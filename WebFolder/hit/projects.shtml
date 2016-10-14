@@ -50,6 +50,11 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
                     </div>
 
                     <div class="row-fluid filter-block">
+                    	<div class="pull-left">
+                    		 <div class="btn-group pull-left">
+                                <a href="javascript:void(0)" onClick="$('#selected_vls').val('');pushLiveFormGithub();" class="btn-flat success new-product">Deploy from Github to Live</a>
+                            </div>
+                    	</div>
                         <div class="pull-right">
                             <div class="btn-group pull-right">
                                 <button class="glow left large" onClick="__showAllProjects(); return false;">All</button>
@@ -65,6 +70,9 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
                         <table class="table table-hover">
                             <thead>
                                 <tr>
+                                	<th>
+                                        <input name="select" class="" type="checkbox" id="chk_all" >
+                                    </th>
                                     <th class="span3">
                                         Client
                                     </th>
@@ -108,6 +116,7 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
                             </thead>
                             <tfoot>
                             <tr>  
+                            	<th align="left">&nbsp;</th>
                                 <th align="left">CLIENT</th>
                                 <th align="left">PROJECT</th>
                                 <th align="left">BUDGET</th>
@@ -123,6 +132,8 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
                             <tbody id="projects_table_body">
                             </tbody>
                         </table>
+                        <input id="selected_vls" type="hidden" value="" />
+									
 						<div id="img_loading_div" style="text-align:center">
 							<img src="loading.gif"  style="padding:20px;" width="34" >
 						</div>
@@ -162,10 +173,31 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
 	 <script>
 var JSONdata;
 var start=0, end=25;
-var old_srch='',keyword='', jsonRow='', tab='', set='';
+var old_srch='',keyword='', jsonRow='', tab='', set='', checkAllFlag=false;
 var tablname='Projects';
 var complete=false;
- var completeScroll=false;
+var completeScroll=false;
+
+function pushLiveFormGithub(){
+		var selected='';
+		$('.check').each(function(){
+			if($(this).is(":checked")){
+				if(selected==''){
+					selected=$(this).val();	
+				}else{
+					selected+=","+$(this).val();
+				}
+			}
+		});
+		$("#selected_vls").val(selected);
+		var get_selectedStr=$("#selected_vls").val();
+		if(get_selectedStr!=''){
+			console.log(get_selectedStr);
+		}else{
+			$.prompt('Please select some projects!');
+			$('#selected_vls').val('');
+		}
+}
 
 function __showProjectForm(uuid)
 {
@@ -275,7 +307,19 @@ $(document).ready(function() {
 			}, doneTypingInterval);
 		}
 	});
-
+	// toggle all checkboxes from a table when header checkbox is clicked
+  	$(".table th input:checkbox").click(function () {
+  		$checks = $(this).closest(".table").find("tbody input:checkbox");
+  		if ($(this).is(":checked")) {
+			checkAllFlag=true;
+			$('#chk_all').prop("checked", true);
+  			$checks.prop("checked", true);
+  		} else {
+			checkAllFlag=false;
+			$('#chk_all').prop("checked", false);
+  			$checks.prop("checked", false);
+  		}  		
+  	});
 });
  
 var proj_uuid=new Array();  
@@ -292,49 +336,54 @@ function load_data(jsonRow){
 				$.each(result.ClientName, function(i,item)
 				{
 					JSONdata[i]=new Array();
-					JSONdata[i][0]='<a target="_blank" href="customers.shtml?keyword='+item+'">'+item+'</a>';					
+					JSONdata[i][1]='<a target="_blank" href="customers.shtml?keyword='+item+'">'+item+'</a>';					
 				}); 
 				$.each(result.uuid, function(i,item)
 				{
 					proj_uuid[i]=item;  
-					JSONdata[i][8]='<span><a title="Download Activities" target="_blank" style="text-decoration:none;" href="project_preview.shtml?uuid='+item+'&token=<!--#4DVAR _HIT_TokenGetAny-->&preview=pdf"><span class="icon-download-alt"></span>&nbsp;</a></span>&nbsp;&nbsp;<a title="Download All Tasks" target="_blank" href="project_preview.shtml?uuid='+item+'&token=<!--#4DVAR _HIT_TokenGetAny-->&preview=pdf&full=true"></a>&nbsp;';
-					JSONdata[i][9]='<ul class="actions"><li><a href="javascript:void(0)" onClick="__showProjectForm(\''+item+'\')"><i class="table-edit"></i></a></li><li><i class="table-settings"></i></li><li class="last"><i class="table-delete"></i></li></ul>';					
+					if(checkAllFlag==true){
+						JSONdata[i][0]='<input name="select" class="check" checked type="checkbox" id="Select" value="'+item+'"></td>';
+					}else{
+						JSONdata[i][0]='<input name="select" class="check" type="checkbox" id="Select" value="'+item+'"></td>';
+					}
+					JSONdata[i][9]='<span><a title="Download Activities" target="_blank" style="text-decoration:none;" href="project_preview.shtml?uuid='+item+'&token=<!--#4DVAR _HIT_TokenGetAny-->&preview=pdf"><span class="icon-download-alt"></span>&nbsp;</a></span>&nbsp;&nbsp;<a title="Download All Tasks" target="_blank" href="project_preview.shtml?uuid='+item+'&token=<!--#4DVAR _HIT_TokenGetAny-->&preview=pdf&full=true"></a>&nbsp;';
+					JSONdata[i][10]='<ul class="actions"><li><a href="javascript:void(0)" onClick="__showProjectForm(\''+item+'\')"><i class="table-edit"></i></a></li><li><i class="table-settings"></i></li><li class="last"><i class="table-delete"></i></li></ul>';					
 				}); 
 				$.each(result.projName, function(i,item)
 				{
-					JSONdata[i][1]='<a href="javascript:void(0)" onClick="__showProjectForm(\''+proj_uuid[i]+'\')">'+item+'</a>';
+					JSONdata[i][2]='<a href="javascript:void(0)" onClick="__showProjectForm(\''+proj_uuid[i]+'\')">'+item+'</a>';
 				});
 				
 				$.each(result.budget, function(i,item)
 				{	
-					JSONdata[i][2]=item;
+					JSONdata[i][3]=item;
 				});
 				$.each(result.Rate, function(i,item)
 				{	
-					JSONdata[i][3]=item;
+					JSONdata[i][4]=item;
 				});
 				$.each(result.currency, function(i,item)
 				{					
-					JSONdata[i][4]=item;
+					JSONdata[i][5]=item;
 				});
 				$.each(result.StartDate, function(i,item)
 				{					
-					JSONdata[i][5]=item;
+					JSONdata[i][6]=item;
 				}); 
 				
 				$.each(result.Active, function(i,item)
 				{					
 				    if(item==true){
-						JSONdata[i][6]='<span class="label label-info"> Active </span>';
+						JSONdata[i][7]='<span class="label label-info"> Active </span>';
 					}
 					else{
-						JSONdata[i][6]='<span class="label label-success"> Completed </span>';
+						JSONdata[i][7]='<span class="label label-success"> Completed </span>';
 					}
 				});
 				
 				$.each(result.status, function(i,item)
 				{					
-					JSONdata[i][7]=item;
+					JSONdata[i][8]=item;
 				});
 				var table_html='';
 				
