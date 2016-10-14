@@ -1,0 +1,135 @@
+<!--HIT_EXECUTE
+
+C_LONGINT(_HIT_COUNTER)
+C_TEXT(_HIT_HTMLTXT;_HTMLTITLETXT)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+QUERY([product_options];[product_options]uuid=_HIT_WebApp_GetField ("uuid"))
+
+
+IF (Records in selection([product_options])=0)
+_HTMLTITLETXT:="New Product Option"
+ELSE
+_HTMLTITLETXT:= "Edit: "+[product_options]name
+END IF
+
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+
+-->
+<!DOCTYPE html>
+<html>
+<head>
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+
+<link rel='stylesheet' type='text/css' href='css/style.css' />
+<link rel='stylesheet' type='text/css' href='css/print.css' media="print" />
+<link rel="stylesheet" media="all" type="text/css" href="css/jquery-impromptu.css" />
+<style>
+#TaskForm em.error {
+	margin-left: 10px;
+	width: auto;
+	display: inline;
+}
+#TaskForm em.error {
+	color: red;
+	font-style: italic;
+}
+#TaskForm input.error, textarea.error, select.error{
+	border: 1px solid red;
+}
+#items textarea {
+	width:300px;
+}
+</style>
+
+</head>
+<body>
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
+
+	<!-- main container -->
+    <div class="content">
+    	<div class="container-fluid">
+            <div id="pad-wrapper" class="form-page">
+				 <div class="row-fluid header">
+					<h3><!--#4DIF (Records in selection([product_options])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> product options</h3>
+                </div>
+                <div class="row-fluid form-wrapper">
+					<!-- left column -->
+                    <div class="span9 with-sidebar">
+                           <form name="ProductForm" action="" id="ProductForm" method="post" class="form-comment" >
+								<input name="uuid" class="span9" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="uuid">               
+                               	<div class="span12 field-box">
+                                    <label>Heading <span style="color:#6E829B">*</span></label>
+                                    <input class="span5" type="text" name="name" id="name" value="<!--#4DVAR [product_options]name-->">
+                                    <input type="hidden" name="sub_options" id="sub_options" value="">
+                                </div>
+                                
+                                <div class="span12 field-box">
+									<label></label>
+									<label class="checkbox" style="width:auto;">							
+										<input name="status" class="span2" type="checkbox" value="true" id="status" <!--#4DIF ([product_options]status)-->checked<!--4DELSE--><!--4DENDIF--> > <strong>Active</strong>
+									</label>
+								</div>
+								
+								<br>
+                                <h3>Add Options</h3>					
+								<table id="items" style="width:80%">
+									<tr class="item">
+								  		<th>Name</th>
+								 		<th>Action</th>
+							  		</tr>
+							  		
+		  							<tr id="hiderow"><td colspan="7"><a id="addrow" href="javascript:void(0)" title="Add new option">Add new option</a></td></tr> 
+								</table>
+								<br/>
+								<!--
+								<div class="span12 field-box">
+									<label></label>
+									<span style="color:#CC0000;font-style:italic;">Note: You can add further options by saving these basic details!</span>
+								</div>
+								-->
+								
+                                <div class="span11 field-box" style="text-align:center;">
+									<input type="submit" class="btn-glow primary save_exit_btn" value="Submit">
+								
+									<a href="product_options.shtml" CLASS="cancelbtn">Cancel</a>
+								</div>
+                        	</form>
+                    </div>
+				</div>
+            </div>
+        </div>
+    </div>
+    <!-- end main container -->
+
+	<!-- scripts -->
+	<script src="js/wysihtml5-0.3.0.js"></script>
+   <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml-->
+	<script src="js/jquery.uniform.min.js"></script>
+	<script src="js/jquery.validate.js"></script>
+	<script type="text/javascript" src="js/jquery-impromptu.js"></script>
+	<script src="js/product_options.js"></script>
+	<!-- call this page plugins -->
+
+    <script type="text/javascript">
+    $(function () {
+    	$('.save_exit_btn1').click(function(e){
+			var selectedArr = [];
+			$('.parameter_name').each(function(){
+				var valStr=this.value;
+				if(valStr!=""){
+					if ($.inArray(valStr, selectedArr) < 0) {
+          				selectedArr.push(valStr); 
+        			}
+        		}	
+    		});
+    		var sub_options= selectedArr.toString(); 
+			$('#sub_options').val(sub_options);
+		});
+	});
+</script>
+</body>
+</html>

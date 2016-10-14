@@ -1,0 +1,254 @@
+<!--HIT_EXECUTE
+
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+else
+_HIT_HTTPD_RedirectToURL ("/hit/sign-in.shtml")
+end if 
+
+-->
+
+<!--#4DIF (_HIT_AuthenticateSession="Session-Authenticated-OK")-->
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Tenthmatrix CRM</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	
+    <!-- bootstrap -->
+    <link href="css/bootstrap/bootstrap.css" rel="stylesheet" />
+    <link href="css/bootstrap/bootstrap-responsive.css" rel="stylesheet" />
+    <link href="css/bootstrap/bootstrap-overrides.css" type="text/css" rel="stylesheet" />
+
+    <!-- libraries -->
+    <link href="css/lib/jquery-ui-1.10.2.custom.css" rel="stylesheet" type="text/css" />
+    <link href="css/lib/font-awesome.css" type="text/css" rel="stylesheet" />
+
+    <!-- global styles -->
+    <link rel="stylesheet" type="text/css" href="css/layout.css">
+    <link rel="stylesheet" type="text/css" href="css/elements.css">
+    <link rel="stylesheet" type="text/css" href="css/icons.css">
+
+    <!-- this page specific styles -->
+    <link rel="stylesheet" href="css/compiled/index.css" type="text/css" media="screen" />    
+
+    <!-- open sans font -->
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!-- lato font -->
+    <link href='https://fonts.googleapis.com/css?family=Lato:300,400,700,900,300italic,400italic,700italic,900italic' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" href="css/colorbox.css" />
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+	
+	<style>
+		.smallChart{
+			border:10px solid #6E829B; width:410px;
+		}
+	</style>
+</head>
+<body>
+
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+
+ <div id="sidebar-nav">
+		<span style="margin-bottom: 5px; margin-left: 15px; outline: 0 none;  padding: 19px 14px 15px; width: 88%;"><input style="height:13px;width:120px;" class="" type="text" value="" id="menu"></span>
+        <ul id="dashboard-menu">
+                     
+        </ul>
+    </div>
+
+	<!-- main container -->
+    <div class="content">
+
+        <div class="container-fluid">
+
+            <!-- upper main stats -->
+            <div id="main-stats">
+                <div class="row-fluid stats-row">
+                    <div class="span3 stat">
+                        <div class="data">
+                            <span class="number"><!--HIT_EXECUTE
+Web_LoadProjects 
+_HIT_HTMLTXT:=String(Records in selection([Projects]))
+
+--> </span>
+                            projects
+                        </div>
+                        <span class="date">Today</span>
+                    </div>
+                    <div class="span3 stat">
+                        <div class="data">
+                            <span class="number"><!--HIT_EXECUTE
+QUERY([Tasks];[Tasks]task_active=True)
+_HIT_HTMLTXT:=String(Records in selection([Tasks]))
+-->
+</span>
+                            active tasks
+                        </div>
+                        <span class="date"><!--HIT_EXECUTE _HIT_HTMLTXT:=timestamp_unix_toGMT([Tasks]Timestamp_modified)--></span>
+                    </div>
+                    <div class="span3 stat">
+                        <div class="data">
+                            <span class="number"><!--HIT_EXECUTE 
+                           QUERY([Tasks];[Tasks]task_active=True)
+RELATE MANY SELECTION([Timeslips]task_id)
+_HIT_HTMLTXT:=String(Round(Sum([Timeslips]slip_hours);2))
+                            --></span>
+                            total hour spent
+                        </div>
+                        <span class="date"><!--HIT_EXECUTE _HIT_HTMLTXT:=timestamp_unix_toGMT([Tasks]Timestamp_modified)--></span>
+                    </div>
+                    <div class="span3 stat last">
+                        <div class="data">
+                            <span class="number">
+                            $ <!--HIT_EXECUTE 
+                           ALL RECORDS([Projects])
+_HIT_HTMLTXT:=String(Sum([Projects]budget))
+                            -->
+                             </span>
+                            budget spent
+                        </div>
+                         
+                    </div>
+                </div>
+            </div>
+            <!-- end upper main stats -->
+			<h3 style="padding-top:30px;">Charts (to drag chart click on the border)</h3>
+            <div id="pad-wrapper">
+				
+            </div>
+        </div>
+    </div>
+
+
+	<!-- scripts -->
+    <!--Footer--> <script src="js/jquery-latest.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/theme.js"></script>
+<script src="js/ui/jquery-ui.js"></script>
+<script>
+var url = window.location.pathname;
+ var filename = url.substring(url.lastIndexOf('/')+1);
+ var filelink = $("a[href='"+filename+"']");
+ var ulparent = filelink.parents('.submenu');
+ var liparent = ulparent.parent('li');
+ filelink.addClass('active');
+ ulparent.addClass('active');
+ liparent.addClass('active');
+ var mainlink = liparent.children('.dropdown-toggle');
+ mainlink.after('<div class="pointer"><div class="arrow"></div><div class="arrow_border"></div></div>');
+ 
+ function chng_activity_status(act_uuid, location){
+ <!--#4DIF (Web_isUserStaff | Web_isUserClient)-->
+		var dataString = 'act_uuid='+act_uuid+'&redirect=false';
+		$.ajax({
+		type: "GET",
+		dataType: "json",
+		url: "chng_noti_status.cgi",
+		data: dataString,
+		cache: false,
+		success: function(html)
+		{
+			if(html.succ){
+				//alert("status changed");
+				window.location.href=location;
+			}
+		}
+		});
+<!--#4DELSE-->
+	window.location.href=location;
+<!--#4DENDIF-->	
+	}
+	
+function __alertMessage(msg){
+	$.prompt(" ", {
+		title: msg,
+		buttons: { "Close": false }
+	});
+}
+	</script>
+	   
+<script type="text/javascript">
+$(document).ready(function() {
+    
+	var menuTypingTimer;                //timer identifier
+	var doneTypingIntervalStr = 1000; 
+	$('#menu').keyup(function(){
+		clearTimeout(menuTypingTimer);
+		if ($('#menu').val) {
+			menuTypingTimer = setTimeout(function(){
+				
+				load_contacts_modules($('#menu').val);
+			}, doneTypingIntervalStr);
+		}
+	});	
+});
+
+function toggle_left_submenu(id){
+	
+	var liparent = $(id).parent('li');
+	var ulparent = liparent.find('.submenu');
+	if(liparent.hasClass('active')){
+		liparent.removeClass('active');
+		ulparent.removeClass('active');
+	}else{
+		liparent.addClass('active');
+		ulparent.addClass('active');
+	}
+}
+</script>
+<!--end Footer-->
+	<script src="js/jquery-ui-1.10.2.custom.min.js"></script>
+	<script src="js/jquery.colorbox.js"></script>
+
+    <script type="text/javascript">
+var xhr;
+function load_contacts_modules(srch){
+	srch = typeof srch !== 'undefined' ? srch : '';
+	$("#dashboard-menu").html("");
+	var jsonUrl= 'loadusermodules.cgi?srch='+srch+'&user_uuid=<!--#4DVAR [Contacts]uuid-->';
+	
+	if(xhr) xhr.abort();
+	xhr=$.getJSON(jsonUrl,function(result){
+		if(result.Alert){
+			//
+		}else{
+			var table_html='<li><a href="index.shtml"><i><img src="img/home.png"  alt=""/></i><span>Home</span><i class="icon-chevron-down"></i></a></li>';
+			$.each(result, function(i,item){
+				if(item.Sub_Module){
+					if(item.Sub_Module!=""){
+						if(item.displayed=="yes"){
+							table_html+='<li><a class="dropdown-toggle" onclick="toggle_left_submenu(this)" href="javascript:void(0)"><i class="'+item.icon_path+'"></i> <span>'+item.Module_name+'</span><i class="icon-chevron-down"></i></a><ul class="submenu">';
+							$.each(item.Sub_Module, function(i,row){
+								var permissionNum="";
+								if(row.displayed=="yes"){
+									if(row.permission!=""){
+										permissionNum=row.permission;
+									}
+								}
+								if(permissionNum!=""){
+								table_html+='<li><a href="customers.shtml" target="_blank">'+row.sub_module_name+'</a></li>';
+								}
+							});
+							table_html+='</ul></li>';
+						}
+					}
+				}                
+			});
+			$("#dashboard-menu").html(table_html);
+		}
+	});
+}
+        $(function () {
+        	load_contacts_modules();
+			$(".iframe").colorbox({iframe:true, width:"80%", height:"85%"});
+            $( ".smallChart" ).draggable();
+        });
+    </script>
+</body>
+</html><!--#4DELSE--><!--#4DENDIF-->

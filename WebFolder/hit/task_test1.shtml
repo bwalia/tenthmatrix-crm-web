@@ -1,0 +1,567 @@
+<!--HIT_EXECUTE
+_HIT_HTTPD_SetHTTPHeader ("Content-type";"text/html; charset=utf-8")
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml?url="+HTTPD_DocumentURI)
+end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+<link rel="stylesheet" href="css/base/jquery-ui.css" />
+<link rel="stylesheet" href="css/autocomplete.css" />
+<link rel="stylesheet" media="all" type="text/css" href="css/jquery-impromptu.css" />
+<style>
+#message{
+	color:#FF0000;
+}
+.table-wrapper .table ul.actions{
+	float:left;
+}
+</style>
+</head>
+<body>
+
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
+
+	<!-- main container -->
+    <div class="content">
+        
+        <div class="container-fluid">
+            <div id="pad-wrapper">
+
+                <!-- Task table -->
+                <div class="table-wrapper orders-table section">
+                    <div class="row-fluid head">
+                        <div class="span12">
+                            <h4>Tasks
+                            </h4>
+                        </div>
+                    </div>
+					<form id="frm_set" name="frm_set" method="get" action="tasks.shtml">
+                    <div class="row-fluid filter-block">
+							<!-- 
+<div style="margin-left:270px; display:inline;">
+							Sort By: 
+							<div class="ui-select" style="margin-right:0px;" >
+								
+								<select id="sort_field" name="sort_field" onChange="sort_results('')" >
+								<option value="task_id" >Task ID</option>
+								<option value="task_name"  >Task Name</option>
+								<option value="Timestamp_start"  >Start Date</option>
+								<option value="Timestamp_end"  >End date</option>
+								<option value="Timestamp_modified"  >Last Modified</option>
+								
+								</select>
+								
+							</div>
+							<a href="javascript:void(0)" id="img-asc" title="Sort Ascending" class="margn-lft35" style="margin-left:5px;margin-top:15px; display:none;" onClick="sort_results('ASC')"><img src="img/asending-order.png" id="img_asc"/></a>
+				<a  id="img-asc-sel" title="Sort Ascending" class="margn-lft35" style="margin-left:5px;margin-top:15px;" ><img src="img/asending-order-sel.png" id="img_asc"/></a>
+			<a href="javascript:void(0)" id="img-desc" title="Sort Decending" class="margn-lft35" style="margin-left:5px;margin-top:15px;" onClick="sort_results('DESC')"><img src="img/dsending-order.png" /></a>
+			<a  id="img-desc-sel" title="Sort Decending" class="margn-lft35" style="margin-left:5px;margin-top:15px; display:none;" ><img src="img/dsending-order-sel.png" id="img_desc"/></a>
+			</div>
+ -->
+						
+					<div class="pull-right">
+						<input name="keyword_type" id="keyword_type" type="text" class="search order-search" placeholder="Search for Task.." value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" />
+						<div style="display:inline;" >
+						Sort By: 
+						<div class="ui-select" style="margin-right:0px;" >
+							<select id="sort_field" name="sort_field" onChange="sort_results('')" >
+							<option value="task_id" >Task ID</option>
+							<option value="task_name"  >Task Name</option>
+							<option value="Timestamp_start"  >Start Date</option>
+							<option value="Timestamp_end"  >End date</option>
+							<option value="Timestamp_modified"  >Last Modified</option>
+							</select>
+						</div>
+						<a href="javascript:void(0)" id="img-asc" title="Sort Ascending" class="margn-lft35" style="margin-left:5px;margin-top:15px; display:none;" onClick="sort_results('ASC')"><img src="img/asending-order.png" id="img_asc"/></a>
+						<a  id="img-asc-sel" title="Sort Ascending" class="margn-lft35" style="margin-left:5px;margin-top:15px;" ><img src="img/asending-order-sel.png" id="img_asc"/></a>
+						<a href="javascript:void(0)" id="img-desc" title="Sort Decending" class="margn-lft35" style="margin-left:5px;margin-top:15px;" onClick="sort_results('DESC')"><img src="img/dsending-order.png" /></a>
+						<a  id="img-desc-sel" title="Sort Decending" class="margn-lft35" style="margin-left:5px;margin-top:15px; display:none;" ><img src="img/dsending-order-sel.png" id="img_desc"/></a>
+					</div>
+					</div>
+										
+                    </div>
+					</form>
+                    <div class="row-fluid">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th class="span1">
+                                        Task ID
+                                    </th>
+                                     <th class="span4">
+									 <span class="line"></span>
+                                        Task Name
+                                    </th>
+                                    <th class="span2">
+									<span class="line"></span>
+                                        Project
+                                    </th>
+									<th class="span2">
+									<span class="line"></span>
+                                        Start Date
+                                    </th>
+									<th class="span2">
+									<span class="line"></span>
+                                        End Date
+                                    </th>
+                                    <th class="span2">
+                                        <span class="line"></span>
+                                        Estimated hours
+                                    </th>
+                                    <th class="span1">
+                                        <span class="line"></span>
+                                        Active
+                                    </th>
+                                     <th class="span1">
+                                        <span class="line"></span>
+                                        Rate
+                                    </th>
+                                    <th class="span2">
+                                        <span class="line"></span>
+                                        Status
+                                    </th><th class="span2">
+                                        <span class="line"></span>
+                                        ACTION
+                                    </th> 
+                                </tr>
+                            </thead>
+                            <tfoot>
+                            <tr>  
+                                <th align="left">TASK ID</th>
+                                <th align="left">TASK NAME</th>
+                                <th align="left">PROJECT</th>
+                                <th align="left">START DATE</th>
+                                <th align="left">END DATE</th>
+                                <th align="left">ESTIMATED HOURS</th>
+                                <th align="left">ACTIVE</th>
+                                <th align="left">RATE</th>
+                                <th align="left">STATUS</th>
+                            	<th align="left">ACTION</th>
+                            </tr>
+                        	</tfoot>
+                            <tbody id="tasks_table_body">
+
+                            </tbody>
+                        </table>
+						<div id="img_loading_div" style="text-align:center">
+		<img src="loading.gif"  style="padding:20px;" width="34" >
+		</div>
+                    </div>
+                </div>
+                <!-- end Tasks table -->
+
+            </div>
+        </div>
+    </div>
+    <!-- end main container -->
+	<div class="example-container">
+	<pre class="code" style="display:none;" id="no_rec_prompt">
+									var statesdemo = {
+										state0: {
+											title: 'No more records found',
+											html:'',
+											buttons: { OK: 1 },																		
+											submit:function(e,v,m,f){ 
+												//console.log(f);
+												if(v==1) {
+													$.prompt.close();
+												}
+												
+											}
+										},
+										
+									};
+									if(!($(".jqibox").length))
+									$.prompt(statesdemo);
+								</pre>
+							</div>
+
+	<!-- scripts -->
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+	<script src="js/ui/jquery-ui.js"></script>
+	<script type="text/javascript" src="js/jquery-impromptu.js"></script>
+<script>
+var JSONdata;
+ var start=0, end=50;
+ var old_srch='',keyword='', jsonRow='', tab='', set='', project='';
+ var table_name='Tasks';
+ var process=false;
+var complete=false;
+ var sort_field=$("#sort_field").val();
+ var sort_dir='ASC';
+
+function __showProjectTask(name)
+{			
+	//$('#frm_set').submit();
+	project=name;
+	start=0;
+	end=25;
+	tab='';
+	keyword='';
+	$("#keyword_type").val('');
+	jsonRow = 'loadalltablesjson.cgi?start='+start+'&end='+end+'&table_name='+table_name+'&tab='+tab+'&project='+project;
+	$('#tasks_table_body').html('');
+	$('#img_loading_div').show();		
+	load_data(jsonRow);
+}
+
+function __showTaskForm(uuid)
+{
+pUrlStr='task.shtml?uuid='+uuid;
+window.location.href=pUrlStr;
+}
+
+
+
+function __showActive()
+{
+	start=0;
+	end=25;
+	tab='Active';
+	jsonRow = 'loadalltablesjson.cgi?start='+start+'&end='+end+'&table_name='+table_name+'&tab='+tab+'&project='+project;
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}
+	$('#tasks_table_body').html('');
+	$('#img_loading_div').show();		
+	load_data(jsonRow);
+}
+
+
+function __showDone()
+{
+	start=0;
+	end=25;
+	tab='Done';
+	jsonRow = 'loadalltablesjson.cgi?start='+start+'&end='+end+'&table_name='+table_name+'&tab='+tab+'&project='+project;
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}	
+	$('#tasks_table_body').html('');
+	$('#img_loading_div').show();	
+	load_data(jsonRow);
+}
+
+ 
+
+function __showAllTasks()
+{
+	start=0;
+	end=25;
+	tab='';
+	jsonRow = 'loadalltablesjson.cgi?start='+start+'&end='+end+'&table_name='+table_name+'&project='+project;
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}	
+	$('#tasks_table_body').html('');
+	$('#img_loading_div').show();	
+	load_data(jsonRow);
+}
+
+function _showASCSelected(){
+		$('#img-asc').hide();
+		$('#img-asc-sel').show();
+		$('#img-desc').show();
+		$('#img-desc-sel').hide();
+		
+	}
+	function _showDESCSelected(){
+		$('#img-asc').show();
+		$('#img-asc-sel').hide();
+		$('#img-desc').hide();
+		$('#img-desc-sel').show();
+		
+	}
+	function sort_results(sortdir) {
+		$('#tasks_table_body').html('');
+		$('#img_loading_div').show();
+		start=0;
+		end=50;
+		
+		sort_field= $("#sort_field").val();
+		if(sortdir!=''){
+			sort_dir=sortdir;	
+		}
+		
+		if(sortdir=='ASC'){
+			_showASCSelected();
+			sort_dir='ASC';
+		}
+		else if(sortdir=='DESC'){
+			_showDESCSelected();
+			sort_dir='DESC';
+		}
+		jsonRow = 'loadalltablesjson.cgi?start='+start+'&end='+end+'&table_name='+table_name+'&project='+project+'&sort_field='+sort_field+'&sort_direction='+sort_dir;	
+		if(keyword!=''){
+			jsonRow +='&keyword='+keyword;
+		}	
+		load_data(jsonRow);
+
+	}
+
+
+$(document).ready(function() {
+	$('#keyword_type').focus();
+	keyword= $("#keyword_type").val();
+	jsonRow = 'loadalltablesjson.cgi?start='+start+'&end='+end+'&table_name='+table_name;
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}		
+	load_data(jsonRow);			 
+	
+	$(window).scroll(function(){
+		if ($(window).scrollTop() == $(document).height() - $(window).height()){
+		if(complete==false) {
+			$('#img_loading_div').show();
+			//alert("scrolling...");
+			start=end+1;
+			end=start+25;
+			jsonRow = 'loadalltablesjson.cgi?start='+start+'&end='+end+'&table_name='+table_name+'&project='+project;
+			if(keyword!=''){
+				jsonRow +='&keyword='+keyword;
+			}
+			if(tab!=''){
+				jsonRow +='&tab='+tab;
+			}		
+			load_data(jsonRow);
+		}
+		
+		}
+	});	
+	
+	//setup before functions
+	var typingTimer;                //timer identifier
+	var doneTypingInterval = 1000;  //time in ms, 5 second for example
+	
+	//on keyup, start the countdown
+	$('#keyword_type').keyup(function(){
+		clearTimeout(typingTimer);
+		if ($('#keyword_type').val) {
+			typingTimer = setTimeout(function(){
+				//do stuff here e.g ajax call etc....
+				$('#tasks_table_body').html('');
+				$('#img_loading_div').show();
+				start=0;
+				end=start+25;
+				tab='';
+				keyword= $("#keyword_type").val();
+				jsonRow = 'loadalltablesjson.cgi?start='+start+'&end='+end+'&table_name='+table_name+'&project='+project;
+				if(keyword!=''){
+					jsonRow +='&keyword='+keyword;
+				}
+				if(tab!=''){
+					jsonRow +='&tab='+tab;
+				}	
+				load_data(jsonRow);
+			}, doneTypingInterval);
+		}
+	});		
+	
+});
+
+ var task_uuid= new Array();
+function load_data(jsonRow){
+	JSONdata=new Array();
+	$.getJSON(jsonRow,function(result){
+			if(result.Alert){
+				code = $('#no_rec_prompt').text();
+				(new Function(code))();
+				complete=true;
+			}
+			else{
+				$.each(result.task_id, function(i,item)
+				{
+					JSONdata[i]=new Array();
+					JSONdata[i][0]=item;
+						
+				}); 
+				$.each(result.uuid, function(i,item)
+				{
+					//JSONdata[i][0]+='<input type="hidden" value="'+item+'">';
+					JSONdata[i][9]='<ul class="actions"><li><a href="javascript:void(0)" onClick="__showTaskForm(\''+item+'\')"><i class="table-edit"></i></a></li><li><i class="table-settings"></i></li><li class="last"><i class="table-delete"></i></li></ul>';	
+					task_uuid[i]=item;				
+				}); 
+				$.each(result.task_name, function(i,item)
+				{
+					JSONdata[i][1]='<a href="javascript:void(0)" onClick="__showTaskForm(\''+task_uuid[i]+'\')">'+item+'</a>';
+					
+				});
+				$.each(result.proj_id, function(i,item)
+				{
+					JSONdata[i][2]='<a href="projects.shtml?keyword='+item+'" target="_blank">'+item+'</a>';
+				});
+				$.each(result.Timestamp_start, function(i,item)
+				{					
+					JSONdata[i][3]=item;
+				});
+				$.each(result.Timestamp_end, function(i,item)
+				{					
+					JSONdata[i][4]=item;
+				});
+				$.each(result.task_estimated_hours, function(i,item)
+				{					
+					JSONdata[i][5]=item;
+				});
+				$.each(result.task_active, function(i,item)
+				{		
+					if(item==true){
+						JSONdata[i][6]='<span class="label label-success"> Active </span>';
+					}
+					else{
+						JSONdata[i][6]='<span class="label label-info"> Done </span>';
+					}
+				});
+				$.each(result.task_rate, function(i,item)
+				{					
+					JSONdata[i][7]=item;
+				});
+				$.each(result.task_status, function(i,item)
+				{			
+				
+				switch(item)
+					{
+					case 'resolved':
+					  JSONdata[i][8]='<span class="label label-success">'+item+'</span>';
+					  break;
+					case 'assigned':
+					  JSONdata[i][8]='<span class="label label-important">'+item+'</span>';
+					  break;
+					case 'new':
+					  JSONdata[i][8]='<span class="label label-warning">'+item+'</span>';
+					  break;
+					default :
+					   JSONdata[i][8]='<span class="label label-info">'+item+'</span>';
+					  }
+				}); 
+				var table_html='';
+				
+				$.each(JSONdata, function(i,row)
+				{
+				
+					table_html+='<tr >';
+					
+					$.each(row, function(i,col){
+						table_html+='<td>'+col+'</td>';
+					});
+					table_html+='</tr>';
+				});
+				if(old_srch!=keyword){
+					$('#tasks_table_body').html('');
+					old_srch=keyword;
+				}
+				//alert(table_html);
+				
+				$('#tasks_table_body').append(table_html);
+
+				complete=false;
+
+		}
+		$('#img_loading_div').hide();
+		});
+}
+
+
+    </script>
+	<script>
+	 var xhr;
+  (function( $ ) {
+    $.widget( "custom.combobox", {
+      _create: function() {
+        this.wrapper = $( "<span>" )
+          .addClass( "custom-combobox" )
+          .insertAfter( this.element );
+ 
+        this.element.hide();
+        this._createAutocomplete();
+        this._createShowAllButton();
+      },
+ 
+      _createAutocomplete: function() {
+	  var ele_select= this.element;
+        var selected = this.element.children( ":selected" ),
+          value = selected.val() ? selected.text() : "";
+ 
+        this.input = $( "<input>" )
+          .appendTo( this.wrapper )
+          .val( value )
+          .attr( "title", "" )
+          .addClass( "custom-combobox-input ui-widget ui-widget-content ui-state-default ui-corner-left" )
+          .autocomplete({
+            delay: 0,
+            minLength: 0,
+            source: $.proxy( this, "_source" )
+          })
+          .tooltip({
+            tooltipClass: "ui-state-highlight"
+          });
+ 
+        this._on( this.input, {
+          autocompleteselect: function( event, ui ) {
+		  	//alert("show all");
+            ui.item.option.selected = true;
+			
+            this._trigger( "select", event, {
+              item: ui.item.option
+            });
+			ele_select.trigger('change');
+          },
+ 
+          autocompletechange: "_removeIfInvalid"
+        });
+      },
+ 
+      _createShowAllButton: function() {
+        var input = this.input,
+          wasOpen = false;
+ 
+        $( "<a>" )
+          .attr( "tabIndex", -1 )
+          .attr( "title", "Show All Items" )
+          .tooltip()
+          .appendTo( this.wrapper )
+          .button({
+            icons: {
+              primary: "ui-icon-triangle-1-s"
+            },
+            text: false
+          })
+          .removeClass( "ui-corner-all" )
+          .addClass( "custom-combobox-toggle ui-corner-right" )
+          .mousedown(function() {
+            wasOpen = input.autocomplete( "widget" ).is( ":visible" );
+          })
+          .click(function() {
+            input.focus();
+ 
+            // Close if already visible
+            if ( wasOpen ) {
+              return;
+            }
+ 
+            // Pass last search string as value to search for, displaying last results
+            input.autocomplete( "search", 'SHOWALL' );
+          });
+      },
+ 
+      _source: function( request, response ) {
+        //var matcher = new RegExp( $.ui.autocomplete.escapeRegex(request.term), "i" );
+		var ele_select= this.element;
+		if(request.term=='SHOWALL'){
+			response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+   

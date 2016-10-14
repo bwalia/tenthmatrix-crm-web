@@ -1,0 +1,167 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+C_TEXT(_HTMLTITLETXT)
+If(_HIT_AuthenticateSession="Session-Authenticated-OK")
+ QUERY([Module];[Module]uuid=_HIT_WebApp_GetField ("uuid"))
+ 
+IF (Records in selection([Module])=0)
+_HTMLTITLETXT:="New Module"
+ELSE
+_HTMLTITLETXT:= "Edit: "+[Module]name+" Module"
+END IF
+
+
+Else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+End If
+-->
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/main-header.shtml-->
+<script src="js/jquery.validate.js"></script>
+<script type="text/javascript">
+function generate_code(){
+		var val=document.getElementById("name").value;
+		var patt=/[^A-Za-z0-9_-]/g;
+		var result=val.replace(patt,' ');
+		result=result.replace(/-/g, ' ');
+		result=result.replace(/\s+/g, ' ');
+		result = result.replace(/^\s+|\s+$/g,'');
+		result=result.replace(/\s/g, '-');
+		result=result.toLowerCase();
+		document.getElementById("code").value=result;
+	}
+	
+$(document).ready(function() {
+		<!--#4DIF (Records in selection([Module])=0)-->
+			var new_uuid='<!--#4DVAR Generate UUID-->';	
+			$('#uuid').val(new_uuid);
+		<!--#4DENDIF-->
+	// validate signup form on keyup and submit
+	$("#DetailForm").validate({
+		rules: {
+				'name' : { required: true
+							<!--#4DIF (Records in selection([Module])=0)-->	
+							, remote: {
+								url: "checkexistingmodule.cgi",
+								type: "GET",
+								data: {
+									name: function() {
+									return $("#name").val();
+									},
+								}
+							}
+							<!--#4DENDIF-->
+					},
+				//'icon_path' : { required: true  }
+			}, messages: {
+					'name' : { required	:  'Please specify Module name' , remote: 'Module name already exists' },
+					//'icon_path' : { required	:  'Please specify path for the icon'},
+			},
+			submitHandler: function(form) {
+    			<!--#4DIF (Records in selection([Module])=1)-->
+				var actualModuleNameStr= '<!--#4DVAR [Module]name-->';
+    			var newNameStr= $('#name').val();
+    			if(actualModuleNameStr!=newNameStr){
+    				var jsonRow = 'checkexistingmodule.cgi?name='+newNameStr;
+					$.getJSON(jsonRow,function(result){
+						if(result=="false" || result==false){
+							$('.moduleNameClass').show();
+							$('#name').addClass("error");
+							return false;
+						}else{
+							$('.moduleNameClass').hide();
+							$('#name').removeClass("error");
+							form.submit();
+						}
+					});
+				}else{
+				form.submit();
+				}
+				<!--#4DELSE-->
+				form.submit();
+				<!--#4DENDIF-->
+    		}
+	});
+});
+
+</script>
+<script type='text/javascript' src='js/customerNotes.js'></script>
+<style>
+label.error { 
+	float: left; 
+	color: red; 
+	padding-top: 1.5em; 
+	vertical-align: top; 
+}
+</style>
+</head>
+<body>
+<div data-role="page" class="jqm-demos" data-quicklinks="true">
+	<!-- header -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/top-header.shtml-->
+	<!-- /header -->
+	<div role="main" class="ui-content jqm-content">
+		<h3><!--#4DIF (Records in selection([Module])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Module</h3>
+		<div  class="ui-body-d ui-content">
+  			<div data-demo-html="true">
+  				<form novalidate="novalidate" data-ajax="false" name="DetailForm" id="DetailForm" action="savemodule.cgi" method="post">
+  					<input name="uuid" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="uuid">        
+							<div class="ui-field-contain">
+								<label>Name</label>
+                                <input name="name" class="span4" type="text" value="<!--4DVAR [Module]name-->" id="name" onKeyUp="generate_code()" onBlur="generate_code()">
+								<input name="uuid" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="uuid">
+                            </div>
+                            <div class="ui-field-contain">
+                           	 <label>Code</label>
+                           	 <input name="code" class="span4" type="text" value="<!--4DVAR [Module]code-->" id="code" readonly>
+                           		<em class="error moduleNameClass" for="name" generated="true" style="display:none;color: red;">Module name already exists</em>
+                            </div>
+                           <!--#4DIF (Records in selection([Module])=1)-->
+							<div class="ui-field-contain">
+								<label>Created On</label>
+                                <input name="created" type="text" <!--#4DIF (timestamp_unix_toDate([Module]created)=!01/01/1970!)-->value=""<!--4DELSE-->value="<!--#4DHTMLVAR timestamp_unix_toDate([Module]created)-->"<!--4DENDIF--> id="created" readonly>
+							</div>
+							<!--#4DENDIF-->
+							<div class="ui-field-contain">
+								<label><input name="active" type="checkbox" value="true" id="active" <!--#4DIF ([Module]active)-->checked<!--4DENDIF-->> Active</label>
+							</div>
+							<div class="ui-field-contain">
+                            	<label>Icon's Class/Image's Path</label>
+                                <input name="icon_path"  type="text" value="<!--4DVAR [Module]icon_path-->" id="icon_path">
+							</div>
+							<div class="ui-field-contain">
+                            	<label>Web Icon's Class/Image's Path</label>
+                                <input name="icon_path_1"  type="text" value="<!--4DVAR [Module]icon_path_1-->" id="icon_path_1">
+							</div>
+							<div class="ui-field-contain">
+                            	<label>Search Terms</label>
+                            	<textarea rows="4" id="free_text_search" name="free_text_search" ><!--4DVAR [Module]free_text_search--></textarea>
+                            </div>
+                           <div class="ui-field-contain">
+                                <label>Table</label>
+								<select name="table_name" id="table_name" data-native-menu="false">
+									<!--HIT_EXECUTE _HIT_HTMLTXT:=Web_TableListHTMLPopup([Module]table_name)-->
+								</select>                                     
+							</div>
+                            <div class="ui-field-contain">
+                            	<label>Sort Order</label>
+                                <input name="module_rank" class="span2" type="text" value="<!--4DVAR [Module]module_rank-->" id="module_rank">
+							</div>
+                		<button type="submit" class="ui-shadow ui-btn ui-corner-all ui-mini">Submit</button>
+						<a href="modules.shtml" data-ajax="false" class="ui-shadow ui-btn ui-corner-all ui-mini">Cancel</a>
+				</form>
+			</div>
+  		</div>
+	</div>
+	<!-- /content -->
+	<!-- panel -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/sidebar.shtml-->
+	<!-- /panel -->
+
+	<!-- footer -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/footer.shtml-->
+	<!-- /footer -->
+</div><!-- /page -->
+</body>
+</html>

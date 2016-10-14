@@ -1,0 +1,25 @@
+/* css for hiding leftbar*/
+		header .navbar {
+		margin-left: 0px;
+		}
+		
+	header .navbar .sidebar-toggle {
+		display:none;
+	   }
+	   @media screen and (min-width:1200px){
+		   header .navbar {
+		margin-left: 0px;
+		}
+		   .fixed-leftside .rightside {
+		margin-left: 0px;
+       }
+	  	   
+	   }
+	  /* @media screen and (max-width:1199px){
+	   .sidebar-sm .rightside{
+		   margin-left: 0px;
+	   }
+	   }*/
+.hide-leftsidebar{
+	display:none!important;
+}

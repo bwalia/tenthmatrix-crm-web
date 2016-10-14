@@ -1,0 +1,1828 @@
+<!--HIT_EXECUTE
+_HIT_HTTPD_SetHTTPHeader ("Content-type";"text/html; charset=utf-8")
+
+C_TEXT(_HIT_HTMLTXT;mPlatform)
+ 
+If(_HIT_AuthenticateSession="Session-Authenticated-OK")
+
+mPlatform:=_HIT_WebSession_GetVar ("platform")
+
+ELse
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml?url="+HTTPD_DocumentURI)
+End if 
+ 
+--> 
+<!DOCTYPE html>
+<html lang="en">
+<!-- BEGIN HEAD -->
+<head>
+	<title>Bank Statment Entries</title>
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/v2/includes/InitCss.shtml-->
+	<link rel="stylesheet" href="assets/css/autocomplete.css" />
+	
+ 	<link href="assets/plugins/datepicker/css/bootstrap.datepicker.css" rel="stylesheet" />
+	<style>
+		#message{
+			color:#FF0000;
+		}
+		.jqibox {
+			z-index:9999!important;
+		}  
+		.hidden-table:hover {
+	background-color: white !important;
+}
+.payment-detail{
+	border-bottom: solid 2px #e9e8e8 ;border-radius:5px;margin-bottom:10px; background:#dadada; padding:5px; margin-top:10px;
+}
+.label{
+	font-size:85%;
+}
+.payment-detail:before {
+ 	content: '';
+ 	display: inline-block;
+ 	border-left: 10px solid transparent;
+  	border-right: 10px solid transparent;
+  	border-bottom: 10px solid #ccc;
+  	border-bottom-color: rgba(0, 0, 0, 0.2);
+  	position: absolute;
+  	top: 0px;
+  	right: 139px;
+}
+.payment-detail:after {
+  	content: '';
+  	display: inline-block;
+  	border-left: 9px solid transparent;
+  	border-right: 9px solid transparent;
+  	border-bottom: 9px solid #dadada;
+  	position: absolute;
+  	top: 1px;
+	right: 140px;
+}
+	</style>
+</head>
+<!-- END HEAD -->
+<!-- BEGIN BODY -->
+<body class="fixed-leftside fixed-header">
+	<!-- BEGIN HEADER -->	
+		<!--#4DSCRIPT/_HIT_LoadInclude/hit/v2/includes/header.shtml-->
+	<!-- END HEADER -->
+
+	<div class="wrapper"> 
+ 		<!-- BEGIN LEFTSIDE -->
+ 		<!--#4DIF (mPlatform="web")-->
+ 		<!--#4DSCRIPT/_HIT_LoadInclude/hit/v2/includes/left-navigation.shtml-->
+ 		<!--#4DENDIF-->
+		<!-- END LEFTSIDE -->
+  
+  <!-- BEGIN RIGHTSIDE -->
+  <div class="rightside bg-grey-100"> 
+    <!-- BEGIN PAGE HEADING -->
+    <div class="page-head">
+    
+     <div class="row">
+     	<div class="col-sm-6">
+      		<h1 class="page-title">Bank Statment Entries <!--#4DIF (_HIT_WebApp_GetField ("set")#"")--> Set : <!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("set")--><!--4DELSE--><!--4DENDIF--></h1>
+            </div>
+      <!-- BEGIN BREADCRUMB -->
+       
+     	<div class="col-sm-6 ">
+      <ol class="breadcrumb sm-pullright">
+        <li><a href="javascript:void(0)" onclick="funURLHandler('index.shtml','open-index-window')"><i class="ion-home margin-right-5"></i> Dashboard</a></li>
+        <li>Bank Statment Entries</li>
+      </ol>
+      </div>
+      </div>
+    </div>
+    <!-- END PAGE HEADING -->
+         
+
+    
+	<div class="container-fluid">
+	<div class="margin-bottom-10 clearfix">
+      <div class="pull-left">
+     	 <form class="form-inline">
+  	    	<strong>Add to Set:</strong>
+				<select class="form-control xs-margin-btm10" name="add_sets" id="add_sets" onChange="__showForm_AddSet(this.value, $('#add_sets option:selected').text())">
+					<option value="">--Select Set--</option>
+					<!--#4DSCRIPT/Web_loadBankEnteriesSets/-->
+					<!--4DLOOP  [saved_sets]-->									
+						<option value="<!--#4DHTMLVAR [saved_sets]uuid-->" ><!--#4DHTMLVAR [saved_sets]name--></option>
+					<!--4DENDLOOP-->
+					<option id="opt_new_set" value="new_set">Create New Set</option>
+				</select>
+                <a data-toggle="modal" data-target="#setManagerModal" class="btn palette-carrot btn-color btn-icon-left btn-sm" >Set Manager</a>    
+          </form> 
+      </div>
+         
+		<div class="pull-right-sm-scr">
+        	<form  class="form-inline" method="post" action="#">                 	          
+            	<div class="btn-inline display-inline-block">
+					<input type="text" class="form-control padding-left-35" placeholder="Enter bank entry ref.." id="keyword">
+					<button class="btn btn-link no-shadow bg-transparent no-padding-top padding-right-10 right-auto left" type="button"><i class="ion-search"></i></button>
+				</div>
+                <a href="new-customer.html" class="btn palette-carrot btn-color btn-icon-left btn-sm" > <i class="fa fa-plus"></i> New Entry</a>                    
+            </form>
+      </div>
+     
+	</div>
+	<div class="margin-bottom-10 clearfix">
+    	<div class="pull-left">
+      		<div class="form-group no-margin">
+   				<form class="form-inline">
+         			<strong> From:</strong> <input type="text" class="form-control xs-margin-btm10 datepicker" name="start_date" data-date-format="dd/mm/yyyy"  value="" id="start_date" readonly><strong>To:</strong> <input type="text" class="form-control xs-margin-btm10 datepicker" data-date-format="dd/mm/yyyy" name="end_date" value="" id="end_date" readonly>
+         			<a href="javascript:void(0)" onClick="reset_dates()" class="btn btn-primary  btn-sm "><i class="fa fa-refresh"></i></a> 
+          		</form>  	
+               
+          	</div>        
+        </div>
+        <div class="pull-right-sm-scr">
+        	<form  class="form-inline" method="post" action="#">   
+            	<select class="form-control xs-margin-btm10 bg-white" style="min-width:175px;" name="add_sets" id="add_sets" onChange="__showselectedBank(this.value)">
+					<option value="">--Select Bank--</option>
+					<!--#4DSCRIPT/Web_LoadAllBankAccount/-->
+					<!--4DLOOP  [bank_accounts]-->									
+						<option value="<!--#4DHTMLVAR [bank_accounts]uuid-->" ><!--#4DHTMLVAR [bank_accounts]account_name--></option>
+					<!--4DENDLOOP-->
+            	</select>              	          
+                <div class="btn-group srch-filter xs-margin-btm10">
+                	<a class="btn btn-info btn-sm dropdown-toggle btn-sm btn-select2 filter-menu" style="min-width:145px; text-align:left;" data-toggle="dropdown">All
+                		<span class="caret"></span>
+                    </a>
+                   	<ul class="dropdown-menu" role="menu">
+                   		<li><a href="javascript:void(0)" onClick="__filterResults('','All'); return false;">All</a></li>
+                    	<li><a href="javascript:void(0)" onClick="__filterResults('pending','Pending'); return false;">Pending</a></li>
+                       	<li><a href="javascript:void(0)" onClick="__filterResults('need to confirm','Need to Confirm'); return false;">Need to Confirm</a></li>
+                       	<li><a href="javascript:void(0)" onClick="__filterResults('reconciled','Reconciled'); return false;">Reconciled</a></li>
+                   	</ul>
+    			</div>
+                 <a href="new-customer.html" class="btn btn-primary btn-sm xs-margin-btm10" >Show Payment Details</a>                    
+            </form>
+      	</div>
+    </div>
+   
+ 
+      			<div class="row">
+        			<div class="col-md-12">
+       					<div class="panel" style="padding-top:20px;"> 
+               				<div class="panel-body no-padding-top bg-white"> 
+            					<div class="table-responsive">
+                					<table class="table table-striped no-border table-hover no-margin" id="Table">
+					
+									</table>
+									<div class="text-center margin-top-10  margin-bottom-10"><button style="width: 50%;display:none;" class="btn palette-belize-hole btn-color" href="javascript:void(0);" onclick="show_more()" title="Show more" id="display_more_btn" >Show more</button></div>
+              						<div class="text-center margin-bottom-10" id="img_loading_div"><img width="32" src="assets/img/loader.gif"></div>
+              					</div>
+            				</div>
+          				</div>
+        			</div>
+        		</div>
+      <!-- /.row --> 
+      
+      <!-- BEGIN FOOTER -->
+      <footer></footer>
+      <!-- END FOOTER --> 
+    </div>
+    <!-- /.container-fluid --> 
+  </div>
+  <!-- /.rightside --> 
+</div>
+<!-- /.wrapper --> 
+<!-- END CONTENT --> 
+
+<!-- BEGIN JAVASCRIPTS --> 
+
+<!-- BEGIN CORE PLUGINS --> 
+<div id="setManagerModal" class="modal  fade in" role="dialog"  data-backdrop="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header" style="background:#e67e22;">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				<h3 class="modal-title" style="font-size:18px; color:#fff; line-height:normal;">Set Manager</h3>
+			</div>
+			<div class="modal-body">
+				<form action="">
+					<!--<p class="sepH_c"><span class="label label-default">Form elemets in modal window</span></p>-->
+					<p><span id="set_mgr_msg" style="color:#006600"></span><span id="set_mgr_err" style="color:#FF0000"></span></p>
+					
+					<div>
+						<select name="sets_list" id="sets_list" class="form-control" size="10" style="width:100%">
+							<!--#4DSCRIPT/Web_loadBankEnteriesSets/-->
+							<!--4DLOOP  [saved_sets]-->									
+								<option value="<!--#4DHTMLVAR [saved_sets]uuid-->" ><!--#4DHTMLVAR [saved_sets]name--></option>
+							<!--4DENDLOOP-->
+						</select>
+					</div>
+					
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn palette-carrot btn-color btn-sm" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); add_new_set()">Add new Set</button>
+				<button type="button" class="btn palette-carrot btn-color btn-sm" style="margin-left:0px;" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); load_from_set($('#sets_list').val(), $('#sets_list option:selected').text())">Load</button>
+				<div class="btn-group">
+				<button type="button" class="btn palette-carrot btn-color btn-sm">Delete</button>
+				<button type="button" class="btn palette-carrot btn-color btn-sm  dropdown-toggle" data-toggle="dropdown">
+        			<span class="caret"></span>
+          		</button>
+      			<ul class="dropdown-menu" role="menu" style="text-align:left">
+        			<li><a href="javascript:void(0)" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); del_set($('#sets_list').val(),$('#sets_list option:selected').text(),1)">Delete Selected Set</a></li>
+         			<li><a href="javascript:void(0)" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); del_set($('#sets_list').val(),$('#sets_list option:selected').text(),2)">Delete Bank statements in selected set</a></li>
+		 		</ul>
+		 	</div>
+			<button type="button" class="btn btn-primary btn-sm" data-dismiss="modal">OK</button>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="example-container">
+		
+		<pre class="code" style="display:none;" id="no_selection_prompt">
+			$.prompt({
+				state0: {
+					title: 'Please select some entries to add to set!',
+					html:'',
+					buttons: { OK: 1 },																		
+					submit:function(e,v,m,f){ 
+						if(v==1) {
+							$.prompt.close();
+						}					
+					}
+				},
+										
+			});
+		</pre>
+		<pre class="code" style="display:none;" id="load_prompt">
+			var statesdemo = {
+				state0: {
+					title: 'Do you want to load the records of '+$('#add_sets option:selected').text()+'?',
+					html:'',
+					buttons: { No : 0, Yes: 1 },																		
+					submit:function(e,v,m,f){ 
+						if(v==1) {
+							location.href='bank_enteries.shtml?set='+$('#add_sets option:selected').text()+'&set_uuid='+$('#add_sets').val();
+						}
+						if(v==0) {
+							$.prompt.close();
+							$('#add_sets').val('');
+							$('.check').prop('checked', false);
+						}
+					}
+				},
+		
+			};
+			$.prompt(statesdemo);
+		</pre>
+		<pre class="code" style="display:none;" id="new_set_prompt">
+									var statesdemo = {
+										state0: {
+											title: 'Please enter name of new set',
+											html:'&lt;div id="message"&gt;&lt;/div&gt;&lt;input type="text" name="new_set" id="new_set" value="userset_1"&gt;&lt;br /&gt;',
+											buttons: { Cancel : 0, Ok: 1 },
+											focus: "#new_set",																		
+											submit:function(e,v,m,f){ 
+												//console.log(f);
+												if(v==1) {
+													e.preventDefault();
+													var new_set=$('#new_set').val().trim();
+													if(new_set!=''){
+														var exist=false;
+														$('#add_sets option').each(function() {
+															if(new_set.toLowerCase()==$(this).text().toLowerCase()){
+																exist=true;
+															}
+														});
+														if(exist==false){
+															if(add_from_manager==true){
+																jsonRow = 'addDelBankEnteriesSets.cgi?tablname='+tablname+'&set='+new_set;
+															}
+															else{
+																jsonRow = 'load_bankenteriesnew.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&selected='+selected+'&set=add_to_'+new_set;
+															}
+															$.getJSON(jsonRow,function(result){
+																if(result.setUUID){
+																	$('#opt_new_set').before('&lt;option value="'+result.setUUID+'"&gt;'+new_set+'&lt;/option&gt;');
+																	$('#add_sets').val(result.setUUID);
+																	$('#sets_list').prepend('&lt;option value="'+result.setUUID+'" &gt;'+ new_set+'&lt;/option&gt;');
+																	$(".jqibox").remove();
+																	show_load_prompt();
+																}
+																else if(result.Succ){
+																	$('#opt_new_set').before('&lt;option value="'+result.UUID+'"&gt;'+new_set+'&lt;/option&gt;');
+																	
+																	//$('#load_sets').append('&lt;option value="'+result.UUID+'" &gt;'+ new_set+'&lt;/option&gt;');
+																	$('#sets_list').prepend('&lt;option value="'+result.UUID+'" &gt;'+ new_set+'&lt;/option&gt;');
+																	set_add_to=new_set;
+																	
+																	$(".jqibox").remove();
+																	
+																	$("#set_mgr_msg").html('* Set added successfully');
+																	
+																	add_from_manager=false;
+																}else if(result.Err){
+																	$('#message').html('* '+result.Err);
+																}
+															});				
+														}
+														else{
+															$('#message').html('* '+new_set+' already exists. Please enter another name of set');
+														}
+													}
+													else{
+														$('#message').html('* Please enter name of new set');
+														$('#new_set').focus();
+													}
+												}
+												if(v==0) {
+													$.prompt.close();
+													$('#add_sets').val('');
+													add_from_manager=false;
+												}
+											}
+										},
+										
+									};
+
+									$.prompt(statesdemo);
+								</pre>
+	</div>
+
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/v2/includes/InitJs.shtml-->
+<script type="text/javascript" src="assets/js/autocomplete.js"></script>
+
+<!-- datepicker --> 
+<script src="assets/plugins/datepicker/js/bootstrap.datepicker.js" type="text/javascript"></script>
+<!-- dashboard --> 
+<script type="text/javascript">
+var JSONdata;
+var nPageSize=25;
+var start=0, end=25;
+var old_srch='',keyword='', jsonRow='', set='',start_date='',end_date='',date_selected='no';
+var tablname='bank_statement_entries';
+var complete=false;
+var completeScroll=false;
+var checkAllFlag=false;
+var add_from_manager=false;
+var bank_account='';
+var status='';
+var selected_set='<!--#4DVAR _HIT_WebApp_GetField ("set") -->';
+var setUUID='<!--#4DVAR _HIT_WebApp_GetField ("set_uuid") -->';
+var showallReceiptsFlag=true;
+	function getMonthName(m) {
+		if(m==1){ monthName= "Jan";}
+		else if(m==2){ monthName= "Feb";}
+		else if(m==3){ monthName= "Mar"; }
+		else if(m==4){ monthName= "Apr"; }
+		else if(m==5){ monthName= "May"; }
+		else if(m==6){ monthName= "Jun"; }
+		else if(m==7){ monthName= "Jul"; }
+		else if(m==8){ monthName= "Aug"; }
+		else if(m==9){ monthName= "Sep"; }
+		else if(m==10){ monthName= "Oct"; }
+		else if(m==11){ monthName= "Nov"; }
+		else if(m==12){ monthName= "Dec"; }
+		else{ monthName= m; }
+		return monthName;
+     }
+function __showEntryDetails(){
+	$(".bankEntryTrClass").addClass('selectTable');
+	$(".receiptTrClass").show();
+	$(".hideReceiptDetails").show();
+	$(".showReceiptDetails").hide();
+	showallReceiptsFlag=true;
+}
+
+function __hideEntryDetails(){
+	$(".bankEntryTrClass").removeClass('selectTable');
+	$(".receiptTrClass").hide();
+	$(".hideReceiptDetails").hide();
+	$(".showReceiptDetails").show();
+	showallReceiptsFlag=false;
+	
+}
+
+function __filterResults(sel,selText){
+	$('.filter-menu').html(selText+' <span class="caret"></span>');
+	if(checkAllFlag==true){
+		$("#chk_all").trigger('click');
+	}
+	start=0;
+	end=25;
+	status=sel;
+	start_date=$('#start_date').val();
+	end_date=$('#end_date').val();
+	keyword= $("#keyword").val();
+	jsonRow = 'load_bankenteriesnew.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&start_date='+start_date+'&end_date='+end_date+'&set='+selected_set+'&setUUID='+setUUID;;	
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}
+	if(bank_account!=''){
+		jsonRow +='&uuid_bank='+bank_account;
+	}
+	if(start_date!='' || end_date!=''){
+		jsonRow +='&date_selected=yes';
+	}else{
+		jsonRow +='&date_selected=no';
+	}
+	if(status!=''){
+		jsonRow +='&status='+status;
+	}
+	jsonRow +='&status=';
+		
+	$('#TableContent').html('');
+	$('#display_more_btn').hide();
+	$('#img_loading_div').show();		
+	load_data(jsonRow);
+}
+function __showselectedBank(value){
+	if(checkAllFlag==true){
+		$("#chk_all").trigger('click');
+	}
+	bank_account=value;
+	
+	start=0, end=start+25;
+	
+	start_date=$('#start_date').val();
+	end_date=$('#end_date').val();
+	keyword= $("#keyword").val();
+	$('#TableContent').html('');
+	$('#img_loading_div').show();
+	jsonRow = 'load_bankenteriesnew.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&start_date='+start_date+'&end_date='+end_date+'&set='+selected_set+'&setUUID='+setUUID;;	
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}	
+	if(bank_account!=''){
+			jsonRow +='&uuid_bank='+bank_account;
+		}
+		if(start_date!='' || end_date!=''){
+			jsonRow +='&date_selected=yes';
+		}else{
+			jsonRow +='&date_selected=no';
+		}
+	if(status!=''){
+		jsonRow +='&status='+status;
+	}
+			
+	load_data(jsonRow);	
+}
+
+function __showForm_AddSet(val,name){
+	if(name!=''){
+		selected='';
+		$('.check').each(function(){
+			if($(this).is(":checked")){
+				if(selected==''){
+					selected=$(this).val();
+				}
+				else{
+					selected+=","+$(this).val();
+				}
+			}
+		});
+		if(selected!='' || add_from_manager==true){
+			if(val=='new_set'){
+				//var new_set=prompt("Please enter name of new set:","userset_1");				
+				code = $('#new_set_prompt').text();
+				(new Function(code))();	
+			}else{
+				start=0;
+				end=start+25;
+				status='';
+				bank_account='';
+				jsonRow = 'load_bankenteriesnew.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&start_date='+start_date+'&end_date='+end_date+'&date_selected=no&selected='+selected+'&set=add_to_'+name+'&uuid_bank='+bank_account;
+				$.getJSON(jsonRow,function(result){
+					if(result.Alert){
+						code = $('#load_prompt').text();
+						(new Function(code))();
+					}
+				});
+			}
+		}else{
+			code = $('#no_selection_prompt').text();
+			(new Function(code))();
+			$('#add_sets').val('');
+		}
+	}
+}
+
+function show_load_prompt(){
+	code = $('#load_prompt').text();
+	(new Function(code))();
+}
+
+function add_new_set(){
+	add_from_manager=true;
+	__showForm_AddSet('new_set','new_set');
+}
+
+function load_from_set(val, name){
+	if(val!='' && val!=null){
+		location.href='bank_enteries.shtml?set='+name+'&set_uuid='+val;
+	}
+	else{
+		$("#set_mgr_err").html('* Please select a Set');
+		$('#sets_list').focus();
+	}
+}
+function del_set(set_uuid, set_name, del_type){
+	if(set_uuid!='' && set_uuid!=null){
+		if(del_type==1){
+			var state_title='About to delete selected set. Are you sure you want to go ahead?';
+			var prompt_title='Deleting selected set';
+			show_del_prompt(state_title, prompt_title, set_uuid, set_name, del_type);						
+		}
+		/*else if(del_type==2) {
+			var state_title='About to delete Items for Invoices in selected set. Are you sure you want to go ahead?';
+			var prompt_title='Deleting Items in selected set';
+			show_del_prompt(state_title, prompt_title, set_uuid, set_name, del_type);
+		}*/
+		else{
+			var state_title='About to delete bank entries permanently of the selected set. Are you sure you want to go ahead?';
+			var prompt_title='Deleting Bank statements in selected set';
+			show_del_prompt(state_title, prompt_title, set_uuid, set_name, del_type);
+		}		
+	}
+	else{
+		$("#set_mgr_err").html('* Please select a Set');
+		$('#sets_list').focus();
+	}
+}
+function show_del_prompt(state_title, prompt_title, set_uuid, set_name, del_type){
+	var statesdemo = {
+		state0: {
+			title: state_title,
+			html:'',
+			buttons: { 'Argh! No stop' : 0, 'Sure, go ahead': 1 },																		
+			submit:function(e,v,m,f){ 
+				//console.log(f);
+				if(v==1) {
+					var prompt_html='<img src="loading.gif"  style="padding:20px;" width="32" >';
+					processPrompt(prompt_title,prompt_html,true,false);	
+					delete_set(set_uuid, set_name, del_type);
+				}
+				if(v==0) {
+					$.prompt.close();								
+				}
+			}
+		},					
+	};			
+	$.prompt(statesdemo);
+}
+
+function delete_set(set_uuid, set_name, del_type) {
+	jsonRow = 'addDelBankEnteriesSets.cgi?tablname='+tablname+'&set_uuid='+set_uuid+'&del_type='+del_type;			
+	$.getJSON(jsonRow,function(result){
+		if(result.Succ){
+			if(del_type==1 || del_type==3) {
+				/*$('#sets_list option:selected').remove();
+				$('#add_sets option[value="'+set_uuid+'"]').hide();
+				$('#load_sets option[value="'+set_uuid+'"]').hide();*/
+				location.href="bank_enteries.shtml";
+			}
+			$("#set_mgr_msg").html('* Deleted successfully');
+		}
+		if($('#dialog').html().length>0){
+			processPrompt('','',false,true);
+		}
+	});
+}
+
+function processPrompt(title,msg,start_prmt,stop_prmt){
+	if(start_prmt){
+		$( "#dialog" ).attr('title', title);
+		$( "#dialog" ).html(msg);
+		$( "#dialog" ).dialog({ modal: true, resizable: false, draggable: false, closeOnEscape: false });
+		$('.ui-dialog-titlebar-close').remove();
+		$('.ui-dialog').css('z-index', 99999);
+		$('.ui-widget-overlay').css('z-index', 99998);
+	}
+	else if(stop_prmt){
+		$( "#dialog" ).dialog( "destroy" );
+		$( "#dialog" ).html('');
+	}
+}
+
+function reset_dates(){
+	if(checkAllFlag==true){
+		$("#chk_all").trigger('click');
+	}
+	$('#TableContent').html('');
+	$('#img_loading_div').show();
+	start=0, end=start+25;
+	$('#start_date').val('');
+	$('#end_date').val('');
+	start_date=$('#start_date').val();
+	end_date=$('#end_date').val();
+	keyword= $("#keyword").val();
+	$('#TableContent').html('');
+	$('#img_loading_div').show();
+	bank_account='';
+	jsonRow = 'load_bankenteriesnew.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&start_date='+start_date+'&end_date='+end_date+'&date_selected=no&set='+selected_set+'&setUUID='+setUUID+'&uuid_bank='+bank_account;	
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}	
+	
+	load_data(jsonRow);	
+}
+$(document).ready(function() {
+	var TableHtml='<thead><tr>';
+	if(isMobile.any()) {
+		$('.hideComponentsClass').hide();
+   		TableHtml+='<th class="vertical-middle">Description</th>';
+		TableHtml+='<th class="vertical-middle">Action</th>';
+	}else{
+		$('.hideComponentsClass').show();
+		TableHtml+='<th class="vertical-middle"><div class="checkbox checkbox-theme no-margin"><input type="checkbox" id="chk_all"><label for="chk_all" class="no-padding"></label></div></th>';
+		TableHtml+='<th class="vertical-middle">Date</th>';
+		TableHtml+='<th class="vertical-middle">Type</th>';
+		TableHtml+='<th class="vertical-middle">Description</th>';
+		TableHtml+='<th class="vertical-middle">Paid Out</th>';
+		TableHtml+='<th class="vertical-middle">Paid In</th>';
+		TableHtml+='<th class="vertical-middle">Balance</th>';
+		TableHtml+='<th class="vertical-middle">Status</th>';
+		TableHtml+='<th class="vertical-middle">Note</th>';
+		TableHtml+='<th class="vertical-middle">Action</th>';
+	}
+	TableHtml+='</tr></thead>';
+	TableHtml+='<tbody id="TableContent">';
+	TableHtml+='</tbody>';
+	$('#Table').append(TableHtml);
+	
+	$('#keyword').focus();
+	keyword= $("#keyword").val();
+	jsonRow = 'load_bankenteriesnew.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&start_date='+start_date+'&end_date='+end_date+'&set='+selected_set+'&setUUID='+setUUID+'&uuid_bank='+bank_account;
+	if(start_date!='' || end_date!=''){
+		jsonRow +='&date_selected=yes';
+	}else{
+		jsonRow +='&date_selected=no';
+	}
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}	
+	if(bank_account!=''){
+	jsonRow +='&uuid_bank='+bank_account;
+	}
+	if(status!=''){
+	jsonRow +='&status='+status;
+	}	
+	load_data(jsonRow);			 
+	
+	$(window).scroll(function(){
+		if ($(window).scrollTop() == $(document).height() - $(window).height()){
+			if(complete==false && completeScroll==false) {
+				$('#display_more_btn').hide();
+				$('#img_loading_div').show();
+				start=end+1;
+				end=start+25;
+				jsonRow = 'load_bankenteriesnew.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&start_date='+start_date+'&end_date='+end_date+'&set='+selected_set+'&setUUID='+setUUID;
+				if(start_date!='' || end_date!=''){
+					jsonRow +='&date_selected=yes';
+				}else{
+					jsonRow +='&date_selected=no';
+				}
+				if(keyword!=''){
+					jsonRow +='&keyword='+keyword;
+				}
+					
+				if(bank_account!=''){
+					jsonRow +='&uuid_bank='+bank_account;
+				}
+				if(status!=''){
+					jsonRow +='&status='+status;
+				}
+				load_data(jsonRow);
+			}
+		}
+	});	
+	
+	//setup before functions
+	var typingTimer;                //timer identifier
+	var doneTypingInterval = 1000;  //time in ms, 5 second for example
+	
+	//on keyup, start the countdown
+	$('#keyword').keyup(function(){
+		clearTimeout(typingTimer);
+		if ($('#keyword').val) {
+			typingTimer = setTimeout(function(){
+				//do stuff here e.g ajax call etc....
+				$('#display_more_btn').hide();
+				$('#Table tbody').html('');
+				$('#img_loading_div').show();
+				start=0;
+				end=parseInt(start)+parseInt(nPageSize);
+				status='';
+				keyword= $("#keyword").val();
+				jsonRow = 'load_bankenteriesnew.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&start_date='+start_date+'&end_date='+end_date+'&set='+selected_set+'&setUUID='+setUUID;
+				if(start_date!='' || end_date!=''){
+					jsonRow +='&date_selected=yes';
+				}else{
+					jsonRow +='&date_selected=no';
+				}
+				if(keyword!=''){
+					jsonRow +='&keyword='+keyword;
+				}
+				
+				if(bank_account!=''){
+				jsonRow +='&uuid_bank='+bank_account;
+				}
+				if(status!=''){
+					jsonRow +='&status='+status;
+				}
+				load_data(jsonRow);
+			}, doneTypingInterval);
+		}
+	}).keydown(function( event ) {
+		if ( event.which == 13 ) {
+			event.preventDefault();
+	  	}
+	});			
+	
+	
+	$('#start_date').datepicker({"autoclose": true}).on('changeDate', function (ev) {
+		start_date=$('#start_date').val();
+		var arrStartDate= $('#start_date').val().split('/');
+		var dateText = new Date(arrStartDate[1]+'/'+arrStartDate[0]+'/'+arrStartDate[2]);
+		$('#end_date').datepicker('setStartDate', dateText);
+		
+		$('#TableContent').html('');
+		$('#img_loading_div').show();
+		if(checkAllFlag==true){
+			$("#chk_all").trigger('click');
+		}
+		start=0,end=start+25;
+		keyword= $("#keyword").val();
+		jsonRow = 'load_bankenteriesnew.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&start_date='+start_date+'&end_date='+end_date+'&set='+selected_set+'&setUUID='+setUUID;
+		if(keyword!=''){
+			jsonRow +='&keyword='+keyword;
+		}
+		if(bank_account!=''){
+			jsonRow +='&uuid_bank='+bank_account;
+		}
+		if(start_date!='' || end_date!=''){
+			jsonRow +='&date_selected=yes';
+		}else{
+			jsonRow +='&date_selected=no';
+		}
+		if(status!=''){
+			jsonRow +='&status='+status;
+		}
+		load_data(jsonRow);
+	});
+	
+	$('#end_date').datepicker({"autoclose": true}).on('changeDate', function (ev) {
+		end_date=$('#end_date').val();
+		var arrEndDate= $('#end_date').val().split('/');
+		var dateText = new Date(arrEndDate[1]+'/'+arrEndDate[0]+'/'+arrEndDate[2]);
+		
+		$('#start_date').datepicker('setEndDate', dateText);
+		
+		$('#TableContent').html('');
+		$('#img_loading_div').show();
+		if(checkAllFlag==true){
+			$("#chk_all").trigger('click');
+		}
+		start=0, end=start+25;
+		keyword= $("#keyword").val();
+		jsonRow = 'load_bankenteriesnew.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&start_date='+start_date+'&end_date='+end_date+'&set='+selected_set+'&setUUID='+setUUID;
+		if(keyword!=''){
+			jsonRow +='&keyword='+keyword;
+		}
+		if(bank_account!=''){
+			jsonRow +='&uuid_bank='+bank_account;
+		}
+		if(start_date!='' || end_date!=''){
+			jsonRow +='&date_selected=yes';
+		}else{
+			jsonRow +='&date_selected=no';
+		}
+		
+		if(status!=''){
+			jsonRow +='&status='+status;
+		}
+		load_data(jsonRow);
+	});
+	
+	$('#start_date').datepicker().on('changeDate', function (ev) {
+		$(this).datepicker('hide');
+	});
+	$('#end_date').datepicker().on('changeDate', function (ev) {
+		$(this).datepicker('hide');
+	});
+	
+	// toggle all checkboxes from a table when header checkbox is clicked
+	$("#Table th input:checkbox").click(function () {
+  		$checks = $(this).closest(".table").find("tbody input:checkbox");
+  		if ($(this).is(":checked")) {
+			checkAllFlag=true;
+			$('#chk_all').prop("checked", true);
+  			$checks.prop("checked", true);
+  		} else {
+			checkAllFlag=false;
+			$('#chk_all').prop("checked", false);
+  			$checks.prop("checked", false);
+  		}  		
+  	});
+	
+	$('.num').keypress(function(e){
+		var k = e.which;
+    	/* numeric inputs can come from the keypad or the numeric row at the top */
+   		if ((k<48 || k>57) && (k!=46) && (k!=8) && (k!=0)) {
+        	e.preventDefault();
+			//alert("Allowed characters are 0-9, +, -, (, )");
+        	return false;
+    	}
+	}); 
+	
+});
+
+function show_more(){
+	$('#display_more_btn').hide();
+	$('#img_loading_div').show();
+	start=end+1;
+	end=parseInt(start)+parseInt(nPageSize);
+	keyword= $("#keyword").val();
+	jsonRow = 'load_bankenteriesnew.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&start_date='+start_date+'&end_date='+end_date+'&set='+selected_set+'&setUUID='+setUUID;
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}
+	if(bank_account!=''){
+		jsonRow +='&uuid_bank='+bank_account;
+	}
+	if(start_date!='' || end_date!=''){
+		jsonRow +='&date_selected=yes';
+	}else{
+		jsonRow +='&date_selected=no';
+	}
+		
+	if(status!=''){
+		jsonRow +='&status='+status;
+	}
+	load_data(jsonRow);	
+}
+			
+function load_data(jsonRow){
+	completeScroll=true;
+	JSONdata=new Array();
+	$.getJSON(jsonRow,function(result){
+		if(result.Alert){
+			__alertMessage('No more records found');
+			complete=true;
+		}else{
+			var table_html='';
+			$.each(result, function(i,row){
+				var statusStr=row.status;
+				
+				if(row.Receipts!=''){
+					table_html+='<tr class="invoice_'+row.uuid+' selectTable bankEntryTrClass">';
+				}else{
+					table_html+='<tr class="invoice_'+row.uuid+' bankEntryTrClass">';
+				}
+				if(isMobile.any()) {
+					table_html+='<td class="vertical-middle">'+row.description+'</td>';
+					table_html+='<td class="vertical-middle"><a href="javascript:void(0)" onclick="funURLHandler(\'bank_entry.shtml?uuid='+row.uuid+'\',\'open-bank_entry-window\')" title="Edit" ><i class="fa fa-pencil"></i></a></td>';
+					table_html+='</tr>';
+				}else{
+					
+				if(checkAllFlag==true){
+					table_html+='<td class="vertical-middle"><div class="checkbox checkbox-theme no-margin"><input class="check" checked type="checkbox" value="'+row.uuid+'" id="'+row.uuid+'"><label for="'+row.uuid+'" class="no-padding"></label></div>';
+				}else{
+					table_html+='<td class="vertical-middle"><div class="checkbox checkbox-theme no-margin"><input class="check" type="checkbox" value="'+row.uuid+'" id="'+row.uuid+'"><label for="'+row.uuid+'" class="no-padding"></label></div>';
+				}
+				
+				table_html+='<td class="vertical-middle"><span class="date_'+row.uuid+' label label-';
+				if(statusStr.toLowerCase()=="reconciled"){
+					table_html+='success';
+				}else if(statusStr.toLowerCase()=="reconciled"){
+					table_html+='warning';
+				}else{
+					table_html+='info';
+				}
+				table_html+='">'+row.date+'</span></td>';
+				
+				table_html+='<td class="vertical-middle">'+row.type+'</td>';
+				table_html+='<td class="vertical-middle">'+row.description+'</td>';
+				table_html+='<td class="vertical-middle"><span class="paid_out_'+row.uuid+'">'+row.paid_out+'</span></td>';
+				table_html+='<td class="vertical-middle"><span class="paid_in_'+row.uuid+'">'+row.paid_in+'</span></td>';
+			
+				table_html+='<td class="vertical-middle">'+row.balance+'</td>';
+				
+					table_html+='<td class="vertical-middle"><select class="form-control" name="status" id="status_'+row.uuid+'" onchange="saveStatus(this,\''+row.uuid+'\',\''+row.status+'\')">';
+					if(row.status=="reconciled"){
+					table_html +='<option value="need to confirm">Need to confirm</option>';
+					table_html +='<option value="pending">Pending</option>';
+					table_html +='<option value="reconciled" selected>Reconciled</option>';
+					}else if(row.status=="need to confirm"){
+					table_html +='<option value="need to confirm" selected>Need to confirm</option>';
+					table_html +='<option value="pending">Pending</option>';
+					table_html +='<option value="reconciled">Reconciled</option>';
+					}else{
+					table_html +='<option value="need to confirm">Need to confirm</option>';
+					table_html +='<option value="pending" selected>Pending</option>';
+					table_html +='<option value="reconciled">Reconciled</option>';
+					}
+					table_html +='</select></td>';
+				
+				var commentStr=row.comment;
+				if(commentStr!=""){
+					table_html+='<td class="vertical-middle"><span class="'+row.uuid+'"><span id="note_'+row.uuid+'">'+row.comment+'</span> <a href="javascript:void(0)" onclick="editNote(\''+row.uuid+'\')" title="Edit"><i class="table-edit"></i></a></span></td>';
+				}else{
+					table_html+='<td class="vertical-middle"><span class="'+row.uuid+'"><a href="javascript:void(0)" onclick="addNote(\''+row.uuid+'\')" title="Add">Add</a></span></td>';
+				}
+				table_html+='<td class="vertical-middle">';
+				table_html+='<a href="javascript:void(0)" onclick="funURLHandler(\'invoice.shtml?uuid='+row.uuid+'\',\'open-customer-window\')" title="Edit"><i class="fa fa-pencil"></i></a>&nbsp;';
+				if(row.Receipts!=''){
+					table_html+='&nbsp;';
+					if(showallReceiptsFlag==true){
+					table_html+='<span class="hideReceiptDetails_'+row.uuid+' hideReceiptDetails" style=""><a href="javascript:void(0)" onclick="viewReceipt(\''+row.uuid+'\')" title="Hide Receipt"><i class="fa fa-eye-slash"></i></span><a href="javascript:void(0)" onclick="viewReceipt(\''+row.uuid+'\')" title="Show Receipt"><span class="showReceiptDetails_'+row.uuid+' showReceiptDetails" style="display:none;"><i class="fa fa-eye"></i></a></span>';
+					}else{
+					table_html+='<span class="hideReceiptDetails_'+row.uuid+' hideReceiptDetails" style="display:none;"><a href="javascript:void(0)" onclick="viewReceipt(\''+row.uuid+'\')" title="Hide Receipt"><i class="fa fa-eye-slash"></i></span><a href="javascript:void(0)" onclick="viewReceipt(\''+row.uuid+'\')" title="Show Receipt"><span class="showReceiptDetails_'+row.uuid+' showReceiptDetails" style=""><i class="fa fa-eye"></i></a></span>';
+					}
+					//table_html+='</li>';
+				}
+				table_html+='</td>';					
+				
+				table_html+='</tr>';
+				if(row.Receipts!=''){
+					if(showallReceiptsFlag==true){
+					table_html+='<tr id="displayReceipt_'+row.uuid+'" class="receiptTrClass hidden-table" >';
+					}else{
+					table_html+='<tr id="displayReceipt_'+row.uuid+'" class="receiptTrClass hidden-table" style="display:none;" >';
+					}
+					table_html+='<td colspan="13" align="left" style="padding:0px; position:relative;"><div class="payment-detail"><table border="0" cellspacing="0" cellpadding="0" class="table table-hover" style="padding:0px; margin-bottom:0px;"><thead><tr style="background:#f5fafc"><th><strong>S No.</strong></th><th><strong>Date</strong></th><th><strong>Mode of Payment</strong></th><th><strong>Amount Received</strong></th><th><strong>Action</strong></th></tr></thead>';
+					
+					var count=1;
+					table_html+='<tbody>';
+					$.each(row.Receipts, function(i,newRow){
+						var receiptdate= newRow.date;
+						var receiptdateArr= receiptdate.split("-");
+						var receiptfinaldate=receiptdateArr[2]+' '+getMonthName(Number(receiptdateArr[1]))+' '+receiptdateArr[0];
+				
+						table_html+='<tr><td>'+count+'</td><td>'+receiptfinaldate+'</td><td>'+newRow.mode+'</td><td>'+newRow.amount+'</td>';
+						//console.log(newRow.form)
+						if(newRow.form=="payment"){
+							table_html+='<td><a target="_blank" href="payment.shtml?uuid='+newRow.uuid+'"><i class="fa fa-pencil"></i></a></td>';
+						}else if(newRow.form=="receipt"){
+							table_html+='<td><a target="_blank" href="receipt.shtml?uuid='+newRow.uuid+'"><i class="fa fa-pencil"></i></a></td>';
+						}
+						table_html+='</tr>';
+						count++;
+					});
+					table_html+='</tbody>';
+					table_html+='</table></div></td></tr></br>';
+				}
+				}
+			});
+			
+				$('#TableContent').append(table_html);
+				complete=false;
+			$('#display_more_btn').show();
+		}
+		$('#img_loading_div').hide();
+		completeScroll=false;
+	});
+}
+function viewReceipt(num){
+	$("#displayReceipt_"+num).toggle();
+	
+	if($(".invoice_"+num).hasClass('selectTable')){
+		$(".invoice_"+num).removeClass('selectTable');
+		$(".showReceiptDetails_"+num).show();
+		$(".hideReceiptDetails_"+num).hide();	
+	}else{
+		$(".invoice_"+num).addClass('selectTable');
+		//$(".receiptDetails_"+num).html('Hide Receipt');
+		$(".showReceiptDetails_"+num).hide();
+		$(".hideReceiptDetails_"+num).show();
+	}
+	
+}
+var bankEntryuuid=new Array();
+var bankEntryStatus=new Array();
+function load_data1(jsonRow){
+	completeScroll=true;
+	JSONdata=new Array();
+	$.getJSON(jsonRow,function(result){
+			if(result.Alert){
+				code = $('#no_rec_prompt').text();
+				(new Function(code))();
+				complete=true;
+			}
+			else{
+				
+				$.each(result.uuid, function(i,item)
+				{
+					JSONdata[i]=new Array();
+					if(checkAllFlag==true){
+					JSONdata[i][0]='<input name="Select" class="check" checked type="checkbox" id="Select" value="'+item+'">';
+					}else{
+					JSONdata[i][0]='<input name="Select" class="check" type="checkbox" id="Select" value="'+item+'">';
+					}
+					bankEntryuuid[i]=item;
+					JSONdata[i][9]='<ul class="actions"><li><a href="bank_entry.shtml?uuid='+item+'"><i class="table-edit"></i></a></li><li><i class="table-settings"></i></li><li class="last"><i class="table-delete"></i></li></ul>';					
+				}); 
+				$.each(result.status, function(i,item){	
+					bankEntryStatus[i]=item;
+				});
+				$.each(result.date, function(i,item)
+				{
+					var td_str ='<span class="date_'+bankEntryuuid[i]+' label label-';
+					if(bankEntryStatus[i].toLowerCase()=="reconciled"){
+						td_str+='success';
+					}else if(bankEntryStatus[i].toLowerCase()=="need to confirm"){
+						td_str+='warning';
+					}else{
+						td_str+='info';
+					}
+					td_str+='">'+item+'</span>';
+					JSONdata[i][1]=td_str;
+				});
+				$.each(result.type, function(i,item)
+				{
+					
+					JSONdata[i][2]='<a target="_blank" href="customers.shtml?keyword='+item+'">'+item+'</a>';
+				});
+				$.each(result.description, function(i,item)
+				{					
+					JSONdata[i][3]=item;
+				});
+				$.each(result.paid_out, function(i,item)
+				{					
+					JSONdata[i][4]='<span class="paid_out_'+bankEntryuuid[i]+'">'+item+'</span>';
+				});
+				$.each(result.paid_in, function(i,item)
+				{		
+					JSONdata[i][5]='<span class="paid_in_'+bankEntryuuid[i]+'">'+item+'</span>';
+				});
+				$.each(result.balance, function(i,item)
+				{		
+					JSONdata[i][6]=item;
+				});
+				$.each(result.comment, function(i,item){		
+					if(item!=''){
+						JSONdata[i][8]='<span class="'+bankEntryuuid[i]+'"><span id="note_'+bankEntryuuid[i]+'">'+item+'</span> <a href="javascript:void(0)" onclick="editNote(\''+bankEntryuuid[i]+'\')" title="Edit"><i class="table-edit"></i></a></span>';
+					}else{
+						JSONdata[i][8]='<span class="'+bankEntryuuid[i]+'"><a href="javascript:void(0)" onclick="addNote(\''+bankEntryuuid[i]+'\')" title="Add">Add</a></span>';
+					}
+				});
+				$.each(result.status, function(i,item){		
+					var statusdropdown='<div class="ui-select"><select name="status" id="status_'+bankEntryuuid[i]+'" onchange="saveStatus(this,\''+bankEntryuuid[i]+'\',\''+item+'\')">';
+					if(item=="reconciled"){
+					statusdropdown +='<option value="need to confirm">Need to confirm</option>';
+					statusdropdown +='<option value="pending">Pending</option>';
+					statusdropdown +='<option value="reconciled" selected>Reconciled</option>';
+					}else if(item=="need to confirm"){
+					statusdropdown +='<option value="need to confirm" selected>Need to confirm</option>';
+					statusdropdown +='<option value="pending">Pending</option>';
+					statusdropdown +='<option value="reconciled">Reconciled</option>';
+					}else{
+					statusdropdown +='<option value="need to confirm">Need to confirm</option>';
+					statusdropdown +='<option value="pending" selected>Pending</option>';
+					statusdropdown +='<option value="reconciled">Reconciled</option>';
+					}
+					statusdropdown +='</select></div>';
+					JSONdata[i][7]=statusdropdown;
+				});
+				
+				/**$.each(result.uuid_account, function(i,item)
+				{		
+					JSONdata[i][8]=item;
+				});**/
+					
+				var table_html='';
+				
+				$.each(JSONdata, function(i,row)
+				{
+				
+					table_html+='<tr >';
+					
+					$.each(row, function(i,col){
+						table_html+='<td>'+col+'</td>';
+					});
+					table_html+='</tr>';
+				});
+				if(old_srch!=keyword){
+					$('#TableContent').html('');
+					old_srch=keyword;
+				}
+				//alert(table_html);
+				
+				$('#TableContent').append(table_html);
+				complete=false;
+			
+		}
+		$('#img_loading_div').hide();
+		completeScroll=false;
+		});
+}
+
+	function addNote(uuid){
+		$.prompt({
+			state0: {
+				title: 'Add Note',
+				html: '<textarea name="bankNote" class="span4" rows="3" id="bankNote"></textarea>',
+				buttons: { Cancel: 0 , Save: 1 },																		
+				submit:function(e,v,m,f){ 
+					if(v==1) {
+						e.preventDefault();
+						var bankNoteStr= $('#bankNote').val();
+						if(bankNoteStr!=''){
+							//console.log(uuid);
+							//console.log(bankNoteStr);
+							$.ajax({
+								type: "GET",
+								url: "setbankstatus.cgi",
+								data: {"uuid": uuid , "value" : bankNoteStr , "action" : "note"},
+								dataType: 'json',
+								cache: false,
+								success: function(html){
+									if(html.Success){
+										$('.'+uuid).html('');
+										var addNoteStr='<span id="note_'+uuid+'">'+html.note+'</span> <a href="javascript:void(0)" onclick="editNote(\''+uuid+'\')" title="Edit"><i class="table-edit"></i></a></span>';
+										$('.'+uuid).html(addNoteStr);
+										$('#bankNote').val();
+										$.prompt.close();
+									}else{
+										$('#bankNote').val();
+										$.prompt.close();
+									}
+									//console.log(html);
+									
+								}
+							});
+						}else{
+							var errmsg = '<div style="color:#CC0000;">* Please add note!</div>';
+							$('#bankNote').before(errmsg);
+						}
+					}
+					if(v==0) {
+						$.prompt.close();
+					}
+				}
+			},
+		});
+	}
+	function editNote(uuid){
+		var noteStr= $('#note_'+uuid).html();
+		var chPos=noteStr.indexOf(")");
+		var note= noteStr.substr(chPos+1);
+		$.prompt({
+			state0: {
+				title: 'Edit Note',
+				html: '<textarea name="bankNote" class="span4" rows="3" id="bankNote">'+note+'</textarea>',
+				buttons: { Cancel: 0 , Save: 1 },																		
+				submit:function(e,v,m,f){ 
+					if(v==1) {
+						e.preventDefault();
+						var bankNoteStr= $('#bankNote').val();
+						if(bankNoteStr!=''){
+							//console.log(uuid);
+							//console.log(bankNoteStr);
+							$.ajax({
+								type: "GET",
+								url: "setbankstatus.cgi",
+								data: {"uuid": uuid , "value" : bankNoteStr , "action" : "note"},
+								dataType: 'json',
+								cache: false,
+								success: function(html){
+									if(html.Success){
+										$('.'+uuid).html('');
+										var addNoteStr='<span id="note_'+uuid+'">'+html.note+'</span> <a href="javascript:void(0)" onclick="editNote(\''+uuid+'\')" title="Edit"><i class="table-edit"></i></a></span>';
+										$('.'+uuid).html(addNoteStr);
+									
+										$('#bankNote').val();
+										$.prompt.close();
+									}else{
+										$('#bankNote').val();
+										$.prompt.close();
+									}
+								}
+							});
+						}else{
+							var errmsg = '<div style="color:#CC0000;">* Please add note!</div>';
+							$('#bankNote').before(errmsg);
+						}
+					}
+					if(v==0) {
+						$.prompt.close();
+					}
+				}
+			},
+		});
+	}
+	
+	
+	function get_client(form,amountReceived,uuid)	{
+		var paidInAmount= amountReceived.trim();
+		paidInAmount= Number(paidInAmount);
+		var inv_no=	$("#inv_no").val();
+		$("#receiptErrMsg").html('');
+		if(form=="Receipt"){
+			var cgiNameStr="getreceiptclient.cgi";
+			var dataString = 'inv_no='+inv_no;
+		}else if(form=="Payment"){
+			var cgiNameStr="getpaymentclient.cgi";
+			var dataString = 'purchase_inv_no='+inv_no;
+		}
+		if(inv_no!=''){
+			
+			$.ajax({
+				type: "GET",
+				dataType: "json",
+				url: cgiNameStr,
+				data: dataString,
+				cache: false,
+				success: function(html)	{
+					if(html.success){
+						$('#err_msg').html('');
+						$("#invoice_uuid").val(html.invoice_uuid);
+						var getAmountStr=html.amount;
+						var getIndexOfSpace=getAmountStr.indexOf(' ');
+						var amounNum = getAmountStr.substr(0, getIndexOfSpace);
+						amounNum = amounNum.trim();
+						amounNum = Number(amounNum);
+							
+						if(paidInAmount<=amounNum){
+							$('.showErrorMsg').html('');
+						}else{
+							var errorMsg = '<div style="color:#CC0000;">* Paid In amount is greater than Invoiced amount!</div>';
+							$('.showErrorMsg').html(errorMsg);
+						}
+						$("#invamount").val(amounNum);
+						$("#client_uuid").val(html.customer_id);
+						var foundClientUUIDStr= html.customer_id;
+						$("#company_name").val(html.customer_name);
+						
+						if(form=="Payment"){
+							$('#supplier_'+uuid).focus(function(){$('#supplier_'+uuid).val("");});
+							$('.ui-autocomplete-input').val();
+							
+							var jsonRow = 'getcompaniesonsearch.cgi?srch='+html.customer_name+'&companies=supplier';
+							$.getJSON(jsonRow,function(result){	
+							if(result){
+								var html="";
+								$.each(result, function(i,item){
+									var supplierUUID=item.CustoemrUUID;
+									if(supplierUUID==foundClientUUIDStr){
+									html += '<option value="'+item.CustoemrUUID+'" selected>'+item.value+'</option>';
+									}
+								});
+								//console.log(html);
+								$('#supplier_'+uuid).html(html);
+								$('#supplier_'+uuid).combobox("destroy");
+								$('#supplier_'+uuid).combobox();
+							}			
+							});
+						}
+					}else if(html.error){
+						if(html.paid){
+							$.prompt.goToState('state1');
+							
+						}else{
+							var errorMsg='<span id="receiptErrMsg" style="color:#FF0000;font-style: italic;">  Invoice no '+inv_no+' doesn\'t exists.</span>';
+							$('.displayMsg').after(errorMsg);
+							$("#inv_no").val('0');
+							$("#invoice_uuid").val('');
+							$("#invamount").val('0');
+							$("#client_uuid").val('');
+							$("#company_name").val('');
+							if(form=="Payment"){
+								$('#supplier_'+uuid).focus(function(){$('#supplier_'+uuid).val("");});
+								$('.ui-autocomplete-input').val();
+							
+								var jsonRow = 'getcompaniesonsearch.cgi?srch=&companies=supplier';
+								$.getJSON(jsonRow,function(result){	
+									if(result){
+										var html='<option value="" ></option>';
+										$.each(result, function(i,item){
+											html += '<option value="'+item.CustoemrUUID+'" >'+item.value+'</option>';
+										});
+										$('#supplier_'+uuid).html(html);
+										$('#supplier_'+uuid).combobox("destroy");
+										$('#supplier_'+uuid).combobox();
+									}			
+								});
+							}
+						}
+					}
+	
+				}
+			});
+		}
+	}
+	
+	function callstatuscgi(valueStr,uuid){
+		$.ajax({
+			type: "GET",
+			url: "setbankstatus.cgi",
+			data: {"uuid": uuid , "value" : valueStr , "action" : "status"},
+			dataType: 'json',
+			cache: false,
+			success: function(html){
+				if(html.Success){
+				if(valueStr=="reconciled"){
+					$('.date_'+uuid).removeClass('label-info');
+					$('.date_'+uuid).removeClass('label-warning');
+					$('.date_'+uuid).addClass('label-success');
+				}else if(valueStr=="need to confirm"){
+					$('.date_'+uuid).removeClass('label-info');
+					$('.date_'+uuid).removeClass('label-success');
+					$('.date_'+uuid).addClass('label-warning');
+				}else{
+					$('.date_'+uuid).removeClass('label-warning');
+					$('.date_'+uuid).removeClass('label-success');
+					$('.date_'+uuid).addClass('label-info');
+				}
+				}
+			}
+		});
+	}
+	function __saveReceipt_Payment(form,uuid, selectedOption, amountReceived){
+		var ErrorMessage= "Sorry, please try after sometime";
+		if(form=="Payment"){
+			var fieldStr= '<label>Purchase Invoice no </label><input name="inv_no" class="span2 displayMsg num" type="text" value="" id="inv_no" onBlur="get_client(\''+form+'\',\''+amountReceived+'\',\''+uuid+'\')"><input class="span5" name="invoice_uuid" id="invoice_uuid" type="hidden" value=""><label>Company <span style="color:#6E829B">*</span></label><div class="ui-widget"><select id="supplier_'+uuid+'" class="supplierDropDown"></select></div><input class="span4" name="company_name"  type="hidden" value="" id="company_name" readonly><input class="span4" name="client_uuid" id="client_uuid" type="hidden" value=""><label>Paid Out Amount <span style="color:#6E829B">*</span></label><input name="amount" class="span2 num" type="text" value="'+amountReceived+'" id="amount"><label>Invoiced amount</label><input name="invamount" type="text" readonly value="" id="invamount"><label>Date <span style="color:#6E829B">*</span></label><input name="date_received" class="input-large datepicker" type="text" data-date-format="dd/mm/yyyy" value="" id="date_received" readonly> <label>Mode of Payment</label><div class="ui-select"><select name="mode_of_payment" id="mode_of_payment"><option value="BACS">BACS</option><option value="Paid by Debit or Credit Card">Paid by Debit or Credit Card</option><option value="Cash">Cash</option><option value="Cheque">Cheque</option><option value="International Banking">International Banking</option><option value="PayPal">PayPal</option></select></div><label>Notes</label><textarea name="notes" class="span4" rows="2" id="notes"></textarea>';
+			var savedMessageStr='Payment successfully added';
+		}else if(form=="Receipt"){
+			var fieldStr= '<label>Sales Invoice no <span style="color:#6E829B">*</span></label><input name="inv_no" onBlur="get_client(\''+form+'\',\''+amountReceived+'\',\''+uuid+'\')" class="span2 displayMsg num" type="text" value="" id="inv_no" ><input class="span5" name="invoice_uuid" id="invoice_uuid" type="hidden" value=""><label>Company</label><input class="span4" name="company_name"  type="text" value="" id="company_name" readonly><input class="span4" name="client_uuid" id="client_uuid" type="hidden" value=""><label>Paid In Amount <span style="color:#6E829B">*</span></label><input name="amount" class="span2 num" type="text" value="'+amountReceived+'" id="amount"><label>Invoiced amount</label><input name="invamount" type="text" readonly value="" id="invamount"><label>Date <span style="color:#6E829B">*</span></label><input name="date_received" class="input-large datepicker" type="text" data-date-format="dd/mm/yyyy" value="" id="date_received" readonly> <label>Mode of Payment</label><div class="ui-select"><select name="mode_of_payment" id="mode_of_payment"><option value="BACS">BACS</option><option value="Paid by Debit or Credit Card">Paid by Debit or Credit Card</option><option value="Cash">Cash</option><option value="Cheque">Cheque</option><option value="International Banking">International Banking</option><option value="PayPal">PayPal</option></select></div><label>Notes</label><textarea name="notes" class="span4" rows="2" id="notes"></textarea>';
+			var savedMessageStr='Receipt successfully added';
+		}
+			var statesdemo = {
+				state0: {
+					title: 'Add '+form,
+					html: '<div class="showErrorMsg"></div>'+fieldStr+'',
+					buttons: { Cancel: 0 , Save: 1 },																		
+					submit:function(e,v,m,f){ 
+						if(v==1) {
+							e.preventDefault();
+							var inv_no= $('#inv_no').val();
+							var date_received= $('#date_received').val();
+							var amount= $('#amount').val();
+							var amountOfInvoice= $('#invamount').val();
+							var invoice_uuid= $('#invoice_uuid').val();
+							var company_name= $('#company_name').val();
+							var mode_of_payment= $('#mode_of_payment').val();
+							var notes= $('#notes').val();
+							
+							
+							if(form=="Payment"){
+								var client_uuid=$("#supplier_"+uuid).val();
+								var dataStringStr = "purchase_inv_no="+inv_no+"&date_received="+date_received+"&purchase_invoice_uuid="+invoice_uuid+"&company_name="+company_name+"&client_uuid="+client_uuid+"&mode_of_payment="+mode_of_payment+"&amount="+amount+"&req_from=bank_entry&uuid_bank_entry="+uuid+"&notes="+notes;
+								//console.log(dataStringStr);
+								if(date_received !="" && amount!="" && client_uuid!="" && client_uuid!="undefined") {
+									if(inv_no!="" && inv_no!=0){
+										amount=Number(amount);
+										amountOfInvoice=Number(amountOfInvoice);
+										if(amountOfInvoice!=0 && amount<=amountOfInvoice){
+											$.ajax({
+												type: "GET",
+												dataType: "json",
+												url: "savepayment.cgi",
+												data: dataStringStr,
+												cache: false,
+												success: function(html)	{
+													if(html.success){
+														//alert(html.success);
+														//console.log(html.uuid);
+														if(html.uuid!=''){
+															$('.delete_icon_'+uuid).html('');
+															var icon ='<li><span class="hideReceiptDetails_'+uuid+' hideReceiptDetails" style=""><a href="javascript:void(0)" onclick="viewReceipt(\''+uuid+'\')" title="Hide Receipt"><img src="images/hide-receipt.png" width="25" height="18"></a></span><a href="javascript:void(0)" onclick="viewReceipt(\''+uuid+'\')" title="Show Receipt"><span class="showReceiptDetails_'+uuid+' showReceiptDetails" style="display:none;"><img src="images/show-receipt.png" width="24" height="15"></a></span></li>';
+															$('.delete_icon_'+uuid).after(icon);
+															
+															var receiptHtml='';
+															receiptHtml+='<tr id="displayReceipt_'+uuid+'" class="receiptTrClass"><td colspan="14" align="left" style="background:#f5fafc" class="tdmrgnbtm"><div><table border="0" cellspacing="0" cellpadding="0" class="table table-hover" style="background:#fff; border-radius:5px; margin-bottom: 0px;"><tr><td><strong>S No.</strong></td><td><strong>Receipt Date</strong></td><td><strong>Mode of Payment</strong></td><td><strong>Amount Received</strong></td><td><strong>Action</strong></td></tr>';
+															var receiptdateArr= date_received.split("/");
+															var receiptfinaldate=receiptdateArr[0]+' '+getMonthName(Number(receiptdateArr[1]))+' '+receiptdateArr[2];
+															console.log(receiptfinaldate);
+															receiptHtml+='<tr><td>1</td><td>'+receiptfinaldate+'</td><td>'+mode_of_payment+'</td><td>'+amount+'</td><td><a target="_blank" href="payment.shtml?uuid='+html.uuid+'"><i class="table-edit"></i></a></td></tr>';
+															receiptHtml+='</table></div></td></tr></br>';
+															console.log(receiptHtml)
+															$('.invoice_'+uuid).after(receiptHtml);
+														}
+														$.prompt.goToState('state2');
+													}	
+												}
+											});
+										}else{
+											var errorMsg = '<div style="color:#CC0000;">* Paid Out amount is greater than Invoiced amount!</div>';
+											$('.showErrorMsg').html(errorMsg);
+										}
+									}else{
+										$.prompt.goToState('state4');
+									}
+										
+								}else{
+									var errorMsg = '<div style="color:#CC0000;">* Please add all the required fields!</div>';
+									$('.showErrorMsg').html(errorMsg);
+								}
+								
+							}else if(form=="Receipt"){
+								var client_uuid= $('#client_uuid').val();
+								var dataString = "inv_no="+inv_no+"&date_received="+date_received+"&invoice_uuid="+invoice_uuid+"&company_name="+company_name+"&client_uuid="+client_uuid+"&mode_of_payment="+mode_of_payment+"&amount="+amount+"&req_from=bank_entry&uuid_bank_entry="+uuid+"&notes="+notes;
+								//console.log(dataString);
+								if(inv_no!="" && date_received !="" && amount!=""){
+									amount=Number(amount);
+									amountOfInvoice=Number(amountOfInvoice);
+									if(amount<=amountOfInvoice){
+									$.ajax({
+										type: "GET",
+										dataType: "json",
+										url: "savereceipt.cgi",
+										data: dataString,
+										cache: false,
+										success: function(html)	{
+											var conciledFlag=false;
+											if(html.success){
+												conciledFlag=true;
+											}
+											if(html.error){
+												if(html.error!=""){
+												ErrorMessage=html.error;
+												}else{
+												ErrorMessage="Sorry, please try adding receipt after sometime";
+												}
+												
+												conciledFlag=false;
+											}
+											if(conciledFlag){
+												if(html.uuid!=''){
+													$('.delete_icon_'+uuid).html('');
+													var icon ='<li><span class="hideReceiptDetails_'+uuid+' hideReceiptDetails" style=""><a href="javascript:void(0)" onclick="viewReceipt(\''+uuid+'\')" title="Hide Receipt"><img src="images/hide-receipt.png" width="25" height="18"></a></span><a href="javascript:void(0)" onclick="viewReceipt(\''+uuid+'\')" title="Show Receipt"><span class="showReceiptDetails_'+uuid+' showReceiptDetails" style="display:none;"><img src="images/show-receipt.png" width="24" height="15"></a></span></li>';
+													$('.delete_icon_'+uuid).after(icon);
+													
+													var receiptHtml='';
+													receiptHtml+='<tr id="displayReceipt_'+uuid+'" class="receiptTrClass"><td colspan="14" align="left" style="background:#f5fafc" class="tdmrgnbtm"><div><table border="0" cellspacing="0" cellpadding="0" class="table table-hover" style="background:#fff; border-radius:5px; margin-bottom: 0px;"><tr><td><strong>S No.</strong></td><td><strong>Receipt Date</strong></td><td><strong>Mode of Payment</strong></td><td><strong>Amount Received</strong></td><td><strong>Action</strong></td></tr>';
+													var receiptdateArr= date_received.split("/");
+													var receiptfinaldate=receiptdateArr[0]+' '+getMonthName(Number(receiptdateArr[1]))+' '+receiptdateArr[2];
+													receiptHtml+='<tr><td>1</td><td>'+receiptfinaldate+'</td><td>'+mode_of_payment+'</td><td>'+amount+'</td><td><a target="_blank" href="receipt.shtml?uuid='+html.uuid+'"><i class="table-edit"></i></a></td></tr>';
+													receiptHtml+='</table></div></td></tr></br>';
+													$('.invoice_'+uuid).after(receiptHtml);
+												}
+												$.prompt.goToState('state2');
+											}else{
+												$.prompt.goToState('state3');
+											}
+											//$.prompt.close();	
+										}
+									});
+									}else{
+										var errorMsg = '<div style="color:#CC0000;">* Paid In amount is greater than Invoiced amount!</div>';
+										$('.showErrorMsg').html(errorMsg);
+									}
+								}else{
+									var errorMsg = '<div style="color:#CC0000;">* Please add all the required fields!</div>';
+									$('.showErrorMsg').html(errorMsg);
+								}
+							}
+						
+						}
+						if(v==0) {
+							if(selectedOption==""){
+							$("#status_"+uuid).val("pending");
+							}else{
+							$("#status_"+uuid).val(selectedOption);
+							}
+							$.prompt.close();
+						}
+					}
+				},
+				state1: {
+					html:'This invoice is already paid, do you reconcile this?',
+					buttons: { No: -1, Yes: 0 },
+					focus: 1,
+					submit:function(e,v,m,f){
+						e.preventDefault();
+						if(v==0) {
+							callstatuscgi("reconciled",uuid);
+							$.prompt.close();
+						}
+						else if(v==-1){
+							//$.prompt.goToState('state0');
+							if(selectedOption==""){
+							$("#status_"+uuid).val("pending");
+							}else{
+							$("#status_"+uuid).val(selectedOption);
+							}
+							$.prompt.close();
+						}
+					}
+				},
+				state2: {
+					html: savedMessageStr,
+					buttons: { Ok : 0 },
+					focus: 1,
+					submit:function(e,v,m,f){
+						e.preventDefault();
+						if(v==0) {
+							callstatuscgi("reconciled",uuid);
+							$.prompt.close();
+						}
+					}
+				},
+				state3: {
+					html:ErrorMessage,
+					buttons: { Ok : 0 },
+					focus: 1,
+					submit:function(e,v,m,f){
+						e.preventDefault();
+						if(v==0) {
+							if(selectedOption==""){
+							$("#status_"+uuid).val("pending");
+							}else{
+							$("#status_"+uuid).val(selectedOption);
+							}
+							$.prompt.close();
+						}
+					}
+				},
+				state4: {
+					html:"Do you want to save this payment without Purchase Invoice number?",
+					buttons: { Yes : 0, No :1 },
+					focus: 1,
+					submit:function(e,v,m,f){
+						e.preventDefault();
+						if(v==0) {
+							var inv_no= $('#inv_no').val();
+							var date_received= $('#date_received').val();
+							var amount= $('#amount').val();
+							var amountOfInvoice= $('#invamount').val();
+							var invoice_uuid= $('#invoice_uuid').val();
+							var company_name= $('#company_name').val();
+							var mode_of_payment= $('#mode_of_payment').val();
+							var notes= $('#notes').val();
+							var client_uuid=$("#supplier_"+uuid).val();
+							
+							var dataStringStr = "purchase_inv_no="+inv_no+"&date_received="+date_received+"&purchase_invoice_uuid="+invoice_uuid+"&company_name="+company_name+"&client_uuid="+client_uuid+"&mode_of_payment="+mode_of_payment+"&amount="+amount+"&req_from=bank_entry&uuid_bank_entry="+uuid+"&notes="+notes;
+						
+							$.ajax({
+								type: "GET",
+								dataType: "json",
+								url: "savepayment.cgi",
+								data: dataStringStr,
+								cache: false,
+								success: function(html)	{
+									if(html.success){
+										if(html.uuid!=''){
+											$('.delete_icon_'+uuid).html('');
+											
+											var icon ='<li><span class="hideReceiptDetails_'+uuid+' hideReceiptDetails" style=""><a href="javascript:void(0)" onclick="viewReceipt(\''+uuid+'\')" title="Hide Receipt"><img src="images/hide-receipt.png" width="25" height="18"></a></span><a href="javascript:void(0)" onclick="viewReceipt(\''+uuid+'\')" title="Show Receipt"><span class="showReceiptDetails_'+uuid+' showReceiptDetails" style="display:none;"><img src="images/show-receipt.png" width="24" height="15"></a></span></li>';
+											$('.delete_icon_'+uuid).after(icon);
+															
+											var receiptHtml='';
+											receiptHtml+='<tr id="displayReceipt_'+uuid+'" class="receiptTrClass"><td colspan="14" align="left" style="background:#f5fafc" class="tdmrgnbtm"><div><table border="0" cellspacing="0" cellpadding="0" class="table table-hover" style="background:#fff; border-radius:5px; margin-bottom: 0px;"><tr><td><strong>S No.</strong></td><td><strong>Receipt Date</strong></td><td><strong>Mode of Payment</strong></td><td><strong>Amount Received</strong></td><td><strong>Action</strong></td></tr>';
+											var receiptdateArr= date_received.split("/");
+											var receiptfinaldate=receiptdateArr[0]+' '+getMonthName(Number(receiptdateArr[1]))+' '+receiptdateArr[2];
+											
+											receiptHtml+='<tr><td>1</td><td>'+receiptfinaldate+'</td><td>'+mode_of_payment+'</td><td>'+amount+'</td><td><a target="_blank" href="payment.shtml?uuid='+html.uuid+'"><i class="table-edit"></i></a></td></tr>';
+											receiptHtml+='</table></div></td></tr></br>';
+															
+											$('.invoice_'+uuid).after(receiptHtml);
+										}
+									$.prompt.goToState('state2');
+									}	
+								}
+							});
+						}
+						if(v==1){
+							$.prompt.goToState('state0');
+						}
+					}
+				}
+				};
+				var myPrompt = $.prompt(statesdemo);
+				myPrompt.on('impromptu:loaded', function(e){
+				
+					$('#date_received').datepicker().on('changeDate', function (ev) {
+						$(this).datepicker('hide');
+					});
+		 		});
+	}
+	
+	function saveStatus(evn, uuid, selected){
+		
+		var valueStr= $(evn).val();
+		
+		if(valueStr=="reconciled"){
+			var paid_inVal=$('.paid_in_'+uuid).html();
+			var paid_outVal=$('.paid_out_'+uuid).html();
+			if(paid_inVal>1 && paid_outVal==0){
+				__saveReceipt_Payment("Receipt", uuid, selected, paid_inVal);
+			}else if(paid_outVal>1 && paid_inVal==0){
+				get_suppliers(uuid);
+				__saveReceipt_Payment("Payment", uuid, selected, paid_outVal);
+			}
+		}else{
+			callstatuscgi(valueStr,uuid);
+		}
+	}
+   
+	function get_suppliers(uuid){
+		var jsonRow = 'getcompaniesonsearch.cgi?srch=&companies=supplier';
+		$.getJSON(jsonRow,function(result){	
+			if(result){
+				/**var suppliers = new Array();
+				$.each(result, function(i,item){
+					var val= item.value;
+					suppliers.push(val);
+				});
+				$('#supplier_'+uuid).autocomplete({
+               		source: suppliers
+               	});
+               	**/
+               	var html='<option value=""></option>';
+
+				$.each(result, function(i,item)
+				{
+					html += '<option value="'+item.CustoemrUUID+'">'+item.value+'</option>';
+				});
+				
+				$('#supplier_'+uuid).html(html);
+				$('#supplier_'+uuid).combobox();
+			}			
+		});
+	}
+	
+	</script>
+	 <script>
+	 var xhr;
+  (function( $ ) {
+    $.widget( "custom.combobox", {
+      _create: function() {
+        this.wrapper = $( "<span>" )
+          .addClass( "custom-combobox" )
+          .insertAfter( this.element );
+ 
+        this.element.hide();
+        this._createAutocomplete();
+        this._createShowAllButton();
+      },
+ 
+      _createAutocomplete: function() {
+		  var ele_select= this.element;
+        var selected = this.element.children( ":selected" ),
+          value = selected.val() ? selected.text() : "";
+ 
+        this.input = $( "<input>" )
+          .appendTo( this.wrapper )
+          .val( value )
+          .attr( "title", "" )
+          .addClass( "custom-combobox-input ui-widget ui-widget-content ui-state-default ui-corner-left" )
+          .autocomplete({
+            delay: 0,
+            minLength: 0,
+            source: $.proxy( this, "_source" )
+          })
+          .tooltip({
+            tooltipClass: "ui-state-highlight"
+          });
+ 
+        this._on( this.input, {
+          autocompleteselect: function( event, ui ) {
+		  	//alert("show all");
+            ui.item.option.selected = true;
+			
+            this._trigger( "select", event, {
+              item: ui.item.option
+            });
+			
+          },
+ 
+          autocompletechange: "_removeIfInvalid"
+        });
+      },
+ 
+      _createShowAllButton: function() {
+        var input = this.input,
+          wasOpen = false;
+ 
+        $( "<a>" )
+          .attr( "tabIndex", -1 )
+          .attr( "title", "Show All Items" )
+          .tooltip()
+          .appendTo( this.wrapper )
+          .button({
+            icons: {
+              primary: "ui-icon-triangle-1-s"
+            },
+            text: false
+          })
+          .removeClass( "ui-corner-all" )
+          .addClass( "custom-combobox-toggle ui-corner-right" )
+          .mousedown(function() {
+            wasOpen = input.autocomplete( "widget" ).is( ":visible" );
+          })
+          .click(function() {
+            input.focus();
+ 
+            // Close if already visible
+            if ( wasOpen ) {
+              return;
+            }
+ 
+            // Pass last search string as value to search for, displaying last results
+            input.autocomplete( "search", 'SHOWALL' );
+          });
+      },
+ 
+      _source: function( request, response ) {
+        //var matcher = new RegExp( $.ui.autocomplete.escapeRegex(request.term), "i" );
+		var ele_select= this.element;
+		if(request.term=='SHOWALL'){
+			response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+		
+		}
+		else
+		{
+		var jsonRow = 'getcompaniesonsearch.cgi?srch='+request.term+'&companies=supplier';
+		
+		//alert(jsonRowURLStr);
+		if(xhr) xhr.abort();
+		xhr=$.getJSON(jsonRow,function(result){
+			
+			if(result){
+				var html='<option value=""></option>';
+
+				$.each(result, function(i,item)
+				{
+						html += '<option value="'+item.CustoemrUUID+'">'+item.value+'</option>';
+					
+				});
+				
+				ele_select.html(html);
+				
+				
+				response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+				
+				
+			}
+		});
+       
+	  } 
+		
+      },
+ 
+      _removeIfInvalid: function( event, ui ) {
+ 
+        // Selected an item, nothing to do
+        if ( ui.item ) {
+
+          return;
+        }
+ 
+        // Search for a match (case-insensitive)
+        var value = this.input.val(),
+          valueLowerCase = value.toLowerCase(),
+          valid = false;
+		  var ele_select= this.element;
+        this.element.children( "option" ).each(function() {
+          if ( $( this ).text().toLowerCase() === valueLowerCase ) {
+            this.selected = valid = true;	
+		
+            return false;
+          }
+        });
+ 
+        // Found a match, nothing to do
+        if ( valid ) {
+          return;
+        }
+ 
+        // Remove invalid value
+        this.input
+          .val( "" )
+          .attr( "title", value + " didn't match any item" )
+          .tooltip( "open" );
+        this.element.val( "" );
+        this._delay(function() {
+          this.input.tooltip( "close" ).attr( "title", "" );
+        }, 2500 );
+        this.input.data( "ui-autocomplete" ).term = "";
+      },
+ 
+      _destroy: function() {
+        this.wrapper.remove();
+        this.element.show();
+      }
+    });
+  })( jQuery );
+ 
+	</script>
+
+<!-- END JAVASCRIPTS -->
+</body>
+<!-- END BODY -->
+</html>

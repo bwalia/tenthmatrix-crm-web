@@ -1,0 +1,317 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+
+//if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+
+QUERY([Companies];[Companies]uuid=client_uuid)
+
+C_BOOLEAN(mReadOnly)
+mReadOnly:=(Records in selection([Companies])=1)
+
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+//else
+//_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+//end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+-->
+
+	<!-- main container -->
+    <div class="content wide-content" style="margin-bottom:0px">
+        <div class="container-fluid">
+            <div id="pad-wrapper" class="form-page">
+				<div class="row-fluid">
+					<div class="span12">
+						<form name="LicenceManager" id="frm_LicenceManager" action="" class="form-comment form_validation_reg" method="post"> 
+						<input type="hidden" name="client_uuid" id="client_uuid" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("client_uuid")-->">
+							<div class="formSep">
+								<div class="row-fluid">
+									<div class="span9">
+										<label>Version </label>
+										<Select name="Version" id="Version">
+										<option value="7.0">7.0</option>
+										<option value="6.7">6.7</option>
+									</select>
+									</div>
+									</div>
+							</div>
+							        
+							<div class="formSep">
+								<div class="row-fluid">
+									<div class="span9">
+										<label>Vertical</label>
+										<Select name="Vertical" id="Vertical">
+										<option value="Generic">Generic</option>
+										<option value="Catalog">Catalog</option>
+										<option value="Directory">Directory</option>
+										<option value="Classifieds">Classifieds</option>
+										<option value="Price_list">Price List</option>
+										<option value="Course_Guide">Course Guide</option>
+										<option value="Yearbook">Yearbook</option>
+									</select> 
+									</div>
+								</div>
+							</div>
+							        
+							<div class="formSep">
+								<div class="row-fluid">
+									<div class="span9">
+										<label>Platform </label>
+										<label class="radio inline">
+                                    <input  type="radio" value="Mac" name="platform" id="platform1" onClick="set_platform_check(this.value)" class="rdo"> Mac
+                                </label>
+								<label class="radio inline">
+                                    <input type="radio" value="Windows" name="platform" id="platform2" onClick="set_platform_check(this.value)" class="rdo"> Windows
+                            	</label>
+								<label class="radio inline">
+                                    <input type="radio" value="Multi-user" name="platform" id="platform3" onClick="set_platform_check(this.value)" class="rdo"> Multi-user
+                                </label>
+                                <input id="platform_check" type="hidden" >
+									</div>
+								</div>
+							</div>
+							        
+							<div class="formSep">
+								<div class="row-fluid">
+									<div class="span9">
+										<label>Type Of Licence</label>
+										<label class="radio inline">
+                                    <input  type="radio" value="Enterprise" name="type_of_licence" id="type_of_licence1" onClick="set_type_check(this.value)" class="rdo">Enterprise
+                                </label>
+								<label class="radio inline">
+                                    <input type="radio" value="Standard" name="type_of_licence" id="type_of_licence2" onClick="set_type_check(this.value)" class="rdo"> Standard
+                                </label>
+								<label class="radio inline">
+                                    <input type="radio" value="Chameleon" name="type_of_licence" id="type_of_licence3" onClick="set_type_check(this.value)" class="rdo"> Chameleon
+                                </label>
+                                <input id="type_of_licence_check" type="hidden" >								
+										</div>
+									
+								</div>
+							</div>
+							<div class="formSep">
+								<div class="row-fluid">
+									<div class="span9">
+										<label>Number Of Users</label>
+										<input type="text" class="span9" name="noOfUsers" id="noOfUsers" value="">
+									</div>
+								</div>
+							</div>
+							        
+							<div class="formSep">
+								<div class="row-fluid">
+									<div class="span9">
+										<label>License Number </label>
+										<input type="text" class="span9" name="licenceNo" id="licenceNo" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("licenceNo")-->">								
+										</div>
+									
+									</div>
+							</div>
+							
+							
+							
+							<div style="text-align: center;" class="span9 field-box">
+								<input type="button" name="new" class="btn-glow primary" value="Generate New License" onClick="get_license()">
+								<input type="button" name="activate" class="btn-glow primary" value="Activate" onClick="activate_license()"><br/>
+								<input type="button" name="send_mail" class="btn-glow primary" value="Email" onClick="email_license()">
+								<input type="button" name="done" id="done" class="btn-glow primary" value="Done">							</div>
+						</form>
+					</div>
+				</div>
+            </div>
+		</div>
+    </div>
+	
+    <!-- end main container -->
+
+	
+ <script type="text/javascript">
+        $(function () {
+			
+			
+			$("#done").click(function(){
+				$('#cboxClose').click();
+			});
+			
+			$.validator.setDefaults({
+						ignore: "",
+						onkeyup: false,
+				errorClass: 'error',
+				validClass: 'valid',
+				highlight: function(element) {
+					$(element).closest('div').addClass("f_error");
+				},
+				unhighlight: function(element) {
+					$(element).closest('div').removeClass("f_error");
+				},
+				errorPlacement: function(error, element) {
+					$(element).closest('div').append(error);
+				},
+					});
+	
+        });
+		
+	
+    </script>
+	
+	 
+
+<script>
+
+ function set_platform_check(platform_value)
+ {
+ 	$('#platform_check').val(platform_value);
+
+ }
+ 
+ function set_type_check(type_value)
+ {
+ 	$('#type_of_licence_check').val(type_value);
+
+ }
+                
+function get_license()
+
+
+{
+var Version=	$("#Version").val();
+
+var Vertical=$("#Vertical").val();
+var noOfUsers=$('#noOfUsers').val();
+var licenceNo=$('#licenceNo').val();
+var platform_check=$('#platform_check').val();
+var type_of_licence_check=$('#type_of_licence_check').val(); 
+var Company_uuid=$('#client_uuid').val();
+
+$('#frm_LicenceManager').removeData('validator');
+$('#frm_LicenceManager').validate({				
+	rules: {
+		platform: { required: true },
+		type_of_licence: { required: true },	
+	},
+});
+if($('#frm_LicenceManager').valid()){
+
+	if(licenceNo!=''){
+		
+var dataString = 'licenceNo='+ licenceNo +'&Version='+Version+'&Vertical='+Vertical+'&noOfUsers='+noOfUsers+'&Company_uuid='+Company_uuid+'&platform_check='+platform_check+'&type_of_licence_check='+type_of_licence_check+'&redirect=false';
+	}
+	else
+	{
+var dataString = 'Version='+Version+'&Vertical='+Vertical+'&noOfUsers='+noOfUsers+'&Company_uuid='+Company_uuid+'&platform_check='+platform_check+'&type_of_licence_check='+type_of_licence_check+'&redirect=false';	
+	}
+
+
+$.ajax({
+type: "GET",
+dataType: "json",
+url: "generatelicensenumber.cgi",
+data: dataString,
+cache: false,
+success: function(html)
+{
+	if(html.License){		
+		$("#licenceNo").val(html.License);
+		window.parent.document.getElementById("license_number").value = html.License; 
+		window.parent.document.getElementById("lnk_active_licence").href = 'licencemanager.shtml?client_uuid='+$('#client_uuid').val()+'&licenceNo='+html.License; 
+	}
+}
+});
+}
+}
+
+function activate_license()
+{
+var Version=	$("#Version").val();
+
+var Vertical=$("#Vertical").val();
+var noOfUsers=$('#noOfUsers').val();
+var licenceNo=$('#licenceNo').val();
+var platform_check=$('#platform_check').val();
+var type_of_licence_check=$('#type_of_licence_check').val(); 
+var Company_uuid=$('#client_uuid').val();
+
+$('#frm_LicenceManager').removeData('validator');
+$('#frm_LicenceManager').validate({				
+	rules: {
+		licenceNo: { required: true },	
+	},
+	messages: {
+		licenceNo: { required: "Please generate a new License Number" },
+	}
+});
+if($('#frm_LicenceManager').valid()){
+		
+var dataString = 'licenceNo='+ licenceNo +'&Version='+Version+'&Vertical='+Vertical+'&noOfUsers='+noOfUsers+'&Company_uuid='+Company_uuid+'&platform_check='+platform_check+'&type_of_licence_check='+type_of_licence_check+'&redirect=false';
+
+	$.ajax({
+type: "GET",
+dataType: "json",
+url: "activatelicense.cgi",
+data: dataString,
+cache: false,
+success: function(html)
+{
+	if(html.Message){		
+		var message ="Licence no. "+licenceNo+" activated and the customer information OK! Email licence to customer.";
+		alert(message);
+		}
+		  if(html.ErrorMessage){		
+		alert(html.ErrorMessage);
+		}
+		
+	  
+}
+});
+}
+}
+ 
+
+function email_license()
+{
+var Version=	$("#Version").val();
+
+var Vertical=$("#Vertical").val();
+var noOfUsers=$('#noOfUsers').val();
+var licenceNo=$('#licenceNo').val();
+var platform_check=$('#platform_check').val();
+var type_of_licence_check=$('#type_of_licence_check').val(); 
+var Company_uuid=$('#client_uuid').val();
+
+$('#frm_LicenceManager').removeData('validator');
+$('#frm_LicenceManager').validate({				
+	rules: {
+		licenceNo: { required: true },	
+	},
+	messages: {
+		licenceNo: { required: "Please generate a new License Number" },
+	}
+});
+if($('#frm_LicenceManager').valid()){
+		
+var dataString = 'licenceNo='+ licenceNo +'&Version='+Version+'&Vertical='+Vertical+'&noOfUsers='+noOfUsers+'&Company_uuid='+Company_uuid+'&platform_check='+platform_check+'&type_of_licence_check='+type_of_licence_check+'&redirect=false';
+	
+	$.ajax({
+type: "GET",
+dataType: "json",
+url: "mail_license.cgi",
+data: dataString,
+cache: false,
+success: function(html)
+{
+	if(html.mailsent){		
+		alert('License Number sent to the Customer');
+		}
+		 if(html.mailerror){		
+		alert(html.mailerror);
+		}
+	 
+}
+});
+}
+}
+
+
+</script>

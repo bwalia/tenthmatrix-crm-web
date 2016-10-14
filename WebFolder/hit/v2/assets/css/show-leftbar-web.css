@@ -1,0 +1,21 @@
+@charset "UTF-8";
+/* CSS Document */
+
+@media screen and (min-width: 1200px){
+header .navbar {
+margin-left: 240px;
+}
+.fixed-leftside .rightside {
+margin-left:240px;  /* need to done 0 for 4d app*/
+}
+.sidebar-sm .rightside, 
+.sidebar-sm header .navbar {
+margin-left: 80px;
+}
+}
+@media screen and (max-width: 1199px){
+  .wrapper {
+  left: -240px; 
+ }
+}
+

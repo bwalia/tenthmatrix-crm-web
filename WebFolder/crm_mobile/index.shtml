@@ -1,0 +1,184 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+-->
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/main-header.shtml-->
+</head>
+<body>
+<div data-role="page" id="home" data-add-back-btn="false">
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/top-header.shtml-->
+    <div data-role="content" data-theme="a">
+    		<ul data-role="listview" data-inset="true">
+				<li data-role="list-divider">Browse <span style=" color:#2B89D0; font-stretch:narrower;">Tenthmatrix CRM</span></li>
+            </ul>
+			<div data-role="collapsible-set" data-theme="a">
+			
+			<style>
+			.listItemNoIcon .ui-icon, .listItemNoIcon .ui-icon-plus, .listItemNoIcon .ui-icon-shadow
+			{
+			 visibility:hidden;
+			}
+			</style>
+			
+                    <div data-role="collapsible" data-collapsed="true" data-iconpos="right" data-content-theme="a">
+                       <h3>Contacts</h3>
+                       <p>
+                        <ul data-role="listview" data-inset="false" data-theme="c" data-filter="false" data-count-theme="b">
+							<li><a href="contacts.shtml" data-ajax="false">Contacts</a></li>
+							<li><a href="contact.shtml" data-ajax="false">Enter New Contact</a></li>
+                        </ul>
+                        </p>
+                    </div>
+					<div data-role="collapsible" data-collapsed="true" data-iconpos="right" data-content-theme="a">
+                       <h3>Customers</h3>
+                       <p>
+                        <ul data-role="listview" data-inset="false" data-theme="c" data-filter="false" data-count-theme="b">
+							<li><a href="customers.shtml" data-ajax="false">Customers</a></li>
+							<li><a href="customer.shtml" data-ajax="false">Enter New Customer</a></li>
+							<li><a href="#" data-ajax="false">Sets</a></li>
+							<!--#4DSCRIPT/Web_LoadCustomerSets/-->
+							<!--4DLOOP  [saved_sets]-->
+							<li><a data-ajax="false" href="customers.shtml?keyword=load_<!--#4DHTMLVAR [saved_sets]name-->"><!--#4DHTMLVAR [saved_sets]name--></a></li>
+							<!--4DENDLOOP-->
+                        </ul>
+                        </p>
+                    </div>
+					<div data-role="collapsible" data-collapsed="true" data-iconpos="right" data-content-theme="a">
+                       <h3>Employees</h3>
+                       <p>
+                        <ul data-role="listview" data-inset="false" data-theme="c" data-filter="false" data-count-theme="b">
+							<li><a href="employees.shtml" data-ajax="false">Employees</a></li>
+							<li><a href="employee.shtml" data-ajax="false">Enter New Employee</a></li>
+                        </ul>
+                        </p>
+                    </div>
+					
+					<div data-role="collapsible" data-collapsed="true" data-iconpos="right" data-content-theme="a">
+                       <h3>Payments</h3>
+                       <p>
+                        <ul data-role="listview" data-inset="false" data-theme="c" data-filter="false" data-count-theme="b">
+							<li><a href="payments.shtml" data-ajax="false">Payments</a></li>
+							<li><a href="payment.shtml" data-ajax="false">Enter New Payment</a></li>
+                        </ul>
+                        </p>
+                    </div>
+					<div data-role="collapsible" data-collapsed="true" data-iconpos="right" data-content-theme="a">
+                       <h3>Products</h3>
+                       <p>
+                        <ul data-role="listview" data-inset="false" data-theme="c" data-filter="false" data-count-theme="b">
+							<li><a href="products.shtml" data-ajax="false">Products</a></li>
+							<li><a href="product.shtml" data-ajax="false">Enter New Product</a></li>
+                        </ul>
+                        </p>
+                    </div>
+					<div data-role="collapsible" data-collapsed="true" data-iconpos="right" data-content-theme="a">
+                       <h3>Projects</h3>
+                       <p>
+                        <ul data-role="listview" data-inset="false" data-theme="c" data-filter="false" data-count-theme="b">
+							<li><a href="projects.shtml" data-ajax="false">Projects</a></li>
+							<li><a href="project.shtml" data-ajax="false">Enter New Project</a></li>
+                        </ul>
+                        </p>
+                    </div>
+					<div data-role="collapsible" data-collapsed="true" data-iconpos="right" data-content-theme="a">
+                       <h3>Tasks</h3>
+                       <p>
+                        <ul data-role="listview" data-inset="false" data-theme="c" data-filter="false" data-count-theme="b">
+							<li><a href="tasks.shtml" data-ajax="false">Tasks</a></li>
+							<li><a href="task.shtml" data-ajax="false">Enter New Task</a></li>
+                        </ul>
+                        </p>
+                    </div>
+					<div data-role="collapsible" data-collapsed="true" data-iconpos="right" data-content-theme="a">
+                       <h3>Timeslips</h3>
+                       <p>
+                        <ul data-role="listview" data-inset="false" data-theme="c" data-filter="false" data-count-theme="b">
+							<li><a href="timeslips.shtml" data-ajax="false">Timeslips</a></li>
+							<li><a href="timeslip.shtml" data-ajax="false">Enter New Timeslip</a></li>
+                        </ul>
+                        </p>
+                    </div>
+					<div data-role="collapsible" data-collapsed="true" data-iconpos="right" data-content-theme="a">
+                       <h3>Invoices</h3>
+                       <p>
+                        <ul data-role="listview" data-inset="false" data-theme="c" data-filter="false" data-count-theme="b">
+							<li><a href="invoices.shtml" data-ajax="false">Invoices</a></li>
+							<li><a href="invoice.shtml" data-ajax="false">Enter New Invoice</a></li>
+							<li><a href="#" data-ajax="false">Sets</a></li>
+							<!--#4DSCRIPT/Web_LoadInvoicesSets/-->
+							<!--4DLOOP  [saved_sets]-->
+							<li><a data-ajax="false" href="invoices.shtml?keyword=load_<!--#4DHTMLVAR [saved_sets]name-->"><!--#4DHTMLVAR [saved_sets]name--></a></li>
+							<!--4DENDLOOP-->
+                        </ul>
+                        </p>
+                    </div>
+					
+					<div data-role="collapsible" data-collapsed="true" data-iconpos="right" data-content-theme="a">
+                       <h3>Mileage Expenses</h3>
+                       <p>
+                        <ul data-role="listview" data-inset="false" data-theme="c" data-filter="false" data-count-theme="b">
+							<li><a href="travel_expenses.shtml" data-ajax="false">Travel Expense Sheet</a></li>
+							<li><a href="travel_expense.shtml" data-ajax="false">Enter New Travel Expense Sheet</a></li>
+                        </ul>
+                        </p>
+                    </div>
+                    <div data-role="collapsible" data-collapsed="true" data-iconpos="right" data-content-theme="a">
+                       <h3>Leads</h3>
+                       <p>
+                        <ul data-role="listview" data-inset="false" data-theme="c" data-filter="false" data-count-theme="b">
+							<li><a href="leads.shtml" data-ajax="false">leads</a></li>
+							<li><a href="lead.shtml" data-ajax="false">Enter New Lead</a></li>
+							<li><a href="#" data-ajax="false">Sets</a></li>
+							<!--#4DSCRIPT/Web_LoadLeadsSets/-->
+							<!--4DLOOP  [saved_sets]-->
+							<li><a data-ajax="false" href="leads.shtml?keyword=load_<!--#4DHTMLVAR [saved_sets]name-->"><!--#4DHTMLVAR [saved_sets]name--></a></li>
+							<!--4DENDLOOP-->
+                        </ul>
+                        </p>
+                    </div>
+                    <div data-role="collapsible" data-collapsed="true" data-iconpos="right" data-content-theme="a">
+                       <h3>Lead's Contacts</h3>
+                       <p>
+                        <ul data-role="listview" data-inset="false" data-theme="c" data-filter="false" data-count-theme="b">
+							<li><a href="lead_contacts.shtml" data-ajax="false">Lead's Contacts</a></li>
+							<li><a href="lead_contact.shtml" data-ajax="false">Enter New Lead's Contact</a></li>
+                        </ul>
+                        </p>
+                    </div>
+					<div data-role="collapsible" data-collapsed="true" data-iconpos="right" data-content-theme="a">
+                       <h3>Documents</h3>
+                       <p>
+                        <ul data-role="listview" data-inset="false" data-theme="c" data-filter="false" data-count-theme="b">
+							<li><a href="documents.shtml" data-ajax="false">Documents</a></li>
+							<li><a href="document.shtml" data-ajax="false">Enter New Document</a></li>
+                        </ul>
+                        </p>
+                    </div>
+					
+					<div data-role="collapsible" data-collapsed="true" data-iconpos="right" data-content-theme="a">
+                       <h3>Holidays</h3>
+                       <p>
+                        <ul data-role="listview" data-inset="false" data-theme="c" data-filter="false" data-count-theme="b">
+							<li><a href="holidays.shtml" data-ajax="false">Holidays</a></li>
+							<li><a href="holiday.shtml" data-ajax="false">Enter New Holiday Request</a></li>
+                        </ul>
+                        </p>
+                    </div>
+
+
+		</div><!-- END COLLAPSIBLE SET-->
+	</div><!-- END DATA ROLE CONTENT-->
+
+   <!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/footer.shtml-->
+    
+ </div>
+ 
+</body>
+</html>

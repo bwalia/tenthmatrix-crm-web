@@ -1,0 +1,672 @@
+<!--HIT_EXECUTE
+_HIT_HTTPD_SetHTTPHeader ("Content-type";"text/html; charset=utf-8")
+
+C_TEXT(_HIT_HTMLTXT;mPlatform)
+
+If(_HIT_AuthenticateSession="Session-Authenticated-OK")
+
+mPlatform:=_HIT_WebSession_GetVar ("platform")
+
+Else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml?url="+HTTPD_DocumentURI)
+End if 
+ 
+-->
+<!DOCTYPE html>
+<html lang="en">
+<!-- BEGIN HEAD -->
+<head>
+	<title>Timeslips</title>
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/v2/includes/InitCss.shtml-->
+		<link rel="stylesheet" href="assets/css/autocomplete.css" />
+	<style>
+		#message{
+			color:#FF0000;
+		}
+
+		.jqibox {
+			z-index:9999!important;
+		}
+	</style>
+</head>
+
+<!-- END HEAD -->
+<!-- BEGIN BODY -->
+<body class="fixed-leftside fixed-header">
+	<!-- BEGIN HEADER -->
+		<!--#4DSCRIPT/_HIT_LoadInclude/hit/v2/includes/header.shtml-->
+	<!-- END HEADER -->
+			 
+	<div class="wrapper"> 
+ 		<!-- BEGIN LEFTSIDE -->
+        <!--#4DIF (mPlatform="web")-->
+ 		<!--#4DSCRIPT/_HIT_LoadInclude/hit/v2/includes/left-navigation.shtml-->
+ 		<!--#4DENDIF-->
+		<!-- END LEFTSIDE -->
+  
+  <!-- BEGIN RIGHTSIDE -->
+  <div class="rightside bg-grey-100"> 
+    <!-- BEGIN PAGE HEADING -->
+    <div class="page-head">
+     <div class="row">
+     	<div class="col-sm-6">
+      		<h1 class="page-title">Timeslips</h1>
+         </div>  
+         <div class="col-sm-6 "> 
+      
+      <!-- BEGIN BREADCRUMB -->
+      <ol class="breadcrumb sm-pullright">
+        <li><a href="javascript:void(0)" onclick="funURLHandler('index.shtml','open-index-window')"><i class="ion-home margin-right-5"></i> Dashboard</a></li>
+        <li>Timeslips</li>
+      </ol>
+      <!-- END BREADCRUMB --> 
+      </div>
+      </div>
+    </div>
+    <!-- END PAGE HEADING -->
+    	<div class="container-fluid">
+    		<div class="margin-bottom-15">
+     			<div class="pull-left">
+     				<div class="form-group hideComponentsClass ui-widget" style="display:none;">
+      					<select class="form-control" name="task" id="task" onChange="__showTaskTimeslips(this.value)" >
+							<!--#4DIF (_HIT_WebApp_GetField ("task")#"")-->
+								<option value="<!--4DVAR [Tasks]task_id-->"  ><!--4DVAR [Tasks]task_name--></option>
+							<!--#4DELSE-->
+								<option value=""></option>
+								<!--#4DSCRIPT/Web_LoadTasks/-->
+								<!--4DLOOP [Tasks]-->
+									<option value="<!--4DVAR [Tasks]task_id-->"  ><!--4DVAR [Tasks]task_name--></option>
+								<!--4DENDLOOP-->
+							<!--#4DENDIF-->				
+						</select>
+        			</div>
+         		</div>
+         		<div class="pull-right">
+         			<div class="form-inline">
+               			<input type="text" class="form-control  no-border-right " placeholder="Search..." id="keyword">
+						<div class="btn-group srch-filter xs-margin-btm10">
+                            <a class="btn btn-info btn-sm dropdown-toggle btn-sm filter-menu" style="min-width:145px; text-align:left;" data-toggle="dropdown">All
+                            <span> 
+                                <span class="caret"></span>
+                                <span class="sr-only">Toggle Dropdown</span>
+                            </span>
+                        	</a>
+							<ul class="dropdown-menu" role="menu">
+								<li><a href="javascript:void(0)" onClick="__filterResults('','All'); return false;">All</a></li>
+								<li><a href="javascript:void(0)" onClick="__filterResults('billed','Billed'); return false;">Billed</a></li>
+								<li><a href="javascript:void(0)" onClick="__filterResults('on','Chargeable'); return false;">Chargeable</a></li>
+								<li><a href="javascript:void(0)" onClick="__filterResults('off','Not Chargeable'); return false;">Not Chargeable</a></li>
+							</ul>
+						</div><!-- /btn-group -->
+                               
+                        <a href="javascript:void(0)" onclick="funURLHandler('timeslip.shtml','open-timeslip-window')" class="btn palette-carrot btn-color btn-icon-left  btn-sm  " > <i class="fa fa-plus-square"></i> Add New</a>
+                    </div>  
+                 	
+      				<div class="clearfix"></div>
+     			</div>
+      			<div class="row">
+        			<div class="col-md-12">
+       					<div class="panel" style="padding-top:20px;"> 
+                			<div class="panel-body no-padding-top bg-white"> 
+              					<div class="table-responsive">
+                					<table class="table table-striped no-border table-hover no-margin" id="timeslipTable">
+					
+									</table>
+									<div class="text-center margin-top-10  margin-bottom-10"><button style="width: 50%;display:none;" class="btn palette-belize-hole btn-color" href="javascript:void(0);" onclick="show_more()" title="Show more" id="display_more_btn" >Show more</button></div>
+              						<div class="text-center margin-bottom-10" id="img_loading_div"><img width="32" src="assets/img/loader.gif"></div>
+              					</div>
+            				</div>
+          				</div>
+        			</div>
+        			<!-- /.col --> 
+      			</div>
+      			<!-- /.row --> 
+      
+      <!-- BEGIN FOOTER -->
+      <!--#4DSCRIPT/_HIT_LoadInclude/hit/v2/includes/footer.shtml-->
+      <!-- END FOOTER --> 
+    </div>
+    <!-- /.container-fluid --> 
+  </div>
+  <!-- /.rightside --> 
+</div>
+<!-- /.wrapper --> 
+<!-- END CONTENT --> 
+<div class="example-container">
+	<pre class="code" style="display:none;" id="no_rec_prompt">
+		var statesdemo = {
+			state0: {
+				title: 'No more records found',
+				html:'',
+				buttons: { OK: 1 },																		
+				submit:function(e,v,m,f){ 
+					//console.log(f);
+					if(v==1) {
+						$.prompt.close();
+					}
+				}
+			},
+		};
+		if(!($(".jqibox").length))
+		$.prompt(statesdemo);
+	</pre>
+</div>
+<!-- BEGIN JAVASCRIPTS -->  
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/v2/includes/InitJs.shtml-->
+<script type="text/javascript" src="assets/js/autocomplete.js"></script>
+<script type="text/javascript">
+
+var JSONdata;
+var nPageSize=25;
+var selected='';
+var start=0, end=25;
+var old_srch='',keyword='', jsonRow='', tab='', task='', selected_set='';
+var tablname='Timeslips';
+var deleteuuid='';
+var complete=false;
+var add_from_manager=false;
+var completeScroll=false;
+var checkAllFlag=false;
+
+function __showTaskTimeslips(name){	
+	task=name;		
+	start=0;
+	end=25;
+	tab='';
+	keyword='';
+	$("#keyword_type").val('');
+	jsonRow = 'loadtimeslips.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&chargeable='+tab+'&task='+task;
+	$('#TimeslipsContent').html('');
+	$('#display_more_btn').hide();
+	$('#img_loading_div').show();		
+	load_data(jsonRow);
+}
+
+function __filterResults(tab,selText){
+	$('.filter-menu').html(selText+' <span class="caret"></span>');
+	
+	if(checkAllFlag==true){
+		$("#chk_all").trigger('click');
+	}
+	start=0;
+	end=25;
+	keyword= $("#keyword").val();
+	jsonRow = 'loadtimeslips.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&chargeable='+tab;
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}
+	$('#TimeslipsContent').html('');
+	$('#display_more_btn').hide();
+	$('#img_loading_div').show();		
+	load_data(jsonRow);
+}
+function __deleteSelected(del_uuid){
+	var statesdemo = {
+		state0: {
+			title: 'Are you sure to delete this timeslip?',
+			buttons: { Cancel : 0, Delete: 1 },																		
+			submit:function(e,v,m,f){ 
+				if(v==1) {
+					var url= "deletetaskandtimeslip.cgi";
+					var dataString = 'selected='+del_uuid+'&action=timeslip';
+					$.ajax({
+						type: "GET",
+						dataType: "json",
+						url: url,
+						data: dataString,
+						cache: false,
+						success: function(html)
+						{
+							if(html.Success){		
+								$.prompt.close();				
+								start=0;
+								end=50;
+								jsonRow = 'loadtimeslips.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&chargeable='+tab+'&task='+task+'&duration='+duration;
+								if(keyword!=''){
+									jsonRow +='&keyword='+keyword;
+								}
+								if(tab!=''){
+									jsonRow +='&tab='+tab;
+								}
+								$('#timeslip_table_body').html('');
+								$('#display_more_btn').hide();
+								$('#img_loading_div').show();		
+								load_data(jsonRow);
+							}else if(html.Error){
+								$.prompt.close();
+								$.prompt(" ", {
+									title: html.Error,
+									buttons: { "Close": false }
+								});
+							}
+						}
+					});
+				}
+				if(v==0) {
+					$.prompt.close();
+				}
+				
+			}
+		},
+		
+	};
+	$.prompt(statesdemo);
+}
+function show_more(){
+	$('#display_more_btn').hide();
+	$('#img_loading_div').show();
+	start=end+1;
+	end=parseInt(start)+parseInt(nPageSize);
+	jsonRow = 'loadtimeslips.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&chargeable='+tab+'&task='+task;
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}
+	if(tab!=''){
+		jsonRow +='&tab='+tab;
+	}	
+	load_data(jsonRow);	
+}
+
+$(document).ready(function() {
+		
+	var timeslipTableHtml='<thead><tr>';
+	if(isMobile.any()) {
+		$('.hideComponentsClass').hide();
+   		timeslipTableHtml+='<th class="vertical-middle">Employee</th>';
+   		timeslipTableHtml+='<th class="vertical-middle">Start</th>';
+		timeslipTableHtml+='<th class="vertical-middle">Action</th>';
+	}else{
+		$('.hideComponentsClass').show();
+		//timeslipTableHtml+='<th class="vertical-middle"><div class="checkbox checkbox-theme no-margin"><input type="checkbox" id="chk_all"><label for="chk_all" class="no-padding"></label></div></th>';
+		timeslipTableHtml+='<th class="vertical-middle col-sm-3">Task</th>';
+		timeslipTableHtml+='<th class="vertical-middle">Project</th>';
+		timeslipTableHtml+='<th class="vertical-middle">Employee</th>';
+		timeslipTableHtml+='<th class="vertical-middle">Start</th>';
+		timeslipTableHtml+='<th class="vertical-middle">End</th>';
+		timeslipTableHtml+='<th class="vertical-middle">Est. Hours</th>';
+		timeslipTableHtml+='<th class="vertical-middle">Rate</th>';
+		timeslipTableHtml+='<th class="vertical-middle">Est. Amount</th>';
+		timeslipTableHtml+='<th class="vertical-middle">Status</th>';
+		timeslipTableHtml+='<th class="vertical-middle">Action</th>';
+	}
+	timeslipTableHtml+='</tr></thead>';
+	timeslipTableHtml+='<tbody id="TimeslipsContent">';
+	timeslipTableHtml+='</tbody>';
+	$('#timeslipTable').append(timeslipTableHtml);
+	
+	$('#keyword').focus();
+	jsonRow = 'loadtimeslips.cgi?start='+start+'&end='+end+'&tablname='+tablname;
+	
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}	
+	 
+	load_data(jsonRow);	
+	
+	$(window).scroll(function(){
+		if ($(window).scrollTop() == $(document).height() - $(window).height()){
+		if(complete==false && completeScroll==false) {
+			$('#display_more_btn').hide();
+			$('#img_loading_div').show();
+			start=end+1;
+			end=parseInt(start)+parseInt(nPageSize);
+			jsonRow = 'loadtimeslips.cgi?start='+start+'&end='+end+'&tablname='+tablname;
+			if(keyword!=''){
+				jsonRow +='&keyword='+keyword;
+			}
+			if(tab!=''){
+				jsonRow +='&chargeable='+tab;
+			}	
+			 
+			load_data(jsonRow);	
+		}
+		}
+	});	
+	
+	//setup before functions
+	var typingTimer;                //timer identifier
+	var doneTypingInterval = 1000;  //time in ms, 5 second for example
+	
+	//on keyup, start the countdown
+	$('#keyword').keyup(function(){
+		clearTimeout(typingTimer);
+		if ($('#keyword').val) {
+			typingTimer = setTimeout(function(){
+				$('#display_more_btn').hide();
+				$('#timeslipTable tbody').html('');
+				$('#img_loading_div').show();
+				start=0;
+				end=parseInt(start)+parseInt(nPageSize);
+				tab='';
+				keyword= $("#keyword").val();
+				jsonRow = 'loadtimeslips.cgi?start='+start+'&end='+end+'&tablname='+tablname;
+				if(keyword!=''){
+					jsonRow +='&keyword='+keyword;
+				}
+				if(tab!=''){
+					jsonRow +='&chargeable='+tab;
+				}	
+				
+				load_data(jsonRow);
+			}, doneTypingInterval);
+		}
+	}).keydown(function( event ) {
+		if ( event.which == 13 ) {
+			event.preventDefault();
+	  	}
+	});		
+	
+	$('#timeslipTable').on("click","#chk_all", function(){
+		if($(this).is(":checked")){
+			checkAllFlag=true;
+			$('.check').prop('checked', true);
+		}else{
+			checkAllFlag=false;
+			$('.check').prop('checked', false);
+		}
+	});	
+    $( "#task" ).combobox();
+});
+function load_data(jsonRow){
+	completeScroll=true;
+	
+	JSONdata=new Array();
+	$.getJSON(jsonRow,function(result){
+		
+			if(result.Alert){
+				code = $('#no_rec_prompt').text();
+				(new Function(code))();
+				complete=true;
+				$('#display_more_btn').hide();
+			}else{
+			 	if(isMobile.any()) {
+			 	$.each(result.uuid, function(i,item){
+				 	JSONdata[i]=new Array();
+				 	JSONdata[i][2]='<a href="timeslip.shtml?uuid='+item+'"><i class="fa fa-pencil"></i></a>';
+				}); 
+				$.each(result.Start, function(i,item)
+				{					
+					JSONdata[i][1]=item;
+				});
+				$.each(result.EmpName, function(i,item)
+				{
+					JSONdata[i][0]=item;
+				});
+				
+			 	}else{
+				$.each(result.uuid, function(i,item){
+				 JSONdata[i]=new Array();
+				 /**if(checkAllFlag==true){
+				 JSONdata[i][0]='<div class="checkbox checkbox-theme no-margin"><input class="check" checked type="checkbox" value="'+item+'" id="'+item+'"><label for="'+item+'" class="no-padding"></label></div>';
+				 }else{
+					 JSONdata[i][0]='<div class="checkbox checkbox-theme no-margin"><input class="check" type="checkbox" value="'+item+'" id="'+item+'"><label for="'+item+'" class="no-padding"></label></div>';
+				 }**/
+				 JSONdata[i][9]='<a href="javascript:void(0)" onclick="funURLHandler(\'timeslip.shtml?uuid='+item+'\',\'open-timeslip-window\')"><i class="fa fa-pencil"></i></a>';
+				 JSONdata[i][9]+='&nbsp;<a href="javascript:void(0)" onClick="__deleteSelected(\''+item+'\')" ><i class="fa fa-remove"></i></a>';
+				});
+				
+				$.each(result.TaskName, function(i,item)
+				{
+					JSONdata[i][0]=item;
+				});
+				
+				$.each(result.ProjName, function(i,item)
+				{					
+					JSONdata[i][1]='<a href="javascript:void(0)" onclick="funURLHandler(\'projects.shtml?keyword='+item+'\',\'open-project-window\',\'true\')">'+item+'</a>';
+				});
+				
+				$.each(result.EmpName, function(i,item)
+				{	
+					var empname = item.substr(0,item.indexOf(' ')); 
+					JSONdata[i][2]='<a href="javascript:void(0)" onclick="funURLHandler(\'employees.shtml?keyword='+empname+'\',\'open-employees-window\',\'true\')">'+item+'</a>';
+				});
+				
+				$.each(result.Start, function(i,item)
+				{					
+					JSONdata[i][3]=item;
+				});
+				
+				$.each(result.End, function(i,item)
+				{					
+					JSONdata[i][4]=item;
+				}); 
+				
+				$.each(result.EstHour, function(i,item)
+				{					
+					JSONdata[i][5]=item;
+				});
+				
+				$.each(result.EstAmount, function(i,item)
+				{					
+					JSONdata[i][6]=item;
+				});
+				
+				$.each(result.Slipvalue, function(i,item)
+				{					
+					JSONdata[i][7]=item;
+				});
+				
+				$.each(result.Status, function(i,item)
+				{
+				switch(item)
+				{
+				case 1:
+				  JSONdata[i][8]='<span class="label bg-green-500 padding-5"> CHARGEABLE </span>';
+				  break;
+				case 2:
+				  JSONdata[i][8]='<span class="label bg-blue-500 padding-5"> BILLED </span>';
+				  break;
+				default :
+				   JSONdata[i][8]='<span class="label bg-red-800 padding-5"> NOT-CHARGEABLE </span>';
+				  }
+
+				});
+			
+				}
+  				
+				var table_html='';
+				$.each(JSONdata, function(i,row){
+					table_html+='<tr>';
+					$.each(row, function(i,col){
+						table_html+='<td class="vertical-middle">'+col+'</td>';
+					});
+					table_html+='</tr>';
+				});
+				
+				if(old_srch!=keyword){
+					$('#TimeslipsContent').html('');
+					old_srch=keyword;
+				}
+				
+				$('#TimeslipsContent').append(table_html);
+				complete=false;
+				$('#display_more_btn').show();
+		}
+		$('#img_loading_div').hide();
+		completeScroll=false;
+			});
+}
+
+	var xhr;
+  (function( $ ) {
+    $.widget( "custom.combobox", {
+      _create: function() {
+        this.wrapper = $( "<span>" )
+          .addClass( "custom-combobox" )
+          .insertAfter( this.element );
+ 
+        this.element.hide();
+        this._createAutocomplete();
+        this._createShowAllButton();
+      },
+ 
+      _createAutocomplete: function() {
+	  var ele_select= this.element;
+        var selected = this.element.children( ":selected" ),
+          value = selected.val() ? selected.text() : "";
+ 
+        this.input = $( "<input>" )
+          .appendTo( this.wrapper )
+          .val( value )
+          .attr( "title", "" )
+          .addClass( "custom-combobox-input ui-widget ui-widget-content ui-state-default ui-corner-left" )
+          .autocomplete({
+            delay: 0,
+            minLength: 0,
+            source: $.proxy( this, "_source" )
+          })
+          .tooltip({
+            tooltipClass: "ui-state-highlight"
+          });
+ 
+        this._on( this.input, {
+          autocompleteselect: function( event, ui ) {
+		  	//alert("show all");
+            ui.item.option.selected = true;
+			
+            this._trigger( "select", event, {
+              item: ui.item.option
+            });
+			ele_select.trigger('change');
+          },
+ 
+          autocompletechange: "_removeIfInvalid"
+        });
+      },
+ 
+      _createShowAllButton: function() {
+        var input = this.input,
+          wasOpen = false;
+ 
+        $( "<a>" )
+          .attr( "tabIndex", -1 )
+          .attr( "title", "Show All Items" )
+          .tooltip()
+          .appendTo( this.wrapper )
+          .button({
+            icons: {
+              primary: "ui-icon-triangle-1-s"
+            },
+            text: false
+          })
+          .removeClass( "ui-corner-all" )
+          .addClass( "custom-combobox-toggle ui-corner-right" )
+          .mousedown(function() {
+            wasOpen = input.autocomplete( "widget" ).is( ":visible" );
+          })
+          .click(function() {
+            input.focus();
+ 
+            // Close if already visible
+            if ( wasOpen ) {
+              return;
+            }
+ 
+            // Pass last search string as value to search for, displaying last results
+            input.autocomplete( "search", 'SHOWALL' );
+          });
+      },
+ 
+      _source: function( request, response ) {
+        //var matcher = new RegExp( $.ui.autocomplete.escapeRegex(request.term), "i" );
+		var ele_select= this.element;
+		if(request.term=='SHOWALL'){
+			response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+		
+		}
+		else
+		{
+		var jsonRow = 'gettaskonsearch.cgi?srch='+request.term;
+		
+
+		//alert(jsonRowURLStr);
+		if(xhr) xhr.abort();
+		xhr=$.getJSON(jsonRow,function(result){
+			
+			if(result){
+				var html='<option value=""></option>';
+
+				$.each(result, function(i,item)
+				{
+					html += '<option value="'+item.id+'">'+item.value+'</option>';
+				});
+				ele_select.html(html);
+				
+				
+				response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+				
+				
+			}
+		});
+       
+	  } 
+		
+      },
+ 
+      _removeIfInvalid: function( event, ui ) {
+ 
+        // Selected an item, nothing to do
+        if ( ui.item ) {
+
+          return;
+        }
+ 
+        // Search for a match (case-insensitive)
+        var value = this.input.val(),
+          valueLowerCase = value.toLowerCase(),
+          valid = false;
+		  var ele_select= this.element;
+        this.element.children( "option" ).each(function() {
+          if ( $( this ).text().toLowerCase() === valueLowerCase ) {
+            this.selected = valid = true;	
+
+			ele_select.trigger('change');
+            return false;
+          }
+        });
+ 
+        // Found a match, nothing to do
+        if ( valid ) {
+          return;
+        }
+ 
+        // Remove invalid value
+        this.input
+          .val( "" )
+          .attr( "title", value + " didn't match any item" )
+          .tooltip( "open" );
+        this.element.val( "" );
+        this._delay(function() {
+          this.input.tooltip( "close" ).attr( "title", "" );
+        }, 2500 );
+        this.input.data( "ui-autocomplete" ).term = "";
+      },
+ 
+      _destroy: function() {
+        this.wrapper.remove();
+        this.element.show();
+      }
+    });
+  })( jQuery );
+</script>
+</body>
+<!-- END BODY -->
+</html>

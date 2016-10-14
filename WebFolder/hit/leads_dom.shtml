@@ -1,0 +1,400 @@
+<!--HIT_EXECUTE
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml?url="+HTTPD_DocumentURI)
+end if 
+//_HIT_HTMLTXT:=_HIT_SessionStr
+
+_HIT_HTMLTXT:=_HIT_HTTP_GetReferer
+
+-->
+
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+
+</head>
+
+<body>
+
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
+
+	<!-- main container -->
+
+    <div class="content">
+
+        <div class="container-fluid">
+
+            <div id="pad-wrapper">
+
+                <!-- Lead table -->
+
+                <div class="table-wrapper orders-table section">
+
+                    <div class="row-fluid head">
+
+                        <div class="span12">
+
+                            <h4>Leads</h4>
+
+                        </div>
+
+                    </div>
+
+                    <div class="row-fluid filter-block">
+					<form id="frm_set" name="frm_set" method="post" action="leads.shtml">
+					<!--<input type="button" class="btn-glow primary" value="Add to Set">-->
+					Add to Set : 
+					<input type="hidden" name="selected" id="selected" value="">
+					<input type="hidden" name="set" id="set" value="">
+					<input type="hidden" name="new_name" id="new_name" value="">
+					
+					<div class="ui-select">
+					<select name="sets" onChange="__showleadForm_AddSet(this.value)">
+					<option value="">--Select Set--</option>
+					<!--HIT_EXECUTE
+
+									ALL RECORDS([saved_sets])		
+
+									-->
+									<!--4DLOOP  [saved_sets]-->									
+									<option value="<!--#4DHTMLVAR [saved_sets]name-->" ><!--#4DHTMLVAR [saved_sets]name--></option>
+									<!--4DENDLOOP-->
+									<option value="new_set">Create New Set</option>
+					</select>
+					</div>
+					
+
+                        <div class="pull-right">
+
+                            <div class="btn-group pull-right">
+
+                                <button class="glow left large" onClick="__showAllLeads(); return false;">All</button>
+
+                                <button class="glow middle large" onClick="__showActiveLeads(); return false;">Active</button>
+
+                                <button class="glow right large" onClick="__showInActiveLeads(); return false;">InActive</button>
+								
+								<a href="lead.shtml" class="btn-flat success new-product margn-lft35">+ Add New Lead</a>
+                            </div>
+
+                            <input name="keyword" id="keyword" type="text" class="search order-search" placeholder="Search for Name, Town or Country" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" />
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="row-fluid">
+
+                        <table class="table table-hover">
+
+                            <thead>
+
+                                <tr>
+								
+								<th width="6%">
+
+                                        <!-- Select For Sets -->
+                                        <input name="Select" class="span3 check" type="checkbox" id="Select" value="<!--#4DHTMLVAR [Leads]uuid-->"></label>
+
+                                    </th>
+                                    
+								<th class="span2">
+
+                                        Product
+
+                                    </th>
+
+                                    <th class="span3">
+
+                                        Lead Name
+
+                                    </th>
+
+                                    <th class="span2">
+
+                                        Town
+
+                                    </th>
+
+									<th class="span2">
+
+                                        Phone
+
+                                    </th>
+
+									<th class="span2">
+
+                                        Country
+
+                                    </th>
+
+									<th class="span2">
+
+                                        Enter Date
+
+                                    </th>
+
+                                    <th class="span2">
+
+                                        Status
+
+                                    </th>
+									<th class="span2">
+                                    </th>
+                                </tr>
+
+                            </thead>
+
+                            <tbody><!--#4DSCRIPT/Web_LoadLeads/-->
+
+                            <!--#4DLOOP [Leads]--><!-- row -->
+
+                                <tr class="first">
+                                	<td>
+                                		<input name="Select" class="span3 check" type="checkbox" id="Select" value="<!--#4DHTMLVAR [Leads]uuid-->"></label>
+								   </td>
+								   <td>
+
+                                        <a href="javascript:void(0)" onClick="__showleadForm('<!--#4DHTMLVAR [Leads]uuid-->')"><!--#4DHTMLVAR [Leads]Product--></a>
+
+                                    </td>
+
+                                	<td>
+
+                                        <a href="javascript:void(0)" onClick="__showleadForm('<!--#4DHTMLVAR [Leads]uuid-->')"><!--#4DHTMLVAR [Leads]CompanyName--></a>
+
+                                    </td>
+
+									<td>
+
+                                        <!--#4DHTMLVAR [Leads]Town-->
+
+                                    </td>
+
+                                    <td>
+
+                                        <!--#4DHTMLVAR [Leads]Phone-->
+
+                                    </td>
+
+									<td>
+
+										<!--#4DHTMLVAR [Leads]Country-->
+
+                                    </td>
+
+                                    <td>
+
+                                        <!--#4DHTMLVAR [Leads]EnterDate-->
+
+                                    </td>                                   
+
+                                    <td>
+										<!--#4DIF ([Leads]Inactive=True)--><span class="label label-info">InActive</span><!--#4DELSE--><span class="label label-success">Active</span><!--#4DENDIF-->
+
+                                    </td>
+									<td>
+                                        <!-- <a href="javascript:void(0)" onClick="__showEmailForm('<!~~#4DHTMLVAR [Leads]uuid~~>')">Send mail</a> -->
+                                        <ul class="actions">
+                                    		<li><a href="javascript:void(0)" onClick="__showleadForm('<!--#4DHTMLVAR [Leads]uuid-->')"><i class="table-edit"></i></a></li>
+                                    		<li><a href="javascript:void(0)" onClick="__showEmailForm('<!--#4DHTMLVAR [Leads]uuid-->')"><i class="icon-envelope"></i></a></li>
+                                        	<li class="last"><i class="table-delete"></i></li>
+                                   	 	</ul>
+                                    </td>
+                                </tr>
+
+							<!--#4DENDLOOP-->
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+                <!-- end Lead table -->
+
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- end main container -->
+
+
+
+	<!-- scripts -->
+
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+
+<script>
+
+    
+
+function __showActiveLeads()
+
+{
+
+pUrlStr='leads.shtml?keyword='+$('#keyword').val()+'&tab=Active';
+
+window.location.href=pUrlStr;
+
+}
+
+
+
+function __showInActiveLeads()
+
+{
+
+pUrlStr='leads.shtml?keyword='+$('#keyword').val()+'&tab=InActive';
+
+window.location.href=pUrlStr;
+
+}
+
+
+
+function __showAllLeads()
+
+{
+
+pUrlStr='leads.shtml';
+
+window.location.href=pUrlStr;
+
+}
+
+
+
+function __showLeads()
+
+{
+
+pUrlStr='leads.shtml?keyword='+$('#keyword').val();
+
+window.location.href=pUrlStr;
+
+}
+
+
+function __showleadForm(uuid)
+
+{
+
+pUrlStr='lead.shtml?uuid='+uuid;
+
+window.location.href=pUrlStr;
+
+}
+
+
+function __showEmailForm(uuid)
+{
+pUrlStr='email.shtml?Lead_uuid='+uuid;
+window.location.href=pUrlStr;
+}
+
+
+function __showleadForm_AddSet(name)
+{
+	var selected='';
+	$('.check').each(function(){
+		if($(this).is(":checked")){
+			if(selected==''){
+				selected=$(this).val();
+			}
+			else{
+				selected+=","+$(this).val();
+			}
+		}
+	
+	});
+	if(selected!=''){
+		if(name=='new_set'){
+			var new_set=prompt("Please enter name of new set:","userset_1");
+			$('#new_name').val(new_set);
+			if(new_set!=null){
+				$('#selected').val(selected);
+				$('#set').val("add_to_"+name);
+				$('#frm_set').submit();
+			
+			}
+		}
+		else
+		{
+			$('#selected').val(selected);
+			$('#set').val("add_to_"+name);
+			$('#frm_set').submit();
+		}
+	}
+	//pUrlStr='leads.shtml?set=add_to_'+name;
+	//window.location.href=pUrlStr;
+}
+
+
+$(document).ready(function() {
+
+
+
+$('#keyword').focus();
+
+
+
+//setup before functions
+
+var typingTimer;                //timer identifier
+
+var doneTypingInterval = 1000;  //time in ms, 5 second for example
+
+
+
+//on keyup, start the countdown
+
+$('#keyword').keyup(function(){
+
+    clearTimeout(typingTimer);
+
+    if ($('#keyword').val) {
+
+        typingTimer = setTimeout(function(){
+
+            //do stuff here e.g ajax call etc....
+
+             var v = $("#keyword").val();
+
+__showLeads();
+
+        }, doneTypingInterval);
+
+    }
+
+});
+
+
+
+    });
+
+
+
+    </script>
+
+</body>
+
+</html>

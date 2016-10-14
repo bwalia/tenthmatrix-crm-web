@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Tenthmatrix CRM App : Orders</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- bootstrap -->
+	<link href="css/bootstrap/bootstrap.css" rel="stylesheet">
+    <link href="css/bootstrap/bootstrap-responsive.css" rel="stylesheet">
+    <link href="css/bootstrap/bootstrap-overrides.css" type="text/css" rel="stylesheet">
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/app/includes/header.shtml-->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    
+    	<style type="text/css">
+		.Highlight
+		{
+			background-color: #dcfac9!important;
+			cursor: pointer;
+		}
+		
+		.pull-right
+		{
+		
+		margin: 0 4px 4px 4px;
+		padding:0 4px 4px 4px;
+		
+		}
+		ul.actions{
+			list-style:none;
+		}
+		#message{
+	color:#FF0000;
+}
+		
+	</style>
+
+
+</head>
+<body>
+
+	<!-- main container -->
+    <div class="content wide-content">
+	
+			<div class="container-fluid">
+		<form id="frm_set" name="frm_set"  method="post" action="">
+		
+         <div class="" style=" padding:15px 0 0 0;">
+
+				
+                  <!-- 
+<strong>Add to Set:</strong>
+					<div class="ui-select" style="margin-right:15px;"> 
+					<select name="add_sets" id="add_sets" onChange="__showinvoicesForm_AddSet(this.value)">
+						<option value="">~~Select Set~~</option>
+						<!~~#4DSCRIPT/Web_LoadInvoicesSets/~~>
+							<!~~4DLOOP  [saved_sets]~~>									
+							<option value="<!~~#4DHTMLVAR [saved_sets]name~~>" ><!~~#4DHTMLVAR [saved_sets]name~~></option>
+							<!~~4DENDLOOP~~>
+						<option id="opt_new_set" value="new_set">Create New Set</option>
+					</select>
+					</div>
+ -->
+
+                            
+                            
+					<!-- 
+<strong>Load Set:</strong>
+					<div class="ui-select" >
+                    
+					<select name="load_sets" id="load_sets" onChange="__showinvoicesForm_LoadSet(this.value)">
+						<option value=""> All Records</option>
+						<!~~#4DSCRIPT/Web_LoadInvoicesSets/~~>
+							<!~~4DLOOP  [saved_sets]~~>									
+							<option value="<!~~#4DHTMLVAR [saved_sets]name~~>" ><!~~#4DHTMLVAR [saved_sets]name~~></option>
+							<!~~4DENDLOOP~~>
+                        
+					</select>
+					</div> 
+ -->
+                        <div class="pull-right">
+                            <div class="btn-group pull-right">
+                                <button class="glow left large" onClick="__showOrders(); return false;">All</button>
+                                <button class="glow middle large" onClick="__showAcknowledgedOrders(); return false;">Acknowledged</button>
+                                <button class="glow middle large" onClick="__showDeliveredOrders(); return false;">Delivered</button>
+                                <button class="glow right large" onClick="__showCompletedOrders(); return false;">Completed</button> 
+                                <a href="order.shtml"  title="Add New Order" class="btn-flat success new-product margn-lft35" style="margin-left:15px;">+ Add New Order</a>
+                            </div>
+                            <input name="typeKeyword" style="margin-top:3px;" id="typeKeyword" type="text" class="search order-search" placeholder="Enter customer name.." value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" />
+                        </div>
+						</div>
+				<!-- 
+<div class="" style=" padding:15px 0 0 0;">
+					 <div class="pull-left">
+						<button onClick="__downloadPdf(); return false;" class="btn-flat success new-product margn-lft35" style="margin-left:15px;">Download PDF</button>
+					</div>
+				</div>
+ -->
+        
+        
+            <div id="pad-wrapper" class="datatables-page">
+                <div class="row-fluid">
+                    <div class="span12">
+
+                        <table cellpadding="0" cellspacing="0" border="0" class="dataTable" id="orders_table">
+                            <thead>
+                                <tr role="row">
+                                    <th align="left"><input name="chk_all" type="checkbox" id="chk_all" value="">
+                                    </th>
+                                    <th align="left">ORDER ID
+                                    </th>
+                                    <th align="left">ORDER DATE
+                                    </th>
+                                    <th align="left">CLIENT
+                                    </th>
+                                    <th align="left">PROJECT
+                                    </th>
+                                    <th align="left">ORDER DATE PAID
+                                    </th>
+                                    <th align="left">TOTAL DUE WITHOUT TAX
+                                    </th>
+                                     <th align="left">TOTAL DUE WITH TAX
+                                    </th>
+                                    <th align="left">BALANCE DUE
+                                    </th>
+                                    <th align="left">ORDER BY
+                                    </th>
+                                    <th align="left">STATUS
+                                    </th>
+                                    
+                                </tr>
+                            </thead>
+                            <tfoot>
+                            <tr>
+                                <th align="left">&nbsp;</th>
+                                <th align="left">ORDER ID</th>
+                                <th align="left">ORDER DATE</th>
+                                <th align="left">CLIENT</th>
+                                <th align="left">PROJECT</th>
+                                <th align="left">ORDER DATE PAID</th>
+                                <th align="left">TOTAL DUE WITHOUT TAX</th>
+                                <th align="left">TOTAL DUE WITH TAX</th>
+                                <th align="left">BALANCE DUE</th>
+                                <th align="left">ORDER BY</th>
+                                <th align="left">STATUS</th>
+								<!--<th align="left">ACTION</th>-->
+                            </tr>
+                        </tfoot>
+
+                            <tbody id="orders_table_body">
+
+                        </tbody>
+                        </table>
+						<div id="img_loading_div" style="text-align:center">
+		<img src="../loading.gif"  style="padding:20px;" width="34" >
+		</div>
+
+                    </div>
+                </div>
+            </div>
+			</form>
+        </div>
+    </div>
+	
+	<div class="example-container">
+								<pre class="code" style="display:none;" id="new_set_prompt">
+									var statesdemo = {
+										state0: {
+											title: 'Please enter name of new set',
+											html:'&lt;div id="message"&gt;&lt;/div&gt;&lt;input type="text" name="new_set" id="new_set" value="userset_1"&gt;&lt;br /&gt;',
+											buttons: { Cancel : 0, Ok: 1 },
+											focus: "#new_set",																		
+											submit:function(e,v,m,f){ 
+												//console.log(f);
+												if(v==1) {
+													e.preventDefault();
+													var new_set=$('#new_set').val().trim();
+													if(new_set!=''){
+														var exist=false;
+														$('#add_sets option').each(function() {
+															if(new_set.toLowerCase()==$(this).val().toLowerCase()){
+																exist=true;
+															}
+														});
+														if(exist==false){
+															start=0;
+															end=50;
+															tab='';
+															jsonRow = 'loadorders.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab+'&selected='+selected+'&set=add_to_'+new_set;
+															$.getJSON(jsonRow,function(result){
+																if(result.Alert){
+																	$('#opt_new_set').before('&lt;option value="'+new_set+'"&gt;'+new_set+'&lt;/option&gt;');
+																	$('#add_sets').val(new_set);
+																	$(".jqibox").remove();
+																	show_load_prompt();
+																}
+															});				
+														}
+														else{
+															$('#message').html('* '+new_set+' already exists. Please enter another name of set');
+														}
+													}
+													else{
+														$('#message').html('* Please enter name of new set');
+														$('#new_set').focus();
+													}
+												}
+												if(v==0) {
+													$.prompt.close();
+													$('#add_sets').val('');
+												}
+											}
+										},
+										
+									};
+
+									$.prompt(statesdemo);
+								</pre>
+								
+								<pre class="code" style="display:none;" id="load_prompt">
+									var statesdemo = {
+										state0: {
+											title: 'Do you want to load the records of '+$('#add_sets').val()+'?',
+											html:'',
+											buttons: { No : 0, Yes: 1 },																		
+											submit:function(e,v,m,f){ 
+												//console.log(f);
+												if(v==1) {
+													location.href='invoices.shtml?load_set='+$('#add_sets').val();
+												}
+												if(v==0) {
+													$.prompt.close();
+													$('#add_sets').val('');
+													$('.check').prop('checked', false);
+												}
+											}
+										},
+										
+									};
+
+									$.prompt(statesdemo);
+								</pre>
+								<pre class="code" style="display:none;" id="no_rec_prompt">
+									var statesdemo = {
+										state0: {
+											title: 'No more records found',
+											html:'',
+											buttons: { OK: 1 },																		
+											submit:function(e,v,m,f){ 
+												//console.log(f);
+												if(v==1) {
+													$.prompt.close();
+												}
+												
+											}
+										},
+										
+									};
+									if(!($(".jqibox").length))
+									$.prompt(statesdemo);
+								</pre>
+								<pre class="code" style="display:none;" id="no_selection_prompt">
+									var statesdemo = {
+										state0: {
+											title: 'Please select invoices',
+											html:'',
+											buttons: { OK: 1 },																		
+											submit:function(e,v,m,f){ 
+												//console.log(f);
+												if(v==1) {
+													$.prompt.close();
+												}
+												
+											}
+										},
+										
+									};
+									if(!($(".jqibox").length))
+									$.prompt(statesdemo);
+								</pre>
+								<!--<a class="run">Run It!</a>-->
+							</div>
+    <!-- end main container -->
+
+	<!-- scripts -->
+    <script src="js/jquery-latest.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.dataTables.js"></script>
+	<script type="text/javascript" src="js/jquery-impromptu.js"></script>
+    <script src="js/theme.js"></script>
+
+<script type="text/javascript">
+var JSONdata;
+var selected='';
+ var start=0, end=50;
+ var old_srch='',keyword='', jsonRow='', tab='', set='';
+ var tablname='orders';
+ var process=false;
+ var selected_set='<!--#4DVAR _HIT_WebApp_GetField ("load_set") -->';
+			// Hide the first cell for JavaScript enabled browsers.
+			$('#orders_table td:first-child').hide();
+
+			// Assign a click handler that grabs the URL from the first cell and redirects the user.
+			$('#orders_table tr td').click(function ()
+			{
+				if(!($(this).find(':checkbox').length)) {
+				location.href = 'order.shtml?uuid='+$(this).parents('tr').find(':checkbox').val()+'&token='+Math.random();
+				}
+			});
+
+function __updateMsgFor4D(pMsgTxt)
+{
+$('#__4D_StatusMsg').val(pMsgTxt);
+}
+
+function __downloadPdf()
+{
+	selected='';
+	$('.check').each(function(){
+		if($(this).is(":checked")){
+			if(selected==''){
+				selected=$(this).val();
+			}
+			else{
+				selected+=","+$(this).val();
+			}
+		}
+	
+	});
+	if(selected!=''){
+		//console.log(selected);
+		//location.href='invoice_preview.shtml?uuid='+selected;
+		window.open('invoice_preview.shtml?uuid='+selected+'&token=<!--#4DVAR _HIT_TokenGetAny-->');
+		$('.check').each(function(){
+			$(this).attr('checked', false);
+		});
+	}
+	else{
+		code = $('#no_selection_prompt').text();
+		(new Function(code))();
+		complete=true;
+		//alert("Please select invoices");
+	}
+}
+function __showCompletedOrders()
+{
+	start=0;
+	end=50;
+	tab=5;
+	jsonRow = 'loadorders.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab+'&set='+selected_set;
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}
+	$('#orders_table_body').html('');
+	$('#img_loading_div').show();		
+	load_data(jsonRow);
+}
+
+
+function __showDeliveredOrders()
+{
+	start=0;
+	end=50;
+	tab=4;
+	jsonRow = 'loadorders.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab+'&set='+selected_set;
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}	
+	$('#orders_table_body').html('');
+	$('#img_loading_div').show();	
+	load_data(jsonRow);
+}
+
+function __showAcknowledgedOrders()
+{
+	start=0;
+	end=50;
+	tab=2;
+	jsonRow = 'loadorders.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab+'&set='+selected_set;
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}	
+	$('#orders_table_body').html('');
+	$('#img_loading_div').show();	
+	load_data(jsonRow);
+}
+
+function __showOrders()
+{
+	start=0;
+	end=50;
+	tab='';
+	jsonRow = 'loadorders.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&set='+selected_set;
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}	
+	$('#orders_table_body').html('');
+	$('#img_loading_div').show();	
+	load_data(jsonRow);
+}
+
+function __showinvoicesForm_AddSet(name)
+{
+	if(name!=''){
+		selected='';
+		$('.check').each(function(){
+			if($(this).is(":checked")){
+				if(selected==''){
+					selected=$(this).val();
+				}
+				else{
+					selected+=","+$(this).val();
+				}
+			}
+		
+		});
+		if(selected!=''){
+			if(name=='new_set'){
+				//var new_set=prompt("Please enter name of new set:","userset_1");				
+				code = $('#new_set_prompt').text();
+				(new Function(code))();	
+			}
+			else
+			{
+				start=0;
+				end=50;
+				tab='';
+				jsonRow = 'loadorders.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab+'&selected='+selected+'&set=add_to_'+name;
+				$.getJSON(jsonRow,function(result){
+					if(result.Alert){
+						code = $('#load_prompt').text();
+						(new Function(code))();
+					}
+				});
+			}
+		}
+		else{
+			code = $('#no_selection_prompt').text();
+			(new Function(code))();
+			complete=true;
+			$('#add_sets').val('');
+		}
+	}
+}
+
+function __showinvoicesForm_LoadSet(name)
+{
+	location.href='invoices.shtml?load_set='+name;
+}
+
+function show_load_prompt(){
+	code = $('#load_prompt').text();
+	(new Function(code))();
+}
+
+ 
+$(document).ready(function() {
+
+	$('#typeKeyword').focus();
+	$('#load_sets').val(selected_set);
+	$('#add_sets option[value="'+selected_set+'"]').hide();
+	keyword= $("#typeKeyword").val();
+	jsonRow = 'loadorders.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&set='+selected_set;		
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}
+	if(tab!=''){
+		jsonRow +='&tab='+tab;
+	}	
+	load_data(jsonRow);			 
+	
+	$(window).scroll(function(){
+		if ($(window).scrollTop() == $(document).height() - $(window).height()){
+		$('#img_loading_div').show();	
+//alert("scrolling before..."+start+", "+end);
+		start=end+1;
+		end=start+50;
+//alert("scrolling after..."+start+", "+end);
+		jsonRow = 'loadorders.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&set='+selected_set;
+		if(keyword!=''){
+			jsonRow +='&keyword='+keyword;
+		}
+		if(tab!=''){
+			jsonRow +='&tab='+tab;
+		}		
+		load_data(jsonRow);
+		
+		}
+	});	
+	
+	//setup before functions
+	var typingTimer;                //timer identifier
+	var doneTypingInterval = 1000;  //time in ms, 5 second for example
+	
+	//on keyup, start the countdown
+	$('#typeKeyword').keyup(function(){
+		clearTimeout(typingTimer);
+		if ($('#typeKeyword').val) {
+			typingTimer = setTimeout(function(){
+				//do stuff here e.g ajax call etc....
+				$('#orders_table_body').html('');
+				$('#img_loading_div').show();
+				start=0;
+				end=start+50;
+				tab='';
+
+				jsonRow = 'loadorders.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&set='+selected_set;
+				if(keyword!=''){
+					jsonRow +='&keyword='+keyword;
+				}
+				if(tab!=''){
+					jsonRow +='&tab='+tab;
+				}	
+				load_data(jsonRow);
+			}, doneTypingInterval);
+		}
+	});	
+	
+	$('#orders_table').on("click","#chk_all", function(){
+			if($(this).is(":checked")){
+					$('.check').prop('checked', true);
+				}
+				else{
+					$('.check').prop('checked', false);
+				}
+		});		
+	
+});
+
+function load_data(jsonRow){
+	JSONdata=new Array();
+	$.getJSON(jsonRow,function(result){
+	
+			if(result.Alert){
+				code = $('#no_rec_prompt').text();
+				(new Function(code))();
+			}
+			else{
+			
+				$.each(result.uuid, function(i,item)
+				{
+					JSONdata[i]=new Array();
+					JSONdata[i][0]='<input class="check" type="checkbox" value="'+item+'">';
+				}); 
+				$.each(result.orderid, function(i,item)
+				{
+					JSONdata[i][1]=item;
+					
+				});
+				$.each(result.order_date, function(i,item)
+				{
+					JSONdata[i][2]=item;
+				});
+				$.each(result.client, function(i,item)
+				{
+					JSONdata[i][3]=item;
+				});
+				$.each(result.project, function(i,item)
+				{					
+					JSONdata[i][4]=item;
+				});
+				$.each(result.approved_date, function(i,item)
+				{					
+					JSONdata[i][5]=item;
+				});
+				$.each(result.total_due_without_tax, function(i,item)
+				{					
+					JSONdata[i][6]=item;
+				});
+				$.each(result.total_due_with_tax, function(i,item)
+				{					
+					JSONdata[i][7]=item;
+				});
+				$.each(result.balance_due, function(i,item)
+				{
+					JSONdata[i][8]=item;
+				});
+				
+				$.each(result.order_by, function(i,item)
+				{					
+					JSONdata[i][9]=item;
+				});
+				$.each(result.status, function(i,item)
+				{					
+					if(item==0){
+						JSONdata[i][10]="Quote";
+					}if(item==1){
+						JSONdata[i][10]="Ordered";
+					}
+					else if(item==2){
+						JSONdata[i][10]="Acknowledged";
+					}
+					else if(item==3){
+						JSONdata[i][10]="Authorised";
+					}else if(item==4){
+						JSONdata[i][10]="Delivered";
+					}else if(item==5){
+						JSONdata[i][10]="Completed ";
+					}
+					
+				});
+								
+				var table_html='';
+				var trClassStr='odd';
+				$.each(JSONdata, function(i,row)
+				{
+				
+					table_html+='<tr class="'+trClassStr+'">';
+					if(trClassStr=='odd') { trClassStr='even'; } else { trClassStr='odd' };
+					$.each(row, function(i,col){
+					//if(i==0) { console.log(i+'--**--'+col); }
+						table_html+='<td>'+col+'</td>';
+					});
+					table_html+='</tr>';
+				});
+				if(old_srch!=keyword){
+					$('#orders_table_body').html('');
+					old_srch=keyword;
+				}
+				//alert(table_html);
+				
+				$('#orders_table_body').append(table_html);
+				__updateMsgFor4D('Showing Invoices from '+(start)+' to '+end+' in chronological order.');
+
+			// Apply a class on mouse over and remove it on mouse out.
+			$('#orders_table tbody tr').unbind();
+			$('#orders_table tbody tr').hover(function ()
+			{
+				$(this).toggleClass('Highlight');
+			});
+
+			// Assign a click handler that grabs the URL from the first cell and redirects the user.
+			$('#orders_table tr td').click(function ()
+			{
+				if(!($(this).find(':checkbox').length || $(this).find('ul.actions').length)){
+				
+if($.__4D_IsIn4D__()) {
+location.href = 'http://__4DURLHandler__/Edit-Order-'+$(this).parents('tr').find(':checkbox').val()+'&token='+Math.random();
+} else {
+//location.href = 'invoice.shtml?uuid='+$(this).parents('tr').find(':checkbox').val()+'&token='+Math.random();
+pInvoiceURLStr = 'order.shtml?uuid='+$(this).parents('tr').find(':checkbox').val()+'&token='+Math.random();
+window.open(pInvoiceURLStr, '_blank');	}		
+				
+				
+				}
+			});
+
+		}
+		$('#img_loading_div').hide();
+		});
+}
+
+
+
+
+</script>
+
+
+<!--PUT IN _HIT_LoadInclude/hit/app/includes/InitJS4DCallBacks.shtml LATER ON-->
+<form action="http://__4DURLHandler__/JS4DCallBacks" method="get">
+<input type="hidden" name="__4D_version" id="__4D_version" value="" />
+<input type="hidden" name="__App_version" id="__App_version" value="" />
+<input type="hidden" name="__in_4D" id="__in_4D" value="false" />
+<input type="hidden" name="__in_DevMode" id="__in_DevMode" value="false" />
+<input type="hidden" name="__in_DebugMode" id="__in_DebugMode" value="false" />
+<input type="hidden" name="__windowTitleStr" id="__windowTitleStr" value="<!--#4DIF (system_IsStaging)-->STAGING <!--#4DELSE-->LIVE <!--#4DENDIF-->CRM v <!--#4DTEXT Sys_VersionGet-->" />
+<input type="hidden" name="__4D_StatusMsg" id="__4D_StatusMsg" value="" />
+</form>
+
+<script type="text/javascript">
+
+$.__resetSiteByID = function __resetSiteByID(pSiteID,pSiteType){
+//alert(pSiteID+' '+pSiteType);
+pURLPageStr='hit/app/images_gallery.shtml?siteid='+pSiteID
+
+if(pSiteType=='staging'){
+pURLStr='http://staging.netterimages.com/'+pURLPageStr;
+pURLStr=pURLStr+'&connect_to=Staging';
+} else {
+pURLStr='http://www.netterimages.com/'+pURLPageStr;
+}
+
+pURLStr=pURLStr+'&'+Math.random();
+
+window.location.href=pURLStr;
+
+}
+
+
+$._openNewWindow = function _openNewWindow(pURLStr,pWinTitieStr){
+
+myWindow=window.open(pURLStr,pWinTitieStr,'width=1400,height=1000');
+//myWindow.document.write("<p>This is 'myWindow'</p>");
+myWindow.focus();
+
+}
+
+$.__4D_Init__ = function __4D_Init__(p4DVersionStr, pIn4DBoolStr, pDevModeStr, pDebugModeStr)
+{
+
+$.__Alert_IfDebug__("__4D_Init__ called by 4D. p4DVersionStr: " + p4DVersionStr + ", pIn4DBoolStr: "+pIn4DBoolStr);
+$( "#__4D_version" ).val(p4DVersionStr);
+$( "#__in_4D" ).val(pIn4DBoolStr);
+$( "#__in_DevMode" ).val(pIn4DBoolStr);
+$( "#__in_DebugMode" ).val(pDebugModeStr);
+
+return "OK";
+}
+
+$.__4DURLHandler__ = function __4DURLHandler__(pUUIDStr, pCodeStr)
+{
+
+if($.__4D_IsIn4D__())
+{
+$.__Alert_IfDebug__("__4DURLHandler__ called by 4D "+pUUIDStr);
+} else {
+$.__Alert_IfDebug__("__4DURLHandler__ called by Browser "+pUUIDStr);
+
+pURLPageStr="invoice.shtml?uuid="+pUUIDStr+"&"+Math.random();
+
+if(pCodeStr=="edit-order")
+{
+$._openNewWindow(pURLPageStr, "Edit Order "+pUUIDStr);
+}
+
+if(pCodeStr=="new-image")
+{
+$._openNewWindow(pURLPageStr, "New Order "+pUUIDStr);
+}
+}
+
+}
+
+$.__4D_IsIn4D__ = function __4D_IsIn4D__()
+{
+rIsIn4DStr = $( "#__in_4D" ).val();
+return (rIsIn4DStr=="true");
+}
+
+$.__IsDevMode__ = function __IsDevMode__(pModeBool)
+{
+nParams = __IsDevMode__.arguments.length;
+if(nParams>0) { if( pModeBool ) { $( "#__in_DevMode" ).val("true"); } else { $( "#__in_DevMode" ).val("false"); } }
+
+return ($( "#__in_DevMode" ).val()=="true");
+
+}
+
+$.__IsDebugMode__ = function __IsDebugMode__(pModeBool)
+{
+nParams = __IsDebugMode__.arguments.length;
+
+if(nParams>0) { if( pModeBool ) { $( "#__in_DebugMode" ).val("true"); } else { $( "#__in_DebugMode" ).val("false"); } }
+
+return ($( "#__in_DebugMode" ).val()=="true");
+
+}
+
+
+$.__Alert_IfDebug__ = function __Alert_IfDebug__(pAlertMsgTxt)
+{
+if($.__IsDebugMode__())
+{
+alert(pAlertMsgTxt);
+}
+}
+
+$.__4D_Img_SiteID_Get = function __4D_Img_SiteID_Get(){
+//alert("__4D_Img_SiteID_Get " + $( "#__siteID" ).val());
+return $( "#__siteID" ).val();
+}
+$.__4D_Img_UUID_Get = function __4D_Img_UUID_Get(){
+//alert("__4D_Img_UUID_Get " + $( "#img_uuid" ).val());
+return $( "#img_uuid" ).val();
+}
+
+$.__4D_Img_VariantUUID_Get = function __4D_Img_VariantUUID_Get(){
+//alert("__4D_Img_VariantUUID_Get " + $( "#var_uuid" ).val());
+return $( "#var_uuid" ).val();
+}
+
+$.__4D_WindowTitle_Get = function __4D_WindowTitle_Get(){
+//alert("__4D_WindowTitle_Get " + $( "#__windowTitleStr" ).val());
+return $( "#__windowTitleStr" ).val();
+}
+
+$.__4D_StatusMsg_Get = function __4D_StatusMsg_Get(){
+//alert("__4D_StatusMsg_Get " + $( "#__windowTitleStr" ).val());
+return $( "#__4D_StatusMsg" ).val();
+}
+
+$.__4D_Version_Set = function __4D_Version_Set(pVersionStr){
+$( "#__4D_version" ).val(pVersionStr);
+return "OK";//alert($( "#__4D_version" ).val());
+}
+
+$.__4D_AppVersion_Set = function __4D_AppVersion_Set(pAppVersionStr){
+$( "#__App_version" ).val(pAppVersionStr);
+return "OK";
+}
+
+</script>
+</body>
+</html>

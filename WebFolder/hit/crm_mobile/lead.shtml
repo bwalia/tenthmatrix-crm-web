@@ -1,0 +1,263 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+C_TEXT(_HTMLTITLETXT)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+
+QUERY([Leads];[Leads]uuid=_HIT_WebApp_GetField ("uuid"))
+QUERY([Lead_Contacts];[Lead_Contacts]CompanyNumber=[Leads]RecordNumber)
+QUERY([Activity];[Activity]CompanyNumber=[Leads]RecordNumber)
+
+IF (Records in selection([Leads])=0)
+_HTMLTITLETXT:="New Lead"
+ELSE
+_HTMLTITLETXT:= "Edit Lead"
+END IF
+
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+
+-->
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/main-header.shtml-->
+<link rel="stylesheet" href="css/jquery-ui.css">
+<script src="js/datepicker.js"></script>
+<script src="js/jquery.validate.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+		$('#Enter_Date').datepicker({
+    		autoclose: true,
+    		changeMonth: true,
+      		changeYear: true,
+      		dateFormat: 'dd/mm/yy'
+    	});
+		
+		$('#Inactive_Date').datepicker({
+			autoclose: true,
+    		changeMonth: true,
+      		changeYear: true,
+      		dateFormat: 'dd/mm/yy'
+		});
+		
+	// validate signup form on keyup and submit
+	$("#DetailForm").validate({
+		rules: {
+			Product: { required: true },
+			Lead_name: { required: true },
+			Address1: { required: true },
+			Postcode: { required: true },
+			Country: { required: true },
+			Source_type: { required: true },
+			Source: { required: true },
+			Email: { required: true, email : true }
+		}
+	});
+});
+
+</script>
+<style>
+label.error { 
+	float: left; 
+	color: red; 
+	padding-top: 1.5em; 
+	vertical-align: top; 
+}
+</style>
+</head>
+<body>
+
+<div data-role="page" class="jqm-demos" data-quicklinks="true">
+	<!-- header -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/top-header.shtml-->
+	<!-- /header -->
+	<div role="main" class="ui-content jqm-content">
+		<h3><!--#4DIF (Records in selection([Leads])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Lead</h3>
+		<div class="ui-body-d ui-content">
+  			<div data-demo-html="true">
+  				<form novalidate="novalidate" data-ajax="false" name="DetailForm" id="DetailForm" action="savelead.cgi" method="post">
+  					<input name="lead_uuid" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="lead_uuid"> 
+					<input name="lead_id" type="hidden" value="<!--#4DVAR [Leads]RecordNumber-->" id="lead_id">
+					<div class="ui-field-contain">
+						<label>Product</label>
+						<input type="text" value="<!--#4DVAR [Leads]Product-->" name="Product" id="Product">
+					</div>
+					<div class="ui-field-contain">
+						<label>Lead Name</label>
+						<input name="Lead_name"  type="text" value="<!--#4DVAR [Leads]CompanyName-->" id="Lead_name">
+					</div>
+					<div class="ui-field-contain">
+						<label>First Name </label>
+						<input name="First_name" type="text" value="<!--#4DVAR [Leads]First name-->" id="First_name">
+					</div>
+					<div class="ui-field-contain">
+						<label>Address1</label>
+						<textarea name="Address1" id="Address1" ><!--#4DVAR [Leads]Address1--></textarea>                                
+					</div>
+					<div class="ui-field-contain">
+						<label>Address2</label>
+						<textarea name="Address2" id="Address2" ><!--#4DVAR [Leads]Address2--></textarea>         
+					</div>						   
+					<div class="ui-field-contain">
+						<label>Town</label>
+						<input name="Town"  type="text" value="<!--#4DVAR [Leads]Town-->" id="Town">						
+					</div>
+					<div class="ui-field-contain">
+						<label>County</label>
+						<input name="County"  type="text" value="<!--#4DVAR [Leads]County-->" id="County">						
+					</div>
+					<div class="ui-field-contain">
+						<label>Postcode</label>
+						<input name="Postcode" type="text" value="<!--#4DVAR [Leads]PostCode-->" id="Postcode">
+					</div>
+					<div class="ui-field-contain">
+						<label>Country</label>
+						<input name="Country"  type="text" value="<!--#4DVAR [Leads]Country-->" id="Country">
+					</div>
+					<div class="ui-field-contain">
+									<label>Phone </label>
+									<input class="span6 phone" type="text" value="<!--#4DVAR [Leads]Phone-->" name="Phone" id="Phone">
+								</div>
+								<div class="ui-field-contain">
+									<label>Mobile </label>
+									<input name="Mobile" class="span6 phone" type="text" value="<!--#4DVAR [Leads]Mobile-->" id="Mobile">
+								</div>
+								<div class="ui-field-contain">
+									<label>Fax </label>
+									<input name="Fax"  type="text" value="<!--#4DVAR [Leads]Fax-->" id="Fax">
+								</div>							
+								
+								<div class="ui-field-contain">
+									<label>Email </label>
+									<input name="Email"  type="text" value="<!--#4DVAR [Leads]Email-->" id="Email">
+								</div>
+								<div class="ui-field-contain">
+									<label>Website </label>
+									<input name="Website"  type="text" value="<!--#4DVAR [Leads]WebSite-->" id="Website">
+								</div>	
+								
+								<div class="ui-field-contain">
+									<label>Company Size </label>
+									<input name="Company_Size"  type="text" value="<!--#4DVAR [Leads]CompanySize-->" id="Company_Size">
+								</div>	
+								
+								<div class="ui-field-contain">
+									<label>Source Type </label>
+									<input name="Source_type"  type="text" value="<!--#4DVAR [Leads]SourceType-->" id="Source_type">
+								</div>
+								<div class="ui-field-contain">
+									<label>Source </label>
+									<input name="Source"  type="text" value="<!--#4DVAR [Leads]Source-->" id="Source">                                 
+								</div>
+								
+								<div class="ui-field-contain">
+									<label>Business Type </label>
+									<input name="Business_type"  type="text" value="<!--#4DVAR [Leads]BusinessType-->" id="Business_type">                                 
+								</div>
+								
+								<div class="ui-field-contain">
+									<label>Requests </label>
+									<input name="Requests"  type="text" value="<!--#4DVAR [Leads]Requests-->" id="Requests">                                 
+								</div>
+								
+								<div class="ui-field-contain">
+									<label>Comments</label>
+									<textarea name="Comments"  id="Comments" ><!--#4DVAR [Leads]Comments--></textarea>         
+								</div>	
+								
+								<div class="ui-field-contain">
+									<label>Interested in</label>
+									<textarea name="Interested_in"  id="Interested_in" ><!--#4DVAR [Leads]InterestedKeywords--></textarea>         
+								</div>	
+													   
+								<div class="ui-field-contain">
+									<label>Main Contact First Name </label>
+									<input name="First_name"  type="text" value="<!--#4DVAR [Leads]MaincontactFirstName-->" id="First_name">						
+								</div>
+								<div class="ui-field-contain">
+									<label>Main Contact Last Name </label>
+									<input name="Last_name"  type="text" value="<!--#4DVAR [Leads]MainContactLastName-->" id="Last_name">
+								</div>
+								<div class="ui-field-contain">
+									<label>Job Title </label>
+									<input name="Jobtitle"  type="text" value="<!--#4DVAR [Leads]Job title-->" id="Jobtitle">
+								</div>
+								<div class="ui-field-contain">
+                                	<label>
+										<input name="QuarkUser" class="span9" type="checkbox" value="true" id="QuarkUser" <!--#4DIF ([Leads]QuarkUser)-->checked<!--4DELSE--><!--4DENDIF--> >Quark User
+									</label>   
+								</div>
+								
+								<div class="ui-field-contain">
+									<label>						
+										<input name="InDesign_user" class="span9" type="checkbox" value="true" id="InDesign_user" <!--#4DIF ([Leads]InDesign user)-->checked<!--4DELSE--><!--4DENDIF--> >InDesign User
+									</label> 
+								</div>
+								<div class="ui-field-contain">
+									<label>  
+										<input name="Responded" class="span9" type="checkbox" value="true" id="Responded" <!--#4DIF ([Leads]Responded)-->checked<!--4DELSE--><!--4DENDIF--> >Responded to mailing
+									</label> 
+								</div>
+								<div class="ui-field-contain">
+									<label>						
+										<input name="Affiliate" class="span9" type="checkbox" value="true" id="Affiliate" <!--#4DIF ([Leads]Affiliate)-->checked<!--4DELSE--><!--4DENDIF--> >Affiliate
+									</label>
+								</div>
+								<div class="ui-field-contain">
+									<label>		
+										<input name="Send_Info" class="span9" type="checkbox" value="true" id="Send_Info" <!--#4DIF ([Leads]Send Info)-->checked<!--4DELSE--><!--4DENDIF--> >Send Info
+									</label>
+								</div>
+								<div class="ui-field-contain">
+									<label>								
+										<input name="Keep_Us_Posted" class="span9" type="checkbox" value="true" id="Keep_Us_Posted" <!--#4DIF ([Leads]KeepUsPosted)-->checked<!--4DELSE--><!--4DENDIF--> >Keep Us Posted
+									</label>
+								</div>
+								<div class="ui-field-contain">
+									<label>	
+										<input name="Give_to_reseller" class="span9" type="checkbox" value="true" id="Give_to_reseller" <!--#4DIF ([Leads]Give to reseller)-->checked<!--4DELSE--><!--4DENDIF--> >Give to reseller
+									</label>   
+								</div>
+								<div class="ui-field-contain">
+									<label>Given to reseller </label>
+									<input name="Given_to_reseller"  type="text" value="<!--#4DVAR [Leads]Given to reseller-->" id="Given_to_reseller">
+								</div>
+								<div class="ui-field-contain">
+									<label>Enter Date </label>
+									<input name="Enter_Date"  type="text" id="Enter_Date" <!--#4DIF ([Leads]EnterDate=!00/00/0000!)-->value=""<!--4DELSE-->value="<!--#4DVAR [Leads]EnterDate-->"<!--4DENDIF--> readonly >
+								</div>
+								
+								<div class="ui-field-contain">
+									<label>Entered By </label>
+									<input name="Entered_By"  type="text" value="<!--#4DVAR [Leads]EnteredBy-->" id="Entered_By">
+								</div>
+								
+								<div class="ui-field-contain">
+									<label>				
+										<input name="Inactive" class="span9" type="checkbox" value="true" id="Inactive" <!--#4DIF ([Leads]Inactive)-->checked<!--4DELSE--><!--4DENDIF--> >Inactive
+									</label>
+								</div>
+								
+								<div class="ui-field-contain">
+									<label>Inactive Date </label>
+									<input name="Inactive_Date" type="text" id="Inactive_Date" <!--#4DIF ([Leads]InactiveDate=!00/00/0000!)-->value=""<!--4DELSE-->value="<!--#4DVAR [Leads]InactiveDate-->"<!--4DENDIF--> readonly >
+								</div>
+					<button type="submit" class="ui-shadow ui-btn ui-corner-all ui-mini">Submit</button>
+					<a href="leads.shtml" data-ajax="false" class="ui-shadow ui-btn ui-corner-all ui-mini">Cancel</a>
+				</form>
+			</div>
+  		</div>
+  	</div>
+	<!-- /content -->
+	<!-- panel -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/sidebar.shtml-->
+	<!-- /panel -->
+
+	<!-- footer -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/footer.shtml-->
+	<!-- /footer -->
+</div><!-- /page -->
+
+</body>
+</html>

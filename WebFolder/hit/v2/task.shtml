@@ -1,0 +1,679 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+C_TEXT(_HTMLTITLETXT)
+
+If(_HIT_AuthenticateSession="Session-Authenticated-OK")
+QUERY([Tasks];[Tasks]uuid=_HIT_WebApp_GetField ("uuid"))
+
+QUERY([Projects];[Projects]proj_id=num([Tasks]proj_id))
+QUERY([Timeslips];[Timeslips]task_id=[Tasks]task_id)
+
+C_TEXT(_HIT_TSTXT)
+C_LONGINT(iCounter)
+_HIT_TSTXT:=""
+For (iCounter;1;Records in selection([Timeslips]))
+
+QUERY([Employees];[Employees]emp_id=[Timeslips]emp_id)
+
+_HIT_TSTXT:=_HIT_TSTXT+"<tr class='item-row' ><td class='item-id'>"+[Employees]emp_first_name+" "+[Employees]emp_last_name+"</td><td >"+[Timeslips]slip_description+"</td><td>"+string([Timeslips]slip_hours)+"</td><td ><a href='timeslip.shtml?uuid="+[Timeslips]uuid+"' target='_blank'>Edit</a></td></tr>"								
+
+NEXT RECORD([Timeslips])
+End for 
+
+Else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+End If
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<!-- BEGIN HEAD -->
+<head>
+	<title><!--#4DIF (Records in selection([Tasks])=1)-->Update Task<!--#4DELSE-->New Task<!--#4DENDIF--></title>
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/v2/includes/InitCss.shtml-->
+	<!-- BEGIN PLUGIN STYLES -->
+	<link href="assets/plugins/jquery-jvectormap/jquery-jvectormap-1.2.2.css" rel="stylesheet" />
+ 	<link href="assets/plugins/datepicker/css/datepicker.css" rel="stylesheet" />
+	<link href="assets/plugins/bootstrap-daterangepicker/daterangepicker-bs3.css" rel="stylesheet" />
+	<link href="assets/css/autocomplete.css" rel="stylesheet">
+	<style>
+		#message{
+			color:#FF0000;
+		}
+
+		.jqibox {
+			z-index:9999!important;
+		}
+	</style>
+</head>
+<!-- END HEAD -->
+<!-- BEGIN BODY -->
+<body class="fixed-leftside fixed-header">
+	<!-- BEGIN HEADER -->
+		<!--#4DSCRIPT/_HIT_LoadInclude/hit/v2/includes/header.shtml-->
+	<!-- END HEADER -->
+
+<div class="wrapper"> 
+ 		<!-- BEGIN LEFTSIDE -->
+        <!--#4DSCRIPT/_HIT_LoadInclude/hit/v2/includes/left-navigation.shtml-->
+		<!-- END LEFTSIDE -->
+  
+  <!-- BEGIN RIGHTSIDE -->
+  <div class="rightside bg-grey-100"> 
+    <!-- BEGIN PAGE HEADING -->
+    <div class="page-head">
+    	<div class="row">
+        <div class="col-sm-6">
+     	 <h1 class="page-title"><!--#4DIF (Records in selection([Tasks])=1)-->Update Task<!--#4DELSE-->New Task<!--#4DENDIF--></h1>
+         </div>
+      <!-- BEGIN BREADCRUMB -->
+      <div class="col-sm-6">
+          <ol class="breadcrumb sm-pullright">
+            <li><a href="#"><i class="ion-home margin-right-5"></i> Dashboard</a></li>
+            <li><a href="#">Add New Customers</a></li>
+          </ol>
+       </div>   
+      <!-- END BREADCRUMB -->
+      </div> 
+    </div>
+    <!-- END PAGE HEADING -->
+    
+    <div class="container-fluid">
+      
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel" style="padding-top:20px;"> 
+      <div class="panel-body no-padding-top bg-white"> 
+     <div data-example-id="togglable-tabs">
+    <ul id="new-customer-tab" class="nav nav-tabs" role="tablist">
+      <li role="presentation" class="active"><a href="#customerinfo" id="home-tab" role="tab" data-toggle="tab" aria-controls="customer-info" aria-expanded="true"><strong>Task Info</strong></a></li>
+      	<!--#4DIF (Records in selection([Tasks])=1)-->
+      	<li role="presentation"><a href="#relatedTimeslip" role="tab" id="profile-tab" data-toggle="tab" aria-controls="relatedTimeslip"><strong>Related Timeslips</strong></a></li>  
+      	<li role="presentation"><a href="#relatedTask" role="tab" id="moreinfo-tab" data-toggle="tab" aria-controls="relatedTask"><strong>Related Tasks</strong></a></li>
+      	<li role="presentation"><a href="#relatedNote" role="tab" id="note-tab" data-toggle="tab" aria-controls="relatedNote"><strong>Notes</strong></a></li>  	    
+   		<!--#4DENDIF-->
+    </ul>
+    <div id="myTabContent" class="tab-content" style="padding-top:25px; border-left: 1px solid #ddd; border-right: 1px solid #ddd;  border-bottom: 1px solid #ddd; padding-bottom:25px; padding-left:15px; padding-right:15px;">
+      <div role="tabpanel" class="tab-pane fade in active" id="customerinfo" aria-labelledby="home-tab">
+		<form class="form-horizontal" name="TaskForm" id="TaskForm" action="savetask.cgi" method="post">
+       	<div class="row">
+           	<div class=" col-sm-12 col-lg-6">
+             	<input name="Task_uuid" class="span5" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="Task_uuid">
+				<input name="tsk_id" type="hidden" value="<!--#4DVAR [Tasks]task_id-->" id="tsk_id">
+  				<div class="form-group">
+    				<label for="" class="col-sm-3 control-label">Task Name <sup class="req">*</sup></label>
+    				<div class="col-sm-9  ">
+      					<input type="text" class="form-control width300" id="Task_Name" placeholder="" value="<!--#4DVAR [Tasks]task_name-->" name="Task_Name">
+    				</div>
+  				</div>
+  				<div class="form-group">
+   					<label for="" class="col-sm-3 control-label">Reported By<sup class="req">*</sup></label>
+                    <div class="col-sm-5">
+                        <select  class="form-control" id="uuid_reported_by" name="uuid_reported_by">
+                            <option value="">--Select Employee--</option>
+                            <!--HIT_EXECUTE
+							_HIT_HTMLTXT:=""
+							QUERY([Employees];[Employees]emp_active=True)
+							ORDER BY([Employees];[Employees]emp_last_name;>)
+
+							For (_HIT_COUNTER;1;Records in selection([Employees]))
+								_HIT_HTMLTXT:=_HIT_HTMLTXT+"<option value=\""+[Employees]uuid+"\""
+								If ([Tasks]uuid_reported_by=[Employees]uuid)
+								_HIT_HTMLTXT:=_HIT_HTMLTXT+" selected"
+								End if 
+								_HIT_HTMLTXT:=_HIT_HTMLTXT+">"+[Employees]emp_first_name+" "+[Employees]emp_last_name+"</option>"
+								NEXT RECORD([Employees])
+							End for 
+							-->
+                        </select>
+                    </div>
+     			</div>
+     			<div class="form-group">
+   					<label for="" class="col-sm-3 control-label">Project Name</label>
+                    <div class="col-sm-6 ui-widget">
+                        <select class="form-control" name="Project_ID" id="Project_ID">
+                            <!--#4DIF (Records in selection([Tasks])=0)-->
+							<option value=""></option>
+							<!--#4DSCRIPT/Web_LoadProjects/-->
+							<!--4DLOOP [Projects]-->
+							<option value="<!--#4DVAR [Projects]proj_id-->" ><!--4DVAR [Projects]proj_name--></option>
+							<!--4DENDLOOP-->
+							<!--#4DELSE-->
+							<option value="<!--4DVAR [Projects]proj_id-->" selected><!--4DVAR [Projects]proj_name--></option>									 
+							<!--#4DENDIF-->
+                        </select>
+                    </div>
+     			</div>
+  				 
+  				<div class="form-group">
+   			 		<label for="firstname" class="col-sm-3  control-label">Task Start Date</label>
+    				<div class="col-sm-3">
+      					<input type="text" class="form-control datepicker" readonly id="task_start_date" name="task_start_date" placeholder="" <!--#4DIF (timestamp_unix_toDate([Tasks]Timestamp_start)=!01/01/1970!)-->value=""<!--4DELSE-->value="<!--#4DVAR timestamp_unix_toDate([Tasks]Timestamp_start)-->"<!--4DENDIF-->>
+    				</div>
+  				</div>
+  				
+  				<div class="form-group">
+   			 		<label for="firstname" class="col-sm-3  control-label">Task End Date</label>
+    				<div class="col-sm-3">
+      					<input type="text" class="form-control datepicker" readonly id="task_end_date" name="task_end_date" placeholder="" <!--#4DIF (timestamp_unix_toDate ([Tasks]Timestamp_end)=!01/01/1970!)-->value=""<!--4DELSE-->value="<!--#4DVAR timestamp_unix_toDate ([Tasks]Timestamp_end)-->"<!--4DENDIF-->>
+    				</div>
+  				</div>
+  				<div class="form-group">
+   			 		<label for="firstname" class="col-sm-3  control-label">Task Estimated Hour</label>
+    				<div class="col-sm-3">
+      					<input type="text" class="form-control" id="Task_Estimated_Hour" name="Task_Estimated_Hour" placeholder="<!--#4DVAR [Tasks]task_estimated_hours-->">
+    				</div>
+  				</div>
+  				<div class="form-group">
+   			 		<label for="firstname" class="col-sm-3  control-label">Task Rate</label>
+    				<div class="col-sm-3">
+      					<input type="text" class="form-control" name="Task_Rate" placeholder="" value="<!--#4DVAR [Tasks]task_rate-->" id="Task_Rate">
+    				</div>
+  				</div>
+  				<div class="form-group">
+   					<label for="" class="col-sm-3 control-label">Task Status</label>
+                    <div class="col-sm-3">
+                    		<Select class="form-control" name="Task_Status" id="Task_Status"> 
+							<!--#4DIF (Records in selection([Tasks])=0)-->
+							<option value="assigned" >assigned</option>
+							<!--#4DELSE-->
+							<!--HIT_EXECUTE _HIT_HTMLTXT:=Task_Status_HTMLPopup-->
+							<!--#4DENDIF-->
+							</select>
+							<Select name="Task_Status_old" id="Task_Status_old" style="display:none;" >
+							<!--#4DIF (Records in selection([Tasks])=0)-->
+							<option value="assigned" >assigned</option>
+							<!--#4DELSE-->
+							<!--HIT_EXECUTE _HIT_HTMLTXT:=Task_Status_HTMLPopup-->
+							<!--#4DENDIF-->
+						</select>
+                    </div>
+     			</div>
+				<div class="form-group">
+   					<label for="" class="col-sm-3 control-label">Assigned To</label>
+                    <div class="col-sm-5">
+                        <Select class="form-control" name="uuid_assigned_to" id="uuid_assigned_to">
+							<option value="">--Select Employee--</option>
+							<!--HIT_EXECUTE
+							_HIT_HTMLTXT:=""
+							QUERY([Employees];[Employees]emp_active=True)
+							ORDER BY([Employees];[Employees]emp_last_name;>)
+
+							For (_HIT_COUNTER;1;Records in selection([Employees]))
+							_HIT_HTMLTXT:=_HIT_HTMLTXT+"<option value=\""+[Employees]uuid+"\""
+							If ([Tasks]uuid_assigned_to=[Employees]uuid)
+							_HIT_HTMLTXT:=_HIT_HTMLTXT+" selected"
+							Else 
+							End if 
+							_HIT_HTMLTXT:=_HIT_HTMLTXT+">"+[Employees]emp_first_name+" "+[Employees]emp_last_name+"</option>"
+							NEXT RECORD([Employees])
+							End for 
+							-->
+						</select> 
+                    </div>
+     			</div>
+     			<div class="form-group">
+   					<label for="" class="col-sm-3 control-label">Active</label>
+                    <div class="col-sm-3">
+                        <Select  class="form-control" name="Task_Active" id="Task_Active" name="Task_Active">
+							<!--#4DIF (Records in selection([Tasks])=1)-->
+							<option value="Active" <!--#4DIF ([Tasks]task_active=True)-->selected<!--4DELSE--><!--4DENDIF-->>Active</option>
+							<option value="Done" <!--#4DIF ([Tasks]task_active=false)-->selected<!--4DELSE--><!--4DENDIF-->>Done</option>
+							<!--#4DELSE-->
+							<option value="Active">Active</option>
+							<!--#4DENDIF-->
+						</select> 
+                    </div>
+     			</div>
+     			
+             </div>
+ 
+             
+       		 </div>
+             <div class="row">
+             	<div class="col-sm-12 text-center">
+                	<input type="submit" class="btn palette-carrot btn-color margin-right-5 btn-sm">
+                	<input type="reset" class="btn btn-primary btn-sm">
+                </div>
+             </div>
+		</form>
+      </div>
+      		<!--#4DIF (Records in selection([Tasks])=1)-->
+      		<div role="tabpanel" class="tab-pane fade" id="relatedTimeslip" aria-labelledby="profile-tab">
+       		 <div class="row">
+                	<div class="col-sm-12">
+                	<div class="table-responsive">
+                        <table class="table table-bordered">
+							<thead>
+								<tr style="background:#fafafa;">
+								<th class="vertical-middle width-250">Employee Name</th>
+								<th class="vertical-middle width-auto">Description</th>
+								<th class="vertical-middle width-100">Hours</th>
+								<th class="vertical-middle width-100">Edit</th>
+								</tr>
+							</thead>
+							<tbody>
+								<!--#4DIF (Records in selection([Tasks])=1)-->
+		  						<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_TSTXT -->
+		  						<!--#4DENDIF-->
+		  						<tr> 
+									<td class="vertical-middle" colspan="6"><a onclick="funURLHandler('timeslip.shtml?task_id=<!--#4DVAR [Tasks]task_id-->','open-timeslip-window')" href="javascript:void(0)" title="Add a row"><strong>Add new timeslip</strong></a></td>
+								</tr>
+							</tbody>
+						</table>
+                    </div>
+                     
+             </div>
+             </div>
+      </div>
+      <div role="tabpanel" class="tab-pane fade" id="relatedTask" aria-labelledby="moreinfo-tab">
+      	<form class="form-horizontal">
+             	<div class="row">
+                	<div class="col-sm-12 ">
+                        <div class="table-responsive">
+                        	<table class="table table-bordered">
+								<thead>
+									<tr style="background:#fafafa;">
+										<th class="vertical-middle">Relationship</th>
+										<th class="vertical-middle">Task Name</th>
+										<th class="vertical-middle">Status</th>
+								  		<th class="vertical-middle">Delete</th>
+									</tr>
+								</thead>
+								<tbody class="relationshipClass">
+									<!--#4DSCRIPT/Web_LoadRelatedTask/-->
+		  							<!--#4DLOOP [Related_Task]--><!--#4DSCRIPT/Web_LoadRelatedTaskRelated/-->	
+		  							<tr class="item-row">
+		      							<td><!--#4DHTMLVAR [Related_Task]Relationship--></td>
+		      							<td><!--#4DHTMLVAR [Tasks]task_name--></td>
+		     							<td><!--#4DHTMLVAR [Tasks]task_status--></td>	      
+			  							<td ><a href="javascript:void(0)" onClick="del_relation('<!--#4DHTMLVAR [Related_Task]uuid-->', $(this))" >Delete</a></td>			  
+		  							</tr>
+		  							<!--#4DENDLOOP-->
+									
+								</tbody>
+							</table>
+                        </div>
+                        <h4>Add new relationship</h4>
+                        <div class="form-group">
+   							<label class="col-sm-2 control-label">Current Issue</label>
+                            <div class="col-sm-3 width275">
+                            	<select class="form-control" name="current_issue" id="current_issue" >
+									<option value="parent of" >parent of</option>
+									<option value="child of" >child of</option>
+									<option value="duplicate of">duplicate of</option>
+									<option value="has duplicate">has duplicate</option>
+									<option value="related to">related to</option>
+								</select>
+                            </div>
+                   		</div>
+             			<div class="form-group tasknameClass">
+   							<label class="col-sm-2 control-label">Task Name</label>
+                    		<div class="col-sm-3 width275">
+                        		<select class="form-control" name="Task_ID" id="Task_ID">
+                            		<option value="">--Task Name--</option>
+                            		<!--#4DSCRIPT/Web_LoadTasks/-->
+									<!--4DLOOP  [Tasks]-->
+									<option value="<!--4DVAR [Tasks]task_id-->" <!--#4DIF ([Tasks]task_id= Num(_HIT_WebApp_GetField ("task_id")))-->selected<!--4DELSE--><!--4DENDIF-->><!--4DVAR [Tasks]task_name--></option>
+									<!--4DENDLOOP-->
+                        		</select>
+                    		</div>
+                   		</div>               
+               			<div class="form-group">
+                        	<div class="col-sm-7">
+                            	<input type="button" value="Add" class="btn palette-carrot btn-color margin-lft215 padding-right-20 padding-left-20 btn-sm" onClick="add_relation()">                         
+                            </div>
+                   		</div> 
+
+                	</div>  
+                	        
+                </div>       
+             </form>
+      </div>
+      	
+      		<div role="tabpanel" class="tab-pane fade" id="relatedNote" aria-labelledby="note-tab">
+				<div class="table-responsive ">
+                	<table class="table table-bordered ">
+                    	<thead>
+                        	<tr style="background:#fafafa;">
+                        		<th class="vertical-middle "> Time stamp</th>
+                            	<th class="vertical-middle "> Added by</th>
+                            	<th class="vertical-middle ">Description</th>
+                            	<th class="vertical-middle ">Action</th>
+                          	</tr>
+                        </thead>
+                        <tbody>
+                        	<!--#4DSCRIPT/Web_LoadTaskNotes/-->	
+							<!--#4DLOOP [Notes]--><!-- row -->
+                        	<tr class="notes">
+                        		<td class="vertical-middle "><!--4DHTMLVAR timestamp_unix_toGMT ([Notes]Timestamp_modified)--></td>
+                               	<td class="vertical-middle "><!--#4DHTMLVAR [Notes]note_user_name--></td>
+                            	<td class="vertical-middle "><textarea readonly class="form-control  no-padding no-border disabled note" id="note" name="note"><!--#4DHTMLVAR [Notes]Note--></textarea></td>
+                            	<td class="vertical-middle">
+                            		<input class="note_uuid" type="hidden" value="<!--#4DHTMLVAR [Notes]uuid-->" />
+                            		<a title="Save note" href="javascript:void(0)" onClick="saveCustomerNote($(this))" style="display:none" id="save"><i class="fa fa-save big-size color-carrot"></i></a>
+                            		<a title="Edit note" href="javascript:void(0)" onClick="editCustomerNote($(this))" id="edit"><i class="ion-edit big-size color-carrot"></i></a>
+                            		<a title="Delete note" href="javascript:void(0)" onClick="deleteCustomerNote($(this))" id="delete"><i class="ion-trash-b big-size color-carrot ion-android-deletes"></i></a>
+                            		<a title="Cancel" href="javascript:void(0)"  onClick="cancelCustomerNote($(this))" style="display:none" id="cancel"><i class="ion-android-cancel big-size color-carrot"></i></a>
+                            	</td>
+                          	</tr>
+                          	<!--#4DENDLOOP-->
+                          	<tr class='notes_end'></tr>
+                         </tbody>
+                      </table>
+                </div>
+                <div class="row margin-bottom-15">
+                	<div class="col-sm-10 col-lg-9">
+                    	<div class="form-group">
+                        	<label class="col-sm-1 control-label display-block" for="">Add note</label>
+                            <div class="col-sm-4 ">
+                            	<textarea name="add_new_note" id="add_new_note" class="form-control"> </textarea>
+                            </div>
+                            <button type="button" class="btn btn-primary btn-sm margin-top-10" id="add" onClick="addCustomerNote()">Add Note</button>
+                        </div>
+                    </div>
+                </div>
+      		</div>
+      	<!--#4DENDIF-->
+    </div>    
+  </div>
+</div>
+</div>
+</div>
+  <!-- /.col --> 
+</div>
+<!-- /.row --> 
+
+	<!-- BEGIN FOOTER -->
+    	<!--#4DSCRIPT/_HIT_LoadInclude/hit/v2/includes/footer.shtml-->
+    <!-- END FOOTER --> 
+
+</div>
+<!-- /.container-fluid -->
+</div>
+<!-- /.rightside -->
+</div>
+<!-- /.wrapper --> 
+<!-- END CONTENT --> 
+
+<!-- BEGIN JAVASCRIPTS --> 
+
+
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/v2/includes/InitJs.shtml-->
+
+<script src="assets/plugins/bootstrap/js/bootstrap-tabcollapse.js"></script>
+<!-- bootstrap validator -->
+<script src="assets/plugins/bootstrapValidator/bootstrapValidator.min.js" type="text/javascript"></script>
+	
+<!-- maniac -->
+<script src="assets/js/maniac.js" type="text/javascript"></script>
+<!-- datepicker --> 
+<script src="assets/plugins/datepicker/js/bootstrap-datepicker.js" type="text/javascript"></script>
+<script src="assets/plugins/bootstrap-daterangepicker/moment.min.js" type="text/javascript"></script> 
+<script src="assets/plugins/bootstrap-daterangepicker/daterangepicker.js" type="text/javascript"></script> 
+
+<script type="text/javascript" src="assets/js/autocomplete.js"></script>
+<!-- dashboard --> 
+<script type="text/javascript">
+var tableUUIDStr= '<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->';
+var tableNameStr='Tasks';
+maniac.loadvalidator();
+	
+function add_relation(){
+	if ($('#Task_ID').val()==""){ 
+		__alertMessage('Please Specify Task Name');
+		$('#Task_ID').focus();
+		return false;
+	}else if($('#Task_ID').val()==$('#tsk_id').val()){
+		__alertMessage('Please Specify some other Task Name');
+		$('#Task_ID').focus();
+		return false;
+	}else{
+		var relation=$('#current_issue').val();
+		var rel_task_id=$('#Task_ID').val();
+		var Task_uuid=$('#Task_uuid').val();
+		var task_id=$('#tsk_id').val();
+		var task_name=$('#Task_ID option:selected').text();
+
+		var dataString = 'relation='+relation+'&rel_task_id='+rel_task_id+'&task_id='+task_id+'&uuid_task='+Task_uuid+'&redirect=false';
+	
+		$.ajax({
+			type: "GET",
+			url: "saverelatedtask.cgi",
+			data: dataString,
+			dataType: 'json',
+			cache: false,
+			success: function(html){
+				if(html.Success){
+					$('.tasknameClass').find('.ui-autocomplete-input').val('');
+					$('.relationshipClass').append('<tr class="item-row"><td>'+relation+'</td><td>'+task_name+'</td><td>assigned</td><td ><a href="javascript:void(0)" onClick="del_relation(\''+html.UUID+'\', $(this))" >Delete</a></td></tr>');
+				}else if(html.Error){
+					__alertMessage(html.Error);
+				}
+			}
+		});
+	}	
+}
+
+function del_relation(del_uuid, ref){
+	var Task_uuid=$('#Task_uuid').val();
+	var task_id=$('#tsk_id').val();
+
+	var dataString = 'del_uuid='+del_uuid+'&task_id='+task_id+'&uuid_task='+Task_uuid+'&redirect=false';
+
+	$.ajax({
+		type: "GET",
+		url: "delrelatedtask.cgi",
+		data: dataString,
+		dataType: 'json',
+		cache: false,
+		success: function(html)
+		{
+			ref.parents('tr').remove();
+		}
+	});
+}
+
+    $(document).ready(function () {
+		$('#new-customer-tab').tabCollapse();
+		
+    	$('.datepicker').datepicker({
+        	format: "dd/mm/yyyy"
+        });  
+    });
+    
+	$('#new-customer-tab').on('click', function(e){
+		$('#new-customer-tab').toggleClass('glyphicon glyphicon-chevron-down , glyphicon glyphicon-chevron-up', 200);
+	});
+
+	var xhr;
+	(function( $ ) {
+    $.widget( "custom.combobox", {
+      _create: function() {
+        this.wrapper = $( "<span>" )
+          .addClass( "custom-combobox" )
+          .insertAfter( this.element );
+ 
+        this.element.hide();
+        this._createAutocomplete();
+        this._createShowAllButton();
+      },
+ 
+      _createAutocomplete: function() {
+      	var ele_select= this.element;
+        var selected = this.element.children( ":selected" ),
+          value = selected.val() ? selected.text() : "";
+ 
+        this.input = $( "<input>" )
+          .appendTo( this.wrapper )
+          .val( value )
+          .attr( "title", "" )
+          .addClass( "custom-combobox-input ui-widget ui-widget-content ui-state-default ui-corner-left" )
+          .autocomplete({
+            delay: 0,
+            minLength: 0,
+            source: $.proxy( this, "_source" )
+          })
+          .tooltip({
+            tooltipClass: "ui-state-highlight"
+          });
+ 
+        this._on( this.input, {
+          autocompleteselect: function( event, ui ) {
+		  	//alert("show all");
+            ui.item.option.selected = true;
+			
+            this._trigger( "select", event, {
+              item: ui.item.option
+            });
+            ele_select.trigger('change');
+          },
+ 
+          autocompletechange: "_removeIfInvalid"
+        });
+      },
+ 
+      _createShowAllButton: function() {
+        var input = this.input,
+          wasOpen = false;
+ 
+        $( "<a>" )
+          .attr( "tabIndex", -1 )
+          .attr( "title", "Show All Items" )
+          .tooltip()
+          .appendTo( this.wrapper )
+          .button({
+            icons: {
+              primary: "ui-icon-triangle-1-s"
+            },
+            text: false
+          })
+          .removeClass( "ui-corner-all" )
+          .addClass( "custom-combobox-toggle ui-corner-right" )
+          .mousedown(function() {
+            wasOpen = input.autocomplete( "widget" ).is( ":visible" );
+          })
+          .click(function() {
+            input.focus();
+ 
+            // Close if already visible
+            if ( wasOpen ) {
+              return;
+            }
+ 
+            // Pass last search string as value to search for, displaying last results
+            input.autocomplete( "search", 'SHOWALL' );
+          });
+      },
+ 
+      _source: function( request, response ) {
+        //var matcher = new RegExp( $.ui.autocomplete.escapeRegex(request.term), "i" );
+		var ele_select= this.element;
+		if(request.term=='SHOWALL'){
+			response(ele_select.children( "option" ).map(function() {
+          	var text = $( this ).text();
+		 	var value= $( this ).val();
+          	//if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+		
+		}else{
+		if(ele_select.attr('id')=='Project_ID'){
+		var jsonRow = 'getprojectsonsearch.cgi?srch='+request.term;
+		}else if(ele_select.attr('id')=='Task_ID'){
+			var jsonRow = 'gettaskonsearch.cgi?srch='+request.term;
+		}
+		
+		if(xhr) xhr.abort();
+		xhr=$.getJSON(jsonRow,function(result){
+			
+			if(result){
+				var html='<option value=""></option>';
+
+				$.each(result, function(i,item)
+				{
+					html += '<option value="'+item.id+'">'+item.value+'</option>';
+				});
+				ele_select.html(html);
+				
+				
+				response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+				
+				
+			}
+		});
+       
+	  } 
+		
+      },
+ 
+      _removeIfInvalid: function( event, ui ) {
+ 
+        // Selected an item, nothing to do
+        if ( ui.item ) {
+
+          return;
+        }
+ 
+        // Search for a match (case-insensitive)
+        var value = this.input.val(),
+          valueLowerCase = value.toLowerCase(),
+          valid = false;
+          var ele_select= this.element;
+        this.element.children( "option" ).each(function() {
+          if ( $( this ).text().toLowerCase() === valueLowerCase ) {
+            this.selected = valid = true;	
+			ele_select.trigger('change');
+            return false;
+          }
+        });
+ 
+        // Found a match, nothing to do
+        if ( valid ) {
+          return;
+        }
+ 
+        // Remove invalid value
+        this.input
+          .val( "" )
+          .attr( "title", value + " didn't match any item" )
+          .tooltip( "open" );
+        this.element.val( "" );
+        this._delay(function() {
+          this.input.tooltip( "close" ).attr( "title", "" );
+        }, 2500 );
+        this.input.data( "ui-autocomplete" ).term = "";
+      },
+ 
+      _destroy: function() {
+        this.wrapper.remove();
+        this.element.show();
+      }
+    });
+  })( jQuery );
+ 
+  	$(function() {
+   		$( "#Project_ID" ).combobox();
+   		$( "#Task_ID" ).combobox();
+	});
+</script>
+<script type='text/javascript' src='assets/js/customerNotes.js'></script>
+<!-- END JAVASCRIPTS -->
+</body>
+<!-- END BODY -->
+</html>

@@ -1,0 +1,364 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+QUERY([Contacts];[Contacts]uuid=_HIT_WebApp_GetField ("uuid"))
+QUERY([Companies];[Companies]account_Number=num([Contacts]client_id))
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+-->
+
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/main-header.shtml-->
+<link rel="stylesheet" href="css/jquery.ui.button.css" />
+<link rel="stylesheet" href="css/jquery.ui.tooltip.css" />
+<link rel="stylesheet" href="css/combobox.css" />
+<style>
+label.error {
+	float: left;
+	color: red;
+	padding-top: .5em;
+	vertical-align: top;
+	font-weight:bold
+}
+</style>
+<link rel="stylesheet" type="text/css" href="css/jqm-datebox.min.css" /> 
+<script type="text/javascript" src="js/jqm-datebox.core.min.js"></script>
+<script type="text/javascript" src="js/jqm-datebox.mode.calbox.min.js"></script>
+<script type="text/javascript" src="js/jquery.mobile.datebox.i18n.en_US.utf8.js"></script>
+<script src="js/jquery.validate.js"></script>
+<script src="js/additional-methods.js"></script>
+<script src="js/ui/jquery-ui.js"></script>
+<script type="text/javascript">
+function __showContacts()
+{
+pUrlStr='contacts.shtml';
+window.location.href=pUrlStr;
+}
+
+$( '#home' ).live( 'pagebeforecreate',function(event){
+	
+	 $( "#Client_ID" ).combobox();
+	 	 
+});
+
+$(document).on('pageinit', function(){
+
+$( "#Client_ID" ).parents('div.ui-btn').hide();
+
+	$("#contactForm").validate({
+        rules: {
+            Client_ID: "required",
+            First_Name : "required",
+            Surname : "required",
+            Email : {
+				required: true,
+				email: true
+			},
+			Date_Added : "required",
+        },
+		messages: {
+			Client_ID: "Please Select Client Name",
+			First_Name: "Please Enter First Name",
+			Surname: "Please Enter Surname",
+			Email: { required: "Please Specify Email", email: "Please Specify valid Email" },
+			Date_Added: "Please Specify Date Added",
+		}
+    });
+});
+</script>
+<script>
+	 var xhr;
+  (function( $ ) {
+    $.widget( "custom.combobox", {
+      _create: function() {
+        this.wrapper = $( "<span>" )
+          .addClass( "custom-combobox" )
+          .insertAfter( this.element );
+ 
+        this.element.hide();
+        this._createAutocomplete();
+        this._createShowAllButton();
+      },
+ 
+      _createAutocomplete: function() {
+        var selected = this.element.children( ":selected" ),
+          value = selected.val() ? selected.text() : "";
+ 
+        this.input = $( "<input>" )
+          .appendTo( this.wrapper )
+          .val( value )
+          .attr( "title", "" )
+          .addClass( "custom-combobox-input ui-widget ui-widget-content ui-state-default ui-corner-left" )
+          .autocomplete({
+            delay: 0,
+            minLength: 0,
+            source: $.proxy( this, "_source" )
+          })
+          .tooltip({
+            tooltipClass: "ui-state-highlight"
+          });
+ 
+        this._on( this.input, {
+          autocompleteselect: function( event, ui ) {
+		  	//alert("show all");
+            ui.item.option.selected = true;
+			
+            this._trigger( "select", event, {
+              item: ui.item.option
+            });
+          },
+ 
+          autocompletechange: "_removeIfInvalid"
+        });
+      },
+ 
+      _createShowAllButton: function() {
+        var input = this.input,
+          wasOpen = false;
+ 
+        $( "<a>" )
+          .attr( "tabIndex", -1 )
+          .attr( "title", "Show All Items" )
+          .tooltip()
+          .appendTo( this.wrapper )
+          .button1({
+            icons: {
+              primary: "ui-icon-triangle-1-s"
+            },
+            text: false
+          })
+          .removeClass( "ui-corner-all" )
+          .addClass( "custom-combobox-toggle ui-corner-right" )
+          .mousedown(function() {
+            wasOpen = input.autocomplete( "widget" ).is( ":visible" );
+          })
+          .click(function() {
+            input.focus();
+ 
+            // Close if already visible
+            if ( wasOpen ) {
+              return;
+            }
+ 
+            // Pass last search string as value to search for, displaying last results
+            input.autocomplete( "search", 'SHOWALL' );
+          });
+      },
+ 
+      _source: function( request, response ) {
+        //var matcher = new RegExp( $.ui.autocomplete.escapeRegex(request.term), "i" );
+		var ele_select= this.element;
+		if(request.term=='SHOWALL'){
+			response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+		
+		}
+		else
+		{
+		var jsonRow = 'getcompaniesonsearch.cgi?srch='+request.term;
+		
+
+		//alert(jsonRowURLStr);
+		if(xhr) xhr.abort();
+		xhr=$.getJSON(jsonRow,function(result){
+			
+			if(result){
+				var html='<option value=""></option>';
+
+				$.each(result, function(i,item)
+				{
+					html += '<option value="'+item.id+'">'+item.value+'</option>';
+				});
+				ele_select.html(html);
+				
+				
+				response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+				
+				
+			}
+		});
+       
+	  } 
+		
+      },
+ 
+      _removeIfInvalid: function( event, ui ) {
+ 
+        // Selected an item, nothing to do
+        if ( ui.item ) {
+
+          return;
+        }
+ 
+        // Search for a match (case-insensitive)
+        var value = this.input.val(),
+          valueLowerCase = value.toLowerCase(),
+          valid = false;
+        this.element.children( "option" ).each(function() {
+          if ( $( this ).text().toLowerCase() === valueLowerCase ) {
+            this.selected = valid = true;	
+			
+            return false;
+          }
+        });
+ 
+        // Found a match, nothing to do
+        if ( valid ) {
+          return;
+        }
+ 
+        // Remove invalid value
+        this.input
+          .val( "" )
+          .attr( "title", value + " didn't match any item" )
+          .tooltip( "open" );
+        this.element.val( "" );
+        this._delay(function() {
+          this.input.tooltip( "close" ).attr( "title", "" );
+        }, 2500 );
+        this.input.data( "ui-autocomplete" ).term = "";
+      },
+ 
+      _destroy: function() {
+        this.wrapper.remove();
+        this.element.show();
+      }
+    });
+  })( jQuery );
+ 
+  </script>
+
+
+</head>
+<body>
+<div data-role="page" id="home" data-add-back-btn="false">
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/top-header.shtml-->
+	<div data-role="content" style="padding: 15px;">
+		<ul data-role="listview" data-inset="true">
+			<li data-role="list-divider"><span style=" color:#2B89D0; font-stretch:narrower;"><!--#4DIF (Records in selection([Employees])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Contact</span></li>
+		</ul>
+		<form data-ajax="false" action="savecontact.cgi" method="post" name="form" id="contactForm" >
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput1">Client Name<font color="#FF0000">*</font></label>
+					<div class="ui-widget">
+					<select id="Client_ID" name="Client_ID">
+					<!--#4DIF (Records in selection([Contacts])=0)-->
+						<option value=""></option>
+					<!--#4DSCRIPT/Web_LoadCustomers/-->
+					 <!--4DLOOP  [Companies]-->
+						<option value="<!--4DVAR [Companies]account_Number-->"  <!--#4DIF ([Contacts]client_id=[Companies]account_Number)-->selected<!--4DELSE--><!--4DENDIF-->><!--4DVAR [Companies]company_Name--></option>		
+					 <!--4DENDLOOP-->
+					 <!--#4DELSE-->
+						 <option value="<!--4DVAR [Companies]account_Number-->" selected><!--4DVAR [Companies]company_Name--></option>									 
+						 <!--#4DENDIF-->
+					</select>
+					</div>
+				</fieldset>
+			</div>
+			<input name="Contact_uuid" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="Contact_uuid">        
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput1">First Name<font color="#FF0000">*</font></label>
+					<input type="text" name="First_Name" id="First_Name" placeholder="First Name" value="<!--#4DVAR [Contacts]First name-->">
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput1">Surname<font color="#FF0000">*</font></label>
+					<input type="text" name="Surname" id="Surname" placeholder="Surname" value="<!--#4DVAR [Contacts]Surname-->">
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput1">Title</label>
+					<input type="text" name="Title" id="Title" placeholder="Title" value="<!--#4DVAR [Contacts]Title-->">
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput1">Salutation</label>
+					<input type="text" name="Salutation" id="Salutation" placeholder="Salutation" value="<!--#4DVAR [Contacts]Salutation-->">
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput1">Direct Phone</label>
+					<input type="text" name="Direct_Phone" id="Direct_Phone" placeholder="Direct Phone" value="<!--#4DVAR [Contacts]Direct Phone-->">
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput1">Email<font color="#FF0000">*</font></label>
+					<input type="text" name="Email" id="Email" placeholder="Email" value="<!--#4DVAR [Contacts]Email-->">
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput1">Direct fax</label>
+					<input type="text" name="Direct_fax" id="Direct_fax" placeholder="Direct fax" value="<!--#4DVAR [Contacts]Direct fax-->">
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput1">Mobile</label>
+					<input type="text" name="Mobile" id="Mobile" placeholder="Mobile" value="<!--#4DVAR [Contacts]Mobile-->">
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput1">Comments</label>
+					<input type="text" name="Comments" id="Comments" placeholder="Comments" value="<!--#4DVAR [Contacts]Comments-->">
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput13">Date <font color="#FF0000">*</font></label>
+					<input name="Date_Added" id="Date_Added" type="date" data-role="datebox" data-options='{"mode": "calbox"}' placeholder="Slip Date" <!--#4DIF ([Contacts]DateAdded=!00/00/00!)-->value=""<!--4DELSE-->value="<!--#4DHTMLVAR [Contacts]DateAdded-->"<!--4DENDIF-->>
+				</fieldset>
+			</div>		
+			
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput15">News Letter Status</label>
+					<select name="News_Letter_Status" id="Task_Active" name="News_Letter_Status">
+						<option value="Subscriber" <!--#4DIF ([Contacts]GetsNewsletter=True)-->selected<!--4DELSE--><!--4DENDIF-->>Subscriber</option>
+						<option value="Non Subscriber" <!--#4DIF ([Contacts]GetsNewsletter=False)-->selected<!--4DELSE--><!--4DENDIF-->>Non Subscriber</option>
+					</select>  
+				</fieldset>
+			</div>
+			
+			<input type="submit" value="Submit" id="submit" name="submit">
+			<input type="submit" value="Cancel" onClick="__showContacts(); return false;">
+		</form>
+	</div><!-- END DATA ROLE CONTENT-->
+
+   <!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/footer.shtml-->
+    
+ </div>
+ 
+</body>
+</html>

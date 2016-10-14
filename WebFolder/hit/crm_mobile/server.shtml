@@ -1,0 +1,198 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+C_TEXT(_HTMLTITLETXT)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+
+QUERY([servers];[servers]uuid=_HIT_WebApp_GetField ("uuid"))
+IF (Records in selection([servers])=0)
+_HTMLTITLETXT:="New server"
+ELSE
+_HTMLTITLETXT:= "Edit: "+[servers]server_name
+END IF
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+-->
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/main-header.shtml-->
+<script src="js/jquery.validate.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+	  
+	// validate signup form on keyup and submit
+	$("#DetailForm").validate({
+		rules: {
+			server_name : { required: true },
+			server_location : { required: true },
+			server_type : { required: true },
+			managed_by_uuid : { required: true },
+			is_active : { required: true }
+		}
+	});
+});
+
+</script>
+<style>
+label.error { 
+	float: left; 
+	color: red; 
+	padding-top: 1.5em; 
+	vertical-align: top; 
+}
+</style>
+</head>
+<body>
+<div data-role="page" class="jqm-demos" data-quicklinks="true">
+	<!-- header -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/top-header.shtml-->
+	<!-- /header -->
+	<div role="main" class="ui-content jqm-content">
+		<h3><!--#4DIF (Records in selection([servers])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Server</h3>
+		<div data-demo-html="true">
+ 			<form novalidate="novalidate" data-ajax="false" name="DetailForm" id="DetailForm" action="saveserver.cgi" method="post">
+  				<input name="uuid" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="uuid">
+  					<div class="ui-field-contain">
+								<label >Server Name</label>
+								<div class="ui-input-text ui-body-inherit ui-corner-all ui-shadow-inset" >
+									<input name="server_name" value="<!--#4DVAR [servers]server_name-->" id="server_name" type="text">
+										
+								</div>
+						</div>
+  
+						<div class="ui-field-contain">
+								<label for="server_type">Server Type</label>
+								<select name="server_type" id="server_type" data-native-menu="false">
+									<option value="Live" <!--#4DIF ([servers]server_type="Live")-->selected<!--4DELSE--><!--4DENDIF-->>Live</option>
+									<option value="Staging" <!--#4DIF ([servers]server_type="Staging")-->selected<!--4DELSE--><!--4DENDIF-->>Staging</option>
+									<option value="Dev" <!--#4DIF ([servers]server_type="Dev")-->selected<!--4DELSE--><!--4DENDIF-->>Dev</option>
+								</select>
+						</div>
+						
+						<div class="ui-field-contain">
+								<label for="uuid_reported_by">Managed By</label>
+								<select name="managed_by_uuid" id="managed_by_uuid" data-native-menu="false"> 
+								<!--#4DSCRIPT/Web_LoadEmployees/-->
+								<!--4DLOOP  [Employees]-->
+									<option value="<!--4DVAR [Employees]uuid-->" <!--#4DIF ([servers]managed_by_uuid=[Employees]uuid)-->selected<!--4DELSE--><!--4DENDIF-->><!--4DVAR [Employees]emp_first_name--> <!--4DVAR [Employees]emp_last_name--></option>
+								<!--4DENDLOOP-->	
+								</select> 
+						</div>
+				
+						<div class="ui-field-contain">
+								<label for="server_os" class="select">Server OS</label>
+								<select data-native-menu="false" name="server_os" id="server_os">
+									<option value="">--Select OS--</option>
+									<option value="CentOS" <!--#4DIF ([servers]server_os="CentOS")-->selected<!--4DELSE--><!--4DENDIF-->>CentOS</option>
+									<option value="RedHat" <!--#4DIF ([servers]server_os="RedHat")-->selected<!--4DELSE--><!--4DENDIF-->>RedHat</option>
+									<option value="Windows" <!--#4DIF ([servers]server_os="Windows")-->selected<!--4DELSE--><!--4DENDIF-->>Windows</option>
+									<option value="Apple OSX" <!--#4DIF ([servers]server_os="Apple OSX")-->selected<!--4DELSE--><!--4DENDIF-->>Apple OSX</option>
+								</select>
+						</div>
+						
+						<div class="ui-field-contain">
+							<label >Root User </label>
+							<input  name="root_user" id="root_user" value="<!--#4DVAR [servers]root_user-->" type="text">
+						</div>
+						
+						<div class="ui-field-contain">
+								<label >Root Password </label>
+								<input type="password" name="root_password" id="root_password" value="<!--#4DVAR [servers]root_password-->">
+						</div>
+						
+						
+						<div class="ui-field-contain">
+								<label >Root Path </label>
+								<div class="ui-input-text ui-body-inherit ui-corner-all ui-shadow-inset" >
+								
+								
+								<input name="www_root_path" type="text" value="<!--#4DVAR [servers]www_root_path-->" id="www_root_path">
+										
+								</div>
+						</div>
+						
+						<div class="ui-field-contain">
+								<label>Server Location</label>
+								<input name="server_location" type="text" value="<!--#4DVAR [servers]server_location-->" id="server_location">
+							</div>
+						
+						<div class="ui-field-contain">
+								<label >Lan IP Address  </label>
+								<input name="lan_ip_addr" type="text" value="<!--#4DVAR [servers]lan_ip_addr-->" id="lan_ip_addr">
+						</div>
+						
+						
+						<div class="ui-field-contain">
+								<label >Lan IP Address (Long)  </label>
+								<input name="lan_ip_addr_long" type="text" value="<!--#4DVAR [servers]lan_ip_addr_long-->" id="lan_ip_addr_long">
+						</div>
+						
+						<div class="ui-field-contain">
+							<label >Lan IP Address v6  </label>
+							<input name="lan_ip_addr_v6" type="text"  value="<!--#4DVAR [servers]lan_ip_addr_v6-->" id="lan_ip_addr_v6">
+						</div>
+	
+						<div class="ui-field-contain">
+							<label>Server Support Ref no </label>
+							<input type="text" id="server_support_ref_no" name="server_support_ref_no" value="<!--#4DVAR [servers]server_support_ref_no-->">
+						</div>
+						
+						<div class="ui-field-contain">
+								<label >Wan IP Address </label>
+								<input type="text" id="wan_ip_addr" name="wan_ip_addr" value="<!--#4DVAR [servers]wan_ip_addr-->">
+						</div>
+						
+						
+						<div class="ui-field-contain">
+								<label>Wan IP Address (Long)</label>
+								<input type="text" id="wan_ip_addr_long" name="wan_ip_addr_long" value="<!--#4DVAR [servers]wan_ip_addr_long-->">
+						</div>
+						
+						
+						
+						<div class="ui-field-contain">
+							<label>Wan IP Address v6o</label>
+							<input type="text" id="wan_ip_addr_v6" name="wan_ip_addr_v6" value="<!--#4DVAR [servers]wan_ip_addr_v6-->">
+						</div>
+						
+						
+						<div class="ui-field-contain">
+								<label>Status</label>
+									<select  data-native-menu="false" name="is_active" id="is_active">
+									<option value="">--Select Status--</option>
+									<option value="true" <!--#4DIF ([servers]isactive=true)-->selected<!--4DELSE--><!--4DENDIF--> >Active</option>
+									<option value="false" <!--#4DIF ([servers]isactive=false)-->selected<!--4DELSE--><!--4DENDIF--> >InActive</option>
+								</select>
+						</div>
+					
+					
+					<div  class="ui-field-contain" >
+					
+							<input name="Submit" class="ui-btn ui-shadow ui-corner-all ui-mini" value="Submit" type="submit" >
+						
+						<a href="invoices.shtml" data-ajax="false" class="ui-shadow ui-btn ui-corner-all ui-mini">Cancel</a>
+						</div>
+					
+						
+						
+				</form>
+				
+</div>
+
+		
+</div>
+	<!-- /content -->
+	<!-- panel -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/sidebar.shtml-->
+	<!-- /panel -->
+
+	<!-- footer -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/footer.shtml-->
+	<!-- /footer -->
+</div><!-- /page -->
+
+</body>
+</html>

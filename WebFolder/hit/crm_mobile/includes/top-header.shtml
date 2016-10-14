@@ -1,0 +1,36 @@
+	<div data-role="header" class="jqm-header">
+		<h2><a href="index.shtml"  data-ajax="false" title="jQuery Mobile Demos home"><img src="./_assets/img/logo.png" alt="jQuery Mobile"></a></h2>
+		<a href="#" class="jqm-navmenu-link ui-btn ui-btn-icon-notext ui-corner-all ui-icon-bars ui-nodisc-icon ui-alt-icon ui-btn-left">Menu</a>
+		<!--<a href="#" class="jqm-search-link ui-btn ui-btn-icon-notext ui-corner-all ui-icon-search ui-nodisc-icon ui-alt-icon ui-btn-right">Search</a>
+		-->
+		<div CLASS="ui-btn-right" STYLE="margin-top: 2.5em; margin-right: 1em; color:#fff; ">
+		
+		<!--#4DIF (_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")-->
+			<!--HIT_EXECUTE
+				C_TEXT(_HIT_HTMLTXT)
+				If (Web_isUserClient )
+					_HIT_HTMLTXT:=[Contacts]First name+" "+[Contacts]Surname
+				Else 
+					_HIT_HTMLTXT:="Admin"
+				End if 
+			--> 
+		<!--#4DELSE-->
+			<!--HIT_EXECUTE
+				C_TEXT(_HIT_HTMLTXT)
+				If (Web_isUserStaff)
+					_HIT_HTMLTXT:=[Employees]emp_first_name+" "+[Employees]emp_last_name
+				Else 
+					_HIT_HTMLTXT:="Admin"
+				End if
+			-->
+		<!--#4DENDIF-->
+		
+		<a data-inline="true" data-theme="b" data-iconpos="notext" data-icon="arrow-r" data-role="button" href="sign-in.shtml" class="ui-link ui-btn ui-btn-c ui-icon-arrow-r ui-btn-icon-notext ui-btn-inline ui-shadow ui-corner-all" role="button" STYLE="width: 18px;
+height: 19px;
+background: #fff;
+border: 0px none;
+top: 50%;
+margin-top: -5px;">Sign out</a>
+	
+		</div>
+	</div>

@@ -1,0 +1,250 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+<!--#4DSCRIPT/_HIT_LoadInclude/admin/includes/header.shtml-->
+</head>
+<body>
+<!--#4DSCRIPT/_HIT_LoadInclude/admin/includes/navbar.shtml-->
+
+<!--#4DSCRIPT/_HIT_LoadInclude/admin/includes/navigation.shtml-->
+
+	<!-- main container -->
+    <div class="content">
+        
+        <div class="container-fluid">
+            <div id="pad-wrapper">
+
+                <!-- timeslips table -->
+                <div class="table-wrapper orders-table section">
+                    <div class="row-fluid head">
+                        <div class="span12">
+                            <h4>Customers</h4>
+                        </div>
+                    </div>
+                            <form method="get" onSubmit="__showCustomers(); return false;">
+
+                    <div class="row-fluid filter-block">
+                        <div class="pull-right">
+                            <div class="btn-group pull-right">
+                                <button class="glow left large" onClick="__showAllCustomers(); return false;">All</button>
+                                <button class="glow middle large" onClick="__showSuppliers(); return false;">Suppliers</button>
+                                <button class="glow right large" onClick="__showActiveCustomers(); return false;">Active</button>
+                            </div>
+                            <input name="keyword" id="keyword" type="text" class="search order-search" placeholder="Enter customer name.." value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" />
+                        </div>
+                    </div>
+
+                            </form>
+
+                    <div class="row-fluid">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th class="span2">
+                                        Customer
+                                    </th>
+                                    <th class="span3">
+                                        Telephone
+                                    </th>
+                                    <th class="span3">
+                                        <span class="line"></span>
+                                        City/Town
+                                    </th>
+                                    <th class="span3">
+                                        <span class="line"></span>
+                                        Customer  Address
+                                    </th>
+                                    <th class="span3">
+                                        <span class="line"></span>
+                                        Time slip Status
+                                    </th>
+                                    <th class="span3">
+                                        <span class="line"></span>
+                                        Total Spent
+                                    </th>
+                                                                        <th class="span3">
+                                        <span class="line"></span>
+                                        Statement
+                                    </th>
+
+                                </tr>
+                            </thead>
+                            <tbody><!--#4DSCRIPT/Web_LoadCustomers/-->
+                                <!--#4DLOOP [Companies]--><!--#4DSCRIPT/Web_LoadCustomerRelated/--><!-- row -->
+                                <tr class="first">
+                                    <td>
+                                        <a href="javascript:void(0)" onClick="__showCustomerForm('<!--#4DHTMLVAR [Companies]uuid-->')"><!--#4DHTMLVAR [Companies]company_Name--></a>
+                                    </td>
+                                    <td>
+                                        <!--#4DHTMLVAR [Companies]telephone-->
+                                    </td>
+                                    <td>
+                                        <a hre<a href="customers.shtml">No Title</a>
+<a href="customer.shtml">No Title</a>
+<a href="invoice.shtml">No Title</a>
+<a href="invoices.shtml">No Title</a>
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+
+C_BLOB(Web_ResponseDataBLOB)
+C_LONGINT(mitemID)
+C_TEXT(muuid)
+_HIT_HTMLTXT:=_HIT_AuthenticateSession 
+If (_HIT_HTMLTXT="Session-Authenticated-OK")
+C_TEXT(mUUIDStr;mDeleteuuid)
+mDeleteuuid:=_HIT_WebApp_GetField ("delitem_uuid")
+READ WRITE([Invoice_Items])
+QUERY([Invoice_Items];[Invoice_Items]uuid=mDeleteuuid)
+If (Records in selection([Invoice_Items])#0)
+DELETE RECORD([Invoice_Items])
+End if 
+
+mUUIDStr:=_HIT_WebApp_GetField ("ivcnitem_uuid")
+READ WRITE([Invoice_Items])
+QUERY([Invoice_Items];[Invoice_Items]uuid=mUUIDStr)
+
+If (Records in selection([Invoice_Items])=0)
+CREATE RECORD([Invoice_Items])
+[Invoice_Items]uuid:=Generate UUID
+muuid:=[Invoice_Items]uuid
+[Invoice_Items]item_id:=Sequence number([Invoice_Items])
+mitemID:=[Invoice_Items]item_id
+End if 
+
+[Invoice_Items]inv_id:=Num(_HIT_WebApp_GetField ("invoice_id"))
+[Invoice_Items]item_description:=_HIT_WebApp_GetField ("description")
+[Invoice_Items]item_rate:=Num(_HIT_WebApp_GetField ("rate"))
+[Invoice_Items]item_amount:=Num(_HIT_WebApp_GetField ("amount"))
+[Invoice_Items]item_hours:=Num(_HIT_WebApp_GetField ("hours"))
+
+SAVE RECORD([Invoice_Items])
+UNLOAD RECORD([Invoice_Items])
+READ ONLY([Invoice_Items])
+
+
+//_HIT_HTMLTXT:="[{\"item_id\": "+String(mitemID)+"},{\"m_uuid\": "+muuid+"}]"
+_HIT_HTMLTXT:=String(mitemID)+","+muuid
+
+//SET BLOB SIZE(Web_ResponseDataBLOB;0)
+//TEXT TO BLOB(_HIT_HTMLTXT;Web_ResponseDataBLOB;UTF8 text without length)
+//_HIT_HTTPD_AppendResponse (->Web_ResponseDataBLOB)
+
+Else
+
+_HIT_HTMLTXT:=_HIT_HTMLTXT+", NOT Authenticated, "+_HIT_HTMLTXT+", "
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+
+End if 
+-->
+f="#"><!--#4DHTMLVAR [Companies]city_or_town--></a>
+                                    </td>
+                                    <td>
+                                        <!--#4DHTMLVAR [Companies]address_line_1-->
+                                    </td>
+
+                                    <td>
+                                        <span class="label label-success"><!--#4DIF ([Timeslips]billing_status=1)-->Chargeable<!--#4DELSE-->Not Chargeable<!--#4DENDIF--></span>
+                                    </td>
+                                    <td>
+                                        £<!--#4DHTMLVAR Invoice_AmtReturnAsText (Sum([Invoices]inv_total_due_with_tax))-->
+                                    </td>
+                                    
+                                                                        <td>
+                                        <span class="label label-success"><a title="Download Statement" target="_blank" href="statement_preview.shtml?uuid=<!--#4DVAR [Companies]uuid-->&token=<!--#4DVAR _HIT_TokenGetAny-->&preview=pdf">
+                                        <i class="icon-download-alt"></i>&nbsp;</a>
+                                    </span>&nbsp;&nbsp;<a title="Download Full Statement" target="_blank" href="statement_preview.shtml?uuid=<!--#4DVAR [Companies]uuid-->&token=<!--#4DVAR _HIT_TokenGetAny-->&preview=pdf&type=full">Full</a>&nbsp; Statement</td>
+
+                                </tr>
+
+									<!--#4DENDLOOP-->
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- end timeslips table -->
+
+            </div>
+        </div>
+    </div>
+    <!-- end main container -->
+
+	<!-- scripts -->
+    <!--#4DSCRIPT/_HIT_LoadInclude/admin/includes/footer.shtml--> 
+    
+    
+<script>
+
+function __showSuppliers()
+{
+pUrlStr='customers.shtml?keyword='+$("#keyword").val()+'&tab=suppliers';
+window.location.href=pUrlStr;
+}
+
+function __showActiveCustomers()
+{
+pUrlStr='customers.shtml?keyword='+$("#keyword").val()+'&tab=active';
+window.location.href=pUrlStr;
+}
+
+function __showAllCustomers()
+{
+pUrlStr='customers.shtml';
+window.location.href=pUrlStr;
+}
+
+function __showCustomers()
+{
+pUrlStr='customers.shtml?keyword='+$("#keyword").val();
+window.location.href=pUrlStr;
+}
+
+function __showCustomerForm(uuid)
+{
+pUrlStr='customer.shtml?uuid='+uuid;
+window.location.href=pUrlStr;
+}
+    
+    
+$(document).ready(function() {
+
+$('#keyword').focus();
+
+//setup before functions
+var typingTimer;                //timer identifier
+var doneTypingInterval = 1000;  //time in ms, 5 second for example
+
+//on keyup, start the countdown
+$('#keyword').keyup(function(){
+    clearTimeout(typingTimer);
+    if ($('#keyword').val) {
+        typingTimer = setTimeout(function(){
+            //do stuff here e.g ajax call etc....
+             var v = $("#keyword").val();
+__showCustomers();
+        }, doneTypingInterval);
+    }
+});
+
+    });
+
+    </script>
+
+    
+</body>
+</html>

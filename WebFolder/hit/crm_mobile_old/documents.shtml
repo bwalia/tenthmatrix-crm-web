@@ -1,0 +1,133 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml?url="+HTTPD_DocumentURI)
+end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+-->
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/main-header.shtml-->
+
+<style>
+label.error {
+	float: left;
+	color: red;
+	padding-top: .5em;
+	vertical-align: top;
+	font-weight:bold
+}
+.label{
+width:auto;
+}
+.table-opt tbody tr:hover td a { color: #FFF!important; }
+.table-opt tbody tr:hover td a:hover { color: #FFF; text-decoration:underline}
+</style>
+<link rel="stylesheet" type="text/css" href="css/jqm-datebox.min.css" /> 
+<script type="text/javascript" src="js/jqm-datebox.core.min.js"></script>
+<script type="text/javascript" src="js/jqm-datebox.mode.calbox.min.js"></script>
+<script type="text/javascript" src="js/jquery.mobile.datebox.i18n.en_US.utf8.js"></script>
+<script src="js/jquery.validate.js"></script>
+<script src="js/additional-methods.js"></script>
+<script>
+
+
+function __showDocuments()
+{
+pUrlStr='documents.shtml?keyword='+$("#keyword").val();
+window.location.href=pUrlStr;
+}
+
+function __showDocumentForm(uuid)
+{
+pUrlStr='document.shtml?uuid='+uuid;
+window.location.href=pUrlStr;
+}
+    
+    
+$(document).ready(function() {
+
+$('#keyword').focus();
+
+//setup before functions
+var typingTimer;                //timer identifier
+var doneTypingInterval = 1000;  //time in ms, 5 second for example
+
+//on keyup, start the countdown
+$('#keyword').keyup(function(){
+    clearTimeout(typingTimer);
+    if ($('#keyword').val) {
+        typingTimer = setTimeout(function(){
+            //do stuff here e.g ajax call etc....
+             var v = $("#keyword").val();
+__showDocuments();
+        }, doneTypingInterval);
+    }
+});
+
+    });
+
+
+    </script>
+
+</head>
+<body>
+<div data-role="page" id="home" data-add-back-btn="false">
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/top-header.shtml-->
+	<form method="get" onSubmit="__showDocuments(); return false;">
+	<div class="search-container" data-theme="a" style="height:30px;">
+		<div data-role="fieldcontain" >
+			<input name="keyword" id="keyword" type="search" placeholder="Enter document name.." value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" />
+		</div>
+	</div>
+	
+	</form>
+	<div data-role="content" style="padding: 15px;">
+		<ul data-role="listview" data-inset="true">
+			<li data-role="list-divider"><span style=" color:#2B89D0; font-stretch:narrower;">Documents</span></li>
+		</ul>
+		<table class="table-opt" summary="Product Options">
+			<thead>
+				<tr>
+					<th>Name</th>
+					
+					<th>Type</th>
+					
+					<th>Size</th>
+
+					
+					
+				</tr>
+			</thead>
+			<tbody>
+			<!--#4DSCRIPT/Web_LoadDocuments/-->
+                                <!--#4DLOOP [Documents]--><!--#4DSCRIPT/Web_LoadDocumentRelated/--><!-- row -->
+				<tr> 											
+					 <td ><a data-ajax="false" href="document.shtml?uuid=<!--#4DHTMLVAR [Documents]uuid-->" ><!--#4DHTMLVAR [Documents]filename--></a></td>
+                                    
+                                    <td>
+                                        <!--#4DHTMLVAR [Documents]doctype-->
+                                    </td>
+                                                                       
+                                    <td>
+                                     <!--#4DHTMLVAR _HIT_FileSizeHumanReadable (BLOB size([Documents]filecontent))-->
+                                    </td>
+
+				</tr>
+
+<!--#4DENDLOOP-->
+			</tbody>
+		</table>
+	</div><!-- END DATA ROLE CONTENT-->
+
+   <!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/footer.shtml-->
+   
+    
+ </div>
+ 
+</body>
+</html>

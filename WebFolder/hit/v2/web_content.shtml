@@ -1,0 +1,753 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+C_TEXT(_HTMLTITLETXT)
+
+QUERY([web_content];[web_content]uuid=_HIT_WebApp_GetField ("uuid"))
+
+QUERY([Projects];[Projects]uuid=[web_content]uuid_project)
+
+IF (Records in selection([web_content])=0)
+_HTMLTITLETXT:="New document"
+ELSE
+_HTMLTITLETXT:= "Edit document"
+end if
+
+-->
+<!DOCTYPE html>
+<html lang="en">
+<!-- BEGIN HEAD -->
+<head>
+<!--#4DIF (Records in selection([web_content])=1)-->
+<title>Edit :<!--#4DVAR [web_content]title--></title>
+<!--#4DELSE-->
+<title>New Document</title>
+<!--#4DENDIF-->
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<meta content="" name="description"/>
+<meta content="" name="author"/>
+
+<!-- BEGIN CORE FRAMEWORK -->
+<link href="assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+<link href="assets/plugins/ionicons/css/ionicons.min.css" rel="stylesheet" />
+<link href="assets/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+<!-- END CORE FRAMEWORK -->
+
+<!-- BEGIN PLUGIN STYLES -->
+<link href="assets/plugins/animate/animate.css" rel="stylesheet" />
+
+<link href="assets/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css" rel="stylesheet" />
+<!-- END PLUGIN STYLES -->
+
+<!-- BEGIN THEME STYLES -->
+<link href="assets/css/material.css" rel="stylesheet" />
+<link href="assets/css/style.css" rel="stylesheet" />
+<link href="assets/css/plugins.css" rel="stylesheet" />
+<link href="assets/css/helpers.css" rel="stylesheet" />
+<link href="assets/css/responsive.css" rel="stylesheet" />
+<!-- END THEME STYLES -->
+
+<link rel="stylesheet" media="all" type="text/css" href="assets/css/jquery-impromptu.css" />
+<!-- BEGIN PLUGIN STYLES -->
+<link href="assets/plugins/jquery-jvectormap/jquery-jvectormap-1.2.2.css" rel="stylesheet" />
+<!-- END PLUGIN STYLES -->
+<link href="assets/css/autocomplete.css" rel="stylesheet">
+</head>
+
+<style>
+.rightside {
+	padding-top: 0px!important;
+}
+.chosen-container-multi .chosen-choices {
+	background: #fafafa!important;
+	border: 1px solid #eeeeee!important;
+	border-radius: 3px;
+	padding: 3px;
+}
+
+.boxbcg{
+	border: 1px solid #E1E1E1 !important;
+padding: 19px;
+border-radius: 4px !important;
+margin-bottom: 10px !important;
+margin: 15px;
+width: 98%;
+}
+
+.boxbcg h3{
+	padding: 0px 0px 0px 6px;
+font-size: 21px;
+color: #108cd3;
+}
+
+.pdng3{
+	padding:3px 0px;
+}
+
+.labelnew{
+	padding-left: 0px; float: left; width: 124px; padding-top: 5px;
+}
+
+.labtext{
+	position: relative; padding-right: 7px; bottom: 4px; float: left;
+}
+
+.tablebox{
+width: 97%;
+margin: 6px;
+}
+
+.overflowdata{
+height: 146px;
+margin-bottom: 10px;
+overflow-x: none;
+overflow-y: scroll;
+}
+
+.savebtn{
+	  text-align: center;
+    width: 97%;
+    color: rgb(255, 255, 255);
+    padding-right: 0px;
+    margin-left: 7px;
+}
+
+.savebtn a{
+	color:#fff;
+}
+
+.savebtn a:hover{
+	text-decoration:none;
+}
+</style>
+<!-- END HEAD -->
+<!-- BEGIN BODY -->
+<body class="fixed-leftside fixed-header">
+	<div class="wrapper"> 
+		<!-- BEGIN RIGHTSIDE -->
+		<div class="rightside bg-grey-100"> 
+			<!-- BEGIN PAGE HEADING -->
+			<div class="page-head">
+				<div class="row">
+					<div class="col-sm-6">
+						<h1 class="page-title"><!--#4DIF (Records in selection([web_content])=1)-->Edit <!--#4DVAR [web_content]title--><!--#4DELSE-->New document<!--#4DENDIF--></h1>
+					</div>
+				</div>
+			</div>
+			<!-- END PAGE HEADING -->
+			<div class="container-fluid">
+				<div class="row">
+					<div class="col-md-12">
+						<div class="panel" style="padding-top:20px;">
+							<div class="panel-body no-padding-top bg-white">
+								<form name="ProductForm" action="savewebcontent.cgi" id="ProductForm" method="post" class="form-horizontal" >
+									<!-- Nav tabs -->
+									<div data-example-id="togglable-tabs">
+                						<ul id="new-customer-tab" class="nav nav-tabs" role="tablist">
+                							<li role="presentation" class="active"><a href="#tab1" id="basicInfo-tab" role="tab" data-toggle="tab" aria-controls="tab1" aria-expanded="true"><strong>Document Editor</strong></a></li>
+      										<li role="presentation"><a href="#tab2" role="tab" id="second-tab" data-toggle="tab" aria-controls="tab2"><strong>Search Optimisation</strong></a></li>
+      										<!--#4DIF (Records in selection([web_content])=1)-->
+                  								<li role="presentation"><a href="#tab3" role="tab" id="third-tab" data-toggle="tab" aria-controls="tab3"><strong>Objects</strong></a></li>
+      										<!--#4DENDIF-->
+               							</ul>
+                 						<div class="tab-content" style="padding-top:25px; border-left: 1px solid #ddd; border-right: 1px solid #ddd;  border-bottom: 1px solid #ddd; padding-bottom:25px; padding-left:15px; padding-right:15px;">
+               								<div role="tabpanel" class="tab-pane fade in active cust-info" id="tab1" aria-labelledby="basicInfo-tab">
+                								<div class="row">
+                									<div class=" col-sm-12 col-lg-8">
+														<div class="form-group">
+															<label class="col-sm-2 control-label">Project <sup class="req">*</sup></label>
+															<div class="col-sm-6 ui-widget projectClass">
+																<select name="project_uuid" id="project_uuid" class="form-control">
+																	<!--#4DIF (Records in selection([web_content])=0)-->
+																	<option value=""></option>
+																	<!--#4DSCRIPT/Web_LoadProjects/-->
+																	<!--4DLOOP [Projects]-->
+																	<option value="<!--#4DVAR [Projects]uuid-->" ><!--4DVAR [Projects]proj_name--></option>
+																<!--4DENDLOOP-->
+																<!--#4DELSE-->
+																 	<option value="<!--4DVAR [Projects]uuid-->" selected><!--4DVAR [Projects]proj_name--></option>									 
+																<!--#4DENDIF-->
+																</select>                                     
+															</div>
+														</div>
+														<div class="form-group errorNameClass">
+															<label class="col-sm-2 control-label">Heading <sup class="req">*</sup></label>
+															<div class="col-sm-6">
+																<input name="actualTitle" class="form-control " type="hidden" value="<!--#4DVAR [web_content]title-->" id="actualTitle">
+																<input name="title" class="form-control " type="text" value="<!--#4DVAR [web_content]title-->" id="title" onKeyUp="generate_code('title','code')" onBlur="generate_code('title','code')">
+																<small id="errorEM" style="display: none;" data-bv-validator-for="title" class="help-block">This name already exists!</small>
+															</div>
+														</div>
+														<input name="uuid" class="span4" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="uuid">
+														<div class="form-group">
+															<label class="col-sm-2 control-label">Sub Heading</label>
+															<div class="col-sm-6"><input name="subtitle" class="form-control" type="text" value="<!--#4DVAR [web_content]subtitle-->" id="subtitle"></div>
+														</div>
+														<div class="form-group">
+															<label class="col-sm-2 control-label">Body <sup class="req">*</sup></label>
+															<div class="col-sm-6">
+                            							        <textarea id="body" class="form-control bs-texteditor" rows="20" name="body"><!--#4DHTMLVAR [web_content]body--></textarea>
+                                							</div>
+														</div> 	
+														
+													</div>
+													<div class="col-sm-12 col-lg-4">
+														<div class="form-group">
+															<label class="col-sm-2 control-label">Posted At <sup class="req">*</sup></label>
+															<div class="col-sm-6">
+																<input name="posted_timestamp" class="input-large datepicker form-control" data-date-format="dd/mm/yyyy" type="text"  <!--#4DIF (timestamp_unix_toDate([web_content]posted_timestamp)=!01/01/1970!)-->value=""<!--4DELSE-->value="<!--#4DHTMLVAR timestamp_unix_toDate([web_content]posted_timestamp)-->"<!--4DENDIF-->  id="posted_timestamp" readonly >
+															</div>
+														</div>
+														<div class="form-group">
+															<label class="col-sm-2 control-label">Sort Order</label>
+															<div class="col-sm-6">
+																<input class="form-control num" name="sort_order" type="text" value="<!--#4DVAR [web_content]sort_order-->" id="sort_order" >
+															</div>
+														</div>
+														<div class="form-group">
+															<label class="col-sm-2 control-label">Type</label>
+															<div class="ui-select col-sm-6">
+																<select id="type" name="type" class="form-control">
+																	<option value="blog" <!--#4DIF ([web_content]type="blog")-->selected<!--4DELSE--><!--4DENDIF-->>Blog</option>
+																	<option value="news" <!--#4DIF ([web_content]type="news")-->selected<!--4DELSE--><!--4DENDIF-->>News</option>
+																	<option value="page" <!--#4DIF ([web_content]type="page")-->selected<!--4DELSE--><!--4DENDIF-->>Page</option>
+																</select>
+						 	    							</div>
+														</div>
+															
+														<div class="form-group">
+   		        											<div class="col-sm-offset-2 col-sm-9">
+    			  												<div class="checkbox">
+      		  														<label class="col-sm-2 control-label"> <input type="checkbox" name="status" value="true" id="status" <!--#4DIF ([web_content]status)-->checked<!--4DELSE--><!--4DENDIF-->>Active</label>
+    			  												</div>
+  															</div>
+  														</div>
+													</div>
+													<div class="row">
+														<div class="col-sm-12 text-center">
+															<input type="submit" class="btn palette-carrot btn-color margin-right-5 btn-sm save_exit">
+															<!--#4DIF (Records in selection([web_content])=0)-->
+																<input type="reset" class="btn btn-primary btn-sm">
+															<!--4DENDIF--> 
+														</div>
+													</div>	
+												</div>
+											</div>
+											<div role="tabpanel" class="tab-pane fade" id="tab2" aria-labelledby="second-tab">
+												<div class="row">
+													<div class="col-sm-12">
+														<div class="form-group">
+															<label class="col-sm-2 control-label">Code <sup class="req">*</sup></label>
+															<div class="col-sm-6"><input name="code" readonly class="form-control" type="text" value="<!--#4DVAR [web_content]code-->" id="code"></div>
+														</div>
+														<div class="form-group">
+															<label class="col-sm-2 control-label">Window Title </label>
+															<div class="col-sm-6"><input name="windowtitle" class="form-control" type="text" value="<!--#4DVAR [web_content]windowtitle-->" id="windowtitle"></div>
+														</div>
+														<div class="form-group">
+															<label class="col-sm-2 control-label">Meta tag keywords </label>
+															<div class="col-sm-6"><textarea id="meta_tag_keywords" class="form-control" rows="5" columns="40" name="meta_tag_keywords"><!--#4DHTMLVAR [web_content]meta_tag_keywords--></textarea></div>
+                        								</div>
+                        								<div class="form-group">
+															<label class="col-sm-2 control-label">Meta tag description </label>
+															<div class="col-sm-6"><textarea id="meta_tag_description" class="form-control" rows="5" columns="30" name="meta_tag_keywords"><!--#4DHTMLVAR [web_content]meta_tag_description--></textarea></div>
+                        								</div> 
+                        								<div class="row">
+															<div class="col-sm-12 text-center">
+																<input type="submit" class="btn palette-carrot btn-color margin-right-5 btn-sm save_exit">
+																<!--#4DIF (Records in selection([web_content])=0)-->
+																	<input type="reset" class="btn btn-primary btn-sm">
+																<!--4DENDIF--> 
+															</div>
+														</div>
+													</div>  
+												</div>    
+											</div>
+											<!--#4DIF (Records in selection([web_content])=1)-->
+											<div role="tabpanel" class="tab-pane fade" id="tab3" aria-labelledby="third-tab">
+												<div class="row getObjectsClass">
+                									<!--#4DSCRIPT/Web_LoadWebContentObjects-->
+													<!--4DLOOP [objects]-->
+													<div class=" col-sm-12 boxbcg" >
+														<div class="col-sm-12 col-lg-9">
+                   											<div class="form-group ObjectMsg_<!--4DVAR [objects]uuid-->" >
+																<label class="col-sm-2 control-label">Object Heading <sup class="req">*</sup></label>
+																<div class="col-sm-6"><input class="form-control" type="text" value="<!--4DVAR [objects]name-->" id="object_heading_<!--4DVAR [objects]uuid-->" onKeyUp="generate_object_code('<!--4DVAR [objects]uuid-->')" onBlur="generate_object_code('<!--4DVAR [objects]uuid-->')"></div>
+															</div>
+								
+															<div class="form-group"><label class="col-sm-2 control-label">Code <sup class="req">*</sup></label><div class="col-sm-6"><input <!--#4DIF ([objects]auto_format)--><!--4DELSE-->readonly<!--4DENDIF--> class="form-control" type="text" value="<!--4DVAR [objects]code-->" id="object_code_<!--4DVAR [objects]uuid-->"></div></div>
+															<div class="form-group">
+   		        												<div class="col-sm-offset-2 col-sm-9">
+    			  													<div class="checkbox">
+      		  															<label class="col-sm-6 control-label" STYLE="text-align:left;"> <input onclick="en_dis_code(this.checked,'object_code_<!--4DVAR [objects]uuid-->','<!--4DVAR [objects]uuid-->')"  type="checkbox" value="true" id="auto_format_<!--4DVAR [objects]uuid-->" <!--#4DIF ([objects]auto_format)-->checked<!--4DENDIF--> > <strong>I want to manually enter code </strong></label>
+    			  													</div>
+  																</div>
+  															</div>
+															
+															<div class="form-group" style="margin-bottom: 1px!important;"><label class="col-sm-2 control-label">Object Content</label><div class="col-sm-6"><textarea id="object_content_<!--4DVAR [objects]uuid-->" class="form-control" rows="5"><!--4DVAR [objects]object_content--></textarea></div></div>
+                       			
+       														<div class="form-group col-md-8" style="margin-top: 15px; margin-bottom: 10px; text-align: right; padding-right: 0px; margin-right: 0px;"><input type="button" onClick="saveObject('<!--4DVAR [objects]uuid-->');" class="btn btn-color palette-carrot btn-sm" value="Save Object"></div>  
+                       									</div>
+                       									<div class="col-sm-12 col-lg-3">
+                       										<div class="form-group"><label class="col-sm-2 control-label">Sort Order</label><div class="col-sm-6"><input class="form-control" type="text" value="<!--4DVAR [objects]order_num-->" id="object_sort_order_<!--4DVAR [objects]uuid-->"></div></div>
+															<div class="form-group"><label class="col-sm-2 control-label"></label><label class="checkbox" style="width:auto;"><input  type="checkbox" value="true" id="status_<!--4DVAR [objects]uuid-->" <!--#4DIF ([objects]status)-->checked<!--4DENDIF--> > <strong>Active</strong></label></div>
+															<div class="form-group" ><label class="col-sm-2 control-label"></label><a class="btn btn-color palette-wisteria btn-sm" href="javascript:void(0)" onClick="delete_object('<!--4DVAR [objects]uuid-->')">Delete</a></div>
+														</div>	
+													</div>
+													<!--4DENDLOOP-->
+													<div class=" col-sm-12 boxbcg" STYLE="margin-left:0px;" >
+														<div class="col-sm-12 col-lg-9 ObjectMsg_new">
+                   											<div class="form-group" >
+																<label class="col-sm-2 control-label">Object Heading <sup class="req">*</sup></label>
+																<div class="col-sm-6"><input name="object_heading_new" class="form-control" type="text" value="" id="object_heading_new" onKeyUp="generate_code('object_heading_new','object_code_new','auto_format_new')" onBlur="generate_code('object_heading_new','object_code_new','auto_format_new')"></div>
+															</div>
+															<div class="form-group" ><label class="col-sm-2 control-label">Code <sup class="req">*</sup></label><div class="col-sm-6"><input name="object_code_new" readonly class="form-control" type="text" value="" id="object_code_new"></div></div>
+															<div class="form-group">
+   		        												<div class="col-sm-offset-2 col-sm-9">
+    			  													<div class="checkbox">
+      		  															<label class="col-sm-6 control-label" style="text-align:left;"> <input onclick="en_dis_code(this.checked,'object_code_new')" type="checkbox" value="true" id="auto_format_new"  name="auto_format_new" > <strong>I want to manually enter code </strong></label>
+    			  													</div>
+  																</div>
+  															</div>
+															<div class="form-group" ><label class="col-sm-2 control-label">Object Content</label><div class="col-sm-6"><textarea id="object_content_new" class="form-control" rows="5" columns="40" name="object_content_new"></textarea></div></div>
+                       										<div class="form-group col-md-8" style="margin-top: 15px; margin-bottom: 10px; text-align: right; padding-right: 0px; margin-right: 0px;" ><input type="button" onClick="saveObject('new');" class="btn btn-color palette-carrot btn-sm" value="Save Object"></div>  
+                       									</div>
+                       									<div class="col-sm-12 col-lg-3">
+                       										<div class="form-group" ><label class="col-sm-2 control-label">Sort Order</label><div class="col-sm-6"><input name="object_sort_order_new" class="form-control" type="text" value="" id="object_sort_order_new"></div></div>
+															<div class="form-group"><label class="col-sm-2 control-label"></label><label class="checkbox" style="width:auto;">	<input name="status_new"  type="checkbox" value="true" id="status_new"> <strong>Active</strong></label></div>
+														</div>
+													</div>
+												</div>    
+											</div>
+											<!--4DENDIF-->	
+															
+										</div>
+									</div>
+								</form>
+							</div>
+						</div>
+					</div><!-- /.col --> 
+				</div><!-- /.row --> 
+			</div><!-- /.container-fluid --> 
+		</div><!-- /.rightside --> 
+	</div><!-- /.wrapper --> 
+
+<!-- END CONTENT --> 
+
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/v2/includes/InitJs.shtml--> 
+<!-- BEGIN JAVASCRIPTS --> 
+<script src="assets/plugins/bootstrap/js/bootstrap-tabcollapse.js"></script>
+<!-- bootstrap validator --> 
+<script src="assets/plugins/bootstrapValidator/bootstrapValidator.min.js" type="text/javascript"></script> 
+<!-- bootstrap wysihtml5 -->
+<script src="assets/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js" type="text/javascript"></script>
+<!-- maniac --> 
+<script src="assets/js/maniac.js" type="text/javascript"></script> 
+<!-- datepicker --> 
+<script src="assets/plugins/datepicker/js/bootstrap.datepicker.js" type="text/javascript"></script>
+<script type="text/javascript" src="assets/js/autocomplete.js"></script>
+<script type="text/javascript">
+maniac.loadbstexteditor();
+	$('#ProductForm').bootstrapValidator({
+			message: 'This value is not valid',
+			excluded: ':disabled',
+			fields: {
+				title: {
+					message: 'Name is not valid',
+					validators: {
+						notEmpty: {
+							message: 'Heading is required and can\'t be empty'
+						}
+					}
+				},
+				project_uuid: {
+					validators: {
+						notEmpty: {
+							message: 'This field is required and can\'t be empty'
+						}
+					}
+				},
+				body: {
+					validators: {
+						notEmpty: {
+							message: 'This field is required and can\'t be empty'
+						}
+					}
+				},
+				posted_timestamp: {
+					validators: {
+						notEmpty: {
+							message: 'This field is required and can\'t be empty'
+						}
+					}
+				}
+			},submitHandler: function(validator, form, submitButton) {
+					//var actualNameStr= '<!--#4DVAR [web_content]title-->';
+					var actualNameStr= $("#actualTitle").val();
+					var prodNameStr=$("#title").val();
+       				<!--#4DIF (Records in selection([web_content])=1)-->	
+						//alert(actualNameStr+" "+prodNameStr);
+						if(actualNameStr!=prodNameStr){
+							var jsonRow = 'checkalready.cgi?field_value='+prodNameStr+'&table_name=web_content&field_name=title';
+							$.getJSON(jsonRow,function(html){
+								if(html.result=="yes" ){
+									$('#errorEM').show();
+									$('.errorNameClass').addClass("has-error");
+									return false;
+								}else{
+									$('#errorEM').hide();
+									$('.errorNameClass').removeClass("has-error");
+									validator.defaultSubmit();
+								}
+							});
+						}else{
+							validator.defaultSubmit();
+						}
+					<!--#4DELSE-->
+						var jsonRow = 'checkalready.cgi?field_value='+prodNameStr+'&table_name=web_content&field_name=title';
+						$.getJSON(jsonRow,function(html){
+							if(html.result=="yes" ){
+								$('#errorEM').show();
+								$('.errorNameClass').addClass("has-error");
+								return false;
+							}else{
+								$('#errorEM').hide();
+								$('.errorNameClass').removeClass("has-error");
+								validator.defaultSubmit();
+							}
+						});
+					<!--#4DENDIF-->
+			}
+		});
+function en_dis_code(status,id,e){
+	auto = typeof auto !== 'undefined' ? auto : '';
+	if(status==true){
+		$('#'+id).attr("readonly",false);
+		$('#'+id).val("");
+	}else{
+		$('#'+id).attr("readonly",true);
+		$('#'+id).val("");
+		generate_object_code(e);
+	}
+}
+function generate_object_code(e){
+	var s="object_heading_"+e;
+	var d="object_code_"+e;
+	var a="auto_format_"+e;
+	generate_code(s,d,a);
+}
+function saveObject(e){
+	
+	$(".msg_"+e).remove();
+	if(e=="new"){
+		var uuid="";
+	}else{
+	var uuid= e;
+	}
+	var object_heading= $("#object_heading_"+e).val();
+	var object_code= $("#object_code_"+e).val();
+	var object_content= $("#object_content_"+e).val();
+	var object_sort_order= $("#object_sort_order_"+e).val();
+	
+	var auto_format=false;
+	if($('#auto_format_'+e).is(':checked')){
+		auto_format= true;
+	}
+	var status=false;
+	if($('#status_'+e).is(':checked')){
+		status= true;
+	}
+	
+	if(object_heading!="" && object_code!="" && object_content!=""){		
+    			$.ajax({
+					url: 'saveobject.cgi',
+					type: 'POST',
+					data: {"uuid" : uuid, "web_content_uuid" : $("#uuid").val(), "name" : object_heading, "code" : object_code,  "object_content" : object_content, "auto_format" : auto_format, "order_num" : object_sort_order, "status" : status },
+					dataType: 'json',
+					cache: false,
+					success: function(response){
+						if(response.success){
+							$.prompt(response.success);
+							location.reload();
+						}else if(response.error){
+							$(".ObjectMsg_"+e).before('<div class="span9 alert alert-danger msg_'+e+'" role="alert">'+response.error+'</div>');
+						}
+						
+					}
+				});
+	}else{
+		$(".ObjectMsg_"+e).before('<div class="span9 alert alert-info msg_'+e+'" role="alert">Please enter all the required fields!</div>');
+	}
+}
+function delete_object(uid){
+	$.prompt("Are you sure to delete this object?", {
+		buttons: { "Yes": true, "No": false },
+		submit: function(e,v,m,f){
+			if(v){
+				$.ajax({
+					type: "POST",
+					url: "deleteobjects.cgi",
+					data: { "selected_uuids" : uid},
+					cache: false,
+					success: function(response){
+						if(response.success){
+							$.prompt(response.success);
+							location.reload();
+						}else if(response.error){
+							$.prompt(response.error);
+						}	
+					}
+				});
+				$.prompt.close();	
+			}else{
+				$.prompt.close();
+			}
+		}
+	});
+}
+
+
+	function generate_code(source,dest,checked){
+		checked = typeof checked !== 'undefined' ? checked : '';
+		if(checked!=""){
+			var status=$("#"+checked).checked;
+			if(status!=true){
+				var val=$("#"+source).val();
+				var patt=/[^A-Za-z0-9_-]/g;
+				var result=val.replace(patt,' ');
+				result=result.replace(/-/g, ' ');
+				result=result.replace(/\s+/g, ' ');
+				result = result.replace(/^\s+|\s+$/g,'');
+				result=result.replace(/\s/g, '-');
+				result=result.toLowerCase();
+				$("#"+dest).val(result);
+			}
+		}else{
+			var val=$("#"+source).val();
+			var patt=/[^A-Za-z0-9_-]/g;
+			var result=val.replace(patt,' ');
+			result=result.replace(/-/g, ' ');
+			result=result.replace(/\s+/g, ' ');
+			result = result.replace(/^\s+|\s+$/g,'');
+			result=result.replace(/\s/g, '-');
+			result=result.toLowerCase();
+			$("#"+dest).val(result);
+		}
+	}
+	
+	$(function () {
+		<!--#4DIF (_HIT_WebApp_GetField ("msg")="success")-->
+			$.prompt("Content saved successfully");
+		<!--#4DENDIF-->
+		<!--#4DIF (_HIT_WebApp_GetField ("msg")="error")-->
+			$.prompt("Sorry, some error occurred while saving content. Please try after some time!");
+		<!--#4DENDIF-->
+		$('#posted_timestamp').datepicker().on('changeDate', function (ev) {
+			$(this).datepicker('hide');
+			$('#posted_timestamp').trigger('change');
+		});
+        $('#new-customer-tab').tabCollapse();
+		
+		
+	});
+	
+	
+	 var xhr;
+  (function( $ ) {
+    $.widget( "custom.combobox", {
+      _create: function() {
+        this.wrapper = $( "<span>" )
+          .addClass( "custom-combobox" )
+          .insertAfter( this.element );
+ 
+        this.element.hide();
+        this._createAutocomplete();
+        this._createShowAllButton();
+      },
+ 
+      _createAutocomplete: function() {
+		var ele_select= this.element;
+        var selected = this.element.children( ":selected" ),
+          value = selected.val() ? selected.text() : "";
+ 
+        this.input = $( "<input>" )
+          .appendTo( this.wrapper )
+          .val( value )
+          .attr( "title", "" )
+          .addClass( "custom-combobox-input ui-widget ui-widget-content ui-state-default ui-corner-left" )
+          .autocomplete({
+            delay: 0,
+            minLength: 0,
+            source: $.proxy( this, "_source" )
+          })
+          .tooltip({
+            tooltipClass: "ui-state-highlight"
+          });
+ 
+        this._on( this.input, {
+          autocompleteselect: function( event, ui ) {
+		  	//alert("show all");
+            ui.item.option.selected = true;
+			
+            this._trigger( "select", event, {
+              item: ui.item.option
+            });
+			
+			if(ele_select.attr('id')=='Client_ID'){
+				get_client_info();
+				get_projects();
+			}
+			ele_select.trigger('change');
+          },
+ 
+          autocompletechange: "_removeIfInvalid"
+        });
+      },
+ 
+      _createShowAllButton: function() {
+        var input = this.input,
+          wasOpen = false;
+ 
+        $( "<a>" )
+          .attr( "tabIndex", -1 )
+          .attr( "title", "Show All Items" )
+          .tooltip()
+          .appendTo( this.wrapper )
+          .button({
+            icons: {
+              primary: "ui-icon-triangle-1-s"
+            },
+            text: false
+          })
+          .removeClass( "ui-corner-all" )
+          .addClass( "custom-combobox-toggle ui-corner-right" )
+          .mousedown(function() {
+            wasOpen = input.autocomplete( "widget" ).is( ":visible" );
+          })
+          .click(function() {
+            input.focus();
+ 
+            // Close if already visible
+            if ( wasOpen ) {
+              return;
+            }
+ 
+            // Pass last search string as value to search for, displaying last results
+            input.autocomplete( "search", 'SHOWALL' );
+          });
+      },
+ 
+      _source: function( request, response ) {
+        //var matcher = new RegExp( $.ui.autocomplete.escapeRegex(request.term), "i" );
+		var ele_select= this.element;
+		if(request.term=='SHOWALL'){
+			response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+		
+		}
+		else
+		{
+		var jsonRow = 'getprojectsonsearch.cgi?srch='+request.term;
+		
+		if(xhr) xhr.abort();
+		xhr=$.getJSON(jsonRow,function(result){
+			
+			if(result){
+				var html='<option value=""></option>';
+
+				$.each(result, function(i,item)
+				{
+					html += '<option value="'+item.ProjectUUID+'">'+item.value+'</option>';
+				});
+				
+				ele_select.html(html);
+				
+				
+				response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+				
+				
+			}
+		});
+       
+	  } 
+		
+      },
+ 
+      _removeIfInvalid: function( event, ui ) {
+ 
+        // Selected an item, nothing to do
+        if ( ui.item ) {
+
+          return;
+        }
+ 
+        // Search for a match (case-insensitive)
+        var value = this.input.val(),
+          valueLowerCase = value.toLowerCase(),
+          valid = false;
+		  var ele_select= this.element;
+        this.element.children( "option" ).each(function() {
+          if ( $( this ).text().toLowerCase() === valueLowerCase ) {
+            this.selected = valid = true;	
+		if(ele_select.attr('id')=='Client_ID'){
+			get_client_info();
+			get_projects();
+			}	
+			ele_select.trigger('change');
+            return false;
+          }
+        });
+ 
+        // Found a match, nothing to do
+        if ( valid ) {
+          return;
+        }
+ 
+        // Remove invalid value
+        this.input
+          .val( "" )
+          .attr( "title", value + " didn't match any item" )
+          .tooltip( "open" );
+        this.element.val( "" );
+        this._delay(function() {
+          this.input.tooltip( "close" ).attr( "title", "" );
+        }, 2500 );
+       // this.input.data( "ui-autocomplete" ).term = "";
+      },
+ 
+      _destroy: function() {
+        this.wrapper.remove();
+        this.element.show();
+      }
+    });
+  })( jQuery );
+ 
+	$(function() {
+		$( "#project_uuid" ).combobox();
+  	});
+</script>
+<!-- END JAVASCRIPTS -->
+</body>
+<!-- END BODY -->
+</html>

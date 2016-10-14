@@ -1,0 +1,182 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml?url="+HTTPD_DocumentURI)
+end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+_HIT_HTMLTXT:=_HIT_HTTP_GetReferer
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+</head>
+<body>
+
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
+
+	<!-- main container -->
+    <div class="content">
+        
+        <div class="container-fluid">
+            <div id="pad-wrapper">
+
+                <!-- projects table -->
+                <div class="table-wrapper orders-table section">
+                    <div class="row-fluid head">
+                        <div class="span12">
+                            <h4>Projects</h4>
+                        </div>
+                    </div>
+
+                    <div class="row-fluid filter-block">
+                        <div class="pull-right">
+                            <div class="btn-group pull-right">
+                                <button class="glow left large" onClick="__showAllProjects(); return false;">All</button>
+                                <button class="glow middle large" onClick="__showActive(); return false;">Active</button>
+                                <button class="glow right large" onClick="__showInActive(); return false;">InActive</button>
+                                <a href="project.shtml" class="btn-flat success new-product margn-lft35">+ Add New Project</a>
+                            </div>
+                            <input name="keyword" id="keyword" type="text" class="search order-search" placeholder="Search for Client or Project.." value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->">
+                        </div>
+                    </div>
+
+                    <div class="row-fluid">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th class="span2">
+                                        Client
+                                    </th>
+                                    <th class="span1">
+                                        Project
+                                    </th>
+                                    <th class="span1">
+                                        <span class="line"></span>
+                                        Currency
+                                    </th>
+                                    <th class="span1">
+                                        <span class="line"></span>
+                                        Budget
+                                    </th>
+                                     <th class="span2">
+                                        <span class="line"></span>
+                                        Start Date
+                                    </th>
+                                    <th class="span2">
+                                        <span class="line"></span>
+                                        Status
+                                    </th>                              
+                                </tr>
+                            </thead>
+                            <tbody><!--#4DSCRIPT/Web_LoadProjects/-->
+                                <!--#4DLOOP [Projects]--><!--#4DSCRIPT/Web_LoadProjectRelated/--><!-- row -->
+                                <tr class="first">
+                                    <td>
+                                        <a href="customers.shtml?keyword=<!--#4DVAR [Companies]company_Name-->"><!--#4DHTMLVAR [Companies]company_Name--></a>
+                                    </td>
+                                    <td>
+                                        <a href="javascript:void(0)" onClick="__showProjectForm('<!--#4DHTMLVAR [Projects]uuid-->')"><!--#4DHTMLVAR [Projects]proj_name--></a>
+                                    </td>
+                                    <td>
+                                        <!--#4DHTMLVAR [Projects]currency_code-->
+                                    </td>
+                                    <td>
+                                        <!--#4DHTMLVAR Invoice_AmtReturnAsText([Projects]budget)-->
+                                    </td>
+                                    <td>
+                                        <!--#4DHTMLVAR ([Projects]start_date)-->
+                                    </td>
+                                    <td>
+                                    	<!--#4DIF ([Projects]proj_active=True)--><span class="label label-success">Active</span><!--#4DELSE--><span class="label label-info">InActive</span><!--#4DENDIF-->
+                                    	<ul class="actions">
+                                    		<li><a href="javascript:void(0)" onClick="__showProjectForm('<!--#4DHTMLVAR [Projects]uuid-->')"><i class="table-edit"></i></a></li>
+                                        	<li><i class="table-settings"></i></li>
+                                        	<li class="last"><i class="table-delete"></i></li>
+                                   	 	</ul>
+                                    </td>
+                                </tr>
+						<!--#4DENDLOOP-->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- end projects table -->
+
+            </div>
+        </div>
+    </div>
+    <!-- end main container -->
+
+	<!-- scripts -->
+   <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+	
+	 <script>
+    
+function __showActive()
+{
+pUrlStr='projects.shtml?keyword='+$('#keyword').val()+'&tab=active';
+window.location.href=pUrlStr;
+}
+
+function __showInActive()
+{
+pUrlStr='projects.shtml?keyword='+$('#keyword').val()+'&tab=inactive';
+window.location.href=pUrlStr;
+}
+
+function __showAllProjects()
+{
+pUrlStr='projects.shtml';
+window.location.href=pUrlStr;
+}
+
+function __showProjects()
+{
+pUrlStr='projects.shtml?keyword='+$('#keyword').val();
+window.location.href=pUrlStr;
+}
+
+function __showProjectForm(uuid)
+{
+pUrlStr='project.shtml?uuid='+uuid;
+window.location.href=pUrlStr;
+}
+
+
+$(document).ready(function() {
+
+$('#keyword').focus();
+
+//setup before functions
+var typingTimer;                //timer identifier
+var doneTypingInterval = 1000;  //time in ms, 5 second for example
+
+//on keyup, start the countdown
+$('#keyword').keyup(function(){
+    clearTimeout(typingTimer);
+    if ($('#keyword').val) {
+        typingTimer = setTimeout(function(){
+            //do stuff here e.g ajax call etc....
+             var v = $("#keyword").val();
+__showProjects();
+        }, doneTypingInterval);
+    }
+});
+
+    });
+
+
+    </script>
+	
+</body>
+</html>

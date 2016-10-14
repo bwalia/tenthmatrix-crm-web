@@ -1,0 +1,175 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+else
+//_HIT_HTTPD_RedirectToURL ("sign-in.shtml?url="+HTTPD_DocumentURI)
+end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+
+_HIT_HTMLTXT:=_HIT_HTTP_GetReferer
+-->
+<!DOCTYPE html>
+<html>
+<head>
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+</head>
+<body>
+
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
+
+	<!-- main container -->
+    <div class="content">
+        
+        <div class="container-fluid">
+            <div id="pad-wrapper">
+
+                <!-- projects table -->
+                <div class="table-wrapper orders-table section">
+                    <div class="row-fluid head">
+                        <div class="span12">
+                            <h4>Activity</h4>
+                        </div>
+                    </div>
+
+                    <div class="row-fluid filter-block">
+                        <div class="pull-right">
+                            <div class="btn-group pull-right">
+                                <button class="glow left large" onClick="__showAllActivities(); return false;">All</button>
+                                <button class="glow middle large" onClick="__showSent(); return false;">Sent</button>
+                                <button class="glow right large" onClick="__showNotSent(); return false;">Not-Sent</button>
+                            </div>
+                            <input name="keyword" id="keyword" type="text" class="search order-search" placeholder="Search for Contact or Client" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" />
+                        </div>
+                    </div>
+
+                    <div class="row-fluid">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th class="span2">
+                                        LEAD NAME
+                                    </th>
+                                    <th class="span3">
+                                        CONTACT NAME
+                                    </th>
+									<th class="span4">
+                                        ACTION
+                                    </th>
+                                    <th class="span6">
+                                        Phone
+                                    </th>
+                                    <th class="span6">
+                                        DATE
+                                    </th>
+									<th class="span6">
+                                        OWNER
+                                    </th>
+                                    <th class="span7">
+                                       Brochure Sent
+                                    </th>
+
+                                </tr>
+                            </thead>
+                            <tbody><!--#4DSCRIPT/Web_LoadActivity/-->
+                            <!--#4DLOOP [Activity]--><!--#4DSCRIPT/Web_LoadActivityRelated/--><!-- row -->
+                                <tr class="first">
+                                    <td>
+										 <a target="_blank" href="leads.shtml?keyword=<!--#4DVAR [Leads]CompanyName-->"><!--#4DHTMLVAR [Leads]CompanyName--></a>
+                                    </td>
+                                    <td>
+                                        <a href="javascript:void(0)" onClick="__showActivityForm('<!--#4DHTMLVAR [Activity]uuid-->')"><!--#4DHTMLVAR [Activity]ContactName--></a>
+                                    </td>
+                                    <td>
+                                        <a href="javascript:void(0)" onClick="__showActivityForm('<!--#4DHTMLVAR [Activity]uuid-->')"><!--#4DHTMLVAR [Activity]Action-->
+                                    </td>
+                                    <td>
+                                        <!--#4DHTMLVAR [Activity]Phone-->
+                                    </td>
+									<td>
+                                        <!--#4DHTMLVAR [Activity]Date-->
+                                    </td>
+									<td>
+                                        <!--#4DHTMLVAR [Activity]Owner-->
+                                    </td>
+                                    <td>
+                                        <span class="label label-success"><!--#4DIF ([Activity]SentBrochure=True)-->SENT<!--#4DELSE-->NOT-SENT<!--#4DENDIF--></span>
+                                    </td>
+
+                                </tr>
+<!--#4DENDLOOP-->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- end Activity table -->
+
+            </div>
+        </div>
+    </div>
+    <!-- end main container -->
+
+	<!-- scripts -->
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+<script>
+    
+function __showSent()
+{
+pUrlStr='activities.shtml?keyword='+$('#keyword').val()+'&tab=Sent';
+window.location.href=pUrlStr;
+}
+
+function __showNotSent()
+{
+pUrlStr='activities.shtml?keyword='+$('#keyword').val()+'&tab=NotSent';
+window.location.href=pUrlStr;
+}
+
+function __showAllActivities()
+{
+pUrlStr='activities.shtml';
+window.location.href=pUrlStr;
+}
+
+function __showActivities()
+{
+pUrlStr='activities.shtml?keyword='+$('#keyword').val();
+window.location.href=pUrlStr;
+}
+
+function __showActivityForm(uuid)
+{
+pUrlStr='activity.shtml?uuid='+uuid;
+window.location.href=pUrlStr;
+}
+
+$(document).ready(function() {
+
+$('#keyword').focus();
+
+//setup before functions
+var typingTimer;                //timer identifier
+var doneTypingInterval = 1000;  //time in ms, 5 second for example
+
+//on keyup, start the countdown
+$('#keyword').keyup(function(){
+    clearTimeout(typingTimer);
+    if ($('#keyword').val) {
+        typingTimer = setTimeout(function(){
+            //do stuff here e.g ajax call etc....
+             var v = $("#keyword").val();
+__showActivities();
+        }, doneTypingInterval);
+    }
+});
+
+    });
+
+    </script>
+</body>
+</html>

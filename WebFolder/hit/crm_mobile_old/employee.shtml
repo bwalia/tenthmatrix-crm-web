@@ -1,0 +1,148 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+QUERY([Employees];[Employees]uuid=_HIT_WebApp_GetField ("uuid"))
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+-->
+
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/main-header.shtml-->
+
+<style>
+label.error {
+	float: left;
+	color: red;
+	padding-top: .5em;
+	vertical-align: top;
+	font-weight:bold
+}
+</style>
+<link rel="stylesheet" type="text/css" href="css/jqm-datebox.min.css" /> 
+<script type="text/javascript" src="js/jqm-datebox.core.min.js"></script>
+<script type="text/javascript" src="js/jqm-datebox.mode.calbox.min.js"></script>
+<script type="text/javascript" src="js/jquery.mobile.datebox.i18n.en_US.utf8.js"></script>
+<script src="js/jquery.validate.js"></script>
+<script src="js/additional-methods.js"></script>
+<script type="text/javascript">
+function __showEmps()
+{
+pUrlStr='employees.shtml';
+window.location.href=pUrlStr;
+}
+
+$(document).on('pageinit', function(){
+	$("#employeeForm").validate({
+        rules: {
+            Position: "required",
+            FirstName : "required",
+            LastName : "required",
+            Email : {
+				required: true,
+				email: true
+			},
+            Password : "required"
+        },
+		messages: {
+			Position: "Please enter Position",
+			FirstName: "Please Enter First Name",
+			LastName: "Please Enter Last Name",
+			Email: "Please Enter Valid Email Address",
+			Password: "Please Enter Password"
+		}
+    });
+});
+</script>
+</head>
+<body>
+<div data-role="page" id="home" data-add-back-btn="false">
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/top-header.shtml-->
+	<div data-role="content" style="padding: 15px;">
+		<ul data-role="listview" data-inset="true">
+			<li data-role="list-divider"><span style=" color:#2B89D0; font-stretch:narrower;"><!--#4DIF (Records in selection([Employees])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Employee</span></li>
+		</ul>
+		<form data-ajax="false" action="saveemployee.cgi" method="post" name="form" id="employeeForm" >
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput1">Position<font color="#FF0000">*</font></label>
+					<input type="text" name="Position" id="Position" placeholder="Position" value="<!--#4DVAR [Employees]emp_position-->">
+					<input name="Employee_uuid" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="Employee_uuid">        
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput1">First Name<font color="#FF0000">*</font></label>
+					<input type="text" name="FirstName" id="FirstName" placeholder="First Name" value="<!--#4DVAR [Employees]emp_first_name-->">
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput1">Last Name<font color="#FF0000">*</font></label>
+					<input type="text" name="LastName" id="LastName" placeholder="Last Name" value="<!--#4DVAR [Employees]emp_last_name-->">
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput1">Email<font color="#FF0000">*</font></label>
+					<input type="text" name="Email" id="Email" placeholder="Email" value="<!--#4DVAR [Employees]email-->">
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput1">Password<font color="#FF0000">*</font></label>
+					<input type="password" name="Password" id="Password" placeholder="Password" value="<!--#4DVAR [Employees]zWebPassword-->">
+				</fieldset>
+			</div>
+						
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput15">Type</label>
+					<select name="Type" id="Type">
+						<option value="0">Select an option</option>
+						<option value="Administrator" <!--#4DIF ([Employees]emp_type="Administrator")-->selected<!--4DELSE--><!--4DENDIF-->>Administrator</option>
+						<option value="Bookkeeper" <!--#4DIF ([Employees]emp_type="Bookkeeper")-->selected<!--4DELSE--><!--4DENDIF-->>Bookkeeper</option>
+						<option value="Customer Relationship Manager" <!--#4DIF ([Employees]emp_type="Customer Relationship Manager")-->selected<!--4DELSE--><!--4DENDIF-->>Customer Relationship Manager</option>
+						<option value="Designer" <!--#4DIF ([Employees]emp_type="Designer")-->selected<!--4DELSE--><!--4DENDIF-->>Designer</option>
+						<option value="Developer" <!--#4DIF ([Employees]emp_type="Developer")-->selected<!--4DELSE--><!--4DENDIF-->>Developer</option>
+						<option value="Manager" <!--#4DIF ([Employees]emp_type="Manager")-->selected<!--4DELSE--><!--4DENDIF-->>Manager</option>
+						<option value="Shareholder" <!--#4DIF ([Employees]emp_type="Shareholder")-->selected<!--4DELSE--><!--4DENDIF-->>Shareholder</option>
+						<option value="Support" <!--#4DIF ([Employees]emp_type="Support")-->selected<!--4DELSE--><!--4DENDIF-->>Support</option>
+						<option value="Technical" <!--#4DIF ([Employees]emp_type="Technical")-->selected<!--4DELSE--><!--4DENDIF-->>Technical</option>
+					</select>   
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput15">Status</label>
+					<select name="Status" id="Status">
+						<option value="Active" <!--#4DIF ([Employees]emp_active=True)-->selected<!--4DELSE--><!--4DENDIF-->>Active</option>
+						<option value="Inactive" <!--#4DIF ([Employees]emp_active=False)-->selected<!--4DELSE--><!--4DENDIF-->>Inactive</option>
+					</select>   
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput15">Web Access</label>
+					<select name="Allow_Web_Access" id="Allow_Web_Access">
+						<option value="Allow" <!--#4DIF ([Employees]AllowWebAccess=True)-->selected<!--4DELSE--><!--4DENDIF-->>Allow</option>
+						<option value="Deny" <!--#4DIF ([Employees]AllowWebAccess=False)-->selected<!--4DELSE--><!--4DENDIF-->>Deny</option>
+					</select>   
+				</fieldset>
+			</div>
+			<input type="submit" value="Submit" id="submit" name="submit">
+			<input type="submit" value="Cancel" onClick="__showEmps(); return false;">
+		</form>
+	</div><!-- END DATA ROLE CONTENT-->
+
+   <!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/footer.shtml-->
+    
+ </div>
+ 
+</body>
+</html>

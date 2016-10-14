@@ -1,0 +1,122 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+C_TEXT(_HTMLTITLETXT)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+QUERY([_emailc_queue];[_emailc_queue]_uuid=_HIT_WebApp_GetField ("uuid"))
+C_BOOLEAN(mReadEmail)
+mReadEmail:=(Records in selection([_emailc_queue])=1)
+
+
+IF (Records in selection([_emailc_queue])=0)
+_HTMLTITLETXT:="New mail"
+ELSE
+_HTMLTITLETXT:= "Resend mail"
+end if
+
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+
+-->
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/main-header.shtml-->
+<script src="js/jquery.validate.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+	// validate signup form on keyup and submit
+	$("#DetailForm").validate({
+		rules: {
+			group_name: { required: true },
+		}
+	});
+});
+
+</script>
+<script type='text/javascript' src='js/customerNotes.js'></script>
+<style>
+label.error { 
+	float: left; 
+	color: red; 
+	padding-top: 1.5em; 
+	vertical-align: top; 
+}
+</style>
+</head>
+<body>
+<div data-role="page" class="jqm-demos" data-quicklinks="true">
+	<!-- header -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/top-header.shtml-->
+	<!-- /header -->
+	<div role="main" class="ui-content jqm-content">
+		<h3><!--#4DIF (Records in selection([_emailc_queue])=1)-->Resend Mail<!--#4DELSE-->New mail<!--#4DENDIF--></h3>
+		<div  class="ui-body-d ui-content">
+  			<div data-demo-html="true">
+  				<form novalidate="novalidate" data-ajax="false" name="DetailForm" id="DetailForm" action="sendmailQueue.cgi" method="post">
+  					<input name="uuid" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="uuid">        
+							<div class="ui-field-contain">
+								<label>From </label>
+								<input name="From_name" type="text" value="<!--#4DVAR [_emailc_queue]_from_name-->" id="From_name">
+							</div>
+							<input name="email_uuid" class="span4" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="email_uuid">
+							<div class="ui-field-contain">
+								<label>Recipient </label>
+								<select id="ToEmailAddress" name="ToEmailAddress" data-native-menu="false">
+									<!--#4DIF (mReadEmail)-->
+									     <option value="<!--4DVAR [_emailc_queue]_recipient-->" selected><!--4DVAR [_emailc_queue]_recipient--></option>	
+									<!--#4DELSE--> 
+									 	 <option value="<!--4DVAR [_emailc_queue]_recipient-->"><!--4DVAR [_emailc_queue]_recipient--></option>									 
+									 <!--#4DENDIF-->	
+								</select>
+							</div>
+						 	<div class="ui-field-contain">
+								<label>Cc  </label>
+								<select id="CCToEmailAddress" name="CCToEmailAddress" data-native-menu="false">
+									<!--#4DIF (mReadEmail)-->
+									<option value="<!--4DVAR [_emailc_queue]_cc-->"><!--4DVAR [_emailc_queue]_cc--></option>
+									<!--#4DENDIF-->
+								</select>
+						 	</div>
+						 	<div class="ui-field-contain">
+								<label>BCc  </label>
+								<select id="BCCToEmailAddress" name="BCCToEmailAddress" data-native-menu="false">
+									<option value=""></option>
+									<!--#4DIF (mReadEmail)-->
+										<option value="<!--4DVAR [_emailc_queue]_bcc-->"><!--4DVAR [_emailc_queue]_bcc--></option>
+									<!--#4DENDIF-->
+								</select>
+						 	</div>
+						 	<div class="ui-field-contain">
+								<label>Send By </label>
+								<select id="HostName" name="HostName" data-native-menu="false">
+								  <option value="Balinder">Balinder Walia</option>
+								  <option value="Pat">Pat Bensky</option>
+								  <option value="Sandeep" selected>Sandeep Shah</option>
+								</select>
+						 	</div>
+							<div class="ui-field-contain">
+								<label>Subject </label>
+								<textarea name="Subject" id="Subject"><!--#4DHTMLVAR [_emailc_queue]_subject-->"</textarea>                               
+							</div>
+							<div class="ui-field-contain">
+								<label>Send Message </label>
+								<textarea id="Message_Body" class="span10" rows="25" columns="40" name="Message_Body" ><!--#4DHTMLVAR [_emailc_queue]_email_body_html--></textarea>
+							</div> 
+                		<button type="submit" class="ui-shadow ui-btn ui-corner-all ui-mini">Submit</button>
+						<a href="emailqueue.shtml" data-ajax="false" class="ui-shadow ui-btn ui-corner-all ui-mini">Cancel</a>
+				</form>
+			</div>
+  		</div>
+	</div>
+	<!-- /content -->
+	<!-- panel -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/sidebar.shtml-->
+	<!-- /panel -->
+
+	<!-- footer -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/footer.shtml-->
+	<!-- /footer -->
+</div><!-- /page -->
+</body>
+</html>

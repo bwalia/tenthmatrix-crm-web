@@ -1,0 +1,333 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+
+QUERY([Companies];[Companies]uuid=_HIT_WebApp_GetField ("uuid"))
+QUERY([Contacts];[Contacts]client_id=[Companies]account_Number)
+_HIT_WebSession_SetVar ("last-clicked-uuid";_HIT_WebApp_GetField ("uuid"))
+
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+
+-->
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/main-header.shtml-->
+
+<style>
+label.error {
+	float: left;
+	color: red;
+	padding-top: .5em;
+	vertical-align: top;
+	font-weight:bold
+}
+
+.table-opt tbody tr:hover td a { color: #FFF!important; }
+.table-opt tbody tr:hover td a:hover { color: #FFF; text-decoration:underline}
+</style>
+<link rel="stylesheet" type="text/css" href="css/jqm-datebox.min.css" /> 
+<script type="text/javascript" src="js/jqm-datebox.core.min.js"></script>
+<script type="text/javascript" src="js/jqm-datebox.mode.calbox.min.js"></script>
+<script type="text/javascript" src="js/jquery.mobile.datebox.i18n.en_US.utf8.js"></script>
+<script src="js/jquery.validate.js"></script>
+<script src="js/additional-methods.js"></script>
+<script type="text/javascript">
+
+function __showCusts()
+{
+pUrlStr='customers.shtml';
+window.location.href=pUrlStr;
+}
+
+$(document).on('pageinit', function(){
+
+	$("#frm").validate({
+        rules: {
+            Company_Name: "required",
+            Contact_First_Name : "required",
+            Contact_Last_Name : "required",
+            Email : { required: true, email: true },
+            Address_1 : "required",
+            City : "required",
+			Country : "required",
+			Post_Code: "required",
+            Phone : "required",
+            Enter_Date : "required",
+
+        },
+		messages: {
+			Company_Name: "Please Specify Company Name",
+			Contact_First_Name: "Please Specify Contact First Name",
+			Contact_Last_Name: "Please Specify Contact Last Name",
+			Email: { required: "Please Specify Email", email: "Please Specify valid Email" },
+			Address_1: "Please Specify Address1",
+			City: "Please Specify City",
+			Country : "Please Specify Country",
+			Post_Code: "Please Specify Post Code",
+			Phone: "Please Specify Phone Number",
+			Enter_Date: "Please Specify Date",
+			
+		}
+    });
+	
+	$("#frm_contact").validate({
+        rules: {
+			f_name: "required",
+            s_name: "required",
+            c_email : { required: true, email: true },
+           
+        },
+		messages: {
+			f_name: "Please enter First Name",
+			s_name: "Please enter Surname",
+			c_email: { required: "Please enter Email", email: "Please Specify a valid email" },
+			
+		}
+    });
+});
+</script>
+
+<script type="text/javascript">
+	
+	function checkphone(e)
+	{
+		var k = e.which;
+    					/* numeric inputs can come from the keypad or the numeric row at the top */
+   						 if ((k<48 || k>57) && (k!=45) && (k!=43) && (k!=40) && (k!=41) && (k!=32) && (k!=44) && (k!=46) && (k!=8) && (k!=0)) {
+        					e.preventDefault();
+							//alert("Allowed characters are 0-9, +, -, (, ), , ,, .");
+        					return false;
+    					}
+	}
+
+        $(function () {
+		
+		<!--#4DIF (Records in selection([Companies])=0)-->
+		
+		var new_acc_no='<!--#4DVAR Sequence number([Companies])-->';	
+		$('#acc_no').val(new_acc_no);
+		<!--#4DELSE--><!--#4DENDIF-->
+
+			
+			$('.phone').keypress(function(e){
+						checkphone(e);
+					
+					}); 
+			
+        });
+    </script>
+<script type='text/javascript' src='js/contactcustomer.js'></script>
+
+</head>
+<body>
+<div data-role="page" id="home" data-add-back-btn="false">
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/top-header.shtml-->
+	<div data-role="content" style="padding: 15px;">
+	
+	<div id="div_cust" >
+	
+		<ul data-role="listview" data-inset="true">
+			<li data-role="list-divider"><span style=" color:#2B89D0; font-stretch:narrower;"><!--#4DIF (Records in selection([Companies])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Customer</span></li>
+		</ul>
+		<form data-ajax="false" action="savecustomer.cgi" method="post" name="CompanyForm" id="frm" >
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput1">Company Name<font color="#FF0000">*</font></label>
+					<input class="span9" name="Company_Name" type="text" value="<!--#4DVAR [Companies]company_Name-->" id="Company_Name" placeholder="Company Name">
+					<input name="acc_no" type="hidden" value="<!--#4DVAR [Companies]account_Number-->" id="acc_no">
+					<input name="Company_uuid" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="Company_uuid">
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput12">Contact First Name<font color="#FF0000">*</font></label>
+					<input type="text" id="Contact_First_Name" name="Contact_First_Name" value="<!--#4DVAR [Companies]contact_firstname-->" placeholder="First Name">
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput12">Contact Last Name<font color="#FF0000">*</font></label>
+						<input type="text" id="Contact_Last_Name" name="Contact_Last_Name" value="<!--#4DVAR [Companies]contact_Lastname-->" placeholder="Last Name">                         
+				</fieldset>
+			</div>
+			
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput13">Email<font color="#FF0000">*</font></label>
+					<input type="text" name="Email" id="Email" value="<!--#4DVAR [Companies]email_address-->" placeholder="Email">
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput14">Address 1<font color="#FF0000">*</font></label>
+					<textarea name="Address_1" id="Address_1" rows="4" placeholder="Address 1"><!--#4DVAR [Companies]address_line_1--></textarea>
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput15">Address 2</label>
+					<textarea name="Address_2" id="Address_2" rows="4" placeholder="Address 2"><!--#4DVAR [Companies]address_line_2--></textarea>
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput15">City<font color="#FF0000">*</font></label>
+					<input name="City" type="text" value="<!--#4DVAR [Companies]city_or_town-->" id="City" placeholder="City">
+				</fieldset>
+			</div>
+			
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput12">Country<font color="#FF0000">*</font></label>
+					<input name="Country" type="text" value="<!--#4DVAR [Companies]country-->" id="Country" placeholder="Country">
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput12">Post Code<font color="#FF0000">*</font></label>
+						<input name="Post_Code" type="text" value="<!--#4DVAR [Companies]post_zip_code-->" id="Post_Code" placeholder="Postcode">                       
+				</fieldset>
+			</div>
+			
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput13">Phone <font color="#FF0000">*</font></label>
+					<input class="phone" name="Phone" type="text" value="<!--#4DVAR [Companies]telephone-->" id="Phone" placeholder="Phone">
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput14">Relation</label>
+					<input name="Relation" type="text" maxlength="2" value="<!--#4DVAR [Companies]relationship-->" id="Relation" placeholder="Relation">
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput15">Referred by</label>
+					<input type="text" id="Referred_by" name="Referred_by" value="<!--#4DVAR [Companies]referred_by-->" placeholder="Referred By">
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput15">Enter Date<font color="#FF0000">*</font></label>
+					
+					<input name="Enter_Date" id="Enter_Date" type="date" <!--#4DIF ([Companies]enter_date=!00/00/00!)-->value=""<!--4DELSE-->value="<!--#4DHTMLVAR ([Companies]enter_date)-->"<!--4DENDIF--> data-role="datebox" data-options='{"mode": "calbox"}' placeholder="Enter Date">
+				</fieldset>
+			</div>
+			
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput15">Comments</label>
+					<input type="text" name="Comments" id="Comments" value="<!--#4DVAR [Companies]comments-->" placeholder="Comments">
+				</fieldset>
+			</div>
+			
+			<table class="table-opt" id="tbl_items">
+		<thead>
+		  <tr class="item">
+		      
+		      <th>First Name</th>
+		      <th>E-mail</th>
+		     
+			  <th>Mobile</th>
+			  <th>Edit</th>
+			  <th>Remove</th>
+		  </tr>
+		 	</thead>								
+				<tbody>
+		  <!--#4DLOOP [Contacts]--><!--#4DSCRIPT/Web_LoadContactRelated/--><!-- row -->
+		  
+		  <tr class="item-row" id="<!--#4DHTMLVAR [Contacts]uuid-->">
+									<td class="firstname">
+									<!--#4DHTMLVAR [Contacts]First name-->
+									</td>
+									
+									<td class="email">
+									<!--#4DHTMLVAR [Contacts]Email-->
+									</td>
+									
+									<td class="mobile">
+									<!--#4DHTMLVAR [Contacts]Mobile-->
+									</td>
+									<td class="editlink" >
+									<a href="javascript:void(0)" onClick="show_contactform('<!--#4DHTMLVAR [Contacts]uuid-->','<!--#4DHTMLVAR [Contacts]First name-->','<!--#4DHTMLVAR [Contacts]Surname-->','<!--#4DHTMLVAR [Contacts]Email-->','<!--#4DHTMLVAR [Contacts]Mobile-->')" >Edit</a>
+									
+									 </td>	
+									 <td class="removelink" ><a href="javascript:void(0)" onClick="remove_contact('<!--#4DHTMLVAR [Contacts]uuid-->')" >Remove</a>
+									
+									</td>								
+									</tr>
+		  
+		  <!--#4DENDLOOP-->
+		  
+		  
+		  
+		  <tr id="hiderow" class="newrow">
+		    <td colspan="5"><a href="javascript:;" title="Add a row" onClick="show_contactform('','','','','')" >Add a row</a></td>
+		  </tr>
+		  </tbody> 
+		</table>	<br/>
+			
+			<input type="submit" value="Submit" id="submit" name="submit" >
+			<input type="submit" value="Cancel" onClick="__showCusts(); return false;">
+		</form>
+		</div>
+		
+		<div id="div_contact" style="display:none;">
+		<ul data-role="listview" data-inset="true">
+			<li data-role="list-divider"><span style=" color:#2B89D0; font-stretch:narrower;">Contact</span></li>
+		</ul>
+		<form data-ajax="false" name="ContactForm" action="" method="post" id="frm_contact" >
+
+		<input name="cntitem_uuid" type="hidden" value="" id="cntitem_uuid">
+		
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput1">First Name<font color="#FF0000">*</font></label>
+					<input type="text" name="f_name" id="f_name" placeholder="First Name" value="" >
+					
+				</fieldset>
+			</div>
+		
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput1">Surname<font color="#FF0000">*</font></label>
+					<input type="text" name="s_name" id="s_name" placeholder="Surname" value="" >
+					
+				</fieldset>
+			</div>
+					
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput12">Email<font color="#FF0000">*</font></label>
+						<input type="text" name="c_email" id="c_email" placeholder="Email" value="" >
+				</fieldset>
+			</div>
+			
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput12">Mobile</label>
+						<input type="text" name="c_mobile" id="c_mobile" placeholder="Mobile" value="" >
+				</fieldset>
+			</div>
+						
+			<input type="button" value="Submit" id="submit_item" name="submit" onClick="save()" >
+			
+			<input type="button" value="Cancel" onClick="hide_contactform()">
+			
+			
+			
+		</form>
+		</div>
+		
+	</div><!-- END DATA ROLE CONTENT-->
+
+   <!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/footer.shtml-->
+    
+ </div>
+ 
+</body>
+</html>

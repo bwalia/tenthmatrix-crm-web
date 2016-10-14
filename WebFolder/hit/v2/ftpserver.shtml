@@ -1,0 +1,429 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+ 
+If(_HIT_AuthenticateSession="Session-Authenticated-OK")
+
+QUERY([ftp_users];[ftp_users]uuid=_HIT_WebApp_GetField ("uuid"))
+QUERY([Sites];[Sites]uuid=[ftp_users]uuid_site)
+
+Else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+End If
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<!-- BEGIN HEAD -->
+<head>
+	<title><!--#4DIF (Records in selection([ftp_users])=1)-->Update FTP Details<!--#4DELSE-->New FTP Details<!--#4DENDIF--></title>
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/v2/includes/InitCss.shtml-->
+	<link href="assets/css/autocomplete.css" rel="stylesheet">
+	<style>
+		#message{
+			color:#FF0000;
+		}
+
+		.jqibox {
+			z-index:9999!important;
+		}
+	</style>
+</head>
+<!-- END HEAD -->
+<!-- BEGIN BODY -->
+<body class="fixed-leftside fixed-header">
+	<!-- BEGIN HEADER -->
+		<!--#4DSCRIPT/_HIT_LoadInclude/hit/v2/includes/header.shtml-->
+	<!-- END HEADER -->
+
+<div class="wrapper"> 
+ 		<!-- BEGIN LEFTSIDE -->
+        <!--#4DSCRIPT/_HIT_LoadInclude/hit/v2/includes/left-navigation.shtml-->
+		<!-- END LEFTSIDE -->
+  
+  <!-- BEGIN RIGHTSIDE -->
+  <div class="rightside bg-grey-100"> 
+    <!-- BEGIN PAGE HEADING -->
+    <div class="page-head">
+    	<div class="row">
+        <div class="col-sm-6">
+     	 <h1 class="page-title"><!--#4DIF (Records in selection([ftp_users])=1)-->Update FTP Details<!--#4DELSE-->New FTP Details<!--#4DENDIF--></h1>
+         </div>
+      <!-- BEGIN BREADCRUMB -->
+      <div class="col-sm-6">
+          <ol class="breadcrumb sm-pullright">
+             <li><a href="javascript:void(0)" onClick="funURLHandler('index.shtml','open-index-window')" title="Dashboard"><i class="ion-home margin-right-5"></i> Dashboard</a></li>
+        	<li><a href="javascript:void(0)" onClick="funURLHandler('ftpservers.shtml','open-site-window')" title="Sites">FTP Details</a></li>
+        	<li><!--#4DIF (Records in selection([ftp_users])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> FTP Details</li>
+          </ol>
+       </div>   
+      <!-- END BREADCRUMB -->
+      </div> 
+    </div>
+    <!-- END PAGE HEADING -->
+    
+    <div class="container-fluid">
+      
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel" style="padding-top:20px;"> 
+      <div class="panel-body no-padding-top bg-white"> 
+     <div data-example-id="togglable-tabs">
+	 <form class="form-horizontal fixed-width-form" name="FTPForm" id="FTPForm" method="post" action="saveftpserver.cgi" enctype="multipart/form-data">
+     <!-- Nav tabs -->
+	
+       		<div class="row">
+           	<div class=" col-sm-12">
+             	<input name="form_name" class="span9" type="hidden" value="SiteForm" id="form_name">
+				<input name="uuid" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="uuid"> 
+				    
+  				<div class="form-group">
+    				<label for="" class="col-sm-3 control-label">Site<sup class="req">*</sup></label>
+    				<div class="col-sm-8 ui-widget">
+                        <select  class="form-control width300" id="uuid_site" name="uuid_site">
+							<!--#4DIF (Records in selection([ftp_users])=0)-->
+										<option value=""></option>
+									<!--#4DSCRIPT/Web_LoadSites/-->
+									<!--4DLOOP  [Sites]-->
+											<option value="<!--4DVAR [Sites]uuid-->" <!--#4DIF ([Sites]uuid= (_HIT_WebApp_GetField ("site")))-->selected<!--4DELSE--><!--4DENDIF-->><!--4DVAR [Sites]name--></option>
+									<!--4DENDLOOP-->
+									<!--#4DELSE-->
+										 <option value="<!--4DVAR [Sites]uuid-->" selected><!--4DVAR [Sites]name--></option>									 
+									<!--#4DENDIF-->
+                        </select>
+                    </div>
+					
+    			</div>
+				
+    			<div class="form-group">
+    				<label for="" class="col-sm-3 control-label">Server Type<sup class="req">*</sup></label>
+    				
+    				<div class="col-sm-3">
+      					<select  class="form-control width300" id="uuid_site" name="uuid_site">
+							<option value=""></option>
+                                <option value="dev" <!--#4DIF ([ftp_users]server_type="dev")-->selected<!--#4DENDIF-->>Dev</option>
+                                <option value="staging" <!--#4DIF ([ftp_users]server_type="staging")-->selected<!--#4DENDIF-->>Staging</option>
+                                <option value="live" <!--#4DIF ([ftp_users]server_type="live")-->selected<!--#4DENDIF-->>Live</option>
+                        </select>
+		 
+    				</div>
+					
+  				</div>
+  				 				
+  				<div class="form-group">
+    			<label for="" class="col-sm-3 control-label">Host<sup class="req">*</sup></label>
+    				<div class="col-sm-8  ">
+					<input class="form-control width300" name="ftp_host_name" type="text" value="<!--#4DVAR [ftp_users]ftp_host_name-->" id="ftp_host_name">						
+						
+    				</div>
+  				</div>
+  				
+  				<div class="form-group">
+    			<label for="" class="col-sm-3 control-label">User Name<sup class="req">*</sup></label>
+    				<div class="col-sm-8">
+                        <input class="form-control width300" name="ftp_user_name" id="ftp_user_name" type="text" value="<!--#4DVAR [ftp_users]ftp_user_name-->">
+                    </div>
+  				</div>
+  				
+				
+				<div class="form-group">
+    			<label for="" class="col-sm-3 control-label">Password<sup class="req">*</sup></label>
+    				<div class="col-sm-8">
+                        <input class="form-control width300" name="ftp_password" id="ftp_password" type="password" value="<!--#4DVAR [ftp_users]ftp_password-->">
+                    </div>
+  				</div>
+  				
+  				<div class="form-group">
+    			<label for="" class="col-sm-3 control-label">Directory Path</label>
+    				<div class="col-sm-8">
+                        <input class="form-control width300" name="ftp_home_dir_path" id="ftp_home_dir_path" type="text" value="<!--#4DVAR [ftp_users]ftp_home_dir_path-->">
+                    </div>
+  				</div>
+  				
+      		</div>
+ 	 		</div>
+			
+			<div class="row">
+             	<div class="col-sm-12 text-center">
+                	<input type="submit" class="btn palette-carrot btn-color margin-right-5 btn-sm">
+               		<!--#4DIF (Records in selection([ftp_users])=0)-->
+                 	<input type="reset" class="btn btn-primary btn-sm">
+                 	<!--4DENDIF-->
+                </div>
+     		</div>
+			
+	 </form>   
+  </div>
+</div>
+</div>
+</div>
+  <!-- /.col --> 
+</div>
+<!-- /.row --> 
+
+	<!-- BEGIN FOOTER -->
+      <!--#4DSCRIPT/_HIT_LoadInclude/hit/v2/includes/footer.shtml-->
+      <!-- END FOOTER --> 
+    </div>
+<!-- /.container-fluid -->
+</div>
+<!-- /.rightside -->
+</div>
+<!-- /.wrapper --> 
+<!-- END CONTENT --> 
+
+
+
+<!-- BEGIN JAVASCRIPTS --> 
+
+
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/v2/includes/InitJs.shtml-->
+<!-- BEGIN JAVASCRIPTS --> 
+<!-- bootstrap validator -->
+<script src="assets/plugins/bootstrapValidator/bootstrapValidator.min.js" type="text/javascript"></script>
+	
+<!-- maniac -->
+<script src="assets/js/maniac.js" type="text/javascript"></script>
+
+<script type="text/javascript" src="assets/js/autocomplete.js"></script>
+
+<script type="text/javascript">
+	maniac.loadvalidator();
+	 var xhr;
+  (function( $ ) {
+    $.widget( "custom.combobox", {
+      _create: function() {
+        this.wrapper = $( "<span>" )
+          .addClass( "custom-combobox" )
+          .insertAfter( this.element );
+ 
+        this.element.hide();
+        this._createAutocomplete();
+        this._createShowAllButton();
+      },
+ 
+      _createAutocomplete: function() {
+      	 var ele_select= this.element;	
+       	 var selected = this.element.children( ":selected" ),
+          value = selected.val() ? selected.text() : "";
+ 
+        this.input = $( "<input>" )
+          .appendTo( this.wrapper )
+          .val( value )
+          .attr( "title", "" )
+          .addClass( "custom-combobox-input ui-widget ui-widget-content ui-state-default ui-corner-left" )
+          .autocomplete({
+            delay: 0,
+            minLength: 0,
+            source: $.proxy( this, "_source" )
+          })
+          .tooltip({
+            tooltipClass: "ui-state-highlight"
+          });
+ 
+        this._on( this.input, {
+          autocompleteselect: function( event, ui ) {
+		  	//alert("show all");
+            ui.item.option.selected = true;
+			
+            this._trigger( "select", event, {
+              item: ui.item.option
+            });
+            ele_select.trigger('change');
+          },
+ 
+          autocompletechange: "_removeIfInvalid"
+        });
+      },
+ 
+      _createShowAllButton: function() {
+        var input = this.input,
+          wasOpen = false;
+ 
+        $( "<a>" )
+          .attr( "tabIndex", -1 )
+          .attr( "title", "Show All Items" )
+          .tooltip()
+          .appendTo( this.wrapper )
+          .button({
+            icons: {
+              primary: "ui-icon-triangle-1-s"
+            },
+            text: false
+          })
+          .removeClass( "ui-corner-all" )
+          .addClass( "custom-combobox-toggle ui-corner-right" )
+          .mousedown(function() {
+            wasOpen = input.autocomplete( "widget" ).is( ":visible" );
+          })
+          .click(function() {
+            input.focus();
+ 
+            // Close if already visible
+            if ( wasOpen ) {
+              return;
+            }
+ 
+            // Pass last search string as value to search for, displaying last results
+            input.autocomplete( "search", 'SHOWALL' );
+          });
+      },
+ 
+      _source: function( request, response ) {
+        //var matcher = new RegExp( $.ui.autocomplete.escapeRegex(request.term), "i" );
+		var ele_select= this.element;
+		if(request.term=='SHOWALL'){
+			response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+		
+		}
+		else
+		{
+		var jsonRow = 'getsiteonsearch.cgi?srch='+request.term+'&closed=false';
+		
+
+		//alert(jsonRowURLStr);
+		if(xhr) xhr.abort();
+		xhr=$.getJSON(jsonRow,function(result){
+			
+			if(result){
+				var html='<option value=""></option>';
+
+				$.each(result, function(i,item)
+				{
+					html += '<option value="'+item.uuid+'">'+item.value+'</option>';
+				});
+				ele_select.html(html);
+				
+				
+				response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+				
+				
+			}
+		});
+       
+	  } 
+		
+      },
+ 
+      _removeIfInvalid: function( event, ui ) {
+ 
+        // Selected an item, nothing to do
+        if ( ui.item ) {
+
+          return;
+        }
+ 
+        // Search for a match (case-insensitive)
+       	var value = this.input.val(),
+          valueLowerCase = value.toLowerCase(),
+          valid = false;
+           var ele_select= this.element;
+        this.element.children( "option" ).each(function() {
+          if ( $( this ).text().toLowerCase() === valueLowerCase ) {
+            this.selected = valid = true;	
+			ele_select.trigger('change');
+            return false;
+          }
+        });
+ 
+        // Found a match, nothing to do
+        if ( valid ) {
+          return;
+        }
+ 
+        // Remove invalid value
+        this.input
+          .val( "" )
+          .attr( "title", value + " didn't match any item" )
+          .tooltip( "open" );
+        this.element.val( "" );
+        this._delay(function() {
+          this.input.tooltip( "close" ).attr( "title", "" );
+        }, 2500 );
+        this.input.data( "ui-autocomplete" ).term = "";
+      },
+ 
+      _destroy: function() {
+        this.wrapper.remove();
+        this.element.show();
+      }
+    });
+  })( jQuery );
+ 
+  $(function() {
+    $( "#uuid_site" ).combobox();
+	
+	$('#SiteForm').bootstrapValidator({
+					message: 'This value is not valid',
+					excluded: ':disabled',
+					fields: {
+						 uuid_site: {
+							validators: {
+								notEmpty: {
+									message: 'Site is required and can\'t be empty'
+								}
+							}
+						},
+						
+						server_type: {
+							validators: {
+								notEmpty: {
+									message: 'Server Type is required and can\'t be empty'
+								}
+							}
+						},
+						
+						ftp_host_name: {
+							validators: {
+								notEmpty: {
+									message: 'Host is required and can\'t be empty'
+								}
+							}
+						},
+						
+						ftp_user_name: {
+							validators: {
+								notEmpty: {
+									message: 'User Name is required and can\'t be empty'
+								}
+							}
+						},
+						
+						ftp_password: {
+							validators: {
+								notEmpty: {
+									message: 'Password is required and can\'t be empty'
+								}
+							}
+						},
+						
+					}
+				});
+	
+  });
+  
+
+</script>
+<!-- END JAVASCRIPTS -->
+
+</body>
+<!-- END BODY -->
+</html>

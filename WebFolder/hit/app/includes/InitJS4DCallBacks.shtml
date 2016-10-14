@@ -1,0 +1,155 @@
+<form action="https://__4DURLHandler__/JS4DCallBacks" method="get">
+<input type="hidden" name="__4D_version" id="__4D_version" value="" />
+<input type="hidden" name="__App_version" id="__App_version" value="" />
+<input type="hidden" name="__in_4D" id="__in_4D" value="false" />
+<input type="hidden" name="__in_DevMode" id="__in_DevMode" value="false" />
+<input type="hidden" name="__in_DebugMode" id="__in_DebugMode" value="false" />
+<input type="hidden" name="__windowTitleStr" id="__windowTitleStr" value="<!--#4DIF (system_IsStaging)-->STAGING <!--#4DELSE-->LIVE <!--#4DENDIF-->CRM v <!--#4DTEXT Sys_VersionGet-->" />
+<input type="hidden" name="__4D_StatusMsg" id="__4D_StatusMsg" value="" />
+</form>
+
+<script type="text/javascript">
+$._openNewWindow = function _openNewWindow(pURLStr,pWinTitieStr){
+
+myWindow=window.open(pURLStr,pWinTitieStr,'width=1400,height=1000');
+//myWindow.document.write("<p>This is 'myWindow'</p>");
+myWindow.focus();
+
+}
+$.__4D_Init__ = function __4D_Init__(p4DVersionStr, pIn4DBoolStr, pDevModeStr, pDebugModeStr){
+$.__Alert_IfDebug__("__4D_Init__ called by 4D. p4DVersionStr: " + p4DVersionStr + ", pIn4DBoolStr: "+pIn4DBoolStr);
+$( "#__4D_version" ).val(p4DVersionStr);
+$( "#__in_4D" ).val(pIn4DBoolStr);
+$( "#__in_DevMode" ).val(pIn4DBoolStr);
+$( "#__in_DebugMode" ).val(pDebugModeStr);
+
+return "OK";
+}
+
+$.__4DURLHandler__ = function __4DURLHandler__(pUUIDStr, pCodeStr)
+{
+
+if($.__4D_IsIn4D__())
+{
+$.__Alert_IfDebug__("__4DURLHandler__ called by 4D "+pUUIDStr);
+} else {
+$.__Alert_IfDebug__("__4DURLHandler__ called by Browser "+pUUIDStr);
+
+
+if(pCodeStr=="edit-invoice")
+{
+pURLPageStr="invoice.shtml?uuid="+pUUIDStr+"&"+Math.random();
+$._openNewWindow(pURLPageStr, "Edit Invoice "+pUUIDStr);
+}
+
+if(pCodeStr=="new-invoice")
+{
+pURLPageStr="invoice.shtml?"+Math.random();
+$._openNewWindow(pURLPageStr, "New Invoice "+pUUIDStr);
+}
+
+if(pCodeStr=="edit-customer")
+{
+pURLPageStr="customer.shtml?uuid="+pUUIDStr+"&"+Math.random();
+$._openNewWindow(pURLPageStr, "Edit Customer "+pUUIDStr);
+}
+
+if(pCodeStr=="new-customer")
+{
+pURLPageStr="customer.shtml?"+Math.random();
+$._openNewWindow(pURLPageStr, "New Customer "+pUUIDStr);
+}
+
+if(pCodeStr=="edit-contact")
+{
+pURLPageStr="contact.shtml?uuid="+pUUIDStr+"&"+Math.random();
+$._openNewWindow(pURLPageStr, "Edit Contact "+pUUIDStr);
+}
+
+if(pCodeStr=="new-contact")
+{
+pURLPageStr="contact.shtml?"+Math.random();
+$._openNewWindow(pURLPageStr, "New Contact "+pUUIDStr);
+}
+
+
+}
+
+}
+
+$.__4D_IsIn4D__ = function __4D_IsIn4D__()
+{
+rIsIn4DStr = $( "#__in_4D" ).val();
+
+return (rIsIn4DStr=="true");
+}
+
+$.__IsDevMode__ = function __IsDevMode__(pModeBool)
+{
+nParams = __IsDevMode__.arguments.length;
+if(nParams>0) { if( pModeBool ) { $( "#__in_DevMode" ).val("true"); } else { $( "#__in_DevMode" ).val("false"); } }
+
+return ($( "#__in_DevMode" ).val()=="true");
+
+}
+
+$.__IsDebugMode__ = function __IsDebugMode__(pModeBool)
+{
+nParams = __IsDebugMode__.arguments.length;
+
+if(nParams>0) { if( pModeBool ) { $( "#__in_DebugMode" ).val("true"); } else { $( "#__in_DebugMode" ).val("false"); } }
+
+return ($( "#__in_DebugMode" ).val()=="true");
+
+}
+
+
+$.__Alert_IfDebug__ = function __Alert_IfDebug__(pAlertMsgTxt)
+{
+if($.__IsDebugMode__())
+{
+alert(pAlertMsgTxt);
+}
+}
+
+$.__4D_Img_SiteID_Get = function __4D_Img_SiteID_Get(){
+//alert("__4D_Img_SiteID_Get " + $( "#__siteID" ).val());
+return $( "#__siteID" ).val();
+}
+$.__4D_Img_UUID_Get = function __4D_Img_UUID_Get(){
+//alert("__4D_Img_UUID_Get " + $( "#img_uuid" ).val());
+return $( "#img_uuid" ).val();
+}
+
+$.__4D_Img_VariantUUID_Get = function __4D_Img_VariantUUID_Get(){
+//alert("__4D_Img_VariantUUID_Get " + $( "#var_uuid" ).val());
+return $( "#var_uuid" ).val();
+}
+
+$.__4D_WindowTitle_Get = function __4D_WindowTitle_Get(){
+//alert("__4D_WindowTitle_Get " + $( "#__windowTitleStr" ).val());
+return $( "#__windowTitleStr" ).val();
+}
+
+$.__4D_WindowTitle_Set = function __4D_WindowTitle_Set(pTitleStr){
+$( "#__windowTitleStr" ).val(pTitleStr);
+//alert("__4D_WindowTitle_Set " + $( "#__windowTitleStr" ).val());
+}
+
+
+$.__4D_StatusMsg_Get = function __4D_StatusMsg_Get(){
+//alert("__4D_StatusMsg_Get " + $( "#__windowTitleStr" ).val());
+return $( "#__4D_StatusMsg" ).val();
+}
+
+$.__4D_Version_Set = function __4D_Version_Set(pVersionStr){
+$( "#__4D_version" ).val(pVersionStr);
+return "OK";//alert($( "#__4D_version" ).val());
+}
+
+$.__4D_AppVersion_Set = function __4D_AppVersion_Set(pAppVersionStr){
+$( "#__App_version" ).val(pAppVersionStr);
+return "OK";
+}
+
+</script>

@@ -1,0 +1,190 @@
+<!--HIT_EXECUTE
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+
+If(_HIT_AuthenticateSession="Session-Authenticated-OK")
+QUERY([bank_statement_entries];[bank_statement_entries]uuid=_HIT_WebApp_GetField ("uuid"))
+
+else
+_HIT_HTTPD_RedirectToURL ("/hit/sign-in.shtml?url="+HTTPD_DocumentURI)
+end if 
+-->
+<!--#4DIF (_HIT_AuthenticateSession="Session-Authenticated-OK")--><!DOCTYPE html>
+<html>
+<head>
+	<title>Tenthmatrix CRM App : Bank statement entry</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- bootstrap -->
+	<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="bootstrap/css/bootstrap-responsive.min.css" />
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/app/includes/header.shtml-->
+	
+</head>
+<body>
+
+	<!-- main container -->
+    <div class="content wide-content">
+        <div class="container-fluid">
+            <div id="pad-wrapper" class="form-page">
+				<div class="row-fluid">
+					<div class="span12">
+						<form name="PaymentForm" action="savebankstatement.cgi" method="post" class="form_validation_reg">
+							<input name="uuid" class="span9" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="uuid">
+							<div class="formSep">
+								<div class="row-fluid">
+									<div class="span4">
+										<label>Description <span class="f_req">*</span></label>
+										<textarea name="entry_description" class="span12" rows="2" id="entry_description"><!--#4DVAR [bank_statement_entries]entry_description--></textarea>
+									</div>
+								</div>
+							</div>
+							<div class="formSep">
+								<div class="row-fluid">
+									<div class="span3">
+										<label>Entry Date <span class="f_req">*</span></label>
+										<div class="input-append date" id="dp2">
+											<input class="span6" placeholder="Entry Date" type="text" readonly="readonly"  name="entry_date" id="entry_date" <!--#4DIF ([bank_statement_entries]entry_date=!00/00/00!)-->value=""<!--4DELSE-->value="<!--#4DVAR [bank_statement_entries]entry_date-->"<!--4DENDIF-->  data-date-format="dd/mm/yyyy" /><span class="add-on"><i class="splashy-calendar_day"></i></span>
+										</div>
+									</div>
+									<div class="span3">
+										<label>Type <span class="f_req">*</span></label>
+										<input class="span12" name="entry_type"  type="text" value="<!--4DVAR [bank_statement_entries]entry_type-->" id="entry_type" >
+									</div>
+								</div>
+							</div>
+							<div class="formSep">
+								<div class="row-fluid">
+									<div class="span3">
+										<label>Balance </label>
+										<input name="balance" class="span12 num" type="text" value="<!--#4DVAR [bank_statement_entries]balance-->" id="balance" >
+									</div>
+								</div>
+							</div>
+							<div class="formSep">
+								<div class="row-fluid">
+									<div class="span3">
+										<label>Paid Out </label>
+										<input name="paid_out" class="span12 num" type="text" value="<!--#4DVAR [bank_statement_entries]paid_out-->" id="paid_out">
+									</div>
+									<div class="span3">
+										<label>Paid In </label>
+										<input name="paid_in" class="span12 num" type="text" value="<!--#4DVAR [bank_statement_entries]paid_in-->" id="paid_in">
+									</div>
+								</div>
+							</div>
+							
+							<div class="formSep">
+								<div class="row-fluid">
+									<div class="span4">
+										<label>Comment</label>
+										<textarea name="comment" class="span12" rows="4" id="comment"><!--#4DVAR [bank_statement_entries]comment--></textarea>
+									</div>
+								</div>
+							</div>
+							<div style="text-align: center;" class="span9 field-box">
+								<input type="submit" value="Submit" class="btn-glow primary">
+								<span>OR</span>
+								<a href="bank_statement_enteries.shtml">Cancel</a>
+							</div>
+						</form>
+					</div>
+				</div>
+		
+            </div>
+		</div>
+    </div>
+    <!-- end main container -->
+
+	
+	<script src="js/jquery.min.js"></script>
+	
+	<script src="bootstrap/js/bootstrap.min.js"></script>
+	<!-- validation -->
+    <script src="lib/validation/jquery.validate.min.js"></script>
+	<!-- datepicker -->
+	<script src="lib/datepicker/bootstrap-datepicker.min.js"></script>
+<script type="text/javascript">
+
+	$(document).ready(function() {
+		gebo_datepicker.init();
+		//* regular validation
+		gebo_validation.reg();
+		
+		$('.splashy-calendar_day').click(function(){
+			$('#entry_date').datepicker( "show" );
+		});
+		
+		$(document).click(function(event){
+			//console.log($(event.target).closest('div').attr('id'));
+			if($(event.target).closest('div').attr('id')!='dp2') {
+				$('#entry_date').datepicker( "hide" );
+			}
+		});
+		
+		$.validator.addMethod('checkinteger', function(value, element, param) {
+            return (value != 0);
+        }, 'Please enter a non zero value!');
+	});
+
+$('#inv_no').keypress(function(e){
+						var k = e.which;
+    					/* numeric inputs can come from the keypad or the numeric row at the top */
+   						 if ((k<48 || k>57) && (k!=8) && (k!=0)) {
+        					e.preventDefault();
+							//alert("Allowed characters are 0-9, +, -, (, )");
+        					return false;
+    					}
+					
+					}); 
+					
+		$('.num').keypress(function(e){
+					checknumber(e);	
+					
+					});
+					
+	function checknumber(e)
+	{
+		var k = e.which;
+    					/* numeric inputs can come from the keypad or the numeric row at the top */
+   						 if ((k<48 || k>57) && (k!=46) && (k!=8) && (k!=0)) {
+        					e.preventDefault();
+							//alert("Allowed characters are 0-9, +, -, (, )");
+        					return false;
+    					}
+	
+	}
+	gebo_datepicker = {
+		init: function() {
+			$('#entry_date').datepicker({"autoclose": true});
+		}
+	};
+	gebo_validation = {
+		reg: function() {
+			reg_validator = $('.form_validation_reg').validate({
+				onkeyup: false,
+				errorClass: 'error',
+				validClass: 'valid',
+				highlight: function(element) {
+					$(element).closest('div').addClass("f_error");
+				},
+				unhighlight: function(element) {
+					$(element).closest('div').removeClass("f_error");
+				},
+				errorPlacement: function(error, element) {
+					$(element).closest('div').append(error);
+				},
+				rules: {
+					entry_description: { required: true },
+					entry_date: { required: true },
+					entry_type: { required: true },
+				},
+			})
+		}
+	};
+</script>
+
+</body>
+</html><!--#4DELSE--><h1>Authentication Required!<br>
+<!--HIT_EXECUTE _HIT_HTMLTXT:="_HIT_AuthenticateSession: "+_HIT_AuthenticateSession-->
+</h1><!--#4DENDIF-->

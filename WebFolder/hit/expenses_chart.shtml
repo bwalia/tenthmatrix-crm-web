@@ -1,0 +1,347 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HTMLTITLETXT)
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+_HTMLTITLETXT:="Expenses"
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+-->
+<!DOCTYPE html>
+<html>
+<head>
+	
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+    
+
+	<!-- <link rel="stylesheet" href="css/base/jquery-ui.css" /> -->
+
+    <!-- this page specific styles -->
+    <link rel="stylesheet" href="css/compiled/index.css" type="text/css" media="screen" />   
+	
+	<link rel="stylesheet" href="css/autocomplete.css" />
+
+
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+</head>
+<body style="background-color:#FFFFFF"> 
+<!--#4DIF (_HIT_WebApp_GetField ("view")="small")-->
+   <div id="container" style="margin: 0 auto;height:280px;"></div>
+<!--#4DELSE-->
+
+	<!-- main container -->
+    <div style="background:#fff;">
+        <div id="pad-wrapper" style="margin-top:0px;margin-bottom:0px;">
+			
+			<div class="row-fluid form-wrapper">
+				<form  action="" class="form-comment" method="post" >
+					Project &nbsp;
+					<div class="ui-widget"  style="display:inline;padding-right:20px;">
+						<select name="Project_ID" id="Project_ID">
+						
+							<option value="">All</option>
+						<!--#4DSCRIPT/Web_LoadProjects/-->
+						<!--4DLOOP [Projects]-->
+							<option value="<!--#4DVAR [Projects]proj_id-->" ><!--4DVAR [Projects]proj_name--></option>
+						<!--4DENDLOOP--> 
+						
+						</select>
+					</div>
+					<input type="button" class="btn-glow primary" value="Submit" id="btn_redraw">	
+				</form>
+			</div>
+				
+			<!-- statistics chart built with jQuery Flot -->
+			<div class="row-fluid chart">
+				<div class="span12">
+				   <div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+				</div>
+			</div>
+			<!-- end statistics chart -->
+        </div>
+    </div>
+	<!--#4DENDIF-->
+
+	<!-- scripts -->
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+   <!-- <script src="js/ui/jquery-ui.js"></script> -->
+    <script src="js/bootstrap.datepicker.js"></script>
+    <script src="js/jquery.uniform.min.js"></script>
+	<!-- charts -->
+	<script src="https://code.highcharts.com/highcharts.js"></script>
+	<script src="https://code.highcharts.com/modules/exporting.js"></script>
+
+	
+	<script type="text/javascript">
+	var project_id='';
+	
+	function get_data(){
+		var dataString = 'project_id='+project_id;
+		jsonRow = 'returnBudget.cgi?'+dataString;
+		$.getJSON(jsonRow,function(item){
+			total_budget=item.budget;
+			total_rate=Number(item.rate);
+			if(total_rate>total_budget){
+				over_spent= total_rate-total_budget
+				total_rate=total_budget
+			}else{
+				over_spent=0
+			}
+			data = [{name:'Over Spent',data:[0,over_spent]},{ name:'Budget', data:[total_budget,total_rate]}]
+			load_chart(data);
+		});
+		
+	}
+	function load_chart(content){
+		$('#container').highcharts({
+			chart: {
+				type: 'column'
+			},
+			title: {
+				text: 'Expenses'
+			},
+			xAxis: {
+				categories: ['Budget','Total Spent']
+			},
+			colors: ["#D92222", "#68A3D5"],
+			yAxis: {
+				min: 0,
+				title: {
+					text: 'Amount'
+				},
+				stackLabels: {
+					enabled: true,
+					style: {
+						fontWeight: 'bold',
+						color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
+					}
+				}
+			},
+			credits: {
+				enabled: false
+			},
+			tooltip: {
+				formatter: function() {
+					return '<b>'+ this.x +'</b><br/>'+
+						this.series.name +': '+ this.y +'<br/>'+
+						'Total: '+ this.point.stackTotal;
+				}
+			},
+			plotOptions: {
+				column: {
+					stacking: 'normal',
+					dataLabels: {
+						enabled: true,
+						color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white'
+					}
+				}
+			},
+			
+			series: content
+		});
+	}
+	$(function () {
+		
+		$("#Project_ID").change(function(){
+			project_id=$(this).val();
+		});
+		get_data();
+		
+		$('#btn_redraw').click(function(){
+			get_data();
+		});
+		$( "#Project_ID" ).combobox();
+    });
+		
+    </script>
+	
+	<script>
+	 var xhr;
+  (function( $ ) {
+    $.widget( "custom.combobox", {
+      _create: function() {
+        this.wrapper = $( "<span>" )
+          .addClass( "custom-combobox" )
+          .insertAfter( this.element );
+ 
+        this.element.hide();
+        this._createAutocomplete();
+        this._createShowAllButton();
+      },
+ 
+      _createAutocomplete: function() {
+	  var ele_select= this.element;
+        var selected = this.element.children( ":selected" ),
+          value = selected.val() ? selected.text() : "";
+ 
+        this.input = $( "<input>" )
+          .appendTo( this.wrapper )
+          .val( value )
+          .attr( "title", "" )
+          .addClass( "custom-combobox-input ui-widget ui-widget-content ui-state-default ui-corner-left" )
+          .autocomplete({
+            delay: 0,
+            minLength: 0,
+            source: $.proxy( this, "_source" )
+          })
+          .tooltip({
+            tooltipClass: "ui-state-highlight"
+          });
+ 
+        this._on( this.input, {
+          autocompleteselect: function( event, ui ) {
+		  	//alert("show all");
+            ui.item.option.selected = true;
+			
+            this._trigger( "select", event, {
+              item: ui.item.option
+            });
+			ele_select.trigger('change');
+          },
+ 
+          autocompletechange: "_removeIfInvalid"
+        });
+      },
+ 
+      _createShowAllButton: function() {
+        var input = this.input,
+          wasOpen = false;
+ 
+        $( "<a>" )
+          .attr( "tabIndex", -1 )
+          .attr( "title", "Show All Items" )
+          .tooltip()
+          .appendTo( this.wrapper )
+          .button({
+            icons: {
+              primary: "ui-icon-triangle-1-s"
+            },
+            text: false
+          })
+          .removeClass( "ui-corner-all" )
+          .addClass( "custom-combobox-toggle ui-corner-right" )
+          .mousedown(function() {
+            wasOpen = input.autocomplete( "widget" ).is( ":visible" );
+          })
+          .click(function() {
+            input.focus();
+ 
+            // Close if already visible
+            if ( wasOpen ) {
+              return;
+            }
+ 
+            // Pass last search string as value to search for, displaying last results
+            input.autocomplete( "search", 'SHOWALL' );
+          });
+      },
+ 
+      _source: function( request, response ) {
+        //var matcher = new RegExp( $.ui.autocomplete.escapeRegex(request.term), "i" );
+		var ele_select= this.element;
+		if(request.term=='SHOWALL'){
+			response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+		
+		}
+		else
+		{
+		if(ele_select.attr('id')=='Project_ID'){
+			var jsonRow = 'getprojectsonsearch.cgi?srch='+request.term;
+		}
+
+		//alert(jsonRowURLStr);
+		if(xhr) xhr.abort();
+		xhr=$.getJSON(jsonRow,function(result){
+			
+			if(result){
+				var html='<option value="">All</option>';
+
+				$.each(result, function(i,item)
+				{
+					html += '<option value="'+item.id+'">'+item.value+'</option>';
+				});
+				ele_select.html(html);
+				
+				
+				response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+				
+				
+			}
+		});
+       
+	  } 
+		
+      },
+ 
+      _removeIfInvalid: function( event, ui ) {
+ 
+        // Selected an item, nothing to do
+        if ( ui.item ) {
+
+          return;
+        }
+ 
+        // Search for a match (case-insensitive)
+        var value = this.input.val(),
+          valueLowerCase = value.toLowerCase(),
+          valid = false;
+		  var ele_select= this.element;
+        this.element.children( "option" ).each(function() {
+          if ( $( this ).text().toLowerCase() === valueLowerCase ) {
+            this.selected = valid = true;	
+			ele_select.trigger('change');
+            return false;
+          }
+        });
+ 
+        // Found a match, nothing to do
+        if ( valid ) {
+          return;
+        }
+ 
+        // Remove invalid value
+        this.input
+          .val( "" )
+          .attr( "title", value + " didn't match any item" )
+          .tooltip( "open" );
+        this.element.val( "" );
+        this._delay(function() {
+          this.input.tooltip( "close" ).attr( "title", "" );
+        }, 2500 );
+        this.input.data( "ui-autocomplete" ).term = "";
+      },
+ 
+      _destroy: function() {
+        this.wrapper.remove();
+        this.element.show();
+      }
+    });
+  })( jQuery );
+ 
+
+
+  </script>
+	
+</body>
+</html>

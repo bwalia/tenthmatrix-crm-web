@@ -1,0 +1,619 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+C_TEXT(_HTMLTITLETXT)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+
+_HTMLTITLETXT:="Employee Holidays"
+
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml?url="+HTTPD_DocumentURI)
+end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+	<link href='css/lib/fullcalendar.css' rel='stylesheet' />
+    <link href='css/lib/fullcalendar.print.css' rel='stylesheet' media='print' />
+    <link rel="stylesheet" href="css/compiled/calendar.css" type="text/css" media="screen" />
+	<link rel="stylesheet" type="text/css" href="lib/base.css" />
+	<link rel="stylesheet" type="text/css" href="css/jquery.timepicker.css" />
+	<link rel="stylesheet" href="css/base/jquery-ui.css" />
+	<link rel="stylesheet" href="css/autocomplete.css" />
+	
+	<link rel="stylesheet" media="all" type="text/css" href="css/jquery-impromptu.css" />
+<style>
+  
+  .ui-front {
+    z-index: 1000;
+	}
+  .jqibox{
+  	z-index: 9999! important;
+  }
+  </style>
+	
+</head>
+<body>
+
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+
+     <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
+
+	<!-- main container -->
+    <div class="content">
+        
+        <div class="container-fluid">
+		 <div id="pad-wrapper">
+            <div class="row-fluid calendar-wrapper">
+                    <div class="span12">
+						<h3 style="margin-bottom: 35px; font-style: italic;color: #696D73;">Employee Holidays</h3>
+						<div style="margin-top:-10px;margin-left:200px;" class="pull-left">
+						<div class="btn-group pull-right">
+							<a href="holidays.shtml" class="btn-flat success new-product margn-lft35">List View</a>
+							</div>
+						</div>
+                        <!-- div that fullcalendar plugin uses  -->
+                        <div id='calendar'></div>
+						
+						<!-- add new holiday request pop up -->
+                        <div class="new-event popup" style="display:none" >
+                            <div class="pointer">
+                                <div class="arrow"></div>
+                                <div class="arrow_border"></div>
+                            </div>
+                            <i class="close-pop table-delete"></i>
+                            <h5>Date 
+                                <span class="date"></span></h5>
+                            <form name="frm_task" class="form-comment" > 
+								<input type="hidden" value="" name="curr_date" id="curr_date">
+								<input type="hidden" value="Requested" name="status" id="status">
+								<div class="field">
+								   Employee Name <span style="color:#6E829B">*</span>
+								   <div class="ui-select">
+										<select name="Employee_ID" id="Employee_ID">
+											
+											<option value="">--Select Employee--</option>
+											<!--HIT_EXECUTE
+											_HIT_HTMLTXT:=""
+											QUERY([Employees];[Employees]emp_active=True)
+											ORDER BY([Employees];[Employees]emp_last_name;>)
+											
+											For (_HIT_COUNTER;1;Records in selection([Employees]))
+												_HIT_HTMLTXT:=_HIT_HTMLTXT+"<option value=\""+[Employees]uuid+"\""
+												_HIT_HTMLTXT:=_HIT_HTMLTXT+">"+[Employees]emp_first_name+" "+[Employees]emp_last_name+"</option>"
+												NEXT RECORD([Employees])
+											End for 
+											-->
+										</select>
+									</div>
+								</div>
+								<div class="field">
+									End Date <span style="color:#6E829B">*</span>
+									<input style="width:90px;" type="text" class="input-large datepicker" name="End_Date" id="End_Date">
+								</div>
+								<div class="field">
+									Reason <span style="color:#6E829B">*</span>
+									<textarea name="Subject" id="Subject" rows="1" cols="10" class="event-input" style="width:45%; height:20px"></textarea>
+								</div>
+								<input type="button" value="Request" class="btn-glow primary" onClick="return ValidateForm();">
+							</form>
+                        </div>
+                    </div>
+                </div>
+			</div>
+        </div>
+    </div>
+    <!-- end main container -->
+
+	<!-- scripts for this page -->
+   <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+   
+   <script src="js/jquery-ui-1.10.2.custom.min.js"></script>
+    
+    <script src='js/fullcalendar_new.min.js'></script>
+   <script src="js/bootstrap.datepicker.js"></script>
+   <script src="js/ui/jquery-ui.js"></script>
+
+	<script type="text/javascript" src="js/jquery-impromptu.js"></script>
+<script language="javascript">
+var new_event=new Array();
+
+function ValidateForm () {
+
+if (document.frm_task.Employee_ID.value=="")
+{ 
+	__alertMessage('Please Select Employee Name'); 
+	return false;
+}
+else if (document.frm_task.End_Date.value=="")
+{ 
+	__alertMessage('Please Select End Date'); 
+	document.frm_task.End_Date.focus();
+	return false;
+}
+else if (document.frm_task.Subject.value=="")
+{ 
+	__alertMessage('Please Specify Reason For Leave'); 
+	document.frm_task.Subject.focus();
+	return false;
+}else{
+	save(); 
+}
+
+}
+//check dates
+function check_ondates(current_selected_date,check_date,ele){
+	
+	var current_date=new Date();
+	var d = current_date.getDate();
+	var m = current_date.getMonth();
+	var y = current_date.getFullYear();
+	current_date = new Date(y, m, d);
+	current_date = current_date.getTime();
+	
+	var selected_date_arr= current_selected_date.split("/");
+	var selected_date= new Date(selected_date_arr[2],selected_date_arr[1]-1,selected_date_arr[0]);
+	var selected_date = selected_date.getTime();
+	
+	var check_date_arr= check_date.split("/");
+	var check_date= new Date(check_date_arr[2],check_date_arr[1]-1,check_date_arr[0]);
+	var check_date = check_date.getTime();
+	
+	var ONE_DAY = 1000 * 60 * 60 * 24;
+	
+	var today = check_date - current_date;
+	
+	if(selected_date<current_date){
+		__alertMessage('You cannot request holiday for a date before current date');
+		$(".new-event").fadeOut("fast");
+	}else{
+		if(check_date<selected_date){
+			__alertMessage('Please Select appropriate Date');
+			$(ele).val('');
+		}
+		else if((Math.round(today/ONE_DAY))<1){
+			__alertMessage('Please add request only if there is an emergency');
+		}else if((Math.round(today/ONE_DAY))<=6){
+			__alertMessage('Please add request a week before or only if there is an emergency');
+		}
+	}
+}
+
+//save
+function save(){
+var start_date=$("#curr_date").val();
+var end_date=$("#End_Date").val();
+var employee_ID=$("#Employee_ID").val();
+var status=$("#status").val();
+var subject=$("#Subject").val();
+var dataString = 'start_date='+start_date+'&end_date='+end_date+'&employee_ID='+employee_ID+'&status='+status+'&subject='+subject+'&redirect=false';
+//alert(dataString);
+$.ajax({
+type: "GET",
+url: "savecalenderholiday.cgi",
+data: dataString,
+dataType: "json",
+cache: false,
+success: function(html)
+{
+	var new_arr=new Array();
+	new_arr['id']=html.uuid;
+	new_arr['title']=html.Holiday_Details;;
+	new_arr['start']=get_datetime(start_date);
+	new_arr['end']=get_datetime(end_date);
+	new_arr['url']='holiday.shtml?uuid='+html.uuid;
+	new_arr['allDay']=true;
+	new_event.push(new_arr);
+	
+	$('#calendar').fullCalendar( 'removeEventSource', new_event );
+	$('#calendar').fullCalendar( 'addEventSource', new_event );
+	$(".new-event").fadeOut("fast");
+}
+});
+
+}
+</script>
+
+
+    <!-- builds fullcalendar example -->
+    <script>
+	function get_datetime(date)
+	{
+
+		var date_arr=date.split('/');		
+		var new_date = new Date(date_arr[2], Number(date_arr[1])-1, date_arr[0]);
+		return new_date;
+	}
+	
+	var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+	var days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+	
+	
+        $(document).ready(function() {
+			$("#End_Date").change(function() {
+				var current_selected_date= $("#curr_date").val();
+				var e_date= $("#End_Date").val();
+				check_ondates(current_selected_date,e_date,'#End_Date');
+			});
+		// datepicker plugin
+			$( ".datepicker" ).datepicker({ dateFormat: 'dd/mm/yy' });
+           
+		   var flag=0;
+			
+            
+            $('#calendar').fullCalendar({
+                header: {
+                    left: 'month,agendaWeek,agendaDay',
+                    center: 'title',
+                    right: 'today prev,next'
+                },
+                selectable: true,
+                selectHelper: true,
+                editable: true,
+				
+				timeFormat: 'd MMM { - d MMM }',
+               /* events: [
+				
+                 
+					<!--#4DSCRIPT/Web_LoadTimeslips/-->
+                         <!--#4DLOOP [Timeslips]--><!--#4DSCRIPT/Web_LoadTimeslipRelated/--><!-- row -->
+					{
+                        id: '<!--#4DVAR [Timeslips]uuid-->',
+                        title: '<!--#4DVAR [Tasks]task_name-->',
+						start: get_datetime('<!--#4DVAR timestamp_unix_toDate ([Timeslips]Timestamp_start)-->', '<!--#4DVAR timestamp_unix_toTime ([Timeslips]Timestamp_start)-->'),						
+						end: get_datetime('<!--#4DVAR timestamp_unix_toDate ([Timeslips]Timestamp_end)-->', '<!--#4DVAR timestamp_unix_toTime ([Timeslips]Timestamp_end)-->'),						
+						url: 'timeslip.shtml?uuid=<!--#4DVAR [Timeslips]uuid-->'
+                        //allDay: false
+                    },
+					<!--#4DENDLOOP-->
+					
+                ],*/
+                eventBackgroundColor: '#278ccf',
+				
+				<!--#4DIF (_HIT_WebApp_GetField ("mode")="week")-->
+				defaultView: 'agendaWeek',
+				<!--#4DENDIF-->
+				
+				 dayClick: function(date, allDay, jsEvent, view) {
+				 
+			var s_time='';
+        if (allDay) {
+           // alert('Clicked on the entire day: ' + date);
+        }else{
+            //alert('Clicked on the slot: ' + date);
+			
+			var date_arr=String(date).split(" ");
+			var timestring='';
+			for(var i=0; i<date_arr.length; i++){
+				var contains = (date_arr[i].indexOf(":") > -1);
+					if(contains){
+						timestring=date_arr[i];
+						break;
+					}
+			}
+			var time_arr=timestring.split(":");
+			if(time_arr[0]>12){ var h=time_arr[0]-12; s_time=h+":"+time_arr[1]+"pm"; }
+			else{ s_time=time_arr[0]+":"+time_arr[1]+"am"; }
+			
+        }
+
+		var cal_left=Number($('#calendar').offset().left);
+		var cal_top=Number($('#calendar').offset().top);
+		var left = jsEvent.pageX - cal_left - (Number($(".new-event").outerWidth())/2);
+		var top = jsEvent.pageY - cal_top - Number($(".new-event").outerHeight()) - Number($(".arrow_border").outerHeight());
+		
+	
+		if(left<0){
+			left=0;
+		}
+		else if(left>(Number($('#calendar').outerWidth())-Number($(".new-event").outerWidth()))){
+			left=Number($('#calendar').outerWidth())-Number($(".new-event").outerWidth());
+		}
+		if(top<0){
+			top=0;
+		}
+        $(".new-event").css('left', left);
+		$(".new-event").css('top', top);
+				
+		
+		var converted = days[date.getDay()] + ", " + date.getDate() + " " +months[date.getMonth()];
+		var curr_month=Number(date.getMonth())+1;
+		var curr_date=	date.getDate()+'/'+	curr_month+'/'+date.getFullYear();
+		
+		var selected_date_arr= curr_date.split("/");
+		var selected_date= new Date(selected_date_arr[2],selected_date_arr[1]-1,selected_date_arr[0]);
+		var selected_date = selected_date.getTime();
+
+		var today_date=new Date();
+		var d = today_date.getDate();
+		var m = today_date.getMonth();
+		var y = today_date.getFullYear();
+		today_date = new Date(y, m, d);
+		today_date = today_date.getTime();
+		
+		$(".new-event").find('.date').html(converted);
+		$("#curr_date").val(curr_date);
+		$("#Employee_ID").val();
+		$("#End_Date").val('');
+		$("#Subject").val('');
+			
+		if(selected_date>today_date){
+			$(".new-event").fadeIn("fast");
+		}
+
+    },
+			viewRender: function( view, element ) {
+				
+				var s_month=Number(view.visStart.getMonth())+1;
+				var s_date=	view.visStart.getDate()+'/'+s_month+'/'+view.visStart.getFullYear();
+				var e_month=Number(view.end.getMonth())+1;
+				var e_date=	view.end.getDate()+'/'+e_month+'/'+view.end.getFullYear();
+				
+				var date_arr=String(view.visStart).split(" ");
+				var s_time='';
+				for(var i=0; i<date_arr.length; i++){
+					var contains = (date_arr[i].indexOf(":") > -1);
+					if(contains){
+						s_time=date_arr[i];
+						break;
+					}
+				}
+				
+				var date_arr1=String(view.end).split(" ");
+				var e_time='';
+				for(var i=0; i<date_arr1.length; i++){
+					var contains = (date_arr1[i].indexOf(":") > -1);
+					if(contains){
+						e_time=date_arr1[i];
+						break;
+					}
+				}
+				
+				
+				//var s_date=	view.start.getTime();
+				//var e_date= view.end.getTime();
+				var dataString = 's_date='+s_date+'&e_date='+e_date+'&redirect=false';
+				
+				//alert(dataString);
+								
+				jsonRow = 'returnCalenderHolidays.cgi?'+dataString;
+
+		
+				$.getJSON(jsonRow,function(result){
+					$('#calendar').fullCalendar( 'removeEventSource', new_event );
+					if(result){
+						
+						new_event=new Array();
+						$.each(result, function(i,item)
+						{
+							var new_arr=new Array();
+							new_arr['id']=item.uuid;
+							new_arr['start']=get_datetime(item.start_date);
+							new_arr['end']=get_datetime(item.end_date);
+							//new_arr['title']=item.Holiday_Details;
+							if(item.calender_type=="company_holiday"){
+								new_arr['backgroundColor']='#50D050';
+								new_arr['borderColor']='#50D050';
+								new_arr['title']=item.subject;
+								new_arr['url']='company_holiday.shtml?uuid='+item.uuid;
+							}else{
+								new_arr['title']=item.Holiday_Details;
+								new_arr['url']='holiday.shtml?uuid='+item.uuid;
+							}
+							
+							new_arr['allDay']=true;
+							new_event.push(new_arr);
+							
+						});
+						
+						$('#calendar').fullCalendar( 'addEventSource', new_event );
+					}
+				});
+		
+		
+				
+			},
+	
+            });
+            // handler to close the new event popup just for displaying purposes
+            // more documentation for fullcalendar on http://arshaw.com/fullcalendar/
+            $(".popup .close-pop").click(function () {
+                $(".new-event").fadeOut("fast");
+            });
+        });
+    </script>
+	
+	<script>
+	 var xhr;
+  (function( $ ) {
+    $.widget( "custom.combobox", {
+      _create: function() {
+        this.wrapper = $( "<span>" )
+          .addClass( "custom-combobox" )
+          .insertAfter( this.element );
+ 
+        this.element.hide();
+        this._createAutocomplete();
+        this._createShowAllButton();
+      },
+ 
+      _createAutocomplete: function() {
+        var selected = this.element.children( ":selected" ),
+          value = selected.val() ? selected.text() : "";
+ 
+        this.input = $( "<input>" )
+          .appendTo( this.wrapper )
+          .val( value )
+          .attr( "title", "" )
+          .addClass( "custom-combobox-input ui-widget ui-widget-content ui-state-default ui-corner-left" )
+          .autocomplete({
+            delay: 0,
+            minLength: 0,
+            source: $.proxy( this, "_source" )
+          })
+          .tooltip({
+            tooltipClass: "ui-state-highlight"
+          });
+ 
+        this._on( this.input, {
+          autocompleteselect: function( event, ui ) {
+		  	//alert("show all");
+            ui.item.option.selected = true;
+			
+            this._trigger( "select", event, {
+              item: ui.item.option
+            });
+          },
+ 
+          autocompletechange: "_removeIfInvalid"
+        });
+      },
+ 
+      _createShowAllButton: function() {
+        var input = this.input,
+          wasOpen = false;
+ 
+        $( "<a>" )
+          .attr( "tabIndex", -1 )
+          .attr( "title", "Show All Items" )
+          .tooltip()
+          .appendTo( this.wrapper )
+          .button({
+            icons: {
+              primary: "ui-icon-triangle-1-s"
+            },
+            text: false
+          })
+          .removeClass( "ui-corner-all" )
+          .addClass( "custom-combobox-toggle ui-corner-right" )
+          .mousedown(function() {
+            wasOpen = input.autocomplete( "widget" ).is( ":visible" );
+          })
+          .click(function() {
+            input.focus();
+ 
+            // Close if already visible
+            if ( wasOpen ) {
+              return;
+            }
+ 
+            // Pass last search string as value to search for, displaying last results
+            input.autocomplete( "search", 'SHOWALL' );
+          });
+      },
+ 
+      _source: function( request, response ) {
+        //var matcher = new RegExp( $.ui.autocomplete.escapeRegex(request.term), "i" );
+		var ele_select= this.element;
+		if(request.term=='SHOWALL'){
+			response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+		
+		}
+		else
+		{
+		var jsonRow = 'gettaskonsearch.cgi?srch='+request.term;
+		
+
+		//alert(jsonRowURLStr);
+		if(xhr) xhr.abort();
+		xhr=$.getJSON(jsonRow,function(result){
+			
+			if(result){
+				var html='<option value=""></option>';
+
+				$.each(result, function(i,item)
+				{
+					html += '<option value="'+item.id+'">'+item.value+'</option>';
+				});
+				ele_select.html(html);
+				
+				
+				response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+				
+				
+			}
+		});
+       
+	  } 
+		
+      },
+ 
+      _removeIfInvalid: function( event, ui ) {
+ 
+        // Selected an item, nothing to do
+        if ( ui.item ) {
+
+          return;
+        }
+ 
+        // Search for a match (case-insensitive)
+        var value = this.input.val(),
+          valueLowerCase = value.toLowerCase(),
+          valid = false;
+        this.element.children( "option" ).each(function() {
+          if ( $( this ).text().toLowerCase() === valueLowerCase ) {
+            this.selected = valid = true;	
+			
+            return false;
+          }
+        });
+ 
+        // Found a match, nothing to do
+        if ( valid ) {
+          return;
+        }
+ 
+        // Remove invalid value
+        this.input
+          .val( "" )
+          .attr( "title", value + " didn't match any item" )
+          .tooltip( "open" );
+        this.element.val( "" );
+        this._delay(function() {
+          this.input.tooltip( "close" ).attr( "title", "" );
+        }, 2500 );
+        this.input.data( "ui-autocomplete" ).term = "";
+      },
+ 
+      _destroy: function() {
+        this.wrapper.remove();
+        this.element.show();
+      }
+    });
+  })( jQuery );
+ 
+  $(function() {
+    $( "#Task_ID" ).combobox();
+   
+	
+  });
+
+  </script>
+    
+</body>
+</html>

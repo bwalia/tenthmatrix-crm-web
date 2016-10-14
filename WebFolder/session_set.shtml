@@ -1,0 +1,61 @@
+<!--HIT_EXECUTE
+
+_HIT_WebSession_SetVar("user_name";_HIT_WebApp_GetField ("name"))
+_HIT_WebSession_SetVar("user_email";_HIT_WebApp_GetField ("email"))
+
+ARRAY TEXT(tBasketNameArrTxt;0)
+ARRAY TEXT(tBasketValueArrTxt;0)
+
+APPEND TO ARRAY(tBasketNameArrTxt;"product1")
+APPEND TO ARRAY(tBasketValueArrTxt;"iPad 2")
+
+APPEND TO ARRAY(tBasketNameArrTxt;"product2")
+APPEND TO ARRAY(tBasketValueArrTxt;"iPod")
+
+APPEND TO ARRAY(tBasketNameArrTxt;"product3")
+APPEND TO ARRAY(tBasketValueArrTxt;"iPad Mini")
+
+_HIT_WebSession_SetArray ("basket_items";->tBasketNameArrTxt;->tBasketValueArrTxt)
+
+ARRAY TEXT(tRecentlyViewedNameArrTxt;0)
+ARRAY TEXT(tRecentlyViewedValueArrTxt;0)
+
+APPEND TO ARRAY(tRecentlyViewedNameArrTxt;"Fuse Box")
+APPEND TO ARRAY(tRecentlyViewedValueArrTxt;"XXX-XXX-XXX-XXX1")
+
+APPEND TO ARRAY(tRecentlyViewedNameArrTxt;"Boxed Isolators")
+APPEND TO ARRAY(tRecentlyViewedValueArrTxt;"XXX-XXX-XXX-XXX2")
+
+APPEND TO ARRAY(tRecentlyViewedNameArrTxt;"Locks")
+APPEND TO ARRAY(tRecentlyViewedValueArrTxt;"XXX-XXX-XXX-XXX3")
+
+_HIT_WebSession_SetArray ("recently_viewed_items";->tRecentlyViewedNameArrTxt;->tRecentlyViewedValueArrTxt)
+
+-->
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+
+<h2>Set Session Data Form Name/Value Demo as per table below</h2>	
+
+<!--HIT_EXECUTE
+C_TEXT(_HIT_HTMLTXT)
+_HIT_HTMLTXT:="<table border=1>"
+
+_HIT_HTMLTXT:=_HIT_HTMLTXT+"<th>Name</th><th>Email</th>"
+_HIT_HTMLTXT:=_HIT_HTMLTXT+"<tr>"
+_HIT_HTMLTXT:=_HIT_HTMLTXT+"<td>"+_HIT_WebApp_GetField ("name")+"</td>"
+_HIT_HTMLTXT:=_HIT_HTMLTXT+"<td>"+_HIT_WebApp_GetField ("email")+"</td>"
+_HIT_HTMLTXT:=_HIT_HTMLTXT+"</tr>"
+_HIT_HTMLTXT:=_HIT_HTMLTXT+"</table>"
+-->
+<a target="_blank" href="session_get.shtml">View this data through out the site now</a>
+
+<h2>Set Session Data ( Arrays ) Demo</h2>	
+<!--#4DSCRIPT/_HIT_LoadInclude/includes/session_get_code.shtml-->	
+<a target="_blank" href="session_get.shtml">Get Session Data Demo ( Set by session_set.shtml this page )</a>
+
+</body>
+</html>

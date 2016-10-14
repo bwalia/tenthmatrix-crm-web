@@ -1,0 +1,252 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml?url="+HTTPD_DocumentURI)
+end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+</head>
+<body>
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
+
+	<!-- main container -->
+    <div class="content">
+        
+        <div class="container-fluid">
+            <div id="pad-wrapper">
+
+                <!-- timeslips table -->
+                <div class="table-wrapper orders-table section">
+                    <div class="row-fluid head">
+                        <div class="span12">
+                            <h4>Customers</h4>
+                        </div>
+                    </div>
+                    <div class="row-fluid filter-block">
+					<form id="frm_set" name="frm_set" method="post" action="customers.shtml">
+					<input type="button" class="btn-glow primary" value="Add to Set">
+					
+					<input type="hidden" name="selected" id="selected" value="">
+					<input type="hidden" name="set" id="set" value="">
+					<input type="hidden" name="new_name" id="new_name" value="">
+					
+					<div class="ui-select">
+					<select name="sets" onChange="__showCustomerForm_AddSet(this.value)">
+						<option value="">--Select Set--</option>
+						<!--#4DSCRIPT/Web_LoadCustomerSets/-->
+							<!--4DLOOP  [saved_sets]-->									
+							<option value="<!--#4DHTMLVAR [saved_sets]name-->" ><!--#4DHTMLVAR [saved_sets]name--></option>
+							<!--4DENDLOOP-->
+						<option value="new_set">Create New Set</option>
+					</select>
+					</div>
+                           <!--  <form method="get" onSubmit="__showCustomers(); return false;"> -->
+
+                    <div class="row-fluid filter-block">
+                        <div class="pull-right">
+                            <div class="btn-group pull-right">
+                                <button class="glow left large" onClick="__showAllCustomers(); return false;">All</button>
+                                <button class="glow middle large" onClick="__showSuppliers(); return false;">Suppliers</button>
+                                <button class="glow right large" onClick="__showActiveCustomers(); return false;">Active</button>
+                            </div>
+                            <input name="keyword" id="keyword" type="text" class="search order-search" placeholder="Enter customer name.." value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" />
+                        </div>
+                    </div>
+
+                            </form>
+
+                    <div class="row-fluid">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                	<th class="span2">
+                                        <!-- Select For Sets -->
+                                        <input name="Select" class="span3 check" type="checkbox" id="Select" value="<!--#4DHTMLVAR [Companies]uuid-->"></label>
+                                    </th>
+                                    <th class="span2">
+                                        Customer
+                                    </th>
+                                    <th class="span3">
+                                        Telephone
+                                    </th>
+                                    <th class="span3">
+                                        <span class="line"></span>
+                                        City/Town
+                                    </th>
+                                    <th class="span3">
+                                        <span class="line"></span>
+                                        Customer  Address
+                                    </th>
+                                    <th class="span3">
+                                        <span class="line"></span>
+                                        Time slip Status
+                                    </th>
+                                    <th class="span3">
+                                        <span class="line"></span>
+                                        Total Spent
+                                    </th>
+                                                                        <th class="span3">
+                                        <span class="line"></span>
+                                        Statement
+                                    </th>
+
+                                </tr>
+                            </thead>
+                            <tbody><!--#4DSCRIPT/Web_LoadCustomers/-->
+                                <!--#4DLOOP [Companies]--><!--#4DSCRIPT/Web_LoadCustomerRelated/--><!-- row -->
+                                <tr class="first">
+                                	<td>
+                                		<input name="Select" class="span3 check" type="checkbox" id="Select" value="<!--#4DHTMLVAR [Companies]uuid-->"></label>
+								   </td>
+                                    <td>
+                                        <a href="javascript:void(0)" onClick="__showCustomerForm('<!--#4DHTMLVAR [Companies]uuid-->')"><!--#4DHTMLVAR [Companies]company_Name--></a>
+                                    </td>
+                                    <td>
+                                        <!--#4DHTMLVAR [Companies]telephone-->
+                                    </td>
+                                     <td>
+                                       <!--#4DVAR [Companies]city_or_town-->
+                                    </td>
+                                    <td>
+                                        <!--#4DHTMLVAR [Companies]address_line_1-->
+                                    </td>
+
+                                    <td>
+                                        <span class="label label-success"><!--#4DIF ([Timeslips]billing_status=1)-->Chargeable<!--#4DELSE-->Not Chargeable<!--#4DENDIF--></span>
+                                    </td>
+                                    <td>
+                                        £<!--#4DHTMLVAR Invoice_AmtReturnAsText (Sum([Invoices]inv_total_due_with_tax))-->
+                                    </td>
+                                    
+                                                                        <td>
+                                        <span class="label label-success"><a title="Download Statement" target="_blank" href="statement_preview.shtml?uuid=<!--#4DVAR [Companies]uuid-->&token=<!--#4DVAR _HIT_TokenGetAny-->&preview=pdf">
+                                        <i class="icon-download-alt"></i>&nbsp;</a>
+                                    </span>&nbsp;&nbsp;<a title="Download Full Statement" target="_blank" href="statement_preview.shtml?uuid=<!--#4DVAR [Companies]uuid-->&token=<!--#4DVAR _HIT_TokenGetAny-->&preview=pdf&full=true">Full</a>&nbsp; Statement</td>
+
+                                </tr>
+
+									<!--#4DENDLOOP-->
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- end timeslips table -->
+
+            </div>
+        </div>
+    </div>
+    <!-- end main container -->
+
+	<!-- scripts -->
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+    
+    
+<script>
+
+function __showSuppliers()
+{
+pUrlStr='customers.shtml?keyword='+$("#keyword").val()+'&tab=suppliers';
+window.location.href=pUrlStr;
+}
+
+function __showActiveCustomers()
+{
+pUrlStr='customers.shtml?keyword='+$("#keyword").val()+'&tab=active';
+window.location.href=pUrlStr;
+}
+
+function __showAllCustomers()
+{
+pUrlStr='customers.shtml';
+window.location.href=pUrlStr;
+}
+
+function __showCustomers()
+{
+pUrlStr='customers.shtml?keyword='+$("#keyword").val();
+window.location.href=pUrlStr;
+}
+
+function __showCustomerForm(uuid)
+{
+pUrlStr='customer.shtml?uuid='+uuid;
+window.location.href=pUrlStr;
+}
+    
+
+function __showCustomerForm_AddSet(name)
+{
+	var selected='';
+	$('.check').each(function(){
+		if($(this).is(":checked")){
+			if(selected==''){
+				selected=$(this).val();
+			}
+			else{
+				selected+=","+$(this).val();
+			}
+		}
+	
+	});
+	if(selected!=''){
+		if(name=='new_set'){
+			var new_set=prompt("Please enter name of new set:","userset_1");
+			$('#new_name').val(new_set);
+			if(new_set!=null){
+				$('#selected').val(selected);
+				$('#set').val("add_to_"+name);
+				$('#frm_set').submit();
+			
+			}
+		}
+		else
+		{
+			$('#selected').val(selected);
+			$('#set').val("add_to_"+name);
+			$('#frm_set').submit();
+		}
+	}
+	//pUrlStr='leads.shtml?set=add_to_'+name;
+	//window.location.href=pUrlStr;
+}
+$(document).ready(function() {
+
+$('#keyword').focus();
+
+//setup before functions
+var typingTimer;                //timer identifier
+var doneTypingInterval = 1000;  //time in ms, 5 second for example
+
+//on keyup, start the countdown
+$('#keyword').keyup(function(){
+    clearTimeout(typingTimer);
+    if ($('#keyword').val) {
+        typingTimer = setTimeout(function(){
+            //do stuff here e.g ajax call etc....
+             var v = $("#keyword").val();
+__showCustomers();
+        }, doneTypingInterval);
+    }
+});
+
+    });
+
+    </script>
+
+    
+</body>
+</html>

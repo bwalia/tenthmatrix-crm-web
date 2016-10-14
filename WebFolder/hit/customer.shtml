@@ -1,0 +1,761 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+C_TEXT(_HTMLTITLETXT)
+
+If(_HIT_AuthenticateSession="Session-Authenticated-OK")
+ALL RECORDS([Tax_Codes])
+
+QUERY([Companies];[Companies]uuid=_HIT_WebApp_GetField ("uuid"))
+QUERY([Contacts];[Contacts]client_id=[Companies]account_Number)
+
+
+QUERY([analysis_ledger];[analysis_ledger]uuid=[Companies]uuid_analysis_ledger)
+QUERY([analysis_account];[analysis_account]uuid=[Companies]uuid_analysis_account)
+
+If (Records in selection([Companies])=0)
+_HTMLTITLETXT:="New Customer"
+Else
+_HTMLTITLETXT:= "Customer: "+[Companies]company_Name
+END If
+
+Else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+End If 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+-->
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+		<link rel='stylesheet' type='text/css' href='css/style.css' />
+		<link rel='stylesheet' type='text/css' href='css/print.css' media="print" />
+		<link rel="stylesheet" href="css/compiled/ui-elements.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="css/colorbox.css" />
+		<link rel="stylesheet" media="all" type="text/css" href="css/jquery-impromptu.css" />
+		<link href="css/img-tabs.css" type="text/css" rel="stylesheet">
+		<link rel="stylesheet" href="css/autocomplete.css" />
+		<style>
+			table { border-collapse: collapse; }
+			table td, table th { border: 1px solid black; padding: 5px; }
+			.items { clear: both; width: 100%; margin: 30px 0 0 0; border: 1px solid black; }
+			.items th { background: #eee; }
+			.items tr.item-row td { border: 0; vertical-align: top; }
+			table td input { width:100px; }
+				
+			#CompanyForm em.error {
+				margin-left: 10px;
+				width: auto;
+				display: inline;
+			}
+			#CompanyForm em.error {
+   				color: red;
+    			font-style: italic;
+			}
+			#CompanyForm input.error, textarea.error, select.error{
+   				border: 1px solid red;
+			}
+		</style>
+	</head>
+<body>
+
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
+	
+	<!-- main container -->
+    <div class="content">
+        
+        <div class="container-fluid">
+            <div id="pad-wrapper" class="form-page">
+				 <div class="row-fluid" style="margin-bottom: 40px;">
+					<h3><!--#4DIF (Records in selection([Companies])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Customer</h3>
+					
+                </div>
+                <form name="CompanyForm" id="CompanyForm" action="savecustomer.cgi" class="form-comment" method="post">
+				<!--<form name="CompanyForm" action="savecustomertest.cgi" class="form-comment" method="post" onSubmit="return ValidateForm();">-->
+					<div class="row-fluid form-wrapper">
+						<div id="tabs">
+							<ul>
+								<li><a style="color:#000000" href="#tabs-1">Customer Info</a></li>
+								<li><a style="color:#000000" href="#tabs-2">Licence Number</a></li>
+								<li><a style="color:#000000" href="#tabs-3">More Information and Contacts</a></li>
+								 <!--#4DIF (_HIT_WebSession_GetVar ("auth_user_type")#"CLIENTS")-->
+								<!--#4DIF (Records in selection([Companies])=1)-->
+								<li><a style="color:#000000" href="#tabs-4">Notes</a></li>
+								<!--#4DENDIF-->
+								<!--#4DENDIF-->
+							</ul>
+							<div id="tabs-1" class="var_tabs"> 
+								<!-- left column -->
+								<div class="span7 column">   
+									<div class="field-box">
+										<label>Company Name <span style="color:#6E829B">*</span></label>
+										<input class="span5" name="Company_Name" type="text" value="<!--#4DVAR [Companies]company_Name-->" id="Company_Name">
+									</div>
+									<input name="Company_uuid" class="span6" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="Company_uuid">
+							
+									<div class="field-box">
+										<div style="float:left">
+											<label>Account Number <span style="color:#6E829B">*</span></label>
+											<input readonly class="span5" name="acc_no" type="text" value="<!--#4DVAR [Companies]account_Number-->" id="acc_no">
+										</div>
+										<div style="float:left">
+											<label class="checkbox" style="width:auto;">							
+											<input name="inactive" class="span9" type="checkbox" value="true" id="inactive" <!--#4DIF ([Companies]inactive)-->checked<!--4DELSE--><!--4DENDIF--> >Inactive
+										</div>
+									</div>
+							<div class="field-box">
+								<label>Contact First Name </label>
+								<input class="span5" type="text" id="Contact_First_Name" name="Contact_First_Name" value="<!--#4DVAR [Companies]contact_firstname-->">
+							</div>
+							<div class="field-box">
+								<label>Contact Last Name </label>
+								<input class="span5" type="text" id="Contact_Last_Name" name="Contact_Last_Name" value="<!--#4DVAR [Companies]contact_Lastname-->">
+							</div>
+							
+							<div class="field-box">
+								<label>Email <span style="color:#6E829B"></span></label>
+								<input class="span5" type="text" name="Email" id="Email" value="<!--#4DVAR [Companies]email_address-->">
+							</div>
+							<div class="field-box">
+								<label>Address 1 <span style="color:#6E829B">*</span></label>
+								<textarea class="span5" name="Address_1" id="Address_1" rows="4"><!--#4DVAR [Companies]address_line_1--></textarea>
+							</div>
+							<div class="field-box">
+								<label>Address 2</label>
+								<textarea class="span5" name="Address_2" id="Address_2" rows="4"><!--#4DVAR [Companies]address_line_2--></textarea>
+							</div>				
+							<div class="field-box">
+								<label>City </label>
+								<input class="span5" name="City" type="text" value="<!--#4DVAR [Companies]city_or_town-->" id="City">
+							</div>
+							<div class="field-box">
+								<label>County </label>
+								<input class="span5" name="county_or_state" type="text" value="<!--#4DVAR [Companies]county_or_state-->" id="county_or_state">
+							</div>
+							<div class="field-box">
+								<label>Post Code </label>
+								<input class="span5" name="Post_Code" type="text" value="<!--#4DVAR [Companies]post_zip_code-->" id="Post_Code">
+							</div>
+							<div class="field-box">
+								<label>Phone </label>
+								<input class="span5 phone" name="Phone" type="text" value="<!--#4DVAR [Companies]telephone-->" id="Phone">
+							</div>
+							<div class="field-box">
+								<label>Fax </label>
+								<input class="span5" name="Fax" type="text" value="<!--#4DVAR [Companies]fax-->" id="Fax">
+							</div>
+							<div class="field-box">
+								<label>Country</label>
+								<input class="span5" name="Country" type="text" value="<!--#4DVAR [Companies]country-->" id="Country">
+							</div>
+							<div class="field-box">
+								<label>Relation</label>
+								<input class="span5" name="Relation" type="text" maxlength="2" value="<!--#4DVAR [Companies]relationship-->" id="Relation">
+							</div>
+							<!--<div class="field-box">
+								<label>Type </label>
+								<input class="span5" type="text" name="business_type" id="business_type" value="">
+							</div>-->
+							<div class="span12 field-box">
+								<label>Referred by</label>
+								<input class="span5" type="text" id="Referred_by" name="Referred_by" value="<!--#4DVAR [Companies]referred_by-->">
+							</div>
+							
+							<div class="span12 field-box">
+								<label>Comments</label>
+								<textarea name="Comments" class="span5" rows="4" id="Comments"><!--#4DVAR [Companies]comments --></textarea>
+							</div>
+							
+							
+							
+							
+							</div>
+							<!-- right column -->
+							<div class="span4 column pull-right">
+								<div class="span12 field-box">
+									<label></label>
+									<label class="checkbox" style="width:auto;">							
+										<input name="is_supplier" class="span9" type="checkbox" value="true" id="is_supplier" <!--#4DIF ([Companies]is_supplier)-->checked<!--4DELSE--><!--4DENDIF--> > <strong>Supplier</strong>
+									</label>
+								</div>	
+								<div class="span12 field-box">
+									<label>Follow Up Date </span></label>
+									<input type="text" class="input-large datepicker span9" data-date-format="dd/mm/yyyy" <!--#4DIF ([Companies]followup_date=!00/00/00!)-->value=""<!--4DELSE-->value="<!--#4DHTMLVAR ([Companies]followup_date)-->"<!--4DENDIF--> name="follow_date" id="follow_date" readonly >
+								</div>
+								<div class="span12 field-box">
+									<label>Technical Person : </label>
+									First name: <input name="tech_cont_firstname" class="span3" type="text" value="<!--#4DVAR [Companies]tech_cont_firstname-->" id="tech_cont_firstname" >
+									&nbsp;&nbsp;&nbsp;Last name: <input name="tech_contact_lastname" class="span3" type="text" value="<!--#4DVAR [Companies]tech_contact_lastname-->" id="tech_contact_lastname" >
+								</div>
+																
+								<div class="span12 field-box">
+									<label>Other email</label>
+									<input name="other_email" class="span9" type="text" value="<!--#4DVAR [Companies]other_email-->" id="other_email" >
+								</div>
+								<div class="span12 field-box">
+									<label>Support Renewal</label>
+									<input name="support_renew2" readonly class="input-large datepicker span9" data-date-format="dd/mm/yyyy" type="text" <!--#4DIF ([Companies]support_renew2=!00/00/00!)-->value=""<!--4DELSE-->value="<!--#4DHTMLVAR ([Companies]support_renew2)-->"<!--4DENDIF--> id="support_renew2" >
+								</div>
+												
+								<div class="span12 field-box">
+									<label>Currency</label>
+									<div class="ui-select">
+									<select id="currency_code" name="currency_code">
+										<option value=""></option>
+										<!--4DLOOP [Tax_Codes]-->
+										<option value="<!--#4DVAR [Tax_Codes]Currency_Code-->" <!--#4DIF ([Tax_Codes]Currency_Code=[Companies]base_currency_code)-->selected<!--4DELSE--><!--4DENDIF-->><!--4DVAR [Tax_Codes]Currency_Code--></option>	
+										<!--4DENDLOOP-->
+									</select> 
+									</div>
+								</div>
+								<div class="span12 field-box">
+									<label>VAT Number</label>
+									<input name="VAT_number" class="span9" type="text" value="<!--#4DVAR [Companies]vat_tax_number-->" id="VAT_number" >
+								</div>
+								<div class="span12 field-box">
+									<label>VAT Claimed</label>
+									<div class="ui-select">
+									<select id="vat_claimed" name="vat_claimed">
+										<option value="">--SELECT TYPE--</option>
+										<option value="Yes" <!--#4DIF ([Companies]vat_claimed="Yes")-->selected<!--4DELSE--><!--4DENDIF-->>Yes</option>
+										<option value="No" <!--#4DIF ([Companies]vat_claimed="No")-->selected<!--4DELSE--><!--4DENDIF-->>No</option>
+										<option value="Depend upon bill" <!--#4DIF ([Companies]vat_claimed="Depend upon bill")-->selected<!--4DELSE--><!--4DENDIF-->>Depend upon bill</option>	
+									</select> 
+									</div>
+								</div>
+								<div class="span12 field-box">
+									<label>Bank Sort Code</label>
+									<input name="bank_sort_code" class="span9" type="text" value="<!--#4DVAR [Companies]bank_sort_code-->" id="bank_sort_code" >
+								</div>
+								<div class="span12 field-box">
+									<label>Bank Account Number</label>
+									<input name="bank_acc_num" class="span9" type="text" value="<!--#4DVAR [Companies]bank_account_number-->" id="bank_acc_num" >
+								</div>
+								<div class="span12 field-box">
+									<label>IBAN</label>
+									<input name="IBAN" class="span9" type="text" value="<!--#4DVAR [Companies]bank_iban_number-->" id="IBAN" >
+								</div>
+								<div class="span12 field-box">
+									<label>Default Analysis Ledger</label>
+									<input  type="hidden" value="<!--#4DVAR [Companies]uuid_analysis_ledger-->">
+									<div class="ui-widget">
+										<select id="analysis_ledger" name="analysis_ledger" class="span9">
+											<!--#4DIF (Records in selection([Companies])=0)-->
+												<option value=""></option>
+												<!--#4DSCRIPT/Web_LoadAnalysisLegder/-->
+												<!--4DLOOP  [analysis_ledger]-->
+												<option value="<!--4DVAR [analysis_ledger]uuid-->"  <!--#4DIF ([analysis_ledger]uuid=[Companies]uuid_analysis_ledger)-->selected<!--4DELSE--><!--4DENDIF-->><!--4DVAR [analysis_ledger]ledger_name--></option>		
+										 		<!--4DENDLOOP-->
+										 	<!--#4DELSE-->
+										 		<option value="<!--4DVAR [analysis_ledger]uuid-->" selected><!--4DVAR [analysis_ledger]ledger_name--></option>									 
+										 	<!--#4DENDIF-->
+										</select>
+									</div>
+								</div>
+								<div class="span12 field-box">
+									<label>Default Analysis Account</label>
+									<input type="hidden" value="<!--#4DVAR [Companies]uuid_analysis_account-->">
+									<div class="ui-widget" id="account_div">
+										<select id="uuid_analysis_account" name="uuid_analysis_account" class="span9">
+											<!--#4DIF (Records in selection([Companies])=0)-->
+												<option value=""></option>
+												<!--#4DSCRIPT/Web_LoadAnalysisAccount/-->
+												<!--4DLOOP  [analysis_account]-->
+												<option value="<!--4DVAR [analysis_account]uuid-->"  <!--#4DIF ([analysis_account]uuid=[Companies]uuid_analysis_account)-->selected<!--4DELSE--><!--4DENDIF-->><!--4DVAR [analysis_account]account_name--></option>		
+										 		<!--4DENDLOOP-->
+										 	<!--#4DELSE-->
+										 		<option value="<!--4DVAR [analysis_account]uuid-->" selected><!--4DVAR [analysis_account]account_name--></option>									 
+										 	<!--#4DENDIF-->
+										</select>
+									</div>
+								</div>
+								<div class="span12 field-box">
+									<label></label>
+									<label class="checkbox" style="width:auto;">							
+										<input name="renewal_letter" class="span9" type="checkbox" value="true" id="renewal_letter" <!--#4DIF ([Companies]renewal_letter)-->checked<!--4DELSE--><!--4DENDIF--> >Renewal letter
+									</label>
+								</div>						
+							</div>
+						</div>
+						<div id="tabs-2" class="var_tabs" style="display:none">
+							<div class="field-box">
+								<label>Catbase Type </label>
+								<input class="span5" type="text" name="catBase_type" id="catBase_type" value="<!--#4DVAR [Companies]catBase_type-->">
+							</div>
+							<div class="field-box">
+								<label>Catbase Prog Type</label>
+								<input class="span5" type="text" name="catbase_prog_type" id="catbase_prog_type" value="<!--#4DVAR [Companies]catbase_prog_type-->">
+							</div>
+							<div class="field-box">
+								<label>Catbase Version</label>
+								<input class="span5" type="text" name="catbase_version" id="catbase_version" value="<!--#4DVAR [Companies]catbase_version-->">
+							</div>
+							<div class="field-box">
+								<label>Number of users</label>
+								<input class="span5" type="text" name="no_of_users" id="no_of_users" value="<!--#4DVAR [Companies]no_of_users-->">
+							</div>
+							<div class="field-box">
+								<label>Licence Number </label>
+								<input class="span5" type="text" name="license_number" id="license_number" value="<!--#4DVAR [Companies]licence_number-->"></br>
+								<!--#4DIF (Records in selection([Companies])=1)-->
+								<span style="padding-left:140px;"><a href="licencemanager.shtml" class="btn-flat info Licence" id="lnk_licence" name="lnk_licence">Generate New License</a>
+								<a href="licencemanager.shtml" class="btn-flat info Licence" id="lnk_active_licence" name="lnk_active_licence">Activate License Number</a></span>
+								<!--#4DENDIF-->
+							</div>
+							<div class="field-box">
+								<label>Old licence number</label>
+								<input class="span5" type="text" name="old_licence_no" id="old_licence_no" value="<!--#4DVAR [Companies]old_licence_number-->">
+							</div>
+							
+						</div>
+						<div id="tabs-3" class="var_tabs" style="display:none" >
+							<div class="span12 field-box">
+								<label>Invoice contact name</span></label>
+								<input class="span5" type="text" id="invoice_contact_name" name="invoice_contact_name" value="<!--#4DVAR [Companies]invoice_contact_name-->">
+							</div>
+							<div class="span12 field-box">
+								<label>Invoice contact email</span></label>
+								<input class="span5" type="text" id="invoice_contact_email" name="invoice_contact_email" value="<!--#4DVAR [Companies]invoice_contact_email-->">
+							</div>
+							<div class="span12 field-box">
+								<label>Invoice Address</span></label>
+								<input class="span5" type="text" id="invoice_address" name="invoice_address" value="<!--#4DVAR [Companies]invoice_address-->">
+							</div>
+							<div class="span12 field-box">
+								<label>Account Status</label>
+								<input class="span5" type="text" id="accountStatus" name="accountStatus" value="<!--#4DVAR [Companies]account_status-->">
+							</div>
+							<div class="span12 field-box">
+								<label>Computer type</span></label>
+								<input class="span5" type="text" id="computer_type" name="computer_type" value="<!--#4DVAR [Companies]computer_type-->">
+							</div>
+							<div class="span12 field-box">
+								<label>Platform</span></label>
+								<input class="span5" type="text" id="platform" name="platform" value="<!--#4DVAR [Companies]platform_os-->">
+							</div>
+							<div class="span12 field-box">
+								<label>Website</span></label>
+								<input class="span9" type="text" id="website" name="website" value="<!--#4DVAR [Companies]website_url-->">
+								<!--#4DIF ((Records in selection([Companies])=1) & ([Companies]website_url#""))-->
+								&nbsp; <a href="<!--#4DVAR [Companies]website_url-->" target="_blank" class="btn-glow primary">View Website</a>
+								<!--#4DENDIF-->
+							</div>
+							<div class="span12 field-box">
+								<label>Logo Path</span></label>
+								<input class="span5" type="text" id="logo_path" name="logo_path" value="<!--#4DVAR [Companies]logo_path-->">
+							</div>
+							<br/>
+							<!--#4DIF (Records in selection([Companies])=1)-->
+							<table id="items">		
+							  <tr class="item">
+								  
+								  <th>First Name</th>
+								  <th>Surname</th>
+								  <th>E-mail</th>
+								 
+								  <th>Mobile</th>
+								  <th>Save</th>
+								  <th>Cancel</th>
+							  </tr>
+		 					<input id="edited_contact_uuid" type="hidden" value="edited_contact_uuid" />
+
+		  <!--#4DLOOP [Contacts]--><!--#4DSCRIPT/Web_LoadContactRelated/--><!-- row -->
+		  
+		  <tr class="item-row" id="<!--#4DHTMLVAR [Companies]company_Name-->">
+									<td>
+									<span class="s_firstname" ><!--#4DHTMLVAR [Contacts]First name--></span>
+
+									<input class="contact_uuid" type="hidden" value="<!--#4DHTMLVAR [Contacts]uuid-->" />
+									<input type="text" class="firstname" style="display:none;" value="<!--#4DHTMLVAR [Contacts]First name-->" >
+									</td>
+									<td >
+									<span class="s_surname" ><!--#4DHTMLVAR [Contacts]Surname--></span>
+									<input type="text" class="surname" style="display:none;" value="<!--#4DHTMLVAR [Contacts]Surname-->" >
+									</td>
+									<td>
+									<span class="s_email" ><!--#4DHTMLVAR [Contacts]Email--></span>
+									<input type="text" class="email" style="display:none;" value="<!--#4DHTMLVAR [Contacts]Email-->" >
+									</td>
+									
+									<td>
+									<span class="s_mobile" ><!--#4DHTMLVAR [Contacts]Mobile--></span>
+									<input type="text" class="mobile phone" style="display:none;" value="<!--#4DHTMLVAR [Contacts]Mobile-->">
+									</td>
+									<td >
+									<a href="javascript:void(0)" class="editlink">Edit</a>
+									<a href="javascript:void(0)" class="savelink" style="display:none">Save</a>
+									 </td>	
+									 <td><a href="javascript:void(0)" class="removelink" >Remove</a>
+									<a href="javascript:void(0)" class="cancellink" style="display:none">Cancel</a>
+									</td>								
+									</tr>
+		  
+		  <!--#4DENDLOOP-->
+		  
+		  
+		  
+		  <tr id="hiderow">
+		    <td colspan="7"><a id="addrow" href="javascript:;" title="Add a row">Add a row</a></td>
+		  </tr>
+		  
+		</table><br/>
+		<!--#4DENDIF-->
+		</div>	
+					<!-- start 4th tab -->
+					<!--#4DIF (_HIT_WebSession_GetVar ("auth_user_type")#"CLIENTS")-->
+					<!--#4DIF (Records in selection([Companies])=1)-->
+					
+					<div id="tabs-4" class="var_tabs">  
+						<div class="row-fluid form-wrapper" style="margin-bottom:5px;">
+							<!-- left column -->
+							<div class="span8 column">
+								<div class="span12 field-box">
+									<!--#4DSCRIPT/Web_LoadCompaniesNotes/-->	
+									<!--#4DLOOP [Notes]--><!-- row -->
+									<div class="notes">
+										<label id="user_details"><!--#4DHTMLVAR [Notes]note_user_name--> (<!--4DHTMLVAR timestamp_unix_toGMT ([Notes]Timestamp_modified)-->) (Note: <!--#4DHTMLVAR [Notes]note_ID-->)</label>
+										<input class="note_uuid" type="hidden" value="<!--#4DHTMLVAR [Notes]uuid-->" />
+										<textarea name="note" class="span6 note" rows="3" id="note" readonly> <!--#4DHTMLVAR [Notes]Note--></textarea>
+										<button type="button" id="edit" class="btn-glow" onClick="editCustomerNote($(this))">Edit Note</button>&nbsp;
+										<button type="button" id="delete" class="btn-glow" onClick="deleteCustomerNote($(this))">Delete</button>
+										<button type="button" id="save" class="btn-glow" onClick="saveCustomerNote($(this))" style="display:none">Save Note</button>
+										<button type="button" id="cancel" class="btn-glow" onClick="cancelCustomerNote($(this))" style="display:none">Cancel</button>
+									</div>
+									<!--#4DENDLOOP-->
+									<div class='notes_end'></div>
+								</div>
+								<div class="span12 field-box">
+									<label>Add Note</label>
+									<textarea name="add_new_note" class="span7" rows="4" id="add_new_note"></textarea>
+									<button type="button" id="add" class="btn-glow" onClick="addCustomerNote()">Add Note</button>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!--#4DENDIF-->
+					<!--#4DENDIF-->
+					<!-- end 4th tab -->
+					
+				<div style="text-align:center; margin-top: 11px;">
+								<input type="submit" name="Submit" class="btn-glow primary" value="Submit">
+								<!--#4DIF (Records in selection([Companies])=1)-->
+								<input type="button" name="Submit" class="btn-glow primary" value="Send Mail" onClick="__showEmailForm('<!--#4DHTMLVAR [Companies]uuid-->')">
+								<!--#4DENDIF-->
+								
+								<a href="customers.shtml" class="cancelbtn">Cancel</a>
+								
+								<!-- <input type="reset" value="Cancel" class="reset"> -->
+							</div>
+							
+						
+							
+                   			</div>		
+								
+						</div>
+					</div>
+            	</form>
+            
+        </div>
+    </div>
+    <!-- end main container -->
+
+	<!-- scripts -->
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+	
+	<script src="js/jquery.uniform.min.js"></script>
+	<script src="js/bootstrap.datepicker.js"></script>
+	<script src="js/jquery.colorbox.js"></script>
+	<script type="text/javascript" src="js/jquery-impromptu.js"></script>
+	<script src='js/jquery.MetaData.js' type="text/javascript" language="javascript"></script>
+	<!-- call this page plugins -->
+	<script src="js/jquery.validate.js"></script>
+	
+<script language="javascript">
+var tableUUIDStr= '<!--#4DVAR [Companies]uuid -->';
+var tableNameStr='Companies';
+	
+function __showEmailForm(uuid){
+	pUrlStr='email.shtml?company_uuid='+uuid;
+	window.location.href=pUrlStr;
+}
+	function checkphone(e){
+		var k = e.which;
+    	/* numeric inputs can come from the keypad or the numeric row at the top */
+   		if ((k<48 || k>57) && (k!=45) && (k!=43) && (k!=40) && (k!=41) && (k!=32) && (k!=44) && (k!=46) && (k!=8) && (k!=0)) {
+        	e.preventDefault();
+			return false;
+    	}
+	}
+	function get_ledger_accounts(){
+		var ledger_uuid= $("#analysis_ledger").val();
+		$('#account_div').find('.ui-autocomplete-input').val('');
+		var jsonRow = 'getanalysisaccountsonsearch.cgi?srch=&ledger_uuid='+ledger_uuid;
+		$.getJSON(jsonRow,function(result){	
+			if(result){
+				
+				var html='<option value=""></option>';
+				if(result.error){
+				
+				}else{
+					$.each(result, function(i,item){
+						html += '<option value="'+item.uuid+'">'+item.name+'</option>';
+					});
+				}
+				$('#uuid_analysis_account').html(html);
+			}
+		});
+	}
+	
+        $(function () {
+			$("a.info").colorbox({maxWidth:'60%', maxHeight:'90%'});
+		
+			<!--#4DIF (Records in selection([Companies])=0)-->
+		
+				var new_acc_no='<!--#4DVAR  SequenceNumber (->[Companies]account_Number)-->';
+				var new_uuid='<!--#4DVAR Generate UUID-->';
+				$('#acc_no').val(new_acc_no);
+				$('#Company_uuid').val(new_uuid);
+			<!--#4DELSE--><!--#4DENDIF-->
+		
+			$('#lnk_licence').attr('href','licencemanager.shtml?client_uuid='+$('#Company_uuid').val());
+			$('#lnk_active_licence').attr('href','licencemanager.shtml?client_uuid='+$('#Company_uuid').val()+'&licenceNo='+$('#license_number').val());
+
+            // add uniform plugin styles to html elements
+            $("input:checkbox").uniform();
+
+            // datepicker plugin
+            $('.datepicker').datepicker().on('changeDate', function (ev) {
+                $(this).datepicker('hide');
+            });
+				
+			$( "#tabs" ).tabs();
+				
+			$('.phone').keypress(function(e){
+					checkphone(e);
+			});
+			
+			$("#CompanyForm").validate({
+				ignore: "",
+				onkeyup: false,
+				errorClass: 'error',
+				validClass: 'valid',
+				errorElement: "em",
+				errorPlacement: function(error, element) {
+					if (element.attr("name") == "uuid_reported_by") {
+						error.insertAfter(".selectClass");
+					}else if (element.attr("name") == "uuid_assigned_to") {
+						error.insertAfter(".selectAsClass");
+					}else{
+						$(element).closest('div').append(error);
+					}
+				},
+				rules: {
+					Company_Name: { required: true },
+					Email: { email: true },
+					Address_1: { required: true},
+				},
+			});
+        });
+        
+        var xhr;
+  (function( $ ) {
+    $.widget( "custom.combobox", {
+      _create: function() {
+        this.wrapper = $( "<span>" )
+          .addClass( "custom-combobox" )
+          .insertAfter( this.element );
+ 
+        this.element.hide();
+        this._createAutocomplete();
+        this._createShowAllButton();
+      },
+ 
+      _createAutocomplete: function() {
+      	var ele_select= this.element;
+        var selected = this.element.children( ":selected" ),
+          value = selected.val() ? selected.text() : "";
+ 
+        this.input = $( "<input>" )
+          .appendTo( this.wrapper )
+          .val( value )
+          .attr( "title", "" )
+          .addClass( "custom-combobox-input ui-widget ui-widget-content ui-state-default ui-corner-left" )
+          .autocomplete({
+            delay: 0,
+            minLength: 0,
+            source: $.proxy( this, "_source" )
+          })
+          .tooltip({
+            tooltipClass: "ui-state-highlight"
+          });
+ 
+        this._on( this.input, {
+          autocompleteselect: function( event, ui ) {
+		  	//alert("show all");
+            ui.item.option.selected = true;
+			
+            this._trigger( "select", event, {
+              item: ui.item.option
+            });
+            if(ele_select.attr('id')=='analysis_ledger'){
+				get_ledger_accounts();
+			}
+          },
+ 
+          autocompletechange: "_removeIfInvalid"
+        });
+      },
+ 
+      _createShowAllButton: function() {
+        var input = this.input,
+          wasOpen = false;
+ 
+        $( "<a>" )
+          .attr( "tabIndex", -1 )
+          .attr( "title", "Show All Items" )
+          .tooltip()
+          .appendTo( this.wrapper )
+          .button({
+            icons: {
+              primary: "ui-icon-triangle-1-s"
+            },
+            text: false
+          })
+          .removeClass( "ui-corner-all" )
+          .addClass( "custom-combobox-toggle ui-corner-right" )
+          .mousedown(function() {
+            wasOpen = input.autocomplete( "widget" ).is( ":visible" );
+          })
+          .click(function() {
+            input.focus();
+ 
+            // Close if already visible
+            if ( wasOpen ) {
+              return;
+            }
+ 
+            // Pass last search string as value to search for, displaying last results
+            input.autocomplete( "search", 'SHOWALL' );
+          });
+      },
+ 
+      _source: function( request, response ) {
+        //var matcher = new RegExp( $.ui.autocomplete.escapeRegex(request.term), "i" );
+		var ele_select= this.element;
+		if(request.term=='SHOWALL'){
+			response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+		
+		}
+		else
+		{
+		if(ele_select.attr('id')=='analysis_ledger'){
+		var jsonRow = 'getledgersonsearch.cgi?srch='+request.term;
+		}
+		else if(ele_select.attr('id')=='uuid_analysis_account'){
+			var jsonRow = 'getanalysisaccountsonsearch.cgi?srch='+request.term;
+		}
+		if(xhr) xhr.abort();
+		xhr=$.getJSON(jsonRow,function(result){
+			
+			if(result){
+				var html='<option value=""></option>';
+				if(result.error){
+				
+				}else{
+					$.each(result, function(i,item){
+						html += '<option value="'+item.uuid+'">'+item.name+'</option>';
+					});
+				}
+				ele_select.html(html);
+				
+				
+				response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+				
+				
+			}
+		});
+       
+	  } 
+		
+      },
+ 
+      _removeIfInvalid: function( event, ui ) {
+ 
+        // Selected an item, nothing to do
+        if ( ui.item ) {
+
+          return;
+        }
+ 
+        // Search for a match (case-insensitive)
+        var value = this.input.val(),
+          valueLowerCase = value.toLowerCase(),
+          valid = false;
+           var ele_select= this.element;
+        this.element.children( "option" ).each(function() {
+          if ( $( this ).text().toLowerCase() === valueLowerCase ) {
+            this.selected = valid = true;	
+			if(ele_select.attr('id')=='analysis_ledger'){
+				get_ledger_accounts();
+			}
+            return false;
+          }
+        });
+ 
+        // Found a match, nothing to do
+        if ( valid ) {
+          return;
+        }
+ 
+        // Remove invalid value
+        this.input
+          .val( "" )
+          .attr( "title", value + " didn't match any item" )
+          .tooltip( "open" );
+        this.element.val( "" );
+        this._delay(function() {
+          this.input.tooltip( "close" ).attr( "title", "" );
+        }, 2500 );
+        this.input.data( "ui-autocomplete" ).term = "";
+      },
+ 
+      _destroy: function() {
+        this.wrapper.remove();
+        this.element.show();
+      }
+    });
+  })( jQuery );
+ 
+  $(function() {
+    $( "#analysis_ledger" ).combobox();
+    $("#uuid_analysis_account").combobox();
+  });
+
+    </script>
+	 <script type='text/javascript' src='js/contactcustomer.js'></script>
+	 <script type='text/javascript' src='js/customerNotes.js'></script>
+</body>
+</html>

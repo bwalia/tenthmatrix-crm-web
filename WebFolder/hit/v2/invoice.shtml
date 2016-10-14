@@ -1,0 +1,982 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+
+If(_HIT_AuthenticateSession="Session-Authenticated-OK")
+ALL RECORDS([Tax_Codes])
+
+If(Num(_HIT_WebApp_GetField ("inv_id"))#0)
+QUERY([Invoices];[Invoices]inv_id=Num(_HIT_WebApp_GetField ("inv_id")))
+else
+QUERY([Invoices];[Invoices]uuid=_HIT_WebApp_GetField ("uuid"))
+end If
+
+
+QUERY([Companies];[Companies]account_Number=num([Invoices]client_id))
+QUERY([Projects];[Projects]proj_name=[Invoices]project_code)
+
+C_BOOLEAN(mUserIsCurrentBool)
+mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
+
+C_BOOLEAN(mUserIsStaff)
+mUserIsStaff:=(_HIT_WebSession_GetVar ("auth_user_type")="STAFF")
+
+Else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+End If
+-->
+<!DOCTYPE html>
+<html lang="en">
+<!-- BEGIN HEAD -->
+<head>
+	<!--#4DIF (Records in selection([Invoices])=1)-->
+		<title>Invoice Number: <!--#4DVAR [Invoices]Full_Invoice_Number--></title>
+	<!--#4DELSE-->
+		<title>New Invoice</title>
+	<!--#4DENDIF-->
+	
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/v2/includes/InitCss.shtml-->
+	<!-- BEGIN PLUGIN STYLES -->
+	<link href="assets/css/autocomplete.css" rel="stylesheet">
+ 	<link href="assets/plugins/datepicker/css/bootstrap.datepicker.css" rel="stylesheet" />
+ 	
+	<!-- END PLUGIN STYLES -->
+<style>
+@media (min-width: 1200px) and (max-width:1450px){
+	
+	.cust-info .col-sm-3{
+		width:33%!important;
+	}
+	.cust-info .col-sm-6{
+		width:67%!important;
+	}
+	
+}
+</style>
+</head>
+
+<!-- END HEAD -->
+<!-- BEGIN BODY -->
+<body class="fixed-leftside fixed-header">
+	<!-- BEGIN HEADER -->
+		<!--#4DSCRIPT/_HIT_LoadInclude/hit/v2/includes/header.shtml-->
+	<!-- END HEADER -->
+
+	<div class="wrapper"> 
+ 		 <!-- BEGIN LEFTSIDE -->
+      		<!--#4DSCRIPT/_HIT_LoadInclude/hit/v2/includes/left-navigation.shtml-->
+		<!-- END LEFTSIDE -->
+  
+  <!-- BEGIN RIGHTSIDE -->
+  <div class="rightside bg-grey-100"> 
+    <!-- BEGIN PAGE HEADING -->
+    <div class="page-head">
+    <div class="row">
+     	<div class="col-sm-6">
+      		<h1 class="page-title"><!--#4DIF (Records in selection([Invoices])=1)-->Invoice Number: <!--#4DVAR [Invoices]Full_Invoice_Number--><!--#4DELSE-->New<!--#4DENDIF--></h1>
+        </div>
+      <!-- BEGIN BREADCRUMB -->
+      	<div class="col-sm-6">
+      <ol class="breadcrumb sm-pullright">
+        <li><a href="javascript:void(0)" onClick="funURLHandler('index.shtml','open-index-window')"><i class="ion-home margin-right-5"></i> Dashboard</a></li>
+        <li><a href="javascript:void(0)" onClick="funURLHandler('invoices.shtml','open-invoice-window')">Invoices</a></li>
+        <li><a href="javascript:void(0)"><!--#4DIF (Records in selection([Invoices])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Invoice</a></li>
+      </ol>
+      </div>
+      <!-- END BREADCRUMB --> 
+      </div>
+    </div>
+    <!-- END PAGE HEADING -->
+    
+    <div class="container-fluid">
+	<div class="row">
+        <div class="col-md-12">
+          <div class="panel" style="padding-top:20px;">
+            <div class="panel-body no-padding-top bg-white">
+              <div> 
+                <form class="form-horizontal new-invoice-form" name="InvoiceForm" id="InvoiceForm" action="saveinvoice.cgi" action="post">
+               
+                <!-- Nav tabs -->
+                <ul id="new-customer-tab" class="nav nav-tabs" role="tablist">
+                  <li role="presentation" class="active"><a href="#invoice-dtl" aria-controls="home" role="tab" data-toggle="tab"><strong>Invoice Details</strong></a></li>
+                  <li role="presentation"><a href="#internal-notes" aria-controls="profile" role="tab" data-toggle="tab"><strong>Internal Notes &amp; Other details</strong></a></li>
+                  	  <!--#4DIF (_HIT_WebSession_GetVar ("auth_user_type")#"CLIENTS")-->
+                  	<!--#4DIF (Records in selection([Invoices])=1)-->
+                  		<li role="presentation"><a href="#payments" aria-controls="profile" role="tab" data-toggle="tab"><strong>Payments</strong></a></li>
+                 		<li role="presentation"><a href="#notes" aria-controls="profile" role="tab" data-toggle="tab"><strong>Notes</strong></a></li>
+                	<!--#4DENDIF-->
+                	<!--#4DENDIF-->
+                </ul>
+                
+                <!-- Tab panes -->
+                   
+                <div class="tab-content" style="padding-top:25px; border-left: 1px solid #ddd; border-right: 1px solid #ddd;  border-bottom: 1px solid #ddd; padding-bottom:25px; padding-left:15px; padding-right:15px;">
+                  
+                  <div role="tabpanel" class="tab-pane active" id="invoice-dtl">
+                 	<!--#4DIF (Records in selection([Invoices])=1)-->
+                    <div class="row">
+                      <div class="col-sm-12   text-right clearfix margin-bottom-15">
+                        <a title="Pay Invoice <!--#4DHTMLVAR String([Invoices]inv_id;"000000")--> by Credit or Debit Card" target="_blank" href="<!--#4DVAR Invoice_GetPayByCardLink-->"><button class="btn palette-carrot btn-color margin-right-5 btn-sm"> Pay Invoice By CC</button></a>
+                        <a title="Email Invoice To <!--#4DHTMLVAR String([Companies]company_Name)--> " target="_blank" href="email.shtml?inv_uuid=<!--#4DVAR [Invoices]uuid-->&company_uuid=<!--#4DVAR [Companies]uuid-->"><button class="btn palette-carrot btn-color margin-right-5 btn-sm"> Email Invoice </button></a>
+                       	<a title="Download Invoice <!--#4DHTMLVAR String([Invoices]inv_id;"000000")-->" target="_blank" href="invoice_preview.shtml?uuid=<!--#4DVAR [Invoices]uuid-->&token=<!--#4DVAR _HIT_TokenGetAny-->&preview=pdf"><button class="btn palette-carrot btn-color margin-right-5 btn-sm"> Download </button></a>
+                      </div>
+                    </div>
+                    <!--#4DENDIF-->
+                    
+                      <div class="row">
+                        <div class=" col-sm-12 col-lg-6">
+                          	<div class="form-group">
+                          		<label for="" class="col-sm-3 control-label">Invoice no. <sup class="req">*</sup></label>
+                            	<div class="col-sm-3">
+                              		<input type="text" class="form-control" id="inv_number" value="<!--#4DVAR [Invoices]inv_number -->" name="inv_number" readonly>
+                            		<input name="invoice_id" class="span8" type="hidden"  value="<!--#4DVAR [Invoices]inv_id-->" id="invoice_id">
+									<input name="invoice_uuid" class="span9" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="invoice_uuid"> 
+								</div>
+                          	</div>
+                          	<div class="form-group">
+                            	<label for="firstname" class="col-sm-3  control-label">Terms <sup class="req">*</sup></label>
+                            	<div class="col-sm-3">
+                             		<select class="form-control" name="invoice_terms" id="invoice_terms">
+										<option value="Net 15" <!--#4DIF ([Invoices]inv_terms="Net 15")-->selected<!--4DELSE--><!--4DENDIF--> >Net 15</option>
+										<option value="Net 20" <!--#4DIF ([Invoices]inv_terms="Net 20")-->selected<!--4DELSE--><!--4DENDIF--> >Net 20</option>
+										<option value="Net 30" <!--#4DIF ([Invoices]inv_terms="Net 30")-->selected<!--4DELSE--><!--4DENDIF--> >Net 30</option>
+										<option value="Upon receipt" <!--#4DIF ([Invoices]inv_terms="Upon receipt")-->selected<!--4DELSE--><!--4DENDIF--> >Upon receipt</option>
+										<option value="Due On Receipt" <!--#4DIF ([Invoices]inv_terms="Due On Receipt")-->selected<!--4DELSE--><!--4DENDIF--> >Due On Receipt</option>
+									</select>    
+                            	</div>
+                          	</div>
+                          <div class="form-group">
+                            <label for="" class="col-sm-3 control-label">Date<sup class="req">*</sup> </label>
+                            <div class="col-sm-3"><!--#4DIF (mUserIsCurrentBool)--><!--#4DVAR [Invoices]inv_date--><!--#4DELSE-->
+                              <input name="invoice_date" type="text" class="form-control datepicker" data-date-format="dd/mm/yyyy" type="text" <!--#4DIF ([Invoices]inv_date=!00/00/00!)-->value=""<!--4DELSE-->value="<!--#4DVAR [Invoices]inv_date-->"<!--4DENDIF--> id="invoice_date" readonly ><!--#4DENDIF-->
+                            </div>
+                          </div>
+                          <div class="form-group">
+                            <label for="" class="col-sm-3 control-label">Due Date<sup class="req">*</sup> </label>
+                            <div class="col-sm-3"><!--#4DIF (mUserIsCurrentBool)--><!--#4DVAR [Invoices]inv_date_due--><!--#4DELSE-->
+                              <input name="invoice_due_date" type="text" class="form-control datepicker" data-date-format="dd/mm/yyyy" type="text" <!--#4DIF ([Invoices]inv_date_due=!00/00/00!)-->value=""<!--4DELSE-->value="<!--#4DVAR [Invoices]inv_date_due-->"<!--4DENDIF--> id="invoice_due_date" readonly ><!--#4DENDIF-->
+                            </div>
+                          </div>
+                          
+                          <div class="form-group">
+                            <label for="" class="col-sm-3 control-label">Balance Outstanding</label>
+                            <div class="col-sm-3">
+                              <input type="text" class="form-control" name="balance_due" value="<!--#4DVAR [Invoices]balance_due -->" id="balance_due" readonly>
+                            </div>
+                          </div>
+                          <div class="form-group">
+                            <label for="" class="col-sm-3 control-label">Total Paid</label>
+                            <div class="col-sm-3">
+                              	<!--#4DIF (mUserIsCurrentBool)--><!--#4DVAR [Invoices]inv_total_paid-->
+								<input name="invoice_total_paid" class="form-control num" type="hidden" value="<!--#4DVAR [Invoices]inv_total_paid-->" id="invoice_total_paid">
+								<!--#4DELSE-->
+								<input name="invoice_total_paid" class="form-control num" type="text" value="<!--#4DVAR [Invoices]inv_total_paid-->" id="invoice_total_paid">
+								<!--#4DENDIF-->
+                            </div>
+                          </div>
+                          <div class="form-group">
+                            <label for="" class="col-sm-3 control-label">Notes</label>
+                            <div class="col-sm-6">
+                              <textarea <!--#4DIF (mUserIsCurrentBool)-->readonly<!--#4DELSE--><!--#4DENDIF--> class="form-control" name="inv_note" id="inv_note"><!--#4DVAR [Invoices]inv_note --></textarea>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div class="col-sm-12 col-lg-6">
+                          	<div class="form-group">
+                           		<label  class="col-sm-3  control-label">Client<sup class="req">*</sup></label>
+                            	<div class="col-sm-6 ui-widget">
+                            	<!--#4DIF (mUserIsCurrentBool)--><!--#4DVAR [Companies]company_Name--><!--#4DELSE-->
+                              		<select class="form-control" id="Client_ID" name="Client_ID">
+										<!--#4DIF (Records in selection([Invoices])=0)-->
+											<option value=""></option>
+										<!--#4DSCRIPT/Web_LoadCustomers/-->
+										<!--4DLOOP  [Companies]-->
+											<option value="<!--4DVAR [Companies]account_Number-->"  ><!--4DVAR [Companies]company_Name--></option>		
+									 	<!--4DENDLOOP-->
+									 	<!--#4DELSE-->
+											<option value="<!--4DVAR [Companies]account_Number-->" selected><!--4DVAR [Companies]company_Name--></option>									 
+									 	<!--#4DENDIF-->
+                              		</select>
+                              	<!--#4DENDIF-->
+                            	</div>
+                        	</div>
+                          <div class="form-group">
+                            <label for="" class="col-sm-3 control-label">Bill To </label>
+                            <div class="col-sm-6">
+                              <textarea class="form-control" <!--#4DIF (mUserIsCurrentBool)-->readonly<!--#4DELSE--><!--#4DENDIF--> name="invoice_bill_to" id="invoice_bill_to"><!--#4DVAR [Invoices]inv_bill_to --></textarea>
+                            </div>
+                          </div>
+                          <div class="form-group">
+                            <label for="" class="col-sm-3 control-label">Order By</label>
+                            <div class="col-sm-6">
+                              <input type="text" class="form-control" <!--#4DIF (mUserIsCurrentBool)-->readonly<!--#4DELSE--><!--#4DENDIF--> name="ordered_by" value="<!--#4DVAR [Invoices]ordered_by -->" id="ordered_by">
+                            </div>
+                          </div>
+                          	<div class="form-group">
+                        		<label for="firstname" class="col-sm-3  control-label">Invoice Status</label>
+                            	<div class="col-sm-3">
+                            	<!--#4DIF (mUserIsCurrentBool)--><!--#4DVAR [Invoices]invoice_status--><!--#4DELSE-->
+                              		<select class="form-control"  name="status" id="status">
+										<option value="Invoiced" <!--#4DIF ([Invoices]invoice_status="Invoiced")-->selected<!--4DELSE--><!--4DENDIF-->>Invoiced</option>
+										<option value="Paid" <!--#4DIF ([Invoices]invoice_status="Paid")-->selected<!--4DELSE--><!--4DENDIF-->>Paid</option>
+										<option value="Bad debt" <!--#4DIF ([Invoices]invoice_status="Bad debt")-->selected<!--4DELSE--><!--4DENDIF-->>Bad debt</option>
+										<option value="Needs chasing" <!--#4DIF ([Invoices]invoice_status="Needs chasing")-->selected<!--4DELSE--><!--4DENDIF-->>Needs chasing</option>
+									</select>
+                              	<!--#4DENDIF-->
+                            	</div>
+                          	</div>
+                          <div class="form-group" id="div_proj">
+                            <label for="firstname" class="col-sm-3  control-label">Project<sup class="req">*</sup></label>
+                            <div class="col-sm-6">
+                               	 <!--#4DIF (mUserIsCurrentBool)-->
+								 <input readonly  name="project_code" class="form-control" type="text" value="<!--#4DVAR [Invoices]project_code -->" id="project_code">
+								 <!--#4DELSE-->
+								<div class="ui-select span5">
+									<select class="form-control" name="project_code" id="project_code">
+										<!--HIT_EXECUTE _HIT_HTMLTXT:=Invoice_ProjectCode_HTMLPopup-->
+									</select>                                     
+								</div>
+								<!--#4DENDIF-->
+                            </div>
+                            
+                          </div>
+                         
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-sm-12">
+                          <div class="table-responsive padding-left-5">
+                            <table class="table table-bordered">
+                              <tbody>
+                                <tr style="background:#fafafa;" class="item">
+                                  <th class="vertical-middle width-50">Item</th>
+                                  <th class="vertical-middle" >Description</th>
+                                  <th class="vertical-middle width-160 width-175 ">Rate</th>
+                                  <th class="vertical-middle width-160">Hours</th>
+                                  <th class="vertical-middle width-160">Amount</th>
+                                  <!--#4DIF (mUserIsCurrentBool)--><!--#4DELSE-->
+                                  <th class="vertical-middle width-50 td_edit">Save</th>
+                                  <th class="vertical-middle width-50 td_remove">Cancel</th>
+                                  <!--#4DENDIF-->
+                                </tr>
+                                <!--#4DIF (Records in selection([Invoices])=1)-->
+							  	<!--#4DSCRIPT/Web_LoadInvoiceItems/-->
+								<!--#4DLOOP [Invoice_Items]-->
+                                <tr class="item-row" id="<!--#4DHTMLVAR [Invoice_Items]item_id-->">
+                                  <td>
+                                  	<span class="item_id"><!--#4DHTMLVAR [Invoice_Items]item_id--></span>
+                                  	<input class="item_uuid" type="hidden" value="<!--#4DHTMLVAR [Invoice_Items]uuid-->">
+                                  </td>
+                                  <td>
+                                  	<span class="s_description" ><!--#4DHTMLVAR [Invoice_Items]item_description--></span>
+                                  	<textarea class="form-control description" style="display:none;" ><!--#4DHTMLVAR [Invoice_Items]item_description--></textarea>
+                                  </td>
+                                  <td class="vertical-middle">
+                                  	<span class="s_rate" ><!--#4DHTMLVAR [Invoice_Items]item_rate--></span>
+                                  	<input type="text" class="form-control rate num1" style="display:none;" value="<!--#4DHTMLVAR [Invoice_Items]item_rate-->" >
+                                  </td>
+                                  <td class="vertical-middle">
+                                  	<span class="s_hours" ><!--#4DHTMLVAR [Invoice_Items]item_hours--></span>
+									<input type="text" class="form-control hours num1" style="display:none;" value="<!--#4DHTMLVAR [Invoice_Items]item_hours-->">
+                                  </td>
+                                  <td class="vertical-middle"><span class="price" ><!--#4DHTMLVAR [Invoice_Items]item_amount--></span></td>
+                                  	<!--#4DIF (mUserIsCurrentBool)--><!--#4DELSE-->
+                                  		<td class="vertical-middle">
+                                  			<a href="javascript:void(0)" class="editlink">Edit</a>
+                                  			<a href="javascript:void(0)" class="savelink" style="display:none">Save</a>
+                                  		</td>
+                                  		<td class="vertical-middle">
+                                  			<a href="javascript:void(0)" class="removelink">Remove</a>
+                                  			<a href="javascript:void(0)" class="cancellink" style="display:none">Cancel</a>
+                                  		</td>
+                               		<!--#4DENDIF-->
+                                </tr>
+                                 <!--#4DENDLOOP-->
+						  		<!--#4DENDIF-->
+						  		<!--#4DIF (mUserIsCurrentBool)--><!--#4DELSE-->
+                                <tr id="hiderow">
+                                  <td colspan="7" class="text-right "><a title="Add a row" href="javascript:void(0)" id="addrow"><strong>Add a row</strong></a></td>
+                                </tr>
+                                <!--#4DENDIF-->
+                               
+                                <tr>
+                                  <td colspan="5" class="text-right vertical-middle"><a title="Tax Code"><strong>Tax Code</strong></a></td>
+                                  <td colspan="2" class="text-right vertical-middle">
+                                 	<input type="hidden" value="<!--#4DVAR [Invoices]inv_tax_code-->">
+									<select class="form-control" id="inv_tax_code" name="inv_tax_code">
+									<!--#4DSCRIPT/Web_LoadTax_Codes/-->
+									<!--#4DIF (Records in selection([Invoices])=0)-->
+									<!--4DLOOP [Tax_Codes]-->
+										<!-- <option value="<!~~#4DVAR [Tax_Codes]Tax_Code~~>" <!~~#4DIF ([Tax_Codes]Tax_Code=[Invoices]inv_tax_code)~~>selected<!~~4DELSE~~><!~~4DENDIF~~>><!~~4DVAR [Tax_Codes]Tax_Code~~></option>-->
+										<option value="<!--#4DVAR [Tax_Codes]Tax_Code-->"><!--4DVAR [Tax_Codes]Tax_Code--></option>									 								
+									<!--4DENDLOOP-->
+									<!--#4DELSE-->	
+										<!--#4DIF ([Invoices]inv_tax_code="")-->
+											<!--4DLOOP [Tax_Codes]-->
+												<option value="<!--#4DVAR [Tax_Codes]Tax_Code-->"><!--4DVAR [Tax_Codes]Tax_Code--></option>									 								
+											<!--4DENDLOOP-->
+										<!--#4DELSE-->	
+											<option value="<!--#4DVAR [Invoices]inv_tax_code-->" selected><!--#4DVAR [Invoices]inv_tax_code--></option>
+										<!--4DENDIF-->
+									<!--4DENDIF-->
+									</select>
+								</td>
+                                </tr>
+                                <tr class="no-border-bottom">
+                                  <td colspan="5" class="text-right vertical-middle no-border-bottom"><a title="Total Hours"><strong>Total Hours</strong></a></td>
+                                  <td colspan="2" class="text-right vertical-middle"><input type="text" class="form-control" value="" name="total_hours" id="total_hours" readonly></td>
+                                </tr>
+                                <tr>
+                                  <td colspan="5" class="text-right vertical-middle no-border-bottom"><a title="Total Due"><strong>Total Due</strong></a></td>
+                                  <td colspan="2" class="text-right vertical-middle"><input type="text" class="form-control" value="<!--#4DVAR [Invoices]inv_total_due -->" name="total_due" id="total_due" readonly></td>
+                                </tr>
+                                <tr>
+                                  <td colspan="5" class="text-right vertical-middle no-border-bottom"><a title="Total Tax"><strong>Total Tax</strong></a></td>
+                                  <td colspan="2" class="text-right vertical-middle"><input type="text" class="form-control" value="<!--#4DVAR [Invoices]inv_total_tax -->" id="invoice_total_tax" name="invoice_total_tax" readonly></td>
+                                </tr>
+                                <tr>
+                                  <td colspan="5" class="text-right vertical-middle no-border-bottom"><a title="Total Due With Tax"><strong>Total Due With Tax</strong></a></td>
+                                  <td colspan="2" class="text-right vertical-middle"><input type="text" class="form-control" value="<!--#4DVAR [Invoices]inv_total_due_with_tax -->" id="invoice_total_due_with_tax" name="invoice_total_due_with_tax" readonly></td>
+                                </tr>
+                                <tr>
+                                  <td colspan="5" class="text-right vertical-middle no-border-bottom"><a title="Grand Total"><strong>Grand Total</strong></a></td>
+                                  <td colspan="2" class="text-right vertical-middle"><input type="text" class="form-control" name="total" id="total" readonly></td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row"> </div>
+                      <div class="row">
+                        <div class="col-sm-12 text-center">
+                          <a title="Pay Invoice <!--#4DHTMLVAR String([Invoices]inv_id;"000000")--> by Credit or Debit Card" target="_blank" href="<!--#4DVAR Invoice_GetPayByCardLink-->"><input type="button" value="Pay Invoice" class="btn palette-carrot btn-color margin-right-5 btn-sm"></a>
+                          <input type="submit" value="Save Invoice" class="btn palette-carrot btn-color margin-right-5 btn-sm">
+                            <!--#4DIF (Records in selection([Invoices])=0)-->
+                         	<input type="reset" value="Cancel" class="btn btn-primary btn-sm">
+                          	<!--#4DENDIF-->
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                  <div role="tabpanel" class="tab-pane" id="internal-notes">
+                      <div class="row">
+                        <div class=" col-sm-12 col-lg-6">
+                          <div class="form-group">
+                            <label for="" class="col-sm-6 control-label">Invoice Pin or Passcode (For Paying Online)</label>
+                            <div class="col-sm-4">
+                              <input type="text" class="form-control" <!--#4DIF (mUserIsCurrentBool)-->readonly<!--#4DELSE--><!--#4DENDIF--> name="payment_pin_or_passcode" id="payment_pin_or_passcode" value="<!--#4DVAR [Invoices]Payment_Pin_Or_Passcode -->">
+                            </div>
+                          </div>
+                          <div class="form-group">
+                            <label for="" class="col-sm-6 control-label">Tax Rate</label>
+                            <div class="col-sm-4">
+                              <input type="text" class="form-control" name="invoice_tax_rate" id="invoice_tax_rate" <!--#4DIF (mUserIsCurrentBool)-->readonly<!--#4DELSE--><!--#4DENDIF--> value="<!--#4DVAR [Invoices]inv_tax_rate -->" readonly>
+                            </div>
+                          </div>
+                          <div class="form-group">
+                            <label for="" class="col-sm-6 control-label">Template</label>
+                            <div class="col-sm-4">
+                            	<!--#4DIF (mUserIsCurrentBool)--><!--#4DVAR [Invoices]inv_Template--><!--#4DELSE-->
+                              	<select class="form-control" name="inv_Template" id="inv_Template">
+									<option value="TimeBilling" <!--#4DIF ([Invoices]inv_Template="TimeBilling")-->selected<!--4DELSE--><!--4DENDIF-->>TimeBilling</option>
+									<option value="Monthly Contract" <!--#4DIF ([Invoices]inv_Template="Monthly Contract")-->selected<!--4DELSE--><!--4DENDIF-->>Monthly Contract</option>
+									<option value="Day Rate" <!--#4DIF ([Invoices]inv_Template="Day Rate")-->selected<!--4DELSE--><!--4DENDIF-->>Day Rate</option>
+								</select>
+                             	<!--#4DENDIF-->
+                            </div>
+                          </div>
+                          <div class="form-group">
+                            <label for="" class="col-sm-6 control-label">Print Template Code</label>
+                            <div class="col-sm-4">
+                            	<!--#4DIF (mUserIsCurrentBool)-->
+                              	<input type="text" class="form-control" id="print_template_code" name="print_template_code" value="<!--#4DVAR [Invoices]print_template_code-->" readonly>
+                              	<!--#4DELSE-->
+                              	<select class="form-control" name="print_template_code" id="print_template_code">
+									<!--HIT_EXECUTE _HIT_HTMLTXT:=Invoice_TemplateCodeHTMLPopUP-->
+								</select> 
+                              	<!--#4DENDIF-->
+                            </div>
+                          </div>
+                          	<div class="form-group">
+                           		<label for="" class="col-sm-6 control-label">Internal Notes</label>
+                            	<div class="col-sm-4">
+                              		<textarea <!--#4DIF (mUserIsCurrentBool)-->readonly<!--#4DELSE--><!--#4DENDIF--> name="internal_notes" class="form-control" id="internal_notes"><!--#4DVAR [Invoices]internal_notes --></textarea>
+                            	</div>
+                          	</div>
+                                                  
+                        </div>
+                        <div class="col-sm-12 col-lg-6">
+                          <div class="form-group">
+                            <label for="" class="col-sm-6 control-label">Customer ref or PO</label>
+                            <div class="col-sm-4">
+                              <input type="text" class="form-control" value="<!--#4DVAR [Invoices]inv_customer_ref_po -->" id="inv_customer_ref_po" name="inv_customer_ref_po">
+                            </div>
+                          </div>
+                          <div class="form-group">
+                            <label for="" class="col-sm-6 control-label">Customer Currency Code</label>
+                            <div class="col-sm-4">
+                            	<!--#4DIF (mUserIsCurrentBool)-->
+									<input readonly name="currency_code" class="form-control" type="text" value="<!--#4DVAR [Invoices]inv_currency_code -->" id="currency_code">
+								<!--#4DELSE-->
+									<select class="form-control" id="currency_code" name="currency_code">
+										<!--HIT_EXECUTE _HIT_HTMLTXT:=Invoice_CurrencyCodeHTMLPopUP-->
+									</select>                                     
+								<!--#4DENDIF-->
+                            </div>
+                          </div>
+                          <div class="form-group">
+                            <label for="" class="col-sm-6 control-label">Base Currency Code</label>
+                            <div class="col-sm-4">
+                              <input type="text" class="form-control" <!--#4DIF (mUserIsCurrentBool)-->readonly<!--#4DELSE--><!--#4DENDIF--> name="base_currency_code" value="<!--#4DVAR [Invoices]inv_base_currency_code-->" id="base_currency_code">
+                            </div>
+                          </div>
+                          <div class="form-group">
+                            <label for="" class="col-sm-6 control-label">Exchange Customer Currency to Base Currency</label>
+                            <div class="col-sm-4">
+                              <input type="text" class="form-control num" <!--#4DIF (mUserIsCurrentBool)-->readonly<!--#4DELSE--><!--#4DENDIF--> name="inv_exchange_rate" type="text" value="<!--#4DVAR [Invoices]inv_exchange_rate -->" id="inv_exchange_rate">
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-sm-7 margin-top-15 text-center">
+                          <a title="Pay Invoice <!--#4DHTMLVAR String([Invoices]inv_id;"000000")--> by Credit or Debit Card" target="_blank" href="<!--#4DVAR Invoice_GetPayByCardLink-->"><input type="button" value="Pay Invoice" class="btn palette-carrot btn-color margin-right-5 btn-sm"></a>
+                          <input type="submit" value="Save Invoice" class="btn palette-carrot btn-color margin-right-5 btn-sm">
+                          <!--#4DIF (Records in selection([Invoices])=0)-->
+                          <input type="reset" value="Cancel" class="btn btn-primary btn-sm">
+                          <!--#4DENDIF-->
+                        </div>
+                      </div>
+                  </div>
+                  <!--#4DIF (_HIT_WebSession_GetVar ("auth_user_type")#"CLIENTS")-->
+                  <!--#4DIF (Records in selection([Invoices])=1)-->
+                  <div role="tabpanel" class="tab-pane" id="payments">
+                    <div class="table-responsive padding-left-5">
+                      <table class="table table-bordered width-auto">
+                        <thead>
+                          <tr style="background:#fafafa;">
+                            <th class="vertical-middle width-50"> S.No. </th>
+                            <th class="vertical-middle width-150"> Date </th>
+                            <th class="vertical-middle width-150">Amount</th>
+                            <th class="vertical-middle width-auto">Payment Method</th>
+                          </tr>
+                        </thead>
+                        <tbody id="payment_table_body">
+                          
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                  <div role="tabpanel" class="tab-pane" id="notes">
+                    <div class="table-responsive padding-left-5">
+                      <table class="table table-bordered ">
+                        <thead>
+                          <tr style="background:#fafafa;"> 
+                           <th class="vertical-middle "> Time stamp</th>
+                            	<th class="vertical-middle "> Added by</th>
+                            	<th class="vertical-middle ">Description</th>
+                            	<th class="vertical-middle ">Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                        <!--#4DSCRIPT/Web_LoadInvoicesNotes/-->	
+							<!--#4DLOOP [Notes]--><!-- row -->
+                        	<tr class="notes">
+                        		<td class="vertical-middle "><!--4DHTMLVAR timestamp_unix_toGMT ([Notes]Timestamp_modified)--></td>
+                               	<td class="vertical-middle "><!--#4DHTMLVAR [Notes]note_user_name--></td>
+                            	<td class="vertical-middle "><textarea readonly class="form-control width-300 no-padding no-border disabled note" id="note" name="note"><!--#4DHTMLVAR [Notes]Note--></textarea></td>
+                            	<td class="vertical-middle">
+                            		<input class="note_uuid" type="hidden" value="<!--#4DHTMLVAR [Notes]uuid-->" />
+                            		<a title="Save note" href="javascript:void(0)" onClick="saveCustomerNote($(this))" style="display:none" id="save"><i class="fa fa-save big-size color-carrot"></i></a>
+                            		<a title="Edit note" href="javascript:void(0)" onClick="editCustomerNote($(this))" id="edit"><i class="ion-edit big-size color-carrot"></i></a>
+                            		<a title="Delete note" href="javascript:void(0)" onClick="deleteCustomerNote($(this))" id="delete"><i class="ion-trash-b big-size color-carrot ion-android-deletes"></i></a>
+                            		<a title="Cancel" href="javascript:void(0)"  onClick="cancelCustomerNote($(this))" style="display:none" id="cancel"><i class="ion-android-cancel big-size color-carrot"></i></a>
+                            	</td>
+                          	</tr>
+                          	<!--#4DENDLOOP-->
+                          	<tr class='notes_end'></tr>
+                       	</tbody>
+                      </table>
+                    </div>
+                    <div class="row margin-bottom-15">
+                		<div class="col-sm-10 col-lg-9">
+                    		<div class="form-group">
+                        		<label class="col-sm-1 control-label display-block" for="">Add note</label>
+                           	 	<div class="col-sm-4 ">
+                           	 		<textarea name="add_new_note" id="add_new_note" class="form-control"> </textarea>
+                           	 	</div>
+                          	 	 <button type="button" class="btn btn-primary btn-sm margin-top-10" id="add" onClick="addCustomerNote()">Add Note</button>
+                       	 	</div>
+                    	</div>
+                	</div>
+                   
+                  </div>
+                  <!--#4DENDIF-->
+                  <!--#4DENDIF-->
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- /.col --> 
+      </div>
+   		<div class="example-container">
+								<pre class="code" style="display:none;" id="inv_num_code">
+									var statesdemo = {
+										state0: {
+											title: 'Enter new Invoice ID manually?',
+											html:'&lt;div id="message"&gt;&lt;/div&gt;&lt;input class="form-control" type="text" name="invoice_numbr" id="invoice_numbr" value=""&gt;&lt;br /&gt;',
+											buttons: { Cancel : 0, Ok: 1 },
+											focus: "#invoice_numbr",
+											submit:function(e,v,m,f){ 
+												//console.log(f);
+												if(v==1) {
+													if(f.invoice_numbr!=null && f.invoice_numbr!=""){
+														e.preventDefault();
+														var jsonRowURLStr = 'checkinvoicenum.cgi?inv_no='+f.invoice_numbr;
+		
+														$.getJSON(jsonRowURLStr,function(result){
+															//alert(result.exist);
+															
+															if(result.exist=='false'){
+																$('#inv_number').val(f.invoice_numbr);
+																$('#invoice_id').val(f.invoice_numbr);
+																$.prompt.close()
+															}
+															else{
+																e.preventDefault();
+																document.getElementById("message").innerHTML = "* Invoice number "+f.invoice_numbr+" already exists." ;
+																$('#invoice_numbr').val('');
+																$('#invoice_numbr').focus();
+															}
+															
+														});
+													}else {
+														e.preventDefault();
+														document.getElementById("message").innerHTML = "* Please enter Invoice number." ;
+														$('#invoice_numbr').focus();
+													}
+												}
+												if(v==0) {
+													$.prompt.close();
+													var new_inv='<!--#4DVAR InvoiceGetNextID-->';
+													$('#inv_number').val(new_inv);
+													$('#invoice_id').val(new_inv);
+												}
+											}
+										},
+										
+									};
+
+									$.prompt(statesdemo);
+								</pre>
+								
+								<pre class="code" style="display:none;" id="tax_rate_code">
+									var statesdemo = {
+										state0: {
+											title: 'Enter tax rate',
+											html:'&lt;div id="tax_message"&gt;&lt;/div&gt;&lt;input type="text" class="form-control num" name="dlg_tax_rate" id="dlg_tax_rate" value=""&gt;&lt;br /&gt;',
+											buttons: { Cancel : 0, Ok: 1 },
+											focus: "#dlg_tax_rate",
+											submit:function(e,v,m,f){ 
+												//console.log(f);
+												if(v==1) {
+													if(f.dlg_tax_rate!=null && f.dlg_tax_rate!=""){
+														$('#invoice_tax_rate').val(f.dlg_tax_rate);
+														update_total();
+													}
+													else {
+														e.preventDefault();
+														$('#tax_message').html('* Please enter Tax Rate.');
+														$('#dlg_tax_rate').focus();
+													}
+												}
+												if(v==0) {
+													$.prompt.close();
+													$('#invoice_tax_rate').val("20");
+													$('#inv_tax_code').val("UK");
+													//$('#invoice_tax_rate').val('');
+												}
+											}
+										},
+										
+									};
+
+									$.prompt(statesdemo);
+									$(".num").unbind();
+									$('.num').keypress(function(e){
+										checknumber(e);	
+									}); 
+								</pre>
+								<!--<a class="run">Run It!</a>-->
+							</div>
+
+ 		<!-- BEGIN FOOTER -->
+      	<!--#4DSCRIPT/_HIT_LoadInclude/hit/v2/includes/footer.shtml-->
+     	 <!-- END FOOTER --> 
+</div>
+<!-- /.container-fluid -->
+</div>
+<!-- /.rightside -->
+</div>
+<!-- /.wrapper --> 
+<!-- END CONTENT --> 
+<!-- BEGIN JAVASCRIPTS -->
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/v2/includes/InitJs.shtml-->
+ 
+<script src="assets/plugins/bootstrap/js/bootstrap-tabcollapse.js"></script>
+<!-- bootstrap validator -->
+<script src="assets/plugins/bootstrapValidator/bootstrapValidator.min.js" type="text/javascript"></script>
+	
+<!-- maniac -->
+<script src="assets/js/maniac.js" type="text/javascript"></script>
+<script type="text/javascript" src="assets/js/autocomplete.js"></script>
+<!-- datepicker --> 
+<script src="assets/plugins/datepicker/js/bootstrap.datepicker.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+var tableUUIDStr= '<!--#4DVAR [Invoices]uuid -->';
+var tableNameStr='Invoices';
+
+maniac.loadvalidator();
+
+function load_payments(){
+	var jsonRow= 'loadreceipts.cgi?start=0&end=10&tablname=Receipts&keyword='+$("#inv_number").val();
+	JSONdata=new Array();
+	$.getJSON(jsonRow,function(result){
+		if(result.Alert){
+		//
+		}else{
+			$.each(result.DateAdded, function(i,item){
+				JSONdata[i]=new Array();
+				JSONdata[i][0]=item;
+			});
+			$.each(result.PaidAmout, function(i,item){					
+				JSONdata[i][1]=item;
+			});
+			$.each(result.PayMode, function(i,item){					
+				JSONdata[i][2]=item;
+			});
+					
+			var table_html='';
+			var count=0;
+			$.each(JSONdata, function(i,row){
+				count++;
+				table_html+='<tr >';
+				table_html+='<td class="vertical-middle">'+count+'</td>';
+				$.each(row, function(i,col){
+					table_html+='<td class="vertical-middle">'+col+'</td>';
+				});
+				table_html+='</tr>';
+				
+			});
+			$('#payment_table_body').append(table_html);
+				
+		}
+		
+	});
+}
+	function checknumber(e)	{
+		var k = e.which;
+		/* numeric inputs can come from the keypad or the numeric row at the top */
+		 if ((k<48 || k>57) && (k!=46) && (k!=8) && (k!=0)) {
+			e.preventDefault();
+			//alert("Allowed characters are 0-9, +, -, (, )");
+			return false;
+		}
+	}
+	
+	function get_client_info()	{
+		var Client_ID=	$("#Client_ID").val();
+		var dataString = 'Client_ID='+Client_ID;
+		$.ajax({
+			type: "GET",
+			url: "Returnvalues.cgi",
+			data: dataString,
+			cache: false,
+			success: function(html){
+				$("#invoice_bill_to").val(html);
+			}
+		});
+	}
+	
+	function get_projects(){
+		$('#div_proj').find('.ui-autocomplete-input').val('');
+		var jsonRow = 'getprojectsonsearch.cgi?srch=&client='+$('#Client_ID').val();
+		$.getJSON(jsonRow,function(result){	
+			if(result){
+				var html='<option value=""></option>';
+
+				$.each(result, function(i,item){
+					html += '<option value="'+item.value+'">'+item.value+'</option>';
+				});
+				if(html=='<option value=""></option>'){
+					html +='<!--HIT_EXECUTE _HIT_HTMLTXT:=Invoice_ProjectCode_HTMLPopup-->';
+				}
+				$('#project_code').html(html);
+			}
+		});
+	}
+	$(function(){
+		<!--#4DIF (Records in selection([Invoices])=0)-->
+			var new_uuid='<!--#4DVAR Generate UUID-->';	
+			$('#invoice_uuid').val(new_uuid);
+			code = $('#inv_num_code').text();
+			(new Function(code))();
+		<!--#4DELSE--><!--#4DENDIF-->
+		load_payments();
+		<!--#4DIF ([Invoices]invoice_status="Paid")-->
+			$('#InvoiceForm :input').attr('disabled', true);
+			$('#status').attr('disabled', false);
+			$('#hiderow').hide();
+			$('.td_edit').hide();
+			$('.td_remove').hide();
+	
+			$('#status').change(function(){
+				if($(this).val()!='Paid'){
+					$('#InvoiceForm :input').attr('disabled', false);
+					$('#hiderow').show();
+					$('.td_edit').show();
+					$('.td_remove').show();
+				}	
+			});
+		<!--#4DENDIF-->
+		$('#invoice_numbr').keypress(function(e){
+			var k = e.which;
+			/* numeric inputs can come from the keypad or the numeric row at the top */
+			 if ((k<48 || k>57) && (k!=8) && (k!=0)) {
+				e.preventDefault();
+				return false;
+			}
+		}); 
+		$('#invoice_date').datepicker({"autoclose": true}).on('changeDate', function (ev) {
+        	var arrStartDate= $('#invoice_date').val().split('/');
+			var dateText = new Date(arrStartDate[1]+'/'+arrStartDate[0]+'/'+arrStartDate[2]);
+			$('#invoice_due_date').datepicker('setStartDate', dateText);
+			$('#invoice_date').trigger('change');
+        });
+				
+		$('#invoice_due_date').datepicker().on('changeDate', function (ev) {
+			$(this).datepicker('hide');
+			$('#invoice_due_date').trigger('change');
+		});
+		/**$('#invoice_paid_date').datepicker().on('changeDate', function (ev) {
+			$(this).datepicker('hide');
+		});**/
+	});
+
+	 var xhr;
+  (function( $ ) {
+    $.widget( "custom.combobox", {
+      _create: function() {
+        this.wrapper = $( "<span>" )
+          .addClass( "custom-combobox" )
+          .insertAfter( this.element );
+ 
+        this.element.hide();
+        this._createAutocomplete();
+        this._createShowAllButton();
+      },
+ 
+      _createAutocomplete: function() {
+		var ele_select= this.element;
+        var selected = this.element.children( ":selected" ),
+          value = selected.val() ? selected.text() : "";
+ 
+        this.input = $( "<input>" )
+          .appendTo( this.wrapper )
+          .val( value )
+          .attr( "title", "" )
+          .addClass( "custom-combobox-input ui-widget ui-widget-content ui-state-default ui-corner-left" )
+          .autocomplete({
+            delay: 0,
+            minLength: 0,
+            source: $.proxy( this, "_source" )
+          })
+          .tooltip({
+            tooltipClass: "ui-state-highlight"
+          });
+ 
+        this._on( this.input, {
+          autocompleteselect: function( event, ui ) {
+		  	//alert("show all");
+            ui.item.option.selected = true;
+			
+            this._trigger( "select", event, {
+              item: ui.item.option
+            });
+			
+			if(ele_select.attr('id')=='Client_ID'){
+				get_client_info();
+				get_projects();
+			}
+			ele_select.trigger('change');
+          },
+ 
+          autocompletechange: "_removeIfInvalid"
+        });
+      },
+ 
+      _createShowAllButton: function() {
+        var input = this.input,
+          wasOpen = false;
+ 
+        $( "<a>" )
+          .attr( "tabIndex", -1 )
+          .attr( "title", "Show All Items" )
+          .tooltip()
+          .appendTo( this.wrapper )
+          .button({
+            icons: {
+              primary: "ui-icon-triangle-1-s"
+            },
+            text: false
+          })
+          .removeClass( "ui-corner-all" )
+          .addClass( "custom-combobox-toggle ui-corner-right" )
+          .mousedown(function() {
+            wasOpen = input.autocomplete( "widget" ).is( ":visible" );
+          })
+          .click(function() {
+            input.focus();
+ 
+            // Close if already visible
+            if ( wasOpen ) {
+              return;
+            }
+ 
+            // Pass last search string as value to search for, displaying last results
+            input.autocomplete( "search", 'SHOWALL' );
+          });
+      },
+ 
+      _source: function( request, response ) {
+        //var matcher = new RegExp( $.ui.autocomplete.escapeRegex(request.term), "i" );
+		var ele_select= this.element;
+		if(request.term=='SHOWALL'){
+			response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+		
+		}
+		else
+		{
+		if(ele_select.attr('id')=='Client_ID'){
+		var jsonRow = 'getcompaniesonsearch.cgi?srch='+request.term;
+		}
+		else if(ele_select.attr('id')=='project_code'){
+			var jsonRow = 'getprojectsonsearch.cgi?srch='+request.term+'&client='+$('#Client_ID').val();
+		}
+		
+
+		//alert(jsonRowURLStr);
+		if(xhr) xhr.abort();
+		xhr=$.getJSON(jsonRow,function(result){
+			
+			if(result){
+				var html='<option value=""></option>';
+
+				$.each(result, function(i,item)
+				{
+					if(ele_select.attr('id')=='Client_ID'){
+						html += '<option value="'+item.id+'">'+item.value+'</option>';
+					}
+					else if(ele_select.attr('id')=='project_code'){
+						html += '<option value="'+item.value+'">'+item.value+'</option>';
+					}
+				});
+				if(ele_select.attr('id')=='Project_ID' && html=='<option value=""></option>'){
+					html +='<!--HIT_EXECUTE _HIT_HTMLTXT:=Invoice_ProjectCode_HTMLPopup-->';
+				}
+				ele_select.html(html);
+				
+				
+				response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+				
+				
+			}
+		});
+       
+	  } 
+		
+      },
+ 
+      _removeIfInvalid: function( event, ui ) {
+ 
+        // Selected an item, nothing to do
+        if ( ui.item ) {
+
+          return;
+        }
+ 
+        // Search for a match (case-insensitive)
+        var value = this.input.val(),
+          valueLowerCase = value.toLowerCase(),
+          valid = false;
+		  var ele_select= this.element;
+        this.element.children( "option" ).each(function() {
+          if ( $( this ).text().toLowerCase() === valueLowerCase ) {
+            this.selected = valid = true;	
+		if(ele_select.attr('id')=='Client_ID'){
+			get_client_info();
+			get_projects();
+			}	
+			ele_select.trigger('change');
+            return false;
+          }
+        });
+ 
+        // Found a match, nothing to do
+        if ( valid ) {
+          return;
+        }
+ 
+        // Remove invalid value
+        this.input
+          .val( "" )
+          .attr( "title", value + " didn't match any item" )
+          .tooltip( "open" );
+        this.element.val( "" );
+        this._delay(function() {
+          this.input.tooltip( "close" ).attr( "title", "" );
+        }, 2500 );
+       // this.input.data( "ui-autocomplete" ).term = "";
+      },
+ 
+      _destroy: function() {
+        this.wrapper.remove();
+        this.element.show();
+      }
+    });
+  })( jQuery );
+ 
+  $(function() {
+    $( "#Client_ID" ).combobox();
+	$( "#project_code" ).combobox();
+  });
+</script>
+<!-- END JAVASCRIPTS -->
+<script type='text/javascript' src='assets/js/invoice_calc.js'></script>
+<script type='text/javascript' src='assets/js/customerNotes.js'></script>
+</body>
+<!-- END BODY -->
+</html>

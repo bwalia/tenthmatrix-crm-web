@@ -1,0 +1,1322 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+C_TEXT(_HTMLTITLETXT)
+
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+QUERY([Tasks];[Tasks]uuid=_HIT_WebApp_GetField ("uuid"))
+
+C_BOOLEAN (mtaskBoolen)
+mtaskBoolen:=(Records in selection([Employees])=1)
+
+C_BOOLEAN(mUserIsCurrentBool)
+mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
+
+QUERY([Timeslips];[Timeslips]task_id=[Tasks]task_id)
+
+IF (Records in selection([Tasks])=0)
+_HTMLTITLETXT:="New Task"
+
+//select default project
+C_TEXT(pUserUUIDStr;pUserProject)
+pUserUUIDStr:=_HIT_WebSession_GetVar ("auth_user_uuid")
+pUserProject:=User_GetPreferences (pUserUUIDStr;"project_id")
+QUERY([Projects];[Projects]proj_id=num(pUserProject))
+
+ELSE
+_HTMLTITLETXT:= "Edit Task"
+
+//selected project
+QUERY([Projects];[Projects]proj_id=num([Tasks]proj_id))
+END IF
+
+
+C_TEXT(_HIT_TSTXT;taskNameStr)
+C_LONGINT(iCounter;taskNameLength)
+_HIT_TSTXT:=""
+For (iCounter;1;Records in selection([Timeslips]))
+
+QUERY([Employees];[Employees]emp_id=[Timeslips]emp_id)
+ 
+_HIT_TSTXT:=_HIT_TSTXT+"<tr class='item-row' ><td class='item-id'>"+[Employees]emp_first_name+" "+[Employees]emp_last_name+"</td><td >"+[Timeslips]slip_description+"</td><td>"+String(timestamp_unix_toDate ([Timeslips]Timestamp_start))+" ("+String(timestamp_unix_toTime([Timeslips]Timestamp_start))+")</td><td>"+String(timestamp_unix_toDate ([Timeslips]Timestamp_end))+" ("+String(timestamp_unix_toTime([Timeslips]Timestamp_end))+")</td><td>"+string([Timeslips]slip_hours)+"</td><td><a href='timeslip.shtml?uuid="+[Timeslips]uuid+"' >Edit</a></td></tr>"								
+
+NEXT RECORD([Timeslips])
+End for 
+
+taskNameLength:=Length([Tasks]task_name)
+
+If(taskNameLength>=50)
+taskNameStr:=Substring ([Tasks]task_name; 1; 100)+"..."
+Else
+taskNameStr:=[Tasks]task_name
+End If
+
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+//_HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")
+_HIT_WebSession_SetVar ("last-clicked-uuid";_HIT_WebApp_GetField ("uuid"))
+-->
+<!DOCTYPE html>
+<html>
+<head>
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+	<link rel='stylesheet' type='text/css' href='css/style.css' />
+	<link rel='stylesheet' type='text/css' href='css/print.css' media="print" />
+	<link href="css/img-tabs.css" type="text/css" rel="stylesheet">
+	<link rel="stylesheet" media="all" type="text/css" href="css/jquery-impromptu.css" />
+	
+	<link rel="stylesheet" href="css/autocomplete.css" />
+<style>
+.custom-combobox a.ui-button, 
+  .custom-combobox a.ui-widget, 
+  .custom-combobox a.ui-state-default, 
+  .custom-combobox a.ui-button-icon-only, 
+  .custom-combobox a.custom-combobox-toggle, 
+  .custom-combobox a.ui-corner-right {
+	top:0px;
+  }
+   .file-table thead th{
+	  padding-bottom:10px;
+  }
+  .file-table tbody td{
+	  padding:5px;
+  }
+  .file-table td, .file-table th{
+	  border: 1px solid #ddd;
+  }
+  
+  .file-table td a:hover {
+	  text-decoration:none;
+  }
+#TaskForm em.error {
+	margin-left: 10px;
+	width: auto;
+	display: inline;
+}
+#TaskForm em.error {
+    color: red;
+    font-style: italic;
+}
+#TaskForm input.error, textarea.error, select.error{
+    border: 1px solid red;
+}
+.table-wrapper .table ul.actions {
+      float: left;
+}
+
+.green-color{
+	background:#dff0d8;;
+}
+.table thead th {
+	padding-top:10px;
+	padding-bottom:10px;
+	vertical-align:middle;
+	border: 1px solid #d5d5d5!important;
+}
+#items th {
+    background: #f4f4f5;
+    border: 1px solid #d5d5d5!important;
+    text-align: left;
+}
+ #items tr td {
+    border: 1px solid #d5d5d5;
+    text-align: left;
+}
+</style>
+</head>
+<body>
+
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
+
+	<!-- main container -->
+    <div class="content">
+        
+        <div class="container-fluid">
+            <div id="pad-wrapper" class="form-page">
+				 <div class="row-fluid header" style="margin-bottom: 40px;">
+                    <h4><!--#4DIF (Records in selection([Tasks])=1)-->"<!--#4DVAR taskNameStr-->"<!--#4DELSE-->New<!--#4DENDIF--> Task</h4>
+                </div>
+				
+				<form name="TaskForm" id="TaskForm" action="savetask.cgi" class="form-comment" method="post">
+				
+				<div id="tabs">
+						<ul >
+							<li ><a style="color:#000000" href="#tabs-1">Task Details</a></li>
+							<!--#4DIF (Records in selection([Tasks])=1)-->
+							<li ><a style="color:#000000" href="#tabs-2">Related Timeslips</a></li>
+							<li ><a style="color:#000000" href="#tabs-3">Related Tasks</a></li>
+							<li ><a style="color:#000000" href="#tabs-4">Checklist</a></li>
+							<!--#4DENDIF-->
+						</ul>
+						<div id="tabs-1" class="var_tabs">  
+						
+                <div class="row-fluid form-wrapper">
+					<!-- left column -->
+                    <div class="span12 with-sidebar">
+						
+							<div class="span12 field-box">
+								<label>Task Name <span style="color:#6E829B">*</span></label>
+								<input name="Task_Name" class="span5" type="text" value="<!--#4DVAR [Tasks]task_name-->" id="Task_Name">
+							</div>
+							<input name="Task_uuid" class="span5" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="Task_uuid">
+							<input name="tsk_id" type="hidden" value="<!--#4DVAR [Tasks]task_id-->" id="tsk_id">
+							
+							<div class="field-box">
+								<label>Reported By <span style="color:#6E829B">*</span></label>
+								<div class="ui-select span5 selectClass">
+									<select name="uuid_reported_by" id="uuid_reported_by" >
+									<!--HIT_EXECUTE _HIT_HTMLTXT:=Web_EmployeeHTMLPopup([Tasks]uuid_reported_by)-->
+									</select>                                     
+								</div>
+							</div>                  
+ 
+							<div class="field-box">
+								<label>Project Name <span style="color:#6E829B">*</span></label>
+								<div class="ui-widget projectClass">
+									<Select name="Project_ID" id="Project_ID">
+									<!--#4DIF (Records in selection([Tasks])=0)-->
+										<!--#4DIF (pUserProject="")-->
+											<option value=""></option>
+											<!--#4DSCRIPT/Web_LoadProjects/-->
+											<!--4DLOOP [Projects]-->
+												<option value="<!--#4DVAR [Projects]proj_id-->" ><!--4DVAR [Projects]proj_name--></option>
+											<!--4DENDLOOP-->
+										<!--#4DELSE-->
+										 	<option value="<!--4DVAR [Projects]proj_id-->" selected><!--4DVAR [Projects]proj_name--></option>									 
+										 <!--#4DENDIF-->
+									<!--#4DELSE-->
+										 <option value="<!--4DVAR [Projects]proj_id-->" selected><!--4DVAR [Projects]proj_name--></option>									 
+									<!--#4DENDIF-->
+									</select>                                     
+								</div>
+							</div>							
+							<div class="field-box">
+                                <label>Task Start Date </label>
+								
+								<input name="task_start_date" class="input-large datepicker" type="text" data-date-format="dd/mm/yyyy" <!--#4DIF (timestamp_unix_toDate([Tasks]Timestamp_start)=!01/01/1970!)-->value=""<!--4DELSE-->value="<!--#4DVAR timestamp_unix_toDate([Tasks]Timestamp_start)-->"<!--4DENDIF--> id="task_start_date" readonly >
+                            </div>
+							
+							<div class="field-box">
+                                <label>Task End Date </label>
+								<input name="task_end_date" class="input-large datepicker" type="text" data-date-format="dd/mm/yyyy" <!--#4DIF (timestamp_unix_toDate ([Tasks]Timestamp_end)=!01/01/1970!)-->value=""<!--4DELSE-->value="<!--#4DVAR timestamp_unix_toDate ([Tasks]Timestamp_end)-->"<!--4DENDIF--> id="task_end_date" readonly >
+                            </div>
+							
+							                 
+							<div class="span12 field-box">
+								<label>Task Estimated Hour </label>
+								<input name="Task_Estimated_Hour" class="span5 num" type="text" value="<!--#4DVAR [Tasks]task_estimated_hours-->" id="Task_Estimated_Hour">
+							</div>                                                                 
+							<div class="span12 field-box">
+								<label>Task Rate </label>
+								<input name="Task_Rate" class="span5 num" type="text" value="<!--#4DVAR [Tasks]task_rate-->" id="Task_Rate">
+							</div>
+							
+							<div class="field-box">
+								<label>Status</label>
+								<div class="ui-select span5">
+									<Select name="Task_Status" id="Task_Status">
+									<!--#4DIF (Records in selection([Tasks])=0)-->
+									<option value="assigned" >assigned</option>
+									<!--#4DELSE-->
+									<!--HIT_EXECUTE _HIT_HTMLTXT:=Task_Status_HTMLPopup-->
+									 <!--#4DENDIF-->
+									</select>
+									<Select type="hidden"name="Task_Status_old" id="Task_Status_old">
+									<!--#4DIF (Records in selection([Tasks])=0)-->
+									<option value="assigned" >assigned</option>
+									<!--#4DELSE-->
+									<!--HIT_EXECUTE _HIT_HTMLTXT:=Task_Status_HTMLPopup-->
+									<!--#4DENDIF-->
+									</select>                                   
+								</div>
+							</div>
+
+								<div class="field-box">
+								<label>Assigned to <span style="color:#6E829B">*</span></label>
+								<div class="ui-select span5 selectAsClass">
+									<Select name="uuid_assigned_to" id="uuid_assigned_to">
+									<!--HIT_EXECUTE _HIT_HTMLTXT:=Web_EmployeeHTMLPopup([Tasks]uuid_assigned_to)-->
+									</select>                                     
+								</div>
+							</div>                  
+
+							<!-- 
+<div class="span12 field-box">
+								<label>Task Activate</label>
+								<input style="margin-left: -22%;" type="checkbox" name="Task_Activate" value=""><br>
+							</div>
+ -->
+							<div class="field-box">
+                                <label>Task Active</label>
+                                <div class="ui-select span5">
+									<Select name="Task_Active" id="Task_Active" name="Task_Active">
+									<!--#4DIF (Records in selection([Tasks])=1)-->
+										<option value="Active" <!--#4DIF ([Tasks]task_active=True)-->selected<!--4DELSE--><!--4DENDIF-->>Active</option>
+										<option value="Done" <!--#4DIF ([Tasks]task_active=false)-->selected<!--4DELSE--><!--4DENDIF-->>Done</option>
+									<!--#4DELSE-->
+										<option value="Active">Active</option>
+										<!--#4DENDIF-->
+									</select>                                    
+                                </div>
+                            </div>
+							
+							
+							
+							
+							<!--#4DIF (Records in selection([Tasks])=1)-->
+							<div class="span6 ">
+								<h3 style="font-size:14px; margin:0px 0 10px 0; padding-left:0px; font-weight:bold;">Attached Files</h3>
+                                <table class="table file-table table-condensed table-striped  table-hover" >
+              					<thead>
+                					<tr>
+                  						<!-- <th>File</th> -->
+                  						<th>File Name</th>
+                  						<th>Delete</th>
+                  						<th>Download</th>
+                					</tr>
+              					</thead>
+              					<tbody>
+              					<!--#4DSCRIPT/Web_LoadDocumentFiles/-->	
+			  					<!--#4DLOOP [Documents]--><!-- row -->
+                				<tr>
+                  					<!-- <td width="30">1</td> -->
+                  					<td><a title="<!--#4DHTMLVAR [Documents]filename-->" target="_blank" href="<!--#4DHTMLVAR [Documents]doc_path-->"><!--#4DHTMLVAR [Documents]filename--></a></td>
+                  					<td width="75" ><a href="javascript:void(0)" onClick="del_file('<!--#4DHTMLVAR [Documents]uuid-->', $(this))"><i class="icon-remove" style="color:#f00;"></i></a ></td>
+                  					<td width="75"><a href="javascript:void(0)" onClick="download_file('<!--#4DHTMLVAR [Documents]uuid-->')"><i class="icon-download-alt"></i></a></td>                
+                				</tr>
+                				<!--#4DENDLOOP-->
+              					</tbody>
+           				 		</table>
+							</div>
+							<div class="field-box">
+                                <label>Upload File <span style="font-size:10px;font-style:italic;">(Max size 4MB)</span></label>
+									<input name="file_content" type="file" id="file_content">
+									<button type="button" class="btn btn-info" onClick="add_file()" >Upload</button>
+                            </div>
+							
+							
+							<div class="span12 field-box">
+								<h3>Notes</h3><br>
+								<!--#4DSCRIPT/Web_LoadTaskNotes/-->	
+								<!--#4DLOOP [Notes]--><!-- row -->
+								<div class="notes">
+									<label id="user_details"><!--#4DHTMLVAR [Notes]note_user_name--> (<!--4DHTMLVAR timestamp_unix_toGMT ([Notes]Timestamp_modified)-->) (Note: <!--#4DHTMLVAR [Notes]note_ID-->)</label>
+									<input class="note_uuid" type="hidden" value="<!--#4DHTMLVAR [Notes]uuid-->" />
+									<textarea name="note" class="span6 note" rows="3" id="note" readonly> <!--#4DHTMLVAR [Notes]Note--></textarea>
+									<button type="button" id="edit" class="btn-glow" onClick="editCustomerNote($(this))">Edit Note</button>&nbsp;
+									<button type="button" id="delete" class="btn-glow" onClick="deleteCustomerNote($(this))">Delete</button>
+									<button type="button" id="save" class="btn-glow" onClick="saveCustomerNote($(this))" style="display:none">Save Note</button>
+									<button type="button" id="cancel" class="btn-glow" onClick="cancelCustomerNote($(this))" style="display:none">Cancel</button>
+								</div>
+								<!--#4DENDLOOP-->
+								
+								<div class='notes_end'></div>
+							</div>
+							<div class="span12 field-box">
+								<label>Add Note</label>
+								<textarea name="add_new_note" class="span6" rows="3" id="add_new_note"></textarea>
+								<button type="button" id="add" class="btn-glow" onClick="addCustomerNote()">Add Note</button>
+							</div>
+							<!--#4DELSE--><!--#4DENDIF-->
+							<div class="span11 field-box" style="text-align: center;">
+								<input name="create_live_task" type="hidden" value="no" id="create_live_task">
+								<input name="live_task_name" type="hidden" value="" id="live_task_name">
+								<input name="live_assigned_to" type="hidden" value="" id="live_assigned_to">
+							
+								<input type="submit" class="btn-glow primary" value="Submit">
+								<span>OR</span>
+								<a href="tasks.shtml">Cancel</a>
+							</div>
+						
+                    </div>
+				</div>
+				
+				</div>
+				<!--#4DIF (Records in selection([Tasks])=1)-->
+					<div id="tabs-2" class="var_tabs">
+						 <div class="row-fluid form-wrapper">
+					<!-- left column -->
+                    <div class="span12 with-sidebar">
+					
+					<table id="items">
+		
+		  <tr class="item">
+		      <th>Employee</th>
+		      <th width="60%">Description</th>
+		      <th>Start</th>
+		      <th>End</th>
+		      <th>Hours</th>
+		      
+			  <th >Edit</th>
+			  
+		  </tr>
+		  <!--#4DIF (Records in selection([Tasks])=1)-->
+		  <!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_TSTXT -->
+		  <!--#4DENDIF-->
+		  
+		  <!--#4DIF (mUserIsCurrentBool)-->
+		  
+		  <!--#4DELSE-->
+			<tr id="hiderow">
+		   		<td colspan="4"><a href="timeslip.shtml?task_id=<!--#4DVAR [Tasks]task_id-->" title="Add a row">Add new Timeslip</a></td>
+		 	</tr>
+		  <!--#4DENDIF-->
+		  
+		</table>	<br/>
+					
+					</div>
+					</div>
+					
+					</div>
+					
+			<div id="tabs-3" class="var_tabs">
+						 <div class="row-fluid form-wrapper">
+					<!-- left column -->
+                    <div class="span12 with-sidebar">
+					
+					<table id="items">
+		  
+		  <tr class="item">
+		      <th>Relationship</th>
+		      <th>Task Name</th>
+		      <th>Status</th>	      
+			  <th >Delete</th>			  
+		  </tr>
+		  <!--#4DSCRIPT/Web_LoadRelatedTask/-->
+		  <!--#4DLOOP [Related_Task]--><!--#4DSCRIPT/Web_LoadRelatedTaskRelated/-->	
+		  <tr class="item-row">
+		      <td><!--#4DHTMLVAR [Related_Task]Relationship--></td>
+		      <td><!--#4DHTMLVAR [Tasks]task_name--></td>
+		      <td><!--#4DHTMLVAR [Tasks]task_status--></td>	      
+			  <td ><a href="javascript:void(0)" onClick="del_relation('<!--#4DHTMLVAR [Related_Task]uuid-->', $(this))" >Delete</a></td>			  
+		  </tr>
+		  <!--#4DENDLOOP-->
+		</table><br/><br/>
+		
+		
+		<h3>New Relationship</h3>
+		<br/>
+		<div class="field-box">
+			<label>Current Issue</label>
+			<div class="ui-select span2">
+				<Select name="current_issue" id="current_issue" >
+					<option value="parent of" >parent of</option>
+					<option value="child of" >child of</option>
+					<option value="duplicate of">duplicate of</option>
+					<option value="has duplicate">has duplicate</option>
+					<option value="related to">related to</option>
+				</select>                                    
+			</div>
+		</div>
+		
+		<div class="field-box">
+                                <label>Task Name </label>
+								<div class="ui-widget">
+									<select name="Task_ID" id="Task_ID">
+										<option value=""></option>
+									<!--#4DSCRIPT/Web_LoadTasks/-->
+									<!--4DLOOP  [Tasks]-->
+											<option value="<!--4DVAR [Tasks]task_id-->" <!--#4DIF ([Tasks]task_id= Num(_HIT_WebApp_GetField ("task_id")))-->selected<!--4DELSE--><!--4DENDIF-->><!--4DVAR [Tasks]task_name--></option>
+									<!--4DENDLOOP-->									
+									</select>
+								</div>
+							</div>
+				<div class="field-box">
+                                <label></label>			
+				<button type="button" class="btn-glow primary" onClick="add_relation()" >Add</button>
+				</div>
+					
+					</div>
+					</div>
+					
+					</div>
+					
+		<div id="tabs-4" class="var_tabs ui-tabs-panel ui-widget-content ui-corner-bottom" aria-labelledby="ui-id-5" role="tabpanel" aria-expanded="false" aria-hidden="true" >
+            <div class="row-fluid form-wrapper"> 
+              <!-- left column -->
+              <div class="span12 with-sidebar"> <a hre="javascript:void(0)" onClick="add_new_checklist()" class="btn-glow primary">Add new Checklist</a>
+              <div class="table-wrapper checklistTable" style="display:none;">
+                <table class="table table-hover" id="items" style="width:75%">
+                <thead>
+                	<tr>
+                      <th style="width:5% ;border:1px solid #d5d5d5!important;background-clip: padding-box ">&nbsp;</th>
+                      <th style="border: 1px solid #d5d5d5!important;background-clip: padding-box">Checklist</th>
+                      <th style="width:25%;border: 1px solid #d5d5d5!important;background-clip: padding-box">Modified </th>
+                      <th style="width:15%;	border: 1px solid #d5d5d5!important;background-clip: padding-box">Duplicate Status</th>
+                      <th style="width:6%; border: 1px solid #d5d5d5!important;background-clip: padding-box" align="left">Action</th>
+                    </tr>
+                </thead>
+                  <tbody id="checkListData">
+                    
+                  </tbody>
+                </table>
+                <span style="font-size:11px;font-style:italic;padding-right: 400px;float:right;">*Note: Checklist with green background indicates "Completed"!</span>
+                <br>
+                <div style="width:75%; margin-top:10px;" class="text-center"><a style="margin:0 auto;display:none;" class="btn-glow  text-center" id="load_more_checklist" onclick="load_more_checklist()" href="javascript:void(0)">Load more</a></div>
+                
+                </div>
+              </div>
+            </div>
+          </div>
+				<!--#4DENDIF-->	
+				
+            </div><!-- tabs div-->
+				</form>
+            </div>
+        </div>
+    </div>
+    <!-- end main container -->
+
+	<!-- scripts -->
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+	<!-- <script src="js/ui/jquery-ui.js"></script> -->
+	<script src="js/bootstrap.datepicker.js"></script>
+	<script src="js/jquery.uniform.min.js"></script>
+	<script type="text/javascript" src="js/jquery-impromptu.js"></script>
+	<script src="js/jquery.validate.js"></script>
+	<script src="js/jquery-loader.js" type="text/javascript"></script>
+	<!--HIT_EXECUTE
+		C_TEXT(_HIT_NAMETXT)
+		IF (_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
+		If (Web_isUserClient )
+		_HIT_NAMETXT:=[Contacts]First name+" "+[Contacts]Surname
+		Else 
+		_HIT_NAMETXT:="Admin"
+		End if 
+		ELSE
+		 If (Web_isUserStaff)
+		_HIT_NAMETXT:=[Employees]emp_first_name+" "+[Employees]emp_last_name
+		Else 
+		_HIT_NAMETXT:="Admin"
+		End if
+		END IF
+	-->
+
+<script language="javascript">
+var tableUUIDStr= '<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->';
+var tableNameStr='Tasks';
+var taskNameStr='',xhrAbortLoad;
+var loadmoreNum=10, start=0, end=loadmoreNum;
+
+function load_more_checklist(){
+	start=end+1;
+	end=end+loadmoreNum;
+	loadCheckList();
+}
+function add_new_checklist(){
+	$.prompt({
+		state0: {
+			title: 'Add new CheckList',
+			html: '<textarea name="description" id="description" value="" placeholder="Description" row="8" class="span4"></textarea><br/><label>Duplicate this checklist :</label><label style="width:auto; display:inline"><input type="radio" value="daily" class="duplicate_checklist" name="duplicate_checklist"> Daily&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="weekly" name="duplicate_checklist" class="duplicate_checklist"> Weekly&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="monthly" class="duplicate_checklist" name="duplicate_checklist"> Monthly&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="yearly" class="duplicate_checklist" name="duplicate_checklist"> Yearly&nbsp;&nbsp;</label>',
+			buttons: { Save : 0, Cancel: 1 },
+			submit:function(e,v,m,f){ 
+				$("#errMsg").remove();
+	
+				if(v==0) {
+					e.preventDefault();
+					var duplicateOption="";
+					var is_duplicate="false";
+					$('.duplicate_checklist').each(function(){
+						if($(this).is(':checked')){
+							duplicateOption= $(this).val();
+						}
+					});
+					if(duplicateOption!=""){
+						is_duplicate="true";
+					}else{
+						duplicateOption="none";
+					}
+					if(f.description!=""){
+						$.ajax({
+							type: "GET",
+							url: "savetaskchecklist.cgi",
+							data: {'table' : 'Tasks', 'task_uuid' : tableUUIDStr, 'description': f.description, 'duplicate_interval' : duplicateOption, 'is_duplicate'  :is_duplicate},
+							success: function(response){
+								$.prompt.goToState('state1');
+								return false;
+							}
+						});
+					}else{
+						$("#description").before('<span id="errMsg" style="color:#CC0000">* Please add description for new Checklist item!</span>');
+					}
+				}
+				if(v==1) {
+					$.prompt.close();
+				}
+			}
+		},
+		state1: {
+			html:'Successfully saved!',
+			buttons: { Ok: 0 },
+			submit:function(e,v,m,f){
+				e.preventDefault();
+				$.prompt.close();
+				$('#checkListData').html("");
+				end=start+loadmoreNum;
+				start=0;
+				loadCheckList();
+			}
+		}
+	});
+}
+
+function changeStatus(evt,uuid){
+	$.ajax({
+		type: "GET",
+		url: "managetaskchecllist.cgi",
+		data: {'status' : evt.checked, 'uuid' : uuid, "action" : "active_status", 'task_uuid' : tableUUIDStr},
+		success: function(response){
+			$('#checkListData').html("");
+			end=start+loadmoreNum;
+			start=0;
+			loadCheckList();
+		}
+	});
+}
+
+function deleteChecklist(uuid){
+if(uuid!=""){
+	$.prompt({
+		state0: {
+			title: 'Are you sure to remove this option?',
+			buttons: { Yes : 0, No: 1 },
+			submit:function(e,v,m,f){ 
+				if(v==0) {
+					$.ajax({
+						type: "GET",
+						url: "managetaskchecllist.cgi",
+						data: {'uuid' : uuid, "action" : "delete"},
+						success: function(response){
+							$('#checkListData').html("");
+							end=start+loadmoreNum;
+							start=0;
+							loadCheckList();
+							$.prompt.close();
+						}
+					});
+				}
+				if(v==1) {
+					$.prompt.close();
+				}
+			}
+		}
+	});
+}
+
+}
+function editChecklist(uuid){
+	if(uuid!=""){
+		$("#span_"+uuid).hide();
+		$("#text_"+uuid).show();
+		$("#editRemove_"+uuid).hide();
+		$("#saveCancel_"+uuid).show();
+	}
+}
+
+function cancelChecklist(uuid){
+	if(uuid!=""){
+		$("#span_"+uuid).show();
+		$("#text_"+uuid).hide();
+		$("#editRemove_"+uuid).show();
+		$("#saveCancel_"+uuid).hide();
+	}
+}
+function saveChecklist(uuid){
+	if(uuid!=""){
+		var descriptionVal=$("#text_"+uuid).val();
+		if(descriptionVal!=""){
+			$.ajax({
+				type: "GET",
+				url: "savetaskchecklist.cgi",
+				data: {'table' : 'Tasks', 'task_uuid' : tableUUIDStr, 'description': descriptionVal, "uuid": uuid },
+				success: function(response){
+					$("#span_"+uuid).html(descriptionVal);
+					var modifiedStr=response.modifiedby+" ("+response.modified+")"
+					$("#modified_"+uuid).html(modifiedStr);
+					//$("#user_"+uuid).html(response.modifiedby);
+					$("#span_"+uuid).show();
+					$("#text_"+uuid).hide();
+					$("#editRemove_"+uuid).show();
+					$("#saveCancel_"+uuid).hide();
+				}
+			});
+		}else{
+			$.prompt("* Please add description for the Checklist item!");
+		}
+	}
+}
+function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+function duplicateChecklsit(dstatus, uuid, type){
+	var addDuplicateHtmlStr="";
+	var errorMsgStr="";
+	if(dstatus=="daily"){
+		addDuplicateHtmlStr='<label style="width:auto; display:inline" class="duplicateErr"><input type="radio" value="none" class="duplicate_checklist" name="duplicate_checklist"> No&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" checked value="daily" class="duplicate_checklist" name="duplicate_checklist"> Daily&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="weekly" name="duplicate_checklist" class="duplicate_checklist"> Weekly&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="monthly" class="duplicate_checklist" name="duplicate_checklist"> Monthly&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="yearly" class="duplicate_checklist" name="duplicate_checklist"> Yearly&nbsp;&nbsp;</label>'
+	}else if(dstatus=="weekly"){
+		addDuplicateHtmlStr='<label style="width:auto; display:inline" class="duplicateErr"><input type="radio" value="none" class="duplicate_checklist" name="duplicate_checklist"> No&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="daily" class="duplicate_checklist" name="duplicate_checklist"> Daily&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="weekly" checked name="duplicate_checklist" class="duplicate_checklist"> Weekly&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="monthly" class="duplicate_checklist" name="duplicate_checklist"> Monthly&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="yearly" class="duplicate_checklist" name="duplicate_checklist"> Yearly&nbsp;&nbsp;</label>'
+	}else if(dstatus=="monthly"){
+		addDuplicateHtmlStr='<label style="width:auto; display:inline" class="duplicateErr"><input type="radio" value="none" class="duplicate_checklist" name="duplicate_checklist"> No&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="daily" class="duplicate_checklist" name="duplicate_checklist"> Daily&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="weekly" name="duplicate_checklist" class="duplicate_checklist"> Weekly&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="monthly" checked class="duplicate_checklist" name="duplicate_checklist"> Monthly&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="yearly" class="duplicate_checklist" name="duplicate_checklist"> Yearly&nbsp;&nbsp;</label>'
+	}else if(dstatus=="yearly"){
+		addDuplicateHtmlStr='<label style="width:auto; display:inline" class="duplicateErr"><input type="radio" value="none" class="duplicate_checklist" name="duplicate_checklist"> No&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="daily" class="duplicate_checklist" name="duplicate_checklist"> Daily&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="weekly" name="duplicate_checklist" class="duplicate_checklist"> Weekly&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="monthly" class="duplicate_checklist" name="duplicate_checklist"> Monthly&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="yearly" checked class="duplicate_checklist" name="duplicate_checklist"> Yearly&nbsp;&nbsp;</label>'
+	}else{
+		addDuplicateHtmlStr='<label style="width:auto; display:inline" class="duplicateErr"><input type="radio" value="daily" class="duplicate_checklist" name="duplicate_checklist"> Daily&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="weekly" name="duplicate_checklist" class="duplicate_checklist"> Weekly&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="monthly" class="duplicate_checklist" name="duplicate_checklist"> Monthly&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="yearly" class="duplicate_checklist" name="duplicate_checklist"> Yearly&nbsp;&nbsp;</label>'
+	}
+	$.prompt({
+		state0: {
+			title: 'Duplicate this CheckList',
+			html: addDuplicateHtmlStr,
+			buttons: { Update : 0, Cancel: 1 },
+			submit:function(e,v,m,f){ 
+				$("#errMsg").remove();
+	
+				if(v==0) {
+					e.preventDefault();
+					var duplicateOption="";
+					var is_duplicate="false";
+					$('.duplicate_checklist').each(function(){
+						if($(this).is(':checked')){
+							duplicateOption= $(this).val();
+						}
+					});
+					if(duplicateOption!=""){
+						var is_duplicate="false";
+						if(duplicateOption=="none"){
+							is_duplicate="false";
+						}else{
+							is_duplicate="true";
+						}
+						$.ajax({
+							type: "GET",
+							url: "managetaskchecllist.cgi",
+							data: {'task_uuid' : tableUUIDStr, 'uuid': uuid, 'action' : 'duplicate_status', 'duplicate_interval' : duplicateOption, 'is_duplicate' :is_duplicate, 'type' :type},
+							success: function(response){
+								if(response.success){
+									$.prompt.goToState('state1');
+									return false;
+								}else{
+									errorMsgStr=response.error;
+									$(".duplicateErr").before('<span id="errMsg" style="color:#CC0000">* '+errorMsgStr+'<br/>');
+								}
+							}
+						});
+					}else{
+						$(".duplicateErr").before('<span id="errMsg" style="color:#CC0000">* Please select an option!</span><br/>');
+					}
+				}
+				if(v==1) {
+					$.prompt.close();
+				}
+			}
+		},
+		state1: {
+			html:'Successfully updated!',
+			buttons: { Ok: 0 },
+			submit:function(e,v,m,f){
+				e.preventDefault();
+				$.prompt.close();
+				$('#checkListData').html("");
+				end=start+loadmoreNum;
+				start=0;
+				loadCheckList();
+			}
+		}
+	});
+}
+function loadCheckList(){
+	$("#load_more_checklist").hide();
+	
+	var jsonRow="loadtaskchecklist.cgi?task_uuid="+tableUUIDStr+"&start="+start+"&end="+end+"&"+Math.random();
+	if(xhrAbortLoad) xhrAbortLoad.abort();
+	xhrAbortLoad=$.getJSON(jsonRow,function(result){
+		if(result.Alert){
+			//$.prompt("* No more record found!");
+		}else{
+		if(result.aaData!=""){
+			$(".checklistTable").show();
+				var table_html="";
+				$.each(result.aaData, function(i,row){
+					if(row.status==1 || row.status=="1"){
+						table_html+='<tr class="green-color">';
+						table_html+='<td><input type="checkbox" id="chk_all" class="check" checked value="true" name="Select" onChange="changeStatus(this,\''+row.uuid+'\')"></td>';
+					}else{
+						table_html+='<tr>';
+						table_html+='<td><input type="checkbox" id="chk_all" class="check" value="false" name="Select" onClick="changeStatus(this,\''+row.uuid+'\')"></td>';
+					}
+					table_html+='<td><span id="span_'+row.uuid+'">'+row.description+'</span><textarea style="display:none;width:95%;height:35px;" rows="3" id="text_'+row.uuid+'">'+row.description+'</textarea></td>';
+					//table_html+='<td><span id="user_'+row.uuid+'">'+row.user_name+'</span></td>';
+					table_html+='<td><span id="modified_'+row.uuid+'">'+row.user_name+' ('+row.last_modified+')</span></td>';
+					if(row.duplicate_interval=="none" || row.duplicate_interval=="None"){
+						table_html+='<td><a href="javascript:void(0)" onClick="duplicateChecklsit(\''+row.duplicate_interval+'\',\''+row.uuid+'\',\'new\')" title="Duplicate this">Duplicate this</a></td>';
+					}else{
+						var duplicateStr=capitalizeFirstLetter(row.duplicate_interval);
+						table_html+='<td>'+duplicateStr+' (<a href="javascript:void(0)" onClick="duplicateChecklsit(\''+row.duplicate_interval+'\',\''+row.uuid+'\',\'change\')" title="Change">Change</a>)</td>';
+					}
+					table_html+='<td align="left">';
+					table_html+='<ul class="actions" id="editRemove_'+row.uuid+'"><li><a href="javascript:void(0)" onClick="editChecklist(\''+row.uuid+'\')" title="Edit"><i class="table-edit"></i></a></li><li class="last"><a href="javascript:void(0)" onClick="deleteChecklist(\''+row.uuid+'\')" title="Delete"><i class="table-delete"></i></a></li></ul>';
+					table_html+='<ul class="actions" id="saveCancel_'+row.uuid+'" style="display:none;"><li><a href="javascript:void(0)" onClick="saveChecklist(\''+row.uuid+'\')" title="Save"><i class="table-save"></i></a></li><li class="last"><a href="javascript:void(0)" onClick="cancelChecklist(\''+row.uuid+'\')" title="Cancel"><i class="table-cancel"></i></a></li></ul>';
+					table_html+='</td>';
+					table_html+='</tr>';
+				});
+			
+				$('#checkListData').append(table_html);
+				if(end< result.total_records){
+					$("#load_more_checklist").show();
+				}
+		}else{
+			$.prompt("* No more record found!");
+		}
+		}
+	});
+}
+
+function add_file(){
+	//$('#TaskForm').attr('action', 'upload_file.cgi');
+	//$('#TaskForm').submit();
+	if ($('#file_content')[0].files && $('#file_content')[0].files[0]) {
+		$.loader.open($data);
+		var val = $('#file_content').val().toLowerCase();   
+
+				var data = new FormData();
+				var files= $('#file_content')[0].files;
+				var Task_uuid=$('#Task_uuid').val();
+				var table='tasks';
+				
+				data.append('uuid', Task_uuid);
+				var tsk_id=$('#tsk_id').val();
+				data.append('tsk_id', tsk_id);
+				data.append('table', table);
+	
+	
+				$.each(files, function(key, value){
+					data.append('file_content', value);
+				});
+
+				$.ajax({
+					url: 'upload_doc.cgi?files',
+					type: 'POST',
+					data: data,
+					cache: false,
+					dataType: 'json',
+					processData: false, // Don't process the files
+					contentType: false, // Set content type to false as jQuery will tell the server its a query string request
+					success: function(data)	{
+						$.loader.close(true);
+						var statesdemo = {
+										state0: {
+											title: data.Result,
+											buttons: { OK : 0 },
+											submit:function(e,v,m,f){ 
+												if(v==0) {
+													e.preventDefault();
+													$.prompt.close();
+													if(data.Result=='File uploaded successfully.'){
+														location.reload(true);
+													}
+												}
+											}
+										},
+										
+										
+									};
+									$.prompt(statesdemo);
+					},
+					error: function( xhr, tStatus, err ) {	
+						$.loader.close(true);
+						__alertMessage("Upload process aborted, please try after some time.");
+					}
+
+				});
+		
+			
+	}
+	else{
+		__alertMessage('Please select File to upload');
+		document.TaskForm.file_content.focus() ;
+		return false;
+	}
+}
+
+function del_file(del_uuid, ref){
+	var Task_uuid=$('#Task_uuid').val();
+	var task_id=$('#tsk_id').val();
+
+	var dataString = 'DocumentUUID='+del_uuid+'&table=Tasks&uuid='+Task_uuid+'&redirect=false';
+
+	$.ajax({
+		type: "GET",
+		url: "deletedocfile.cgi",
+		data: dataString,
+		dataType: 'json',
+		cache: false,
+		success: function(html)
+		{
+			if(html.Success){
+			var title=html.Success;
+			}
+			else{
+			var title=html.Error;
+			}
+			var statesdemo = {
+				state0: {
+					title: title,
+					buttons: { OK : 0 },
+					submit:function(e,v,m,f){ 
+						if(v==0) {
+							if(html.Success){
+								ref.parents('tr').remove();
+							}
+						}
+					}
+				},
+				
+				
+			};
+			$.prompt(statesdemo);
+		}
+	});
+}
+
+function download_file(del_uuid){
+
+	window.open('doc_preview.shtml?document_uuid='+del_uuid+'&token=<!--#4DVAR _HIT_TokenGetAny-->');
+	
+}
+
+function add_relation(){
+	if ($('#Task_ID').val()=="")
+	{ 
+		__alertMessage('Please Specify Task Name');
+		$('#Task_ID').focus();
+		return false;
+	}
+	else if($('#Task_ID').val()==$('#tsk_id').val()){
+		__alertMessage('Please Specify some other Task Name');
+		$('#Task_ID').focus();
+		return false;
+	}
+	else{
+		var relation=$('#current_issue').val();
+		var rel_task_id=$('#Task_ID').val();
+		var Task_uuid=$('#Task_uuid').val();
+		var task_id=$('#tsk_id').val();
+		var task_name=$('#Task_ID option:selected').text();
+
+		var dataString = 'relation='+relation+'&rel_task_id='+rel_task_id+'&task_id='+task_id+'&uuid_task='+Task_uuid+'&redirect=false';
+	
+		$.ajax({
+			type: "GET",
+			url: "saverelatedtask.cgi",
+			data: dataString,
+			dataType: 'json',
+			cache: false,
+			success: function(html)
+			{
+				if(html.Success){
+					$('#tabs-3 table#items').append('<tr class="item-row"><td>'+relation+'</td><td>'+task_name+'</td><td>assigned</td><td ><a href="javascript:void(0)" onClick="del_relation(\''+html.UUID+'\', $(this))" >Delete</a></td></tr>');
+				}
+			}
+		});
+	}	
+}
+
+function del_relation(del_uuid, ref){
+	var Task_uuid=$('#Task_uuid').val();
+	var task_id=$('#tsk_id').val();
+
+	var dataString = 'del_uuid='+del_uuid+'&task_id='+task_id+'&uuid_task='+Task_uuid+'&redirect=false';
+
+	$.ajax({
+		type: "GET",
+		url: "delrelatedtask.cgi",
+		data: dataString,
+		dataType: 'json',
+		cache: false,
+		success: function(html)
+		{
+			ref.parents('tr').remove();
+		}
+	});
+}
+
+</script>
+
+    <script type="text/javascript">
+        $(function () {
+        	loadCheckList();
+        	taskNameStr = $('#Task_Name').val();
+        	
+			$( "#tabs" ).tabs();
+            // add uniform plugin styles to html elements
+            //$("input:checkbox").uniform();
+
+			/* datepicker plugin */
+			$('#task_start_date').datepicker({"autoclose": true}).on('changeDate', function (ev) {
+				var arrStartDate= $('#task_start_date').val().split('/');
+				var dateText = new Date(arrStartDate[1]+'/'+arrStartDate[0]+'/'+arrStartDate[2]);
+				
+				$('#task_end_date').datepicker('setStartDate', dateText);
+			});
+			
+			$('#task_end_date').datepicker({"autoclose": true}).on('changeDate', function (ev) {
+				var arrEndDate= $('#task_end_date').val().split('/');
+				var dateText = new Date(arrEndDate[1]+'/'+arrEndDate[0]+'/'+arrEndDate[2]);
+				
+				$('#task_start_date').datepicker('setEndDate', dateText);
+			});
+			var arrStartDate= $('#task_start_date').val().split('/');
+			var dateText = new Date(arrStartDate[1]+'/'+arrStartDate[0]+'/'+arrStartDate[2]);			
+			$('#task_end_date').datepicker('setStartDate', dateText);
+			var arrEndDate= $('#task_end_date').val().split('/');
+			var dateText = new Date(arrEndDate[1]+'/'+arrEndDate[0]+'/'+arrEndDate[2]);			
+			$('#task_start_date').datepicker('setEndDate', dateText);
+			/* datepicker plugin */
+			
+				
+				
+			$('.num').keypress(function(e){
+				var k = e.which;
+				/* numeric inputs can come from the keypad or the numeric row at the top */
+				 if ((k<48 || k>57) && (k!=46) && (k!=8) && (k!=0)) {
+					e.preventDefault();
+					//alert("Allowed characters are 0-9, +, -, (, )");
+					return false;
+				}
+			
+			});
+			
+			// validate signup form on keyup and submit
+			var val_flag=0;
+			$("#TaskForm").validate({
+				ignore: "",
+				onkeyup: false,
+				errorClass: 'error',
+				validClass: 'valid',
+				highlight: function(element) {
+					$(element).closest('div').addClass("f_error");
+					var err_div_id=$(element).closest('div.var_tabs').attr('id');
+					if($("#"+err_div_id).hasClass("active")){
+					
+					val_flag=1;
+					}								
+					else if(!$("#"+err_div_id).hasClass("active") && val_flag==0){
+					//$(element).closest('div').addClass("f_error");
+						for(var i=1; i<=2; i++) {
+							if(err_div_id=="tab"+i){
+								$("#tab"+i).addClass("active");
+								$("#li"+i).addClass("active");
+
+							}
+							else {
+								$("#tab"+i).removeClass("active");
+								$("#li"+i).removeClass("active");
+							}
+						}
+					}
+				},
+				unhighlight: function(element) {
+					$(element).closest('div').removeClass("f_error");
+				},
+				errorElement: "em",
+				errorPlacement: function(error, element) {
+					if (element.attr("name") == "uuid_reported_by") {
+						error.insertAfter(".selectClass");
+					}else if (element.attr("name") == "uuid_assigned_to") {
+						error.insertAfter(".selectAsClass");
+					}else{
+						$(element).closest('div').append(error);
+					}
+				},
+				rules: {
+					Task_Name: { required: true },
+					Project_ID: { required: true },
+					uuid_reported_by: { required: true },
+					uuid_assigned_to: { required: true },
+					Task_Estimated_Hour: { number: true},
+					Task_Rate: { number: true},
+				},submitHandler: function(form) {
+				var taskActiveValue =$('#Task_Active').val();
+				if(taskActiveValue=="Done"){
+					$.prompt({
+						state0: {
+							title: 'Accomplished Platform?',
+							buttons: { Live : 0, Dev: 1 },
+							submit:function(e,v,m,f){ 
+								if(v==1) {
+									e.preventDefault();
+									$.prompt.goToState('state1');
+								}
+								if(v==0) {
+									$.prompt.close();
+									form.submit();
+								}
+							}
+						},
+						state1: {
+							title: 'So, Do you want to create this task for live?',
+							buttons: { No : 0, Yes: 1 },
+							submit:function(e,v,m,f){ 
+								if(v==1) {
+									e.preventDefault();
+									$.prompt.goToState('state2');
+								}
+								if(v==0) {
+									$.prompt.close();
+									form.submit();
+								}
+							}
+						},
+						state2: {
+							title: "Live : "+taskNameStr,
+							html: '<div id="PromptErrMsg" style="color:#CC0000"></div><label>Assigned To : </label><div class="ui-select"><select name="selectedEmployeeUUID" id="selectedEmployeeUUID"><option value="">--Select Employee--</option><span id="PromptMessage" style="color:#FF0000;"></span><br /><!--HIT_EXECUTE
+							_HIT_HTMLTXT:=""
+							QUERY([Employees];[Employees]emp_active=True)
+							ORDER BY([Employees];[Employees]emp_last_name;>)
+
+							For (_HIT_COUNTER;1;Records in selection([Employees]))
+							_HIT_HTMLTXT:=_HIT_HTMLTXT+"<option value=\""+[Employees]uuid+"\">"+[Employees]emp_first_name+" "+[Employees]emp_last_name+"</option>"
+							NEXT RECORD([Employees])
+							End for 
+							--></select></div><br />',
+							buttons: { No : 0, Yes: 1 },
+							submit:function(e,v,m,f){ 
+								if(v==1) {
+									var selectedEmployeeUUID= $('#selectedEmployeeUUID').val();
+									if(selectedEmployeeUUID == ''){
+										e.preventDefault();
+										document.getElementById("PromptErrMsg").innerHTML = "* Please select an assigned to person!" ;
+									}else{
+										var newtaskNameStr= "Live : "+taskNameStr;
+										$('#live_assigned_to').val(selectedEmployeeUUID);
+										$('#live_task_name').val(newtaskNameStr);
+										$('#create_live_task').val("yes");
+										
+										$.prompt.close();
+										form.submit();
+									}
+								}
+								if(v==0) {
+									$.prompt.close();
+									form.submit();
+								}
+							}
+						},
+					});
+				}else{
+					form.submit();
+				}
+			}
+			});
+			
+			 $data = {
+                autoCheck: 32,
+                size: 32,
+                bgColor: '#000',
+                bgOpacity: 0.5, 
+                fontColor: false,
+                title: '',
+                isOnly: true
+            };
+        });
+    
+	
+	var xhr;
+  (function( $ ) {
+    $.widget( "custom.combobox", {
+      _create: function() {
+        this.wrapper = $( "<span>" )
+          .addClass( "custom-combobox" )
+          .insertAfter( this.element );
+ 
+        this.element.hide();
+        this._createAutocomplete();
+        this._createShowAllButton();
+      },
+ 
+      _createAutocomplete: function() {
+        var selected = this.element.children( ":selected" ),
+          value = selected.val() ? selected.text() : "";
+ 
+        this.input = $( "<input style="width:500px;">" )
+          .appendTo( this.wrapper )
+          .val( value )
+          .attr( "title", "" )
+          .addClass( "custom-combobox-input ui-widget ui-widget-content ui-state-default ui-corner-left" )
+          .autocomplete({
+            delay: 0,
+            minLength: 0,
+            source: $.proxy( this, "_source" )
+          })
+          .tooltip({
+            tooltipClass: "ui-state-highlight"
+          });
+ 
+        this._on( this.input, {
+          autocompleteselect: function( event, ui ) {
+		  	//alert("show all");
+            ui.item.option.selected = true;
+			
+            this._trigger( "select", event, {
+              item: ui.item.option
+            });
+          },
+ 
+          autocompletechange: "_removeIfInvalid"
+        });
+      },
+ 
+      _createShowAllButton: function() {
+        var input = this.input,
+          wasOpen = false;
+ 
+        $( "<a>" )
+          .attr( "tabIndex", -1 )
+          .attr( "title", "Show All Items" )
+          .tooltip()
+          .appendTo( this.wrapper )
+          .button({
+            icons: {
+              primary: "ui-icon-triangle-1-s"
+            },
+            text: false
+          })
+          .removeClass( "ui-corner-all" )
+          .addClass( "custom-combobox-toggle ui-corner-right" )
+          .mousedown(function() {
+            wasOpen = input.autocomplete( "widget" ).is( ":visible" );
+          })
+          .click(function() {
+            input.focus();
+ 
+            // Close if already visible
+            if ( wasOpen ) {
+              return;
+            }
+ 
+            // Pass last search string as value to search for, displaying last results
+            input.autocomplete( "search", 'SHOWALL' );
+          });
+      },
+ 
+      _source: function( request, response ) {
+        //var matcher = new RegExp( $.ui.autocomplete.escapeRegex(request.term), "i" );
+		var ele_select= this.element;
+		if(request.term=='SHOWALL'){
+			response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+		
+		}
+		else
+		{
+		if(ele_select.attr('id')=='Project_ID'){
+		var jsonRow = 'getprojectsonsearch.cgi?srch='+request.term;
+		}
+		else if(ele_select.attr('id')=='Task_ID'){
+			var jsonRow = 'gettaskonsearch.cgi?srch='+request.term;
+		}
+		
+
+		//alert(jsonRowURLStr);
+		if(xhr) xhr.abort();
+		xhr=$.getJSON(jsonRow,function(result){
+			
+			if(result){
+				var html='<option value=""></option>';
+
+				$.each(result, function(i,item)
+				{
+					html += '<option value="'+item.id+'">'+item.value+'</option>';
+				});
+				ele_select.html(html);
+				
+				
+				response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+				
+				
+			}
+		});
+       
+	  } 
+		
+      },
+ 
+      _removeIfInvalid: function( event, ui ) {
+ 
+        // Selected an item, nothing to do
+        if ( ui.item ) {
+
+          return;
+        }
+ 
+        // Search for a match (case-insensitive)
+        var value = this.input.val(),
+          valueLowerCase = value.toLowerCase(),
+          valid = false;
+        this.element.children( "option" ).each(function() {
+          if ( $( this ).text().toLowerCase() === valueLowerCase ) {
+            this.selected = valid = true;	
+			
+            return false;
+          }
+        });
+ 
+        // Found a match, nothing to do
+        if ( valid ) {
+          return;
+        }
+ 
+        // Remove invalid value
+        this.input
+          .val( "" )
+          .attr( "title", value + " didn't match any item" )
+          .tooltip( "open" );
+        this.element.val( "" );
+        this._delay(function() {
+          this.input.tooltip( "close" ).attr( "title", "" );
+        }, 2500 );
+        this.input.data( "ui-autocomplete" ).term = "";
+      },
+ 
+      _destroy: function() {
+        this.wrapper.remove();
+        this.element.show();
+      }
+    });
+  })( jQuery );
+ 
+  $(function() {
+    $( "#Project_ID" ).combobox();
+   $( "#Task_ID" ).combobox();
+	
+  });
+  </script>
+  
+	<script type='text/javascript' src='js/customerNotes.js'></script>
+	
+</body>
+</html>

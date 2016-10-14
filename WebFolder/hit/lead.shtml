@@ -1,0 +1,505 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+C_TEXT(_HTMLTITLETXT)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+
+QUERY([Leads];[Leads]uuid=_HIT_WebApp_GetField ("uuid"))
+QUERY([Lead_Contacts];[Lead_Contacts]CompanyNumber=[Leads]RecordNumber)
+QUERY([Activity];[Activity]CompanyNumber=[Leads]RecordNumber)
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+
+IF (Records in selection([Leads])=0)
+_HTMLTITLETXT:="New Lead"
+ELSE
+_HTMLTITLETXT:= "Edit Lead"
+END IF
+
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+-->
+<!DOCTYPE html>
+<html>
+<head>
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+	<link rel='stylesheet' type='text/css' href='css/style.css' />
+	<link rel='stylesheet' type='text/css' href='css/print.css' media="print" />
+	<link rel="stylesheet" href="css/compiled/ui-elements.css" type="text/css" media="screen" />
+	<link href="css/img-tabs.css" type="text/css" rel="stylesheet">
+	<link rel="stylesheet" media="all" type="text/css" href="css/jquery-impromptu.css" />
+	<link href='css/jquery.rating.css' type="text/css" rel="stylesheet"/>
+<style>
+#tbl_contact { clear: both; width: 100%; margin: 30px 0 0 0; }
+#tbl_contact tr td { border:1px solid #dae3e9;}
+#tbl_contact th { background: #f4f4f5;  border:1px solid #dae3e9; text-align:left; }
+#tbl_contact textarea { width: 80px; height: 20px; }
+#tbl_contact tr.item-row td {  vertical-align: top; }
+#tbl_contact td.description { width: 300px; }
+#tbl_contact td.item-name { width: 175px; }
+#tbl_contact td.description textarea, #tbl_contact td.item-name textarea { width: 100%; }
+#tbl_contact td.total-line {  text-align: right; }
+#tbl_contact td.total-value {  padding: 10px; }
+#tbl_contact td.total-value textarea { height: 20px; background: none; }
+#tbl_contact td.balance { background: #eee; }
+#tbl_contact td.blank { border: 0; }
+#LeadsForm em.error {
+	margin-left: 10px;
+	width: auto;
+	display: inline;
+}
+#LeadsForm em.error {
+	color: red;
+	font-style: italic;
+}
+#LeadsForm input.error, textarea.error, select.error{
+	border: 1px solid red;
+}
+</style>
+
+</head>
+<body>
+
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
+	<!-- main container -->
+    <div class="content">
+        <div class="container-fluid">
+            <div id="pad-wrapper" class="form-page">
+				<div class="row-fluid header">
+					<h3><!--#4DIF (Records in selection([Leads])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Lead</h3>
+                </div>
+                <div class="row-fluid form-wrapper">
+					<!-- left column -->
+                    <div class="span12 with-sidebar">
+						<form name="LeadsForm" id="LeadsForm" action="savelead.cgi" class="form-comment" method="post" >							
+							<div id="tabs">
+								<ul >
+									<li ><a style="color:#000000" href="#tabs-1">Basic</a></li>
+									<!--#4DIF (Records in selection([Leads])=1)-->
+									<li ><a style="color:#000000" href="#tabs-2">Contact</a></li>
+									<li ><a style="color:#000000" href="#tabs-3">Activity</a></li>
+									<!--#4DENDIF-->
+								</ul>
+							    <div id="tabs-1" class="var_tabs" >	
+		
+								<input name="lead_uuid" class="span6" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="lead_uuid"> 
+								<input name="lead_id" class="span6" type="hidden" value="<!--#4DVAR [Leads]RecordNumber-->" id="lead_id">
+								<div class="span12 field-box">
+									<label>Product <span style="color:#6E829B">*</span></label>
+									<input class="span6" type="text" value="<!--#4DVAR [Leads]Product-->" name="Product" id="Product">
+								</div>
+									   
+								 <div class="field-box">
+									<label>Lead Name <span style="color:#6E829B">*</span></label>
+									<input name="Lead_name" class="span6" type="text" value="<!--#4DVAR [Leads]CompanyName-->" id="Lead_name">
+								
+								</div>
+								
+								<div class="field-box">
+									<label>First Name </label>
+									<input name="First_name" class="span6" type="text" value="<!--#4DVAR [Leads]First name-->" id="First_name">
+								
+								</div>
+								
+								<div class="span12 field-box">
+									<label>Address1 <span style="color:#6E829B">*</span></label>
+									<textarea name="Address1" class="span6" id="Address1" ><!--#4DVAR [Leads]Address1--></textarea>                                
+								</div>
+								<div class="span12 field-box">
+									<label>Address2</label>
+									<textarea name="Address2" class="span6" id="Address2" ><!--#4DVAR [Leads]Address2--></textarea>         
+								</div>						   
+								<div class="span12 field-box">
+									<label>Town </label>
+									<input name="Town" class="span6" type="text" value="<!--#4DVAR [Leads]Town-->" id="Town">						
+								</div>
+								<div class="span12 field-box">
+									<label>County</label>
+									<input name="County" class="span6" type="text" value="<!--#4DVAR [Leads]County-->" id="County">						
+								</div>
+								<div class="span12 field-box">
+									<label>Postcode <span style="color:#6E829B">*</span></label>
+									<input name="Postcode" class="span6" type="text" value="<!--#4DVAR [Leads]PostCode-->" id="Postcode">
+								</div>
+								<div class="span12 field-box">
+									<label>Country  <span style="color:#6E829B">*</span></label>
+									<input name="Country" class="span6" type="text" value="<!--#4DVAR [Leads]Country-->" id="Country">
+								</div>
+								<div class="span12 field-box">
+									<label>Phone <span style="color:#6E829B">*</span></label>
+									<input class="span6 phone" type="text" value="<!--#4DVAR [Leads]Phone-->" name="Phone" id="Phone">
+								</div>
+								<div class="span12 field-box">
+									<label>Mobile </label>
+									<input name="Mobile" class="span6 phone" type="text" value="<!--#4DVAR [Leads]Mobile-->" id="Mobile">
+								</div>
+								<div class="span12 field-box">
+									<label>Fax </label>
+									<input name="Fax" class="span6" type="text" value="<!--#4DVAR [Leads]Fax-->" id="Fax">
+								</div>							
+								
+								<div class="span12 field-box">
+									<label>Email <span style="color:#6E829B">*</span></label>
+									<input name="Email" class="span6" type="text" value="<!--#4DVAR [Leads]Email-->" id="Email">
+								</div>
+								<div class="span12 field-box">
+									<label>Website </label>
+									<input name="Website" class="span6" type="text" value="<!--#4DVAR [Leads]WebSite-->" id="Website">
+								</div>	
+								
+								<div class="span12 field-box">
+									<label>Company Size </label>
+									<input name="Company_Size" class="span6" type="text" value="<!--#4DVAR [Leads]CompanySize-->" id="Company_Size">
+								</div>	
+								
+								<div class="field-box">
+									<label>Source Type <span style="color:#6E829B">*</span></label>
+									<input name="Source_type" class="span6" type="text" value="<!--#4DVAR [Leads]SourceType-->" id="Source_type">
+								</div>
+								<div class="span12 field-box">
+									<label>Source <span style="color:#6E829B">*</span></label>
+									<input name="Source" class="span6" type="text" value="<!--#4DVAR [Leads]Source-->" id="Source">                                 
+								</div>
+								
+								<div class="span12 field-box">
+									<label>Business Type </label>
+									<input name="Business_type" class="span6" type="text" value="<!--#4DVAR [Leads]BusinessType-->" id="Business_type">                                 
+								</div>
+								
+								<div class="span12 field-box">
+									<label>Requests </label>
+									<input name="Requests" class="span6" type="text" value="<!--#4DVAR [Leads]Requests-->" id="Requests">                                 
+								</div>
+								
+								<div class="span12 field-box">
+									<label>Comments</label>
+									<textarea name="Comments" class="span6" id="Comments" ><!--#4DVAR [Leads]Comments--></textarea>         
+								</div>	
+								
+								<div class="span12 field-box">
+									<label>Interested in</label>
+									<textarea name="Interested_in" class="span6" id="Interested_in" ><!--#4DVAR [Leads]InterestedKeywords--></textarea>         
+								</div>	
+													   
+								<div class="span12 field-box">
+									<label>Main Contact First Name </label>
+									<input name="First_name" class="span6" type="text" value="<!--#4DVAR [Leads]MaincontactFirstName-->" id="First_name">						
+								</div>
+								<div class="span12 field-box">
+									<label>Main Contact Last Name </label>
+									<input name="Last_name" class="span6" type="text" value="<!--#4DVAR [Leads]MainContactLastName-->" id="Last_name">
+								</div>
+								<div class="span12 field-box">
+									<label>Job Title </label>
+									<input name="Jobtitle" class="span6" type="text" value="<!--#4DVAR [Leads]Job title-->" id="Jobtitle">
+								</div>
+								
+								<div class="field-box">
+                                
+								<label></label>	
+								<label class="checkbox">
+														
+								<input name="QuarkUser" class="span9" type="checkbox" value="true" id="QuarkUser" <!--#4DIF ([Leads]QuarkUser)-->checked<!--4DELSE--><!--4DENDIF--> >Quark User
+							</label>   
+							<label class="checkbox">							
+								<input name="InDesign_user" class="span9" type="checkbox" value="true" id="InDesign_user" <!--#4DIF ([Leads]InDesign user)-->checked<!--4DELSE--><!--4DENDIF--> >InDesign User
+							</label>   
+							<label class="checkbox" style="width:auto;">
+														
+								<input name="Responded" class="span9" type="checkbox" value="true" id="Responded" <!--#4DIF ([Leads]Responded)-->checked<!--4DELSE--><!--4DENDIF--> >Responded to mailing
+							</label> 
+							</div>
+								
+								<div class="field-box">
+							<label></label>	
+							<label class="checkbox">							
+								<input name="Affiliate" class="span9" type="checkbox" value="true" id="Affiliate" <!--#4DIF ([Leads]Affiliate)-->checked<!--4DELSE--><!--4DENDIF--> >Affiliate
+							</label>
+							<label class="checkbox">
+														
+								<input name="Send_Info" class="span9" type="checkbox" value="true" id="Send_Info" <!--#4DIF ([Leads]Send Info)-->checked<!--4DELSE--><!--4DENDIF--> >Send Info
+							</label>   
+							<label class="checkbox">							
+								<input name="Keep_Us_Posted" class="span9" type="checkbox" value="true" id="Keep_Us_Posted" <!--#4DIF ([Leads]KeepUsPosted)-->checked<!--4DELSE--><!--4DENDIF--> >Keep Us Posted
+							</label>
+							</div>
+							
+							
+								
+								<div class="field-box">
+							<label></label>	
+							<label class="checkbox">
+														
+								<input name="Give_to_reseller" class="span9" type="checkbox" value="true" id="Give_to_reseller" <!--#4DIF ([Leads]Give to reseller)-->checked<!--4DELSE--><!--4DENDIF--> >Give to reseller
+							</label>   
+							                                                 
+                            </div>
+							
+							<div class="span12 field-box">
+									<label>Given to reseller </label>
+									<input name="Given_to_reseller" class="span6" type="text" value="<!--#4DVAR [Leads]Given to reseller-->" id="Given_to_reseller">
+								</div>
+								
+								<div class="span12 field-box">
+									<label>Enter Date </label>
+									<input class="input-large datepicker" data-date-format="dd/mm/yyyy" name="Enter_Date"  type="text" id="Enter_Date" <!--#4DIF ([Leads]EnterDate=!00/00/0000!)-->value=""<!--4DELSE-->value="<!--#4DVAR [Leads]EnterDate-->"<!--4DENDIF--> readonly >
+								</div>
+								
+								<div class="span12 field-box">
+									<label>Entered By </label>
+									<input name="Entered_By" class="span6" type="text" value="<!--#4DVAR [Leads]EnteredBy-->" id="Entered_By">
+								</div>
+								
+								<div class="span12 field-box">
+									<label></label>	
+							<label class="checkbox">
+														
+								<input name="Inactive" class="span9" type="checkbox" value="true" id="Inactive" <!--#4DIF ([Leads]Inactive)-->checked<!--4DELSE--><!--4DENDIF--> >Inactive</label>
+								</div>
+								
+								<div class="span12 field-box">
+									<label>Inactive Date </label>
+									<input class="input-large datepicker" data-date-format="dd/mm/yyyy" name="Inactive_Date" type="text" id="Inactive_Date" <!--#4DIF ([Leads]InactiveDate=!00/00/0000!)-->value=""<!--4DELSE-->value="<!--#4DVAR [Leads]InactiveDate-->"<!--4DENDIF--> readonly >
+								</div>
+								
+								<div class="span12 field-box">
+									<label>Rate this Lead </label>
+									<input name="star1" type="radio" class="star" value="1" <!--#4DIF ([Leads]rating="1")-->checked<!--4DELSE--><!--4DENDIF-->/>
+								   <input name="star1" type="radio" class="star" value="2" <!--#4DIF ([Leads]rating="2")-->checked<!--4DELSE--><!--4DENDIF-->/>
+								   <input name="star1" type="radio" class="star" value="3"  <!--#4DIF ([Leads]rating="3")-->checked<!--4DELSE--><!--4DENDIF-->/>
+								   <input name="star1" type="radio" class="star" value="4" <!--#4DIF ([Leads]rating="4")-->checked<!--4DELSE--><!--4DENDIF-->/>
+								   <input name="star1" type="radio" class="star" value="5"  <!--#4DIF ([Leads]rating="5")-->checked<!--4DELSE--><!--4DENDIF-->/>
+								   
+								   <input name="rating" id="rating" type="hidden" value="<!--#4DVAR [Leads]rating-->" >
+								</div>
+								
+								
+								<div class="span12 field-box" >
+								<LABEL></LABEL>
+									<input type="submit" class="btn-glow primary" value="Submit">     
+									<input type="button" name="Submit" class="btn-glow primary" value="Add to Customer" onClick="__addtoCustomer()">     
+									<input type="button" name="Submit" class="btn-glow primary" value="Send Mail" onClick="__showEmailForm('<!--#4DHTMLVAR [Leads]uuid-->')"> 
+								
+									<a href="leads.shtml" CLASS="cancelbtn">Cancel</a>
+								</div>
+							</div>
+							<!--#4DIF (Records in selection([Leads])=1)-->
+							<div id="tabs-2" class="var_tabs" style="display:none" >
+							<table class="items" id="tbl_contact">
+							<tr class="item">
+		      				
+		      				<th>Fore Name</th>
+		      				<th>Surname</th>
+		      				<th>E-mail</th>
+			  				<th>Mobile</th>
+			 				<th>Save</th>
+			 				<th>Cancel</th>
+		     					</tr>
+		 							
+									 
+		  							<!--#4DLOOP [Lead_Contacts]--><!--#4DSCRIPT/Web_LoadLeadContactsRelated/--><!-- row -->
+		 							 <tr class="item-row" >
+		 							
+		 							 
+		 							
+									<td>
+									<span class="s_forename" ><!--#4DHTMLVAR [Lead_Contacts]Forename--></span>
+									<input class="contact_uuid" type="hidden" value="<!--#4DHTMLVAR [Lead_Contacts]uuid-->" />
+									<input type="text" class="forename" style="display:none;" value="<!--#4DHTMLVAR [Lead_Contacts]Forename-->" >
+									</td>
+									<td >
+									<span class="s_surname" ><!--#4DHTMLVAR [Lead_Contacts]Surname--></span>
+									<input type="text" class="surname" style="display:none;" value="<!--#4DHTMLVAR [Lead_Contacts]Surname-->" >
+									</td>
+									<td>
+									<span class="s_email" ><!--#4DHTMLVAR [Lead_Contacts]Email--></span>
+									<input type="text" class="email" style="display:none;" value="<!--#4DHTMLVAR [Lead_Contacts]Email-->" >
+									</td>
+									
+									<td>
+									<span class="s_mobile" ><!--#4DHTMLVAR [Lead_Contacts]Mobile--></span>
+									<input type="text" class="mobile phone" style="display:none;" value="<!--#4DHTMLVAR [Lead_Contacts]Mobile-->">
+									</td>
+									<td >
+									<a href="javascript:void(0)" class="con_editlink">Edit</a>
+									<a href="javascript:void(0)" class="con_savelink" style="display:none">Save</a>
+									 </td>	
+									 <td><a href="javascript:void(0)" class="con_removelink" >Remove</a>
+									<a href="javascript:void(0)" class="con_cancellink" style="display:none">Cancel</a>
+									</td>								
+									</tr>
+		  						<!--#4DENDLOOP-->
+		  						<tr id="hiderow">
+		   							 <td colspan="7"><a id="addcontact" href="javascript:;" title="Add a row">Add a row</a></td>
+		  						</tr>
+								</table><br/>
+								</div>
+							<div id="tabs-3" class="var_tabs" style="display:none" >
+							<table class="items" id="items">
+							<tr class="item">
+		      				
+		      				<th>Contact Name</th>
+		      				<th>Action</th>
+			  				<th>Phone</th>
+			  				<th>Owner</th>
+			 				<th>Save</th>
+			 				<th>Cancel</th>
+		     					</tr>
+		 							
+
+		  							<!--#4DLOOP [Activity]--><!--#4DSCRIPT/Web_LoadActivityRelated/--><!-- row -->
+		  
+		 							<tr class="item-row">
+		 							 
+									<td>
+									<span class="s_ContactName" ><!--#4DHTMLVAR [Activity]ContactName--></span>
+									<input class="activity_uuid" type="hidden" value="<!--#4DHTMLVAR [Activity]uuid-->" />
+									<input type="text" class="ContactName" style="display:none;" value="<!--#4DHTMLVAR [Activity]ContactName-->" >
+									</td>
+									<td >
+									<span class="s_action" ><!--#4DHTMLVAR [Activity]Action--></span>
+									<input type="text" class="action" style="display:none;" value="<!--#4DHTMLVAR [Activity]Action-->" >
+									</td>
+									<td>
+									<span class="s_phone" ><!--#4DHTMLVAR [Activity]Phone--></span>
+									<input type="text" class="phone" style="display:none;" value="<!--#4DHTMLVAR [Activity]Phone-->" >
+									</td>	
+									<td>
+									<span class="s_owner" ><!--#4DHTMLVAR [Activity]Owner--></span>
+									<input type="text" class="owner" style="display:none;" value="<!--#4DHTMLVAR [Activity]Owner-->">
+									</td>
+									<!-- 
+<td>
+									<span class="s_owner" ><!~~#4DHTMLVAR [Activity]Mobile~~></span>
+									<input type="text" class="mobile phone" style="display:none;" value="<!~~#4DHTMLVAR [Activity]Mobile~~>">
+									</td>
+ -->
+									<td>
+									<a href="javascript:void(0)" class="act_editlink">Edit</a>
+									<a href="javascript:void(0)" class="act_savelink" style="display:none">Save</a>
+									 </td>	
+									 <td><a href="javascript:void(0)" class="act_removelink" >Remove</a>
+									<a href="javascript:void(0)" class="act_cancellink" style="display:none">Cancel</a>
+									</td>								
+									</tr>
+		  						<!--#4DENDLOOP-->
+		  						<tr id="hiderow">
+		   							 <td colspan="7"><a id="addactivity" href="javascript:;" title="Add a row">Add a row</a></td>
+		  						</tr>
+								</table><br/>
+							</div><!--#4DENDIF-->
+							</div>
+							
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+    </div>
+    <!-- end main container -->
+
+	<!-- scripts -->
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+	<script src="js/jquery.uniform.min.js"></script>
+	<script src="js/jquery-ui.custom.min.js"></script>
+	<script src="js/bootstrap.datepicker.js"></script>
+	<script src="js/lead.js"></script>
+	<script src='js/jquery.MetaData.js' type="text/javascript" language="javascript"></script>
+ 	<script src='js/jquery.rating.js' type="text/javascript" language="javascript"></script>
+	<script src="js/jquery.validate.js"></script>
+ 	<script type="text/javascript" src="js/jquery-impromptu.js"></script>
+	<!-- <script type='text/javascript' src='js/lead.js'></script> -->
+	<!-- call this page plugins -->
+<script language="javascript">
+	
+function __showEmailForm(uuid)
+{
+pUrlStr='email.shtml?Lead_uuid='+uuid;
+window.location.href=pUrlStr;
+}
+
+function __addtoCustomer()
+{
+	$('#LeadsForm').attr('action', 'addtocustomer.cgi');
+	$('#LeadsForm').submit();
+}
+
+function checkphone(e)
+	{
+		var k = e.which;
+    					/* numeric inputs can come from the keypad or the numeric row at the top */
+   						 if ((k<48 || k>57) && (k!=45) && (k!=43) && (k!=40) && (k!=41) && (k!=32) && (k!=44) && (k!=46) && (k!=8) && (k!=0)) {
+        					e.preventDefault();
+							//alert("Allowed characters are 0-9, +, -, (, ), , ,, .");
+        					return false;
+    					}
+	}
+
+	$(function () {
+		// validate form on keyup and submit
+		$("#LeadsForm").validate({
+			ignore: "",
+			onkeyup: false,
+			errorClass: 'error',
+			validClass: 'valid',
+			errorElement: "em",
+			errorPlacement: function(error, element) {
+				$(element).closest('div').append(error);
+			},
+			onfocusout: false,
+			invalidHandler: function(form, validator) {
+				var errors = validator.numberOfInvalids();
+				if (errors) {                    
+					validator.errorList[0].element.focus();
+				}
+			},
+			rules: {
+				Product: { required: true  },
+				Lead_name: { required: true  },
+				Address1: { required: true  },
+				Postcode: { required: true  },
+				Country: { required: true  },
+				Source_type: { required: true  },
+				Source: { required: true  },
+				Email: { required: true, email : true  },
+			},
+		});	
+	<!--#4DIF (Records in selection([Leads])=0)-->
+		
+		var new_lead_id='<!--#4DVAR Sequence number([Leads])-->';	
+		$('#lead_id').val(new_lead_id);
+		<!--#4DELSE--><!--#4DENDIF-->
+		
+		 $("input:checkbox, input:radio").uniform();
+		 $('.datepicker').datepicker().on('changeDate', function (ev) {
+			$(this).datepicker('hide');
+		});
+		
+		$('.phone').keypress(function(e){
+						checkphone(e);
+					
+					}); 
+					$( "#tabs" ).tabs();
+					
+					
+		$('.star').click(function(){
+			$('#rating').val($('.star:checked').val());
+		});
+		
+		$('.rating-cancel').click(function(){
+			$('#rating').val('0');
+		});
+		
+	});
+</script>
+   
+	
+	
+</body>
+</html>

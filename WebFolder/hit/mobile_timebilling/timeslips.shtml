@@ -1,0 +1,181 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+<title>Tenthmatrix CRM</title>
+	
+    <meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1"/>
+	
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="robots" content="noindex, nofollow" />	
+	<link rel="stylesheet" href="css/jquery.fumobile.theme-1.1.0.min.css?" />
+	<link rel="stylesheet" href="css/jquery.mobile.structure-1.3.1.min.css" /> 
+	<link rel="stylesheet" href="css/jquery.fumobile.extra-1.1.0.css" />
+    <link rel="stylesheet" href="themes/selectedtheme.min.css" />
+	<link href="css/bootstrap-overrides.css" type="text/css" rel="stylesheet">
+	
+	<script src="js/jquery-1.7.1.min.js"></script>
+	<script>
+        $(document).bind("mobileinit", function() {
+            $.mobile.defaultPageTransition = 'slide';
+            $.mobile.page.prototype.options.addBackBtn = true;
+            $.mobile.page.prototype.options.headerTheme = 'b'; // page headers
+            $.mobile.listview.prototype.options.headerTheme = 'd'; // nested list headers
+      });
+    </script>
+	
+	<script src="js/jquery.mobile-1.3.1.min.js"></script>
+	<script src="js/swipe-carousel.min.js"></script>  
+	<script src="js/lists.js"></script>        
+    <script src="js/job_detail.js"></script>        
+
+	<script>
+		$(document).on('pageshow', '#home', function() {
+		  var home_promos = new Swipe(document.getElementById('home-promos'), { auto: 4500, speed: 1250 });
+		});
+	</script>
+	<style>
+	/* Table */
+	
+	.table-opt { font-size: 5px; width: 50%; text-align: left; border-collapse: separate;    margin-left: -12px;}
+	.table-opt th { font-weight: normal; font-size: 10px; color: #666; background: #e4e4e4; padding: 5px; font-weight: bold }
+	.table-opt td { background:#f1f0f0; border-top: 1px solid #fff; color: #666; padding: 6px }
+	.table-opt tbody tr:hover td { background: #2b89d0; color: #FFF }
+	.red { color:  #cc0000; font-style: italic }
+	</style>
+	
+</head>
+<body>
+	
+<div data-role="page" id="home" data-add-back-btn="false">
+	
+	<div data-role="header" class="head-border" data-theme="a">
+		<div style="text-align:right">
+			<a href="#" class="my-account" style="color: #FFFFFF;font-size:12px;text-decoration: none;">Sign out</a>
+		</div>
+	</div>
+	<div class="search-container" data-theme="a">
+		<div id="search-home"><a href="index.shtml"><span>Click here for Home</span></a></div>
+	</div>
+		<div data-role="content" data-theme="a">
+			<ul data-role="listview" data-inset="true">
+				<li data-role="list-divider"><span style=" color:#2B89D0; font-size:15px; font-stretch:narrower;">Timeslips</span></li>
+			</ul>
+				<button onclick="__showAllTimeslips(); return false;">All</button>
+				<button onclick="__showChargeable(); return false;">Chargeable</button>
+				<button onclick="__showNotChargeable(); return false;">Not Chargeable</button>
+				<input name="keyword" id="keyword" type="text" class="search order-search" placeholder="Enter client or staff name.." value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" />
+			<div data-role="collapsible-set" data-theme="a">
+				<table class="table-opt">
+					<thead>
+						<tr>
+							<th width="1%">Date</th>
+							<th width="1%">Project</th>
+							<th width="1%">Employee Name </th>
+							<th width="1%">Hours</th>
+							<th width="1%">Time slip Status</th>
+							<th width="1%">Estimated Amt.</th>
+						</tr>
+					</thead>
+					<tbody><!--#4DSCRIPT/Web_LoadTimeslips/-->
+						<!--#4DLOOP [Timeslips]--><!--#4DSCRIPT/Web_LoadTimeslipRelated/--><!-- row -->
+						<tr class="first">
+							<td>
+								<!--#4DVAR [Timeslips]slip_date-->
+							</td>
+							<td>
+								<a href="#"><!--#4DVAR [Projects]proj_name--></a>
+							</td>
+							<td>
+								<a href="#"><!--#4DVAR [Employees]emp_first_name--> <!--#4DVAR [Employees]emp_last_name--></a>
+							</td>
+							<td>
+								<!--#4DVAR [Timeslips]slip_hours-->
+							</td>
+							<td>
+								<span class="label label-success"><!--#4DIF ([Timeslips]billing_status=1)-->Chargeable<!--#4DELSE-->Not Chargeable<!--#4DENDIF--></span>
+							</td>
+							<td>
+								<!--#4DVAR Invoice_AmtReturnAsText([Timeslips]slip_hours*[Timeslips]slip_rate)-->
+							</td>
+						</tr>
+						<!--#4DENDLOOP-->
+					</tbody>
+				</table>
+			</div><!-- END COLLAPSIBLE SET-->
+		</div><!-- END DATA ROLE CONTENT-->
+
+    <div data-theme="a" data-role="footer" style=" background-color:#383838;">
+        <h3>
+			<span style="color:#FFF; font-size:16px;"> View  : <a href="http://billing.tenthmatrix.co.uk/admin/sign-in.shtml" rel="external" target="_blank">Main Site</a></span> 
+        </h3>
+    </div>
+    
+ </div>
+ <script>
+    
+    function __showChargeable()
+{
+pUrlStr='timeslips.shtml?keyword='+$('#keyword').val()+'&chargeable=on';
+window.location.href=pUrlStr;
+}
+
+function __showNotChargeable()
+{
+pUrlStr='timeslips.shtml?keyword='+$('#keyword').val()+'&chargeable=off';
+window.location.href=pUrlStr;
+}
+
+function __showAllTimeslips()
+{
+pUrlStr='timeslips.shtml';
+window.location.href=pUrlStr;
+}
+
+function __showTimeslips()
+{
+pUrlStr='timeslips.shtml?keyword='+$('#keyword').val();
+window.location.href=pUrlStr;
+}
+
+    
+$(document).ready(function() {
+
+$('#keyword').focus();
+
+//setup before functions
+var typingTimer;                //timer identifier
+var doneTypingInterval = 1000;  //time in ms, 5 second for example
+
+//on keyup, start the countdown
+$('#keyword').keyup(function(){
+    clearTimeout(typingTimer);
+    if ($('#keyword').val) {
+        typingTimer = setTimeout(function(){
+            //do stuff here e.g ajax call etc....
+             var v = $("#keyword").val();
+__showTimeslips();
+        }, doneTypingInterval);
+    }
+});
+
+    });
+
+    </script>
+</body>
+</html>

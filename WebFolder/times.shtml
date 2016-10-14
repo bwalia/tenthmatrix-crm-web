@@ -1,0 +1,226 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+	<!--#4DSCRIPT/Web_LoadIncluded/admin/includes/header.shtml-->
+    <link rel="stylesheet" type="text/css" href="lib/base.css" />
+	<link rel="stylesheet" type="text/css" href="css/jquery.timepicker.css" />
+</head>
+<body>
+
+	<!--#4DSCRIPT/Web_LoadIncluded/admin/includes/navbar.shtml-->
+
+     <!--#4DSCRIPT/Web_LoadIncluded/admin/includes/navigation.shtml-->
+
+	<!-- main container -->
+    <div class="content">
+        
+        <div class="container-fluid">
+            <div id="pad-wrapper" class="form-page">
+				 <div class="row-fluid header">
+                    <h3>Add New TimeSlip</h3>
+                </div>
+                <div class="row-fluid form-wrapper">
+					<!-- left column -->
+                    <div class="span9 with-sidebar">
+						<form name="Timeslip" action="SaveTimeSlip.cgi" class="form-comment" method="post" onSubmit="return ValidateForm();">                
+							<div class="field-box">
+                                <label>Task:</label>
+								<div class="ui-select span5">
+									<select name="Task_ID" name="Task_ID">
+									<!--4DLOOP  [Tasks]-->
+											<option value="<!--4DVAR [Tasks]task_id-->" name=""><!--4DVAR [Tasks]task_id--></option>
+									<!--4DENDLOOP-->
+									</select>
+								</div>
+							</div>
+							<div class="field-box">
+                                <label>Employee's ID :</label>
+								<div class="ui-select span5">
+									<select name="Employee_ID">
+										<option></option>
+										<option value="Neha kapoor" >Neha kapoor</option>
+										<option value="Virender Singh">Virender Singh</option>
+										<option value="Sandeep Shah">Sandeep Shah</option>
+										<option value="Tanima Gupta">Tanima Gupta</option>
+										<option value="Gurpreet Cheema">Gurpreet Cheema</option>
+										<option value="Harpreet Brar">Harpreet Brar</option>
+										<option value="Nitish Pal">Nitish Pal</option>
+									</select>
+								</div>
+                            </div>
+                            <div class="field-box">
+                                <label>Slip Date:</label>
+								<input name="Slip_Date" class="input-large datepicker" type="text" value="" id="datepicker">
+                            </div>
+							<div class="field-box">
+                                <label>Slip Description:</label>
+                                <textarea class="span9" rows="4" name="Slip_Description" id="Slip_Description"></textarea>
+                            </div>                            
+                            <div class="field-box">
+                                <label>Slip Timer Started:</label>
+								<input class="" type="text" value="" name="Slip_TimerStarted" id="setStartTime">
+									<table align="right" style="padding-right: 125pt;">
+										<tr>
+											<td>
+												<button id="StartTimeButton" type="button">Set current time</button>
+											</td>
+										</tr>
+									</table>                              
+                            </div>
+                            <div class="field-box">
+                                <label>Slip Timer End:</label>
+									<input class="" type="text" value="" name="Slip_Timer_End" id="setEndTIme">
+									<table align="right" style="padding-right: 125pt;">
+										<tr>
+											<td>
+												<button id="EndTimeButton" type="button">Set current time</button>
+											</td>
+										</tr>
+									</table>
+                            </div>
+                            <div class="field-box">
+                                <label>Slip Hours:</label>
+								<input class="span8" name="Slip_Hours" id="Slip_Hours" type="text" value="">
+                            </div>
+                            <div class="field-box">
+                                <label>slip timer accumulated seconds:</label>
+								<input type="text" value="" name="slip_timer_accumulated_seconds" class="span8">                                                           
+                            </div>
+							<div class="span11 field-box" style="text-align: center;">
+                                    <input type="submit" class="btn-glow primary" value="Add TimeSlip">
+                                    <span>OR</span>
+                                    <input type="reset" value="Cancel" class="reset">
+                            </div>							
+                        </form>
+                    </div>
+				</div>
+            </div>
+        </div>
+    </div>
+    <!-- end main container -->
+
+	<!-- scripts for this page -->
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/bootstrap.datepicker.js"></script>
+    <script src="js/jquery.uniform.min.js"></script>
+    <script src="js/theme.js"></script>
+	<script type="text/javascript" src="js/jquery.timepicker.js"></script>
+    <!-- call this page plugins -->
+<script language="javascript">
+function ValidateForm () {
+var msg = '';
+if (document.Timeslip.Slip_Date.value=="")
+{ msg = msg + 'Please Specify Slip Date\n'; }
+if (document.Timeslip.Slip_Hours.value=="")
+{ msg = msg + 'Please Specify Slip Hour\n'; }
+if (document.Timeslip.Slip_TimerStarted.value=="")
+{ msg = msg + 'Please Specify Slip Timer Started\n'; }
+if (document.Timeslip.Slip_Timer_End.value=="")
+{ msg = msg + 'Please Specify Slip Timer End\n'; } 
+if (document.Timeslip.slip_timer_accumulated_seconds.value=="")
+{ msg = msg + 'Please Specify Slip Timer Accumulated Seconds\n'; }
+if (document.Timeslip.Slip_Description.value=="")
+{ msg = msg + 'Please Specify Slip Description Hours\n'; }
+if (msg=="") {
+return true;
+} else {
+alert (msg);
+return false;
+}}
+</script>
+<script type="text/javascript">
+	$(function () {
+		// datepicker plugin
+		$('.datepicker').datepicker().on('changeDate', function (ev) {
+			$(this).datepicker('hide');
+		});
+
+	});
+</script>
+<script>
+var Start=0;
+var End=0;
+
+	  $(function() {
+		$('#setStartTime').timepicker({ 'step': 15 });
+		$('#StartTimeButton').on('click', function (){
+		  $('#setStartTime').timepicker('setTime', new Date());
+		  $("#setStartTime").change();
+		});
+	  });
+
+	  $(function() {
+		$('#setEndTIme').timepicker({ 'step': 15 });
+		$('#EndTimeButton').on('click', function (){
+		  $('#setEndTIme').timepicker('setTime', new Date());
+		  $("#setEndTIme").change();
+		});
+	  });
+	  
+	$(document).ready(function(){
+		
+		$("#setStartTime").change(function() {
+			Start = 0;
+			var Slip_TimerStarted = $(this).val();
+			var last2 = Slip_TimerStarted.substr(Slip_TimerStarted.length - 2);
+			var n=Slip_TimerStarted.split(":");
+			var minu= n[1].substr(0,2);
+			var StartTime = n[0];
+			StartTime= parseInt(StartTime, 10)
+			if(last2 == 'pm'){
+				StartTime= StartTime + 12;
+			}
+			//Start = StartTime + '.' + minu;
+			Start = (StartTime*60) + parseInt(minu);
+			
+			if(End!=0){
+				if(End<Start){
+					End = End+(24*60);
+				}
+				var diff= End - Start;
+				
+				var diff_min=diff%60;
+				
+				var diff_hour=(diff-diff_min)/60;
+				
+				var diff_time=diff_hour+"."+diff_min;
+				
+				$('#Slip_Hours').val(diff_time);
+			}
+		});
+		$("#setEndTIme").change(function() {
+			End = 0;
+			var Slip_TimerEnded = $(this).val();
+			var last2 = Slip_TimerEnded.substr(Slip_TimerEnded.length - 2);
+			var n=Slip_TimerEnded.split(":");
+			var minu= n[1].substr(0,2);
+			var EndTime = n[0];
+			EndTime= parseInt(EndTime, 10)
+			if(last2 == 'pm'){
+				EndTime= EndTime + 12;
+			}
+			//End = EndTime + '.' + minu;
+			End = (EndTime*60) + parseInt(minu);
+			if(Start!=0){
+				if(End<Start){
+					End = End+(24*60);
+				}
+				
+				var diff= End - Start;
+				
+				var diff_min=diff%60;
+				
+				var diff_hour=(diff-diff_min)/60;
+				
+				var diff_time=diff_hour+"."+diff_min;
+				
+				$('#Slip_Hours').val(diff_time);
+			}
+		}); 
+		
+	}); 
+</script>
+</body>
+</html>

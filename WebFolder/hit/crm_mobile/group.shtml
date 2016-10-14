@@ -1,0 +1,123 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+C_TEXT(_HTMLTITLETXT)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+
+QUERY([Groups];[Groups]uuid=_HIT_WebApp_GetField ("uuid"))
+IF (Records in selection([Groups])=0)
+_HTMLTITLETXT:="New Group"
+ELSE
+_HTMLTITLETXT:= "Edit Group"
+END IF
+
+
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+-->
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/main-header.shtml-->
+<script src="js/jquery.validate.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+	// validate signup form on keyup and submit
+	$("#DetailForm").validate({
+		rules: {
+			group_name: { required: true },
+		},
+		submitHandler: function (form) {
+				var selected_group= $('#group_users').val();  
+				$('#users_selected').val(selected_group);
+				var enabled=false;
+				if($('#enabled').is(':checked')){
+					enabled= true;
+				}
+				$.ajax({
+					type: "POST",
+					url: "savegroup.cgi",
+					data: {'uuid' : $("#uuid").val(), "group_name" : $("#group_name").val(), "notes" : $("#notes").val(), "users_selected" : $("#users_selected").val(), "enabled" : enabled},
+					dataType: "json",
+					cache: false,
+					success: function(response){
+						if(response.result){
+							window.location.href="groups.shtml";
+						}else if(response.error){
+							//__alertMessage(response.error);
+							$("#displayMsg").before(response.error);
+						}
+					},
+    				error: function(xhr, textStatus, errorThrown){
+       					//	location.reload();
+  	 				}
+				});
+			}
+	});
+});
+
+</script>
+<script type='text/javascript' src='js/customerNotes.js'></script>
+<style>
+label.error { 
+	float: left; 
+	color: red; 
+	padding-top: 1.5em; 
+	vertical-align: top; 
+}
+</style>
+</head>
+<body>
+<div data-role="page" class="jqm-demos" data-quicklinks="true">
+	<!-- header -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/top-header.shtml-->
+	<!-- /header -->
+	<div role="main" class="ui-content jqm-content">
+		<h3>Group</h3>
+		<div  class="ui-body-d ui-content">
+  			<div data-demo-html="true">
+  				<form novalidate="novalidate" data-ajax="false" name="DetailForm" id="DetailForm" action="" method="post">
+  					<input name="uuid" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="uuid">        
+					<div class="ui-field-contain" id="displayMsg">
+						<label>Group name</label>
+						<input name="group_name" type="text" value="<!--#4DVAR [Groups]group_name -->" id="group_name">
+					</div>
+  					<div class="ui-field-contain">
+						<label>Assign Users</label>
+						<input name="users_selected" type="hidden" value="" id="users_selected">
+						<select id="group_users" multiple="multiple" name="group_users" data-native-menu="false">
+						<!--#4DIF (Records in selection([Groups])=1)-->
+							<!--HIT_EXECUTE _HIT_HTMLTXT:=Web_GroupUsersHTMLPopup([Groups]uuid)-->
+						<!--#4DELSE-->
+							<!--HIT_EXECUTE _HIT_HTMLTXT:=Web_GroupUsersHTMLPopup("")-->
+						<!--#4DENDIF-->   
+						</select>
+						</div>
+  						<div class="ui-field-contain">
+							<label>Comments</label>
+							<textarea name="notes" class="span6" rows="4" id="notes"><!--#4DVAR [Groups]notes --></textarea>
+						</div>
+						<div class="ui-field-contain">
+							<label>							
+								<input name="enabled" class="span2" type="checkbox" value="true" id="enabled" <!--#4DIF ([Groups]enabled)-->checked<!--4DELSE--><!--4DENDIF--> > Enable
+							</label>                                                         
+                        </div>
+                	<button type="submit" class="ui-shadow ui-btn ui-corner-all ui-mini">Submit</button>
+					<a href="groups.shtml" data-ajax="false" class="ui-shadow ui-btn ui-corner-all ui-mini">Cancel</a>
+				</form>
+			</div>
+  		</div>
+	</div>
+	<!-- /content -->
+	<!-- panel -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/sidebar.shtml-->
+	<!-- /panel -->
+
+	<!-- footer -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/footer.shtml-->
+	<!-- /footer -->
+</div><!-- /page -->
+</body>
+</html>

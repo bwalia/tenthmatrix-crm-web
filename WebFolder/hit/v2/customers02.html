@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- BEGIN HEAD -->
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<meta content="" name="description"/>
+<meta content="" name="author"/>
+<title>Maniac - Dashboard</title>
+
+<!-- BEGIN CORE FRAMEWORK -->
+<link href="assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+<link href="assets/plugins/ionicons/css/ionicons.min.css" rel="stylesheet" />
+<link href="assets/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+<!-- END CORE FRAMEWORK -->
+
+<!-- BEGIN PLUGIN STYLES -->
+<link href="assets/plugins/animate/animate.css" rel="stylesheet" />
+<link href="assets/plugins/bootstrap-slider/css/slider.css" rel="stylesheet" />
+<link href="assets/plugins/rickshaw/rickshaw.min.css" rel="stylesheet" />
+<link href="assets/plugins/jquery-jvectormap/jquery-jvectormap-1.2.2.css" rel="stylesheet" />
+<link href="assets/plugins/bootstrap-daterangepicker/daterangepicker-bs3.css" rel="stylesheet" />
+<!-- END PLUGIN STYLES -->
+
+<!-- BEGIN THEME STYLES -->
+<link href="assets/css/material.css" rel="stylesheet" />
+<link href="assets/css/style.css" rel="stylesheet" />
+<link href="assets/css/plugins.css" rel="stylesheet" />
+<link href="assets/css/helpers.css" rel="stylesheet" />
+<link href="assets/css/responsive.css" rel="stylesheet" />
+<!-- END THEME STYLES -->
+</head>
+<!-- END HEAD -->
+<!-- BEGIN BODY -->
+<body class="fixed-leftside fixed-header">
+<!-- BEGIN HEADER -->
+<header> <a href="index.html" class="logo"><img src="assets/img/logo.png"> <span><img src="assets/img/logo-text.png" class=""></span></a>
+  <nav class="navbar navbar-static-top"> <a href="#" class="navbar-btn sidebar-toggle"> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </a>
+    <div class="navbar-header">
+      <ul class="nav navbar-nav pull-left">
+        <li><a href="#"><i class="ion-arrow-expand"></i></a></li>
+        <li><a href="#"><i class="ion-image"></i></a></li>
+        <li class="dropdown dropdown-inverse"> <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="ion-plus-round"></i></a>
+          <ul class="dropdown-menu">
+            <li> <a href="#"><i class="ion-compose"></i> New Post </a> </li>
+            <li> <a href="#"><i class="ion-person-add"></i> New User </a> </li>
+            <li> <a href="#"><i class="ion-chatbox"></i> New Comment </a> </li>
+            <li class="divider"></li>
+            <li> <a href="#" class="clearfix"><span class="pull-left">Comments</span> <span class="label bg-teal-500 pull-right">3</span></a> </li>
+            <li> <a href="#" class="clearfix"><span class="pull-left">Articles</span> <span class="label bg-red-500 pull-right">2</span></a> </li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+    <div class="navbar-right">
+      <form role="search" class="navbar-form pull-left" method="post" action="#">
+        <div class="btn-inline">
+          <input type="text" class="form-control padding-right-35" placeholder="Search..."/>
+          <button class="btn btn-link no-shadow bg-transparent no-padding padding-right-10" type="button"><i class="ion-search"></i></button>
+        </div>
+      </form>
+      <ul class="nav navbar-nav">
+        <li class="dropdown dropdown-box"> <a href="#" class="dropdown-toggle" data-toggle="dropdown"> <i class="ion-chatbox"></i> <span class="label bg-green-500 label-rounded">&nbsp;</span> </a>
+          <ul class="dropdown-menu">
+            <li class="header"><i class="ion-chatbox"></i> You have 6 messages</li>
+            <li>
+              <ul class="media-list media-content scroll">
+                <li class="media"> <a class="pull-left" href="#"> <img class="media-object img-circle width-40 height-40" src="assets/img/avatar.jpg" alt="image"> </a>
+                  <div class="media-body">
+                    <div class="clearfix"> <a href="#" class="media-heading">Randolph Kit</a> <span class="media-item">now</span> </div>
+                    <p class="box">If a client calls and asks for a quote you need to be able to respond quickly. This example quotation letter can be...</p>
+                  </div>
+                  <div class="media-footer">
+                    <div class="pull-right media-tools"> <a href="#"><i class="ion-reply"></i> reply</a> <a href="#"><i class="ion-compose"></i> edit</a> <a href="#"><i class="ion-trash-b"></i> trash</a> </div>
+                  </div>
+                </li>
+                <!-- /.media -->
+                
+                <li class="media"> <a class="pull-left" href="#"> <img class="media-object img-circle width-40 height-40" src="assets/img/avatar_3.jpg" alt="image"> </a>
+                  <div class="media-body">
+                    <div class="clearfix"> <a href="#" class="media-heading">Barry Allen</a> <span class="media-item">6 hours ago</span> </div>
+                    <p class="box unread">I do love email. Wherever possible I try to communicate asynchronously.</p>
+                  </div>
+                  <div class="media-footer">
+                    <div class="pull-right media-tools"> <a href="#"><i class="ion-reply"></i> reply</a> <a href="#"><i class="ion-compose"></i> edit</a> <a href="#"><i class="ion-trash-b"></i> trash</a> </div>
+                  </div>
+                </li>
+                <!-- /.media -->
+                
+                <li class="media"> <a class="pull-left" href="#"> <img class="media-object img-circle width-40 height-40" src="assets/img/avatar_2.jpg" alt="image"> </a>
+                  <div class="media-body">
+                    <div class="clearfix"> <a href="#" class="media-heading">Andrina Trisha</a> <span class="media-item">1 week ago</span> </div>
+                    <p class="box">Which would explain the naquadah in your blood that lets you use Goa'uld technology. </p>
+                  </div>
+                  <div class="media-footer">
+                    <div class="pull-right media-tools"> <a href="#"><i class="ion-reply"></i> reply</a> <a href="#"><i class="ion-compose"></i> edit</a> <a href="#"><i class="ion-trash-b"></i> trash</a> </div>
+                  </div>
+                </li>
+                <!-- /.media -->
+                
+                <li class="media"> <a class="pull-left" href="#"> <img class="media-object img-circle width-40 height-40" src="assets/img/avatar_4.jpg" alt="image"> </a>
+                  <div class="media-body">
+                    <div class="clearfix"> <a href="#" class="media-heading">Jean Grey</a> <span class="media-item">2 weeks ago</span> </div>
+                    <p class="box">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam consectetur magna vel elit tristique, a vehicula enim finibus.</p>
+                  </div>
+                  <div class="media-footer">
+                    <div class="pull-right media-tools"> <a href="#"><i class="ion-reply"></i> reply</a> <a href="#"><i class="ion-compose"></i> edit</a> <a href="#"><i class="ion-trash-b"></i> trash</a> </div>
+                  </div>
+                </li>
+                <!-- /.media -->
+              </ul>
+            </li>
+            <li class="footer"><a href="#">View all messages</a></li>
+          </ul>
+        </li>
+        <li class="dropdown dropdown-box dropdown-notifications"> <a href="#" class="dropdown-toggle" data-toggle="dropdown"> <i class="ion-earth"></i><span class="label bg-orange-500 label-rounded">&nbsp;</span> </a>
+          <ul class="dropdown-menu">
+            <li class="header"><i class="ion-earth"></i> You have 5 new notifications</li>
+            <li>
+              <ul>
+                <li><a href="#"><i class="ion-person-add color-green-500"></i> New user registered</a></li>
+                <li><a href="#"><i class="ion-heart color-red-500"></i> Jean <span class="bold">liked</span> your post</a></li>
+                <li><a href="#"><i class="ion-chatbox-working color-orange-500"></i> You got a message from Jean</a></li>
+                <li><a href="#" class="bg-yellow-50 color-brown-700"><i class="ion-ios-information color-light-blue-500"></i> <span class="bold">Privacy policy</span> have been changed</a></li>
+                <li><a href="#"><i class="ion-chatbubble-working color-teal-500"></i> New comments <span class="bold">waiting</span> approval</a></li>
+              </ul>
+            </li>
+            <li class="footer"><a href="#">View all notification</a></li>
+          </ul>
+        </li>
+        <li class="dropdown dropdown-box dropdown-tasks"> <a href="#" class="dropdown-toggle" data-toggle="dropdown"> <i class="ion-android-list"></i><span class="label bg-red-500 label-rounded">&nbsp;</span> </a>
+          <ul class="dropdown-menu">
+            <li class="header"><i class="ion-android-list"></i> You have 1 new task</li>
+            <li>
+              <ul>
+                <li> <a href="#">
+                  <h3>PHP Developing<small class="pull-right">32%</small></h3>
+                  <div class="progress progress-animated progress-xs">
+                    <div class="progress-bar bg-green-500" role="progressbar" aria-valuenow="32" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>
+                  </div>
+                  </a> </li>
+                <li> <a href="#">
+                  <h3>Database Repair<small class="pull-right">14%</small></h3>
+                  <div class="progress progress-animated progress-xs">
+                    <div class="progress-bar bg-orange-500" role="progressbar" aria-valuenow="14" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>
+                  </div>
+                  </a> </li>
+                <li> <a href="#">
+                  <h3>Sql Backup<small class="pull-right">65%</small></h3>
+                  <div class="progress progress-animated progress-xs">
+                    <div class="progress-bar bg-green-700" role="progressbar" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>
+                  </div>
+                  </a> </li>
+                <li> <a href="#">
+                  <h3>Create New Modules<small class="pull-right">80%</small></h3>
+                  <div class="progress progress-animated progress-xs">
+                    <div class="progress-bar bg-red-500" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>
+                  </div>
+                  </a> </li>
+              </ul>
+            </li>
+            <li class="footer"> <a href="#">View all tasks</a> </li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </nav>
+</header>
+<!-- END HEADER -->
+
+<div class="wrapper"> 
+  <!-- BEGIN LEFTSIDE -->
+  <div class="leftside">
+    <div class="sidebar"> 
+      <!-- BEGIN RPOFILE -->
+      <div class="nav-profile">
+        <div class="thumb"> <img src="assets/img/avatar.jpg" class="img-circle" alt="" /> <span class="label label-danger label-rounded">3</span> </div>
+        <div class="info"> <a href="#">John Doe</a>
+          <ul class="tools list-inline">
+            <li><a href="#" data-toggle="tooltip" title="Settings"><i class="ion-gear-a"></i></a></li>
+            <li><a href="#" data-toggle="tooltip" title="Events"><i class="ion-earth"></i></a></li>
+            <li><a href="#" data-toggle="tooltip" title="Downloads"><i class="ion-archive"></i></a></li>
+          </ul>
+        </div>
+        <a href="login.html" class="button"><i class="ion-log-out"></i></a> </div>
+      <!-- END RPOFILE --> 
+      <!-- BEGIN NAV -->
+      <div style="background: #293c4e; margin:10px 15px;" >
+        <input type="text" class="form-control" Placeholder="Search..." />
+      </div>
+      <ul class="nav-sidebar">
+        <li class="active"> <a href="index.html"> <i class="ion-home"></i> <span>Dashboard</span> </a> </li>
+        <li class="nav-dropdown"> <a href="#"> <i class="ion-beaker"></i> <span>Customers</span> <i class="ion-chevron-right pull-right"></i> </a>
+          <ul>
+            <li><a href="panels.html">View all Customers</a></li>
+            <li><a href="tiles.html">Ennter New Customer</a></li>
+            <li><a href="typography.html">Projects</a></li>
+            <li><a href="material.html">Enter New Project</a></li>
+            <li class="nav-dropdown"> <a href="#"> Customer Sets <i class="ion-chevron-right pull-right"></i> </a>
+              <ul>
+                <li><a href="#">Jobshout_Customers</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li class="nav-dropdown"> <a href="#"> <i class="ion-compose"></i> <span>Forms</span> <i class="ion-chevron-right pull-right"></i> </a>
+          <ul>
+            <li><a href="form-elements.html">Form Elements</a></li>
+            <li><a href="form-validation.html">Form Validation</a></li>
+            <li><a href="form-layouts.html">Form Layouts</a></li>
+            <li><a href="form-advanced.html">Advanced Plugins</a></li>
+            <li><a href="file-upload.html">File Upload</a></li>
+            <li><a href="text-editor.html">Text Editors</a></li>
+          </ul>
+        </li>
+        <li class="nav-dropdown"> <a href="#"> <i class="ion-navicon-round"></i> <span>Tables</span> <i class="ion-chevron-right pull-right"></i> </a>
+          <ul>
+            <li><a href="basic-tables.html">Basic tables</a></li>
+            <li><a href="data-tables.html">Data tables</a></li>
+          </ul>
+        </li>
+        <li class="nav-dropdown"> <a href="#"> <i class="ion-arrow-graph-up-right"></i> <span>Charts</span> <i class="ion-chevron-right pull-right"></i> </a>
+          <ul>
+            <li><a href="flot.html">Flot</a></li>
+            <li><a href="morris.html">Morris</a></li>
+          </ul>
+        </li>
+        <li class="nav-dropdown"> <a href="#"> <i class="ion-paper-airplane"></i> <span>Layouts</span> <i class="ion-chevron-right pull-right"></i> </a>
+          <ul>
+            <li><a href="fixed-header.html">Fixed Header</a></li>
+            <li><a href="fixed-sidebar.html">Fixed Sidebar</a></li>
+            <li><a href="fixed-layout.html">Fixed Layout</a></li>
+            <li><a href="collapsed-sidebar.html">Collapsed Sidebar</a></li>
+          </ul>
+        </li>
+        <li> <a href="calendar.html"> <i class="ion-calendar"></i> <span>Calendar</span> <span class="label bg-green-700 pull-right">NEW</span> </a> </li>
+        <li class="nav-dropdown"> <a href="#"> <i class="ion-ios-location"></i> <span>Map</span> <i class="ion-chevron-right pull-right"></i> </a>
+          <ul>
+            <li><a href="vectormap.html">Vector Map</a></li>
+            <li><a href="googlemap.html">Google Map</a></li>
+          </ul>
+        </li>
+        <li class="nav-dropdown"> <a href="#"> <i class="ion-document-text"></i> <span>Other Pages</span> <i class="ion-chevron-right pull-right"></i> </a>
+          <ul>
+            <li><a href="invoice.html">Invoice</a></li>
+            <li><a href="login.html">Login</a></li>
+            <li><a href="register.html">Register</a></li>
+            <li><a href="lockscreen.html">Lockscreen</a></li>
+            <li><a href="timeline.html">Timeline</a></li>
+            <li><a href="404.html">404 Error</a></li>
+            <li><a href="500.html">500 Error</a></li>
+            <li><a href="blank.html">Blank Page</a></li>
+          </ul>
+        </li>
+      </ul>
+      <!-- END NAV --> 
+      
+      <!-- BEGIN WIDGET -->
+      <div class="widget">
+        <div class="list">
+          <div class="title">Online Staff <a href="#" class="pull-right"><i class="ion-gear-a"></i></a></div>
+          <a href="#"> <img src="assets/img/avatar.jpg" alt="avatar" class="pull-left" />
+          <div class="name">Randolph Kit</div>
+          <i class="ion-record color-green-500 margin-right-5 font-size-10 pull-right"></i> </a> <a href="#"> <img src="assets/img/avatar_2.jpg" alt="avatar" class="pull-left" />
+          <div class="name">Andrina Trisha</div>
+          <i class="ion-record color-green-500 margin-right-5 font-size-10 pull-right"></i> </a> <a href="#"> <img src="assets/img/avatar_3.jpg" alt="avatar" class="pull-left" />
+          <div class="name">Barry Allen</div>
+          <i class="ion-record color-red-500 margin-right-5 font-size-10 pull-right"></i> </a> <a href="#"> <img src="assets/img/avatar_4.jpg" alt="avatar" class="pull-left" />
+          <div class="name">Jean Grey</div>
+          <i class="ion-record color-grey-500 margin-right-5 font-size-10 pull-right"></i> </a> </div>
+        <!-- /.list -->
+        
+        <div class="chat">
+          <div class="title">
+            <div class="pull-left"><i class="ion-record color-green-500 margin-right-5"></i> Randolph Kit</div>
+            <a href="#" class="pull-right close-chat"><i class="ion-close"></i></a></div>
+          <ul>
+            <li>
+              <div class="clearfix"> <img src="assets/img/avatar.jpg" alt="avatar" class="pull-left" />
+                <div class="message">What's Up? Anyway the new website is very cool.</div>
+              </div>
+              <span>8 minutes ago</span> </li>
+            <li>
+              <div class="clearfix"> <img src="assets/img/avatar.jpg" alt="avatar" class="pull-left" />
+                <div class="message">Can you send me a link?</div>
+              </div>
+              <span>4 minutes ago</span> </li>
+            <li class="right">
+              <div class="clearfix">
+                <div class="message">Yes, sure I will send you tomorrow via message.</div>
+              </div>
+              <span>1 minutes ago</span> </li>
+            <li>
+              <div class="clearfix"> <img src="assets/img/avatar.jpg" alt="avatar" class="pull-left" />
+                <div class="message">Thank you so much... Maniac is awesome!</div>
+              </div>
+              <span><i class="ion-checkmark"></i> Seen: 15:30</span> </li>
+          </ul>
+          <div class="footer">
+            <div class="btn-inline">
+              <input type="text" class="form-control padding-right-35" Placeholder="Type of message..." />
+              <button class="btn btn-link no-shadow no-padding margin-right-10" type="button"><i class="ion-image color-white"></i></button>
+            </div>
+          </div>
+        </div>
+        <!-- /.chat --> 
+      </div>
+      <!-- END WIDGET --> 
+    </div>
+    <!-- /.sidebar --> 
+  </div>
+  <!-- END LEFTSIDE --> 
+  
+  <!-- BEGIN RIGHTSIDE -->
+  <div class="rightside bg-grey-100"> 
+    <!-- BEGIN PAGE HEADING -->
+    <div class="page-head">
+      <h1 class="page-title">Customers</h1>
+      <!-- BEGIN BREADCRUMB -->
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="ion-home margin-right-5"></i> Dashboard</a></li>
+        <li><a href="#">Customers</a></li>
+      </ol>
+      <!-- END BREADCRUMB --> 
+    </div>
+    <!-- END PAGE HEADING -->
+         
+
+    
+    <div class="container-fluid">
+    <div class="margin-bottom-15">
+      <div class="pull-left ">
+      <div class="form-group">
+   		 <form class="form-inline">
+  	       
+     		<!-- <label for="exampleInputEmail1">Choose Action:</label>-->
+				<select class="form-control  ">
+						<option><strong>Choose Action</strong></option>
+						<option>Create New Set</option>
+						<option>Delete</option>						
+				</select>
+        <button type="button" class="btn palette-carrot btn-color btn-icon-left btn-sm  " data-toggle="modal" data-target="#myModal"> <i class="fa fa-user"></i> Set Manager</button>
+          </form>
+           </div>          
+         </div>
+         
+       
+               <div class="pull-right">
+                           	
+                 <Div class="form-inline">
+               <div class="input-group ">
+												<input type="text" class="form-control  no-border-right " placeholder="Search..." >
+													<div class="input-group-btn">
+														<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Action <span class="caret"></span></button>
+														<ul class="dropdown-menu pull-right">
+															<li><a href="#fakelink">All</a></li>
+															<li><a href="#fakelink">Active</a></li>
+															<li><a href="#fakelink">Suppliers</a></li>
+															
+														</ul>
+													</div><!-- /btn-group -->
+                                                   </div><!-- /input-group -->
+                                                 <select class="form-control  " id="" name="" >
+										<option value="">--Select VAT Claimed--</option>
+										<option value="Yes">Yes</option>
+										<option value="No">No</option>
+										<option value="Depend upon bill">Depend upon bill</option>	
+									</select>
+                                       <a href="new-customer.html" class="btn palette-carrot btn-color btn-icon-left  btn-sm  " > <i class="fa fa-user"></i> Add New</a>
+                                    
+
+												
+                                       
+  
+  	      
+	    
+             </div>                                           
+         
+      </div>
+      <div class="clearfix"></div>
+     
+    </div>
+      <div class="row">
+        <div class="col-md-12">
+       
+          <div class="panel" style="padding-top:20px;"> 
+            <!--<div class="panel-title bg-white no-border">
+									<div class="panel-head">Bootstrap Table</div>
+									<div class="panel-tools">
+									<a href="#" data-toggle="dropdown"><i class="ion-gear-a"></i></a>  
+									<ul class="dropdown-menu pull-right margin-right-10">
+										<li>
+											<a href="#"><i class="ion-gear-a"></i> Settings </a>
+										</li>
+										<li>
+											<a href="#"><i class="ion-ios-printer"></i> Print </a>
+										</li>
+										<li>
+											<a href="#"><i class="ion-refresh"></i> Refresh </a>
+										</li>
+                                    </ul>
+									<a href="#" class="panel-refresh"><i class="ion-refresh"></i></a>
+									<a href="#" class="panel-close" data-effect="fadeOutDown"><i class="ion-close"></i></a>
+								</div>
+								</div>-->
+                             
+                      
+            <div class="panel-body no-padding-top bg-white"> 
+              <!--<h3 class="color-grey-700">Basic example</h3>
+									<p class="text-light margin-bottom-30">For basic styling—light padding and only horizontal dividers—add the base class .table to any <code>table</code>. It may seem super redundant, but given the widespread use of tables for other plugins like calendars and date pickers, we've opted to isolate our custom table styles.</p>-->
+              <div class="table-responsive">
+                
+                <table class="table table-striped no-border table-hover no-margin" id="customerTable">
+										<thead>
+											<tr>
+												<th class="vertical-middle"><div class="checkbox checkbox-theme no-margin"><input type="checkbox" id="chk_all"><label for="chk_all" class="no-padding"></label></div></th>
+												<th class="vertical-middle">Customer</th>
+												<th class="vertical-middle">Telephone</th>
+												<th class="vertical-middle">City/Town</th>
+												<th class="vertical-middle">Address</th>
+												<th class="vertical-middle">E-MAIL</th>
+												<th class="vertical-middle">Total Spent</th>
+												<th class="vertical-middle">VAT Claimed</th>
+												<th class="vertical-middle">Statement</th>
+												<th class="vertical-middle">Action</th>
+											</tr>
+										</thead>
+										<tbody id="customersContent">
+												
+												
+										<tr><td class="vertical-middle"><div class="checkbox checkbox-theme no-margin"><input class="check" type="checkbox" value="EDA20C4E2EF848BDBADC8535A4CCE8FE" id="EDA20C4E2EF848BDBADC8535A4CCE8FE"><label for="EDA20C4E2EF848BDBADC8535A4CCE8FE" class="no-padding"></label></div></td><td class="vertical-middle">Rackspace</td><td class="vertical-middle">442087342500</td><td class="vertical-middle"></td><td class="vertical-middle">Rackspace LTD
+Unit 5
+Millington Road</td><td class="vertical-middle"></td><td class="vertical-middle">£0</td><td class="vertical-middle">Yes</td><td class="vertical-middle"><a title="Download Full Statement" target="_blank" href="statement_preview.shtml?uuid=EDA20C4E2EF848BDBADC8535A4CCE8FE&amp;token=0.08346860879100859&amp;preview=pdf&amp;full=true"><i class="fa fa-download"></i></a>&nbsp;</td><td class="vertical-middle"><a href="customer.shtml?uuid=EDA20C4E2EF848BDBADC8535A4CCE8FE"><i class="fa fa-pencil"></i></a></td></tr><tr><td class="vertical-middle"><div class="checkbox checkbox-theme no-margin"><input class="check" type="checkbox" value="C73B1337CF214B41A6D80BA4D028F115" id="C73B1337CF214B41A6D80BA4D028F115"><label for="C73B1337CF214B41A6D80BA4D028F115" class="no-padding"></label></div></td><td class="vertical-middle">Test Unlimited</td><td class="vertical-middle">077890456123</td><td class="vertical-middle">Bicker Town</td><td class="vertical-middle">12 Wafflers Avenue</td><td class="vertical-middle">rhead@testunlimited.co.uk</td><td class="vertical-middle">£0</td><td class="vertical-middle">Yes</td><td class="vertical-middle"><a title="Download Full Statement" target="_blank" href="statement_preview.shtml?uuid=C73B1337CF214B41A6D80BA4D028F115&amp;token=0.07989022810943425&amp;preview=pdf&amp;full=true"><i class="fa fa-download"></i></a>&nbsp;</td><td class="vertical-middle"><a href="customer.shtml?uuid=C73B1337CF214B41A6D80BA4D028F115"><i class="fa fa-pencil"></i></a></td></tr><tr><td class="vertical-middle"><div class="checkbox checkbox-theme no-margin"><input class="check" type="checkbox" value="F6C1187665BD4BA0A6B8C713F565A883" id="F6C1187665BD4BA0A6B8C713F565A883"><label for="F6C1187665BD4BA0A6B8C713F565A883" class="no-padding"></label></div></td><td class="vertical-middle">window &amp; door </td><td class="vertical-middle"></td><td class="vertical-middle"></td><td class="vertical-middle">Unit 1A
+Barncoose Industrial Estate </td><td class="vertical-middle">sales@windowrepairshop.co.uk</td><td class="vertical-middle">£0</td><td class="vertical-middle"></td><td class="vertical-middle"><a title="Download Full Statement" target="_blank" href="statement_preview.shtml?uuid=F6C1187665BD4BA0A6B8C713F565A883&amp;token=0.2550575789064169&amp;preview=pdf&amp;full=true"><i class="fa fa-download"></i></a>&nbsp;</td><td class="vertical-middle"><a href="customer.shtml?uuid=F6C1187665BD4BA0A6B8C713F565A883"><i class="fa fa-pencil"></i></a></td></tr><tr><td class="vertical-middle"><div class="checkbox checkbox-theme no-margin"><input class="check" type="checkbox" value="18A26A11A9C249A1AC7352324FBC382D" id="18A26A11A9C249A1AC7352324FBC382D"><label for="18A26A11A9C249A1AC7352324FBC382D" class="no-padding"></label></div></td><td class="vertical-middle">Zen</td><td class="vertical-middle">08450589000</td><td class="vertical-middle"></td><td class="vertical-middle">Zen
+sandbrook park, 
+Rochdale OL11 1RY</td><td class="vertical-middle">customerbilling@zen.co.uk</td><td class="vertical-middle">£0</td><td class="vertical-middle"></td><td class="vertical-middle"><a title="Download Full Statement" target="_blank" href="statement_preview.shtml?uuid=18A26A11A9C249A1AC7352324FBC382D&amp;token=0.5853653494268656&amp;preview=pdf&amp;full=true"><i class="fa fa-download"></i></a>&nbsp;</td><td class="vertical-middle"><a href="customer.shtml?uuid=18A26A11A9C249A1AC7352324FBC382D"><i class="fa fa-pencil"></i></a></td></tr><tr><td class="vertical-middle"><div class="checkbox checkbox-theme no-margin"><input class="check" type="checkbox" value="7724E7CD65FE40D69A86F007F44B097A" id="7724E7CD65FE40D69A86F007F44B097A"><label for="7724E7CD65FE40D69A86F007F44B097A" class="no-padding"></label></div></td><td class="vertical-middle">Worldpay</td><td class="vertical-middle"></td><td class="vertical-middle"></td><td class="vertical-middle">Worldpay (UK) LTD
+Victory House
+</td><td class="vertical-middle"></td><td class="vertical-middle">£0</td><td class="vertical-middle"></td><td class="vertical-middle"><a title="Download Full Statement" target="_blank" href="statement_preview.shtml?uuid=7724E7CD65FE40D69A86F007F44B097A&amp;token=0.06888774898834527&amp;preview=pdf&amp;full=true"><i class="fa fa-download"></i></a>&nbsp;</td><td class="vertical-middle"><a href="customer.shtml?uuid=7724E7CD65FE40D69A86F007F44B097A"><i class="fa fa-pencil"></i></a></td></tr><tr><td class="vertical-middle"><div class="checkbox checkbox-theme no-margin"><input class="check" type="checkbox" value="B0A3DAEF40414020858E005E9901221D" id="B0A3DAEF40414020858E005E9901221D"><label for="B0A3DAEF40414020858E005E9901221D" class="no-padding"></label></div></td><td class="vertical-middle">Wondertree cafe</td><td class="vertical-middle"></td><td class="vertical-middle"></td><td class="vertical-middle">Wondertree cafe
+UNIT RU2019 UPPER LEVEL </td><td class="vertical-middle"></td><td class="vertical-middle">£0</td><td class="vertical-middle"></td><td class="vertical-middle"><a title="Download Full Statement" target="_blank" href="statement_preview.shtml?uuid=B0A3DAEF40414020858E005E9901221D&amp;token=0.034530424512922764&amp;preview=pdf&amp;full=true"><i class="fa fa-download"></i></a>&nbsp;</td><td class="vertical-middle"><a href="customer.shtml?uuid=B0A3DAEF40414020858E005E9901221D"><i class="fa fa-pencil"></i></a></td></tr><tr><td class="vertical-middle"><div class="checkbox checkbox-theme no-margin"><input class="check" type="checkbox" value="13394C18EE224BF1925A7A303BFF8E37" id="13394C18EE224BF1925A7A303BFF8E37"><label for="13394C18EE224BF1925A7A303BFF8E37" class="no-padding"></label></div></td><td class="vertical-middle">wirebox</td><td class="vertical-middle"></td><td class="vertical-middle"></td><td class="vertical-middle">wirebox
+2 caxton way
+watford Business park
+</td><td class="vertical-middle"></td><td class="vertical-middle">£0</td><td class="vertical-middle"></td><td class="vertical-middle"><a title="Download Full Statement" target="_blank" href="statement_preview.shtml?uuid=13394C18EE224BF1925A7A303BFF8E37&amp;token=0.3312701960094273&amp;preview=pdf&amp;full=true"><i class="fa fa-download"></i></a>&nbsp;</td><td class="vertical-middle"><a href="customer.shtml?uuid=13394C18EE224BF1925A7A303BFF8E37"><i class="fa fa-pencil"></i></a></td></tr><tr><td class="vertical-middle"><div class="checkbox checkbox-theme no-margin"><input class="check" type="checkbox" value="DFAD469CA9AE4B8993DFC3FE286A1535" id="DFAD469CA9AE4B8993DFC3FE286A1535"><label for="DFAD469CA9AE4B8993DFC3FE286A1535" class="no-padding"></label></div></td><td class="vertical-middle">Windsor Telecom</td><td class="vertical-middle">03331234000</td><td class="vertical-middle"></td><td class="vertical-middle">Windsor Telecom
+First Floor
+</td><td class="vertical-middle">accounts@windsor-telecom.co.uk</td><td class="vertical-middle">£0</td><td class="vertical-middle"></td><td class="vertical-middle"><a title="Download Full Statement" target="_blank" href="statement_preview.shtml?uuid=DFAD469CA9AE4B8993DFC3FE286A1535&amp;token=0.7771401298232377&amp;preview=pdf&amp;full=true"><i class="fa fa-download"></i></a>&nbsp;</td><td class="vertical-middle"><a href="customer.shtml?uuid=DFAD469CA9AE4B8993DFC3FE286A1535"><i class="fa fa-pencil"></i></a></td></tr><tr><td class="vertical-middle"><div class="checkbox checkbox-theme no-margin"><input class="check" type="checkbox" value="91459D1911AB4DC9964D9F99D779B762" id="91459D1911AB4DC9964D9F99D779B762"><label for="91459D1911AB4DC9964D9F99D779B762" class="no-padding"></label></div></td><td class="vertical-middle">wagamama Limited</td><td class="vertical-middle">0172 7865122</td><td class="vertical-middle"></td><td class="vertical-middle">wagamama Limited
+christopher place
+AL3 5DQ
+</td><td class="vertical-middle"></td><td class="vertical-middle">£0</td><td class="vertical-middle"></td><td class="vertical-middle"><a title="Download Full Statement" target="_blank" href="statement_preview.shtml?uuid=91459D1911AB4DC9964D9F99D779B762&amp;token=0.7473148689605296&amp;preview=pdf&amp;full=true"><i class="fa fa-download"></i></a>&nbsp;</td><td class="vertical-middle"><a href="customer.shtml?uuid=91459D1911AB4DC9964D9F99D779B762"><i class="fa fa-pencil"></i></a></td></tr><tr><td class="vertical-middle"><div class="checkbox checkbox-theme no-margin"><input class="check" type="checkbox" value="4136E4EBB28F4BE5B56FF62C03714FE4" id="4136E4EBB28F4BE5B56FF62C03714FE4"><label for="4136E4EBB28F4BE5B56FF62C03714FE4" class="no-padding"></label></div></td><td class="vertical-middle">Vonage</td><td class="vertical-middle"></td><td class="vertical-middle"></td><td class="vertical-middle">Brook House
+229-243 Shepherds Bush Road </td><td class="vertical-middle"></td><td class="vertical-middle">£0</td><td class="vertical-middle"></td><td class="vertical-middle"><a title="Download Full Statement" target="_blank" href="statement_preview.shtml?uuid=4136E4EBB28F4BE5B56FF62C03714FE4&amp;token=0.2933938030619174&amp;preview=pdf&amp;full=true"><i class="fa fa-download"></i></a>&nbsp;</td><td class="vertical-middle"><a href="customer.shtml?uuid=4136E4EBB28F4BE5B56FF62C03714FE4"><i class="fa fa-pencil"></i></a></td></tr><tr><td class="vertical-middle"><div class="checkbox checkbox-theme no-margin"><input class="check" type="checkbox" value="6450093791A84AAD8EFD644040AC8ABA" id="6450093791A84AAD8EFD644040AC8ABA"><label for="6450093791A84AAD8EFD644040AC8ABA" class="no-padding"></label></div></td><td class="vertical-middle">Virgin Media</td><td class="vertical-middle">08000520800</td><td class="vertical-middle"></td><td class="vertical-middle">cable House
+2-8 Frenchwood Avenue</td><td class="vertical-middle"></td><td class="vertical-middle">£0</td><td class="vertical-middle"></td><td class="vertical-middle"><a title="Download Full Statement" target="_blank" href="statement_preview.shtml?uuid=6450093791A84AAD8EFD644040AC8ABA&amp;token=0.8603017730638385&amp;preview=pdf&amp;full=true"><i class="fa fa-download"></i></a>&nbsp;</td><td class="vertical-middle"><a href="customer.shtml?uuid=6450093791A84AAD8EFD644040AC8ABA"><i class="fa fa-pencil"></i></a></td></tr><tr><td class="vertical-middle"><div class="checkbox checkbox-theme no-margin"><input class="check" type="checkbox" value="A7CA554641B84A0E83E23B3A31FE45EF" id="A7CA554641B84A0E83E23B3A31FE45EF"><label for="A7CA554641B84A0E83E23B3A31FE45EF" class="no-padding"></label></div></td><td class="vertical-middle">Unicom</td><td class="vertical-middle">01619464444</td><td class="vertical-middle"></td><td class="vertical-middle">Unicom
+Universal House
+Longley Lane 
+</td><td class="vertical-middle">info@switchingon.com</td><td class="vertical-middle">£0</td><td class="vertical-middle"></td><td class="vertical-middle"><a title="Download Full Statement" target="_blank" href="statement_preview.shtml?uuid=A7CA554641B84A0E83E23B3A31FE45EF&amp;token=0.11892117257229984&amp;preview=pdf&amp;full=true"><i class="fa fa-download"></i></a>&nbsp;</td><td class="vertical-middle"><a href="customer.shtml?uuid=A7CA554641B84A0E83E23B3A31FE45EF"><i class="fa fa-pencil"></i></a></td></tr><tr><td class="vertical-middle"><div class="checkbox checkbox-theme no-margin"><input class="check" type="checkbox" value="B05B0E519FC14E87B142DDAB8A9CFE3B" id="B05B0E519FC14E87B142DDAB8A9CFE3B"><label for="B05B0E519FC14E87B142DDAB8A9CFE3B" class="no-padding"></label></div></td><td class="vertical-middle">UKFast.Net Limited</td><td class="vertical-middle"></td><td class="vertical-middle"></td><td class="vertical-middle">UKFast.Net Limited
+UKFast campus
+</td><td class="vertical-middle"></td><td class="vertical-middle">£0</td><td class="vertical-middle"></td><td class="vertical-middle"><a title="Download Full Statement" target="_blank" href="statement_preview.shtml?uuid=B05B0E519FC14E87B142DDAB8A9CFE3B&amp;token=0.21542342589236796&amp;preview=pdf&amp;full=true"><i class="fa fa-download"></i></a>&nbsp;</td><td class="vertical-middle"><a href="customer.shtml?uuid=B05B0E519FC14E87B142DDAB8A9CFE3B"><i class="fa fa-pencil"></i></a></td></tr><tr><td class="vertical-middle"><div class="checkbox checkbox-theme no-margin"><input class="check" type="checkbox" value="7820C7DAF19745DDB97962E1E08F3E94" id="7820C7DAF19745DDB97962E1E08F3E94"><label for="7820C7DAF19745DDB97962E1E08F3E94" class="no-padding"></label></div></td><td class="vertical-middle">UK Dedicated</td><td class="vertical-middle"></td><td class="vertical-middle"></td><td class="vertical-middle">UK Dedicated
+3 centro, Boundary way , </td><td class="vertical-middle"></td><td class="vertical-middle">£0</td><td class="vertical-middle"></td><td class="vertical-middle"><a title="Download Full Statement" target="_blank" href="statement_preview.shtml?uuid=7820C7DAF19745DDB97962E1E08F3E94&amp;token=0.8448230470530689&amp;preview=pdf&amp;full=true"><i class="fa fa-download"></i></a>&nbsp;</td><td class="vertical-middle"><a href="customer.shtml?uuid=7820C7DAF19745DDB97962E1E08F3E94"><i class="fa fa-pencil"></i></a></td></tr><tr><td class="vertical-middle"><div class="checkbox checkbox-theme no-margin"><input class="check" type="checkbox" value="84DBB74566324128BC9C98E4AC88899A" id="84DBB74566324128BC9C98E4AC88899A"><label for="84DBB74566324128BC9C98E4AC88899A" class="no-padding"></label></div></td><td class="vertical-middle">Toolstation Hemel hempstead</td><td class="vertical-middle"></td><td class="vertical-middle"></td><td class="vertical-middle">Unit10, MCDonald BusinessPark
+MaylandsAvenue</td><td class="vertical-middle"></td><td class="vertical-middle">£0</td><td class="vertical-middle"></td><td class="vertical-middle"><a title="Download Full Statement" target="_blank" href="statement_preview.shtml?uuid=84DBB74566324128BC9C98E4AC88899A&amp;token=0.12987320683896542&amp;preview=pdf&amp;full=true"><i class="fa fa-download"></i></a>&nbsp;</td><td class="vertical-middle"><a href="customer.shtml?uuid=84DBB74566324128BC9C98E4AC88899A"><i class="fa fa-pencil"></i></a></td></tr><tr><td class="vertical-middle"><div class="checkbox checkbox-theme no-margin"><input class="check" type="checkbox" value="D3EC2B856BA245F8B57A9674AAD124A6" id="D3EC2B856BA245F8B57A9674AAD124A6"><label for="D3EC2B856BA245F8B57A9674AAD124A6" class="no-padding"></label></div></td><td class="vertical-middle">Three.co.uk</td><td class="vertical-middle">07414860106</td><td class="vertical-middle"></td><td class="vertical-middle">Three.co.uk
+3
+36 The Harlequin Centre
+</td><td class="vertical-middle"></td><td class="vertical-middle">£0</td><td class="vertical-middle"></td><td class="vertical-middle"><a title="Download Full Statement" target="_blank" href="statement_preview.shtml?uuid=D3EC2B856BA245F8B57A9674AAD124A6&amp;token=0.744424180360511&amp;preview=pdf&amp;full=true"><i class="fa fa-download"></i></a>&nbsp;</td><td class="vertical-middle"><a href="customer.shtml?uuid=D3EC2B856BA245F8B57A9674AAD124A6"><i class="fa fa-pencil"></i></a></td></tr><tr><td class="vertical-middle"><div class="checkbox checkbox-theme no-margin"><input class="check" type="checkbox" value="AAE55EFCA0B34F51BE7DCE6C0286D24C" id="AAE55EFCA0B34F51BE7DCE6C0286D24C"><label for="AAE55EFCA0B34F51BE7DCE6C0286D24C" class="no-padding"></label></div></td><td class="vertical-middle">Telestream</td><td class="vertical-middle"></td><td class="vertical-middle"></td><td class="vertical-middle">Avangate BV 
+Prins Hendriklaan 26 II,1075 BD</td><td class="vertical-middle"></td><td class="vertical-middle">£0</td><td class="vertical-middle"></td><td class="vertical-middle"><a title="Download Full Statement" target="_blank" href="statement_preview.shtml?uuid=AAE55EFCA0B34F51BE7DCE6C0286D24C&amp;token=0.8432807207573205&amp;preview=pdf&amp;full=true"><i class="fa fa-download"></i></a>&nbsp;</td><td class="vertical-middle"><a href="customer.shtml?uuid=AAE55EFCA0B34F51BE7DCE6C0286D24C"><i class="fa fa-pencil"></i></a></td></tr><tr><td class="vertical-middle"><div class="checkbox checkbox-theme no-margin"><input class="check" type="checkbox" value="648C8C2168554181A74C6FEA4236D24F" id="648C8C2168554181A74C6FEA4236D24F"><label for="648C8C2168554181A74C6FEA4236D24F" class="no-padding"></label></div></td><td class="vertical-middle">Staples</td><td class="vertical-middle">03444727993</td><td class="vertical-middle"></td><td class="vertical-middle">Unit1 London Road Retail park
+Hemel Hempsted</td><td class="vertical-middle"></td><td class="vertical-middle">£0</td><td class="vertical-middle"></td><td class="vertical-middle"><a title="Download Full Statement" target="_blank" href="statement_preview.shtml?uuid=648C8C2168554181A74C6FEA4236D24F&amp;token=0.4886993339750916&amp;preview=pdf&amp;full=true"><i class="fa fa-download"></i></a>&nbsp;</td><td class="vertical-middle"><a href="customer.shtml?uuid=648C8C2168554181A74C6FEA4236D24F"><i class="fa fa-pencil"></i></a></td></tr><tr><td class="vertical-middle"><div class="checkbox checkbox-theme no-margin"><input class="check" type="checkbox" value="A77C6D07BA5546958BB67B7C167CDC66" id="A77C6D07BA5546958BB67B7C167CDC66"><label for="A77C6D07BA5546958BB67B7C167CDC66" class="no-padding"></label></div></td><td class="vertical-middle">Sendgrid</td><td class="vertical-middle"></td><td class="vertical-middle"></td><td class="vertical-middle">Sendgrid
+1401 Walnut street, Suite 500
+</td><td class="vertical-middle"></td><td class="vertical-middle">£0</td><td class="vertical-middle"></td><td class="vertical-middle"><a title="Download Full Statement" target="_blank" href="statement_preview.shtml?uuid=A77C6D07BA5546958BB67B7C167CDC66&amp;token=0.37106557888910174&amp;preview=pdf&amp;full=true"><i class="fa fa-download"></i></a>&nbsp;</td><td class="vertical-middle"><a href="customer.shtml?uuid=A77C6D07BA5546958BB67B7C167CDC66"><i class="fa fa-pencil"></i></a></td></tr><tr><td class="vertical-middle"><div class="checkbox checkbox-theme no-margin"><input class="check" type="checkbox" value="7496740258144B86AD61146BCE92EE6D" id="7496740258144B86AD61146BCE92EE6D"><label for="7496740258144B86AD61146BCE92EE6D" class="no-padding"></label></div></td><td class="vertical-middle">Screwfix</td><td class="vertical-middle">0500 41 41 41</td><td class="vertical-middle"></td><td class="vertical-middle">Screwfix
+Screwfix Direct Ltd, Trade House,</td><td class="vertical-middle"></td><td class="vertical-middle">£0</td><td class="vertical-middle"></td><td class="vertical-middle"><a title="Download Full Statement" target="_blank" href="statement_preview.shtml?uuid=7496740258144B86AD61146BCE92EE6D&amp;token=0.4045295270625502&amp;preview=pdf&amp;full=true"><i class="fa fa-download"></i></a>&nbsp;</td><td class="vertical-middle"><a href="customer.shtml?uuid=7496740258144B86AD61146BCE92EE6D"><i class="fa fa-pencil"></i></a></td></tr><tr><td class="vertical-middle"><div class="checkbox checkbox-theme no-margin"><input class="check" type="checkbox" value="F5F5B2607B654F32A86853D2AD86FE38" id="F5F5B2607B654F32A86853D2AD86FE38"><label for="F5F5B2607B654F32A86853D2AD86FE38" class="no-padding"></label></div></td><td class="vertical-middle">Sainsburys</td><td class="vertical-middle"></td><td class="vertical-middle">London</td><td class="vertical-middle">sainssbury's supermarkets Ltd. 
+33 Holborn </td><td class="vertical-middle"></td><td class="vertical-middle">£0</td><td class="vertical-middle"></td><td class="vertical-middle"><a title="Download Full Statement" target="_blank" href="statement_preview.shtml?uuid=F5F5B2607B654F32A86853D2AD86FE38&amp;token=0.701486102771014&amp;preview=pdf&amp;full=true"><i class="fa fa-download"></i></a>&nbsp;</td><td class="vertical-middle"><a href="customer.shtml?uuid=F5F5B2607B654F32A86853D2AD86FE38"><i class="fa fa-pencil"></i></a></td></tr><tr><td class="vertical-middle"><div class="checkbox checkbox-theme no-margin"><input class="check" type="checkbox" value="BF6516CB76A540DAB43CC02CAE4E3155" id="BF6516CB76A540DAB43CC02CAE4E3155"><label for="BF6516CB76A540DAB43CC02CAE4E3155" class="no-padding"></label></div></td><td class="vertical-middle">Red Lion</td><td class="vertical-middle">01442 213594</td><td class="vertical-middle"></td><td class="vertical-middle">Red Lion
+waterend
+Herts, </td><td class="vertical-middle"></td><td class="vertical-middle">£0</td><td class="vertical-middle"></td><td class="vertical-middle"><a title="Download Full Statement" target="_blank" href="statement_preview.shtml?uuid=BF6516CB76A540DAB43CC02CAE4E3155&amp;token=0.7425125679001212&amp;preview=pdf&amp;full=true"><i class="fa fa-download"></i></a>&nbsp;</td><td class="vertical-middle"><a href="customer.shtml?uuid=BF6516CB76A540DAB43CC02CAE4E3155"><i class="fa fa-pencil"></i></a></td></tr><tr><td class="vertical-middle"><div class="checkbox checkbox-theme no-margin"><input class="check" type="checkbox" value="A154E2F34C5F4A5DB6D2DE4DA80B79B1" id="A154E2F34C5F4A5DB6D2DE4DA80B79B1"><label for="A154E2F34C5F4A5DB6D2DE4DA80B79B1" class="no-padding"></label></div></td><td class="vertical-middle">JS Consultancy</td><td class="vertical-middle">01462 433033</td><td class="vertical-middle"></td><td class="vertical-middle">2 Langley End
+Hitchin, Hertfordshire,</td><td class="vertical-middle">jenny@jsconsult.co.uk</td><td class="vertical-middle">£0</td><td class="vertical-middle"></td><td class="vertical-middle"><a title="Download Full Statement" target="_blank" href="statement_preview.shtml?uuid=A154E2F34C5F4A5DB6D2DE4DA80B79B1&amp;token=0.6110529766883701&amp;preview=pdf&amp;full=true"><i class="fa fa-download"></i></a>&nbsp;</td><td class="vertical-middle"><a href="customer.shtml?uuid=A154E2F34C5F4A5DB6D2DE4DA80B79B1"><i class="fa fa-pencil"></i></a></td></tr><tr><td class="vertical-middle"><div class="checkbox checkbox-theme no-margin"><input class="check" type="checkbox" value="FB1498EB0DB6408CB48F04EEF02456DC" id="FB1498EB0DB6408CB48F04EEF02456DC"><label for="FB1498EB0DB6408CB48F04EEF02456DC" class="no-padding"></label></div></td><td class="vertical-middle">Hillarys Blinds Ltd</td><td class="vertical-middle">01159617420</td><td class="vertical-middle"></td><td class="vertical-middle">colwick Business park,
+private Road no.2, 
+</td><td class="vertical-middle">enquiries@hillarys.co.uk</td><td class="vertical-middle">£0</td><td class="vertical-middle"></td><td class="vertical-middle"><a title="Download Full Statement" target="_blank" href="statement_preview.shtml?uuid=FB1498EB0DB6408CB48F04EEF02456DC&amp;token=0.2231710236519575&amp;preview=pdf&amp;full=true"><i class="fa fa-download"></i></a>&nbsp;</td><td class="vertical-middle"><a href="customer.shtml?uuid=FB1498EB0DB6408CB48F04EEF02456DC"><i class="fa fa-pencil"></i></a></td></tr><tr><td class="vertical-middle"><div class="checkbox checkbox-theme no-margin"><input class="check" type="checkbox" value="0E697C0347876B48B35E72D88E4401C7" id="0E697C0347876B48B35E72D88E4401C7"><label for="0E697C0347876B48B35E72D88E4401C7" class="no-padding"></label></div></td><td class="vertical-middle">promoprint</td><td class="vertical-middle"></td><td class="vertical-middle"></td><td class="vertical-middle">Wilsom Multiplex  t/a promoprint
+Ewood Hall,</td><td class="vertical-middle">sales@promoprint.co.uk</td><td class="vertical-middle">£0</td><td class="vertical-middle"></td><td class="vertical-middle"><a title="Download Full Statement" target="_blank" href="statement_preview.shtml?uuid=0E697C0347876B48B35E72D88E4401C7&amp;token=0.7391257875133306&amp;preview=pdf&amp;full=true"><i class="fa fa-download"></i></a>&nbsp;</td><td class="vertical-middle"><a href="customer.shtml?uuid=0E697C0347876B48B35E72D88E4401C7"><i class="fa fa-pencil"></i></a></td></tr></tbody>
+									</table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- /.col --> 
+      </div>
+      <!-- /.row --> 
+      
+      <!-- BEGIN FOOTER -->
+      <footer>
+        <div class="pull-left"> <span class="pull-left margin-right-15">&copy; 2015 Maniac by YAKUZI.</span>
+          <ul class="list-inline pull-left">
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Terms of Use</a></li>
+          </ul>
+        </div>
+      </footer>
+      <!-- END FOOTER --> 
+    </div>
+    <!-- /.container-fluid --> 
+  </div>
+  <!-- /.rightside --> 
+</div>
+<!-- /.wrapper --> 
+<!-- END CONTENT --> 
+
+<!-- BEGIN JAVASCRIPTS --> 
+
+<!-- BEGIN CORE PLUGINS --> 
+<div id="myModal" class="modal  fade in" role="dialog"  data-backdrop="true">
+       
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header" style="background:#e67e22;">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				<h3 class="modal-title" style="font-size:18px; color:#fff; line-height:normal;">Set Manager</h3>
+			</div>
+			<div class="modal-body">
+				<form action="">
+					<!--<p class="sepH_c"><span class="label label-default">Form elemets in modal window</span></p>-->
+					<p><span class="label-default" id="set_mgr_msg" style="color:#006600"></span><span class="label-default" id="set_mgr_err" style="color:#FF0000"></span></p>
+					
+					<div>
+						<select name="sets_list" id="sets_list" class="form-control" size="10" style="width:100%">
+						 
+												
+						<option value="CADD8A72-D610-4985-8AD7-9BB14E844902">Jobshout_Customers</option>
+						
+						</select>
+					</div>
+					
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn palette-carrot btn-color btn-sm" onclick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); add_new_set()">Add new Set</button>
+				
+				
+				<button type="button" class="btn palette-carrot btn-color btn-sm" style="margin-left:0px;" onclick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); load_from_set($('#sets_list').val(), $('#sets_list option:selected').text())">Load</button>
+				<div class="btn-group">
+				<button type="button" class="btn palette-carrot btn-color btn-sm">Delete</button>
+				<button type="button" class="btn palette-carrot btn-color btn-sm  dropdown-toggle" data-toggle="dropdown">
+        <span class="caret"></span>
+          </button>
+      <ul class="dropdown-menu" role="menu" style="text-align:left">
+        <li><a href="javascript:void(0)" onclick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); del_set($('#sets_list').val(),$('#sets_list option:selected').text(),1)">Delete Selected Set</a></li>
+         <li><a href="javascript:void(0)" onclick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); del_set($('#sets_list').val(),$('#sets_list option:selected').text(),2)">Delete Contacts in selected set</a></li>
+		 <li><a href="javascript:void(0)" onclick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); del_set($('#sets_list').val(),$('#sets_list option:selected').text(),3)">Delete Customers in selected set</a></li>
+		 </ul>
+		 </div>
+				<button type="button" class="btn btn-primary btn-sm" data-dismiss="modal">OK</button>
+			</div>
+		</div>
+	</div>
+</div>
+<script src="assets/plugins/jquery-1.11.1.min.js" type="text/javascript"></script> 
+<script src="assets/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script> 
+<script src="assets/plugins/bootstrap/js/holder.js"></script> 
+<script src="assets/plugins/pace/pace.min.js" type="text/javascript"></script> 
+<script src="assets/plugins/slimScroll/jquery.slimscroll.min.js" type="text/javascript"></script> 
+<script src="assets/js/core.js" type="text/javascript"></script> 
+<!-- END CORE PLUGINS --> 
+
+<!-- flot chart --> 
+<script src="assets/plugins/flot/jquery.flot.min.js" type="text/javascript"></script> 
+<script src="assets/plugins/flot/jquery.flot.grow.js" type="text/javascript"></script> 
+<script src="assets/plugins/flot/jquery.flot.resize.min.js" type="text/javascript"></script> 
+
+<!-- bootstrap slider --> 
+<script src="assets/plugins/bootstrap-slider/js/bootstrap-slider.js" type="text/javascript"></script> 
+
+<!-- datepicker --> 
+<script src="assets/plugins/bootstrap-daterangepicker/moment.min.js" type="text/javascript"></script> 
+<script src="assets/plugins/bootstrap-daterangepicker/daterangepicker.js" type="text/javascript"></script> 
+
+<!-- vectormap --> 
+<script src="assets/plugins/jquery-jvectormap/jquery-jvectormap-1.2.2.min.js" type="text/javascript"></script> 
+<script src="assets/plugins/jquery-jvectormap/jquery-jvectormap-europe-merc-en.js" type="text/javascript"></script> 
+
+<!-- counter --> 
+<script src="assets/plugins/jquery-countTo/jquery.countTo.js" type="text/javascript"></script> 
+
+<!-- rickshaw --> 
+<script src="assets/plugins/rickshaw/vendor/d3.v3.js" type="text/javascript"></script> 
+<script src="assets/plugins/rickshaw/rickshaw.min.js" type="text/javascript"></script> 
+
+<!-- maniac --> 
+<script src="assets/js/maniac.js" type="text/javascript"></script> 
+
+<!-- dashboard --> 
+<script type="text/javascript">
+		maniac.loadchart();
+		maniac.loadvectormap();
+		maniac.loadbsslider();
+		maniac.loadrickshaw();
+		maniac.loadcounter();
+		maniac.loadprogress();
+		maniac.loaddaterangepicker();
+	</script> 
+
+<!-- END JAVASCRIPTS -->
+</body>
+<!-- END BODY -->
+</html>

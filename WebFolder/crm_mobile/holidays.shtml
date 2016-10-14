@@ -1,0 +1,176 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml?url="+HTTPD_DocumentURI)
+end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+
+_HIT_HTMLTXT:=_HIT_HTTP_GetReferer
+-->
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/main-header.shtml-->
+<style>
+
+.table-opt tbody tr:hover td a { color: #FFF!important; }
+.table-opt tbody tr:hover td a:hover { color: #FFF; text-decoration:underline}
+</style>
+
+<script type="text/javascript">
+function days_between(date1, date2) {
+	var end_date_arr= date1.split("/");
+	var start_date_arr= date2.split("/");
+	var end_date= new Date(end_date_arr[2],end_date_arr[0]-1,end_date_arr[1]);
+	var start_date= new Date(start_date_arr[2],start_date_arr[0]-1,start_date_arr[1]);
+	
+    // The number of milliseconds in one day
+    var ONE_DAY = 1000 * 60 * 60 * 24;
+
+    // Convert both dates to milliseconds
+    var date1_ms = end_date.getTime();
+	//alert(date1_ms);
+    var date2_ms = start_date.getTime();
+
+    // Calculate the difference in milliseconds
+    var difference_ms = Math.abs(date1_ms - date2_ms)
+
+    // Convert back to days and return
+    return Math.round(difference_ms/ONE_DAY)+1;
+
+}
+
+
+function __showPaidLeave()
+{
+pUrlStr='holidays.shtml?keyword='+$('#keyword').val()+'&tab=paid';
+window.location.href=pUrlStr;
+}
+function __showUnPaidLeave()
+{
+pUrlStr='holidays.shtml?keyword='+$('#keyword').val()+'&tab=unpaid';
+window.location.href=pUrlStr;
+}
+
+function __showAllHolidays()
+{
+pUrlStr='holidays.shtml';
+window.location.href=pUrlStr;
+}
+
+function __showHolidays()
+{
+pUrlStr='holidays.shtml?keyword='+$('#keyword').val();
+window.location.href=pUrlStr;
+}
+
+$(document).ready(function() {
+
+$('#keyword').focus();
+
+
+
+//setup before functions
+var typingTimer;                //timer identifier
+var doneTypingInterval = 1000;  //time in ms, 5 second for example
+
+//on keyup, start the countdown
+$('#keyword').keyup(function(){
+    clearTimeout(typingTimer);
+    if ($('#keyword').val) {
+        typingTimer = setTimeout(function(){
+            //do stuff here e.g ajax call etc....
+             var v = $("#keyword").val();
+__showHolidays();
+        }, doneTypingInterval);
+    }
+});
+
+    });
+
+
+$(document).on('pageinit', function(){
+
+$('.first').each(function(){
+	var s_date= $(this).find('.s_date').html();
+	var e_date= $(this).find('.e_date').html();
+	$(this).find('.date').html(days_between(e_date, s_date));
+});
+
+});
+
+</script>
+</head>
+<body>
+<div data-role="page" id="home" data-add-back-btn="false">
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/top-header.shtml-->
+	<form method="get" onSubmit="__showHolidays(); return false;">
+	<div class="search-container" data-theme="a" style="height:30px;">
+		<div data-role="fieldcontain" >
+			<input id="keyword" name="keyword" placeholder="Search.." value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" type="search"   />
+		</div>
+	</div>
+				
+	<input type="button" value="All" onClick="__showAllHolidays(); return false;">
+	<input type="button" value="Paid Leave" onClick="__showPaidLeave(); return false;">
+	<input type="button" value="Unpaid Leave" onClick="__showUnPaidLeave(); return false;">
+	</form>
+	
+	<div data-role="content" style="padding: 15px;">
+		<ul data-role="listview" data-inset="true">
+			<li data-role="list-divider"><span style=" color:#2B89D0; font-stretch:narrower;">Holidays</span></li>
+		</ul>
+		<table class="table-opt" summary="Product Options" >
+			<thead>
+				<tr>
+					<th>EMPLOYEE NAME</th>
+					<th>FROM</th>
+					<th>TO</th>
+					<th >DAYS USED</th>
+					<th>STATUS</th>
+				</tr>
+			</thead>
+			<tbody>
+			<!--#4DSCRIPT/Web_LoadHolidays-->
+                            <!--#4DLOOP [employee_holidays]--><!--#4DSCRIPT/Web_LoadHolidaysRelated--><!-- row -->
+				<tr class="first"> 											
+					 <td >
+						<a data-ajax="false" href="employees.shtml?keyword=<!--#4DVAR [Employees]emp_first_name-->" ><!--#4DHTMLVAR [Employees]emp_first_name--> <!--#4DHTMLVAR [Employees]emp_last_name--></a>
+					</td>
+					<td  >
+						<a data-ajax="false" href="holiday.shtml?uuid=<!--#4DHTMLVAR [employee_holidays]uuid-->" class="s_date" ><!--#4DHTMLVAR timestamp_unix_toDate ([employee_holidays]timestamp_start)--></a>
+					</td>
+					<td  >
+						<a data-ajax="false" href="holiday.shtml?uuid=<!--#4DHTMLVAR [employee_holidays]uuid-->" class="e_date" ><!--#4DHTMLVAR timestamp_unix_toDate ([employee_holidays]timestamp_end)--></a>
+                    </td>
+					<td >
+						<a data-ajax="false" href="holiday.shtml?uuid=<!--#4DHTMLVAR [employee_holidays]uuid-->" class="date" ></a>			
+                    </td>
+					<td >
+						<a data-ajax="false" href="holiday.shtml?uuid=<!--#4DHTMLVAR [employee_holidays]uuid-->" ><!--#4DIF ([employee_holidays]status="Approved")--><span class="label label-success">
+<!--#4DELSE-->
+<!--#4DIF ([employee_holidays]status="Requested")--><span class="label label-info">
+<!--#4DELSE-->
+<!--#4DIF ([employee_holidays]status="Revoked")--><span class="label label-important">
+<!--#4DELSE--><span class="label label-warning">
+<!--#4DENDIF-->
+<!--#4DENDIF--><!--#4DENDIF-->
+<!--#4DVAR [employee_holidays]status-->
+</span></a>
+                    </td>
+				</tr>
+
+<!--#4DENDLOOP-->
+			</tbody>
+		</table>
+	</div><!-- END DATA ROLE CONTENT-->
+
+   <!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/footer.shtml-->
+    
+ </div>
+ 
+</body>
+</html>

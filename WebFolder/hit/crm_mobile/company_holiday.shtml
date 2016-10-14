@@ -1,0 +1,123 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+C_TEXT(_HTMLTITLETXT)
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+
+_HTMLTITLETXT:="Company Holiday"
+QUERY([employee_holidays];[employee_holidays]uuid=_HIT_WebApp_GetField ("uuid"))
+
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml?url="+HTTPD_DocumentURI)
+end if 
+
+C_BOOLEAN(mReadOnly)
+mReadOnly:=(Records in selection([employee_holidays])=1)
+
+-->
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/main-header.shtml-->
+<link rel="stylesheet" href="css/jquery-ui.css">
+<script src="js/datepicker.js"></script>
+<script src="js/jquery.validate.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+		$('#Start_Date').datepicker({
+    		autoclose: true,
+    		changeMonth: true,
+      		changeYear: true,
+      		dateFormat: 'dd/mm/yy',
+      		onClose: function( selectedDate ) {
+        		$( "#End_Date" ).datepicker( "option", "minDate", selectedDate );
+      		}
+    	});
+		
+		$('#End_Date').datepicker({
+			autoclose: true,
+    		changeMonth: true,
+      		changeYear: true,
+      		dateFormat: 'dd/mm/yy',
+      		onClose: function( selectedDate ) {
+      			//console.log(selectedDate);
+        		$( "#Start_Date" ).datepicker( "option", "maxDate", selectedDate );
+      		}
+		});
+		var startDateTxt= $('#Start_Date').val();
+		$('#End_Date').datepicker("option", "minDate", startDateTxt);
+		
+		var endDateTxt= $('#End_Date').val();	
+		$('#Start_Date').datepicker("option", "maxDate", endDateTxt);
+    
+	// validate signup form on keyup and submit
+	$("#DetailForm").validate({
+		rules: {
+			Employee_UUID: "required",
+			Subject: "required",
+			Start_Date: "required",
+			End_Date: "required",
+			status: "required",
+		}
+	});
+});
+
+</script>
+<script type='text/javascript' src='js/customerNotes.js'></script>
+<style>
+label.error { 
+	float: left; 
+	color: red; 
+	padding-top: 1.5em; 
+	vertical-align: top; 
+}
+</style>
+</head>
+<body>
+<div data-role="page" class="jqm-demos" data-quicklinks="true">
+	<!-- header -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/top-header.shtml-->
+	<!-- /header -->
+	
+	<div role="main" class="ui-content jqm-content">
+		<h3><!--#4DIF (Records in selection([employee_holidays])=1)-->Edit <!--#4DELSE-->New <!--#4DENDIF-->Request</h3>
+		<div data-demo-html="true">
+			<form name="DetailForm" action="savecompanyholiday.cgi" id="DetailForm" data-ajax="false" method="post">
+					     
+                   	<input name="holiday_uuid" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="holiday_uuid">        
+					
+					<div class="ui-field-contain">
+   						<label for="Start_Date">Start Date:</label>
+   						<input data-role="date" type="text" <!--#4DIF (timestamp_unix_toDate([employee_holidays]timestamp_start)=!01/01/1970!)-->value=""<!--4DELSE-->value="<!--#4DVAR timestamp_unix_toDate ([employee_holidays]timestamp_start)-->"<!--4DENDIF--> name="Start_Date" id="Start_Date" readonly placeholder="Start Date">
+					</div>
+					<div class="ui-field-contain">
+   						<label for="End_Date">End Date:</label>
+   						<input data-role="date" type="text" <!--#4DIF (timestamp_unix_toDate([employee_holidays]timestamp_end)=!01/01/1970!)-->value=""<!--4DELSE-->value="<!--#4DVAR timestamp_unix_toDate ([employee_holidays]timestamp_end)-->"<!--4DENDIF--> name="End_Date" id="End_Date" placeholder="End Date">
+					</div>
+					
+					<div class="ui-field-contain">
+   						<label for="days_used">Days Used:</label>
+						<input name="days_used" class="span4" type="text" value="" id="days_used"   readonly> 
+   					</div>
+   									
+   					<div class="ui-field-contain">
+   						<label for="Subject">Subject:</label>
+						<!--#4DIF (mReadOnly)--><textarea cols="40" rows="8" name="Subject" id="Subject"><!--#4DVAR [employee_holidays]subject--></textarea><!--#4DELSE-->
+						<textarea cols="40" rows="8" name="Subject" id="Subject"><!--#4DVAR [employee_holidays]subject--></textarea><!--#4DENDIF-->
+					</div>
+					
+					<button type="submit" class="ui-shadow ui-btn ui-corner-all ui-mini">Submit</button>
+					<a href="holidays.shtml" data-ajax="false" class="ui-shadow ui-btn ui-corner-all ui-mini">Cancel</a>
+				</form>	
+		    	
+		    </div>
+	</div><!-- /content -->
+	<!-- panel -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/sidebar.shtml-->
+	<!-- /panel -->
+
+	<!-- footer -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/footer.shtml-->
+	<!-- /footer -->
+</div><!-- /page -->
+
+</body>
+</html>

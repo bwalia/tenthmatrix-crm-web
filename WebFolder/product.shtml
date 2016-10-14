@@ -1,0 +1,149 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+QUERY([Products];[Products]uuid=_HIT_WebApp_GetField ("uuid"))
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+//_HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")
+
+-->
+<!DOCTYPE html>
+<html>
+<head>
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+</head>
+<body>
+
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
+
+	<!-- main container -->
+    <div class="content">
+    
+        <div class="container-fluid">
+            <div id="pad-wrapper" class="form-page">
+				 <div class="row-fluid header">
+					<h3><!--#4DIF (Records in selection([Products])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Product</h3>
+                </div>
+                <div class="row-fluid form-wrapper">
+					<!-- left column -->
+                    <div class="span9 with-sidebar">
+                           <form name="ProductForm" action="saveproduct.cgi" id="ProductForm" method="post" class="form-comment" onSubmit="return ValidateForm();" >
+								<input name="Product_uuid" class="span9" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="Product_uuid">               
+                               
+                                <div class="span12 field-box">
+                                    <label>Product Name <span style="color:#6E829B">*</span></label>
+                                    <input class="span8" type="text" name="ProductName" id="ProductName" value="<!--#4DVAR [Products]ProductName-->">
+                                </div>
+                                <div class="span12 field-box">
+                                    <label>Unit Price <span style="color:#6E829B">*</span></label>
+									<input class="span8 num" type="text" id="Unit_Price" value="<!--#4DVAR [Products]Unit_Price-->" name="Unit_Price">
+                                </div>
+                                <div class="span12 field-box">
+                                    <label>Product Type <span style="color:#6E829B">*</span></label>
+                                    <input class="span8" type="text" id="Product_Type" value="<!--#4DVAR [Products]Product_Type-->" name="Product_Type">
+                                </div>
+								<div class="span12 field-box">
+                                    <label>Serial Number </label>
+                                    <div class="ui-select span5">
+										<Select name="SerialNumberRequired" id="SerialNumberRequired">
+											<option value="Required" <!--#4DIF ([Products]SerialNumberRequired=True)-->selected<!--4DELSE--><!--4DENDIF-->>Required</option>
+											<option value="Not Required" <!--#4DIF ([Products]SerialNumberRequired=False)-->selected<!--4DELSE--><!--4DENDIF-->>Not Required</option>
+										</select>                                     
+                                    </div>
+                                </div>
+								
+								<div class="span12 field-box">
+                                    <label>Number Of Users </label>
+                                    <input class="span8" type="text" id="NumberOfUsers" value="<!--#4DVAR [Products]NumberOfUsers-->" name="NumberOfUsers" >
+                                </div>
+								<div class="span12 field-box">
+                                    <label>Current Version </label>
+                                    <input class="span8" type="text" id="CurrentVersion" value="<!--#4DVAR [Products]CurrentVersion-->" name="CurrentVersion">
+                                </div>
+								<div class="span12 field-box">
+                                    <label>Platform </label>
+                                    <input class="span8" type="text" id="Platform" value="<!--#4DVAR [Products]Platform-->" name="Platform">
+                                </div>
+                                <div class="span11 field-box" style="text-align: center;">
+								<input type="submit" class="btn-glow primary" value="Submit">
+								<span>OR</span>
+								<a href="products.shtml">Cancel</a>
+							</div>
+                            </form>
+                    </div>
+				</div>
+            </div>
+        </div>
+    </div>
+    <!-- end main container -->
+
+	<!-- scripts -->
+	<script src="js/wysihtml5-0.3.0.js"></script>
+   <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+	<script src="js/bootstrap.datepicker.js"></script>
+	<script src="js/jquery.uniform.min.js"></script>
+	<!-- call this page plugins -->
+<script language="javascript">
+function ValidateForm () {
+
+if (document.ProductForm.ProductName.value=="")
+{ 
+	alert('Please Specify Product Name');
+	document.ProductForm.ProductName.focus() ;
+	return false;
+}
+if (document.ProductForm.Unit_Price.value=="" || document.ProductForm.Unit_Price.value==0)
+{  
+	alert('Please Specify Unit Price');
+	document.ProductForm.Unit_Price.focus() ;
+	return false;
+}
+if (document.ProductForm.Product_Type.value=="")
+{ 
+	alert('Please Specify Product Type');
+	document.ProductForm.Product_Type.focus() ;
+	return false;
+}
+}
+</script>
+    <script type="text/javascript">
+        $(function () {
+
+            // add uniform plugin styles to html elements
+            $("input:checkbox").uniform();
+			
+			$('.num').keypress(function(e){
+						var k = e.which;
+    					/* numeric inputs can come from the keypad or the numeric row at the top */
+   						 if ((k<48 || k>57) && (k!=46) && (k!=8) && (k!=0)) {
+        					e.preventDefault();
+							//alert("Allowed characters are 0-9, +, -, (, )");
+        					return false;
+    					}
+					
+					}); 
+					
+			$('#NumberOfUsers').keypress(function(e){
+						var k = e.which;
+    					/* numeric inputs can come from the keypad or the numeric row at the top */
+   						 if ((k<48 || k>57) && (k!=8) && (k!=0)) {
+        					e.preventDefault();
+							//alert("Allowed characters are 0-9, +, -, (, )");
+        					return false;
+    					}
+					
+					}); 
+		
+        });
+    </script>
+</body>
+</html>

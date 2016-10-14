@@ -1,0 +1,649 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+C_BOOLEAN(mUserIsCurrentBool)
+C_TEXT(_HTMLTITLETXT;pUserUUIDStr;pUserTask)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+
+QUERY([Timeslips];[Timeslips]uuid=_HIT_WebApp_GetField ("uuid"))
+mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
+QUERY([Employees];[Employees]emp_id=[Timeslips]emp_id)
+
+IF (Records in selection([Timeslips])=0)
+_HTMLTITLETXT:="New Timeslip"
+
+If(_HIT_WebApp_GetField ("task_id")#"")
+pUserTask:=_HIT_WebApp_GetField ("task_id")
+Else
+pUserUUIDStr:=_HIT_WebSession_GetVar ("auth_user_uuid")
+pUserTask:=User_GetPreferences (pUserUUIDStr;"task_id")
+End If
+QUERY([Tasks];[Tasks]task_id=num(pUserTask))
+
+ELSE
+_HTMLTITLETXT:= "Edit Timeslip"
+
+QUERY([Tasks];[Tasks]task_id=[Timeslips]task_id)
+
+END IF
+
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+
+-->
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/main-header.shtml-->
+<!--<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">-->
+<link rel="stylesheet" href="css/jquery-ui.css">
+<script src="js/datepicker.js"></script>
+<script src="js/jquery.validate.js"></script>
+<link href="css/jquery.ptTimeSelect.css" rel="stylesheet" />
+<script src="js/jquery.ptTimeSelect.js"></script>
+<script type="text/javascript">
+var Start=0, End=0, xhrAbortSearch;
+	
+	function __getTime(timeStr){
+		var s_date=$('#Slip_Date').val();
+		var s_date_arr=s_date.split("/");
+		if(timeStr!=""){
+			var time_arr= timeStr.split(":");
+			var s_hour= Number(time_arr[0]);
+			var s_min= Number(time_arr[1].substr(0,2));
+			var s_ampm= time_arr[1].substr(time_arr[1].length - 2);
+			if(s_hour==12){
+				s_hour= 0;
+			}
+			if(s_ampm == 'PM'){
+				s_hour= s_hour+12;
+			}
+							
+			var datetimeStr= new Date(s_date_arr[2],s_date_arr[1]-1,s_date_arr[0],s_hour,s_min,'0');
+			var actualtime= datetimeStr.getTime();
+		}else{
+			var actualtime= 0;
+		}
+		return actualtime;				
+	}
+	function chng_time_format(){
+		var s_time=$('#setStartTime').val();
+		var e_time=$('#setEndTIme').val();
+		var s_time_arr=s_time.split(":");
+		var e_time_arr=e_time.split(":");
+		var s_hour= Number(s_time_arr[0]);
+		var e_hour= Number(e_time_arr[0]);
+		var s_min= Number(s_time_arr[1]);
+		var e_min= Number(e_time_arr[1]);
+		var s_ampm='AM';
+		var e_ampm='AM';
+		if(s_hour>=12){
+			s_ampm='PM';
+		}
+		if(e_hour>=12){
+			e_ampm='PM';
+		}
+		if(s_hour>12){
+			s_hour= s_hour-12;
+		}
+		if(e_hour>12){
+			e_hour= e_hour-12;
+		}
+		if(s_min<10){
+			s_min= '0'+String(s_min);
+		}
+		if(e_min<10){
+			e_min= '0'+String(e_min);
+		}
+		s_time=s_hour+':'+s_min+' '+s_ampm;
+		e_time=e_hour+':'+e_min+' '+e_ampm;	
+		$('#setStartTime').val(s_time);
+		$('#setEndTIme').val(e_time);	
+	}
+	function resetIntervalTime(){
+		$('#intervalTime').val('');
+		$('#exclude_lunch').val("off");
+		$('.brkTimePicker').val('');
+		$('.breakTimeClass').hide();
+		$("input.lunchinterval").attr("checked", false);
+		$('.intervalTimeSpan').html('');
+		$('.intervalTimeSpan').hide();
+		var mainStartTime = $('#setStartTime').val();
+		var mainEndTime = $('#setEndTIme').val();
+		
+		var mainStartTimeStr = __getTime(mainStartTime);
+		var mainEndTimeStr = __getTime(mainEndTime);
+		if(mainEndTimeStr>=mainStartTimeStr){
+			var timeslipsDiff= mainEndTimeStr-mainStartTimeStr;
+			var timeslipsMinutes = Math.floor(timeslipsDiff / (1000*60));
+			var slipHourStr= (timeslipsMinutes/60).toFixed(2);
+			$('#Slip_Hours').val(slipHourStr);	
+		}else{
+			$('#Slip_Hours').val('');	
+		}
+	} 
+	function evaluateSlipHoursWithBreakTime(){
+		//alert('hi');
+		var s_time=$('#setBreakStartTime').val();
+		var e_time=$('#setBreakEndTime').val();
+						
+		var mainStartTime = $('#setStartTime').val();
+		var mainEndTime = $('#setEndTIme').val();
+		
+		var mainStartTimeStr = __getTime(mainStartTime);
+		var mainEndTimeStr = __getTime(mainEndTime);
+												
+		if(s_time!='' && e_time!='') {
+			var start_time= __getTime(s_time);
+							var end_time=  __getTime(e_time);
+							var validStartTimeSelectionFlag=false;
+							var validEndTimeSelectionFlag=false;
+											
+							if(start_time>=mainStartTimeStr && mainEndTimeStr>=start_time){
+								validStartTimeSelectionFlag=true;
+							}
+							if(mainEndTimeStr>=end_time && start_time>=mainStartTimeStr){
+								validEndTimeSelectionFlag=true;
+							}
+							
+							if(validStartTimeSelectionFlag == true){
+								if(validEndTimeSelectionFlag == true){
+									if(end_time>=start_time){
+										var diff_time= end_time-start_time;
+											
+										var minutes = Math.floor(diff_time / (1000*60));
+										var intervalTimeHrs = (minutes/60).toFixed(2);
+										if(intervalTimeHrs>=1){
+										var intervalTimeStr = "("+intervalTimeHrs+" hr)";
+										}else{
+										var intervalTimeStr =  "("+intervalTimeHrs+" hrs)";
+										}
+										var time_diff= minutes*60;
+										
+										var timeslipsDiff= mainEndTimeStr-mainStartTimeStr;
+										var timeslipsMinutes = Math.floor(timeslipsDiff / (1000*60));
+
+										var slipHourStr= (timeslipsMinutes/60).toFixed(2);
+										
+										var totalSlipSeconds = slipHourStr*3600;
+										var evalSeconds= totalSlipSeconds-time_diff;
+										var evalHours = (evalSeconds/3600).toFixed(2);
+										$('.intervalTimeSpan').html(intervalTimeStr);
+										$('.intervalTimeSpan').show();
+										$('#Slip_Hours').val(evalHours);	
+										$('#intervalTime').val(intervalTimeHrs);
+										$('#exclude_lunch').val("on");
+									}else if(end_time<start_time){
+										$('#setBreakEndTime').val('');
+										var errmsg='<span id="msgDisplayedStr" style="color:#CC0000">End date time must be greater than start date time</span>';
+   			    						$("#msgDisplayedStr").remove();
+   										$(".displayMsgStr").before(errmsg);
+									}
+								}else{
+									$('#setBreakEndTime').val('');
+									var errmsg='<span id="msgDisplayedStr" style="color:#CC0000">Break time should lie between timeslip timing!</span>';
+   			    					$("#msgDisplayedStr").remove();
+   									$(".displayMsgStr").before(errmsg);
+								}
+							}else{
+								$('#setBreakStartTime').val('');
+								var errmsg='<span id="msgDisplayedStr" style="color:#CC0000">Break time should lie between timeslip timing!</span>';
+   			    				$("#msgDisplayedStr").remove();
+   								$(".displayMsgStr").before(errmsg);
+							}
+						}else{
+							var errmsg='<span id="msgDisplayedStr" style="color:#CC0000">Please specify both Start and End Interval time</span>';
+   			    			$("#msgDisplayedStr").remove();
+   							$(".displayMsgStr").before(errmsg);
+						}
+	} 
+
+$(document).ready(function() {
+	<!--#4DIF (_HIT_WebApp_GetField ("uuid")="")-->
+		$(':input','#DetailForm')
+ 		.not(':button, :submit, :reset, :hidden')
+ 		.val('')
+ 		.removeAttr('checked')
+ 		.removeAttr('selected');
+	<!--#4DELSE--><!--#4DENDIF-->
+	
+		chng_time_format();
+	
+		<!--#4DIF (Records in selection([Timeslips])=0)-->
+		$("#setStartTime").val('');
+		$("#setEndTIme").val('');
+		<!--#4DELSE--><!--#4DENDIF-->
+		
+	$(".ui-table-columntoggle-btn").hide();
+	$("#DetailForm").validate({
+		ignore: "",
+        rules: {
+            projectNameStr: { required: true },
+			Employee_ID: { required: true },
+			Slip_Date: { required: true },
+			Slip_Description: { required: true },
+			Slip_Description: { required: true },
+			/**setBreakStartTime:{
+                  required: function (element) {
+                     if($("#lunchinterval").is(':checked')){
+                        return true;                     
+                     } else {
+                         return false; 
+                     }  
+                  }  
+            },
+            setBreakEndTime:{
+                  required: function (element) {
+                     if($("#lunchinterval").is(':checked')){
+                        return true;                      
+                     } else {
+                         return false;   
+                     }  
+                  }  
+            }**/
+        }
+    });
+    
+    //on keyup, start the countdown
+	$('.projectNameStr').keyup(function(){
+    	if ($('.projectNameStr').val()) {
+      		var jsonRow="gettaskonsearch.cgi?srch="+$('.projectNameStr').val()+"&closed=false&"+Math.random();
+			if(xhrAbortSearch) xhrAbortSearch.abort();
+			xhrAbortLoxhrAbortSearchad=$.getJSON(jsonRow,function(result){
+				if(result){
+					var html='';
+					$.each(result, function(i,item){
+						html += '<li><a class="ui-btn ui-btn-icon-right ui-icon-carat-r" href="javascript:void(0)" onClick="selectValue(\''+item.id+'\',\''+item.value+'\')">'+item.value+'</a></li>';
+					});
+					$( ".projectListView").html("");
+					$( ".projectListView").html(html);
+				}
+			});
+          
+    	}
+    });
+    $('.ui-input-clear').click(function(){
+    	$("#Task_ID").val("");
+    });
+     // find the input fields and apply the time select to them.
+            $('#sample2 input').ptTimeSelect({
+                onBeforeShow: function(i){
+                    $('#sample2-data')
+                        .append(
+                            'onBeforeShow(event) Input field: [' + 
+                            $(i).attr('name') + 
+                            "], value: [" +
+                            $(i).val() +
+                            "]<br>");
+                },
+                onClose: function(i) {
+                	$('#setStartTime').trigger('change');
+                    $('#sample2-data')
+                        .append(
+                            'onClose(event)Time selected: ' + 
+                            $(i).val() + 
+                            "<br>");
+                }
+            });
+            $('#sample1 input').ptTimeSelect({
+                onBeforeShow: function(i){
+                    $('#sample1-data')
+                        .append(
+                            'onBeforeShow(event) Input field: [' + 
+                            $(i).attr('name') + 
+                            "], value: [" +
+                            $(i).val() +
+                            "]<br>");
+                },
+                onClose: function(i) {
+                	$('#setEndTIme').trigger('change');
+                    $('#sample1-data')
+                        .append(
+                            'onClose(event)Time selected: ' + 
+                            $(i).val() + 
+                            "<br>");
+                }
+            }); 
+            $('#bstart input').ptTimeSelect({
+                onBeforeShow: function(i){
+                    $('#bstart-data')
+                        .append(
+                            'onBeforeShow(event) Input field: [' + 
+                            $(i).attr('name') + 
+                            "], value: [" +
+                            $(i).val() +
+                            "]<br>");
+                },
+                onClose: function(i) {
+					//alert('1');
+                	evaluateSlipHoursWithBreakTime();
+                	$('#bstart-data')
+                        .append(
+                            'onClose(event)Time selected: ' + 
+                            $(i).val() + 
+                            "<br>");
+                }
+            }); 
+            $('#estart input').ptTimeSelect({
+                onBeforeShow: function(i){
+                    $('#estart-data')
+                        .append(
+                            'onBeforeShow(event) Input field: [' + 
+                            $(i).attr('name') + 
+                            "], value: [" +
+                            $(i).val() +
+                            "]<br>");
+                },
+                onClose: function(i) {
+                	evaluateSlipHoursWithBreakTime();
+                	$('#estart-data')
+                        .append(
+                            'onClose(event)Time selected: ' + 
+                            $(i).val() + 
+                            "<br>");
+                }
+            }); 
+            //end ptTimeSelect()
+	  	
+    	$('#Slip_Date').datepicker({
+    		autoclose: true,
+    		changeMonth: true,
+      		changeYear: true,
+      		dateFormat: 'dd/mm/yy',
+      		onClose: function( selectedDate ) {
+        		$( "#Slip_EndDate" ).datepicker( "option", "minDate", selectedDate );
+      		}
+    	});
+		
+		$('#Slip_EndDate').datepicker({
+			autoclose: true,
+    		changeMonth: true,
+      		changeYear: true,
+      		dateFormat: 'dd/mm/yy',
+      		onClose: function( selectedDate ) {
+      			//console.log(selectedDate);
+        		$( "#Slip_Date" ).datepicker( "option", "maxDate", selectedDate );
+      		}
+		});
+		var startDateTxt= $('#Slip_Date').val();
+		$('#Slip_EndDate').datepicker("option", "minDate", startDateTxt);
+		
+		var endDateTxt= $('#Slip_EndDate').val();	
+		$('#Slip_Date').datepicker("option", "maxDate", endDateTxt);
+	
+		$('#setStartTime').change(function(){
+			if($('#setEndTIme').val()==''){
+				$('#setEndTIme').val($(this).val());
+			}else if($(this).val()==''){
+				$('#setEndTIme').val('');
+			}
+		});
+		
+		$('#setEndTIme').change(function(){
+			if($(this).val()==''){
+				$(this).val($('#setEndTIme').val());
+			}else if($('#setStartTime').val()==''){
+				$('#setStartTime').val($(this).val());
+			}
+		});  
+        $("input.lunchinterval").on("click", function() {
+			$("#msgDisplayedStr").remove();
+			if($(this).is(":checked")){
+				if($('#setStartTime').val()!="" && $('#setEndTime').val()!="" && $('#Slip_Date').val()!="" && $('#Slip_EndDate').val()!=""){
+   					$('.breakTimeClass').show();
+   				}else{
+   					var errmsg='<span id="msgDisplayedStr" style="color:#CC0000">Please select start/end date and time</span>';
+   			    	$(".displayMsgStr").before(errmsg);
+					$("input.lunchinterval").attr("checked", false);
+   				}
+   			}else{
+   				$('.breakTimeClass').hide();
+   				resetIntervalTime();
+   			}
+  		});
+		
+		$(".timePicker").change(function() {
+			//resetIntervalTime();
+			var s_date=$('#Slip_Date').val();
+			var e_date=$('#Slip_EndDate').val();
+			var s_time=$('#setStartTime').val();
+			var e_time=$('#setEndTIme').val();
+			if(e_date==''){
+				e_date=s_date;
+			}
+			if(s_time=='' || e_time==''){
+				s_time="12:00 AM";
+				e_time="12:00 AM";
+			}
+			if(s_date!='' && e_date!='' && s_time!='' && e_time!='') {
+				
+				var s_date_arr=s_date.split("/");
+				var e_date_arr=e_date.split("/");
+				var s_time_arr=s_time.split(":");
+				var e_time_arr=e_time.split(":");
+				var s_hour= Number(s_time_arr[0]);
+				var e_hour= Number(e_time_arr[0]);
+				var s_min= Number(s_time_arr[1].substr(0,2));
+				var e_min= Number(e_time_arr[1].substr(0,2));
+				var s_ampm= s_time_arr[1].substr(s_time_arr[1].length - 2);
+				var e_ampm= e_time_arr[1].substr(e_time_arr[1].length - 2);
+				if(s_hour==12){
+					s_hour= 0;
+				}
+				if(e_hour==12){
+					e_hour= 0;
+				}
+				if(s_ampm == 'PM'){
+					s_hour= s_hour+12;
+				}
+				if(e_ampm == 'PM'){
+					e_hour= e_hour+12;
+				}
+				//alert(s_date_arr[2]+','+s_date_arr[1]+','+s_date_arr[0]+','+s_hour+','+s_min);
+				//alert(e_date_arr[2]+','+e_date_arr[1]+','+e_date_arr[0]+','+e_hour+','+e_min);
+				
+				var start_datetime= new Date(s_date_arr[2],s_date_arr[1]-1,s_date_arr[0],s_hour,s_min,'0');
+				var end_datetime= new Date(e_date_arr[2],e_date_arr[1]-1,e_date_arr[0],e_hour,e_min,'0');
+				var start_time= start_datetime.getTime();
+				var end_time= end_datetime.getTime();
+				//console.log(start_time+', '+end_time);
+				if(end_time>=start_time){
+					var diff_time= end_time-start_time;
+					
+					//alert(diff_time);
+					/*var hours = Math.floor(diff_time / (1000*60*60));
+					var minutes = Math.floor((diff_time % (1000*60*60)) / (1000*60));
+					if(minutes<10){
+						minutes='0'+String(minutes);
+					}
+					var time_diff= hours+'.'+minutes;*/
+					
+					var minutes = Math.floor(diff_time / (1000*60));
+
+					var time_diff= (minutes/60).toFixed(2);
+								
+					var breakStartTime=$('#setBreakStartTime').val();
+					var breakEndTime=$('#setBreakEndTime').val();
+					if(breakStartTime!="" && breakEndTime!=""){			
+						var brkStartTimeStr = __getTime(breakStartTime);
+						var brkEndTimeStr = __getTime(breakEndTime);
+																
+						if(brkStartTimeStr>=start_time && end_time>=brkStartTimeStr && end_time>=brkEndTimeStr && brkEndTimeStr>=start_time && brkEndTimeStr>brkStartTimeStr){
+							evaluateSlipHoursWithBreakTime();
+						}else{
+							resetIntervalTime();
+							$('#Slip_Hours').val(time_diff);
+						}
+					}else{
+						var interval_time=$('#interval_time').val();
+						//alert(interval_time);
+						if(interval_time!=""){
+							interval_time=<!--#4DVAR [Timeslips]interval_time-->
+							var total_hours= time_diff*60;
+							var intervalTimeStr= interval_time*60;
+							if(total_hours>intervalTimeStr){
+								var timeDiffStr=total_hours-intervalTimeStr;
+								time_diff= (timeDiffStr/60).toFixed(2);
+								//console.log(time_diff);
+								$('#Slip_Hours').val(time_diff);
+							}else{
+								$('#Slip_Hours').val(time_diff);
+							}
+						}else{
+							$('#Slip_Hours').val(time_diff);
+						}
+					}						
+										
+				}
+				else if(end_time<start_time){
+					var errmsg='<span id="msgDisplayedStr" style="color:#CC0000">End date time must be greater than start date time</span>';
+   			    	$("#msgDisplayedStr").remove();
+   					$(".displayMsgStr").before(errmsg);
+					$('#Slip_EndDate').val('');
+					$('#setEndTIme').val('');
+					$('#Slip_Hours').val('');
+					resetIntervalTime();
+				}
+			}
+		
+			
+		});
+});
+function selectValue(val, name){
+	$(".projectNameStr").val(name);
+	$("#Task_ID").val(val);
+	$( ".projectListView" ).listview( "refresh" );
+	$( ".projectListView li" ).addClass("ui-screen-hidden");
+}
+</script>
+<script type='text/javascript' src='js/customerNotes.js'></script>
+<style>
+label.error { 
+	float: left; 
+	color: red; 
+	padding-top: 1.5em; 
+	vertical-align: top; 
+}
+</style>
+</head>
+<body>
+<div data-role="page" class="jqm-demos" data-quicklinks="true">
+	<!-- header -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/top-header.shtml-->
+	<!-- /header -->
+	
+	<div role="main" class="ui-content jqm-content">
+		<h3><!--#4DIF (Records in selection([Timeslips])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> TimeSlip</h3>
+		<div data-demo-html="true">
+			<form name="DetailForm" action="savetimeslip.cgi" id="DetailForm" data-ajax="false" method="post">
+					<div class="ui-field-contain">
+						<label for="uuid_reported_by" class="select">Task Name:</label>
+						<input name="Task_ID" id="Task_ID" type="hidden" value="<!--4DVAR [Tasks]task_id-->">
+						<span class="ui-filterable">
+   							<input id="inset-autocomplete-input" data-type="search" placeholder="Search task..." class="projectNameStr" value="<!--4DVAR [Tasks]task_name-->" name="projectNameStr">
+						</span>
+						
+						<ul data-role="listview" data-inset="true" data-filter="true" data-filter-reveal="true" data-input="#inset-autocomplete-input" class="projectListView">
+   							<!--#4DIF (Records in selection([Timeslips])=0)-->
+								<!--#4DIF (pUserTask="")-->
+									<!--#4DSCRIPT/Web_LoadTasks/-->
+                                    <!--4DLOOP  [Tasks]-->
+										<li><a href="javascript:void(0)" onClick="selectValue('<!--4DVAR [Tasks]task_id-->','<!--4DVAR [Tasks]task_name-->')"><!--4DVAR [Tasks]task_name--></a></li>
+									<!--4DENDLOOP-->
+								<!--#4DENDIF-->								 
+							<!--#4DENDIF-->
+						</ul>       
+					</div>      
+                    <input name="Timeslip_uuid" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="Timeslip_uuid">               
+					
+					<div class="ui-field-contain">
+   						<label for="News_Letter_Status">Employee Name:</label>
+						<select data-native-menu="false" name="Employee_ID" id="Employee_ID">
+							<!--HIT_EXECUTE _HIT_HTMLTXT:=Web_EmployeeHTMLPopup([Employees]uuid)-->
+						</select>    
+					</div>    	
+					<div class="ui-field-contain">
+   						<label for="Slip_Date">Start Date :</label>
+						<input type="text" <!--#4DIF (timestamp_unix_toDate([Timeslips]Timestamp_start)=!01/01/1970!)-->value="<!--#4DHTMLVAR Current date -->"<!--4DELSE-->value="<!--#4DHTMLVAR timestamp_unix_toDate([Timeslips]Timestamp_start)-->"<!--4DENDIF--> name="Slip_Date" id="Slip_Date" readonly>
+                    </div>
+                    <div class="ui-field-contain" id="sample2">
+   						<label for="Task_Name">Slip Timer Started</label>
+						<div class="ui-input-text ui-body-inherit ui-corner-all ui-shadow-inset">			
+ 							<input readonly <!--#4DIF (mUserIsCurrentBool)-->readonly <!--#4DELSE--><!--#4DENDIF-->class="time timePicker" type="text" value="<!--#4DVAR timestamp_unix_toTime ([Timeslips]Timestamp_start)-->" name="Slip_TimerStarted" id="setStartTime"/>   
+    					</div>
+    				</div>
+					<div class="ui-field-contain">
+   						<label for="Slip_EndDate">End Date :</label>
+						<input type="text" <!--#4DIF (timestamp_unix_toDate([Timeslips]Timestamp_end)=!01/01/1970!)-->value="<!--#4DHTMLVAR Current date -->"<!--4DELSE-->value="<!--#4DHTMLVAR timestamp_unix_toDate([Timeslips]Timestamp_end)-->"<!--4DENDIF--> name="Slip_EndDate" id="Slip_EndDate" readonly>
+					</div>
+					<div class="ui-field-contain" id="sample1">
+   						<label for="Task_Name">Slip Timer End</label>
+						<div class="ui-input-text ui-body-inherit ui-corner-all ui-shadow-inset">			
+ 							<input readonly <!--#4DIF (mUserIsCurrentBool)-->readonly <!--#4DELSE--><!--#4DENDIF--> class="time timePicker" type="text" value="<!--#4DVAR timestamp_unix_toTime ([Timeslips]Timestamp_end)-->" name="Slip_Timer_End" id="setEndTIme">
+    					</div>
+    				</div>
+    				<div class="ui-field-contain">
+                        <label>
+       						<input class="lunchinterval" type="checkbox" <!--#4DIF (mUserIsCurrentBool)-->disabled <!--#4DELSE--><!--#4DIF ([Timeslips]exclude_lunch)-->checked disabled<!--4DELSE--><!--4DENDIF--><!--#4DENDIF--> name="lunchinterval" id="lunchinterval" value="true"> Exclude break time 
+   						</label>
+						<span style="display:none;" class="intervalTimeSpan"></span>
+                        <input name="intervalTime" id="intervalTime" type="hidden" value="<!--#4DVAR [Timeslips]interval_time-->" readonly>
+                        <input type="hidden" id="exclude_lunch" name="exclude_lunch" value="off" readonly>
+                    </div>
+                           	
+							<div class="ui-field-contain breakTimeClass" style="display:none;" id="bstart">
+                                <label>Start Time</label>
+								<input readonly class="time brkTimePicker span1" type="text" value="" name="setBreakStartTime" id="setBreakStartTime">
+                           	</div>
+                    <div class="ui-field-contain breakTimeClass" style="display:none;" id="estart">
+                        <label>End Time</label>
+						<input readonly class="time brkTimePicker span1" type="text" value="" name="setBreakEndTime" id="setBreakEndTime">&nbsp;&nbsp;&nbsp;
+                        <span id="Errmessage" style="color:#FF0000"></span>
+                    </div>
+                    <div class="ui-field-contain displayMsgStr">
+                        <label>Slip Hours </label>
+						<input class="span4 num" name="Slip_Hours" id="Slip_Hours" type="text" value="<!--#4DVAR [Timeslips]slip_hours-->" readonly>
+                    </div>
+					<div class="ui-field-contain" <!--#4DIF ([Timeslips]interval_time=0)-->style="display:none;"<!--#4DENDIF-->>
+   						<label for="interval_time">Lunch Break </label>
+						<input class="num" name="interval_time" id="interval_time" type="text" value="<!--#4DVAR [Timeslips]interval_time*60--> minutes" readonly>
+                    </div>
+					<div class="ui-field-contain">
+   						<label for="Slip_Description">Slip Description  :</label>
+						 <textarea <!--#4DIF (mUserIsCurrentBool)-->readonly <!--#4DELSE--><!--#4DENDIF--> cols="40" rows="8" name="Slip_Description" id="Slip_Description"><!--#4DVAR [Timeslips]slip_description--></textarea>
+					</div>
+					<div class="ui-field-contain">
+   						<label for="Slip_Rate">Slip Rate:</label>
+						<input <!--#4DIF (mUserIsCurrentBool)-->readonly readonly="readonly" <!--#4DELSE--><!--#4DENDIF-->class="num" name="Slip_Rate" id="Slip_Rate" type="text" value="<!--#4DVAR [Timeslips]slip_rate-->">
+   					</div>
+   					<div class="ui-field-contain">
+   						<label for="slip_timer_accumulated_seconds">Slip timer accumulated seconds:</label>
+						<input <!--#4DIF (mUserIsCurrentBool)-->readonly readonly="readonly" <!--#4DELSE--><!--#4DENDIF-->type="text" name="slip_timer_accumulated_seconds" class="num" value="<!--#4DVAR [Timeslips]slip_timer_accumulated_seconds-->">          
+   					</div>
+   					<input name="task_status" type="hidden" value="" id="task_status">    
+					<input name="add_test_task" type="hidden" value="" id="add_test_task">    
+					<div class="ui-field-contain">
+   						<label for="News_Letter_Status">Billing Status:</label>
+						<select <!--#4DIF (mUserIsCurrentBool)-->readonly readonly="readonly" <!--#4DELSE--><!--#4DENDIF-->name="Billing_Status" id="Billing_Status"  data-native-menu="false">
+							<option value="0" <!--#4DIF ([Timeslips]billing_status=0)-->selected<!--4DELSE--><!--4DENDIF-->>Non Chargeable</option>
+							<option value="1"  <!--#4DIF ([Timeslips]billing_status=1)-->selected<!--4DELSE--><!--4DENDIF-->>Chargeable</option>
+							<option value="2"  <!--#4DIF ([Timeslips]billing_status=2)-->selected<!--4DELSE--><!--4DENDIF-->>Billed</option>
+						</select>    
+					</div>
+					<button type="submit" class="ui-shadow ui-btn ui-corner-all ui-mini">Submit</button>
+					<a href="timeslips.shtml" data-ajax="false" class="ui-shadow ui-btn ui-corner-all ui-mini">Cancel</a>
+				</form>	
+		    	
+		    </div>
+	</div><!-- /content -->
+	<!-- panel -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/sidebar.shtml-->
+	<!-- /panel -->
+
+	<!-- footer -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/footer.shtml-->
+	<!-- /footer -->
+</div><!-- /page -->
+
+</body>
+</html>

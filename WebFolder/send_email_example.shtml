@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+
+<h1>Email </h1>
+
+<h2>Send Email Example: </h2>	
+<form>
+From Email: <input name="from" value="crm@tenthmatrix.co.uk"><br>
+To Email: <input name="to" value=""><br>
+Subject: <input name="subject" value="This is a test : subject"><br>
+Body: <input name="body" value="This is a test : body"><br>
+<input type="submit">
+</form>
+
+<h2>Email data: </h2>	
+	
+<!--HIT_EXECUTE
+
+C_TEXT(mFromStr;mToStr;mSubjectStr;mBodyTxt)
+
+mFromStr:=_HIT_WebApp_GetField("from")
+
+If (mFromStr#"")
+
+mToStr:=_HIT_WebApp_GetField("to")
+mSubjectStr:=_HIT_WebApp_GetField("subject")
+mBodyTxt:=_HIT_WebApp_GetField("body")
+
+C_TEXT(_HIT_HTMLTXT)
+_HIT_HTMLTXT:=""
+
+_HIT_HTMLTXT:=_HIT_HTMLTXT+"<h1>from: "+mFromStr+"</h1>"
+_HIT_HTMLTXT:=_HIT_HTMLTXT+"<h1>to: "+mToStr+"</h1>"
+_HIT_HTMLTXT:=_HIT_HTMLTXT+"<h1>subject: "+mSubjectStr+"</h1>"
+_HIT_HTMLTXT:=_HIT_HTMLTXT+"<h1>body: "+mBodyTxt+"</h1>"
+
+If (mFromStr="")
+mFromStr:="crm@tenthmatrix.co.uk"
+End if 
+If (mToStr="")
+mToStr:="bwalia@tenthmatrix.co.uk"
+End if 
+If (mSubjectStr="")
+mSubjectStr:="Subject This is a test "+String(Current time)
+End if 
+If (mBodyTxt="")
+mBodyTxt:="Subject This is a test "+String(Current time)
+End if 
+
+_EMAILC_SendEmail (->mFromStr;->mToStr;->mSubjectStr;->mBodyTxt)
+
+End if 
+
+-->
+	
+</body>
+</html>

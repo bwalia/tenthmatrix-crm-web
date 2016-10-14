@@ -1,0 +1,250 @@
+<!--HIT_EXECUTE
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+C_TEXT(pValidtoken)
+pValidtoken:=_HIT_TokenGetAny
+
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+-->
+<!DOCTYPE html>
+<html lang="en">
+<!-- BEGIN HEAD -->
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+	<meta content="" name="description"/>
+	<meta content="" name="author"/>
+	
+	<title>Navigator</title>
+	
+	<!-- BEGIN CORE FRAMEWORK -->
+	<link href="assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+	<link href="assets/plugins/ionicons/css/ionicons.min.css" rel="stylesheet" />
+	<link href="assets/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+	<!-- END CORE FRAMEWORK -->
+	
+	<!-- BEGIN THEME STYLES -->
+	<link href="assets/css/material.css" rel="stylesheet" />
+	<link href="style.css" rel="stylesheet" />
+	<link href="assets/css/plugins.css" rel="stylesheet" />
+	<link href="assets/css/helpers.css" rel="stylesheet" />
+	<!--<link href="assets/css/responsive.css" rel="stylesheet" /> -->
+	<!-- END THEME STYLES -->
+</head>
+<!-- END HEAD -->
+<!-- BEGIN BODY -->
+<body class="fixed-leftsides">
+	<div class="wrapper" style="width:240px;">
+		<!-- BEGIN LEFTSIDE -->
+        <div class="leftside leftside-bg">
+			<div class="sidebar">
+            <a href="index.html" class="logo"><img src="assets/img/crm-logo.png"> </a>
+				<!-- BEGIN RPOFILE -->
+				 <div class="nav-profile">
+					<div class="thumb">
+						<img src="assets/img/avatar.jpg" class="img-circle" alt="" />
+						<!-- <span class="label label-danger label-rounded">3</span> -->
+					</div>
+					<div class="info">
+						<!--#4DIF (_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")-->
+						<a href="#"><!--HIT_EXECUTE
+						C_TEXT(_HIT_HTMLTXT)
+						If (Web_isUserClient )
+						_HIT_HTMLTXT:=[Contacts]First name+" "+[Contacts]Surname
+						Else 
+						_HIT_HTMLTXT:="Your account"
+						End if 
+						--></a>
+						<!--#4DELSE-->
+						<a href="#">
+						<!--HIT_EXECUTE
+						C_TEXT(_HIT_HTMLTXT)
+						 If (Web_isUserStaff)
+						_HIT_HTMLTXT:=[Employees]emp_first_name+" "+[Employees]emp_last_name
+						Else 
+						_HIT_HTMLTXT:="Your account"
+						End if
+						--></a>
+						<!--#4DENDIF-->
+						<ul class="tools list-inline">
+							<li><a href="#" data-toggle="tooltip" title="Settings"><i class="ion-gear-a"></i></a></li>
+							<li><a href="#" data-toggle="tooltip" title="Events"><i class="ion-earth"></i></a></li>
+							<li><a href="#" data-toggle="tooltip" title="Downloads"><i class="ion-archive"></i></a></li>
+						</ul>
+					</div>
+					<!-- <a href="sign-in.shtml" class="button"><i class="ion-log-out"></i></a> -->
+				</div>
+				<!-- END RPOFILE -->
+				
+				<!-- BEGIN NAV -->
+				<div class="title">Navigation</div>
+					<!--#4DIF (_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")-->
+					<ul class="nav-sidebar">
+						<li>
+                            <a href="index.shtml">
+                                <i class="ion-home"></i> <span>Dashboard</span>
+                            </a>
+                        </li>
+                         
+                         <li class="nav-dropdown">
+                            <a href="#">
+                                <i class="ion-compose"></i> <span>Import Export Wizard</span>
+                                <i class="ion-chevron-right pull-right"></i>
+                            </a>
+                            <ul>
+								<!-- <li><a href="javascript:void(0)" onclick="open_import_window()">Import From File</a></li> -->
+                                <li><a href="javascript:void(0)" onclick='$4d.Web_URLFilteringGo("oMainWebAreaObj","open-import-window",pTokenStr,function(result,error){ 	});'>Import From File</a></li>
+								<li><a href="javascript:void(0)" onclick='$4d.Web_URLFilteringGo("oMainWebAreaObj","open-ftp-window",pTokenStr,function(result,error){ 	});'>File Manager</a></li>
+                            </ul>
+                        </li>
+                        
+                        <li class="nav-dropdown">
+                            <a href="#">
+                                <i class="ion-compose"></i> <span>Manage Timeslips</span>
+                                <i class="ion-chevron-right pull-right"></i>
+                            </a>
+                            <ul>
+                                <li><a href="javascript:void(0)" onclick='$4d.Web_URLFilteringGo("oMainWebAreaObj","open-timeslip-window",pTokenStr,function(result,error){ 	});'>Timeslips</a></li>
+								<!-- <li><a href="#">Add New Timeslip</a></li> -->
+                            </ul>
+                        </li>
+                        <li class="nav-dropdown">
+                            <a href="#">
+                                <i class="ion-navicon-round"></i> <span>Manage Tasks</span>
+                                <i class="ion-chevron-right pull-right"></i>
+                            </a>
+                            <ul>
+                                <li><a href="javascript:void(0)" onclick='$4d.Web_URLFilteringGo("oMainWebAreaObj","open-task-window",pTokenStr,function(result,error){ 	});'>Tasks</a></li>
+                               <!--  <li><a href="#">Add New Task</a></li> -->
+                            </ul>
+                        </li>
+                        <!-- 
+						<li class="nav-dropdown">
+                            <a href="#">
+                                <i class="ion-navicon-round"></i> <span>Manage Invoices</span>
+                                <i class="ion-chevron-right pull-right"></i>
+                            </a>
+                            <ul>
+                                <<li><a href="javascript:void(0)" onclick='$4d.Web_URLFilteringGo("oMainWebAreaObj","open-invoice-window",pTokenStr,function(result,error){ 	});'>Invoices</a></li>
+                                <li><a href="#">Add New Invoice</a></li>
+                            </ul>
+                        </li>
+                    -->
+                    </ul>
+                    <!--#4DELSE-->
+                    <ul class="nav-sidebar">
+						<li class="active">
+                            <a href="#">
+                                <i class="ion-home"></i> <span>Dashboard</span>
+                            </a>
+                        </li>
+                        <li class="nav-dropdown">
+                            <a href="#">
+                                <i class="ion-beaker"></i> <span>Manage Customers</span>
+                                <i class="ion-chevron-right pull-right"></i>
+                            </a>
+                            <ul>
+                                <li><a href="customers.shtml">Customers</a></li>
+                                <li><a href="#">Add New Customer</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-dropdown">
+                            <a href="#">
+                                <i class="ion-compose"></i> <span>Manage Timeslips</span>
+                                <i class="ion-chevron-right pull-right"></i>
+                            </a>
+                            <ul>
+                                <li><a href="javascript:void(0)" onclick='$4d.Web_URLFilteringGo("oMainWebAreaObj","open-timeslip-window",pTokenStr,function(result,error){ 	});'>Timeslips</a></li>
+								<li><a href="#">Add New Timeslip</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-dropdown">
+                            <a href="#">
+                                <i class="ion-navicon-round"></i> <span>Manage Tasks</span>
+                                <i class="ion-chevron-right pull-right"></i>
+                            </a>
+                            <ul>
+                                <li><a href="javascript:void(0)" onclick='$4d.Web_URLFilteringGo("oMainWebAreaObj","open-task-window",pTokenStr,function(result,error){ 	});'>Tasks</a></li>
+                                <li><a href="#">Add New Task</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-dropdown">
+                            <a href="#">
+                                <i class="ion-navicon-round"></i> <span>Manage Invoices</span>
+                                <i class="ion-chevron-right pull-right"></i>
+                            </a>
+                            <ul>
+                                <li><a href="javascript:void(0)" onclick='$4d.Web_URLFilteringGo("oMainWebAreaObj","open-invoice-window",pTokenStr,function(result,error){ 	});'>Invoices</a></li>
+                                <li><a href="#">Add New Invoice</a></li>
+                            </ul>
+                        </li>
+                   
+                        <li class="nav-dropdown">
+                            <a href="#">
+                                <i class="ion-navicon-round"></i> <span>Manage Employees</span>
+                                <i class="ion-chevron-right pull-right"></i>
+                            </a>
+                            <ul>
+                                <li><a href="javascript:void(0)" onclick='$4d.Web_URLFilteringGo("oMainWebAreaObj","open-employee-window",pTokenStr,function(result,error){ 	});'>Employees</a></li>
+                                <li><a href="#">Add New Employee</a></li>
+                            </ul>
+                        </li>
+                        <li>
+							<a href="#">
+								<i class="ion-calendar"></i> <span>Calendar</span>
+								<span class="label bg-green-700 pull-right">NEW</span>
+							</a>
+						</li>
+                         
+                    </ul>
+                    <!--#4DENDIF-->
+				<!-- END NAV -->
+				
+				<!-- BEGIN WIDGET -->
+					 
+				<!-- END WIDGET -->
+				</div><!-- /.sidebar -->
+        	</div>
+		<!-- END LEFTSIDE -->
+
+		
+    </div><!-- /.wrapper -->
+	<!-- END CONTENT -->
+			
+	<!-- BEGIN JAVASCRIPTS -->
+	
+	<!-- BEGIN CORE PLUGINS -->
+	<script src="assets/plugins/jquery-1.11.1.min.js" type="text/javascript"></script>
+	<script src="assets/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+	<script src="assets/plugins/bootstrap/js/holder.js"></script>
+	<script src="assets/plugins/pace/pace.min.js" type="text/javascript"></script>
+	<script src="assets/plugins/slimScroll/jquery.slimscroll.min.js" type="text/javascript"></script>
+	<script src="assets/js/core.js" type="text/javascript"></script>
+	<!-- END CORE PLUGINS -->
+	<script type="text/javascript">
+		var pTokenStr='<!--#4DVAR Web_TokenGetAny-->'; 
+
+		$.__4D_UserToken_Get = function __4D_UserToken_Get(){
+			return '<!--#4DHTMLVAR pValidtoken-->';
+		}
+		function open_import_window(){
+			$4d.Web_URLFilteringGo("oMainWebAreaObj","open-import-window",pTokenStr,function(result,error){
+	
+			});
+		}
+		
+		function open_ftp_window(){
+			$4d.Web_URLFilteringGo("oMainWebAreaObj","open-ftp-window",pTokenStr,function(result,error){
+	
+			});
+		}
+		
+		//console.log($.__4D_UserToken_Get);
+	</script>
+	<!-- END JAVASCRIPTS -->
+</body>
+<!-- END BODY -->
+</h

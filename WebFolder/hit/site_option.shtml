@@ -1,0 +1,452 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+C_TEXT(_HTMLTITLETXT)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+QUERY([site_options];[site_options]uuid=_HIT_WebApp_GetField ("uuid"))
+QUERY([Sites];[Sites]uuid=[site_options]site_uuid)
+C_LONGINT(mJSONObject)
+C_TEXT(mUserName;mServerName;mPassword;mDbName)
+mUserName:=""
+mServerName:=""
+mPassword:=""
+mDbName:=""
+If (Records in selection([site_options])=1)
+If ([site_options]json_object_data#"")
+mJSONObject:=JSON Parse Text ([site_options]json_object_data)
+mServerName:=JSON Get Text (mJSONObject;"server_name"))
+mUserName:=JSON Get Text (mJSONObject;"user_name"))
+mPassword:=JSON Get Text(mJSONObject;"password"))
+mDbName:=JSON Get Text (mJSONObject;"db_name"))
+JSON Release (mJSONObject)
+End if
+End if
+
+If (Records in selection([site_options])=0)
+_HTMLTITLETXT:="New Site Options"
+ELSE
+_HTMLTITLETXT:= "Edit Site Details"
+END IF
+
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+-->
+<!DOCTYPE html>
+<html>
+<head>
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+    <link rel="stylesheet" type="text/css" href="lib/base.css" />
+	<link href="css/img-tabs.css" type="text/css" rel="stylesheet">
+	<link rel="stylesheet" media="all" type="text/css" href="css/jquery-impromptu.css" />
+	<link rel="stylesheet" href="css/autocomplete.css" />
+	<style>
+		.custom-combobox a.ui-button, 
+  .custom-combobox a.ui-widget, 
+  .custom-combobox a.ui-state-default, 
+  .custom-combobox a.ui-button-icon-only, 
+  .custom-combobox a.custom-combobox-toggle, 
+  .custom-combobox a.ui-corner-right {
+	top:0px;
+  }
+		#SiteOptionsForm em.error {
+			margin-left: 10px;
+			width: auto;
+			display: inline;
+		}
+		#SiteOptionsForm em.error {
+			color: red;
+			font-style: italic;
+		}
+		#SiteOptionsForm input.error, textarea.error, select.error{
+			border: 1px solid red;
+		}
+	</style>
+</head>
+<body>
+
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
+
+	<!-- main container -->
+    <div class="content">
+       <div class="container-fluid">
+            <div id="pad-wrapper" class="form-page">
+				 <div class="row-fluid header">
+                    <h3><!--#4DIF (Records in selection([site_options])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Mysql details</h3>
+                </div>
+       			<form name="SiteOptionsForm" action="savesiteoptions.cgi" class="form-comment" method="post" id="SiteOptionsForm">         
+					<div id="tabs">
+						<ul>
+							<li ><a style="color:#000000" href="#tabs-1">Site Options</a></li>
+							<li ><a style="color:#000000" href="#tabs-2">Database Connection Details</a></li>
+						</ul>
+						<div id="tabs-1" class="var_tabs">  
+							<div class="row-fluid form-wrapper">
+								<div class="field-box">
+                                	<label>Site <span style="color:#6E829B">*</span></label>
+									<div class="ui-widget">
+										<select name="site_guid" id="site_guid">
+										<!--#4DIF (Records in selection([site_options])=0)-->
+											<option value=""></option>
+										<!--#4DSCRIPT/Web_LoadSites/-->
+										<!--4DLOOP  [Sites]-->
+											<option value="<!--4DVAR [Sites]uuid-->" <!--#4DIF ([Sites]uuid=[site_options]site_uuid)-->selected<!--4DELSE--><!--4DENDIF-->><!--4DVAR [Sites]name--></option>
+										<!--4DENDLOOP-->
+										<!--#4DELSE-->
+											 <option value="<!--4DVAR [Sites]uuid-->" selected><!--4DVAR [Sites]name--></option>									 
+										<!--#4DENDIF-->
+										</select>
+									</div>
+								</div>
+								<input name="uuid" class="span9" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="uuid">                      
+                            	<input class="span4 num" name="code" id="code" type="hidden" value="<!--#4DVAR [site_options]code-->">
+                            	<div class="field-box">
+									<label>Allow</label>
+									<label style="width:auto;" class="checkbox">							
+										<div class="checker"><span><input type="checkbox" id="ftp" value="ftp" class="span9" name="is_ftpallowed"></span></div> <strong>FTP</strong>
+									</label>
+									<label style="width:auto;" class="checkbox span2">							
+										<div class="checker"><span><input type="checkbox" id="import" value="import" class="span9" name="is_importallowed"></span></div> <strong>Data Import Manager</strong>
+									</label>
+								</div>
+                            	<h4>FTP Details</h4><br>
+                            	
+                           		<div class="field-box">
+                                	<label>Server <span style="color:#6E829B">*</span></label>
+									<input class="span4 num" name="ftp_server" id="ftp_server" type="text" value="<!--#4DVAR [ftp_users]ftp_server-->">
+                           		</div>
+                           		<div class="field-box">
+                                	<label>User Name <span style="color:#6E829B">*</span></label>
+									<input class="span4 num" name="ftp_user_name" id="ftp_user_name" type="text" value="<!--#4DVAR [ftp_users]ftp_user_name-->">
+                          	 	</div>
+                           		<div class="field-box">
+                            	    <label>Password <span style="color:#6E829B">*</span></label>
+									<input class="span4 num" name="ftp_password" id="ftp_password" type="password" value="<!--#4DVAR [ftp_users]ftp_password-->">
+                           		</div>                          	
+								<div class="field-box">
+                                	<label>Directory Path </label>
+									<input class="span4 num" name="ftp_home_dir_path" id="ftp_home_dir_path" type="text" value="<!--#4DVAR [ftp_users]ftp_home_dir_path-->">
+                           		</div>  
+							
+								<div class="span11 field-box" style="text-align: center;">
+                            		<input type="submit" name="Submit" class="btn-glow primary" value="Submit">
+                                	<span>OR</span>
+                                	<a href="site_options.shtml">Cancel</a>
+                           		</div>	
+							</div>
+            			</div>
+            			<div id="tabs-2" class="var_tabs">  
+							<div class="row-fluid form-wrapper">
+								<div class="field-box">
+									<label></label>
+									<label style="width:auto;" class="radio">							
+										<div class="radio"><span><input type="radio" id="mysql" value="mysql" class="span9" name="db_selected"></span></div> <strong>Mysql</strong>
+									</label>
+									<label style="width:auto;" class="radio span2">							
+										<div class="radio"><span><input type="radio" id="mongoDb" value="mongoDb" class="span9" name="db_selected"></span></div> <strong>MongoDbB</strong>
+									</label>
+								</div>
+								<div class="field-box">
+                                	<label>Host Name <span style="color:#6E829B">*</span></label>
+									<input class="span4 num" name="db_host_name" id="db_host_name" type="text" value="<!--#4DVAR mServerName-->">
+                           		</div>
+                           		<div class="field-box">
+                              		<label>User Name <span style="color:#6E829B">*</span></label>
+									<input class="span4 num" name="db_user_name" id="db_user_name" type="text" value="<!--#4DVAR mUserName-->">
+                          	 	</div>
+                           		<div class="field-box">
+                                	<label>Password <span style="color:#6E829B">*</span></label>
+									<input class="span4 num" name="db_password" id="db_password" type="password" value="<!--#4DVAR mPassword-->">
+                           		</div>                          	
+								<div class="field-box">
+                                	<label>Database Name <span style="color:#6E829B">*</span></label>
+									<input class="span4 num" name="db_name" id="db_name" type="text" value="<!--#4DVAR mDbName-->">
+                           		</div>    
+							
+								<div class="span11 field-box" style="text-align: center;">
+                            		<input type="submit" name="Submit" class="btn-glow primary" value="Submit">
+                                	<span>OR</span>
+                                	<a href="site_options.shtml">Cancel</a>
+                           		</div>
+							</div>
+            			</div>
+        			</div>
+        		</form>
+    		</div>
+    	</div>
+    </div>
+    <!-- end main container -->
+
+	<!-- scripts for this page -->
+   <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+   <!-- <script src="js/ui/jquery-ui.js"></script> -->
+   	<script src="js/jquery.uniform.min.js"></script>
+	<script type="text/javascript" src="js/jquery-impromptu.js"></script>
+	<script src="js/jquery.validate.js"></script>
+	
+    <!-- call this page plugins -->
+
+<script type="text/javascript">
+	$(function () {
+		$( "#tabs" ).tabs();
+		 $("input:radio").uniform();
+		// validate form on keyup and submit
+		$("#SiteOptionsForm").validate({
+			ignore: "",
+			onkeyup: false,
+			errorClass: 'error',
+			validClass: 'valid',
+			errorElement: "em",
+			errorPlacement: function(error, element) {
+				//console.log(element);
+				//if(){
+				
+				//}else{
+					$(element).closest('div').append(error);
+				//}
+			},
+			rules: {
+				site_guid: { required: true },
+				ftp_server: { required: true },
+				ftp_user_name: { required: true },
+				ftp_password: { required: true },
+				db_host_name: {
+                    required: function(element) {
+                        if($("#db_password").val() != '' || $("#db_user_name").val() != '' || $("#db_name").val() != ''){
+                        	return true;
+                        }else{
+                        	return false;
+                        }
+                    }
+                },
+                db_user_name: {
+                    required: function(element) {
+                        if($("#db_password").val() != '' || $("#db_host_name").val() != '' || $("#db_name").val() != ''){
+                        	return true;
+                        }else{
+                        	return false;
+                        }
+                		//return $("#db_user_name").val() != '';
+                    }
+                },
+                db_password: {
+                    required: function(element) {
+                        if($("#db_host_name").val() != '' || $("#db_user_name").val() != '' || $("#db_name").val() != ''){
+                        	return true;
+                        }else{
+                        	return false;
+                        }
+                    }
+                },
+                db_name: {
+                    required: function(element) {
+                        if($("#db_host_name").val() != '' || $("#db_user_name").val() != '' || $("#db_password").val() != ''){
+                        	return true;
+                        }else{
+                        	return false;
+                        }
+                    }
+                },
+                db_selected: {
+                    required: function(element) {
+                        if($("#db_name").val() != '' || $("#db_host_name").val() != '' || $("#db_user_name").val() != '' || $("#db_password").val() != ''){
+                        	return true;
+                        }else{
+                        	return false;
+                        }
+                    }
+                }
+				//db_name: { required: true },
+			},
+		});	
+	});
+        
+	 var xhr;
+  (function( $ ) {
+    $.widget( "custom.combobox", {
+      _create: function() {
+        this.wrapper = $( "<span>" )
+          .addClass( "custom-combobox" )
+          .insertAfter( this.element );
+ 
+        this.element.hide();
+        this._createAutocomplete();
+        this._createShowAllButton();
+      },
+ 
+      _createAutocomplete: function() {
+        var selected = this.element.children( ":selected" ),
+          value = selected.val() ? selected.text() : "";
+ 
+        this.input = $( "<input>" )
+          .appendTo( this.wrapper )
+          .val( value )
+          .attr( "title", "" )
+          .addClass( "custom-combobox-input ui-widget ui-widget-content ui-state-default ui-corner-left" )
+          .autocomplete({
+            delay: 0,
+            minLength: 0,
+            source: $.proxy( this, "_source" )
+          })
+          .tooltip({
+            tooltipClass: "ui-state-highlight"
+          });
+ 
+        this._on( this.input, {
+          autocompleteselect: function( event, ui ) {
+		  	//alert("show all");
+            ui.item.option.selected = true;
+			
+            this._trigger( "select", event, {
+              item: ui.item.option
+            });
+          },
+ 
+          autocompletechange: "_removeIfInvalid"
+        });
+      },
+ 
+      _createShowAllButton: function() {
+        var input = this.input,
+          wasOpen = false;
+ 
+        $( "<a>" )
+          .attr( "tabIndex", -1 )
+          .attr( "title", "Show All Items" )
+          .tooltip()
+          .appendTo( this.wrapper )
+          .button({
+            icons: {
+              primary: "ui-icon-triangle-1-s"
+            },
+            text: false
+          })
+          .removeClass( "ui-corner-all" )
+          .addClass( "custom-combobox-toggle ui-corner-right" )
+          .mousedown(function() {
+            wasOpen = input.autocomplete( "widget" ).is( ":visible" );
+          })
+          .click(function() {
+            input.focus();
+ 
+            // Close if already visible
+            if ( wasOpen ) {
+              return;
+            }
+ 
+            // Pass last search string as value to search for, displaying last results
+            input.autocomplete( "search", 'SHOWALL' );
+          });
+      },
+ 
+      _source: function( request, response ) {
+        //var matcher = new RegExp( $.ui.autocomplete.escapeRegex(request.term), "i" );
+		var ele_select= this.element;
+		if(request.term=='SHOWALL'){
+			response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+		
+		}
+		else
+		{
+		var jsonRow = 'getsiteonsearch.cgi?srch='+request.term+'&closed=false';
+		
+
+		//alert(jsonRowURLStr);
+		if(xhr) xhr.abort();
+		xhr=$.getJSON(jsonRow,function(result){
+			
+			if(result){
+				var html='<option value=""></option>';
+
+				$.each(result, function(i,item)
+				{
+					html += '<option value="'+item.uuid+'">'+item.value+'</option>';
+				});
+				ele_select.html(html);
+				
+				
+				response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+				
+				
+			}
+		});
+       
+	  } 
+		
+      },
+ 
+      _removeIfInvalid: function( event, ui ) {
+ 
+        // Selected an item, nothing to do
+        if ( ui.item ) {
+
+          return;
+        }
+ 
+        // Search for a match (case-insensitive)
+        var value = this.input.val(),
+          valueLowerCase = value.toLowerCase(),
+          valid = false;
+        this.element.children( "option" ).each(function() {
+          if ( $( this ).text().toLowerCase() === valueLowerCase ) {
+            this.selected = valid = true;	
+			
+            return false;
+          }
+        });
+ 
+        // Found a match, nothing to do
+        if ( valid ) {
+          return;
+        }
+ 
+        // Remove invalid value
+        this.input
+          .val( "" )
+          .attr( "title", value + " didn't match any item" )
+          .tooltip( "open" );
+        this.element.val( "" );
+        this._delay(function() {
+          this.input.tooltip( "close" ).attr( "title", "" );
+        }, 2500 );
+        this.input.data( "ui-autocomplete" ).term = "";
+      },
+ 
+      _destroy: function() {
+        this.wrapper.remove();
+        this.element.show();
+      }
+    });
+  })( jQuery );
+ 
+  $(function() {
+    $( "#site_guid" ).combobox();
+  });
+
+  </script>
+
+</body>
+</html>
+</html>

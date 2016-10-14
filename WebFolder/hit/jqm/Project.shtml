@@ -1,0 +1,162 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+<title>Add New project</title>
+	
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+	
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="robots" content="noindex, nofollow" />	
+<link rel="stylesheet" href="css/jquery.fumobile.theme-1.1.0.min.css?" />
+<link rel="stylesheet" href="css/jquery.mobile.structure-1.3.1.min.css" /> 
+<link rel="stylesheet" href="css/jquery.fumobile.extra-1.1.0.css" />
+<link rel="stylesheet" href="themes/selectedtheme.min.css" />
+	 
+<script src="js/jquery-1.7.1.min.js"></script>
+<script>
+	$(document).bind("mobileinit", function() {
+    $.mobile.defaultPageTransition = 'slide';
+    $.mobile.page.prototype.options.addBackBtn = true;
+    $.mobile.page.prototype.options.headerTheme = 'b'; // page headers
+    $.mobile.listview.prototype.options.headerTheme = 'd'; // nested list headers
+    });
+</script>
+	
+<script src="js/jquery.mobile-1.3.1.min.js"></script>
+<script src="js/swipe-carousel.min.js"></script>  
+<script src="js/lists.js"></script>        
+<script src="js/job_detail.js"></script>        
+<script src="http://jquery.bassistance.de/validate/jquery.validate.js"></script>
+<script src="http://jquery.bassistance.de/validate/additional-methods.js"></script>
+<script type="text/javascript">
+	$(document).on('pageinit', function(){
+	$("#ProjectForm").validate({
+        rules: {
+            Project_ID: "required",
+            Project_Name: "required",
+            Start_Date: "required",
+            End_Date: "required",
+            Budget: "required",
+            Currency: "required"
+        },
+		messages: {
+			Project_ID: "Please enter Project ID",
+			Project_Name: "Please enter Project Name",
+			Start_Date: "Please enter Start Date",
+			End_Date: "Please enter End Date",
+			Budget: "Please enter Budget",
+			Currency: "Enter User Currency"
+		}
+    });
+});
+</script>
+<link rel="stylesheet" type="text/css" href="css/jqm-datebox.min.css" /> 
+<script type="text/javascript" src="js/jqm-datebox.core.min.js"></script>
+<script type="text/javascript" src="js/jqm-datebox.mode.calbox.min.js"></script>
+<script type="text/javascript" src="js/jquery.mobile.datebox.i18n.en_US.utf8.js"></script>
+</head>
+<body>
+	
+
+<div data-role="page" id="home" data-add-back-btn="false">
+	<div data-role="header" class="head-border" data-theme="a">
+		<div style="text-align:right">
+			<a href="#" class="my-account" style="color: #FFFFFF;font-size:12px;text-decoration: none;">Sign out</a>
+		</div>
+	</div>
+	<div class="search-container" data-theme="a">
+		<div id="search-home"><a href="index.shtml"><span>Click here for Home</span></a></div>
+	</div>
+    <div data-role="content" style="padding: 15px;" >
+		<ul data-role="listview" data-inset="true">
+			<li data-role="list-divider"><span style=" color:#2B89D0; font-size:15px; font-stretch:narrower;">Add New Project</span></li>
+		</ul>
+		 <form name="ProjectForm" action="SaveProject.cgi" method="post" id="ProjectForm">
+		 <div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput9">Client ID<font color="#FF0000"></font></label>
+					<select name="Client ID" id="Client ID" >
+					<!--4DLOOP  [Companies]-->
+						<option value="<!--4DVAR [Companies]account_Number-->" name=""><!--4DVAR [Companies]account_Number--></option>
+					<!--4DENDLOOP-->
+					</select>
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput1">Project ID<font color="#FF0000">*</font></label>
+					<input name="Project_ID" id="Project_ID" placeholder="Project ID" />
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput2">Project Name<font color="#FF0000">*</font></label>
+					<input name="Project_Name" id="Project_Name" placeholder="Project Name">
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput3">Start Date<font color="#FF0000">*</font></label>
+					<input name="Start_Date" id="Start_Date" type="date" data-role="datebox" data-options='{"mode": "calbox"}' placeholder="Start Date">
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput4">End Date<font color="#FF0000">*</font></label>
+					<input name="End_Date" id="End_Date" type="date" data-role="datebox" data-options='{"mode": "calbox"}' placeholder="End Date">
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput5">Budget<font color="#FF0000">*</font></label>
+					<input name="Budget" id="Budget" placeholder="Budget">
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput6">Rate<font color="#FF0000"></font></label>
+					<input name="Rate" id="Rate" placeholder="Rate">
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput7">Currency<font color="#FF0000">*</font></label>
+					<input name="Currency" id="Currency" placeholder="Currency">
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<input name="Active" id="Active" type="checkbox" value="True" style="vertical-align:bottom">&nbsp;&nbsp;&nbsp; Active
+				</fieldset>
+			</div>
+			<input type="submit" value="Add New project" id="submit" name="submit">
+			<div>
+			<a class="ui-btn ui-shadow ui-btn-corner-all ui-btn-inline ui-btn-icon-left ui-btn-up-c" data-inline="true" data-theme="c" data-iconpos="left" data-icon="back" data-role="button" href="index.shtml" data-corners="true" data-shadow="true" data-iconshadow="true" data-wrapperels="span">
+			<span class="ui-btn-inner">
+			<span class="ui-btn-text">Back</span>
+			<span class="ui-icon ui-icon-back ui-icon-shadow"> </span>
+			</span>
+			</a>
+			</div>
+		</form>
+		</div><!-- END DATA ROLE CONTENT-->
+ </div>
+ 
+</body>
+</html>

@@ -1,0 +1,14 @@
+Case of 
+: ($SetNameStr="Spine")
+$SetNameStr:="Spine_Lexis"
+: ($SetNameStr="Neck")
+$SetNameStr:="Neck_Lexis"
+: ($SetNameStr="Elbow")
+$SetNameStr:="Elbow_Lexis"
+: ($SetNameStr="Hand")
+$SetNameStr:="Hand_Lexis"
+: ($SetNameStr="Knee")
+$SetNameStr:="Knee_Lexis"
+: ($SetNameStr="Wrist")
+$SetNameStr:="Wrist_Lexis"
+End case 

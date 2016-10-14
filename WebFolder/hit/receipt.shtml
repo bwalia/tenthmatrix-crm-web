@@ -1,0 +1,236 @@
+<!--HIT_EXECUTE
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+C_TEXT(_HTMLTITLETXT)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+QUERY([Receipts];[Receipts]uuid=_HIT_WebApp_GetField ("uuid"))
+QUERY([Companies];[Companies]account_Number=[Receipts]client_accountnumber)
+
+QUERY([Invoices];[Invoices]inv_idzzz=[Receipts]invoice_number)
+
+Web_LoadPaymentRelated
+
+IF (Records in selection([Receipts])=0)
+_HTMLTITLETXT:="New Receipt"
+ELSE
+_HTMLTITLETXT:= "Edit Receipt"
+END IF
+
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+_HIT_WebSession_SetVar ("last-payment-uuid";_HIT_WebApp_GetField ("uuid"))
+-->
+<!DOCTYPE html>
+<html>
+<head>
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+	<link rel="stylesheet" media="all" type="text/css" href="css/jquery-impromptu.css" />
+	<style>
+		#PaymentForm em.error {
+			margin-left: 10px;
+			width: auto;
+			display: inline;
+		}
+		#PaymentForm em.error {
+			color: red;
+			font-style: italic;
+		}
+		#PaymentForm input.error, textarea.error, select.error{
+			border: 1px solid red;
+		}
+	</style>
+</head>
+<body>
+
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
+
+	<!-- main container -->
+    <div class="content">
+        
+        <div class="container-fluid">
+            <div id="pad-wrapper" class="form-page">
+				 <div class="row-fluid header">
+                    <h3><!--#4DIF (Records in selection([Receipts])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Receipt</h3>
+                </div>
+                <div class="row-fluid form-wrapper">
+					<!-- left column -->
+                    <div class="span9 with-sidebar">
+						<form name="PaymentForm" id="PaymentForm" action="savereceipt.cgi" class="form-comment" method="post" >
+							<input name="uuid" class="span9" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="uuid">
+							<input name="req_from" type="hidden" value="receipt" id="req_from">
+							<div class="span12 field-box">
+								<label>Invoice no <span style="color:#6E829B">*</span></label>
+								<input name="inv_no" onBlur="get_client()" class="span4 displayMsg" type="text" value="<!--#4DVAR [Receipts]invoice_number-->" id="inv_no" >
+								
+								<input class="span4" name="invoice_uuid" id="invoice_uuid" type="hidden" value="<!--#4DVAR [Invoices]uuid-->">
+							</div>                                                                 
+							<div class="span12 field-box">
+								<label>Company</label>
+								<input class="span4" name="company_name"  type="text" value="<!--4DVAR [Companies]company_Name-->" id="company_name" readonly>
+								<input class="span4" name="client_uuid" id="client_uuid" type="hidden" value="<!--#4DVAR [Companies]uuid-->">
+							</div>							
+							<div class="span12 field-box">
+								<label>Date <span style="color:#6E829B">*</span></label>
+								<input name="date_received" class="input-large datepicker span4" type="text" data-date-format="dd/mm/yyyy" <!--#4DIF ([Receipts]date_received=!00/00/00!)-->value="<!--#4DHTMLVAR Current date -->"<!--4DELSE-->value="<!--#4DVAR [Receipts]date_received-->"<!--4DENDIF--> id="date_received" readonly>
+							</div>
+                  
+							<div class="span12 field-box">
+								<label>Amount <span style="color:#6E829B">*</span></label>
+								<input name="amount" class="span4 num" type="text" value="<!--#4DVAR [Receipts]amount_received-->" id="amount">
+							</div>                                                                 
+							<div class="field-box">
+                                <label>Mode of Payment</label>
+                                <div class="ui-select span4">
+									<Select name="mode_of_payment" id="mode_of_payment">
+										<option value="BACS" <!--#4DIF ([Receipts]mode_of_payment="BACS")-->selected<!--4DELSE--><!--4DENDIF-->>BACS</option>
+										<option value="Paid by Debit or Credit Card" <!--#4DIF ([Receipts]mode_of_payment="Paid by Debit or Credit Card")-->selected<!--4DELSE--><!--4DENDIF-->>Paid by Debit or Credit Card</option>
+										<option value="Cash" <!--#4DIF ([Receipts]mode_of_payment="Cash")-->selected<!--4DELSE--><!--4DENDIF-->>Cash</option>
+										<option value="Cheque" <!--#4DIF ([Receipts]mode_of_payment="Cheque")-->selected<!--4DELSE--><!--4DENDIF-->>Cheque</option>
+										<option value="International Banking" <!--#4DIF ([Receipts]mode_of_payment="International Banking")-->selected<!--4DELSE--><!--4DENDIF-->>International Banking</option>
+										<option value="PayPal" <!--#4DIF ([Receipts]mode_of_payment="PayPal")-->selected<!--4DELSE--><!--4DENDIF-->>PayPal</option>
+									</select>                                     
+                                </div>
+                            </div>
+                            <div class="field-box">
+                                <label>Type</label>
+                                <div class="ui-select span4">
+									<select name="creditType" id="creditType">
+										<option value="Receipt" <!--#4DIF ([Receipts]creditType="Receipt")-->selected<!--4DELSE--><!--4DENDIF-->>Receipt</option>
+										<option value="Credit Note" <!--#4DIF ([Receipts]creditType="Credit Note")-->selected<!--4DELSE--><!--4DENDIF-->>Credit Note</option>
+									</select>                                     
+                                </div>
+                            </div>
+                            <div class="span12 field-box">
+								<label>Notes</label>
+								<textarea name="notes" class="span4" rows="4" id="notes"><!--#4DVAR [Receipts]notes--></textarea>
+							</div>
+
+							<div class="span11 field-box" style="text-align: left; margin-left:138px;">
+								<input type="submit" id="submit" class="btn-glow primary" value="Submit">
+								
+								<a href="receipts.shtml"  class="cancelbtn">Cancel</a>
+							</div>
+						</form>
+                    </div>
+				</div>
+            </div>
+        </div>
+    </div>
+    <!-- end main container -->
+
+	<!-- scripts -->
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+	<script src="js/bootstrap.datepicker.js"></script>
+	<script src="js/jquery.uniform.min.js"></script>
+	<script src="js/jquery.validate.js"></script>
+	<script type="text/javascript" src="js/jquery-impromptu.js"></script>
+	
+	<!-- call this page plugins -->
+<script type="text/javascript">
+	$(function () {
+
+		// add uniform plugin styles to html elements
+		$("input:checkbox").uniform();
+
+		// datepicker plugin
+		$('.datepicker').datepicker().on('changeDate', function (ev) {
+			$(this).datepicker('hide');
+		});
+		
+		// validate form on keyup and submit
+		$.validator.addMethod('checkinteger', function(value, element, param) {
+            return (value != 0);
+        }, 'Please enter a non zero value!');
+		
+		$("#PaymentForm").validate({
+			ignore: "",
+			errorClass: 'error',
+			validClass: 'valid',
+			errorElement: "em",
+			errorPlacement: function(error, element) {
+				$(element).closest('div').append(error);
+			},
+			onfocusout: false,
+			invalidHandler: function(form, validator) {
+				var errors = validator.numberOfInvalids();
+				if (errors) {                    
+					validator.errorList[0].element.focus();
+				}
+			},
+			rules: {
+				inv_no: { required: true, checkinteger : true },
+				date_received: { required: true },
+				amount: { required: true, checkinteger : true },
+			},
+		});	
+	});
+
+function get_client()	{
+    $('#err_msg').remove();
+	var inv_no=	$("#inv_no").val();
+	if(inv_no!=''){
+	var dataString = 'inv_no='+inv_no;
+	$.ajax({
+		type: "GET",
+		dataType: "json",
+		url: "getreceiptclient.cgi",
+		data: dataString,
+		cache: false,
+		success: function(html)	{
+			if(html.success){
+		
+				$('#err_msg').html('');
+				$("#invoice_uuid").val(html.invoice_uuid);
+				$("#amount").val(html.amount);
+				$("#client_uuid").val(html.customer_id);
+				$("#company_name").val(html.customer_name);
+				$('#submit').attr('disabled',false);
+		
+			}else if(html.error){
+				if(html.paid){
+					__alertMessage("This Invoice is Already Paid");
+					$('#submit').attr('disabled',true);
+				}else{
+					var errorMsg='<span id="err_msg" style="color:#FF0000;font-style: italic;">  Invoice no '+inv_no+' doesn\'t exists.</span>';
+					$('.displayMsg').after(errorMsg);
+					$("#inv_no").val('0');
+				}
+				
+					$("#invoice_uuid").val('');
+					$("#amount").val('0');
+					$("#client_uuid").val('');
+					$("#company_name").val('');
+			}
+	
+		}
+	});
+	}
+}
+
+	$('#inv_no').keypress(function(e){
+		checknumber(e);	
+	}); 
+						
+	$('.num').keypress(function(e){
+		checknumber(e);	
+	});
+					
+	function checknumber(e)
+	{
+		var k = e.which;
+		/* numeric inputs can come from the keypad or the numeric row at the top */
+		 if ((k<48 || k>57) && (k!=46) && (k!=8) && (k!=0)) {
+			e.preventDefault();
+			//alert("Allowed characters are 0-9, +, -, (, )");
+			return false;
+		}
+	
+	}
+</script>
+	
+</body>
+</html>

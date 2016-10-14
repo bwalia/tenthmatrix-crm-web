@@ -1,0 +1,189 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+C_TEXT(_HTMLTITLETXT)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+QUERY([Receipts];[Receipts]uuid=_HIT_WebApp_GetField ("uuid"))
+QUERY([Companies];[Companies]account_Number=[Receipts]client_accountnumber)
+
+QUERY([Invoices];[Invoices]inv_idzzz=[Receipts]invoice_number)
+
+Web_LoadPaymentRelated
+
+IF (Records in selection([Receipts])=0)
+_HTMLTITLETXT:="New Receipt"
+ELSE
+_HTMLTITLETXT:= "Edit Receipt"
+END IF
+
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+
+_HIT_WebSession_SetVar ("last-payment-uuid";_HIT_WebApp_GetField ("uuid"))
+-->
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/main-header.shtml-->
+<script src="js/jquery.validate.js"></script>
+<script type="text/javascript">
+
+$(document).ready(function() {
+		
+	$.validator.addMethod('checkinteger', function(value, element, param) {
+    	return (value != 0);
+    }, 'Please enter a non zero value!');
+		
+	$("#DetailForm").validate({
+		ignore: "",
+        rules: {
+            inv_no: { required: true, checkinteger : true },
+			date_received: { required: true },
+			amount: { required: true, checkinteger : true },
+        }
+    });    
+});
+function get_client()	{
+    $('#err_msg').remove();
+	var inv_no=	$("#inv_no").val();
+	if(inv_no!=''){
+	var dataString = 'inv_no='+inv_no;
+	$.ajax({
+		type: "GET",
+		dataType: "json",
+		url: "getreceiptclient.cgi",
+		data: dataString,
+		cache: false,
+		success: function(html)	{
+			if(html.success){
+		
+				$('#err_msg').html('');
+				$("#invoice_uuid").val(html.invoice_uuid);
+				$("#amount").val(html.amount);
+				$("#client_uuid").val(html.customer_id);
+				$("#company_name").val(html.customer_name);
+				$('#submit').attr('disabled',false);
+		
+			}else if(html.error){
+				if(html.paid){
+					var errorMsg='<span id="err_msg" style="color:#FF0000;font-style: italic;">  This Invoice is Already Paid</span>';
+					$('.displayMsg').before(errorMsg);
+					$('#submit').attr('disabled',true);
+				}else{
+					var errorMsg='<span id="err_msg" style="color:#FF0000;font-style: italic;">  Invoice no '+inv_no+' doesn\'t exists.</span>';
+					$('.displayMsg').before(errorMsg);
+					$("#inv_no").val('0');
+				}
+				
+					$("#invoice_uuid").val('');
+					$("#amount").val('0');
+					$("#client_uuid").val('');
+					$("#company_name").val('');
+			}
+	
+		}
+	});
+	}
+}
+
+	$('#inv_no').keypress(function(e){
+		checknumber(e);	
+	}); 
+						
+	$('.num').keypress(function(e){
+		checknumber(e);	
+	});
+					
+	function checknumber(e)
+	{
+		var k = e.which;
+		/* numeric inputs can come from the keypad or the numeric row at the top */
+		 if ((k<48 || k>57) && (k!=46) && (k!=8) && (k!=0)) {
+			e.preventDefault();
+			//alert("Allowed characters are 0-9, +, -, (, )");
+			return false;
+		}
+	
+	}
+</script>
+<script type='text/javascript' src='js/customerNotes.js'></script>
+<style>
+label.error { 
+	float: left; 
+	color: red; 
+	padding-top: 1.5em; 
+	vertical-align: top; 
+}
+</style>
+</head>
+<body>
+<div data-role="page" class="jqm-demos" data-quicklinks="true">
+	<!-- header -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/top-header.shtml-->
+	<!-- /header -->
+	
+	<div role="main" class="ui-content jqm-content">
+		<h3><!--#4DIF (Records in selection([Receipts])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Receipts</h3>
+		<div data-demo-html="true">
+			<form name="DetailForm" action="savereceipt.cgi" id="DetailForm" data-ajax="false" method="post">
+					     
+                   <input name="uuid" class="span9" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="uuid">
+					<input name="req_from" type="hidden" value="receipt" id="req_from">
+					<div class="ui-field-contain displayMsg">
+   						<label for="inv_no">Invoice no:</label>
+   						<input name="inv_no" onBlur="get_client()" type="text" value="<!--#4DVAR [Receipts]invoice_number-->" id="inv_no" placeholder="Invoice no">
+   						<input name="invoice_uuid" id="invoice_uuid" type="hidden" value="<!--#4DVAR [Invoices]uuid-->">
+					</div>
+					<div class="ui-field-contain">
+   						<label for="company_name">Company:</label>
+   						<input name="company_name"  type="text" value="<!--4DVAR [Companies]company_Name-->" id="company_name" readonly placeholder="Company">
+						<input name="client_uuid" id="client_uuid" type="hidden" value="<!--#4DVAR [Companies]uuid-->">
+					</div>
+					
+					<div class="ui-field-contain">
+   						<label for="date_received">Date :</label>
+						<input name="date_received" data-role="date" type="text" data-date-format="dd/mm/yyyy" <!--#4DIF ([Receipts]date_received=!00/00/00!)-->value="<!--#4DHTMLVAR Current date -->"<!--4DELSE-->value="<!--#4DVAR [Receipts]date_received-->"<!--4DENDIF--> id="date_received" readonly placeholder="Date">
+					</div>
+					<div class="ui-field-contain">
+   						<label for="amount">Amount:</label>
+						<input name="amount" class="num" type="text" value="<!--#4DVAR [Receipts]amount_received-->" id="amount" placeholder="Amount">
+   					</div>
+   					<div class="ui-field-contain">
+   						<label for="mode_of_payment">Mode of Payment</label>
+   						<select data-native-menu="false" name="mode_of_payment" id="mode_of_payment">
+							<option value="BACS" <!--#4DIF ([Receipts]mode_of_payment="BACS")-->selected<!--4DELSE--><!--4DENDIF-->>BACS</option>
+							<option value="Paid by Debit or Credit Card" <!--#4DIF ([Receipts]mode_of_payment="Paid by Debit or Credit Card")-->selected<!--4DELSE--><!--4DENDIF-->>Paid by Debit or Credit Card</option>
+							<option value="Cash" <!--#4DIF ([Receipts]mode_of_payment="Cash")-->selected<!--4DELSE--><!--4DENDIF-->>Cash</option>
+							<option value="Cheque" <!--#4DIF ([Receipts]mode_of_payment="Cheque")-->selected<!--4DELSE--><!--4DENDIF-->>Cheque</option>
+							<option value="International Banking" <!--#4DIF ([Receipts]mode_of_payment="International Banking")-->selected<!--4DELSE--><!--4DENDIF-->>International Banking</option>
+							<option value="PayPal" <!--#4DIF ([Receipts]mode_of_payment="PayPal")-->selected<!--4DELSE--><!--4DENDIF-->>PayPal</option>
+						</select> 
+   					</div>
+   					<div class="ui-field-contain">
+   						<label for="creditType">Type</label>
+   						<select data-native-menu="false" name="creditType" id="creditType">
+							<option value="Receipt" <!--#4DIF ([Receipts]creditType="Receipt")-->selected<!--4DELSE--><!--4DENDIF-->>Receipt</option>
+							<option value="Credit Note" <!--#4DIF ([Receipts]creditType="Credit Note")-->selected<!--4DELSE--><!--4DENDIF-->>Credit Note</option>
+						</select>
+   					</div>
+   					<div class="ui-field-contain">
+   						<label for="date_received">Notes :</label>
+						<textarea name="notes" rows="4" id="notes"><!--#4DVAR [Receipts]notes--></textarea>
+					</div>
+					<button type="submit" id="submit" class="ui-shadow ui-btn ui-corner-all ui-mini">Submit</button>
+					<a href="receipts.shtml" data-ajax="false" class="ui-shadow ui-btn ui-corner-all ui-mini">Cancel</a>
+				</form>	
+		    	
+		    </div>
+	</div><!-- /content -->
+	<!-- panel -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/sidebar.shtml-->
+	<!-- /panel -->
+
+	<!-- footer -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/footer.shtml-->
+	<!-- /footer -->
+</div><!-- /page -->
+
+</body>
+</html>

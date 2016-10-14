@@ -1,0 +1,435 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+C_TEXT(_HTMLTITLETXT)
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+ALL RECORDS([Tax_Codes])
+
+If(Num(_HIT_WebApp_GetField ("inv_id"))#0)
+QUERY([Invoices];[Invoices]inv_id=Num(_HIT_WebApp_GetField ("inv_id")))
+else
+QUERY([Invoices];[Invoices]uuid=_HIT_WebApp_GetField ("uuid"))
+end If
+
+
+QUERY([Companies];[Companies]account_Number=num([Invoices]client_id))
+QUERY([Projects];[Projects]proj_name=[Invoices]project_code)
+
+QUERY([analysis_ledger];[analysis_ledger]uuid=[Invoices]uuid_analysis_ledger)
+QUERY([analysis_account];[analysis_account]uuid=[Invoices]uuid_analysis_account)
+
+IF (Records in selection([Invoices])=0)
+_HTMLTITLETXT:="New Invoice"
+ELSE
+_HTMLTITLETXT:= "Invoice Number: "+[Invoices]Full_Invoice_Number
+END IF
+
+C_BOOLEAN(mUserIsCurrentBool)
+mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
+
+C_BOOLEAN(mUserIsStaff)
+mUserIsStaff:=(_HIT_WebSession_GetVar ("auth_user_type")="STAFF")
+
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+
+-->
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/main-header.shtml-->
+<link rel="stylesheet" href="css/jquery-ui.css">
+<script src="js/datepicker.js"></script>
+<script src="js/jquery.validate.js"></script>
+<script type="text/javascript">
+var newEntry=false;
+var new_inv_num=0;
+$(document).ready(function() {
+	$('#invoice_date').datepicker({
+    	autoclose: true,
+    	changeMonth: true,
+      	changeYear: true,
+      	dateFormat: 'dd/mm/yy'
+	});
+	$('#invoice_due_date').datepicker({
+    	autoclose: true,
+    	changeMonth: true,
+      	changeYear: true,
+      	dateFormat: 'dd/mm/yy'
+	});
+	$('#invoice_paid_date').datepicker({
+    	autoclose: true,
+    	changeMonth: true,
+      	changeYear: true,
+      	dateFormat: 'dd/mm/yy'
+	});
+	<!--#4DIF (Records in selection([Invoices])=0)-->
+		newEntry=true;
+		new_inv_num='<!--#4DVAR InvoiceGetNextID-->';
+		//$("#popupForNewID").popup("open");
+				
+		var new_uuid='<!--#4DVAR Generate UUID-->';	
+		$('#invoice_uuid').val(new_uuid);
+		
+		
+		$('#inv_number').val(new_inv_num);
+		$('#invoice_id').val(new_inv_num);
+		
+		$('#tax_rate').val("20");
+		$('#tax_code').val("UK");
+
+	<!--#4DELSE-->
+	newEntry=false;
+	<!--#4DENDIF-->  
+	
+	<!--#4DIF ([Invoices]invoice_posted)-->
+		disableForm(true);
+	<!--#4DELSE-->
+		<!--#4DIF ([Invoices]invoice_status="Paid")-->
+			disableForm(false);
+		<!--#4DENDIF-->
+	<!--#4DENDIF-->  
+});
+</script>
+<script src="js/invoice.js"></script>
+<style>
+label.error { 
+	float: left; 
+	color: red; 
+	padding-top: 1.5em; 
+	vertical-align: top; 
+}
+.movie-list thead th,
+.movie-list tbody tr:last-child {
+	border-bottom: 1px solid #d6d6d6; /* non-RGBA fallback */
+	border-bottom: 1px solid rgba(0,0,0,.1);
+}
+.movie-list tbody th,
+.movie-list tbody td {
+	border-bottom: 1px solid #e6e6e6; /* non-RGBA fallback  */
+	border-bottom: 1px solid rgba(0,0,0,.05);
+}
+.movie-list tbody tr:last-child th,
+.movie-list tbody tr:last-child td {
+	border-bottom: 0;
+}
+.movie-list tbody tr:nth-child(odd) td,
+.movie-list tbody tr:nth-child(odd) th {
+	background-color: #eeeeee; /* non-RGBA fallback  */
+	background-color: rgba(0,0,0,.04);
+}
+</style>
+</head>
+<body>
+<div data-role="page" class="jqm-demos" data-quicklinks="true">
+	<!-- header -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/top-header.shtml-->
+	<!-- /header -->
+	
+	<div role="main" class="ui-content jqm-content">
+		<!--#4DIF (mUserIsCurrentBool)--><h3>Invoice</h3><!--#4DELSE-->
+			<h3><!--#4DIF (Records in selection([Invoices])=1)--><span style="font-style: italic;">Invoice Number: <!--#4DVAR [Invoices]Full_Invoice_Number --></span><!--#4DELSE-->New Invoice<!--#4DENDIF--></h3>
+		<!--#4DENDIF-->
+		<div data-demo-html="true">
+			<div data-role="tabs" id="tabs">
+		      <div data-role="navbar">
+			    <ul>
+			      <li><a href="#one" data-ajax="false" class="ui-btn-active">Invoice Details</a></li>
+			      <li><a href="#two" data-ajax="false">Internal Notes & Other details</a></li>
+			     </ul>
+		      </div>
+		      <form data-ajax="false" name="TaskForm" id="TaskForm" action="saveinvoice.cgi" method="post">
+		     	<div id="one" class="ui-body-d ui-content">
+		     		<div class="ui-field-contain">
+   						<label for="purchase_inv_no">Invoice Number:</label>
+						<input readonly name="inv_number" id="inv_number" placeholder="Invoice Number" value="<!--#4DVAR [Invoices]inv_number-->" type="text">
+   					</div>
+   					<input name="invoice_id" type="hidden"  value="<!--#4DVAR [Invoices]inv_id-->" id="invoice_id">
+					<input name="invoice_uuid" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="invoice_uuid"> 
+					
+					<div class="ui-field-contain">
+						<label for="type_of_holiday" class="select">Terms:</label>
+						<!--#4DIF (mUserIsCurrentBool)--><!--#4DVAR [Invoices]inv_terms--><!--#4DELSE-->
+						<select data-native-menu="false" name="invoice_terms" id="invoice_terms" class="s_dropdown">
+							<option value="Net 15" <!--#4DIF ([Invoices]inv_terms="Net 15")-->selected<!--4DELSE--><!--4DENDIF--> >Net 15</option>
+							<option value="Net 20" <!--#4DIF ([Invoices]inv_terms="Net 20")-->selected<!--4DELSE--><!--4DENDIF--> >Net 20</option>
+							<option value="Net 30" <!--#4DIF ([Invoices]inv_terms="Net 30")-->selected<!--4DELSE--><!--4DENDIF--> >Net 30</option>
+							<option value="Upon receipt" <!--#4DIF ([Invoices]inv_terms="Upon receipt")-->selected<!--4DELSE--><!--4DENDIF--> >Upon receipt</option>
+							<option value="Due On Receipt" <!--#4DIF ([Invoices]inv_terms="Due On Receipt")-->selected<!--4DELSE--><!--4DENDIF--> >Due On Receipt</option>
+						</select>
+						<!--4DENDIF-->
+					</div> 
+							
+   					<div class="ui-field-contain">
+   						<label for="payment_date">Date :</label>
+   						<!--#4DIF (mUserIsCurrentBool)--><!--#4DVAR [Invoices]inv_date--><!--#4DELSE-->
+						<input data-role="date" type="text" name="invoice_date" id="invoice_date" data-date-format="dd/mm/yyyy" <!--#4DIF ([Invoices]inv_date=!00/00/00!)-->value=""<!--4DELSE-->value="<!--#4DVAR [Invoices]inv_date-->"<!--4DENDIF--> readonly>
+						<!--#4DENDIF-->
+					</div>
+					<div class="ui-field-contain">
+   						<label for="payment_date">Due Date :</label>
+   						<!--#4DIF (mUserIsCurrentBool)--><!--#4DVAR [Invoices]inv_date_due--><!--#4DELSE-->
+						<input data-role="date" type="text" name="invoice_due_date" id="invoice_due_date" data-date-format="dd/mm/yyyy" <!--#4DIF ([Invoices]inv_date_due=!00/00/00!)-->value=""<!--4DELSE-->value="<!--#4DVAR [Invoices]inv_date_due-->"<!--4DENDIF--> readonly>
+						<!--#4DENDIF-->
+					</div>
+							
+					<div class="ui-field-contain">
+						<label for="uuid_reported_by" class="select">Client:</label>
+						<input name="Client_ID" id="Client_ID" type="hidden" value="<!--4DVAR [Companies]account_Number-->">
+						<!--#4DIF (mUserIsCurrentBool)--><!--#4DVAR [Companies]company_Name--><!--#4DELSE-->
+						<span class="ui-filterable">
+   							<input id="inset-autocomplete-input" data-type="search" placeholder="Search client..." class="clientNameStr" value="<!--4DVAR [Companies]company_Name-->" name="clientNameStr">
+						</span>
+						<ul data-role="listview" data-inset="true" data-filter="true" data-filter-reveal="true" data-input="#inset-autocomplete-input" class="clientListView">
+   							<!--#4DIF (Records in selection([Invoices])=0)-->
+								<!--#4DSCRIPT/Web_LoadCustomers/-->
+                                <!--4DLOOP  [Companies]-->
+									<li><a href="javascript:void(0)" onClick="selectClient('[Companies]account_Number','<!--4DVAR [Companies]company_Name-->')"><!--4DVAR [Companies]company_Name--></a></li>
+								<!--4DENDLOOP-->							 
+							<!--#4DENDIF-->
+						</ul>
+						<!--#4DENDIF-->
+					</div>
+					<div class="ui-field-contain">
+   						<label for="invoice_bill_to">Bill To:</label>
+   						<textarea cols="40" rows="8" <!--#4DIF (mUserIsCurrentBool)-->readonly<!--#4DELSE--><!--#4DENDIF--> name="invoice_bill_to" id="invoice_bill_to" placeholder="Bill To"><!--#4DVAR [Invoices]inv_bill_to--></textarea>
+					</div>
+					
+					<div class="ui-field-contain">
+   						<label for="ordered_by">Order By:</label>
+						<input<!--#4DIF (mUserIsCurrentBool)-->readonly<!--#4DELSE--><!--#4DENDIF--> name="ordered_by" value="<!--#4DVAR [Invoices]ordered_by -->" id="ordered_by" placeholder="Order By" type="text">
+   					</div>
+   					<div class="ui-field-contain">
+   						<label for="inv_note">Note:</label>
+   						<textarea cols="40" rows="8" <!--#4DIF (mUserIsCurrentBool)-->readonly<!--#4DELSE--><!--#4DENDIF--> name="inv_note" id="inv_note" placeholder="Note"><!--#4DVAR [Invoices]inv_note--></textarea>
+					</div>
+																	
+   					<div class="ui-field-contain">
+						<label for="project_code" class="select">Project:</label>
+						<input name="project_code" id="project_code" type="hidden" value="<!--#4DVAR [Invoices]project_code -->">
+						<!--#4DIF (mUserIsCurrentBool)--><!--#4DVAR [Invoices]project_code --><!--#4DELSE-->
+						<span class="ui-filterable">
+   							<input id="inset-autocomplete-input" data-type="search" placeholder="Search project..." class="projectNameStr" value="<!--4DVAR [Projects]proj_name-->" name="projectNameStr">
+						</span>
+						<ul data-role="listview" data-inset="true" data-filter="true" data-filter-reveal="true" data-input="#inset-autocomplete-input" class="projectListView">
+   							<!--#4DIF (Records in selection([Invoices])=0)-->
+								<li><a href="javascript:void(0)" onClick="selectValue('[Projects]proj_name','<!--4DVAR [Projects]proj_name-->')"><!--4DVAR [Projects]proj_name--></a></li>
+							<!--#4DENDIF-->
+						</ul>
+						<!--#4DENDIF-->
+					</div>
+					
+					<div class="ui-field-contain">
+					<label for="employee_uuid" class="select">Items:</label>	
+					<!--#4DIF (mUserIsCurrentBool)--><!--#4DELSE-->
+					<a href="javascript:void(0)" class="ui-btn ui-icon-edit ui-btn-icon-left ui-shadow-icon ui-btn-b" onClick="$('#popupForNewInvoice').popup('open');" id="addnewitem">Add new item</a>
+					<!--#4DENDIF-->
+					<table data-role="table" id="movie-table-custom" data-mode="reflow" class="movie-list ui-responsive loadedTable">
+						<thead>
+						<tr>
+							<th data-priority="1">Item</th>
+							<th data-priority="2">Description</th>
+		      				<th data-priority="3">Rate</th>
+			  				<th data-priority="4">Hours</th>
+			  				<th data-priority="5">Amount</th>
+	               		</tr>
+	           	 		</thead>
+	            		<tbody id="contentoftable">
+	            			<!--#4DIF (Records in selection([Invoices])=1)-->
+	            			<!--#4DSCRIPT/Web_LoadInvoiceItems/-->
+	              			<!--#4DLOOP [Invoice_Items]-->
+		  					<tr>
+							<td ><!--#4DHTMLVAR [Invoice_Items]item_id-->
+								<input class="item_uuid" name="item_uuid" type="hidden" value="<!--#4DHTMLVAR [Invoice_Items]uuid-->" />
+							</td>
+							<td><!--#4DHTMLVAR [Invoice_Items]item_description--></td>
+							<td><!--#4DHTMLVAR [Invoice_Items]item_rate-->
+							</td>
+							<td><!--#4DHTMLVAR [Invoice_Items]item_hours-->
+							<input class="hours" name="hours" type="hidden" value="<!--#4DHTMLVAR [Invoice_Items]item_hours-->" />
+							</td>
+							<td><!--#4DHTMLVAR [Invoice_Items]item_amount-->
+							<input type="hidden" class="price" value="<!--#4DHTMLVAR [Invoice_Items]item_amount-->" ></td>
+							</tr>
+							<!--#4DENDLOOP-->
+							<!--#4DENDIF-->
+	        			</tbody>
+	        		</table>
+	        		</div>
+	        		<div class="ui-field-contain">
+   						<label for="payment_method">Tax Code:</label>
+						<select data-native-menu="false" id="inv_tax_code" name="inv_tax_code" class="s_dropdown">
+							<!--#4DIF (Records in selection([Invoices])=0)-->
+								<!--#4DSCRIPT/Web_LoadTax_Codes/-->
+									<!--4DLOOP [Tax_Codes]-->
+										<option value="<!--#4DVAR [Tax_Codes]Tax_Code-->"><!--4DVAR [Tax_Codes]Tax_Code--></option>									 								
+									<!--4DENDLOOP-->
+							<!--#4DELSE-->	
+										<!--#4DIF ([Invoices]inv_tax_code="")-->
+											<!--4DLOOP [Tax_Codes]-->
+												<option value="<!--#4DVAR [Tax_Codes]Tax_Code-->"><!--4DVAR [Tax_Codes]Tax_Code--></option>									 								
+											<!--4DENDLOOP-->
+										<!--#4DELSE-->	
+											<option value="<!--#4DVAR [Invoices]inv_tax_code-->" selected><!--#4DVAR [Invoices]inv_tax_code--></option>
+										<!--4DENDIF-->
+							<!--4DENDIF-->
+						</select>
+   					</div>
+   					<div class="ui-field-contain">
+   						<label for="tax_rate">Tax Rate:</label>
+						<input readonly name="invoice_tax_rate" value="<!--#4DVAR [Invoices]inv_tax_rate -->" id="invoice_tax_rate" placeholder="" type="text">
+   					</div>
+   					<div class="ui-field-contain">
+   						<label for="tax_rate">Total Hours:</label>
+						<input readonly name="total_hours" value="" id="total_hours" placeholder="" type="text">
+   					</div>
+   					<div class="ui-field-contain">
+   						<label for="payment_subtotal">Total Due:</label>
+						<input readonly name="total_due" value="<!--#4DVAR [Invoices]inv_total_due -->" id="total_due" placeholder="" type="text">
+   					</div>
+   					<div class="ui-field-contain">
+   						<label for="payment_tax">Total Tax:</label>
+						<input readonly name="invoice_total_tax" value="<!--#4DVAR [Invoices]inv_total_tax -->" id="invoice_total_tax" placeholder="" type="text">
+   					</div>
+   					<div class="ui-field-contain">
+   						<label for="payment_total">Total Due With Tax:</label>
+						<input readonly name="invoice_total_due_with_tax" value="<!--#4DVAR [Invoices]inv_total_due_with_tax -->" id="invoice_total_due_with_tax" placeholder="" type="text">
+   					</div>
+					<button type="submit" class="ui-shadow ui-btn ui-corner-all ui-mini">Submit</button>
+					<a href="invoices.shtml" data-ajax="false" class="ui-shadow ui-btn ui-corner-all ui-mini">Cancel</a>
+		    	</div>
+		    	<div id="two">
+		    		<div class="ui-field-contain">
+						<label for="status" class="select">Status:</label>
+						<!--#4DIF (mUserIsCurrentBool)--><!--#4DVAR [Invoices]invoice_status--><!--#4DELSE-->
+						<select data-native-menu="false" name="status" id="status" class="s_dropdown">
+							<option value="Invoiced" <!--#4DIF ([Invoices]invoice_status="Invoiced")-->selected<!--4DELSE--><!--4DENDIF-->>Invoiced</option>
+							<option value="Paid" <!--#4DIF ([Invoices]invoice_status="Paid")-->selected<!--4DELSE--><!--4DENDIF-->>Paid</option>
+							<option value="Bad debt" <!--#4DIF ([Invoices]invoice_status="Bad debt")-->selected<!--4DELSE--><!--4DENDIF-->>Bad debt</option>
+							<option value="Needs chasing" <!--#4DIF ([Invoices]invoice_status="Needs chasing")-->selected<!--4DELSE--><!--4DENDIF-->>Needs chasing</option>
+							<option value="Credit" <!--#4DIF ([Invoices]invoice_status="Credit")-->selected<!--4DELSE--><!--4DENDIF-->>Credit</option>
+						</select>  
+						<!--4DENDIF-->
+					</div> 
+   					
+   					
+					<div class="ui-field-contain">
+   						<label for="balance_due">Balance Outstanding:</label>
+						<input readonly name="balance_due" id="balance_due" value="<!--#4DVAR [Invoices]balance_due-->"  type="text">
+   					</div>
+   					
+					<div class="ui-field-contain">
+   						<label for="invoice_total_paid">Invoice Total Paid</label>
+						<!--#4DIF (mUserIsCurrentBool)--><!--#4DVAR [Invoices]inv_total_paid-->
+						<input name="invoice_total_paid" class="num" type="hidden" value="<!--#4DVAR [Invoices]inv_total_paid-->" id="invoice_total_paid">
+						<!--#4DELSE-->
+						<input name="invoice_total_paid" class="num" type="text" value="<!--#4DVAR [Invoices]inv_total_paid-->" id="invoice_total_paid">
+						<!--#4DENDIF-->
+					</div>
+   					
+					<div class="ui-field-contain">
+   						<label for="invoice_paid_date">Invoice Paid Date</label><!--#4DIF (mUserIsCurrentBool)--><!--#4DVAR [Invoices]inv_date_paid--><!--#4DELSE-->
+						<input name="invoice_paid_date" data-role="date" type="text" data-date-format="dd/mm/yyyy" <!--#4DIF ([Invoices]inv_date_paid=!00/00/00!)-->value=""<!--4DELSE-->value="<!--#4DVAR [Invoices]inv_date_paid -->"<!--4DENDIF--> id="invoice_paid_date" readonly><!--#4DENDIF-->
+					</div>
+   					<div class="ui-field-contain">
+   						<label for="payment_pin_or_passcode">Invoice Pin or Passcode(For Paying Online)</label>
+						<input <!--#4DIF (mUserIsCurrentBool)-->readonly<!--#4DELSE--><!--#4DENDIF--> name="payment_pin_or_passcode" class="span5" type="text" value="<!--#4DVAR [Invoices]Payment_Pin_Or_Passcode -->" id="payment_pin_or_passcode">
+					</div>
+   					<div class="ui-field-contain">
+   						<label for="Currency">Template</label><!--#4DIF (mUserIsCurrentBool)--><!--#4DVAR [Invoices]inv_Template--><!--#4DELSE-->
+   						<select data-native-menu="false" name="inv_Template" id="inv_Template" class="s_dropdown">
+							<option value="TimeBilling" <!--#4DIF ([Invoices]inv_Template="TimeBilling")-->selected<!--4DELSE--><!--4DENDIF-->>TimeBilling</option>
+							<option value="Monthly Contract" <!--#4DIF ([Invoices]inv_Template="Monthly Contract")-->selected<!--4DELSE--><!--4DENDIF-->>Monthly Contract</option>
+							<option value="Day Rate" <!--#4DIF ([Invoices]inv_Template="Day Rate")-->selected<!--4DELSE--><!--4DENDIF-->>Day Rate</option>
+						</select>    
+						<!--#4DENDIF-->       
+   					</div>
+   					
+		      		<div class="ui-field-contain">
+   						<label for="print_template_code">Print Template Code</label>
+						<!--#4DIF (mUserIsCurrentBool)-->
+							<input name="print_template_code" class="num" type="text" value="<!--#4DVAR [Invoices]print_template_code-->" id="print_template_code" readonly>
+						<!--#4DELSE-->
+							<Select data-native-menu="false" name="print_template_code" id="print_template_code">
+								<!--HIT_EXECUTE _HIT_HTMLTXT:=Invoice_TemplateCodeHTMLPopUP-->
+							</select> 								
+						<!--#4DENDIF-->
+					</div>
+					<!--#4DIF (mUserIsStaff)-->
+					<div class="ui-field-contain">
+   						<label for="internal_notes">Internal Notes</label>
+						<textarea <!--#4DIF (mUserIsCurrentBool)-->readonly<!--#4DELSE--><!--#4DENDIF--> name="internal_notes" rows="4" id="internal_notes"><!--#4DVAR [Invoices]internal_notes --></textarea>
+					</div>
+					<!--#4DENDIF-->
+					<div class="ui-field-contain">
+   						<label for="inv_customer_ref_po">Customer ref or PO</label>
+						<input <!--#4DIF (mUserIsCurrentBool)-->readonly<!--#4DELSE--><!--#4DENDIF--> name="inv_customer_ref_po"  type="text" value="<!--#4DVAR [Invoices]inv_customer_ref_po -->" id="inv_customer_ref_po">
+					</div>
+					<div class="ui-field-contain">
+   						<label for="currency_code">Customer Currency Code</label>
+						<!--#4DIF (mUserIsCurrentBool)-->
+						<input readonly name="currency_code" type="text" value="<!--#4DVAR [Invoices]inv_currency_code -->" id="currency_code">
+						<!--#4DELSE-->
+						<select data-native-menu="false" id="currency_code" name="currency_code" class="s_dropdown">
+								<!--HIT_EXECUTE _HIT_HTMLTXT:=Invoice_CurrencyCodeHTMLPopUP-->
+						</select>                                     
+						<!--#4DENDIF-->
+					</div>
+					<div class="ui-field-contain">
+   						<label for="base_currency_code">Base Currency Code</label>
+						<input <!--#4DIF (mUserIsCurrentBool)-->readonly<!--#4DELSE--><!--#4DENDIF--> name="base_currency_code" class="span8" type="text" value="<!--#4DVAR [Invoices]inv_base_currency_code-->" id="base_currency_code">
+					</div>
+					<div class="ui-field-contain">
+   						<label for="inv_exchange_rate">Exchange Customer Currency to Base Currency</label>
+						<input <!--#4DIF (mUserIsCurrentBool)-->readonly<!--#4DELSE--><!--#4DENDIF--> name="inv_exchange_rate" class="span8 num" type="text" value="<!--#4DVAR [Invoices]inv_exchange_rate -->" id="inv_exchange_rate">
+					</div>
+					
+					<button type="submit" class="ui-shadow ui-btn ui-corner-all ui-mini">Submit</button>
+					<a href="invoices.shtml" data-ajax="false" class="ui-shadow ui-btn ui-corner-all ui-mini">Cancel</a>
+		      	</div>
+		      	</form>	
+		    </div>
+		</div>
+		<div data-role="popup" id="popupForNewID" data-overlay-theme="a" class="ui-content">
+			<div style="padding:10px 20px;">
+        	  	<h3>Enter new Invoice Number manually?</h3>
+        		<label for="newIDNum" class="ui-hidden-accessible newMsgStr"></label>
+            	<input id="newIDNum" value="" type="text">
+            	<button type="button" class="ui-btn ui-corner-all ui-shadow ui-btn-b ui-btn-icon-left ui-icon-check" onClick="addNewID(1)">Ok</button>
+             	<button type="button" class="ui-btn ui-corner-all ui-shadow ui-btn-b ui-btn-icon-left ui-icon-delete" onClick="addNewID(0)">Close</button>
+        	</div>
+		</div>
+		<div data-role="popup" id="popupForTax" data-overlay-theme="a" class="ui-content">
+			<div style="padding:10px 20px;">
+        	  	<h3>Enter tax rate</h3>
+        		<input id="dlg_tax_rate" value="" type="text">
+            	<button type="button" class="ui-btn ui-corner-all ui-shadow ui-btn-b ui-btn-icon-left ui-icon-check" onClick="evaluateTaxRateID(1)">Ok</button>
+             	<button type="button" class="ui-btn ui-corner-all ui-shadow ui-btn-b ui-btn-icon-left ui-icon-delete" onClick="evaluateTaxRateID(0)">Close</button>
+        	</div>
+		</div>
+		<div data-role="popup" id="popupForNewInvoice" data-overlay-theme="a" class="ui-content">
+			<div style="padding:10px 20px;">
+        	  	<h3 class="newPurInvMsg">Add new item</h3>
+        	  	<label for="new_item">Description:</label>
+        		<input id="new_item" value="" type="text" placeholder="Description">
+        		<label for="new_quantity">Rate:</label>
+        		<input id="new_quantity" value="" type="text" placeholder="Rate">
+        		<label for="new_unit_price" >Hours:</label>
+        		<input id="new_unit_price" value="" type="text" placeholder="Hours">
+        		
+        		<button type="button" class="ui-btn ui-corner-all ui-shadow ui-btn-b ui-btn-icon-left ui-icon-check" onClick="addnewInvoiceItem()">Ok</button>
+             	<button type="button" class="ui-btn ui-corner-all ui-shadow ui-btn-b ui-btn-icon-left ui-icon-delete" onClick="$('#popupForNewPurchaseInvoice').popup('close');">Close</button>
+        	</div>
+		</div>
+	
+	</div><!-- /content -->
+	<!-- panel -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/sidebar.shtml-->
+	<!-- /panel -->
+
+	<!-- footer -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/footer.shtml-->
+	<!-- /footer -->
+</div><!-- /page -->
+
+</body>
+</html>

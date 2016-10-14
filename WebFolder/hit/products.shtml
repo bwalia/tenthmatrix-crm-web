@@ -1,0 +1,283 @@
+<!--HIT_EXECUTE
+_HIT_HTTPD_SetHTTPHeader ("Content-type";"text/html; charset=utf-8")
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+C_TEXT(_HTMLTITLETXT)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+
+_HTMLTITLETXT:="Products"
+
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+<link rel="stylesheet" media="all" type="text/css" href="css/jquery-impromptu.css" />
+<style>
+#message{
+	color:#FF0000;
+}
+.table-wrapper .table ul.actions{
+	float:left;
+}
+</style>
+</head>
+<body>
+
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+	
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
+
+	<!-- main container -->
+    <div class="content">
+        
+        <div class="container-fluid">
+<div id="pad-wrapper">
+
+                <!-- timeslips table -->
+                <div class="table-wrapper orders-table section">
+                    <div class="row-fluid head">
+                        <div class="span12">
+                            <h4>Products</h4>
+                        </div>
+                    </div>
+                            <form method="get" onSubmit="__showInvoices(); return false;">
+
+                    <div class="row-fluid filter-block">
+                        <div class="pull-right">
+                            <div class="btn-group pull-right">
+                            </div>
+                            <input name="keyword" id="keyword" type="text" class="search order-search" placeholder="Search for product name, type .." value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" />
+                       		<a href="product.shtml" class="btn-flat success new-product margn-lft35">+ Add New Product</a>
+                        </div>
+                    </div>
+
+                            </form>
+
+                    <div class="row-fluid">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr> 
+                                    <th class="span3">
+                                        PRODUCT ID
+                                    </th>
+                                    <th class="span4">
+										<span class="line"></span>
+                                        PRODUCT NAME
+                                    </th>
+                                    <th class="span3">
+                                        <span class="line"></span>
+                                        UNIT PRICE
+                                    </th>
+                                    <th class="span4">
+                                        <span class="line"></span>
+                                        PRODUCT TYPE
+                                    </th>
+                                    <th class="span3">
+                                        <span class="line"></span>
+                                        NO. OF UESERS
+                                    </th>
+                                    <th class="span3">
+                                        <span class="line"></span>
+                                        ACTION
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tfoot>
+                            <tr>  
+                                <th align="left">PRODUCT ID</th>
+                                <th align="left">PRODUCT NAME</th>
+                                <th align="left">UNIT PRICE</th>
+                                <th align="left">PRODUCT TYPE</th>
+                                <th align="left">NO. OF UESERS</th>
+                                 <th align="left">ACTION</th>
+                            </tr>
+                        	</tfoot>
+                            <tbody id="product_table_body">
+
+                            </tbody>
+                        </table>
+						<div id="img_loading_div" style="text-align:center">
+		<img src="loading.gif"  style="padding:20px;" width="34" >
+		</div>
+                    </div>
+                </div>
+                <!-- end timeslips table -->
+
+            </div>
+        </div>
+    </div>
+    <!-- end main container -->
+
+	<div class="example-container">
+	<pre class="code" style="display:none;" id="no_rec_prompt">
+									var statesdemo = {
+										state0: {
+											title: 'No more records found',
+											html:'',
+											buttons: { OK: 1 },																		
+											submit:function(e,v,m,f){ 
+												//console.log(f);
+												if(v==1) {
+													$.prompt.close();
+												}
+												
+											}
+										},
+										
+									};
+									if(!($(".jqibox").length))
+									$.prompt(statesdemo);
+								</pre>
+							</div>
+
+	<!-- scripts -->
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+ <script type="text/javascript" src="js/jquery-impromptu.js"></script>   
+    
+<script>
+var JSONdata;
+ var start=0, end=50;
+ var old_srch='',keyword='', jsonRow='', tab='', set='';
+ var tablname='Products';
+ var complete=false;
+    
+$(document).ready(function() {
+
+	$('#keyword').focus();
+	keyword= $("#keyword").val();
+	jsonRow = 'loadproducts.cgi?start='+start+'&end='+end+'&tablname='+tablname;
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}		
+	load_data(jsonRow);			 
+	
+	$(window).scroll(function(){
+		if ($(window).scrollTop() == $(document).height() - $(window).height()){
+		if(complete==false) {
+			$('#img_loading_div').show();
+			//alert("scrolling...");
+			start=end+1;
+			end=start+25;
+			jsonRow = 'loadproducts.cgi?start='+start+'&end='+end+'&tablname='+tablname;
+			if(keyword!=''){
+				jsonRow +='&keyword='+keyword;
+			}
+			if(tab!=''){
+				jsonRow +='&tab='+tab;
+			}		
+			load_data(jsonRow);
+		}
+		
+		}
+	});	
+	
+	//setup before functions
+	var typingTimer;                //timer identifier
+	var doneTypingInterval = 1000;  //time in ms, 5 second for example
+	
+	//on keyup, start the countdown
+	$('#keyword').keyup(function(){
+		clearTimeout(typingTimer);
+		if ($('#keyword').val) {
+			typingTimer = setTimeout(function(){
+				//do stuff here e.g ajax call etc....
+				$('#product_table_body').html('');
+				$('#img_loading_div').show();
+				start=0;
+				end=start+25;
+				tab='';
+				keyword= $("#keyword").val();
+				jsonRow = 'loadproducts.cgi?start='+start+'&end='+end+'&tablname='+tablname;
+				if(keyword!=''){
+					jsonRow +='&keyword='+keyword;
+				}
+				if(tab!=''){
+					jsonRow +='&tab='+tab;
+				}	
+				load_data(jsonRow);
+			}, doneTypingInterval);
+		}
+	});		
+	
+});
+
+ var product_uuid=new Array(); 
+function load_data(jsonRow){
+	JSONdata=new Array();
+	$.getJSON(jsonRow,function(result){
+			if(result.Alert){
+				code = $('#no_rec_prompt').text();
+				(new Function(code))();
+				complete=true;
+			}
+			else{
+			  
+				$.each(result.uuid, function(i,item)
+				{
+					JSONdata[i]=new Array();
+					JSONdata[i][5]='<ul class="actions"><li><a href="product.shtml?uuid='+item+'"><i class="table-edit"></i></a></li><li><i class="table-settings"></i></li><li class="last"><i class="table-delete"></i></li></ul>';					
+					product_uuid[i]=item;
+				}); 
+				
+				$.each(result.ProductID, function(i,item)
+				{
+					JSONdata[i][0]=item;
+				});
+				$.each(result.ProductName, function(i,item)
+				{
+					JSONdata[i][1]='<a href="product.shtml?uuid='+product_uuid[i]+'">'+item+'</a>';
+				});
+				$.each(result.UnitPrice, function(i,item)
+				{					
+					JSONdata[i][2]=item;
+				});
+				$.each(result.Type, function(i,item)
+				{					
+					JSONdata[i][3]= item;
+				});
+				$.each(result.NoUser, function(i,item)
+				{		
+				 
+					JSONdata[i][4]=item;
+				}); 
+				
+				var table_html='';
+				$.each(JSONdata, function(i,row)
+				{
+				
+					table_html+='<tr >';
+					
+					$.each(row, function(i,col){
+						table_html+='<td>'+col+'</td>';
+					});
+					table_html+='</tr>';
+				});
+				if(old_srch!=keyword){
+					$('#product_table_body').html('');
+					old_srch=keyword;
+				}
+				//alert(table_html);
+				
+				$('#product_table_body').append(table_html);
+				complete=false;
+			
+		}
+		$('#img_loading_div').hide();
+		});
+}
+
+    </script>
+
+    
+</body>
+</html>

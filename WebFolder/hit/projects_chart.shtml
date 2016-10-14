@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Detail Admin - Home</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		
+		<!-- bootstrap -->
+		<link href="css/bootstrap/bootstrap.css" rel="stylesheet" />
+		<link href="css/bootstrap/bootstrap-responsive.css" rel="stylesheet" />
+		<link href="css/bootstrap/bootstrap-overrides.css" type="text/css" rel="stylesheet" />
+
+		<!-- libraries -->
+		<link href="css/lib/jquery-ui-1.10.2.custom.css" rel="stylesheet" type="text/css" />
+		<link href="css/lib/font-awesome.css" type="text/css" rel="stylesheet" />
+
+		<!-- global styles -->
+		<link rel="stylesheet" type="text/css" href="css/layout.css">
+		<link rel="stylesheet" type="text/css" href="css/elements.css">
+		<link rel="stylesheet" type="text/css" href="css/icons.css">
+
+		<!-- this page specific styles -->
+		<link rel="stylesheet" href="css/compiled/index.css" type="text/css" media="screen" />    
+
+
+		<!--[if lt IE 9]>
+		  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+		<![endif]-->
+	</head>
+	<body>
+
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
+
+
+
+		<!-- main container -->
+		<div class="content">
+
+			<!-- settings changer 
+			<div class="skins-nav">
+				<a href="#" class="skin first_nav selected">
+					<span class="icon"></span><span class="text">Default skin</span>
+				</a>
+				<a href="#" class="skin second_nav" data-file="css/skins/dark.css">
+					<span class="icon"></span><span class="text">Dark skin</span>
+				</a>
+			</div>
+	-->
+			<div class="container-fluid">
+
+				<!-- upper main stats -->
+				<div id="main-stats">
+					<div class="row-fluid stats-row">
+						<div class="span3 stat">
+							<div class="data">
+								<span class="number"><!--HIT_EXECUTE
+	Web_LoadProjects 
+	_HIT_HTMLTXT:=String(Records in selection([Projects]))
+
+	--> </span>
+								projects
+							</div>
+							<span class="date">Today</span>
+						</div>
+						<div class="span3 stat">
+							<div class="data">
+								<span class="number"><!--HIT_EXECUTE
+	QUERY([Tasks];[Tasks]task_active=True)
+	_HIT_HTMLTXT:=String(Records in selection([Tasks]))
+	-->
+	</span>
+								active tasks
+							</div>
+							<span class="date"><!--HIT_EXECUTE _HIT_HTMLTXT:=timestamp_unix_toGMT([Tasks]Timestamp_modified)--></span>
+						</div>
+						<div class="span3 stat">
+							<div class="data">
+								<span class="number"><!--HIT_EXECUTE 
+								QUERY([Tasks];[Tasks]task_active=True)
+	RELATE MANY SELECTION([Timeslips]task_id)
+	_HIT_HTMLTXT:=String(Records in selection([Timeslips]))
+
+								--></span>
+								time slips
+							</div>
+							<span class="date"><!--HIT_EXECUTE _HIT_HTMLTXT:=timestamp_unix_toGMT([Tasks]Timestamp_modified)--></span>
+						</div>
+						<div class="span3 stat last">
+							<div class="data">
+								<span class="number">$2,340</span>
+								budget spent
+							</div>
+							<span class="date">last 30 days</span>
+						</div>
+					</div>
+				</div>
+				<!-- end upper main stats -->
+
+				<div id="pad-wrapper">
+
+					<!-- statistics chart built with jQuery Flot -->
+					<div class="row-fluid chart">
+						<div class="span12">
+						   <div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+						</div>			
+					</div>
+					<!-- end statistics chart -->
+				</div>
+			</div>
+		</div>
+
+
+		<!-- scripts -->
+		<script src="js/jquery-latest.js"></script>
+		<script src="js/bootstrap.min.js"></script>
+		<script src="js/jquery-ui-1.10.2.custom.min.js"></script>
+		<!-- charts -->
+		<script src="https://code.highcharts.com/highcharts.js"></script>
+		<script src="http://code.highcharts.com/modules/exporting.js"></script>
+
+		<script type="text/javascript">
+			$(function () {
+				jsonRow = 'returnProjectsStatus.cgi';
+				$.getJSON(jsonRow,function(result){
+					if(result){				
+						status_arr=new Array();
+						$.each(result, function(i,item)
+						{
+							var new_arr=new Array();
+							new_arr[0]=item.label;
+							new_arr[1]=Number(item.data);
+							status_arr.push(new_arr);
+						});
+					}
+					var status = status_arr
+				$('#container').highcharts({
+					chart: {
+						plotBackgroundColor: null,
+						plotBorderWidth: 0,
+						plotShadow: false
+					},
+					title: {
+						text: 'Projects<br>status',
+						align: 'center',
+						verticalAlign: 'middle',
+						y: 50
+					},
+					colors: ["#81BD82", "#68A3D5", "#F89406","#E1EEFC"],
+					tooltip: {
+						pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+					},
+					plotOptions: {
+						pie: {
+							dataLabels: {
+								enabled: true,
+								distance: -50,
+								style: {
+									fontWeight: 'bold',
+									color: 'white',
+									textShadow: '0px 1px 2px black'
+								}
+							},
+							startAngle: -90,
+							endAngle: 90,
+							center: ['50%', '75%']
+						}
+					},
+					series: [{
+						type: 'pie',
+						name: 'Project',
+						innerSize: '50%',
+						data: status
+					}]
+				});
+				});
+			});
+    
+
+		</script>
+	</body>
+</html>

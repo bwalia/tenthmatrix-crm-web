@@ -1,0 +1,69 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+
+Domain_SyncSiteContent (_HIT_WebApp_GetField ("domain"))
+
+-->
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Tenthmatrix Website Deployment Tools</title>
+<meta http-equiv="refresh" content="60; url=http://www.europacomponents.com" /><style>
+</head>
+
+<body>
+<style>
+body{
+	padding:0px;
+	margin:0px;
+	background:url(images/body-bcg.png) repeat;
+}
+
+.design{
+	padding:0px;
+	margin:0px;
+	font-family:Segoe, "Segoe UI", "DejaVu Sans", "Trebuchet MS", Verdana, sans-serif;
+}
+
+.design h1{
+	font-size:40px;
+	color: #333;
+	font-family: Segoe, "Segoe UI", "DejaVu Sans", "Trebuchet MS", Verdana, sans-serif;
+	text-align:center;	
+}
+
+.design h5{
+	font-size:19px;
+	text-align:center;
+	font-weight:normal;
+
+	
+	}
+	
+	
+	.design h5 a{
+		color:#00a5d5;
+		text-decoration:none;
+		
+	}
+	
+	.design h5 a:hover{
+		color:#333;
+		text-decoration:underline;
+	}
+
+</style>
+<div style="width:1000px; margin:0 auto;" class="design">
+<h1><img src="images/logo.png" alt=""/>
+</h1>
+<h5>Your website changes  are being deployed to <a href="http://www.europacomponents.com">www.europacomponents.com</a></h5>
+<h5>please wait…</h5>
+<h5 style="padding:20px 0;"><img src="images/loading.GIF" width="180" height="180"  alt=""/></h5>
+<!--h5>Estimated time: 1 minute</h5-->
+</div>
+</body>
+</html>
+

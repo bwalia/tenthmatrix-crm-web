@@ -1,0 +1,75 @@
+    <!-- sidebar -->
+    <div id="sidebar-nav">
+        <ul id="dashboard-menu">
+            <li>                
+                <a href="index.html">
+                    <i class="icon-home"></i>
+                    <span>Home</span>
+                </a>
+            </li>            
+
+            <li>
+              <a class="dropdown-toggle" href="#">
+                    <i class="icon-signal"></i>
+                    <span>Customers</span>
+                </a>
+                <ul class="submenu">
+                    <li><a href="customers.shtml">Customers</a></li>
+                    <li><a href="customer.shtml">Enter New Customer</a></li>
+                </ul>
+
+            </li>
+            
+            <li>
+              <a class="dropdown-toggle" href="#">
+                    <i class="icon-signal"></i>
+                    <span>Timeslips</span>
+                </a>
+                <ul class="submenu">
+                    <li><a href="timeslips.shtml">Timeslips</a></li>
+                    <li><a href="timeslip.shtml">Enter New Timeslip</a></li>
+                </ul>
+
+            </li>
+            
+                        <li>
+              <a class="dropdown-toggle" href="#">
+                    <i class="icon-signal"></i>
+                    <span>Invoices</span>
+                </a>
+                <ul class="submenu">
+                    <li><a href="invoices.shtml">Invoices</a></li>
+                    <li><a href="invoices.shtml">Enter New Invoice</a></li>
+                </ul>
+
+            </li>
+
+                        <li>
+              <a class="dropdown-toggle" href="#">
+                    <i class="icon-edit"></i>
+                    <span>Projects</span>
+                </a>
+                <ul class="submenu">
+                    <li><a href="projects.shtml">Projects</a></li>
+                    <li><a href="project.shtml">Enter New Project</a></li>
+                </ul>
+
+            </li>
+
+            <li>
+                <a class="dropdown-toggle" href="#">
+                    <i class="icon-share-alt"></i>
+                    <span>Admin</span>
+                    <i class="icon-chevron-down"></i>
+                </a>
+                <ul class="submenu">
+                    <li><a href="system-activity.shtml">System Activity</a></li>
+                    <li><a href="grids.html">Grids</a></li>
+                    <li><a href="grids.html">Grids</a></li>
+                    <li><a href="signin.html">Sign in</a></li>
+                    <li><a href="signup.html">Sign up</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+    <!-- end sidebar -->

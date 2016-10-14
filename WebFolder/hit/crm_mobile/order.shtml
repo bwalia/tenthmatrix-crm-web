@@ -1,0 +1,397 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+C_TEXT(_HTMLTITLETXT)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+ALL RECORDS([Tax_Codes])
+QUERY([orders];[orders]uuid=_HIT_WebApp_GetField ("uuid"))
+QUERY([Companies];[Companies]account_Number=num([orders]client_id))
+QUERY([Projects];[Projects]proj_name=[orders]project_code)
+//$nrecords:=Records in selection([orders])
+
+IF (Records in selection([orders])=0)
+_HTMLTITLETXT:="New order"
+ELSE
+_HTMLTITLETXT:= "Order Details"
+END IF
+
+
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+
+C_BOOLEAN(mUserIsCurrentBool)
+mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
+
+-->
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/main-header.shtml-->
+<!--<link rel="stylesheet" href="css/jquery.mobile.datepicker.css">
+<script src="js/jquery.ui.datepicker.js"></script>
+<script id="mobile-datepicker" src="js/jquery.mobile.datepicker.js"></script>-->
+
+<script src="js/datepicker.js"></script>
+<script src="js/jquery.validate.js"></script>
+<script type="text/javascript">
+var newEntry=false;
+var new_inv_num=0, newOrdNum=0;
+$(document).ready(function() {
+	<!--#4DIF ([orders]status=6)-->
+		$('#OrderForm :input').attr('disabled', true);
+		$('#status').attr('disabled', false);
+		$('#hiderow').hide();
+		$('.td_edit').hide();
+		$('.td_remove').hide();
+		
+		$('#status').change(function(){
+			if($(this).val()!='Paid'){
+				$('#OrderForm :input').attr('disabled', false);
+				$('#hiderow').show();
+				$('.td_edit').show();
+				$('.td_remove').show();
+			}	
+		});
+	<!--#4DENDIF-->
+	
+	<!--#4DIF (Records in selection([orders])=0)-->
+		newEntry=true;
+		//$("#popupForNewID").popup("open");
+		newOrdNum='<!--#4DVAR SequenceNumber (->[orders]order_id)-->';
+		$('#order_numbr').val(newOrdNum);
+		$('#order_id').val(newOrdNum);
+		//console.log(newOrdNum);
+	<!--#4DENDIF-->
+		
+		$('#ordered_date').datepicker({
+    		autoclose: true,
+    		changeMonth: true,
+      		changeYear: true,
+      		dateFormat: 'dd/mm/yy'
+      	});
+      $('#order_date_paid').datepicker({
+    		autoclose: true,
+    		changeMonth: true,
+      		changeYear: true,
+      		dateFormat: 'dd/mm/yy'
+      	});
+});
+</script>
+<script src="js/order_items.js"></script>
+<style>
+label.error { 
+	float: left; 
+	color: red; 
+	padding-top: 1.5em; 
+	vertical-align: top; 
+}
+.movie-list thead th,
+.movie-list tbody tr:last-child {
+	border-bottom: 1px solid #d6d6d6; /* non-RGBA fallback */
+	border-bottom: 1px solid rgba(0,0,0,.1);
+}
+.movie-list tbody th,
+.movie-list tbody td {
+	border-bottom: 1px solid #e6e6e6; /* non-RGBA fallback  */
+	border-bottom: 1px solid rgba(0,0,0,.05);
+}
+.movie-list tbody tr:last-child th,
+.movie-list tbody tr:last-child td {
+	border-bottom: 0;
+}
+.movie-list tbody tr:nth-child(odd) td,
+.movie-list tbody tr:nth-child(odd) th {
+	background-color: #eeeeee; /* non-RGBA fallback  */
+	background-color: rgba(0,0,0,.04);
+}
+</style>
+</head>
+<body>
+<div data-role="page" class="jqm-demos" data-quicklinks="true">
+	<!-- header -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/top-header.shtml-->
+	<!-- /header -->
+	
+	<div role="main" class="ui-content jqm-content">
+		<!--#4DIF (mUserIsCurrentBool)--><h3>Work Order</h3><!--#4DELSE-->
+			<h3><!--#4DIF (Records in selection([orders])=1)--><span style="font-style: italic;">Order Details: <!--#4DVAR [orders]order_id --></span><!--#4DELSE-->New Work Order<!--#4DENDIF--></h3>
+		<!--#4DENDIF-->
+		<div data-demo-html="true">
+			<div data-role="tabs" id="tabs">
+				<form data-ajax="false" name="TaskForm" id="TaskForm" action="saveorder.cgi" method="post">
+		      		<div data-role="navbar">
+			   			<ul>
+			      			<li><a href="#one" data-ajax="false" class="ui-btn-active">Order Details</a></li>
+			      			<li><a href="#two" data-ajax="false">Other details</a></li>
+			     		</ul>
+		     		</div>
+		      			<div id="one" class="ui-body-d ui-content">
+		     				<div class="ui-field-contain">
+								<label>Order Number</label>
+								<input readonly type="text" class="span5" id="order_id" value="<!--#4DVAR [orders]order_id -->" name="order_id">
+							</div>
+							<!--#4DIF (Records in selection([orders])=1)-->
+							<input name="order_uuid" class="span5" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="order_uuid"> 
+							<!--#4DELSE-->
+							<input name="order_uuid" class="span5" type="hidden" value="<!--#4DVAR Generate UUID-->" id="order_uuid"> 
+							<!--#4DENDIF-->
+							
+							<div class="ui-field-contain">
+								<label for="uuid_reported_by" class="select">Client:</label>
+								<input name="Client_ID" id="Client_ID" type="hidden" value="<!--4DVAR [Companies]account_Number-->">
+								<span class="ui-filterable">
+   									<input id="inset-autocomplete-input" data-type="search" placeholder="Search client..." class="clientNameStr" value="<!--4DVAR [Companies]company_Name-->" name="clientNameStr">
+								</span>
+								<ul data-role="listview" data-inset="true" data-filter="true" data-filter-reveal="true" data-input="#inset-autocomplete-input" class="clientListView">
+   									<!--#4DIF (Records in selection([orders])=0)-->
+										<!--#4DSCRIPT/Web_LoadCustomers/-->
+                                		<!--4DLOOP  [Companies]-->
+											<li><a href="javascript:void(0)" onClick="selectClient('[Companies]account_Number','<!--4DVAR [Companies]company_Name-->')"><!--4DVAR [Companies]company_Name--></a></li>
+										<!--4DENDLOOP-->							 
+									<!--#4DENDIF-->
+								</ul>
+							</div>
+					
+							<div class="ui-field-contain">
+								<label>Bill To</label>
+								<textarea <!--#4DIF (mUserIsCurrentBool)-->readonly<!--#4DELSE--><!--#4DENDIF--> name="order_bill_to" class="span5" rows="3" id="order_bill_to"><!--#4DVAR [orders]bill_to --></textarea>
+							</div>
+							<div class="ui-field-contain">
+								<label>Order By</label>
+								<input <!--#4DIF (mUserIsCurrentBool)-->readonly<!--#4DELSE--><!--#4DENDIF--> name="ordered_by" class="span5" type="text" value="<!--#4DVAR [orders]ordered_by -->" id="ordered_by">
+							</div>
+							
+							<div class="ui-field-contain">
+								<label>Project Code</label>
+								<!--#4DIF (mUserIsCurrentBool)-->
+									<input name="project_code" class="span5" type="text" value="<!--#4DVAR [orders]project_code-->" id="project_code"  readonly>
+								<!--#4DELSE-->
+								<div class="ui-select span5">
+									<select name="project_code" id="project_code" data-native-menu="false">
+										<!--HIT_EXECUTE _HIT_HTMLTXT:=Order_ProjectCodeHTMLPopUP-->
+									</select>                                     
+								</div>
+								<!--#4DENDIF-->
+							</div>
+												
+							<div class="ui-field-contain">
+								<label>Date </label><!--#4DIF (mUserIsCurrentBool)--><!--#4DVAR [orders]order_date--><!--#4DELSE-->
+								<input name="ordered_date" data-role="date" data-date-format="dd/mm/yyyy" type="text" <!--#4DIF ([orders]order_date=!00/00/00!)-->value=""<!--4DELSE-->value="<!--#4DVAR [orders]order_date-->"<!--4DENDIF--> id="ordered_date" readonly ><!--#4DENDIF-->
+							</div>
+                           
+							<div class="ui-field-contain">
+								<label>Order Paid Date</label>
+								<input name="order_date_paid" data-role="date" type="text" data-date-format="dd/mm/yyyy" <!--#4DIF ([orders]approved_date=!00/00/00!)-->value=""<!--4DELSE-->value="<!--#4DVAR [orders]approved_date -->"<!--4DENDIF--> id="order_date_paid"  <!--#4DIF (mUserIsCurrentBool)-->disabled<!--#4DELSE-->readonly<!--#4DENDIF-->>
+							</div>
+							<div class="ui-field-contain">
+								<label>Order Status</label>
+								<select name="status" id="status" data-native-menu="false"  <!--#4DIF (mUserIsCurrentBool)-->disabled<!--#4DELSE--><!--#4DENDIF--> >
+										<option value="0" <!--#4DIF ([orders]status=0)-->selected<!--4DELSE--><!--4DENDIF-->>Estimate</option>
+										<option value="1" <!--#4DIF ([orders]status=1)-->selected<!--4DELSE--><!--4DENDIF-->>Quote</option>
+										<option value="2" <!--#4DIF ([orders]status=2)-->selected<!--4DELSE--><!--4DENDIF-->>Ordered</option>
+										<option value="3" <!--#4DIF ([orders]status=3)-->selected<!--4DELSE--><!--4DENDIF-->>Acknowledged</option>
+										<option value="4" <!--#4DIF ([orders]status=4)-->selected<!--4DELSE--><!--4DENDIF-->>Authorised</option>
+										<option value="5" <!--#4DIF ([orders]status=5)-->selected<!--4DELSE--><!--4DENDIF-->>Delivered</option>
+										<option value="6" <!--#4DIF ([orders]status=6)-->selected<!--4DELSE--><!--4DENDIF-->>Completed </option>
+										<option value="7" <!--#4DIF ([orders]status=7)-->selected<!--4DELSE--><!--4DENDIF-->>Proforma Invoice </option>
+									</select> 
+							</div>
+					<div class="ui-field-contain">
+					<label for="employee_uuid" class="select">Items:</label>	
+					<!--#4DIF (mUserIsCurrentBool)--><!--#4DELSE-->
+						<a href="javascript:void(0)" class="ui-btn ui-icon-edit ui-btn-icon-left ui-shadow-icon ui-btn-b" onClick="$('#popupForNewInvoice').popup('open');" id="addnewitem">Add new item</a>
+					<!--#4DENDIF-->
+					<table data-role="table" id="movie-table-custom" data-mode="reflow" class="movie-list ui-responsive loadedTable">
+						<thead>
+						<tr>
+							<th data-priority="1">Item</th>
+							<th data-priority="2">Description</th>
+		      				<th data-priority="3">Rate</th>
+			  				<th data-priority="4">Quantity</th>
+			  				<th data-priority="5">Discount(%)</th>
+			  				<th data-priority="6">Amount</th>
+	               		</tr>
+	           	 		</thead>
+	            		<tbody id="contentoftable">
+	            			<!--#4DIF (Records in selection([orders])=1)-->
+		 					<!--#4DSCRIPT/Web_LoadOrderItems/-->
+							<!--#4DLOOP [order_items]-->
+		  					<tr>
+							<td ><!--#4DHTMLVAR [order_items]item_id-->
+								<input class="item_uuid" name="item_uuid" type="hidden" value="<!--#4DHTMLVAR [order_items]uuid-->" />
+							</td>
+							<td><!--#4DHTMLVAR [order_items]item_description--></td>
+							<td><!--#4DHTMLVAR [order_items]item_rate--></td>
+							<td><!--#4DHTMLVAR [order_items]item_hours-->
+								<input class="hours" name="hours" type="hidden" value="<!--#4DHTMLVAR [order_items]item_hours-->" />
+							</td>
+							<td><!--#4DHTMLVAR [order_items]item_discount-->
+								<input type="hidden" class="price" value="<!--#4DHTMLVAR [order_items]item_amount-->" ></td>
+							<td><!--#4DHTMLVAR [order_items]item_amount--></td>
+							</tr>
+							<!--#4DENDLOOP-->
+							<!--#4DENDIF-->
+	        			</tbody>
+	        		</table>
+	        		</div>
+	        				<div class="ui-field-contain">
+								<label>Total Quantity</label>
+								<input name="total_hours" type="text" value="" id="total_hours" readonly>
+							</div>
+							<div class="ui-field-contain">
+								<label>Order Subtotal</label>
+								<input type="text" value="<!--#4DVAR [orders]order_subtotal -->" name="order_subtotal" id="order_subtotal" readonly>
+							</div>
+							<div class="ui-field-contain">
+								<label>Discount (%)</label>
+								<input type="text" value="<!--#4DVAR [orders]discount_applied -->" name="discount_applied" id="discount_applied" <!--#4DIF (mUserIsCurrentBool)-->readonly<!--#4DELSE--><!--#4DENDIF-->>
+							</div>
+							<div class="ui-field-contain">
+								<label>Total Due</label>
+								<input type="text" value="<!--#4DVAR [orders]total_due_without_tax -->" name="total_due_without_tax" id="total_due_without_tax" readonly>
+							</div>
+							<div class="field-box">
+								<label>Tax Code</label>
+								<select id="tax_code" name="tax_code" data-native-menu="false" <!--#4DIF (mUserIsCurrentBool)-->disabled<!--#4DELSE--><!--#4DENDIF-->>
+									<!--#4DIF (Records in selection([orders])=0)-->
+									<!--#4DSCRIPT/Web_LoadTax_Codes/-->
+									<!--4DLOOP [Tax_Codes]-->
+										<option value="<!--#4DVAR [Tax_Codes]Tax_Code-->"><!--4DVAR [Tax_Codes]Tax_Code--></option>									 								
+									<!--4DENDLOOP-->
+									<!--#4DELSE-->	
+										<!--#4DIF ([orders]tax_code="")-->
+											<!--4DLOOP [Tax_Codes]-->
+												<option value="<!--#4DVAR [Tax_Codes]Tax_Code-->"><!--4DVAR [Tax_Codes]Tax_Code--></option>									 								
+											<!--4DENDLOOP-->
+										<!--#4DELSE-->	
+											<option value="<!--#4DVAR [orders]tax_code-->" selected><!--#4DVAR [orders]tax_code--></option>
+										<!--4DENDIF-->
+									<!--4DENDIF-->
+								</select>  
+							</div>
+							<div class="ui-field-contain">
+								<label>Total Tax</label>
+								<input name="total_tax" type="text" value="<!--#4DVAR [orders]total_tax -->" id="total_tax" readonly>
+							</div>
+							<div class="ui-field-contain">
+								<label>Total Due With Tax</label>
+								<input name="total_due_with_tax" type="text" value="<!--#4DVAR [orders]total_due_with_tax -->" id="total_due_with_tax" readonly>
+							</div>
+							 <div class="ui-field-contain">
+								<label>Balance Outstanding</label>
+								<input name="balance_due" class="span8 due" type="text" value="<!--#4DVAR [orders]balance_due -->" id="balance_due" readonly>
+							</div>
+                             							
+							<div class="ui-field-contain">
+								<label>Grand Total</label>
+								<input name="total" class="span8" type="text" value="" id="total" readonly>
+							</div>
+		    	</div>
+		    	<div id="two">
+		    				<div class="ui-field-contain">
+								<label>Template</label>
+								<!--#4DIF (mUserIsCurrentBool)-->
+									<input name="order_template" class="span5" type="text" value="<!--#4DVAR [orders]order_template-->" id="order_template"  readonly>
+								<!--#4DELSE-->
+								<div class="ui-select span5">
+									<select name="order_template" id="order_template" data-native-menu="false" >
+										<!--HIT_EXECUTE _HIT_HTMLTXT:=Order_templateCodeHTMLPopUP-->
+									</select>
+								</div>
+								<!--#4DENDIF-->
+							</div>
+		    					<div class="ui-field-contain">
+									<label>Customer ref or PO</label>
+									<input <!--#4DIF (mUserIsCurrentBool)-->readonly<!--#4DELSE--><!--#4DENDIF--> name="customer_ref_po" class="span5" type="text" value="<!--#4DVAR [orders]customer_ref_po -->" id="customer_ref_po">
+								</div>
+								<div class="ui-field-contain">
+									<label>Tax Rate</label>
+									<input name="tax_rate" class="num" type="text" value="<!--#4DVAR [orders]tax_rate -->" id="tax_rate" readonly>
+								</div>
+								<div class="ui-field-contain">
+								<label>Currency Code</label>
+									<!--#4DIF (mUserIsCurrentBool)-->
+									<input name="currency_code" type="text" value="<!--#4DVAR [orders]currency_code-->" id="currency_code"  readonly>
+									<!--#4DELSE-->
+									<select name="currency_code" id="currency_code" data-native-menu="false">
+											<!--HIT_EXECUTE _HIT_HTMLTXT:=Order_CurrencyCodeHTMLPopUP-->
+									</select>   
+									<!--#4DENDIF--> 
+								</div>
+								<div class="ui-field-contain">
+									<label>Base Currency Code</label>
+									<input <!--#4DIF (mUserIsCurrentBool)-->readonly<!--#4DELSE--><!--#4DENDIF--> name="base_currency_code" class="span8" type="text" value="<!--#4DVAR [orders]base_currency_code-->" id="base_currency_code">
+								</div>
+								<div class="ui-field-contain">
+									<label>Exchange Customer Currency to Base Currency</label>
+									<input <!--#4DIF (mUserIsCurrentBool)-->readonly<!--#4DELSE--><!--#4DENDIF--> name="currency_exchange_rate" class="span8 num" type="text" value="<!--#4DVAR [orders]currency_exchange_rate -->" id="currency_exchange_rate">
+								</div>
+							<div class="ui-field-contain">
+								<label>Comments</label>
+								<textarea <!--#4DIF (mUserIsCurrentBool)-->readonly<!--#4DELSE--><!--#4DENDIF--> name="comments" class="span7" rows="4" id="comments"><!--#4DVAR [orders]comments --></textarea>
+							</div>
+							
+					
+		      	</div>
+		      		<button type="submit" class="ui-shadow ui-btn ui-corner-all ui-mini">Submit</button>
+					<a href="orders.shtml" data-ajax="false" class="ui-shadow ui-btn ui-corner-all ui-mini">Cancel</a>
+		      	</form>	
+		    </div>
+		</div>
+		<div data-role="popup" id="popupForNewID" data-overlay-theme="a" class="ui-content">
+			<div style="padding:10px 20px;">
+        	  	<h3>Enter new Order Number manually?</h3>
+        		<label for="newIDNum" class="ui-hidden-accessible newMsgStr"></label>
+            	<input id="newIDNum" value="" type="text">
+            	<button type="button" class="ui-btn ui-corner-all ui-shadow ui-btn-b ui-btn-icon-left ui-icon-check" onClick="addNewID(1)">Ok</button>
+             	<button type="button" class="ui-btn ui-corner-all ui-shadow ui-btn-b ui-btn-icon-left ui-icon-delete" onClick="addNewID(0)">Close</button>
+        	</div>
+		</div>
+		<div data-role="popup" id="popupForTax" data-overlay-theme="a" class="ui-content">
+			<div style="padding:10px 20px;">
+        	  	<h3>Enter tax rate</h3>
+        		<input id="dlg_tax_rate" value="" type="text">
+            	<button type="button" class="ui-btn ui-corner-all ui-shadow ui-btn-b ui-btn-icon-left ui-icon-check" onClick="evaluateTaxRateID(1)">Ok</button>
+             	<button type="button" class="ui-btn ui-corner-all ui-shadow ui-btn-b ui-btn-icon-left ui-icon-delete" onClick="evaluateTaxRateID(0)">Close</button>
+        	</div>
+		</div>
+		<div data-role="popup" id="popupForNewInvoice" data-overlay-theme="a" class="ui-content">
+			<div style="padding:10px 20px;">
+        	  	<h3 class="newPurInvMsg">Add new item</h3>
+        	  	<label for="new_product">Description:</label>
+        	  	<select id="new_product" data-native-menu="false" placeholder="Description">
+					<!--#4DSCRIPT/Web_LoadProducts/-->
+					<!--4DLOOP [Products]-->
+						<option value="<!--#4DVAR [Products]uuid-->"><!--4DVAR [Products]ProductName--></option>									 								
+					<!--4DENDLOOP-->
+				</select>
+        		<label for="new_rate">Rate:</label>
+        		<input id="new_rate" value="" class="new_entry" type="text" placeholder="Rate">
+        		<label for="new_quantity" >Quantity:</label>
+        		<input id="new_quantity" class="new_entry" value="" type="text" placeholder="Quantity">
+        		<label for="new_discount" >Discount(%):</label>
+        		<input id="new_discount" class="new_entry" value="0" type="text" placeholder="Discount(%)">
+        		<label for="new_amount" >Amount:</label>
+        		<input id="new_amount" readonly value="" type="text" placeholder="Amount">
+        		<button type="button" class="ui-btn ui-corner-all ui-shadow ui-btn-b ui-btn-icon-left ui-icon-check" onClick="addnewOrderItem()">Ok</button>
+             	<button type="button" class="ui-btn ui-corner-all ui-shadow ui-btn-b ui-btn-icon-left ui-icon-delete" onClick="$('#popupForNewInvoice').popup('close');">Close</button>
+        	</div>
+		</div>
+	
+	</div>
+	<link rel="stylesheet" href="css/jquery-ui.css">
+	
+	<!-- /content -->
+	<!-- panel -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/sidebar.shtml-->
+	<!-- /panel -->
+
+	<!-- footer -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/footer.shtml-->
+	<!-- /footer -->
+</div><!-- /page -->
+
+
+
+</body>
+</html>

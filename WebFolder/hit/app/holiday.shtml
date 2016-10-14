@@ -1,0 +1,343 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+
+//if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+QUERY([employee_holidays];[employee_holidays]uuid=_HIT_WebApp_GetField ("uuid"))
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+//else
+//_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+//end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+
+C_BOOLEAN(mReadOnly)
+mReadOnly:=(Records in selection([employee_holidays])=1)
+-->
+<!DOC html>
+<html>
+<head>
+	<title>Tenthmatrix CRM App : Holiday</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- bootstrap -->
+	<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="bootstrap/css/bootstrap-responsive.min.css" />
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/app/includes/header.shtml-->
+	<style type="text/css">
+
+  #message, #tax_message{
+	color:#FF0000;
+}
+	</style>
+</head>
+<body>
+
+	<!-- main container -->
+    <div class="content wide-content">
+        <div class="container-fluid">
+            <div id="pad-wrapper" class="form-page">
+				<div class="row-fluid">
+					<div class="span12">
+						<form name="HolidayForm" action="saveholiday.cgi" id="HolidayForm" class="form-comment form_validation_reg" method="post"> 
+						<input name="holiday_uuid" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="holiday_uuid">
+							<div class="formSep">
+								<div class="row-fluid">
+									<div class="span3">
+										<label>Employee Name <span class="f_req">*</span></label>
+										
+											<select name="Employee_UUID" id="Employee_UUID">
+										<!--#4DSCRIPT/Web_LoadEmployees/-->
+										<!--4DLOOP  [Employees]-->
+											<option value="<!--4DVAR [Employees]uuid-->" <!--#4DIF ([employee_holidays]uuid_employee=[Employees]uuid)-->selected<!--4DELSE--><!--4DENDIF-->><!--4DVAR [Employees]emp_first_name--> <!--4DVAR [Employees]emp_last_name--></option>
+										<!--4DENDLOOP-->	
+									</select>
+										
+									</div>
+									
+									<div class="span3">
+										<label>Type Of Holiday </label>
+										<Select name="type_of_holiday" id="type_of_holiday">
+										<option value="0">Select an option</option>
+										<option value="Paid Leave" <!--#4DIF ([employee_holidays]type_of_holiday="Paid Leave")-->selected<!--4DELSE--><!--4DENDIF-->>Paid Leave</option>
+										<option value="Unpaid Leave" <!--#4DIF ([employee_holidays]type_of_holiday="Unpaid Leave")-->selected<!--4DELSE--><!--4DENDIF-->>Unpaid Leave</option>
+									</select>								
+										</div>
+							
+									
+								</div>
+							</div>
+							        
+							<div class="formSep">
+								<div class="row-fluid">
+								
+								<div class="span3">
+										<label>Start Date <span class="f_req">*</span></label>
+										<div class="input-append date" id="dp1">
+										<input type="text" class="span7" data-date-format="dd/mm/yyyy" <!--#4DIF (timestamp_unix_toDate([employee_holidays]timestamp_start)=!01/01/1970!)-->value=""<!--4DELSE-->value="<!--#4DVAR timestamp_unix_toDate ([employee_holidays]timestamp_start)-->"<!--4DENDIF--> name="Start_Date" id="Start_Date" readonly><span class="add-on"><i class="splashy-calendar_day"></i></span>										</div>
+									</div>
+								
+									<div class="span3">
+										<label>End Date <span class="f_req">*</span></label>
+										<div class="input-append date" id="dp2">
+											<input type="text" class="span7" data-date-format="dd/mm/yyyy" <!--#4DIF (timestamp_unix_toDate([employee_holidays]timestamp_end)=!01/01/1970!)-->value=""<!--4DELSE-->value="<!--#4DVAR timestamp_unix_toDate ([employee_holidays]timestamp_end)-->"<!--4DENDIF--> name="End_Date" id="End_Date" readonly><span class="add-on"><i class="splashy-calendar_day"></i></span>										</div>
+									</div>
+								
+									
+									
+								</div>
+							</div>
+							
+							<div class="formSep">
+								<div class="row-fluid">
+								
+								<div class="span3">
+										<label>Days Used </label>
+										<input name="days_used" class="span8" type="text" value="" id="days_used"   readonly>  
+									</div>	
+								</div>
+							</div>
+							
+							<div class="formSep">
+								<div class="row-fluid">
+									<div class="span9">
+										<label>Reason For Leave <span class="f_req">*</span></label>
+										<!--#4DIF (mReadOnly)--><textarea class="span7" rows="4" name="Subject" id="Subject"><!--#4DVAR [employee_holidays]subject--></textarea><!--#4DELSE-->
+								<textarea  class="span7" rows="4" name="Subject" id="Subject"><!--#4DVAR [employee_holidays]subject--></textarea><!--#4DENDIF-->
+									</div>
+									
+									</div>
+							</div>
+							<div class="formSep">
+								<div class="row-fluid">
+								
+									<div class="span9">
+										<label>Manager Notes </label>
+										<!--#4DIF (mReadOnly)--><textarea   class="span7" rows="4" name="Comments" id="Comments"><!--#4DVAR [employee_holidays]comments--></textarea><!--#4DELSE-->
+								<textarea   class="span7" rows="4" name="Comments" id="Comments"><!--#4DVAR [employee_holidays]comments--></textarea><!--#4DENDIF-->								
+										</div>
+									
+									</div>
+							</div>
+							<div class="formSep">
+								<div class="row-fluid">
+									<div class="span3">
+										<label>Status <span class="f_req">*</span></label>
+										<Select name="status" id="status">
+										<option value="">Select an option</option>
+										<option value="Requested" <!--#4DIF ([employee_holidays]status="Requested")-->selected<!--4DELSE--><!--4DENDIF-->>Requested</option>
+										<option value="Approved" <!--#4DIF ([employee_holidays]status="Approved")-->selected<!--4DELSE--><!--4DENDIF-->>Approved</option>
+										<option value="Revoked" <!--#4DIF ([employee_holidays]status="Revoked")-->selected<!--4DELSE--><!--4DENDIF-->>Revoked</option>
+									</select>
+									</div>
+									
+								</div>
+							</div>
+
+							<div style="text-align: center;" class="span9 field-box">
+								<input type="submit" id="btn_submit" value="Submit" class="btn-glow primary">
+								<span>OR</span>
+								<a href="holidays.shtml">Cancel</a>							</div>
+						</form>
+					</div>
+				</div>
+            </div>
+		</div>
+    </div>
+	<div class="example-container">
+								<pre class="code" style="display:none;" id="err_msg">
+									var statesdemo = {
+										state0: {
+											title: message,
+											buttons: {  OK: 1 },
+											submit:function(e,v,m,f){ 
+												if(v==1) {
+													$.prompt.close();
+												}
+											}
+										},
+										
+									};
+									$.prompt(statesdemo);
+								</pre>
+</div>
+    <!-- end main container -->
+
+	
+	<script src="js/jquery.min.js"></script>
+	<script src="bootstrap/js/bootstrap.min.js"></script>
+	<!-- validation -->
+    <script src="lib/validation/jquery.validate.min.js"></script>
+	<script type="text/javascript" src="js/jquery-impromptu.js"></script>
+	<script src="js/jquery-ui-1.9.1.custom.js"></script>
+	<script src="lib/datepicker/bootstrap-datepicker.min.js"></script>
+	
+<script type="text/javascript">
+var message;
+function check_ondates(check_date,ele){
+	
+		var current_date=new Date();
+		var d = current_date.getDate();
+		var m = current_date.getMonth();
+		var y = current_date.getFullYear();
+		current_date = new Date(y, m, d);
+		current_date = current_date.getTime();
+		//console.log(current_date);
+						
+		var check_date_arr= check_date.split("/");
+		var check_date= new Date(check_date_arr[2],check_date_arr[1]-1,check_date_arr[0]);
+		var check_date = check_date.getTime();
+		//console.log(start_date);
+		var ONE_DAY = 1000 * 60 * 60 * 24;
+		
+		//var today = Math.abs(current_date - start_date);
+		var today = check_date - current_date;
+		//console.log(Math.round(today/ONE_DAY));
+		if(check_date<current_date){
+			//alert('Please Select appropriate Date');
+			message='Please Select appropriate Date';
+			code = $('#err_msg').text();
+			(new Function(code))();
+			//$("#Start_Date").val('');
+			//$("#End_Date").val('');
+			$(ele).val('');
+		}
+		else if((Math.round(today/ONE_DAY))<1){
+			//alert('Please add request only if there is an emergency');
+			message='Please add request only if there is an emergency';
+			code = $('#err_msg').text();
+			(new Function(code))();
+		}else if((Math.round(today/ONE_DAY))<=6){
+			//alert('Please add request a week before or only if there is an emergency');
+			message='Please add request a week before or only if there is an emergency';
+			code = $('#err_msg').text();
+			(new Function(code))();
+		}
+		
+	}
+function days_between(date1, date2) {
+	var end_date_arr= date1.split("/");
+	
+	var start_date_arr= date2.split("/");
+	
+	var end_date= new Date(end_date_arr[2],end_date_arr[1]-1,end_date_arr[0]);
+	var start_date= new Date(start_date_arr[2],start_date_arr[1]-1,start_date_arr[0]);
+	
+	if(end_date>=start_date){	
+		 // The number of milliseconds in one day
+		var ONE_DAY = 1000 * 60 * 60 * 24
+
+		// Convert both dates to milliseconds
+		var date1_ms = end_date.getTime()
+		//alert(date1_ms);
+		var date2_ms = start_date.getTime()
+
+		// Calculate the difference in milliseconds
+		var difference_ms = Math.abs(date1_ms - date2_ms)
+
+		// Convert back to days and return
+		$("#days_used").val(Math.round(difference_ms/ONE_DAY)+1)
+		$('#err_msg').html("");
+	}
+	else if(end_date<start_date){
+		$('#err_msg').html("End date must be greater than start date");
+		$("#days_used").val('');
+	}
+
+}
+	$(document).ready(function() {
+		
+		$('#dp1 i.splashy-calendar_day').click(function(){
+			$('#Start_Date').datepicker( "show" );
+		});
+		$('#dp2 i.splashy-calendar_day').click(function(){
+			$('#End_Date').datepicker( "show" );
+		});
+		
+		$(document).click(function(event){
+			//console.log($(event.target).closest('div').attr('id'));
+			if($(event.target).closest('div').attr('id')!='dp1') {
+				$('#Start_Date').datepicker( "hide" );
+			}
+			if($(event.target).closest('div').attr('id')!='dp2') {
+				$('#End_Date').datepicker( "hide" );
+			}
+		});
+		
+		$('#Start_Date').datepicker({"autoclose": true}).on('changeDate', function (ev) {
+			var arrStartDate= $('#Start_Date').val().split('/');
+			var dateText = new Date(arrStartDate[1]+'/'+arrStartDate[0]+'/'+arrStartDate[2]);
+			
+			$('#End_Date').datepicker('setStartDate', dateText);
+		});
+		
+		$('#End_Date').datepicker({"autoclose": true}).on('changeDate', function (ev) {
+			var arrEndDate= $('#End_Date').val().split('/');
+			var dateText = new Date(arrEndDate[1]+'/'+arrEndDate[0]+'/'+arrEndDate[2]);
+			
+			$('#Start_Date').datepicker('setEndDate', dateText);
+		});
+		var arrStartDate= $('#Start_Date').val().split('/');
+		var dateText = new Date(arrStartDate[1]+'/'+arrStartDate[0]+'/'+arrStartDate[2]);
+			
+		$('#End_Date').datepicker('setStartDate', dateText);
+		var arrEndDate= $('#End_Date').val().split('/');
+		var dateText = new Date(arrEndDate[1]+'/'+arrEndDate[0]+'/'+arrEndDate[2]);
+			
+		$('#Start_Date').datepicker('setEndDate', dateText);
+
+		$('.form_validation_reg').validate({
+				ignore: "",
+				onkeyup: false,
+				errorClass: 'error',
+				validClass: 'valid',
+				highlight: function(element) {
+					$(element).closest('div').addClass("f_error");
+				},
+				unhighlight: function(element) {
+					$(element).closest('div').removeClass("f_error");
+				},
+				errorPlacement: function(error, element) {
+					$(element).closest('div').append(error);
+				},
+				rules: {
+					Employee_UUID: { required: true },
+					Start_Date: { required: true },
+					End_Date: { required: true  },
+					Subject: { required: true },
+					status: { required: true  }
+				},
+			});	
+			
+			var s_date= $("#Start_Date").val();
+			var e_date= $("#End_Date").val();
+			if(s_date!='' && e_date !=""){
+				days_between(e_date, s_date);
+			}
+			$("#End_Date").change(function() {
+				var s_date= $("#Start_Date").val();
+				var e_date= $("#End_Date").val();
+				if(s_date!='' && e_date !=""){
+					days_between(e_date, s_date);
+				}
+				check_ondates(e_date,'#End_Date');
+			});
+			$("#Start_Date").change(function() {
+				var s_date= $("#Start_Date").val();
+				var e_date= $("#End_Date").val();
+				if(s_date!='' && e_date !=""){
+					days_between(e_date, s_date);
+				}
+				check_ondates(s_date,'#Start_Date');
+				
+			}); 
+						 
+});
+
+</script>
+
+
+
+</body>
+</html>

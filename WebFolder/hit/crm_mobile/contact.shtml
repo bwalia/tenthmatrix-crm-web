@@ -1,0 +1,204 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+C_TEXT(_HTMLTITLETXT)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+
+QUERY([Contacts];[Contacts]uuid=_HIT_WebApp_GetField ("uuid"))
+QUERY([Companies];[Companies]account_Number=num([Contacts]client_id))
+
+IF (Records in selection([Contacts])=0)
+_HTMLTITLETXT:="New Contact"
+ELSE
+_HTMLTITLETXT:= "Edit Contact"
+if([Contacts]First name#"")
+_HTMLTITLETXT:= _HTMLTITLETXT+": "+[Contacts]First name
+end if
+
+if([Contacts]Surname#"")
+_HTMLTITLETXT:= _HTMLTITLETXT+" "+[Contacts]Surname
+end if
+
+END IF
+
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if
+-->
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/main-header.shtml-->
+<link rel="stylesheet" href="css/jquery.mobile.datepicker.css">
+<script src="js/jquery.ui.datepicker.js"></script>
+<script id="mobile-datepicker" src="js/jquery.mobile.datepicker.js"></script>
+<script src="js/jquery.validate.js"></script>
+<script type="text/javascript">
+var tableUUIDStr= '<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->';
+var tableNameStr='Projects';
+var taskNameStr='',xhrAbortLoad, xhrAbortSearch;
+var loadmoreNum=10, start=0, end=loadmoreNum;
+
+$(document).ready(function() {
+	<!--#4DIF (_HIT_WebApp_GetField ("uuid")="")-->
+		$(':input','#ContactForm')
+ 		.not(':button, :submit, :reset, :hidden')
+ 		.val('')
+ 		.removeAttr('checked')
+ 		.removeAttr('selected');
+	<!--#4DELSE--><!--#4DENDIF-->
+		
+	$(".ui-table-columntoggle-btn").hide();
+	$("#DetailForm").validate({
+		ignore: "",
+        rules: {
+            projectNameStr: { required: true },
+			First_Name: { required: true },
+			Email: { required: true, email: true },
+			Date_Added: { required: true },
+        }
+    });
+    
+    //on keyup, start the countdown
+	$('.projectNameStr').keyup(function(){
+    	if ($('.projectNameStr').val()) {
+      		var jsonRow="getcompaniesonsearch.cgi?srch="+$('.projectNameStr').val()+"&"+Math.random();
+			if(xhrAbortSearch) xhrAbortSearch.abort();
+			xhrAbortLoxhrAbortSearchad=$.getJSON(jsonRow,function(result){
+				if(result){
+					var html='';
+					$.each(result, function(i,item){
+						html += '<li><a class="ui-btn ui-btn-icon-right ui-icon-carat-r" href="javascript:void(0)" onClick="selectValue(\''+item.id+'\',\''+item.value+'\')">'+item.value+'</a></li>';
+					});
+					$( ".projectListView").html("");
+					$( ".projectListView").html(html);
+				}
+			});
+          
+    	}
+    });
+    $('.ui-input-clear').click(function(){
+    	$("#Project_ID").val("");
+    });
+    
+});
+function selectValue(val, name){
+	$(".projectNameStr").val(name);
+	$("#Client_ID").val(val);
+	$( ".projectListView" ).listview( "refresh" );
+	$( ".projectListView li" ).addClass("ui-screen-hidden");
+}
+</script>
+<script type='text/javascript' src='js/customerNotes.js'></script>
+<style>
+label.error { 
+	float: left; 
+	color: red; 
+	padding-top: 1.5em; 
+	vertical-align: top; 
+}
+</style>
+</head>
+<body>
+<div data-role="page" class="jqm-demos" data-quicklinks="true">
+	<!-- header -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/top-header.shtml-->
+	<!-- /header -->
+	
+	<div role="main" class="ui-content jqm-content">
+		<h3><!--#4DIF (Records in selection([Contacts])=1)-->Edit <!--#4DVAR [Contacts]First name--> <!--#4DVAR [Contacts]Surname--><!--#4DELSE-->New Contact<!--#4DENDIF--></h3>
+		<div data-demo-html="true">
+			<form name="DetailForm" action="savecontact.cgi" id="DetailForm" data-ajax="false" method="post">
+					<div class="ui-field-contain">
+						<label for="uuid_reported_by" class="select">Client Name:</label>
+						<input name="Client_ID" id="Client_ID" type="hidden" value="<!--#4DVAR [Companies]account_Number-->">
+						<span class="ui-filterable">
+   							<input id="inset-autocomplete-input" data-type="search" placeholder="Search client..." class="projectNameStr" value="<!--4DVAR [Companies]company_Name-->" name="projectNameStr">
+						</span>
+						
+					
+						<ul data-role="listview" data-inset="true" data-filter="true" data-filter-reveal="true" data-input="#inset-autocomplete-input" class="projectListView">
+   							<!--#4DIF (Records in selection([Contacts])=0)-->
+								<!--#4DIF (pUserClient="")-->
+									<!--#4DSCRIPT/Web_LoadCustomers/-->
+                                    <!--4DLOOP  [Companies]-->
+										<li><a href="javascript:void(0)" onClick="selectValue('[Companies]account_Number','<!--4DVAR [Companies]company_Name-->')"><!--4DVAR [Companies]company_Name--></a></li>
+									<!--4DENDLOOP-->
+								<!--#4DENDIF-->								 
+							<!--#4DENDIF-->
+						</ul>
+					</div>      
+                    <input name="Contact_uuid" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="Contact_uuid">               
+                              	
+					<div class="ui-field-contain">
+   						<label for="Project_Name">First Name:</label>
+   						<input name="First_Name" type="text" value="<!--#4DVAR [Contacts]First name-->" id="First_Name">
+   					</div>
+					<div class="ui-field-contain">
+   						<label for="Surname">Surname:</label>
+   						<input name="Surname" type="text" value="<!--#4DVAR [Contacts]Surname-->" id="Surname">
+					</div>
+					
+					<div class="ui-field-contain">
+   						<label for="Title">Title :</label>
+						<input type="text" id="Title" value="<!--#4DVAR [Contacts]Title-->" name="Title" placeholder="Title">
+					</div>
+					<div class="ui-field-contain">
+   						<label for="Salutation">Salutation:</label>
+						<input id="Salutation" value="<!--#4DVAR [Contacts]Salutation-->" name="Salutation" placeholder="Salutation" type="text">
+   					</div>
+   					<div class="ui-field-contain">
+   						<label for="Email">Email:</label>
+						<input id="Email" value="<!--#4DVAR [Contacts]Email-->" name="Email" placeholder="Email" type="text">
+   					</div>
+   					<div class="ui-field-contain">
+   						<label for="Salutation">Password:</label>
+						<input id="zWebPassword" value="<!--#4DVAR [Contacts]zWebPassword-->" name="zWebPassword" placeholder="Password" type="password">
+   					</div>
+   					<div class="ui-field-contain">
+   						<label for="Direct_Phone">Direct Phone:</label>
+						<input id="Direct_Phone" value="<!--#4DVAR [Contacts]Direct Phone-->" name="Direct_Phone" placeholder="Direct Phone" type="text">
+   					</div>
+   					
+   					<div class="ui-field-contain">
+   						<label for="Mobile">Mobile:</label>
+						<input id="Mobile" value="<!--#4DVAR [Contacts]Mobile-->" name="Mobile" placeholder="Mobile" type="text">
+   					</div>
+   					<div class="ui-field-contain">
+   						<label for="Direct_fax">Direct fax:</label>
+						<input id="Direct_fax" value="<!--#4DVAR [Contacts]Direct fax-->" name="Direct_fax" placeholder="Direct fax" type="text">
+   					</div>
+					
+   					<input name="DateAdded" type="hidden" value="<!--#4DVAR [Contacts]DateAdded-->" id="DateAdded">
+   				
+   					<div class="ui-field-contain">
+   						<label for="Comments">Comments:</label>
+   						<textarea cols="40" rows="8" name="Comments" id="Comments" placeholder="Comments"><!--#4DVAR [Contacts]Comments--></textarea>
+					</div>
+					<div class="ui-field-contain">
+   						<label for="News_Letter_Status">News Letter Status:</label>
+						<select name="News_Letter_Status" id="News_Letter_Status"  data-native-menu="false">
+							<option value="Subscriber" <!--#4DIF ([Contacts]GetsNewsletter=True)-->selected<!--4DELSE--><!--4DENDIF-->>Subscriber</option>
+							<option value="Non Subscriber" <!--#4DIF ([Contacts]GetsNewsletter=False)-->selected<!--4DELSE--><!--4DENDIF-->>Non Subscriber</option>
+						</select>    
+					</div>
+					<div class="ui-field-contain">
+   						<label>
+       						<input name="allow_webAccess" type="checkbox" value="true" id="allow_webAccess" <!--#4DIF ([Contacts]AllowWebAccess)-->checked<!--4DELSE--><!--4DENDIF-->>Allow WebAccess
+   						</label>
+   					</div>
+					<button type="submit" class="ui-shadow ui-btn ui-corner-all ui-mini">Submit</button>
+				</form>	
+		    	
+		    </div>
+	</div><!-- /content -->
+	<!-- panel -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/sidebar.shtml-->
+	<!-- /panel -->
+
+	<!-- footer -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/footer.shtml-->
+	<!-- /footer -->
+</div><!-- /page -->
+
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+-->
+<!DOCTYPE html>
+<html>
+<head>
+	<!--#4DSCRIPT/Web_LoadIncluded/admin/includes/header.shtml-->
+</head>
+<body>
+	<!-- main container -->
+    <div class="content">
+        
+        <div class="container-fluid">
+            <div id="pad-wrapper" class="form-page">
+				 <div class="row-fluid header">
+                    <h3>Invoice Item Details</h3>
+                </div>
+				<form name="InvoiceForm" action="" class="form-comment" method="post" onSubmit="return ValidateForm();">
+					<div class="row-fluid form-wrapper">
+						<!-- left column -->
+						<div class="span8 column">
+							<div class="field-box">
+								<label>Rate</label>
+								<input name="rate" class="span8" type="text" value="" id="rate">
+							</div>
+							
+							<div class="span12 field-box">
+								<label>Hours</label>
+								<input name="hours" class="span8" type="text" value="" id="hours">
+							</div>
+							<div class="span12 field-box">
+								<label>Amount</label>
+								<input name="amount" class="span8" type="text" value="" id="amount">
+							</div>
+							<div class="span12 field-box">
+								<label>Description</label>
+								<textarea name="description" class="span8" rows="3" style="width:34.81%" id="description"></textarea>
+							</div>
+							<div class="span11 field-box" style="text-align: center;">
+								<input type="submit" class="btn-glow primary" value="Add Invoice">
+								<span>OR</span>
+								<input type="reset" value="Cancel" class="reset">
+							</div>
+						</div>
+					
+					</div>
+				</form>
+            </div>
+        </div>
+    </div>
+    <!-- end main container -->
+
+	
+</body>
+</html>

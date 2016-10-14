@@ -1,0 +1,8 @@
+	<!-- sidebar -->
+	<div id="sidebar-nav">
+		<span style="margin-bottom: 5px; outline: 0 none;  padding: 19px 14px 15px; width: 88%;"><input style="height: 21px;width: 203px;" class="" type="text" value="" id="menu"></span>
+        <ul id="dashboard-menu">
+           
+        </ul>
+    </div>
+    <!-- sidebar -->

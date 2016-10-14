@@ -1,0 +1,842 @@
+<!--HIT_EXECUTE
+ If (_HIT_AuthenticateSession ="Session-Authenticated-OK")
+mImageUUIDStr:=_HIT_WebApp_GetField ("img_uuid")
+mImageAddTypeStr:=_HIT_WebApp_GetField ("type")
+QUERY([Image];[Image]uuid=_HIT_WebApp_GetField ("img_uuid"))
+mImageVariantUUIDStr:=""
+mImageVariantIDStr:=""
+If (Records in selection([Image])=1)
+QUERY([Site];[Site]ID=[Image]SiteIDPrimary)
+QUERY([Image_Variant];[Image_Variant]ImageID=[Image]ID;*)
+QUERY([Image_Variant];[Image_Variant]Type="unlabeled")
+
+mImageVariantUUIDStr:=[Image_Variant]uuid
+mImageVariantIDStr:=String([Image_Variant]ID)
+
+C_TEXT(_HIT_VARLISTTXT)
+C_LONGINT(iCounter)
+C_BOOLEAN(vIsLabelParentOK)
+vIsLabelParentOK:=Web_IsUnLabeledParentOK
+Web_LoadImageRelated //loads the related variants
+_HIT_VARLISTTXT:=""
+FIRST RECORD([Image_Variant])
+For (iCounter;1;Records in selection([Image_Variant]))
+_HIT_VARLISTTXT:=_HIT_VARLISTTXT+"<li"
+If (_HIT_WebApp_GetField ("uuid")=[Image_Variant]uuid)
+_HIT_VARLISTTXT:=_HIT_VARLISTTXT+" class='active' "
+End if 
+_HIT_VARLISTTXT:=_HIT_VARLISTTXT+"><a class='link_var' href='image_variant.shtml?siteid="+string([Image]SiteIDPrimary)+"&img_uuid=&uuid="+[Image_Variant]uuid+"' title='"+[Image_Variant]Type+"'>"
+_HIT_VARLISTTXT:=_HIT_VARLISTTXT+"<img src='"+Image_GetThumbnailHTTPURL +"' alt='"+[Image_Variant]Type+"'"
+_HIT_VARLISTTXT:=_HIT_VARLISTTXT+">"+[Image_Variant]Type+"</a></li><br/>"
+NEXT RECORD([Image_Variant])
+End for 
+End if 
+
+QUERY([Image_Variant];[Image_Variant]uuid=_HIT_WebApp_GetField ("uuid"))
+QUERY([Image_Keyword];[Image_Keyword]ImageID=[Image]ID;*)
+QUERY([Image_Keyword]; & ;[Image_Keyword]VariantID=[Image_Variant]ID)
+
+QUERY([Image_RelatedVariant];[Image_RelatedVariant]VariantID=[Image_Variant]ID)
+
+QUERY([Image_Deliverable];[Image_Deliverable]VariantID=[Image_Variant]ID)
+
+Else 
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml?url="+HTTPD_DocumentURI)
+End if 
+
+--><!--#4DIF (_HIT_AuthenticateSession ="Session-Authenticated-OK")--><!--_HIT_AuthenticateSession ="Session-Authenticated-OK"-->
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<!--#4DIF (Records in selection([Image_Variant])=0)-->		
+<title>New Variant : <!--#4DTEXT _HIT_WebApp_GetField ("type")--></title>
+<!--#4DELSE-->
+<title>Variant : <!--#4DTEXT [Image_Variant]Type--></title>
+<!--#4DENDIF-->
+
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/web/includes/InitCSS.shtml-->
+       
+        <!-- uniform -->
+            <link rel="stylesheet" href="lib/uniform/Aristo/uniform.aristo.css" />
+		
+        <!-- upload -->
+            <link rel="stylesheet" href="lib/plupload/js/jquery.plupload.queue/css/plupload-gebo.css" />
+       
+        <!-- switch buttons -->
+            <link rel="stylesheet" href="lib/bootstrap-switch/static/stylesheets/bootstrap-switch.css" />
+
+
+        <!-- wizard -->
+            <link rel="stylesheet" href="lib/stepy/css/jquery.stepy.css" />
+
+
+    </head>
+    <body class="full_width">
+
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/web/includes/topRightPopup.shtml-->
+		<div id="maincontainer" class="clearfix">
+			<header>
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/web/includes/topnavbar.shtml-->
+				
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/web/includes/topNotifications.shtml-->
+				
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/web/includes/topTasks.shtml-->
+				
+			</header>
+        
+
+            <div id="contentwrapper">
+                <div class="main_content">
+                    						<div id="jCrumbs" class="breadCrumb module">
+    <ul>
+        <li>
+            <a href="#"><i class="glyphicon glyphicon-home"></i></a>
+        </li>
+        <li>
+            <a href="images_gallery.shtml">Images</a>
+        </li>
+        <li>
+            <a href='image.shtml?siteid=<!--#4DTEXT [Image]SiteIDPrimary-->&uuid=<!--#4DTEXT _HIT_WebApp_GetField ("img_uuid")-->'><!--#4DIF ([Image]Title#"")-->Image : <!--#4DTEXT [Image]Title--><!--#4DELSE-->New Image : Variant<!--#4DENDIF--></a>
+        </li>
+		<li>
+            <a href='image_variant.shtml?siteid=<!--#4DTEXT [Image]SiteIDPrimary-->&img_uuid=<!--#4DTEXT _HIT_WebApp_GetField ("img_uuid")-->&uuid=<!--#4DTEXT _HIT_WebApp_GetField ("uuid")-->'><!--#4DIF ([Image_Variant]Type#"")--><!--#4DTEXT [Image_Variant]Type--><!--#4DELSE--><!--#4DTEXT _HIT_WebApp_GetField ("type")--><!--#4DENDIF--></a>
+        </li>
+    </ul>
+</div>	
+
+<div class="row">
+    <div class="col-sm-12 col-md-12">
+		<div class="row">
+			<div class="col-sm-12 col-md-12">
+                <form id="validate_wizard" class="stepy-wizzard form-horizontal" action="savevariant.cgi" name="saveVariantForm">
+                  <input type="hidden" id="mVariantType" name="mVariantType" value="<!--#4DTEXT [Image_Variant]Type-->" />
+                  <input type="hidden" id="var_uuid" name="var_uuid" value="<!--#4DTEXT _HIT_WebApp_GetField ("uuid")-->" />
+				  <input name="img_uuid" type="hidden" value="<!--#4DIF (_HIT_WebApp_GetField ("img_uuid")#"")--><!--#4DTEXT _HIT_WebApp_GetField ("img_uuid")--><!--#4DELSE--><!--#4DTEXT [Image]uuid--><!--#4DENDIF-->" id="img_uuid">
+				
+                  <fieldset title="Image Variant">
+                    <legend class="hide"><!--#4DIF ([Image_Variant]Type#"")--><!--#4DTEXT [Image_Variant]Type--><!--#4DELSE-->New Variant : <!--#4DTEXT _HIT_WebApp_GetField ("type")--><!--#4DENDIF-->&hellip;</legend>
+
+                        <div class="formSep form-group" id="4D_Upload_Area">
+                                                <!--#4DIF (Records in selection([Image_Variant])=1)-->
+                        <!--Variant UUID must exist for uploading labeled variants-->
+
+                            <label for="" class="col-md-2 control-label">Variant Path:</label>
+                            <div class="col-md-10">
+					<a href="file:///__4DURLHandler__Upload-<!--#4DTEXT [Image_Variant]UUID-->" onClick="$.__4DURLHandler__('<!--#4DTEXT [Image_Variant]UUID-->','upload-image')" title="Edit <!--#4DTEXT [Image_Variant]Type-->"><button type="button" class="finish btn btn-primary">Select <!--#4DTEXT [Image_Variant]Type--> Variant To Upload</button></a>
+					        </div><!--#4DELSE--><!--#4DENDIF-->
+						</div>
+						
+						                        <legend class="hide">…</legend>
+                        <div class="formSep form-group">
+                            <label for="img_id" class="col-md-2 control-label"><span class="f_req">*</span> Image ID:</label>
+                            <div class="col-md-3">
+								<input type="text" name="img_id" id="img_id" value="<!--#4DIF (Records in selection([Image])=1)--><!--#4DTEXT [Image]ID--><!--#4DELSE--><!--#4DTEXT Sequence number([Image])--><!--#4DENDIF-->" class="input-sm form-control" readonly>
+							</div>
+                        </div>
+
+                        <legend class="hide">&hellip;</legend>
+                        <div class="formSep form-group">
+                            <label class="col-md-2 control-label">Variant ID:</label>
+                            <div class="col-md-3">
+								<input type="text" name="var_id" id="var_id" value="<!--#4DTEXT [Image_Variant]ID-->" class="input-sm form-control" readonly>
+							</div>
+                        </div>
+						
+						<div class="formSep form-group">
+                            <label class="col-md-2 control-label">Clone Parent ID:</label>
+                            <div class="col-md-3">
+								<input type="text" name="clone_pid" id="clone_pid" value="<!--#4DTEXT [Image_Variant]CloneParentID-->" class="input-sm form-control">
+								
+							</div>
+                        </div>
+						
+						
+							
+						
+						
+                        <div class="formSep form-group">
+                            <label class="col-md-2 control-label">Variant Title:</label>
+                            <div class="col-md-10">
+								<input type="text" name="var_title" id="var_title" class="input-sm form-control" value="<!--#4DTEXT [Image_Variant]Title-->">
+							</div>
+                        </div>
+                        
+                        <div class="formSep form-group">
+                            <label class="col-md-2 control-label">Subtitle:</label>
+                            <div class="col-md-10">
+								<input type="text" name="var_sub" id="var_sub" class="input-sm form-control" value="<!--#4DTEXT [Image_Variant]Subtitle-->">
+							</div>
+                        </div>
+
+                        <div class="formSep form-group">
+                            <label class="col-md-2 control-label">Description:</label>
+					<div class="col-sm-6 col-md-10">
+						<textarea name="var_desc" id="var_desc" cols="10" rows="3" class="form-control"><!--#4DTEXT [Image_Variant]Description--></textarea>
+					</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-2 control-label"><span class="f_req">*</span>Variant Type:</label>
+							<div class="col-sm-3 col-md-3">
+								<!--HIT_EXECUTE _HIT_HTMLTXT:=Web_VariantTypesHTMLPopup([Image_Variant]Type)-->
+								<input type="hidden" id="Locked_variant_hidden" >
+							</div>
+							<!--#4DIF (mImageAddTypeStr#"Unlabeled")-->
+								<!--#4DIF ([Image_Variant]Type#"Unlabeled")-->
+								<div class="col-sm-6 col-md-6">
+									<label class="uni-checkbox">
+										<input name="IsLocked" id="IsLocked" type="checkbox" class="" >
+										Remember selected type <span id="Locked_variant_type"></span>
+									</label>
+								</div>
+								<!--#4DELSE--><!--#4DENDIF-->
+							<!--#4DELSE--><!--#4DENDIF-->
+						</div>
+						
+						<div class="formSep form-group">
+                            <label class="col-md-2 control-label">Lightboxes:</label>
+					<div class="col-md-10">
+						<input type="text" name="var_lb" id="var_lb" class="input-sm form-control" value="" readonly>
+					</div>
+                        </div>
+						
+						<div class="formSep form-group">
+                            <label class="col-md-2 control-label">Language:</label>
+					<div class="col-md-10">
+						<input type="text" name="var_lang" id="var_lang" class="input-sm form-control" maxlength="2" value="<!--#4DTEXT [Image_Variant]Language-->" >
+					</div>
+                        </div>
+
+                        <div class="formSep form-group">
+                            <label class="col-md-2 control-label">Royalty Info:</label>
+                            <div class="col-md-10">
+								<input type="text" name="var_rinfo" id="var_rinfo" class="input-sm form-control" value="<!--#4DTEXT [Image_Variant]RoyaltyInfo-->">
+							</div>
+                        </div>
+
+                        <div class="formSep form-group">
+                            <label class="col-md-2 control-label">Citation:</label>
+                            <div class="col-md-10">
+								<input type="text" name="var_cite" id="var_cite" class="input-sm form-control" value="<!--#4DTEXT [Image_Variant]CitationCredits-->">
+							</div>
+                        </div>
+                        
+						<div class="form-group" style="margin-bottom:-28px;text-align:center;">
+							<button type="button" class="btn btn-primary btn_save_exit"> Save Variant </button>
+						</div>
+						
+                    </fieldset>
+                    
+                    <fieldset title="Keywords">
+                        <legend class="hide">Keywords & Related Variants&hellip;</legend>
+						
+						<div class="formSep form-group">
+						 <label class="col-md-2 control-label"></label>
+                      			<div class="col-sm-6 col-md-6">
+								<label class="uni-checkbox">
+							<input <!--#4DIF ([Image_Variant]NotForSale)-->checked<!--4DELSE--><!--4DENDIF--> value="true" name="not_for_sale" id="not_for_sale" type="checkbox" class="uni_style" >
+							Not For Sale
+						</label>
+								</div>
+			                        </div>
+						
+						
+						<div class="formSep form-group">
+						 <label class="col-md-2 control-label"></label>
+                      			<div class="col-sm-6 col-md-6">
+								<label class="uni-checkbox">
+							<input <!--#4DIF ([Image_Variant]KeywordsComplete)-->checked<!--4DELSE--><!--4DENDIF--> value="true" name="keyword_complete" id="keyword_complete" type="checkbox" class="uni_style" >
+							Keywords Complete
+						</label>
+								</div>
+			                        </div>
+                       
+                         <table class="table table-condensed table-striped" data-provides="rowlink">
+									<thead>
+										<tr class="item">
+		      <th>Keywords</th>
+		      <th>Priority</th>
+		      <th>Language</th>
+			  <th>Source</th>
+			  <th>Synonym Of</th>
+			   <th>Save</th>
+			  <th>Cancel</th>
+			  </tr>
+			  </thead>
+			  <tbody>
+			  
+			  <!--#4DIF (Records in selection([Image_Variant])=1)-->
+		  <!--#4DLOOP [Image_Keyword]-->
+		  
+		 <tr class='item-row' >
+		 <td class='item-id'>
+		 <span class='s_vkeyword' ><!--#4DTEXT [Image_Keyword]Keyword--></span>
+		 <input type='hidden' class='key_vid' value='<!--#4DTEXT string([Image_Keyword]ID)-->' >
+		 <input type='text' class='vkeyword input-sm form-control' style='display:none;' value='<!--#4DTEXT [Image_Keyword]Keyword-->' >
+		 </td>
+		 <td >
+		 <span class='s_vpriority' ><!--#4DTEXT string([Image_Keyword]Priority)--></span>
+		 <input type='text' class='vpriority input-sm form-control' style='display:none;' value='<!--#4DTEXT string([Image_Keyword]Priority)-->' >
+		 </td>
+		 <td>
+		 <span class='s_vlanguage' ><!--#4DTEXT [Image_Keyword]Language--></span>
+		 <input type='text' class='vlanguage input-sm form-control' style='display:none;' maxlength="2" value='<!--#4DTEXT [Image_Keyword]Language-->' >
+		 </td>
+		 <td>
+		 <span class='s_vsource' ><!--#4DTEXT [Image_Keyword]Source--></span>
+		 <input type='text' class='vsource input-sm form-control' style='display:none;' value='<!--#4DTEXT [Image_Keyword]Source-->' >
+		 </td>
+		 <td>
+		 <span class='s_vsynonym' ><!--#4DTEXT [Image_Keyword]SynonymOf--></span>
+		 <input type='text' class='vsynonym input-sm form-control' style='display:none;' value='<!--#4DTEXT [Image_Keyword]SynonymOf-->' >
+		 </td>
+		 <td>
+		 <a href='javascript:void(0)'></a>
+		 <a href='javascript:void(0)' class='vkey_editlink'>Edit</a>
+		 <a href='javascript:void(0)' class='vkey_savelink' style='display:none'>Save</a>
+		 </td>
+		 <td>
+		 <a href='javascript:void(0)' class='vkey_removelink' >Remove</a>
+		 <a href='javascript:void(0)' class='vkey_cancellink' style='display:none'>Cancel</a>
+		 </td>
+		 </tr>
+		  
+		  <!--#4DENDLOOP-->
+		  <!--#4DELSE--><!--#4DENDIF-->
+			  
+										
+		  <tr id="hiderow">
+		    <td colspan="7"><a href='javascript:void(0)'></a><a class="vkey_addrow" href="javascript:;" title="Add a row">Add a row</a></td>
+		  </tr>
+
+									</tbody>
+								</table>
+		<div class="formSep form-group" style="text-align: center;">						
+		<button type="button" class="btn btn-primary"> Report...</button>
+		<button type="button" class="btn btn-primary"> MeSH...</button>
+		<br/><br/>
+		</div>
+								
+								<table class="table table-condensed table-striped" data-provides="rowlink">
+									<thead>
+										<tr class="item">
+		      <th>ID</th>
+		      <th>Relationship</th>
+		      <th>Save</th>
+			  <th>Cancel</th>
+										</tr>
+									</thead>
+									<tbody>
+									
+		  <!--#4DIF (Records in selection([Image_Variant])=1)-->
+		  <!--#4DLOOP [Image_RelatedVariant]-->
+		  
+		 <tr class='item-row' >
+		 <td class='item-id'>
+		 <span class='s_rid' ><!--#4DTEXT [Image_RelatedVariant]RelatedVariantID--></span>
+		 <input type='text' class='rid input-sm form-control' style='display:none;' value='<!--#4DTEXT [Image_RelatedVariant]RelatedVariantID-->' >
+		 <input type='hidden' class='id' value='<!--#4DTEXT [Image_RelatedVariant]ID-->' >
+		 </td>
+		 <td >
+		 <span class='s_relation' ><!--#4DTEXT [Image_RelatedVariant]Relationship--></span>
+		 <input type='text' class='relation input-sm form-control' style='display:none;' value='<!--#4DTEXT [Image_RelatedVariant]Relationship-->' >
+		 </td>
+		 <td>
+		 <a href='javascript:void(0)'></a>
+		 <a href='javascript:void(0)' class='rel_var_editlink'>Edit</a>
+		 <a href='javascript:void(0)' class='rel_var_savelink' style='display:none'>Save</a>
+		 </td>
+		 <td>
+		 <a href='javascript:void(0)' class='rel_var_removelink' >Remove</a>
+		 <a href='javascript:void(0)' class='rel_var_cancellink' style='display:none'>Cancel</a>
+		 </td>
+		 </tr>
+		  
+		  <!--#4DENDLOOP-->
+		  <!--#4DELSE--><!--#4DENDIF-->
+									
+
+		  <tr id="hiderow">
+		    <td colspan="4"><a href='javascript:void(0)'></a><a class="rel_var_addrow" href="javascript:;" title="Add a row">Add a row</a></td>
+		  </tr>
+
+									</tbody>
+								</table>
+
+						<div class="form-group" style="margin-bottom:-28px;text-align:center;">
+							<button type="button" class="btn btn-primary btn_save_exit"> Save Variant </button>
+						</div>
+
+                    </fieldset>
+
+                    <fieldset title="Deliverables">
+                        <legend class="hide">Variant Deliverables&hellip;</legend>
+						
+					
+                        								<table class="table table-condensed table-striped" data-provides="rowlink">
+									<thead>
+										<tr class="item">
+		       <th>ID</th>
+		      <th>Type</th>
+			  <th>Size</th>
+			  <th>Height</th>
+			  <th>Width</th>
+			  <th>D'load</th>
+			  <th>$$</th>
+		      <th>Save</th>
+			  <th>Cancel</th>
+										</tr>
+									</thead>
+									<tbody>
+									
+			 <!--#4DIF (Records in selection([Image_Variant])=1)-->
+		  <!--#4DLOOP [Image_Deliverable]-->
+		  
+		 <tr class='item-row' >
+		 <td class='item-id'>
+		 <span class='s_vdid' ><!--#4DTEXT [Image_Deliverable]ID--></span>
+		 </td>
+		 <td >
+		 <span class='s_vdtype' ></span>
+		 <input type='text' class='vdtype input-sm form-control' style='display:none;' value='' >
+		 </td>
+		 <td >
+		 <span class='s_vdsize' ></span>
+		 <input type='text' class='vdsize input-sm form-control' style='display:none;' value='' >
+		 </td>
+		 <td >
+		 <span class='s_vdheight' ><!--#4DTEXT [Image_Deliverable]Height--></span>
+		 <input type='text' class='vdheight input-sm form-control' style='display:none;' value='<!--#4DTEXT [Image_Deliverable]Height-->' >
+		 </td>
+		 <td >
+		 <span class='s_vdwidth' ><!--#4DTEXT [Image_Deliverable]Width--></span>
+		 <input type='text' class='vdwidth input-sm form-control' style='display:none;' value='<!--#4DTEXT [Image_Deliverable]Width-->' >
+		 </td>
+		 <td >
+		 <span class='s_vddload' ></span>
+		 <input type='text' class='vddload input-sm form-control' style='display:none;' value='' >
+		 </td>
+		 <td >
+		 <span class='s_vdrev' ></span>
+		 <input type='text' class='vdrev input-sm form-control' style='display:none;' value='' >
+		 </td>
+		 <td>
+		 <a href='javascript:void(0)'></a>
+		 <a href='javascript:void(0)' class='vd_editlink'>Edit</a>
+		 <a href='javascript:void(0)' class='vd_savelink' style='display:none'>Save</a>
+		 </td>
+		 <td>
+		 <a href='javascript:void(0)' class='vd_removelink' >Remove</a>
+		 <a href='javascript:void(0)' class='vd_cancellink' style='display:none'>Cancel</a>
+		 </td>
+		 </tr>
+		  
+		  <!--#4DENDLOOP-->
+		  <!--#4DELSE--><!--#4DENDIF-->
+									
+
+		  <tr id="hiderow">
+		    <td colspan="9"><a href='javascript:void(0)'></a><a id="vd_addrow" href="javascript:;" title="Add a row">Add a row</a></td>
+		  </tr>
+
+									</tbody>
+								</table>
+								
+			<div class="formSep form-group">
+                            <label class="col-md-2 control-label">Details (optional):</label>
+                            <div class="col-md-10">
+								<input type="text" name="var_del_detail" id="var_del_detail" class="input-sm form-control" value="">
+							</div>
+                        </div>
+			<div class="formSep form-group" style="text-align: center;">				
+			<button type="button" class="btn btn-primary"> Open</button>
+		<button type="button" class="btn btn-primary"> View</button>
+		<button type="button" class="btn btn-primary"> Copy</button>
+		<button type="button" class="btn btn-primary"> Add</button>
+		<button type="button" class="btn btn-primary"> FTP^</button>
+		<br/><br/>
+		<button type="button" class="btn btn-primary"> Replace</button>
+		<button type="button" class="btn btn-primary"> Report...</button>
+		<button type="button" class="btn btn-primary"> EPS...</button>
+		<br/><br/>
+		</div>
+						
+						
+			<div class="formSep form-group">
+                            <label class="col-md-2 control-label">Deliverable Text:</label>
+					<div class="col-sm-6 col-md-10">
+						<textarea name="var_del_text" id="var_del_text" cols="10" rows="3" class="form-control"></textarea>
+					</div>
+                        </div>
+						
+			<div class="formSep form-group">
+						 <label class="col-md-2 control-label"></label>
+                      			<div class="col-sm-6 col-md-6">
+								<label class="uni-checkbox">
+							<input <!--#4DIF ([Image_Variant]AlternatePreviewAvailable)-->checked<!--4DELSE--><!--4DENDIF--> value="true" name="alt_preview" id="alt_preview" type="checkbox" class="uni_style" >
+							Alt Preview
+						</label>
+								</div>
+			                        </div>
+						
+						
+				<div class="formSep form-group" style="text-align: center;">			
+				<button type="button" class="btn btn-primary"> Web Page...</button>
+		<button type="button" class="btn btn-primary"> Report...</button>
+		<br/><br/>
+		<button type="button" class="btn btn-primary"> Add Preview</button>
+		<button type="button" class="btn btn-primary"> Redo Preview</button>
+		<button type="button" class="btn btn-primary"> Redo Thumbnail</button>
+		
+		<button type="button" class="btn btn-primary"> FTP^</button>
+		</div>						
+						<div class="form-group" style="margin-bottom:-28px;text-align:center;">
+							<button type="button" class="btn btn-primary btn_save_exit"> Save Variant </button>
+						</div>
+                    </fieldset>
+					
+                    <button type="button" class="finish btn btn-primary hide" id="btn_submit"><i class="glyphicon glyphicon-ok"></i> Save Variant</button>
+
+               </form>
+                
+            </div>
+        </div>
+	</div>
+</div>                </div>
+            </div>
+<a href="javascript:void(0)" class="sidebar_switch on_switch ttip_r" title="Hide Sidebar">Sidebar switch</a>
+<div class="sidebar">
+	
+	<div class="sidebar_inner_scroll">
+		<div class="sidebar_inner">
+		
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/web/includes/sidebar_search_box.shtml-->
+			<div id="side_accordion" class="panel-group">
+
+<!--#4DIF ([Image]ID>0)-->		
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<a href="#collapse<!--#4DTEXT [Image]ID-->" data-parent="#side_accordion" data-toggle="collapse" class="accordion-toggle">
+							<i class="glyphicon glyphicon-th"></i> Basic View
+						</a>
+					</div>
+					<div class="accordion-body collapse" id="collapse<!--#4DTEXT [Image]ID-->">
+						<div class="panel-body">
+						<a href="image.shtml?siteid=<!--#4DTEXT [Image]SiteIDPrimary-->&uuid=<!--#4DTEXT [Image]UUID-->" title="View Basic Image <!--#4DTEXT [Image]Title-->"><img src="<!--#4DTEXT Image_GetThumbnailHTTPURL(mImageVariantIDStr)-->" alt="<!--#4DTEXT [Image]Title-->"></a>
+						</div>
+					</div>
+				</div>
+<!--#4DELSE--><!--#4DENDIF-->	
+				   
+<!--#4DIF (mImageUUIDStr#"")-->		
+ 	
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<a href="#collapseOne" data-parent="#side_accordion" data-toggle="collapse" class="accordion-toggle">
+							<i class="glyphicon glyphicon-th"></i> Image Variants
+						</a>
+					</div>
+					<div class="accordion-body collapse in" id="collapseOne">
+						<div class="panel-body">
+						
+											<ul class="nav nav-pills nav-stacked">
+			
+<!--#4DIF (_HIT_VARLISTTXT#"")--><li class='nav-header'>Variants List</li><!--#4DELSE--><!--#4DENDIF--><!--HIT_EXECUTE
+_HIT_HTMLTXT:=_HIT_VARLISTTXT
+-->
+
+							</ul>
+
+						</div>
+					</div>
+				</div>
+<!--#4DENDIF-->
+ 
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<a href="#collapseTwo" data-parent="#side_accordion" data-toggle="collapse" class="accordion-toggle">
+							<i class="glyphicon glyphicon-folder-close"></i> Upload Variant
+						</a>
+					</div>
+					<div class="accordion-body collapse in" id="collapseTwo">
+						<div class="panel-body">
+						
+											<ul class="nav nav-pills nav-stacked">
+								<!--#4DIF (vIsLabelParentOK)--><!--#4DELSE--><li class="nav-header">Add New&hellip;</li>
+									<!--#4DIF ([Image]ID>0)-->
+										<li><a class="link_var" href="image_variant.shtml?siteid=<!--#4DTEXT [Image]SiteIDPrimary-->&img_uuid=&type=Unlabeled">Unlabeled Variant</a></li>
+									<!--#4DELSE-->
+										<li class="active"><a href='javascript:alert("Please first save image to add New Unlabeled variant")'>Add New Unlabeled Variant</a></li>
+									<!--#4DENDIF-->
+								<!--#4DENDIF-->
+								<!--#4DIF (Web_IsUnLabeledParentOK)--><li class="nav-header">Add New&hellip;</li>
+									<li><a class="link_var" href="image_variant.shtml?siteid=<!--#4DTEXT [Image]SiteIDPrimary-->&img_uuid=&type=Labeled">Labeled Variant</a></li>
+								<!--#4DENDIF-->
+								<li class="divider"></li>
+								<li><a href="javascript:void(0)">Help</a></li>
+							</ul>
+
+						</div>
+					</div>
+				</div>
+				
+				<!--#4DSCRIPT/_HIT_LoadInclude/hit/web/includes/bottom-logo.shtml-->
+			
+ 			</div>
+			<div class="push"></div>
+		</div>
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/web/includes/sideBarInfo.shtml-->
+	</div>
+	
+</div>
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/web/includes/InitJSPlugins.shtml-->
+
+	<!-- globalize for jQuery UI-->
+    <script src="lib/jquery-ui/external/globalize.js"></script>
+    
+	<!-- styled form elements -->
+	<script src="lib/uniform/jquery.uniform.min.js"></script>
+	
+    <!-- plupload and all it's runtimes and the jQuery queue widget (attachments) -->
+    <script type="text/javascript" src="lib/plupload/js/plupload.full.js"></script>
+    <script type="text/javascript" src="lib/plupload/js/jquery.plupload.queue/jquery.plupload.queue.full.js"></script>
+	
+	<!-- switch buttons -->
+    <script src="lib/bootstrap-switch/static/js/bootstrap-switch.min.js"></script>
+  
+	<!-- validation -->
+    <script src="lib/validation/jquery.validate.min.js"></script>
+    <!-- wizard -->
+    <script src="lib/stepy/js/jquery.stepy.min.js"></script>
+	<script src="js/varient.js"></script>
+   
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/web/includes/InitJS4DCallBacks.shtml-->
+	
+<script type="text/javascript">
+
+$.__4D_Enable_Upload_Area = function __4D_Enable_Upload_Area(){
+//alert("__4D_Enable_Upload_Area");
+$( "#4D_Upload_Area" ).show();
+$( "#4D_Upload_Area" ).focus();
+return "OK";
+}
+
+function save_LockedVariant(){
+	var IsLocked='';
+	if (document.getElementById('IsLocked').checked){
+		IsLocked= "true";
+	}else{
+		IsLocked= "false";
+	}
+	var variant_type_id= $("#variant_type_id").val();
+	jsonRow = 'sortOrder.cgi?IsVariantLocked='+IsLocked+'&locked_variant='+variant_type_id+'&table=Image_Variant';
+	$.getJSON(jsonRow,function(result){
+		//document.saveVariantForm.submit();
+		$( "#validate_wizard" ).trigger('submit');
+	});
+	//return false;
+}
+
+	$(function () {
+	
+				<!--#4DIF ([Image]SiteIDPrimary>0)-->		
+		var siteIDNum='<!--#4DTEXT [Image]SiteIDPrimary-->';	
+		$('#__siteID').val(siteIDNum);
+		<!--#4DELSE--><!--#4DENDIF-->
+
+$("#var_type").attr("readonly", true);
+
+$( "#4D_Upload_Area" ).hide();
+
+		<!--#4DIF (Records in selection([Image_Variant])=0)-->		
+		var new_var_id='<!--#4DTEXT Web_GetNextImageVariantID-->';	
+		$('#var_id').val(new_var_id);
+		<!--#4DELSE--><!--#4DENDIF-->
+		
+		$(".link_var").each(function(){
+			var lnk=$(this).attr('href').replace("img_uuid=","img_uuid="+$("#img_uuid").val()+"");
+			$(this).attr('href',lnk);
+		});
+
+
+	});
+	
+	$(document).ready(function() {
+		<!--#4DIF (mImageAddTypeStr#"Unlabeled")-->
+			var mVariantType= $("#mVariantType").val();
+			if(mVariantType!="Unlabeled"){
+				$.getJSON('sortOrder.cgi?table=Image_Variant',function(response){
+					if(!response.err){
+						if(response.IsVariantLocked == "true"){
+							
+							<!--#4DIF (_HIT_WebApp_GetField ("uuid")="")-->
+								
+								$('#IsLocked').attr('checked','checked');
+								var display= response.locked_variant;
+								$("#variant_type_id").val(display);
+								$('#Locked_variant_hidden').val($('#variant_type_id').val());
+						$('#Locked_variant_hidden').attr('name', 'variant_type_name');
+						$('#variant_type_id').attr('disabled',true);
+							<!--#4DELSE-->
+								
+								var variant_type_id= $("#variant_type_id").val();
+								var checkdisplay= response.locked_variant;
+								if(variant_type_id!=checkdisplay)
+								{
+								$('#IsLocked').attr('checked',false);
+								$('#Locked_variant_hidden').val('');
+						$('#Locked_variant_hidden').attr('name', '');
+						$('#variant_type_id').attr('disabled',false);
+								}
+								else{
+								$('#IsLocked').attr('checked','checked'); 
+								$('#Locked_variant_hidden').val($('#variant_type_id').val());
+						$('#Locked_variant_hidden').attr('name', 'variant_type_name');
+						$('#variant_type_id').attr('disabled',true);
+								}
+								var display= " ("+response.locked_variant+")";
+								$("#Locked_variant_type").html(display); 
+								
+							<!--#4DENDIF-->
+						}else if(response.IsVariantLocked == "false"){
+							$('#IsLocked').attr('checked',false);
+							$('#Locked_variant_hidden').val('');
+						$('#Locked_variant_hidden').attr('name', '');
+						$('#variant_type_id').attr('disabled',false);
+							$("#Locked_variant_type").html('');
+						}
+					}else{
+						$('#IsLocked').attr('checked',false);
+						$('#Locked_variant_hidden').val('');
+						$('#Locked_variant_hidden').attr('name', '');
+						$('#variant_type_id').attr('disabled',false);
+					}
+				});
+				
+				$( "#IsLocked" ).change(function() {
+					if (document.getElementById('IsLocked').checked){
+						$('#IsLocked').attr('checked','checked');
+						$('#Locked_variant_hidden').val($('#variant_type_id').val());
+						$('#Locked_variant_hidden').attr('name', 'variant_type_name');
+						$('#variant_type_id').attr('disabled',true);
+					}else{
+						$('#IsLocked').attr('checked',false);
+						$('#Locked_variant_hidden').val('');
+						$('#Locked_variant_hidden').attr('name', '');
+						$('#variant_type_id').attr('disabled',false);
+					}
+				});
+			}
+		<!--#4DELSE--><!--#4DENDIF-->
+		
+		//* nice form elements
+        gebo_uniform.init();
+		
+		//* wizard with validation
+		gebo_wizard.validation();
+		//* add step numbers to titles
+		gebo_wizard.steps_nb();
+		$('.btn_save_exit').click(function(e){
+			e.preventDefault();
+			<!--#4DIF (mImageAddTypeStr#"Unlabeled")-->
+				var mVariantType= $("#mVariantType").val();
+				if(mVariantType!="Unlabeled"){
+					save_LockedVariant();
+				}else{
+					$( "#validate_wizard" ).trigger('submit');
+				}
+			<!--#4DELSE-->
+			$( "#validate_wizard" ).trigger('submit');
+			<!--#4DENDIF-->
+		});
+		$('#btn_submit').click(function(event){
+			<!--#4DIF (mImageAddTypeStr#"Unlabeled")-->
+				var mVariantType= $("#mVariantType").val();
+				if(mVariantType!="Unlabeled"){
+					event.preventDefault();
+					save_LockedVariant();
+				}
+			<!--#4DELSE--><!--#4DENDIF-->
+		});
+	
+	});
+	
+   
+    //* uniform
+    gebo_uniform = {
+		init: function() {
+            $(".uni_style").uniform();
+        }
+    };
+	
+	gebo_wizard = {
+		
+		validation: function(){
+			$('#validate_wizard').stepy({
+				nextLabel:      'Forward <i class="glyphicon glyphicon-chevron-right"></i>',
+				backLabel:      '<i class="glyphicon glyphicon-chevron-left"></i> Backward',
+				block		: true,
+				errorImage	: true,
+				titleClick	: true,
+				validate	: true
+			});
+			stepy_validation = $('#validate_wizard').validate({
+				onfocusout: false,
+				errorPlacement: function(error, element) {
+					error.appendTo( element.closest("div") );
+				},
+				highlight: function(element) {
+					$(element).closest("div.form-group").addClass("error f_error");
+					var thisStep = $(element).closest('form').prev('ul').find('.current-step');
+					thisStep.addClass('error-image');
+				},
+				unhighlight: function(element) {
+					$(element).closest("div.form-group").removeClass("error f_error");
+					if(!$(element).closest('form').find('div.error').length) {
+						var thisStep = $(element).closest('form').prev('ul').find('.current-step');
+						thisStep.removeClass('error-image');
+					};
+				},
+				rules: {
+					
+					'variant_type_id'	: 'required',
+					
+				}, messages: {
+					
+					'variant_type_id'	: { required:  'Please specify Variant type' },
+					
+				},
+				ignore				: ''
+			});
+		},
+		//* add numbers to step titles
+		steps_nb: function(){
+		
+		
+		
+			$('.stepy-titles').each(function(){
+				$(this).children('li').each(function(index){
+					var myIndex = index + 1
+					$(this).append('<span class="stepNb">'+myIndex+'</span>');
+				})
+			})
+		}
+		
+	};
+	
+
+</script>
+
+
+	  
+</div>
+</body>
+</html>
+<!--HIT_EXECUTE Web_Init("Clear")-->
+
+<!--#4DELSE--><h1>Authentication Required!<br>
+<!--HIT_EXECUTE _HIT_HTMLTXT:="_HIT_AuthenticateSession: "+_HIT_AuthenticateSession-->
+</h1><!--#4DENDIF-->

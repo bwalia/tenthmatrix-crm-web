@@ -1,0 +1,118 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+C_TEXT(_HTMLTITLETXT)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+QUERY([Products];[Products]uuid=_HIT_WebApp_GetField ("uuid"))
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+
+IF (Records in selection([Products])=0)
+_HTMLTITLETXT:="New Product"
+ELSE
+_HTMLTITLETXT:= "Edit: "+[Products]ProductName
+END IF
+
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+-->
+
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/main-header.shtml-->
+<script src="js/jquery.validate.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+	$('.num').keypress(function(e){
+		var k = e.which;
+    	/* numeric inputs can come from the keypad or the numeric row at the top */
+   		 if ((k<48 || k>57) && (k!=46) && (k!=8) && (k!=0)) {
+        	e.preventDefault();
+			return false;
+    	}
+	}); 
+	
+	
+	//validate
+	$.validator.addMethod('checkinteger', function(value, element, param) {
+		return (value != 0);
+	}, 'Please enter a non zero value!');
+					
+	$("#DetailForm").validate({
+		ignore: "",
+        rules: {
+          	ProductName: { required: true  },
+			Unit_Price: { required: true ,checkinteger : true  },
+			Product_Type: { required: true  },
+        }
+    });
+    
+});
+</script>
+<style>
+label.error { 
+	float: left; 
+	color: red; 
+	padding-top: 1.5em; 
+	vertical-align: top; 
+}
+</style>
+</head>
+<body>
+<div data-role="page" class="jqm-demos" data-quicklinks="true">
+	<!-- header -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/top-header.shtml-->
+	<!-- /header -->
+	
+	<div role="main" class="ui-content jqm-content">
+		<h3><!--#4DIF (Records in selection([Products])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Product</h3>
+		<div data-demo-html="true">
+			<form novalidate="novalidate" data-ajax="false" name="DetailForm" id="DetailForm" action="saveproduct.cgi" method="post">
+					<input name="Product_uuid" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="Product_uuid">               
+                               
+                                <div class="ui-field-contain">
+                                    <label>Product Name</label>
+                                    <input type="text" name="ProductName" id="ProductName" value="<!--#4DVAR [Products]ProductName-->">
+                                </div>
+                                <div class="ui-field-contain">
+                                    <label>Unit Price</label>
+									<input class="num" type="text" id="Unit_Price" value="<!--#4DVAR [Products]Unit_Price-->" name="Unit_Price">
+                                </div>
+                                <div class="ui-field-contain">
+                                    <label>Product Type</label>
+                                    <input type="text" id="Product_Type" value="<!--#4DVAR [Products]Product_Type-->" name="Product_Type">
+                                </div>
+								<div class="ui-field-contain">
+                                    <label>
+                                    	<input name="SerialNumberRequired" type="checkbox" value="true" id="SerialNumberRequired" <!--#4DIF ([Products]SerialNumberRequired)-->checked<!--4DENDIF-->> Serial Number
+                                    </label>
+                                </div>
+								<div class="ui-field-contain">
+                                    <label>Number Of Users </label>
+                                    <input type="text" id="NumberOfUsers" value="<!--#4DVAR [Products]NumberOfUsers-->" name="NumberOfUsers" >
+                                </div>
+								<div class="ui-field-contain">
+                                    <label>Current Version </label>
+                                    <input type="text" id="CurrentVersion" value="<!--#4DVAR [Products]CurrentVersion-->" name="CurrentVersion">
+                                </div>
+								<div class="ui-field-contain">
+                                    <label>Platform </label>
+                                    <input type="text" id="Platform" value="<!--#4DVAR [Products]Platform-->" name="Platform">
+                                </div> 
+					<button type="submit" class="ui-shadow ui-btn ui-corner-all ui-mini">Submit</button>
+					<a href="products.shtml" class="ui-shadow ui-btn ui-corner-all ui-mini" data-ajax="false">Cancel</a>
+				</form>	
+		    	
+		    </div>
+	</div><!-- /content -->
+	<!-- panel -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/sidebar.shtml-->
+	<!-- /panel -->
+
+	<!-- footer -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/footer.shtml-->
+	<!-- /footer -->
+</div><!-- /page -->
+
+</body>
+</html>

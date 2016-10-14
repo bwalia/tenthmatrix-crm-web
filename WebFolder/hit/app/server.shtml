@@ -1,0 +1,310 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+
+//if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+QUERY([servers];[servers]uuid=_HIT_WebApp_GetField ("uuid"))
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+//else
+//_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+//end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+-->
+<!DOC html>
+<html>
+<head>
+	<title>Tenthmatrix CRM App : Server</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- bootstrap -->
+	<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="bootstrap/css/bootstrap-responsive.min.css" />
+	<link rel="stylesheet" media="all" type="text/css" href="css/jquery-impromptu.css" />
+	<!-- datatables -->
+    <link rel="stylesheet" href="lib/datatables/extras/TableTools/media/css/TableTools.css">
+	<style>
+	label.error {
+		margin-top: 1px;
+	}
+	</style>
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/app/includes/header.shtml-->
+	
+</head>
+<body>
+<!-- main container -->
+    <div class="content wide-content">
+        <div class="container-fluid">
+            <div id="pad-wrapper" class="form-page">
+				<div class="row-fluid">
+					<div class="">
+						<form name="InvoiceForm" id="InvoiceForm" action="saveserver.cgi" class="form_validation_reg" method="post" >
+							<div class="tabbable">
+								<ul class="nav nav-tabs">
+									<li id="li1" class="active"><a href="#tab1" data-toggle="tab">Server Details</a></li>
+									<li id="li2"><a href="#tab2" data-toggle="tab">Active Domains on Server</a></li>
+								</ul>
+							</div>
+							<div class="tab-content">
+								<div class="tab-pane active" id="tab1">
+									<div class="row-fluid">
+										<div class="span12">
+											<div class="row-fluid">
+												<div class="span12">
+													<div class="form-horizontal well">
+														<fieldset>
+															<input name="uuid" class="span5" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="uuid"> 
+															<div class="control-group">
+																<label class="control-label">Server Name <span class="f_req">*</span></label>
+																<div class="controls">
+																	<input type="text" class="span6" name="server_name" id="server_name" value="<!--#4DVAR [servers]server_name -->" />                                     
+																</div>
+															</div>
+															<div class="control-group">
+																<label class="control-label">Server Type <span class="f_req">*</span></label>
+																<div class="controls">
+																	<select name="server_type" id="server_type" class="span6">
+																		<option value="Live" <!--#4DIF ([servers]server_type="Live")-->selected<!--4DELSE--><!--4DENDIF-->>Live</option>
+																		<option value="Staging" <!--#4DIF ([servers]server_type="Staging")-->selected<!--4DELSE--><!--4DENDIF-->>Staging</option>
+																		<option value="Dev" <!--#4DIF ([servers]server_type="Dev")-->selected<!--4DELSE--><!--4DENDIF-->>Dev</option>
+																	</select> 
+																</div>
+															</div>
+															<div class="control-group">
+																<label class="control-label">Managed By <span class="f_req">*</span></label>
+																<div class="controls">
+																	<select name="managed_by_uuid" id="managed_by_uuid" class="span6">
+																	<!--#4DSCRIPT/Web_LoadEmployees/-->
+																	<!--4DLOOP  [Employees]-->
+																		<option value="<!--4DVAR [Employees]uuid-->" <!--#4DIF ([servers]managed_by_uuid=[Employees]uuid)-->selected<!--4DELSE--><!--4DENDIF-->><!--4DVAR [Employees]emp_first_name--> <!--4DVAR [Employees]emp_last_name--></option>
+																	<!--4DENDLOOP-->	
+																	</select>                                   
+																</div>
+															</div>
+															<div class="control-group">
+																<label class="control-label">Server OS</label>
+																<div class="controls">
+																	<input name="server_os" class="span6" type="text" value="<!--#4DVAR [servers]server_os -->" id="server_os">
+																</div>
+															</div>
+															<div class="control-group">
+																<label class="control-label">Root User</label>
+																<div class="controls">
+																	<input name="root_user" class="span6" type="text" value="<!--#4DVAR [servers]root_user -->" id="root_user">
+																</div>
+															</div>
+															<div class="control-group">
+																<label class="control-label">Root Password</label>
+																<div class="controls">
+																	<input name="root_password" class="span6" type="password" value="<!--#4DVAR [servers]root_password -->" id="root_password">
+																</div>
+															</div>
+															<div class="control-group">
+																<label class="control-label">Root Path</label>
+																<div class="controls">
+																	<input name="www_root_path" class="span6" type="text" value="<!--#4DVAR [servers]www_root_path -->" id="www_root_path">
+																</div>
+															</div>
+															<div class="control-group">
+																<label class="control-label">Server Location</label>
+																<div class="controls">
+																	<input name="server_location" class="span6" type="text" value="<!--#4DVAR [servers]server_location -->" id="server_location">
+																</div>
+															</div>
+															<div class="control-group">
+																<label class="control-label">Lan IP Address </label>
+																<div class="controls">
+																	<input type="text" class="span6" name="lan_ip_addr" id="lan_ip_addr" value="<!--#4DVAR [servers]lan_ip_addr -->" />                                     
+																</div>
+															</div>
+															<div class="control-group">
+																<label class="control-label">Lan IP Address Long</label>
+																<div class="controls">
+																	<input type="text" class="span6" name="lan_ip_addr_long" id="lan_ip_addr_long" value="<!--#4DVAR [servers]lan_ip_addr_long -->" />                                     
+																</div>
+															</div>
+															<div class="control-group">
+																<label class="control-label">Lan IP Address v6</label>
+																<div class="controls">
+																	<input type="text" class="span6" name="lan_ip_addr_v6" id="lan_ip_addr_v6" value="<!--#4DVAR [servers]lan_ip_addr_v6 -->" />                                     
+																</div>
+															</div>
+															
+															<div class="control-group">
+																<label class="control-label">Server Support Ref no</label>
+																<div class="controls">
+																	<input name="server_support_ref_no" class="span6" type="text" value="<!--#4DVAR [servers]server_support_ref_no -->" id="server_support_ref_no">
+																</div>
+															</div>
+															<div class="control-group">
+																<label class="control-label">Wan IP Address</label>
+																<div class="controls">
+																	<input name="wan_ip_addr" class="span6" type="text" value="<!--#4DVAR [servers]wan_ip_addr -->" id="wan_ip_addr">
+																</div>
+															</div>
+															<div class="control-group">
+																<label class="control-label">Wan IP Address Long</label>
+																<div class="controls">
+																	<input name="wan_ip_addr_long" class="span6" type="text" value="<!--#4DVAR [servers]wan_ip_addr_long -->" id="wan_ip_addr_long">
+																</div>
+															</div>
+															<div class="control-group">
+																<label class="control-label">Wan IP Address v6</label>
+																<div class="controls">
+																	<input name="wan_ip_addr_v6" class="span6" type="text" value="<!--#4DVAR [servers]wan_ip_addr_v6 -->" id="wan_ip_addr_v6">
+																</div>
+															</div>
+															<div class="control-group">
+																<label class="control-label">Status <span class="f_req">*</span></label>
+																<div class="controls">
+																	<select name="is_active" id="is_active" class="span6">
+																		<option value="">--Select Status--</option>
+																		<option value="true" <!--#4DIF ([servers]isactive=true)-->selected<!--4DELSE--><!--4DENDIF--> >Active</option>
+																		<option value="false" <!--#4DIF ([servers]isactive=false)-->selected<!--4DELSE--><!--4DENDIF--> >InActive</option>
+																	</select>
+																</div>
+															</div>
+														</fieldset>
+													</div>
+												</div>
+												
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="tab-pane" id="tab2">
+									<div class="row-fluid">
+										<div class="span12">
+											<div class="row-fluid">
+												<div class="span12">
+													<fieldset>
+														<div class="control-group span11" style="padding-left:100px;">
+															<!--#4DIF (Records in selection([servers])=1)-->
+															<a href="domain.shtml" class="btn-flat success new-product margn-lft35"  style="float:right;">+ Add New Domain</a></br></br>
+															 <!--#4DENDIF-->
+															<table class="table table-bordered table-striped table_vam" id="dt_gal" style="font-size:12px;">
+																<thead>
+																	<tr>
+																		<th style="width:20%">Domain name</th>
+																		<th style="width:30%">Project</th>
+																		<th>Expiry date</th>
+																		<th>Status </th>
+																		<th>Action </th>
+																	</tr>
+																</thead>
+																<tbody>
+																
+																</tbody>
+															</table>
+														</div>
+														
+													</fieldset>
+												</div>
+												
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="span9 field-box" style="text-align: center;">
+							<input type="submit" id="btn_submit" class="btn-glow primary" value="Save Server">
+							<span>OR</span>
+							<a href="servers.shtml">Cancel</a>
+					</div>
+						</form>
+					</div>
+				</div>
+		
+            </div>
+		</div>
+    </div>
+    <!-- end main container -->
+
+	<!-- scripts -->
+	<script src="js/jquery.min.js"></script>
+    <script src="bootstrap/js/bootstrap.min.js"></script>
+
+	<script type="text/javascript" src="js/jquery-impromptu.js"></script>
+	<script src="lib/validation/jquery.validate.min.js"></script>
+ 
+  	<script src="lib/datepicker/bootstrap-datepicker.min.js"></script>
+	<!-- datatable -->
+	<script src="lib/datatables/jquery.dataTables.min.js"></script>
+	<!-- additional sorting for datatables -->
+    <script src="lib/datatables/jquery.dataTables.sorting.js"></script>
+    <!-- datatables bootstrap integration -->
+    <script src="lib/datatables/jquery.dataTables.bootstrap.min.js"></script>
+	<script type="text/javascript">
+	function checknumber(e){
+		var k = e.which;
+		/* numeric inputs can come from the keypad or the numeric row at the top */
+		 if ((k<48 || k>57) && (k!=46) && (k!=8) && (k!=0)) {
+			e.preventDefault();
+			//alert("Allowed characters are 0-9, +, -, (, )");
+			return false;
+		}
+	}
+	
+	$(function() {
+		//* regular validation
+		gebo_validation.reg();
+		//*dt
+		gebo_galery_table.init();
+		$( "#tabs" ).tabs();
+		$('.num').keypress(function(e){
+			checknumber(e);	
+		}); 
+					
+	});
+	gebo_validation = {
+		reg: function() {
+			reg_validator = $('.form_validation_reg').validate({
+				ignore: "",
+				onkeyup: false,
+				errorClass: 'error',
+				validClass: 'valid',
+				highlight: function(element) {
+					$(element).closest('div').addClass("f_error");
+				},
+				unhighlight: function(element) {
+					$(element).closest('div').removeClass("f_error");
+				},
+				errorPlacement: function(error, element) {
+					$(element).closest('div').append(error);
+				},
+				rules: {
+					server_name: { required: true },
+					server_location: { required: true},
+					server_type: { required: true },
+					managed_by_uuid: { required: true },
+					is_active: { required: true },
+				},
+			})
+		}
+	};
+	var tbl_img;
+	//* gallery table view
+    gebo_galery_table = {
+        init: function() {
+			tbl_img = $('#dt_gal').dataTable({
+				"bProcessing": true,
+					"sAjaxSource": "loadserverdomains.cgi",
+					"aoColumns": [
+						{ "mData": "domain_name" },
+						{ "mData": "project_name" },
+						{ "mData": "expiry_date" },
+						{ "mData": "status" },
+						{ "mData": "ActionLink" }
+					],
+					"fnServerParams": function ( aoData ) {
+            			aoData.push( { "name": 'server_uuid', "value": $('#uuid').val() } );
+					}
+					
+			});
+           $('.dt_actions').html($('.dt_gal_actions').html());
+        }
+    };
+</script>
+</body>
+</html>

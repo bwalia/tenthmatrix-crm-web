@@ -1,0 +1,379 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+C_TEXT(_HTMLTITLETXT)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+ 
+ALL RECORDS([Tax_Codes])
+QUERY([Purchase_Orders];[Purchase_Orders]uuid=_HIT_WebApp_GetField ("uuid"))
+QUERY([Companies];[Companies]uuid=[Purchase_Orders]uuid_client)
+QUERY([Employees];[Employees]uuid=[Purchase_Orders]uuid_Approved_By)
+
+IF (Records in selection([Purchase_Orders])=0)
+_HTMLTITLETXT:="New Purchase Order"
+ELSE
+_HTMLTITLETXT:= "Purchase Order Details"
+END IF
+
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+
+C_BOOLEAN(mUserIsCurrentBool)
+mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
+-->
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/main-header.shtml-->
+<link rel="stylesheet" href="css/jquery-ui.css">
+<script src="js/datepicker.js"></script>
+<script src="js/jquery.validate.js"></script>
+<script type="text/javascript">
+	var xhrAbortSearch;
+	function checknumber(e){
+		var k = e.which;
+		if ((k<48 || k>57) && (k!=46) && (k!=8) && (k!=0)) {
+			e.preventDefault();
+			return false;
+		}
+	}
+	function roundNumber(number,decimals) {
+		var newString;// The new rounded number
+		decimals = Number(decimals);
+		if (decimals < 1) {
+			newString = (Math.round(number)).toString();
+		} else {
+			var numString = number.toString();
+			if (numString.lastIndexOf(".") == -1) {// If there is no decimal point
+				numString += ".";// give it one at the end
+			}
+			var cutoff = numString.lastIndexOf(".") + decimals;// The point at which to truncate the number
+			var d1 = Number(numString.substring(cutoff,cutoff+1));// The value of the last decimal place that we'll end up with
+			var d2 = Number(numString.substring(cutoff+1,cutoff+2));// The next decimal, after the last one we want
+			if (d2 >= 5) {// Do we need to round up at all? If not, the string will just be truncated
+				if (d1 == 9 && cutoff > 0) {// If the last digit is 9, find a new cutoff point
+					while (cutoff > 0 && (d1 == 9 || isNaN(d1))) {
+						if (d1 != ".") {
+							cutoff -= 1;
+							d1 = Number(numString.substring(cutoff,cutoff+1));
+						} else {
+							cutoff -= 1;
+						}
+					}
+				}
+				d1 += 1;
+			} 
+			if (d1 == 10) {
+				numString = numString.substring(0, numString.lastIndexOf("."));
+				var roundedNum = Number(numString) + 1;
+				newString = roundedNum.toString() + '.';
+			} else {
+				newString = numString.substring(0,cutoff) + d1.toString();
+			}
+		}
+		if (newString.lastIndexOf(".") == -1) {// Do this again, to the new string
+			newString += ".";
+		}
+		var decs = (newString.substring(newString.lastIndexOf(".")+1)).length;
+		for(var i=0;i<decimals-decs;i++) newString += "0";
+		//var newNumber = Number(newString);// make it a number if you like
+		return newString; // Output the result to the form field (change for your purposes)
+	}
+	
+	function update_total(){
+		var tax_rate= $('#currency_exchange_rate').val();
+		var unit_price= $('#unit_price').val();
+		var unit_quantity= $('#unit_quantity').val();
+		 var total_without_vat = roundNumber(unit_price*unit_quantity,2);
+		 $('#total_without_vat').val(total_without_vat);
+		var total_tax = roundNumber(total_without_vat*tax_rate/100,2);
+		var total_with_tax = roundNumber(Number(total_without_vat)+Number(total_tax),2);
+		$('#total_amount').val(total_with_tax);
+	}
+$(document).ready(function() {
+	<!--#4DIF (Records in selection([Purchase_Orders])=0)-->
+		var new_order='<!--#4DVAR Sequence number([Purchase_Orders])-->';
+		$('#purchase_id_number').val(new_order);
+		$('#tax_code').val("UK");
+		$('#currency_exchange_rate').val("20");
+	<!--#4DELSE-->
+		update_total();
+	<!--#4DENDIF-->
+		$('#tax_code').change(function(){
+			var tax_code=$(this).val();
+			if(tax_code=='Rest of the world' || tax_code=='EU'){
+				code = $('#tax_rate_code').text();
+				(new Function(code))();
+			}else{
+				$('#currency_exchange_rate').val("20");
+				update_total();
+			}
+		});
+				
+		$('.num').keypress(function(e){
+			checknumber(e);	
+		}); 
+		
+	// validate signup form on keyup and submit
+	$("#LeadsForm").validate({
+		rules: {
+			purchase_start_date: { required: true  },
+			projectNameStr: { required: true  },
+			purchase_end_date: { required: true  },
+			uuid_approved_by: { required: true  },
+			Project_code: { required: true  },
+			payment_due_date: { required: true  },
+		}
+	});
+	
+    //on keyup, start the countdown
+	$('.projectNameStr').keyup(function(){
+    	if ($('.projectNameStr').val()) {
+      		var jsonRow="getcompaniesonsearch.cgi?srch="+$('.projectNameStr').val()+"&"+Math.random();
+			if(xhrAbortSearch) xhrAbortSearch.abort();
+			xhrAbortLoxhrAbortSearchad=$.getJSON(jsonRow,function(result){
+				if(result){
+					var html='';
+					$.each(result, function(i,item){
+						html += '<li><a class="ui-btn ui-btn-icon-right ui-icon-carat-r" href="javascript:void(0)" onClick="selectValue(\''+item.id+'\',\''+item.value+'\')">'+item.value+'</a></li>';
+					});
+					$( ".projectListView").html("");
+					$( ".projectListView").html(html);
+				}
+			});
+          
+    	}
+    });
+    $('.ui-input-clear').click(function(){
+    	$("#Client_ID").val("");
+    });
+    
+   	$('#purchase_start_date').datepicker({
+    	autoclose: true,
+    	changeMonth: true,
+      	hangeYear: true,
+      	dateFormat: 'dd/mm/yy',
+      	onClose: function( selectedDate ) {
+        	$( "#purchase_end_date" ).datepicker( "option", "minDate", selectedDate );
+      	}
+    });
+    
+    $('#purchase_end_date').datepicker({
+    	autoclose: true,
+    	changeMonth: true,
+      	hangeYear: true,
+      	dateFormat: 'dd/mm/yy',
+      	onClose: function( selectedDate ) {
+        	$( "#purchase_start_date" ).datepicker( "option", "maxDate", selectedDate );
+      	}
+    });
+    var startDateTxt= $('#task_start_date').val();
+	$('#purchase_start_date').datepicker("option", "minDate", startDateTxt);
+		
+	var endDateTxt= $('#purchase_end_date').val();	
+	$('#purchase_start_date').datepicker("option", "maxDate", endDateTxt);
+	
+   	$('#payment_due_date').datepicker({
+    	autoclose: true,
+    	changeMonth: true,
+      	changeYear: true,
+      	dateFormat: 'dd/mm/yy'
+	});
+	
+	$('#payment_made_on_Date').datepicker({
+    	autoclose: true,
+    	changeMonth: true,
+      	changeYear: true,
+      	dateFormat: 'dd/mm/yy'
+	});
+});
+function selectValue(val, name){
+	$(".projectNameStr").val(name);
+	$("#Client_ID").val(val);
+	$( ".projectListView" ).listview( "refresh" );
+	$( ".projectListView li" ).addClass("ui-screen-hidden");
+}
+</script>
+<style>
+label.error { 
+	float: left; 
+	color: red; 
+	padding-top: 1.5em; 
+	vertical-align: top; 
+}
+</style>
+</head>
+<body>
+<div data-role="page" class="jqm-demos" data-quicklinks="true">
+	<!-- header -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/top-header.shtml-->
+	<!-- /header -->
+	<div role="main" class="ui-content jqm-content">
+		<!--#4DIF (mUserIsCurrentBool)--><h3>Order</h3><!--#4DELSE-->
+			<h3><!--#4DIF (Records in selection([Purchase_Orders])=1)-->Order Details: <!--#4DVAR [Purchase_Orders]Purchase_ID_Number --><!--#4DELSE-->New Order<!--#4DENDIF--></h3>
+		<!--#4DENDIF-->
+		<div class="ui-body-d ui-content">
+   			<div data-demo-html="true">
+   				<form novalidate="novalidate" data-ajax="false" name="LeadsForm" id="LeadsForm" action="savepurchaseorder.cgi" method="post">
+    				<div data-role="tabs" id="tabs">
+  						<div data-role="navbar">
+   							<ul>
+      							<li><a href="#one" data-ajax="false" class="ui-btn-active">Basic Details</a></li>
+      							<li><a href="#two" data-ajax="false">Further details</a></li>
+  							</ul>
+  						</div>
+  						<div id="one" class="ui-body-d ui-content">
+  							<div class="ui-field-contain">
+								<label>Purchase Order Number</label>
+								<input readonly type="hidden"  name="full_order_number" id="full_order_number" value="" />
+								<input readonly type="text"  name="purchase_id_number" id="purchase_id_number" value="<!--#4DVAR [Purchase_Orders]Purchase_ID_Number -->" />
+							</div>
+							<!--#4DIF (Records in selection([Purchase_Orders])=1)-->
+							<input name="purchase_order_uuid"  type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="purchase_order_uuid"> 
+							<!--#4DELSE-->
+							<input name="purchase_order_uuid"  type="hidden" value="<!--#4DVAR Generate UUID-->" id="purchase_order_uuid"> 
+							<!--#4DENDIF-->
+							
+							<div class="ui-field-contain">
+								<label for="uuid_reported_by" class="select">Client:</label>
+								<input name="Client_ID" id="Client_ID" type="hidden" value="<!--4DVAR [Companies]account_Number-->">
+								<span class="ui-filterable">
+   									<input id="inset-autocomplete-input" data-type="search" placeholder="Search client..." class="projectNameStr" value="<!--4DVAR [Companies]company_Name-->" name="projectNameStr">
+								</span>
+								<ul data-role="listview" data-inset="true" data-filter="true" data-filter-reveal="true" data-input="#inset-autocomplete-input" class="projectListView">
+   									<!--#4DIF (Records in selection([Purchase_Orders])=0)-->
+										<!--#4DSCRIPT/Web_LoadCustomers/-->
+                                   			 <!--4DLOOP  [Companies]-->
+												<li><a href="javascript:void(0)" onClick="selectValue('<!--4DVAR [Companies]account_Number-->','<!--4DVAR [Companies]company_Name-->')"><!--4DVAR [Companies]company_Name--></a></li>
+											<!--4DENDLOOP-->					 
+									<!--#4DENDIF-->
+								</ul>       
+							</div>   
+				
+							<div class="ui-field-contain">
+								<label>Start Date</label><!--#4DIF (mUserIsCurrentBool)--><!--#4DVAR [Purchase_Orders]Purchase_start_date--><!--#4DELSE-->
+								<input name="purchase_start_date" data-role="date" data-date-format="dd/mm/yyyy" type="text" <!--#4DIF (timestamp_unix_toDate([Purchase_Orders]Purchase_Start_Date)=!01/01/1970!)-->value=""<!--4DELSE-->value="<!--#4DVAR timestamp_unix_toDate([Purchase_Orders]Purchase_Start_Date)-->"<!--4DENDIF--> id="purchase_start_date" readonly ><!--#4DENDIF-->
+							</div>
+							
+							<div class="ui-field-contain">
+								<label>End Date</label><!--#4DIF (mUserIsCurrentBool)--><!--#4DVAR [Purchase_Orders]Purchase_End_Date--><!--#4DELSE-->
+								<input name="purchase_end_date" data-role="date" data-date-format="dd/mm/yyyy" type="text" <!--#4DIF (timestamp_unix_toDate([Purchase_Orders]Purchase_End_Date)=!01/01/1970!)-->value=""<!--4DELSE-->value="<!--#4DVAR timestamp_unix_toDate([Purchase_Orders]Purchase_End_Date)-->"<!--4DENDIF--> id="purchase_end_date" readonly ><!--#4DENDIF-->
+							</div>
+							<div class="ui-field-contain">
+								<label>Approved By</label>
+									<Select name="uuid_approved_by" id="uuid_approved_by" data-native-menu="false">
+										<option value="">--Select Employee--</option>
+										<!--HIT_EXECUTE
+										_HIT_HTMLTXT:=""
+										QUERY([Employees];[Employees]emp_active=True)
+										ORDER BY([Employees];[Employees]emp_last_name;>)
+										For (_HIT_COUNTER;1;Records in selection([Employees]))
+										_HIT_HTMLTXT:=_HIT_HTMLTXT+"<option value=\""+[Employees]uuid+"\""
+										If ([Purchase_Orders]uuid_Approved_By=[Employees]uuid)
+										_HIT_HTMLTXT:=_HIT_HTMLTXT+" selected"
+										Else 
+										End if 
+										_HIT_HTMLTXT:=_HIT_HTMLTXT+">"+[Employees]emp_first_name+" "+[Employees]emp_last_name+"</option>"
+										NEXT RECORD([Employees])
+										End for 
+										-->
+									</select>
+							</div>
+                            
+                            <div class="ui-field-contain">
+								<label>Project Code</label>
+								<select name="Project_code" id="Project_code" data-native-menu="false">
+									 <!--HIT_EXECUTE _HIT_HTMLTXT:=PurOrder_ProjectCodeHTMLPopUP([Purchase_Orders]Project_code)-->
+								</select>
+							</div>
+                            <div class="ui-field-contain">
+								<label>Tax Code</label>
+								<select id="tax_code" name="tax_code" data-native-menu="false">
+										<!--#4DSCRIPT/Web_LoadTax_Codes/-->
+										<!--4DLOOP [Tax_Codes]-->
+										<option value="<!--#4DVAR [Tax_Codes]Tax_Code-->" <!--#4DIF ([Tax_Codes]Tax_Code=[Purchase_Orders]tax_code)-->selected<!--4DELSE--><!--4DENDIF-->><!--4DVAR [Tax_Codes]Tax_Code--></option>
+										<!--4DENDLOOP-->
+								</select>
+							</div>
+							<div class="ui-field-contain">
+								<label>Payment Due On</label><!--#4DIF (mUserIsCurrentBool)--><!--#4DVAR [Purchase_Orders]Payment_Due_Date--><!--#4DELSE-->
+								<input placeholder="Payment Due Date" data-role="date" name="payment_due_date" data-date-format="dd/mm/yyyy" type="text" <!--#4DIF ([Purchase_Orders]Payment_Due_Date=!00/00/00!)-->value=""<!--4DELSE-->value="<!--#4DVAR [Purchase_Orders]Payment_Due_Date-->"<!--4DENDIF--> id="payment_due_date" readonly ><!--#4DENDIF-->
+							</div>
+							
+							<div class="ui-field-contain">
+								<label>Unit Price</label>
+								 	<input name="unit_price" onBlur="update_total();" type="text" value="<!--4DVAR [Purchase_Orders]Unit_Price-->" id="unit_price" >
+							</div>
+							<div class="ui-field-contain">
+								<label>Unit Quantity</label>
+								<input name="unit_quantity" onBlur="update_total();" type="text" value="<!--4DVAR [Purchase_Orders]Unit_Quantity-->" id="unit_quantity" >
+							</div>
+
+							<div class="ui-field-contain">
+								<label>Currency Exchange Rate</label>
+								<input name="currency_exchange_rate" type="text" value="<!--4DVAR [Purchase_Orders]Currency_Exchange_Rate-->" id="currency_exchange_rate" readonly>
+							</div>
+							 						
+							<div class="ui-field-contain">
+								<label>Total Without Tax</label>
+								<input name="total_without_vat" type="text" value="<!--#4DVAR [Purchase_Orders]Total_Without_VAT -->" id="total_without_vat" readonly>
+							</div>
+							<div class="ui-field-contain">
+								<label>Total Amount</label>
+								 <input name="total_amount" type="text" value="<!--4DVAR [Purchase_Orders]Total_Amount-->" id="total_amount" >
+							</div>
+							<div class="ui-field-contain">
+								<label>Description</label>
+								 <textarea <!--#4DIF (mUserIsCurrentBool)-->readonly<!--#4DELSE--><!--#4DENDIF--> name="purchase_descrition" class="span8" rows="4" id="purchase_descrition"><!--#4DVAR [Purchase_Orders]Purchase_Descrition --></textarea>
+							</div>
+							
+						</div>
+						<div id="two">
+							<div class="ui-field-contain">
+								<label>Currency Code</label>
+								<input name="currency_code" type="text" value="<!--4DVAR [Purchase_Orders]Currency_Code-->" id="currency_code" >
+							</div>
+							<div class="ui-field-contain">
+								<label>Supplier Vat Number</label>
+								<input name="supplier_vat_number" type="text" value="<!--#4DVAR [Purchase_Orders]Supplier_VAT_Number -->" id="supplier_vat_number">
+							</div>
+						 	<div class="ui-field-contain">
+								<label>Payment Made On Date</label><!--#4DIF (mUserIsCurrentBool)--><!--#4DVAR [Purchase_Orders]Payment_Made_On_Date--><!--#4DELSE-->
+								<input placeholder="Payment Made On" type="text" readonly="readonly" data-role="date" name="payment_made_on_Date" id="payment_made_on_Date" <!--#4DIF ([Purchase_Orders]Payment_Made_On_Date=!00/00/00!)-->value=""<!--4DELSE-->value="<!--#4DVAR [Purchase_Orders]Payment_Made_On_Date-->"<!--4DENDIF--> data-date-format="dd/mm/yyyy" /><!--#4DENDIF-->
+							</div>
+							<div class="ui-field-contain">
+								<label>Billing Frequency</label>
+								<input name="billing_frequency" type="text" value="<!--4DVAR [Purchase_Orders]billing_frequency-->" id="billing_frequency" >
+							</div>
+							<div class="ui-field-contain">
+								<label>
+									<input name="purchase_order_inactive" type="checkbox" value="true" id="purchase_order_inactive" <!--#4DIF ([Purchase_Orders]Purchase_order_inactive)-->checked<!--4DELSE--><!--4DENDIF--> > Purchase Order Inactive
+								</label>
+							</div>
+							<div class="ui-field-contain">
+								<label><input name="vat_charged" type="checkbox" value="true" id="vat_charged" <!--#4DIF ([Purchase_Orders]VAT_Charged)-->checked<!--4DELSE--><!--4DENDIF--> > VAT Charged</label>
+							</div>
+							<div class="ui-field-contain">
+								<label>Comments</label>
+								<textarea <!--#4DIF (mUserIsCurrentBool)-->readonly<!--#4DELSE--><!--#4DENDIF--> name="comments" rows="4" id="comments"><!--#4DVAR [Purchase_Orders]Comments --></textarea>							
+							</div>
+  						</div>
+  					</div>
+					<button type="submit" class="ui-shadow ui-btn ui-corner-all ui-mini">Submit</button>
+					<a href="purchase_orders.shtml" data-ajax="false" class="ui-shadow ui-btn ui-corner-all ui-mini">Cancel</a>
+				</form>
+			</div>
+		</div>	
+	</div>
+	<!-- /content -->
+	<!-- panel -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/sidebar.shtml-->
+	<!-- /panel -->
+
+	<!-- footer -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/footer.shtml-->
+	<!-- /footer -->
+</div><!-- /page -->
+
+</body>
+</html>

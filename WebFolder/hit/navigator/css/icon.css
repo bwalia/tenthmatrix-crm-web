@@ -1,0 +1,132 @@
+@charset "UTF-8";
+/* CSS Document */
+
+body{
+	margin:0px;
+	padding:0px;
+	font-family: Segoe, "Segoe UI", "DejaVu Sans", "Trebuchet MS", Verdana, sans-serif;
+}
+
+.bg-blue-grey-500 { background-color: #607d8b !important; }
+
+.display-block {
+    display: block !important;
+}
+
+
+.padding-md {
+    padding: 25px 10px!important;
+}
+
+.btn-dark {
+    position: relative;
+}
+
+.color-white {
+    color: #FFF !important;
+}
+
+.bg-blue-grey-500 {
+    background-color: #607D8B !important;
+}
+
+.bg-light-green-600 {
+    background-color: #7CB342 !important;
+}
+
+.bg-light-blue-300 {
+    background-color: #4FC3F7 !important;
+}
+
+.bg-red-300 {
+    background-color: #E57373 !important;
+}
+
+.bg-purple-300 {
+    background-color: #BA68C8 !important;
+}
+
+.bg-red-500 {
+    background-color: #F44336 !important;
+}
+
+.bg-light-blue-300 {
+    background-color: #4FC3F7 !important;
+}
+
+.bg-light-green-500 {
+    background-color: #8BC34A !important;
+}
+
+
+.font-size-46 {
+    font-size: 46px !important;
+}
+
+.text-center{
+	
+	text-align:center;
+	text-decoration:none;
+	
+}
+
+.page-title {
+    display: inline-block;
+    margin:0px 0px 15px 18px;
+    font-size: 24px;
+    color: rgba(0, 0, 0, 0.7);
+	
+}
+
+.page-title > small {
+    font-size: 12px;
+    display: block;
+    font-weight: 300;
+    margin-top: 5px;
+    color: rgba(0, 0, 0, 0.5);
+}
+
+
+.bg-white {
+    background-color: #FFF !important;
+	 border-top: 1px solid rgba(0, 0, 0, 0.05);
+    padding: 15px 30px 5px;
+    font-size: 12px;
+    width: 100%;
+    color: rgba(0, 0, 0, 0.8);
+    position: absolute;
+     left: 0px;
+}
+.panel{
+	width:100%;
+}
+
+
+.svgicon{	
+padding-bottom: 7px;
+height: 57px;
+}
+
+.text-center:hover{
+	text-decoration:none;
+}
+
+footer a {
+    color: rgba(0, 0, 0, 0.4);
+}
+
+.container-fluid{background: #F2F2F2;}
+
+
+@media (max-width:767px) {
+.panel {
+	margin-bottom: 20px;
+	background-color: #fff;
+	border: 1px solid transparent;
+	border-radius: 4px;
+	-webkit-box-shadow: 0 1px 1px rgba(0,0,0,.05);
+	box-shadow: 0 1px 1px rgba(0,0,0,.05);
+	height:140px;
+}
+
+}

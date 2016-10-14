@@ -1,0 +1,124 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+<title>Tenthmatrix CRM</title>
+	
+    <meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1"/>
+	
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="robots" content="noindex, nofollow" />	
+	<link rel="stylesheet" href="css/jquery.fumobile.theme-1.1.0.min.css?" />
+	<link rel="stylesheet" href="css/jquery.mobile.structure-1.3.1.min.css" /> 
+	<link rel="stylesheet" href="css/jquery.fumobile.extra-1.1.0.css" />
+    <link rel="stylesheet" href="themes/selectedtheme.min.css" />
+	<link href="css/bootstrap-overrides.css" type="text/css" rel="stylesheet">
+	<script src="js/jquery-1.7.1.min.js"></script>
+	<script>
+        $(document).bind("mobileinit", function() {
+            $.mobile.defaultPageTransition = 'slide';
+            $.mobile.page.prototype.options.addBackBtn = true;
+            $.mobile.page.prototype.options.headerTheme = 'b'; // page headers
+            $.mobile.listview.prototype.options.headerTheme = 'd'; // nested list headers
+      });
+    </script>
+	
+	<script src="js/jquery.mobile-1.3.1.min.js"></script>
+	<script src="js/swipe-carousel.min.js"></script>  
+	<script src="js/lists.js"></script>        
+    <script src="js/job_detail.js"></script>        
+
+	<script>
+		$(document).on('pageshow', '#home', function() {
+		  var home_promos = new Swipe(document.getElementById('home-promos'), { auto: 4500, speed: 1250 });
+		});
+	</script>
+	<style>
+	/* Table */
+	
+	.table-opt { font-size: 7px; width: 50%; text-align: left; border-collapse: separate;    margin-left: -12px;}
+	.table-opt th { font-weight: normal; font-size: 10px; color: #666; background: #e4e4e4; padding: 5px; font-weight: bold }
+	.table-opt td { background:#f1f0f0; border-top: 1px solid #fff; color: #666; padding: 6px }
+	.table-opt tbody tr:hover td { background: #2b89d0; color: #FFF }
+	.red { color:  #cc0000; font-style: italic }
+	</style>
+	
+</head>
+<body>
+	
+<div data-role="page" id="home" data-add-back-btn="false">
+	
+	<div data-role="header" class="head-border" data-theme="a">
+		<div style="text-align:right">
+			<a href="#" class="my-account" style="color: #FFFFFF;font-size:12px;text-decoration: none;">Sign out</a>
+		</div>
+	</div>
+	<div class="search-container" data-theme="a">
+		<div id="search-home"><a href="index.shtml"><span>Click here for Home</span></a></div>
+	</div>
+		<div data-role="content" data-theme="a">
+			<ul data-role="listview" data-inset="true">
+				<li data-role="list-divider"><span style=" color:#2B89D0; font-size:15px; font-stretch:narrower;">Invoices</span></li>
+			</ul>
+			<button>All</button>
+			<button>Pending</button>
+			<button>Completed</button>
+			<input type="text" class="search order-search" placeholder="Search for an order.." />
+            <div data-role="collapsible-set" data-theme="a">
+				<table class="table-opt">
+					<thead>
+						<tr>
+							<th width="1%">Client</th>
+							<th width="1%">Project</th>
+							<th width="1%">Currency</th>
+							<th width="1%">Budget</th>
+						</tr>
+					</thead>
+					<tbody><!--#4DSCRIPT/Web_LoadProjects/-->
+						<!--#4DLOOP [Projects]--><!--#4DSCRIPT/Web_LoadProjectRelated/--><!-- row -->
+						<tr class="first">
+							<td>
+								<a href="#"><!--#4DVAR [Companies]company_Name--></a>
+							</td>
+							<td>
+								<a href="#"><!--#4DVAR [Projects]proj_name--></a>
+							</td>
+							<td>
+								<!--#4DVAR [Projects]currency_code-->
+							</td>
+							<td>
+								<!--#4DVAR Invoice_AmtReturnAsText([Projects]budget)-->
+							</td>
+						</tr>
+
+					<!--#4DENDLOOP-->
+                    </tbody>
+				</table>
+			</div><!-- END COLLAPSIBLE SET-->
+		</div><!-- END DATA ROLE CONTENT-->
+
+    <div data-theme="a" data-role="footer" style=" background-color:#383838;">
+        <h3>
+			<span style="color:#FFF; font-size:16px;"> View  : <a href="http://billing.tenthmatrix.co.uk/admin/sign-in.shtml" rel="external" target="_blank">Main Site</a></span> 
+        </h3>
+    </div>
+    
+ </div>
+
+</body>
+</html>

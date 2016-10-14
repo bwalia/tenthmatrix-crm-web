@@ -1,0 +1,155 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+QUERY([employee_holidays];[employee_holidays]uuid=_HIT_WebApp_GetField ("uuid"))
+
+C_BOOLEAN(mReadOnly)
+mReadOnly:=(Records in selection([employee_holidays])=1)
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+//_HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")
+
+-->
+<!DOCTYPE html>
+<html>
+<head>
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+</head>
+<body>
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
+
+	<!-- main container -->
+    <div class="content">
+    
+        <div class="container-fluid">
+            <div id="pad-wrapper" class="form-page">
+				 <div class="row-fluid header">
+                    <h3>New Request</h3>
+                </div>
+				
+                <div class="row-fluid form-wrapper">
+					<!-- left column -->
+                    <div class="span9 with-sidebar">
+					   <form name="HolidayForm" action="saveholiday.cgi" id="HolidayForm" method="post" class="form-comment" onSubmit="return ValidateForm();" >
+							<div class="span12 field-box">
+								<label>Employee Name:</label>
+								<div class="ui-select span5">
+									<select name="Employee_ID" >
+										<!--#4DSCRIPT/Web_LoadEmployees/-->
+										<!--4DLOOP  [Employees]-->
+											<option value="<!--4DVAR [Employees]uuid-->" <!--#4DIF ([employee_holidays]uuid_employee=[Employees]uuid)-->selected<!--4DELSE--><!--4DENDIF-->><!--4DVAR [Employees]emp_first_name--> <!--4DVAR [Employees]emp_last_name--></option>
+										<!--4DENDLOOP-->	
+									</select>
+								</div>
+							</div>
+							<input name="holiday_uuid" class="span9" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="holiday_uuid">        
+							
+							<div class="span12 field-box">
+								<label>Start Date :</label>
+								<!--#4DIF (mReadOnly)-->
+									<input class="span8" style="width:39.9%" type="text" value="<!--#4DVAR timestamp_unix_toDate ([employee_holidays]timestamp_start)-->" readonly>
+								<!--#4DELSE-->
+									<input type="text" class="input-large datepicker" data-date-format="mm/dd/yyyy" <!--#4DIF (timestamp_unix_toDate ([employee_holidays]timestamp_start)=!00/00/00!)-->value=""<!--4DELSE-->value="<!--#4DVAR timestamp_unix_toDate ([employee_holidays]timestamp_start)-->"<!--4DENDIF--> name="Start_Date" id="Start_Date" readonly >
+								<!--#4DENDIF-->
+							</div>
+							
+							<div class="span12 field-box">
+								<label>End Date :</label><!--#4DIF (mReadOnly)--><input class="span8" type="text" style="width:39.9%" value="<!--#4DVAR timestamp_unix_toDate ([employee_holidays]timestamp_end)-->" readonly><!--#4DELSE-->
+								<input type="text" class="input-large datepicker" data-date-format="mm/dd/yyyy" <!--#4DIF (timestamp_unix_toDate ([employee_holidays]timestamp_end)=!00/00/00!)-->value=""<!--4DELSE-->value="<!--#4DVAR timestamp_unix_toDate ([employee_holidays]timestamp_end)-->"<!--4DENDIF--> name="End_Date" id="End_Date" readonly><!--#4DENDIF-->
+							</div>
+
+							<div class="span12 field-box">
+								<label>Subject :</label>
+								<!--#4DIF (mReadOnly)--><input class="span8" type="text" id="Subject" value="<!--#4DVAR [employee_holidays]subject-->" name="Subject" readonly><!--#4DELSE-->
+								<input class="span8" type="text" id="Subject" value="<!--#4DVAR [employee_holidays]subject-->" name="Subject"><!--#4DENDIF-->
+							</div>
+							<div class="span12 field-box">
+								<label>Comment :</label>
+								<!--#4DIF (mReadOnly)--><textarea style="width: 65.36%;" class="span9" rows="4" name="Comments" id="Comments" readonly><!--#4DVAR [employee_holidays]comments--></textarea><!--#4DELSE-->
+								<textarea style="width: 65.36%;" class="span9" rows="4" name="Comments" id="Comments"><!--#4DVAR [employee_holidays]comments--></textarea><!--#4DENDIF-->
+							</div>
+							<!--<div class="field-box">
+								<label>Status</label>
+								<div class="ui-select span5">
+									<Select name="ApproveBy" id="ApproveBy">
+										<option value="Request">Request</option>
+										<option value="Approved">Approved</option>
+										<option value="Revoked">Revoked</option>
+										<option value="On Hold">On Hold</option>
+									</select>                                     
+								</div>
+							</div>-->
+							<div class="span11 field-box" style="text-align: center;">
+								<input type="submit" class="btn-glow primary" value="Submit">
+								<span>OR</span>
+								<a href="holidays.shtml">Cancel</a>
+							</div>
+						</form>
+                    </div>
+				</div>
+            </div>
+        </div>
+    </div>
+    <!-- end main container -->
+
+	<!-- scripts -->
+	<script src="js/wysihtml5-0.3.0.js"></script>
+   <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+	<script src="js/bootstrap.datepicker.js"></script>
+	<script src="js/jquery.uniform.min.js"></script>
+	<!-- call this page plugins -->
+<script language="javascript">
+function ValidateForm () {
+var msg = '';
+if (document.HolidayForm.Employee_ID.value=="")
+{ msg = msg + 'Please Select Employee Name\n'; }
+if (document.HolidayForm.Start_Date.value=="")
+{ msg = msg + 'Please Specify Start Date\n'; }
+if (document.HolidayForm.End_Date.value=="")
+{ msg = msg + 'Please Specify End_Date\n'; }
+if (document.HolidayForm.Subject.value=="")
+{ msg = msg + 'Please Enter Subject\n'; }
+if (document.HolidayForm.Comments.value=="")
+{ msg = msg + 'Please Enter Comments\n'; }
+if (msg=="") {
+return true;
+} else {
+alert (msg);
+return false;
+}}
+</script>
+    <script type="text/javascript">
+        $(function () {
+
+            // add uniform plugin styles to html elements
+            $("input:checkbox").uniform();
+
+            // datepicker plugin
+            $('.datepicker').datepicker().on('changeDate', function (ev) {
+                $(this).datepicker('hide');
+            });
+			
+			$('.num').keypress(function(e){
+				var k = e.which;
+				/* numeric inputs can come from the keypad or the numeric row at the top */
+				 if ((k<48 || k>57) && (k!=46) && (k!=8) && (k!=0)) {
+					e.preventDefault();
+					//alert("Allowed characters are 0-9, +, -, (, )");
+					return false;
+				}
+			
+			}); 
+			
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,823 @@
+<!--HIT_EXECUTE
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+QUERY([Activity];[Activity]uuid=_HIT_WebApp_GetField ("uuid"))
+C_BOOLEAN(mReadOnly)
+mReadOnly:=(Records in selection([Activity])=1)
+
+QUERY([Leads];[Leads]RecordNumber=[Activity]CompanyNumber)
+
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+ else
+//_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+
+-->
+
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+	<link rel="stylesheet" type="text/css" href="css/jquery.timepicker.css" />
+	<link rel="stylesheet" href="css/base/jquery-ui.css" />
+
+<link rel="stylesheet" href="css/autocomplete.css" />
+
+</head>
+
+<body>
+
+
+
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+
+
+
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
+
+
+
+
+
+	<!-- main container -->
+
+    <div class="content">
+
+        
+
+        <div class="container-fluid">
+
+            <div id="pad-wrapper" class="form-page">
+
+				 <div class="row-fluid header">
+
+					<h3><!--#4DIF (Records in selection([Activity])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Activity</h3>
+
+                </div>
+
+                <div class="row-fluid form-wrapper">
+
+					<!-- left column -->
+
+                    <div class="span9 with-sidebar">
+
+						<form name="ActivityForm" action="saveactivity.cgi" class="form-comment" method="post" onSubmit="return ValidateForm();">							
+
+							<div class="field-box">
+
+								<label>Lead Name <span style="color:#6E829B">*</span></label>
+
+								<div class="ui-widget">
+
+									<select id="Lead_ID" name="Lead_ID">
+
+									 <!--#4DIF (Records in selection([Activity])=0)-->
+
+									 	<option value=""></option>
+
+									 <!--#4DSCRIPT/Web_LoadLeads/-->
+
+									 <!--4DLOOP  [Leads]-->
+
+									 	<option value="<!--4DVAR [Leads]RecordNumber-->"  ><!--4DVAR [Leads]CompanyName--></option>		
+
+									 <!--4DENDLOOP-->
+
+									 <!--#4DELSE-->
+
+									 	 <option value="<!--4DVAR [Leads]RecordNumber-->" selected><!--4DVAR [Leads]CompanyName--></option>								 
+
+									 <!--#4DENDIF-->									 										
+
+									</select>
+
+						 	</div>
+
+						 	</div>
+
+							<input name="Activity_uuid" class="span9" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="Activity_uuid">  
+ 
+							<div class="span12 field-box">
+
+								<label>Date </label>
+
+								<input type="text" class="input-large datepicker" data-date-format="dd/mm/yyyy" <!--#4DIF ([Activity]Date=!00/00/00!)-->value="0"<!--4DELSE-->value="<!--#4DHTMLVAR [Activity]Date-->"<!--4DENDIF--> name="Date" id="Date" readonly >
+
+							</div>
+
+							<div class="field-box">
+
+								<label>Action </label>
+
+								<input name="Action" class="span9" type="text" value="<!--#4DIF (mReadOnly)--><!--#4DVAR [Activity]Action--><!--#4DELSE--><!--#4DENDIF-->" id="Action">
+
+							</div>
+
+							<div class="span12 field-box">
+
+								<label>FollowUp Date </label>
+
+								<input type="text" class="input-large datepicker" data-date-format="dd/mm/yyyy" <!--#4DIF ([Activity]FollowupDate=!00/00/00!)-->value=""<!--4DELSE-->value="<!--#4DHTMLVAR [Activity]FollowupDate-->"<!--4DENDIF--> name="Followup_date" id="Followup_date" readonly >
+
+							</div>
+
+							<!-- 
+<div class="field-box">
+
+								<label>ContactName <span style="color:#6E829B">*</span></label>
+
+								<input name="ContactName" class="span9" type="text" value="<!~~#4DVAR [Activity]ContactName~~>" id="ContactName">
+							
+							</div>
+ -->
+							
+						 	<div class="field-box">
+
+								<label>Contact Name <span style="color:#6E829B">*</span></label>
+
+								<div class="ui-widget">
+
+									<select id="contact_name" name="contact_name">
+
+									 
+									 <!--#4DIF (mReadOnly)-->
+									 	<option value=""></option>
+
+									 <!--#4DSCRIPT/Web_LoadContacts/-->
+
+									 <!--4DLOOP  [Contacts]-->
+
+									 	<!-- <option value="<!~~4DVAR [Contacts]Forename~~> <!~~4DVAR [Contacts]Surname~~>"><!~~4DVAR [Contacts]Forename~~> <!~~4DVAR [Contacts]Surname~~></option>		 -->
+<option value="<!--4DVAR [Contacts]Forename--> <!--4DVAR [Contacts]Surname-->" <!--#4DIF ([Activity]ContactName=[Contacts]Forename+char(Space)+[Contacts]Surname)-->selected<!--4DELSE--><!--4DENDIF-->><!--4DVAR [Contacts]Forename--> <!--4DVAR [Contacts]Surname--></option>
+									 <!--4DENDLOOP-->
+
+									 <!--#4DELSE-->
+
+									 	 <option value="<!--4DVAR [Contacts]Forename--> <!--4DVAR [Contacts]Surname-->" <!--#4DIF ([Activity]ContactName=[Contacts]Forename+char(Space)+[Contacts]Surname)-->selected<!--4DELSE--><!--4DENDIF-->><!--4DVAR [Contacts]Forename--> <!--4DVAR [Contacts]Surname--></option>								 
+
+									 <!--#4DENDIF-->									 										
+
+									</select>
+
+						 	</div>
+
+						 	</div>
+							<div class="span12 field-box">
+
+								<label>FUP Action <span style="color:#6E829B">*</span></label>
+
+								<input name="fup_action" class="span9" type="text" value="<!--#4DVAR [Activity]FUP Action-->" id="fup_action">                                 
+
+							</div>
+
+							<div class="span12 field-box">
+
+								<label>Entry Time </label>
+
+								<input name="Entry_Time" class="time" type="text" value="<!--#4DIF (mReadOnly)--><!--#4DVAR [Activity]Entry Time--><!--#4DELSE--><!--#4DENDIF-->" id="Entry_Time">                                 <table align="right" style="padding-right: 125pt;">
+										<tr>
+											<td>
+												<button id="TimeButton" type="button">Set current time</button>
+											</td>
+										</tr>
+									</table>
+
+							</div>
+
+							<div class="span12 field-box">
+
+								<label>Key </label>
+
+								<input name="Key" class="span9" type="text" value="<!--#4DVAR [Activity]Key-->" id="Key">
+
+							</div>						   
+
+							<div class="span12 field-box">
+
+								<label>Owner </label>
+
+								<input name="Owner" class="span9" type="text" value="<!--#4DIF (mReadOnly)--><!--#4DVAR [Activity]Owner--><!--#4DELSE--><!--#4DENDIF-->" id="Owner">						
+
+							</div>
+
+							<div class="span12 field-box">
+
+								<label>Record Name </label>
+
+								<input name="Record_Name" class="span9" type="text" value="<!--#4DVAR [Activity]Record Name-->" id="Record_Name">
+
+							</div>
+
+							<div class="span12 field-box">
+
+								<label>Owned by </label>
+
+								<input name="Owned_by" class="span9" type="text" value="<!--#4DVAR [Activity]Owned by-->" id="Owned_by">
+
+							</div>
+
+							<div class="field-box">
+
+                            <label>Phone</label>
+
+								<input name="Phone" class="span9 phone" type="text" value="<!--#4DVAR [Activity]Phone-->" id="Phone">
+								
+							<label></label>
+
+							<label class="checkbox" style="width:auto;">				
+
+								<input name="Sent_RoadMap_PostCard" class="span9" type="checkbox" value="true" id="Sent_RoadMap_PostCard" <!--#4DIF ([Activity]SentRoadMapPostCard)-->checked<!--4DELSE--><!--4DENDIF--> >Sent RoadMap PostCard
+
+							</label>
+
+							<label class="checkbox" style="width:auto;">							
+
+								<input name="Sent_Demo" class="span9" type="checkbox" value="true" id="Sent_Demo" <!--#4DIF ([Activity]SentDemo)-->checked<!--4DELSE--><!--4DENDIF--> >Sent Demo
+
+							</label>                                                         
+
+                            </div>
+
+                            <div class="field-box">
+
+                                <label>Comments</label>
+
+								<textarea class="span9" name="Comments" id="Comments" rows="5"><!--#4DIF (mReadOnly)--><!--#4DVAR [Activity]Comments--><!--#4DELSE--><!--#4DENDIF--></textarea>
+
+								<label></label>	
+
+								<label class="checkbox" style="width:auto;">														
+
+								<input name="Sent_Brochure" class="span9" type="checkbox" value="true" id="Sent_Brochure" <!--#4DIF ([Activity]SentBrochure)-->checked<!--4DELSE--><!--4DENDIF--> >Sent Brochure
+
+							</label>   
+
+							<label class="checkbox" style="width:auto;">							
+
+								<input name="Public" class="span9" type="checkbox" value="true" id="Public" <!--#4DIF ([Activity]Public)-->checked<!--4DELSE--><!--4DENDIF--> >Public
+
+							</label>                                                         
+
+                            </div>
+
+							<div class="span11 field-box" style="text-align: center;">
+
+								<input type="submit" class="btn-glow primary" value="Submit">
+
+								<span>OR</span>
+
+								<a href="activities.shtml">Cancel</a>
+
+							</div>
+
+						</form>
+
+                    </div>
+
+				</div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- end main container -->
+
+
+
+	<!-- scripts -->
+
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+
+	<script src="js/ui/jquery-ui.js"></script>
+
+	<script src="js/bootstrap.datepicker.js"></script>
+
+	<script src="js/jquery.uniform.min.js"></script>
+
+	<script type="text/javascript" src="js/jquery.timepicker.js"></script>
+
+	<!-- call this page plugins -->
+
+	<script language="javascript">
+
+function ValidateForm () {
+
+var msg = '';
+
+if (document.ActivityForm.Lead_ID.value=="")
+
+{ 
+
+	alert('Please Specify Lead Name'); 
+
+	document.ActivityForm.Lead_ID.focus();
+
+	return false;
+
+}
+
+if (document.ActivityForm.ContactName.value=="")
+
+{ 
+
+	alert('Please Specify Contact Name'); 
+
+	document.ActivityForm.ContactName.focus();
+
+	return false;
+
+} 
+
+if (document.ActivityForm.fup_action.value=="")
+
+{
+
+	alert('Please Specify Fup Action'); 
+
+	document.ActivityForm.fup_action.focus();
+
+	return false;
+
+}
+
+
+
+var regex = /^([a-zA-Z0-9_\.\-\+])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+
+if(document.ActivityForm.Email.value!="" && !regex.test(document.ActivityForm.Email.value))
+
+{ 
+
+	alert('Please Specify valid Email'); 
+
+	document.ActivityForm.Email.focus();
+
+	return false;
+
+}
+
+
+
+// if (document.ActivityForm.Date_Added.value=="")
+
+// { 
+
+// 	alert('Please Specify Date Added'); 
+
+// 	document.ActivityForm.Date_Added.focus();
+
+// 	return false;
+
+// }
+
+
+
+}
+
+</script>
+
+<script type="text/javascript">
+
+	$(function () {
+	
+		$('#Entry_Time').timepicker({ 'step': 15 });
+		$('#TimeButton').on('click', function (){
+		  $('#Entry_Time').timepicker('setTime', new Date());
+		  $("#Entry_Time").change();
+		});
+
+		// datepicker plugin
+
+		//$( "#Date_Added" ).datepicker();
+
+		$('.datepicker').datepicker().on('changeDate', function(){
+
+          $(this).blur();
+
+        });
+
+		$("input:checkbox, input:radio").uniform();
+
+		$('.phone').keypress(function(e){
+
+						var k = e.which;
+
+    					/* numeric inputs can come from the keypad or the numeric row at the top */
+
+   						 if ((k<48 || k>57) && (k!=45) && (k!=43) && (k!=40) && (k!=41) && (k!=32) && (k!=44) && (k!=46) && (k!=8) && (k!=0)) {
+
+        					e.preventDefault();
+
+							//alert("Allowed characters are 0-9, +, -, (, )");
+
+        					return false;
+
+    					}
+
+					
+
+					}); 
+
+	});
+
+</script>
+
+    <script>
+
+	 var xhr;
+
+  (function( $ ) {
+
+    $.widget( "custom.combobox", {
+
+      _create: function() {
+
+        this.wrapper = $( "<span>" )
+
+          .addClass( "custom-combobox" )
+
+          .insertAfter( this.element );
+
+ 
+
+        this.element.hide();
+
+        this._createAutocomplete();
+
+        this._createShowAllButton();
+
+      },
+
+ 
+
+      _createAutocomplete: function() {
+
+        var selected = this.element.children( ":selected" ),
+
+          value = selected.val() ? selected.text() : "";
+
+ 
+
+        this.input = $( "<input>" )
+
+          .appendTo( this.wrapper )
+
+          .val( value )
+
+          .attr( "title", "" )
+
+          .addClass( "custom-combobox-input ui-widget ui-widget-content ui-state-default ui-corner-left" )
+
+          .autocomplete({
+
+            delay: 0,
+
+            minLength: 0,
+
+            source: $.proxy( this, "_source" )
+
+          })
+
+          .tooltip({
+
+            tooltipClass: "ui-state-highlight"
+
+          });
+
+ 
+
+        this._on( this.input, {
+
+          autocompleteselect: function( event, ui ) {
+
+		  	//alert("show all");
+
+            ui.item.option.selected = true;
+
+			
+
+            this._trigger( "select", event, {
+
+              item: ui.item.option
+
+            });
+
+          },
+
+ 
+
+          autocompletechange: "_removeIfInvalid"
+
+        });
+
+      },
+
+ 
+
+      _createShowAllButton: function() {
+
+        var input = this.input,
+
+          wasOpen = false;
+
+ 
+
+        $( "<a>" )
+
+          .attr( "tabIndex", -1 )
+
+          .attr( "title", "Show All Items" )
+
+          .tooltip()
+
+          .appendTo( this.wrapper )
+
+          .button({
+
+            icons: {
+
+              primary: "ui-icon-triangle-1-s"
+
+            },
+
+            text: false
+
+          })
+
+          .removeClass( "ui-corner-all" )
+
+          .addClass( "custom-combobox-toggle ui-corner-right" )
+
+          .mousedown(function() {
+
+            wasOpen = input.autocomplete( "widget" ).is( ":visible" );
+
+          })
+
+          .click(function() {
+
+            input.focus();
+
+ 
+
+            // Close if already visible
+
+            if ( wasOpen ) {
+
+              return;
+
+            }
+
+ 
+
+            // Pass last search string as value to search for, displaying last results
+
+            input.autocomplete( "search", 'SHOWALL' );
+
+          });
+
+      },
+
+ 
+
+      _source: function( request, response ) {
+
+      
+
+        //var matcher = new RegExp( $.ui.autocomplete.escapeRegex(request.term), "i" );
+
+		var ele_select= this.element;
+
+		if(request.term=='SHOWALL'){
+
+			response(ele_select.children( "option" ).map(function() {
+
+          var text = $( this ).text();
+
+		 var value= $( this ).val();
+
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+
+            return {
+
+              label: text,
+
+              value: text,
+
+              option: this
+
+            };
+
+        }) );
+
+		
+
+		}
+
+		else
+
+		{
+
+		if(ele_select.attr('id')=='Lead_ID'){
+		var jsonRow = 'getleadsonsearch.cgi?srch='+request.term;
+		}
+		else if(ele_select.attr('id')=='contact_name'){
+		var jsonRow = 'getcontactonsearch.cgi?srch='+request.term;
+		}
+
+
+		//alert(jsonRowURLStr);
+
+		if(xhr) xhr.abort();
+
+		xhr=$.getJSON(jsonRow,function(result){
+
+			
+
+			if(result){
+
+				var html='<option value=""></option>';
+
+
+
+				$.each(result, function(i,item)
+
+				{
+
+					html += '<option value="'+item.id+'">'+item.value+'</option>';
+
+				});
+
+				ele_select.html(html);
+
+				
+
+				
+
+				response(ele_select.children( "option" ).map(function() {
+
+          var text = $( this ).text();
+
+		 var value= $( this ).val();
+
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+
+            return {
+
+              label: text,
+
+              value: text,
+
+              option: this
+
+            };
+
+        }) );
+
+				
+
+				
+
+			}
+
+		});
+
+       
+
+	  } 
+
+		
+
+      },
+
+ 
+
+      _removeIfInvalid: function( event, ui ) {
+
+ 
+
+        // Selected an item, nothing to do
+
+        if ( ui.item ) {
+
+
+
+          return;
+
+        }
+
+ 
+
+        // Search for a match (case-insensitive)
+
+        var value = this.input.val(),
+
+          valueLowerCase = value.toLowerCase(),
+
+          valid = false;
+
+        this.element.children( "option" ).each(function() {
+
+          if ( $( this ).text().toLowerCase() === valueLowerCase ) {
+
+            this.selected = valid = true;	
+
+			
+
+            return false;
+
+          }
+
+        });
+
+ 
+
+        // Found a match, nothing to do
+
+        if ( valid ) {
+
+          return;
+
+        }
+
+ 
+
+        // Remove invalid value
+		if(this.element.attr('id')=='Lead_ID'){
+        this.input
+
+          .val( "" )
+
+          .attr( "title", value + " didn't match any item" )
+
+          .tooltip( "open" );
+		  
+		  }
+		  else
+		  {
+		  this.element.html( "<option value='"+value+"'>"+value+"</option>" );
+		  
+		  }
+
+        this.element.val( "" );
+		
+		if(this.element.attr('id')=='Lead_ID'){
+		
+        this._delay(function() {
+
+          this.input.tooltip( "close" ).attr( "title", "" );
+
+        }, 2500 );
+		
+		}
+
+        this.input.data( "ui-autocomplete" ).term = "";
+
+      },
+
+ 
+
+      _destroy: function() {
+
+        this.wrapper.remove();
+
+        this.element.show();
+
+      }
+
+    });
+
+  })( jQuery );
+
+ 
+
+  $(function() {
+
+    $( "#Lead_ID" ).combobox();
+	$( "#contact_name" ).combobox();
+   
+
+	
+
+  });
+
+
+
+  </script>
+
+	
+
+	
+
+</body>
+
+</html>

@@ -1,0 +1,142 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+C_BOOLEAN(mUserIsCurrentBool)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+QUERY([Products];[Products]uuid=_HIT_WebApp_GetField ("uuid"))
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+-->
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/main-header.shtml-->
+
+
+<style>
+label.error {
+	float: left;
+	color: red;
+	padding-top: .5em;
+	vertical-align: top;
+	font-weight:bold
+}
+</style>
+<link rel="stylesheet" type="text/css" href="css/jqm-datebox.min.css" /> 
+<script type="text/javascript" src="js/jqm-datebox.core.min.js"></script>
+<script type="text/javascript" src="js/jqm-datebox.mode.calbox.min.js"></script>
+<script type="text/javascript" src="js/jquery.mobile.datebox.i18n.en_US.utf8.js"></script>
+<script src="js/jquery.validate.js"></script>
+<script src="js/additional-methods.js"></script>
+
+
+<script type="text/javascript">
+
+function __showPrds()
+{
+pUrlStr='products.shtml';
+window.location.href=pUrlStr;
+}
+
+$(document).on('pageinit', function(){
+
+	$("#frm").validate({
+        rules: {
+            ProductName: "required",
+            Unit_Price : { required: true, number: true },
+            Product_Type : "required",
+			NumberOfUsers: { digits: true },
+            
+        },
+		messages: {
+			ProductName: "Please Specify Product Name",
+			Unit_Price: { required: "Please Specify Unit Price", number: "Please Specify a numeric value" },
+			Product_Type: "Please Specify Product Type",
+			NumberOfUsers: { digits: "Please enter only digits" },
+			
+		}
+    });
+});
+</script>
+
+
+
+
+</head>
+<body>
+<div data-role="page" id="home" data-add-back-btn="false">
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/top-header.shtml-->
+	<div data-role="content" style="padding: 15px;">
+		<ul data-role="listview" data-inset="true">
+			<li data-role="list-divider"><span style=" color:#2B89D0; font-stretch:narrower;"><!--#4DIF (Records in selection([Products])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Product</span></li>
+		</ul>
+		<form data-ajax="false" name="ProductForm" action="saveproduct.cgi" method="post" id="frm" >
+		
+		<input name="Product_uuid" class="span9" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="Product_uuid">
+		
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput1">Product Name<font color="#FF0000">*</font></label>
+					<input  type="text" name="ProductName" id="ProductName" value="<!--#4DVAR [Products]ProductName-->" placeholder="Product Name" >
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput12">Unit Price<font color="#FF0000">*</font></label>
+					<input class="num" type="text" id="Unit_Price" <!--#4DIF ([Products]Unit_Price=0)-->value=""<!--4DELSE-->value="<!--#4DVAR [Products]Unit_Price-->"<!--4DENDIF--> name="Unit_Price" placeholder="Unit Price" >
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput12">Product Type<font color="#FF0000">*</font></label>
+						<input type="text" id="Product_Type" value="<!--#4DVAR [Products]Product_Type-->" name="Product_Type" placeholder="Product Type" >
+				</fieldset>
+			</div>
+			
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput13">Serial Number</label>
+					<Select name="SerialNumberRequired" id="SerialNumberRequired">
+											<option value="Required" <!--#4DIF ([Products]SerialNumberRequired=True)-->selected<!--4DELSE--><!--4DENDIF-->>Required</option>
+											<option value="Not Required" <!--#4DIF ([Products]SerialNumberRequired=False)-->selected<!--4DELSE--><!--4DENDIF-->>Not Required</option>
+										</select> 
+					
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput14">Number Of Users</label>
+					<input type="text" id="NumberOfUsers" value="<!--#4DVAR [Products]NumberOfUsers-->" name="NumberOfUsers" placeholder="Number Of Users"  >  
+				</fieldset>
+			</div>
+			
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput14">Current Version</label>
+					<input type="text" id="CurrentVersion" value="<!--#4DVAR [Products]CurrentVersion-->" name="CurrentVersion" placeholder="Current Version"  >  
+				</fieldset>
+			</div>
+			
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput14">Platform</label>
+					<input type="text" id="Platform" value="<!--#4DVAR [Products]Platform-->" name="Platform" placeholder="Platform" >
+				</fieldset>
+			</div>
+			
+			
+			
+			<input type="submit" value="Submit" id="submit" name="submit" >
+			<input type="submit" value="Cancel" onClick="__showPrds(); return false;">
+		</form>
+	</div><!-- END DATA ROLE CONTENT-->
+
+   <!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/footer.shtml-->
+    
+ </div>
+ 
+</body>
+</html>

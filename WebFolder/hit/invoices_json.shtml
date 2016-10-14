@@ -1,0 +1,579 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+
+_HIT_HTMLTXT:=_HIT_HTTP_GetReferer
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+<link rel="stylesheet" href="css/base/jquery-ui.css" />
+
+<link rel="stylesheet" media="all" type="text/css" href="css/jquery-impromptu.css" />
+</head>
+<body>
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
+
+	<!-- main container -->
+    <div class="content">
+        
+        <div class="container-fluid">
+            <div id="pad-wrapper">
+
+                <!-- timeslips table -->
+                <div class="table-wrapper orders-table section">
+                    <div class="row-fluid head">
+                        <div class="span12">
+                            <h4>Invoices</h4>
+                        </div>
+                    </div>
+					<div class="row-fluid filter-block">
+                    <div class="row-fluid filter-block">
+					<form id="frm_set" name="frm_set" method="post" action="customers.shtml"> 
+					Add to Set :
+					<input type="hidden" name="selected" id="selected" value="">
+					<input type="hidden" name="set" id="set" value="">
+					<input type="hidden" name="new_name" id="new_name" value="">
+					
+					<div class="ui-select">
+					<select name="sets" id="add_sets" onChange="__showinvoicesForm_AddSet(this.value)">
+						<option value="">--Select Set--</option>
+						<!--#4DSCRIPT/Web_LoadInvoicesSets/-->
+							<!--4DLOOP  [saved_sets]-->									
+							<option value="<!--#4DHTMLVAR [saved_sets]name-->" ><!--#4DHTMLVAR [saved_sets]name--></option>
+							<!--4DENDLOOP-->
+						<option value="new_set">Create New Set</option>
+					</select>
+					</div>  
+							<div class="pull-right">
+								<div class="btn-group pull-right">
+									<button class="glow left large" onClick="__showInvoices(); return false;">All</button>
+                                	<button class="glow middle large" onClick="__showPaidInvoices(); return false;">Paid</button>
+                                	<button class="glow middle large" onClick="__showDueInvoices(); return false;">Due</button>
+                                	<button class="glow right large" onClick="__showOverdueInvoices(); return false;">Overdue</button> 
+                                	<a href="http://__4DURLHandler__/Edit-INVUUID" onClick="$.__4DURLHandler__('','add-invoice')" title="Add New Invoice" class="btn-flat success new-product margn-lft35" style="margin-left:15px;">+ Add New Invoice</a>
+								</div>
+								<input name="keyword_type" id="keyword_type" type="text" class="search order-search" placeholder="search for customer, Project.." value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" />
+							</div>
+						</div>
+                    </form>
+
+                    <div class="row-fluid">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                	<th align="left"><input name="chk_all" type="checkbox" id="chk_all" value="">
+                                    </th>
+                                    <th class="span2">
+                                    <span class="line"></span>
+                                        INVOICE NO
+                                    </th>
+									<th class="span2">
+									<span class="line"></span>
+                                        INVOICE DATE
+                                    </th>
+                                    <th class="span3">
+                                        <span class="line"></span>
+                                        CLIENT
+                                    </th>
+                                    <th class="span3">
+									<span class="line"></span>
+                                       PROJECT
+                                    </th>
+                                    <th class="span2">
+									<span class="line"></span>
+                                       TOTAL
+                                    </th>
+									<th class="span2">
+									<span class="line"></span>
+                                       BALANCE
+                                    </th>
+									<th class="span2">
+                                        <span class="line"></span>
+                                        DUE DATE
+                                    </th>
+                                    <th class="span1">
+                                        <span class="line"></span>
+                                        AGE
+                                    </th>
+                                    <th class="span2">
+                                        <span class="line"></span>
+                                        TERMS
+                                    </th>
+                                    <th class="span1">
+                                        <span class="line"></span>
+                                        PAID
+                                    </th>
+                                    <th class="span1">
+                                        <span class="line"></span>
+                                        STATUS
+                                    </th>
+                                    <th class="span1">
+                                        <span class="line"></span>
+                                        ACTION
+                                    </th>
+									<th><span class="line"></span></th>
+                                </tr>
+                            </thead>
+                            <tfoot>
+                            <tr>
+                                <th align="left">&nbsp;</th>
+                                <th align="left">INVOICE NO</th>
+                                <th align="left">INVOICE DATE</th>
+                                <th align="left">CLIENT</th>
+                                <th align="left">PROJECT</th>
+                                <th align="left">TOTAL</th>
+                                <th align="left">BALANCE</th>
+								<th align="left">DUE DATE</th>
+								<th align="left">AGE</th>
+								<th align="left">TERMS</th>
+								<th align="left">PAID</th>
+								<th align="left">STATUS</th>
+								<th align="left">ACTION</th>
+                            </tr>
+                        	</tfoot>
+                            <tbody id="invoice_table_body">
+                            </tbody>
+                        </table>
+						<div id="img_loading_div" style="text-align:center">
+		<img src="loading.gif"  style="padding:20px;" width="34" >
+		</div>
+                    </div>
+                </div>
+                <!-- end timeslips table -->
+
+            </div>
+        </div>
+    </div>
+    <!-- end main container -->
+	<div class="example-container">
+	
+	<pre class="code" style="display:none;" id="load_prompt">
+									var statesdemo = {
+										state0: {
+											title: 'Do you want to load the records of '+$('#add_sets').val()+'?',
+											html:'',
+											buttons: { No : 0, Yes: 1 },																		
+											submit:function(e,v,m,f){ 
+												//console.log(f);
+												if(v==1) {
+													location.href='invoices_json.shtml?load_set='+$('#add_sets').val();
+												}
+												if(v==0) {
+													$.prompt.close();
+													$('#add_sets').val('');
+													$('.check').prop('checked', false);
+												}
+											}
+										},
+										
+									};
+
+									$.prompt(statesdemo);
+								</pre>
+	
+	<pre class="code" style="display:none;" id="no_rec_prompt">
+									var statesdemo = {
+										state0: {
+											title: 'No more records found',
+											html:'',
+											buttons: { OK: 1 },																		
+											submit:function(e,v,m,f){ 
+												//console.log(f);
+												if(v==1) {
+													$.prompt.close();
+												}
+												
+											}
+										},
+										
+									};
+									//$(".jqibox").remove();
+									if(!($(".jqibox").length))
+									$.prompt(statesdemo);
+								</pre>
+							</div>
+
+	<!-- scripts -->
+   <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+    
+	<script type="text/javascript" src="js/jquery-impromptu.js"></script>
+    <script>
+    
+function __showContactForm_AddSet(name)
+{
+	if(name!=''){
+		selected='';
+		$('.check').each(function(){
+			if($(this).is(":checked")){
+				if(selected==''){
+					selected=$(this).val();
+				}
+				else{
+					selected+=","+$(this).val();
+				}
+			}
+		
+		});
+		if(selected!=''){
+			if(name=='new_set'){
+				//var new_set=prompt("Please enter name of new set:","userset_1");				
+				code = $('#new_set_prompt').text();
+				(new Function(code))();	
+			}
+			else
+			{
+				start=0;
+				end=25;
+				tab='';
+				jsonRow = 'loadinvoices.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab+'&selected='+selected+'&set=add_to_'+name;
+				$.getJSON(jsonRow,function(result){
+					if(result.Alert){
+						code = $('#load_prompt').text();
+						(new Function(code))();
+					}
+				});
+			}
+		}
+		else{
+			$('#add_sets').val('');
+		}
+	}
+}
+
+var JSONdata;
+ var start=0, end=50;
+ var old_srch='',keyword='', jsonRow='', tab='', set='';
+ var tablname='Contacts';
+ var selected_set='<!--#4DVAR _HIT_WebApp_GetField ("load_set") -->';
+
+
+function __downloadPdf()
+{
+	selected='';
+	$('.check').each(function(){
+		if($(this).is(":checked")){
+			if(selected==''){
+				selected=$(this).val();
+			}
+			else{
+				selected+=","+$(this).val();
+			}
+		}
+	
+	});
+	if(selected!=''){
+		//console.log(selected);
+		//location.href='invoice_preview.shtml?uuid='+selected;
+		window.open('invoice_preview.shtml?uuid='+selected+'&token=<!--#4DVAR _HIT_TokenGetAny-->');
+		$('.check').each(function(){
+			$(this).attr('checked', false);
+		});
+	}
+	else{
+		alert("Please select invoices");
+	}
+}
+function __showOverdueInvoices()
+{
+	start=0;
+	end=50;
+	tab='overdue';
+	jsonRow = 'loadinvoices.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab+'&set='+selected_set;
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}
+	$('#invoices_table_body').html('');
+	$('#img_loading_div').show();		
+	load_data(jsonRow);
+}
+
+
+function __showDueInvoices()
+{
+	start=0;
+	end=50;
+	tab='due';
+	jsonRow = 'loadinvoices.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab+'&set='+selected_set;
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}	
+	$('#invoices_table_body').html('');
+	$('#img_loading_div').show();	
+	load_data(jsonRow);
+}
+
+function __showPaidInvoices()
+{
+	start=0;
+	end=50;
+	tab='paid';
+	jsonRow = 'loadinvoices.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab+'&set='+selected_set;
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}	
+	$('#invoices_table_body').html('');
+	$('#img_loading_div').show();	
+	load_data(jsonRow);
+}
+
+function __showInvoices()
+{
+	start=0;
+	end=50;
+	tab='';
+	jsonRow = 'loadinvoices.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&set='+selected_set;
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}	
+	$('#invoices_table_body').html('');
+	$('#img_loading_div').show();	
+	load_data(jsonRow);
+}
+
+function __showinvoicesForm_AddSet(name)
+{
+	if(name!=''){
+		selected='';
+		$('.check').each(function(){
+			if($(this).is(":checked")){
+				if(selected==''){
+					selected=$(this).val();
+				}
+				else{
+					selected+=","+$(this).val();
+				}
+			}
+		
+		});
+		if(selected!=''){
+			if(name=='new_set'){
+				//var new_set=prompt("Please enter name of new set:","userset_1");				
+				code = $('#new_set_prompt').text();
+				(new Function(code))();	
+			}
+			else
+			{
+				start=0;
+				end=50;
+				tab='';
+				jsonRow = 'loadinvoices.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab+'&selected='+selected+'&set=add_to_'+name;
+				$.getJSON(jsonRow,function(result){
+					if(result.Alert){
+						code = $('#load_prompt').text();
+						(new Function(code))();
+					}
+				});
+			}
+		}
+		else{
+			$('#add_sets').val('');
+		}
+	}
+}
+
+
+function __showInvoiceForm(uuid)
+{
+pUrlStr='contact.shtml?uuid='+uuid;
+window.location.href=pUrlStr;
+}
+
+
+
+$(document).ready(function() {
+
+
+$('#keyword_type').focus();
+$('#add_sets option[value="'+selected_set+'"]').hide();
+
+	keyword= $("#keyword_type").val();
+	jsonRow = 'loadinvoices.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&set='+selected_set;
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}		
+	load_data(jsonRow);			 
+	$(window).scroll(function(){
+
+		if ($(window).scrollTop() == $(document).height() - $(window).height()){
+		$('#img_loading_div').show();
+		//alert("scrolling...");
+		start=end+1;
+		end=start+25;
+		jsonRow = 'loadinvoices.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&set='+selected_set;
+		if(keyword!=''){
+			jsonRow +='&keyword='+keyword;
+		}
+		if(tab!=''){
+			jsonRow +='&tab='+tab;
+		}		
+		load_data(jsonRow);
+		
+		}
+	});	
+		
+	//setup before functions
+	var typingTimer;                //timer identifier
+	var doneTypingInterval = 1000;  //time in ms, 5 second for example
+	
+	//on keyup, start the countdown
+	$('#keyword_type').keyup(function(){
+		clearTimeout(typingTimer);
+		if ($('#keyword_type').val) {
+			typingTimer = setTimeout(function(){
+				//do stuff here e.g ajax call etc....
+				$('#invoice_table_body').html('');
+				$('#img_loading_div').show();
+				start=0;
+				end=start+25;
+				tab='';
+				keyword= $("#keyword_type").val();
+				jsonRow = 'loadinvoices.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&set='+selected_set;
+				if(keyword!=''){
+					jsonRow +='&keyword='+keyword;
+				}
+				if(tab!=''){
+					jsonRow +='&tab='+tab;
+				}	
+				load_data(jsonRow);
+			}, doneTypingInterval);
+		}
+	});	
+	
+
+    });
+	
+function load_data(jsonRow){
+	JSONdata=new Array();
+	$.getJSON(jsonRow,function(result){
+			if(result.Alert){
+			
+				code = $('#no_rec_prompt').text();
+				(new Function(code))();
+			}
+			else{
+			  
+				$.each(result.uuid, function(i,item)
+				{
+					JSONdata[i]=new Array();
+					JSONdata[i][0]='<input class="check" type="checkbox" value="'+item+'">';				
+					JSONdata[i][12]='<ul class="actions"><li><a href="invoice.shtml?uuid='+item+'" title="Edit" ><i class="table-edit"></i></a></li></ul>';
+				}); 
+				$.each(result.Full_Invoice_Number, function(i,item)
+				{
+					JSONdata[i][1]=item;
+					
+				});
+				$.each(result.inv_date, function(i,item)
+				{
+					JSONdata[i][2]=item;
+				});
+				$.each(result.company_Name, function(i,item)
+				{					
+					JSONdata[i][3]=item;
+				});
+				$.each(result.project_code, function(i,item)
+				{					
+					JSONdata[i][4]=item;
+				});
+				$.each(result.inv_currency_code, function(i,item)
+				{					
+					JSONdata[i][5]=item;
+				});
+				$.each(result.inv_total_due_with_tax, function(i,item)
+				{					
+					JSONdata[i][5]+=' '+item;
+				});
+				$.each(result.balance_due_base_currency, function(i,item)
+				{					
+					JSONdata[i][6]=item;
+				});
+				$.each(result.inv_date_due, function(i,item)
+				{
+					JSONdata[i][7]=item;
+				});
+				$.each(result.AgeDay, function(i,item)
+				{					
+					JSONdata[i][8]=item;
+				});
+
+				$.each(result.inv_terms, function(i,item)
+				{					
+					JSONdata[i][9]=item;
+				});
+				$.each(result.inv_total_paid, function(i,item)
+				{					
+					JSONdata[i][10]=item;
+				});
+				$.each(result.invoice_status, function(i,item)
+				{					
+					JSONdata[i][11]=item;
+				});
+			 
+				
+				
+				var table_html='';
+				var trClassStr='odd';
+				$.each(JSONdata, function(i,row)
+				{
+				
+					table_html+='<tr >';
+					$.each(row, function(i,col){
+						table_html+='<td>'+col+'</td>';
+					});
+					table_html+='</tr>';
+				});
+				if(old_srch!=keyword){
+					$('#invoice_table_body').html('');
+					old_srch=keyword;
+				}
+				//alert(table_html);
+				
+				$('#invoice_table_body').append(table_html);
+
+			
+
+		}
+		$('#img_loading_div').hide();
+		});
+}
+
+function chng_time_format(date_time){
+		var s_date_time=date_time.split(' ');
+		var s_time=s_date_time[1];
+		var s_time_arr=s_time.split(":");
+		var s_hour= Number(s_time_arr[0]);
+		var s_min= Number(s_time_arr[1]);
+		var s_ampm='AM';
+		if(s_hour>=12){
+			s_ampm='PM';
+		}
+		if(s_hour>12){
+			s_hour= s_hour-12;
+		}	
+		if(s_min<10){
+			s_min= '0'+String(s_min);
+		}
+		s_time=s_hour+':'+s_min+' '+s_ampm;
+		return (s_date_time[0]+'<br/>'+s_time);
+}
+
+
+    </script>
+    
+</body>
+</html>

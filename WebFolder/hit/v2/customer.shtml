@@ -1,0 +1,885 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+C_TEXT(_HTMLTITLETXT)
+
+If(_HIT_AuthenticateSession="Session-Authenticated-OK")
+ALL RECORDS([Tax_Codes])
+
+QUERY([Companies];[Companies]uuid=_HIT_WebApp_GetField ("uuid"))
+QUERY([Contacts];[Contacts]client_id=[Companies]account_Number)
+QUERY([LicenceNumbers];[LicenceNumbers]uuid_client=[Companies]uuid)
+
+If (Records in selection([Companies])=0)
+_HTMLTITLETXT:="New Customer"
+Else
+_HTMLTITLETXT:= "Customer: "+[Companies]company_Name
+END If
+
+Else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+End If
+-->
+<!DOCTYPE html>
+<html lang="en">
+<!-- BEGIN HEAD -->
+<head>
+	<!--#4DIF (Records in selection([Companies])=1)-->
+		<title>Customer: <!--#4DVAR [Companies]company_Name--></title>
+	<!--#4DELSE-->
+		<title>New Customer</title>
+	<!--#4DENDIF-->
+	
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/v2/includes/InitCss.shtml-->
+	<!-- BEGIN PLUGIN STYLES -->
+	<link href="assets/plugins/jquery-jvectormap/jquery-jvectormap-1.2.2.css" rel="stylesheet" />
+ 	<link href="assets/plugins/datepicker/css/datepicker.css" rel="stylesheet" />
+	<link href="assets/plugins/bootstrap-daterangepicker/daterangepicker-bs3.css" rel="stylesheet" />
+	<!-- END PLUGIN STYLES -->
+<style>
+@media (min-width: 1200px) and (max-width:1450px){
+	
+	.cust-info .col-sm-3{
+		width:33%!important;
+	}
+	.cust-info .col-sm-6{
+		width:67%!important;
+	}
+	
+}
+</style>
+</head>
+
+<!-- END HEAD -->
+<!-- BEGIN BODY -->
+<body class="fixed-leftside fixed-header">
+	<!-- BEGIN HEADER -->
+		<!--#4DSCRIPT/_HIT_LoadInclude/hit/v2/includes/header.shtml-->
+	<!-- END HEADER -->
+
+	<div class="wrapper"> 
+ 		 <!-- BEGIN LEFTSIDE -->
+      		<!--#4DSCRIPT/_HIT_LoadInclude/hit/v2/includes/left-navigation.shtml-->
+		<!-- END LEFTSIDE -->
+  
+  <!-- BEGIN RIGHTSIDE -->
+  <div class="rightside bg-grey-100"> 
+    <!-- BEGIN PAGE HEADING -->
+    <div class="page-head">
+    <div class="row">
+     	<div class="col-sm-6">
+      		<h1 class="page-title"><!--#4DIF (Records in selection([Companies])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Customer</h1>
+        </div>
+      <!-- BEGIN BREADCRUMB -->
+      	<div class="col-sm-6">
+      <ol class="breadcrumb sm-pullright">
+        <li><a href="javascript:void(0)" onclick="funURLHandler('index.shtml','open-index-window')" title="Dashboard"><i class="ion-home margin-right-5"></i> Dashboard</a></li>
+        <li><a href="javascript:void(0)" onclick="funURLHandler('customers.shtml','open-customer-window')" title="Customers">Customers</a></li>
+        <li><!--#4DIF (Records in selection([Companies])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Customer</li>
+      </ol>
+      </div>
+      <!-- END BREADCRUMB --> 
+      </div>
+    </div>
+    <!-- END PAGE HEADING -->
+    
+    <div class="container-fluid">
+      
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel" style="padding-top:20px;"> 
+   
+      <div class="panel-body no-padding-top bg-white">
+      	<form name="CompanyForm" id="CompanyForm" action="savecustomer.cgi" class="form-horizontal CompanyForm" method="post"> 
+     		<div data-example-id="togglable-tabs">
+    			<ul id="new-customer-tab" class="nav nav-tabs" role="tablist">
+      				<li role="presentation" class="active"><a href="#customerinfo" id="basicInfo-tab" role="tab" data-toggle="tab" aria-controls="customer-info" aria-expanded="true"><strong>Customer Info</strong></a></li>
+      				<li role="presentation"><a href="#licenceno" role="tab" id="licenceno-tab" data-toggle="tab" aria-controls="licenceno"><strong>Licence Number</strong></a></li>  
+      				<li role="presentation"><a href="#moreinfo" role="tab" id="moreinfo-tab" data-toggle="tab" aria-controls="moreinfo"><strong>More Information and Contacts</strong></a></li>  	    
+    				<!--#4DIF (_HIT_WebSession_GetVar ("auth_user_type")#"CLIENTS")-->
+						<!--#4DIF (Records in selection([Companies])=1)-->
+						<li role="presentation"><a href="#notes" role="tab" id="notes-tab" data-toggle="tab" aria-controls="notes"><strong>Notes</strong></a></li>
+						<!--#4DENDIF-->
+					<!--#4DENDIF-->
+    			</ul>
+    			<div id="myTabContent" class="tab-content" style="padding-top:25px; border-left: 1px solid #ddd; border-right: 1px solid #ddd;  border-bottom: 1px solid #ddd; padding-bottom:25px; padding-left:15px; padding-right:15px;">
+     				<div role="tabpanel" class="tab-pane fade in active cust-info" id="customerinfo" aria-labelledby="basicInfo-tab">
+       		 			<div class="row">
+           		  			<div class=" col-sm-12 col-lg-6">
+             
+  								<div class="form-group">
+    								<label for="" class="col-sm-3 control-label">Company Name <sup class="req">*</sup></label>
+    								<div class="col-sm-6  ">
+      									<input type="text" class="form-control" value="<!--#4DVAR [Companies]company_Name-->" id="Company_Name" name="Company_Name" placeholder="Company Name">
+      									<input name="Company_uuid" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="Company_uuid">
+									</div>
+  								</div>
+  								<div class="form-group">
+    								<label for="" class="col-sm-3 control-label">Account No <sup class="req">*</sup></label>
+    								<div class="col-sm-3 ">
+      									<input type="text" class="form-control" value="<!--#4DVAR [Companies]account_Number-->" readonly id="acc_no" name="acc_no" placeholder="Account No">
+    								</div>
+     								<div class="col-sm-offset-1 col-sm-3 col-md-3">
+      									<div class="checkbox">
+        									<label><input type="checkbox" name="inactive" value="true" id="inactive" <!--#4DIF ([Companies]inactive)-->checked<!--4DELSE--><!--4DENDIF-->> Inactive</label>
+      									</div>
+  									</div>
+  								</div>
+  
+  <div class="form-group">
+    <label for="firstname" class="col-sm-3  control-label">Contact First Name </label>
+    <div class="col-sm-6">
+      <input type="text" class="form-control" id="Contact_First_Name" name="Contact_First_Name" value="<!--#4DVAR [Companies]contact_firstname-->" placeholder="Contact First Name">
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="" class="col-sm-3 control-label">Contact Last Name </label>
+    <div class="col-sm-6">
+      <input type="text" class="form-control" id="Contact_Last_Name" name="Contact_Last_Name" value="<!--#4DVAR [Companies]contact_Lastname-->" placeholder="Contact Last Name">
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="" class="col-sm-3 control-label">Email</label>
+    <div class="col-sm-6">
+      <input type="email" class="form-control" name="Email" id="Email" value="<!--#4DVAR [Companies]email_address-->" placeholder="Email">
+    </div>
+  </div>
+   <div class="form-group">
+    <label for="" class="col-sm-3 control-label">Address 1 <sup class="req">*</sup></label>
+    <div class="col-sm-6">
+    <textarea class="form-control" name="Address_1" id="Address_1"><!--#4DVAR [Companies]address_line_1--></textarea>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="" class="col-sm-3 control-label">Address 2</label>
+    <div class="col-sm-6">
+    <textarea class="form-control" name="Address_2" id="Address_2"><!--#4DVAR [Companies]address_line_2--></textarea>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="" class="col-sm-3 control-label">City </label>
+    <div class="col-sm-6">
+      <input type="text" class="form-control" name="City" value="<!--#4DVAR [Companies]city_or_town-->" id="City" placeholder="City">
+    </div>
+    </div>
+    <div class="form-group">
+    <label for="" class="col-sm-3 control-label">County</label>
+    <div class="col-sm-6">
+      <input class="form-control" name="county_or_state" type="text" value="<!--#4DVAR [Companies]county_or_state-->" id="county_or_state" placeholder="County">
+    </div>
+     </div>
+    <div class="form-group">
+    <label for="" class="col-sm-3 control-label">Post Code</label>
+    <div class="col-sm-6">
+      <input name="Post_Code" type="text" value="<!--#4DVAR [Companies]post_zip_code-->" id="Post_Code" class="form-control" placeholder="Post Code">
+    </div>
+     </div>
+    <div class="form-group">
+    <label for="" class="col-sm-3 control-label">Phone</label>
+    <div class="col-sm-6">
+      <input name="Phone" type="text" value="<!--#4DVAR [Companies]telephone-->" id="Phone" class="form-control" placeholder="Phone">
+    </div>
+     </div>
+    <div class="form-group">
+    <label for="firstname" class="col-sm-3 control-label">Fax</label>
+    <div class="col-sm-6">
+      <input class="form-control" name="Fax" type="text" value="<!--#4DVAR [Companies]fax-->" id="Fax" placeholder="Fax">
+    </div>
+     </div>
+    <div class="form-group">
+    <label for="" class="col-sm-3 control-label">Country</label>
+    <div class="col-sm-6">
+      <input class="form-control" name="Country" type="text" value="<!--#4DVAR [Companies]country-->" id="Country" placeholder="Country">
+    </div>
+     </div>
+    <div class="form-group">
+    <label for="" class="col-sm-3 control-label">Relation</label>
+    <div class="col-sm-6">
+      <input class="form-control" name="Relation" type="text" maxlength="2" value="<!--#4DVAR [Companies]relationship-->" id="Relation" placeholder="Relation">
+    </div>
+     </div>
+    <div class="form-group">
+    <label for="" class="col-sm-3 control-label">Business Type</label>
+    <div class="col-sm-6">
+      <input class="form-control" type="text" name="business_type" id="business_type" value="<!--#4DVAR [Companies]business_type-->" placeholder="Business Type">
+    </div>
+     </div>
+      <div class="form-group">
+    <label for="" class="col-sm-3 control-label">Referred By</label>
+    <div class="col-sm-6">
+      <input type="text" class="form-control" id="Referred_by" name="Referred_by" value="<!--#4DVAR [Companies]referred_by-->" placeholder="Referred">
+    </div>
+     </div>
+     <div class="form-group">
+    <label for="" class="col-sm-3 control-label">Comment</label>
+    <div class="col-sm-6">
+    <textarea class="form-control" name="Comments" id="Comments"><!--#4DVAR [Companies]comments --></textarea>
+    </div>
+    </div>
+
+             </div>
+       			 <div class="col-sm-12 col-lg-6">
+         			 <div class="form-group">
+   		        		<div class="col-sm-offset-3 col-sm-9">
+    			 			<div class="checkbox">
+      		  					<label> <input type="checkbox" value="true" id="is_supplier" name="is_supplier" <!--#4DIF ([Companies]is_supplier)-->checked<!--4DELSE--><!--4DENDIF--> > Supplier</label>
+    			  			</div>
+  						</div>
+  					</div>
+                 	 <div class="form-group">
+   						 <label for="" class="col-sm-3 control-label">Follow up date</label>
+                            <div class="col-sm-3">
+                              <input type="text" class="form-control datepicker" <!--#4DIF ([Companies]followup_date=!00/00/00!)-->value=""<!--4DELSE-->value="<!--#4DHTMLVAR ([Companies]followup_date)-->"<!--4DENDIF--> name="follow_date" id="follow_date" readonly  placeholder="Follow up date">
+                            </div>
+     				</div>
+                   
+                    <div class="form-group">
+   						 <label  class="col-sm-3 control-label text-carot ">Technical Person :</label>                           
+     				</div>
+                     <div class="form-group">
+   						 <label for="" class="col-sm-3 control-label">First Name</label>
+                            <div class="col-sm-6">
+                              <input type="text" class="form-control" value="<!--#4DVAR [Companies]tech_cont_firstname-->" id="tech_cont_firstname" placeholder="First Name">
+                            </div>
+     				</div>
+                     <div class="form-group">
+   						<label for="" class="col-sm-3 control-label">Last Name</label>
+                        <div class="col-sm-6">
+                              <input type="text" class="form-control" value="<!--#4DVAR [Companies]tech_contact_lastname-->" id="tech_contact_lastname" name="tech_contact_lastname" placeholder="Last Name">
+                            </div>
+     				</div>
+                    <div class="form-group">
+   						 <label for="" class="col-sm-3 control-label">Other Email</label>
+                            <div class="col-sm-6">
+                              <input type="text" class="form-control" value="<!--#4DVAR [Companies]other_email-->" id="other_email" name="other_email" placeholder="Other Email">
+                            </div>
+     				</div>
+                     <div class="form-group">
+   						 <label for="" class="col-sm-3 control-label">Support Renewal</label>
+                            <div class="col-sm-6">
+                              <input type="text" class="form-control datepicker" <!--#4DIF ([Companies]support_renew2=!00/00/00!)-->value=""<!--4DELSE-->value="<!--#4DHTMLVAR ([Companies]support_renew2)-->"<!--4DENDIF--> id="support_renew2" name="support_renew2" placeholder="Support Renewal">
+                            </div>
+     				</div>
+                     <div class="form-group">
+   						 <label for="" class="col-sm-3 control-label">Currency</label>
+                            <div class="col-sm-3">
+                              	<select class="form-control"id="currency_code" name="currency_code">
+									<option value=""></option>
+									<!--4DLOOP [Tax_Codes]-->
+									<option value="<!--#4DVAR [Tax_Codes]Currency_Code-->" <!--#4DIF ([Tax_Codes]Currency_Code=[Companies]base_currency_code)-->selected<!--4DELSE--><!--4DENDIF-->><!--4DVAR [Tax_Codes]Currency_Code--></option>	
+									<!--4DENDLOOP-->
+                              	</select>
+                            </div>
+     				</div>
+                    <div class="form-group">
+   						 <label for="" class="col-sm-3 control-label">VAT number</label>
+                            <div class="col-sm-6">
+                              <input type="text" class="form-control" value="<!--#4DVAR [Companies]vat_tax_number-->" id="VAT_number" name="VAT_number" placeholder="VAT number">
+                            </div>
+     				</div>
+                    <div class="form-group">
+   						 <label for="" class="col-sm-3 control-label">Vat Claimed</label>
+                            <div class="col-sm-3">
+                              	<select  class="form-control" id="vat_claimed" name="vat_claimed">
+										<option value="">--SELECT TYPE--</option>
+										<option value="Yes" <!--#4DIF ([Companies]vat_claimed="Yes")-->selected<!--4DELSE--><!--4DENDIF-->>Yes</option>
+										<option value="No" <!--#4DIF ([Companies]vat_claimed="No")-->selected<!--4DELSE--><!--4DENDIF-->>No</option>
+										<option value="Depend upon bill" <!--#4DIF ([Companies]vat_claimed="Depend upon bill")-->selected<!--4DELSE--><!--4DENDIF-->>Depend upon bill</option>	
+								</select>
+                            </div>
+     				</div>
+                    
+                     <div class="form-group">
+   						 <label for="" class="col-sm-3 control-label">Bank Sort Code</label>
+                            <div class="col-sm-6">
+                              <input type="text" class="form-control" value="<!--#4DVAR [Companies]bank_sort_code-->" id="bank_sort_code" name="bank_sort_code" placeholder="Bank Sort Code">
+                            </div>
+     				</div>
+                     <div class="form-group">
+   						 <label for="" class="col-sm-3 control-label">Bank Account Number</label>
+                            <div class="col-sm-6">
+                              <input type="text" class="form-control" value="<!--#4DVAR [Companies]bank_account_number-->" id="bank_account_number" name="bank_account_number" placeholder="Bank Account Number">
+                            </div>
+     				</div>
+                     <div class="form-group">
+   						 <label for="" class="col-sm-3 control-label">IBAN</label>
+                            <div class="col-sm-6">
+                              <input type="text" class="form-control" value="<!--#4DVAR [Companies]bank_iban_number-->" id="IBAN" name="IBAN" placeholder="IBAN">
+                            </div>
+     				</div>
+                     <div class="form-group">
+   						 <label for="" class="col-sm-3 control-label">Default Analysis Ledger</label>
+                            <div class="col-sm-6">
+                              <input type="text" class="form-control" value="" id="analysis_ledger" name="analysis_ledger" placeholder="Analysis Ledger">
+                            </div>
+     				</div>
+                     <div class="form-group">
+   						 <label for="" class="col-sm-3 control-label">Default Analysis Acccount</label>
+                            <div class="col-sm-6">
+                              <input type="text" class="form-control" value="<!--#4DVAR [Companies]uuid_analysis_account-->" id="uuid_analysis_account" name="uuid_analysis_account" placeholder="Analysis Acccount">
+                            </div>
+     				</div>
+
+            <div class="form-group">
+   		        <div class="col-sm-offset-3 col-sm-9">
+    			  <div class="checkbox">
+      		  		<label> <input type="checkbox" name="renewal_letter" value="true" id="renewal_letter" <!--#4DIF ([Companies]renewal_letter)-->checked<!--4DELSE--><!--4DENDIF--> >Renewal letter</label>
+    			  </div>
+  				</div>
+  				</div>
+        </div>
+             
+       		 </div>
+             <div class="row">
+             	<div class="col-sm-12 text-center">
+                <input type="submit" class="btn palette-carrot btn-color margin-right-5 btn-sm">
+                <!--#4DIF (Records in selection([Companies])=0)-->
+                <input type="reset" class="btn btn-primary btn-sm">
+                <!--4DENDIF-->
+                </div>
+             </div>
+      </div>
+      <div role="tabpanel" class="tab-pane fade" id="licenceno" aria-labelledby="licenceno-tab">
+       	
+             	<div class="row">
+                	<div class="col-sm-10  col-md-12 col-lg-9">
+                        <div class="form-group">
+                              <label for="" class="col-sm-3 control-label">Catbase Type</label>
+                             <div class="col-sm-6">
+                              <input type="text" class="form-control" name="catBase_type" id="catBase_type" value="<!--#4DVAR [Companies]catBase_type-->" placeholder="Catbase Type">
+                             </div>
+                        </div>
+                        <div class="form-group">
+                              <label for="" class="col-sm-3 control-label">Catbase Prog Type</label>
+                             <div class="col-sm-6">
+                              <input type="text" class="form-control"  name="catbase_prog_type" id="catbase_prog_type" value="<!--#4DVAR [Companies]catbase_prog_type-->" placeholder="Catbase Prog Type">
+                             </div>
+                        </div>
+                        <div class="form-group">
+                              <label for="" class="col-sm-3 control-label">Catbase Version</label>
+                             <div class="col-sm-6">
+                              <input type="text" class="form-control"  name="catbase_version" id="catbase_version" value="<!--#4DVAR [Companies]catbase_version-->" placeholder="Catbase Version">
+                             </div>
+                        </div>
+                        <div class="form-group">
+                              <label for="" class="col-sm-3 control-label">Number of users</label>
+                             <div class="col-sm-6">
+                              <input type="text" class="form-control" name="no_of_users" id="no_of_users" value="<!--#4DVAR [Companies]no_of_users-->" placeholder="Number of users">
+                             </div>
+                        </div>
+                        <div class="form-group">
+                              <label for="" class="col-sm-3 control-label">Licence Number</label>
+                             <div class="col-sm-6">
+                              <input type="text" class="form-control" name="license_number" id="license_number" value="<!--#4DVAR [Companies]licence_number-->" placeholder="Licence Number">
+                             </div>
+                        </div>
+                         <!--#4DIF (Records in selection([Companies])=1)-->
+                        
+                        <div class="form-group">
+                        	<div class=" col-sm-offset-3  col-sm-7">
+                            	<input type="button" class="btn palette-belize-hole btn-color margin-right-5 btn-sm margin-btm10-xs" data-toggle="modal" data-target="#licenseManagerModal" value="Generate New License">
+                            	<input type="button" class="btn palette-belize-hole btn-color margin-right-5 btn-sm" onClick="openActivateLicenseModal()" value="Activate License Number"> 
+                        	</div>
+                        </div>
+                        <!--#4DENDIF-->
+                       <div class="form-group">
+                              <label for="" class="col-sm-3 control-label">Old Licence Number</label>
+                             <div class="col-sm-6">
+                              <input type="text" class="form-control" name="old_licence_no" id="old_licence_no" value="<!--#4DVAR [Companies]old_licence_number-->" placeholder="Old Licence Number">
+                             </div>
+                        </div>
+                         <div class="row">
+             	<div class="col-sm-9 col-sm-offset-3 ">
+                <input type="submit" class="btn palette-carrot btn-color margin-right-5 btn-sm">
+                <!--#4DIF (Records in selection([Companies])=0)-->
+                <input type="reset" class="btn btn-primary btn-sm">
+                <!--#4DENDIF-->
+                </div>
+             </div>
+                        
+                	</div>
+                   
+                
+                </div>
+              
+      </div>
+      <div role="tabpanel" class="tab-pane fade" id="moreinfo" aria-labelledby="moreinfo-tab">
+  
+             	<div class="row">
+                	<div class="col-sm-10 col-lg-9">
+                        <div class="form-group">
+                              <label for="" class="col-sm-3 control-label">Invoice contact name</label>
+                             <div class="col-sm-6 ">
+                              <input type="text" class="form-control" id="invoice_contact_name" name="invoice_contact_name" value="<!--#4DVAR [Companies]invoice_contact_name-->" placeholder="Invoice contact name">
+                             </div>
+                        </div>
+                        <div class="form-group">
+                              <label for="" class="col-sm-3 control-label">Invoice contact email</label>
+                             <div class="col-sm-6">
+                              <input type="text" class="form-control" id="invoice_contact_email" name="invoice_contact_email" value="<!--#4DVAR [Companies]invoice_contact_email-->" placeholder="Invoice contact email">
+                             </div>
+                        </div>
+                        <div class="form-group">
+                              <label for="" class="col-sm-3 control-label">Invoice Address</label>
+                             <div class="col-sm-6">
+                              <input type="text" class="form-control" id="invoice_address" name="invoice_address" value="<!--#4DVAR [Companies]invoice_address-->" placeholder="Invoice Address">
+                             </div>
+                        </div>
+                        <div class="form-group">
+                              <label for="" class="col-sm-3  control-label">Account Status</label>
+                             <div class="col-sm-6">
+                              <input type="text" class="form-control" id="accountStatus" name="accountStatus" value="<!--#4DVAR [Companies]account_status-->" placeholder="Account Status">
+                             </div>
+                        </div>
+                        <div class="form-group">
+                              <label for="" class="col-sm-3  control-label">Computer type</label>
+                             <div class="col-sm-6">
+                              <input type="text" class="form-control" id="computer_type" name="computer_type" value="<!--#4DVAR [Companies]computer_type-->" placeholder="Computer type">
+                             </div>
+                        </div>
+                        <div class="form-group">
+                              <label for="" class="col-sm-3  control-label">Platform</label>
+                             <div class="col-sm-6">
+                              <input type="text" class="form-control" id="platform" name="platform" value="<!--#4DVAR [Companies]platform_os-->" placeholder="Platform">
+                             </div>
+                        </div>
+                        <div class="form-group">
+                              <label for="" class="col-sm-3  control-label">Website</label>
+                             <div class="col-sm-6">
+                              <input type="text" class="form-control" id="website" name="website" value="<!--#4DVAR [Companies]website_url-->" placeholder="Website">
+                             </div>
+                             <!--#4DIF (Records in selection([Companies])=1)-->
+                             <!--#4DIF ([Companies]website_url#"")-->
+                             <div class="col-sm-3">
+                             <a href="<!--#4DVAR [Companies]website_url-->" target="_blank" class="btn palette-belize-hole btn-color margin-right-5 btn-sm">View Website</a>
+                             </div>
+                             <!--#4DENDIF-->
+                             <!--#4DENDIF-->
+                        </div>
+                        <div class="form-group">
+                               <div class=" col-sm-offset-3  col-sm-7">
+                             <input type="submit" class="btn palette-carrot btn-color margin-right-5 btn-sm">
+                              <!--#4DIF (Records in selection([Companies])=0)-->
+                              <input type="reset" value="Cancel" class="btn btn-primary btn-sm">
+                              <!--#4DENDIF-->                         
+                             </div>
+                        </div>  
+                        <div class="table-responsive col-sm-offset-3">
+                        <table class="table table-bordered">
+										<thead>
+											<tr style="background:#fafafa;">
+												<th class="vertical-middle">First Name</th>
+												<th class="vertical-middle">Last Name</th>
+												<th class="vertical-middle">Email</th>
+                                                <th class="vertical-middle">Mobile</th>
+								  				<th class="vertical-middle">Save</th>
+								  				<th class="vertical-middle">Cancel</th>
+											</tr>
+										</thead>
+										<tbody>
+											<!--#4DLOOP [Contacts]--><!--#4DSCRIPT/Web_LoadContactRelated/--><!-- row -->
+		  
+		  									<tr class="item-row" id="<!--#4DHTMLVAR [Companies]company_Name-->">
+									<td>
+									<span class="s_firstname" ><!--#4DHTMLVAR [Contacts]First name--></span>
+
+									<input class="contact_uuid" type="hidden" value="<!--#4DHTMLVAR [Contacts]uuid-->" />
+									<input type="text" class="firstname" style="display:none;" value="<!--#4DHTMLVAR [Contacts]First name-->" >
+									</td>
+									<td >
+									<span class="s_surname" ><!--#4DHTMLVAR [Contacts]Surname--></span>
+									<input type="text" class="surname" style="display:none;" value="<!--#4DHTMLVAR [Contacts]Surname-->" >
+									</td>
+									<td>
+									<span class="s_email" ><!--#4DHTMLVAR [Contacts]Email--></span>
+									<input type="text" class="email" style="display:none;" value="<!--#4DHTMLVAR [Contacts]Email-->" >
+									</td>
+									
+									<td>
+									<span class="s_mobile" ><!--#4DHTMLVAR [Contacts]Mobile--></span>
+									<input type="text" class="mobile phone" style="display:none;" value="<!--#4DHTMLVAR [Contacts]Mobile-->">
+									</td>
+									<td >
+									<a href="javascript:void(0)" class="editlink" title="Edit"><i class="ion-edit big-size color-carrot"></i></a>
+									<a href="javascript:void(0)" class="savelink" style="display:none" title="Save"><i class="fa fa-save big-size color-carrot"></i></a>
+									 </td>	
+									 <td><a href="javascript:void(0)" class="removelink" title="Remove"><i class="ion-trash-b big-size color-carrot ion-android-deletes"></i></a>
+									<a href="javascript:void(0)" class="cancellink" style="display:none" title="Cancel"><i class="ion-android-cancel big-size color-carrot"></i></a>
+									</td>								
+									</tr>
+		  
+		  								<!--#4DENDLOOP-->
+									<tr class="item"> 
+										<td class="vertical-middle" colspan="6"><a id="addrow" href="javascript:void(0)" onClick="add_new_contact()" title="Add a row">Add a row</a></td>
+									</tr>
+								</tbody>
+							</table>
+                        </div>
+                        
+                	</div>
+                    
+                
+                </div>
+            
+      </div>
+	<!--#4DIF (_HIT_WebSession_GetVar ("auth_user_type")#"CLIENTS")-->
+		<!--#4DIF (Records in selection([Companies])=1)-->
+			<div role="tabpanel" class="tab-pane fade" id="notes" aria-labelledby="notes">
+				<div class="table-responsive padding-left-5">
+                	<table class="table table-bordered width-auto">
+                    	<thead>
+                        	<tr style="background:#fafafa;">
+                        		<th class="vertical-middle "> Time stamp</th>
+                            	<th class="vertical-middle "> Added by</th>
+                            	<th class="vertical-middle ">Description</th>
+                            	<th class="vertical-middle ">Action</th>
+                          	</tr>
+                        </thead>
+                        <tbody>
+                        	<!--#4DSCRIPT/Web_LoadCompaniesNotes/-->	
+								<!--#4DLOOP [Notes]--><!-- row -->
+                        	<tr class="notes">
+                        		<td class="vertical-middle "><!--4DHTMLVAR timestamp_unix_toGMT ([Notes]Timestamp_modified)--></td>
+                               	<td class="vertical-middle "><!--#4DHTMLVAR [Notes]note_user_name--></td>
+                            	<td class="vertical-middle "><textarea readonly class="form-control width-300 no-padding no-border disabled note" id="note" name="note"><!--#4DHTMLVAR [Notes]Note--></textarea></td>
+                            	<td class="vertical-middle">
+                            		<input class="note_uuid" type="hidden" value="<!--#4DHTMLVAR [Notes]uuid-->" />
+                            		<a title="Save note" href="javascript:void(0)" onClick="saveCustomerNote($(this))" style="display:none" id="save"><i class="fa fa-save big-size color-carrot"></i></a>
+                            		<a title="Edit note" href="javascript:void(0)" onClick="editCustomerNote($(this))" id="edit"><i class="ion-edit big-size color-carrot"></i></a>
+                            		<a title="Delete note" href="javascript:void(0)" onClick="deleteCustomerNote($(this))" id="delete"><i class="ion-trash-b big-size color-carrot ion-android-deletes"></i></a>
+                            		<a title="Cancel" href="javascript:void(0)"  onClick="cancelCustomerNote($(this))" style="display:none" id="cancel"><i class="ion-android-cancel big-size color-carrot"></i></a>
+                            	</td>
+                          	</tr>
+                          	<!--#4DENDLOOP-->
+                          	<tr class='notes_end'></tr>
+                         </tbody>
+                      </table>
+                </div>
+                <div class="row margin-bottom-15">
+                	<div class="col-sm-10 col-lg-9">
+                    	<div class="form-group">
+                        	<label class="col-sm-1 control-label display-block" for="">Add note</label>
+                            <div class="col-sm-4 ">
+                            	<textarea name="add_new_note" id="add_new_note" class="form-control"> </textarea>
+                            </div>
+                            <button type="button" class="btn btn-primary btn-sm margin-top-10" id="add" onClick="addCustomerNote()">Add Note</button>
+                        </div>
+                    </div>
+                </div>
+    		</div>
+		<!--#4DENDIF-->
+	<!--#4DENDIF-->
+    </div>
+     
+  </div>
+       	</form>
+      </div>
+    </div>
+   
+  </div>
+  <!-- /.col --> 
+</div>
+<!-- /.row --> 
+
+ 		<!-- BEGIN FOOTER -->
+      	<!--#4DSCRIPT/_HIT_LoadInclude/hit/v2/includes/footer.shtml-->
+     	 <!-- END FOOTER --> 
+</div>
+<!-- /.container-fluid -->
+</div>
+<!-- /.rightside -->
+</div>
+<!-- /.wrapper --> 
+<div id="licenseManagerModal" class="modal  fade in" role="dialog"  data-backdrop="true">
+   <div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header top-right-bdr-radius" style="background:#e67e22;">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				<h3 class="modal-title" style="font-size:18px; color:#fff; line-height:normal;">License Manager</h3>
+			</div>
+			<div class="modal-body">
+				<form class="form-horizontal">
+				<div id="validation" align="center"></div>
+  				<div class="form-group">
+   					<label for="" class="col-sm-3 control-label">Version</label>
+   					<div class="col-sm-9">
+      					<select name="lm_Version" id="lm_Version" class="form-control">
+							<option value="7.0">7.0</option>
+							<option value="6.7">6.7</option>
+						</select>
+    				</div>
+  				</div>
+  				<div class="form-group">
+   					<label for="" class="col-sm-3 control-label">Vertical</label>
+    				<div class="col-sm-9">
+           			<select name="lm_Vertical" id="lm_Vertical" class="form-control">
+						<option value="Generic">Generic</option>
+						<option value="Catalog">Catalog</option>
+						<option value="Directory">Directory</option>
+						<option value="Classifieds">Classifieds</option>
+						<option value="Price_list">Price List</option>
+						<option value="Course_Guide">Course Guide</option>
+						<option value="Yearbook">Yearbook</option>
+					</select>
+    			</div>
+  			</div>
+  			<div class="form-group">
+   				<label for="is" class="col-sm-3 control-label">Platform</label>
+    			<div class=" col-sm-9">
+      				<div class="radio">
+        				<label>
+          					<input type="radio" value="Mac" class="lm_platform" id="lm_platform1" onClick="set_platform_check(this.value)"> Mac
+        				</label>
+        				<label>
+          					<input type="radio" value="Windows" class="lm_platform" id="lm_platform2" onClick="set_platform_check(this.value)"> Windows
+        				</label>
+        				<label>
+          					<input type="radio" value="Multi-user" class="lm_platform" id="lm_platform3" onClick="set_platform_check(this.value)"> Multi-user
+        				</label>
+        				<input id="platform_check" type="hidden" >
+      				</div>
+    			</div>
+  			</div>
+  			<div class="form-group">
+   				<label for="inputPassword3" class="col-sm-3 control-label">Type of License</label>
+    			<div class=" col-sm-9">
+      				<div class="radio">
+        				<label >
+          					<input type="radio" value="Enterprise" class="lm_type_of_licence" id="lm_type_of_licence1" onClick="set_type_check(this.value)" > Enterprise
+        				</label>
+       					<label>
+          					<input type="radio" value="Standard" class="lm_type_of_licence" id="lm_type_of_licence2" onClick="set_type_check(this.value)"> Standard
+        				</label>
+        				<label>
+          					<input type="radio" value="Chameleon" class="lm_type_of_licence" id="lm_type_of_licence3" onClick="set_type_check(this.value)"> Chameleon
+        				</label>
+        				<input id="type_of_licence_check" type="hidden" >
+      				</div>
+    			</div>
+  			</div>
+			<div class="form-group">
+    			<label for="" class="col-sm-3 control-label">Number Of Users</label>
+    			<div class="col-sm-9">
+          			<input type="text" class="form-control" name="lm_noOfUsers" id="lm_noOfUsers" value="">
+    			</div>
+  			</div>
+  			<div class="form-group">
+    			<label for="" class="col-sm-3 control-label">License Number</label>
+    			<div class="col-sm-9">
+          			<input type="text" class="form-control" name="lm_licenceNo" id="lm_licenceNo" value="">
+    			</div>
+  			</div>
+			</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn palette-carrot btn-color btn-sm no-margin-left" name="new" value="Generate New License" onClick="get_license()">Generate New License</button>
+				<button type="button" class="btn palette-carrot btn-color btn-sm no-margin-left" name="activate" value="Activate" onClick="activate_license()">Activate</button>				
+				<button type="button" class="btn palette-carrot btn-color btn-sm no-margin-left" name="send_mail" value="Email" onClick="email_license()">Email</button>
+                <button type="button" class="btn btn-primary btn-sm no-margin-left" data-dismiss="modal" onClick="clearLicenseManagerForm()">Done</button>
+             </div>
+		</div>
+	</div>
+</div>
+
+<!-- END CONTENT --> 
+
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/v2/includes/InitJs.shtml-->
+<!-- BEGIN JAVASCRIPTS --> 
+
+<script src="assets/plugins/bootstrap/js/bootstrap-tabcollapse.js"></script>
+<!-- bootstrap validator -->
+<script src="assets/plugins/bootstrapValidator/bootstrapValidator.min.js" type="text/javascript"></script>
+	
+<!-- maniac -->
+<script src="assets/js/maniac.js" type="text/javascript"></script>
+<!-- datepicker --> 
+<script src="assets/plugins/datepicker/js/bootstrap-datepicker.js" type="text/javascript"></script>
+<script src="assets/plugins/bootstrap-daterangepicker/moment.min.js" type="text/javascript"></script> 
+<script src="assets/plugins/bootstrap-daterangepicker/daterangepicker.js" type="text/javascript"></script> 
+
+<script type="text/javascript">
+var tableUUIDStr= '<!--#4DVAR [Companies]uuid -->';
+var tableNameStr='Companies';
+
+maniac.loadvalidator();
+
+function clearLicenseManagerForm(){
+	// $("#lm_Version").val('');
+	//$("#lm_Vertical").val('');
+	$(".lm_platform").attr("checked",false);
+	$(".lm_type_of_licence").attr("checked",false);
+	$("#lm_noOfUsers").val('');
+	$("#lm_licenceNo").val('');
+	$('#platform_check').val('');
+	$('#type_of_licence_check').val(''); 
+}
+
+function openActivateLicenseModal(){
+	$("#lm_Version").val('<!--#4DHTMLVAR [LicenceNumbers]version_number-->');
+	//$("#lm_Vertical").val('<!--#4DHTMLVAR [LicenceNumbers]version_number-->');
+	var platformStr='<!--#4DHTMLVAR [LicenceNumbers]platform-->';
+	$('input.lm_platform:checkbox[value="' +platformStr+ '"]').attr('checked', 'checked');
+	
+	var typeOfLicenseStr='<!--#4DHTMLVAR [LicenceNumbers]type_of_licence-->';
+	$('input.lm_type_of_licence:checkbox[value="' +typeOfLicenseStr+ '"]').attr('checked', 'checked');
+	
+	$("#lm_noOfUsers").val(<!--#4DVAR [LicenceNumbers]number_of_users-->);
+	var licenseNoStr='<!--#4DVAR [Companies]licence_number-->';
+	console.log(licenseNoStr)
+	$("#lm_licenceNo").val(licenseNoStr);
+	
+	$('#licenseManagerModal').modal('show');	
+}
+
+function set_platform_check(platform_value){
+ 	$('#platform_check').val(platform_value);
+	if($("#platform_check").val()!='' && $('#type_of_licence_check').val()!=''){
+		$("#validation").html('');	
+	}
+}
+ 
+function set_type_check(type_value){
+ 	$('#type_of_licence_check').val(type_value);
+	if($("#platform_check").val()!='' && $('#type_of_licence_check').val()!=''){
+		$("#validation").html('');	
+	}
+}
+                
+function get_license(){
+	var Version=$("#lm_Version").val();
+	var Vertical=$("#lm_Vertical").val();
+	var noOfUsers=$('#lm_noOfUsers').val();
+	var licenceNo=$('#lm_licenceNo').val();
+	var platform_check=$('#platform_check').val();
+	var type_of_licence_check=$('#type_of_licence_check').val(); 
+	var Company_uuid='<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->';
+
+	if(platform_check!='' && type_of_licence_check!=''){
+		if(licenceNo!=''){
+			var dataString = 'licenceNo='+ licenceNo +'&Version='+Version+'&Vertical='+Vertical+'&noOfUsers='+noOfUsers+'&Company_uuid='+Company_uuid+'&platform_check='+platform_check+'&type_of_licence_check='+type_of_licence_check+'&redirect=false';
+		}else{
+			var dataString = 'Version='+Version+'&Vertical='+Vertical+'&noOfUsers='+noOfUsers+'&Company_uuid='+Company_uuid+'&platform_check='+platform_check+'&type_of_licence_check='+type_of_licence_check+'&redirect=false';	
+		}
+		$.ajax({
+			type: "GET",
+			dataType: "json",
+			url: "generatelicensenumber.cgi",
+			data: dataString,
+			cache: false,
+			success: function(html){
+				if(html.License){
+					//console.log(html.License);		
+					$("#lm_licenceNo").val(html.License);
+					$("#validation").html("");
+					$("#license_number").val(html.License);
+				}
+			}
+		});
+	}else{
+		var msg = "<span style='color:#CC0000;'>* Please select Platform and Type Of License</span>" ;
+		$("#validation").html(msg);
+	}
+}
+
+function activate_license(){
+	var Version=$("#lm_Version").val();
+	var Vertical=$("#lm_Vertical").val();
+	var noOfUsers=$('#lm_noOfUsers').val();
+	var licenceNo=$('#lm_licenceNo').val();
+	var platform_check=$('#platform_check').val();
+	var type_of_licence_check=$('#type_of_licence_check').val(); 
+	var Company_uuid='<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->';
+
+	if(licenceNo!=''){
+		var dataString = 'licenceNo='+ licenceNo +'&Version='+Version+'&Vertical='+Vertical+'&noOfUsers='+noOfUsers+'&Company_uuid='+Company_uuid+'&platform_check='+platform_check+'&type_of_licence_check='+type_of_licence_check+'&redirect=false';
+	}	else	{
+		var dataString = 'Version='+Version+'&Vertical='+Vertical+'&noOfUsers='+noOfUsers+'&Company_uuid='+Company_uuid+'&platform_check='+platform_check+'&type_of_licence_check='+type_of_licence_check+'&redirect=false';	
+	}
+	
+	if(licenceNo!=''){
+		$.ajax({
+			type: "GET",
+			dataType: "json",
+			url: "activatelicense.cgi",
+			data: dataString,
+			cache: false,
+			success: function(html){
+				if(html.Message){		
+					var message ="Licence no. "+licenceNo+" activated and the customer information OK! Email licence to customer.";
+					__alertMessage(message);
+				}
+		  		if(html.ErrorMessage){		
+					__alertMessage(html.ErrorMessage);
+				}
+			}
+		});
+	}else{
+		$("#validation").html("<span style='color:#CC0000;'>* Please generate a new License Number</span>");
+	}
+}
+ 
+
+function email_license(){
+	var Version=$("#lm_Version").val();
+	var Vertical=$("#lm_Vertical").val();
+	var noOfUsers=$('#lm_noOfUsers').val();
+	var licenceNo=$('#lm_licenceNo').val();
+	var platform_check=$('#platform_check').val();
+	var type_of_licence_check=$('#type_of_licence_check').val(); 
+	var Company_uuid='<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->';
+	
+	if(licenceNo!=''){
+		var dataString = 'licenceNo='+ licenceNo +'&Version='+Version+'&Vertical='+Vertical+'&noOfUsers='+noOfUsers+'&Company_uuid='+Company_uuid+'&platform_check='+platform_check+'&type_of_licence_check='+type_of_licence_check+'&redirect=false';
+	}else{
+		var dataString = 'Version='+Version+'&Vertical='+Vertical+'&noOfUsers='+noOfUsers+'&Company_uuid='+Company_uuid+'&platform_check='+platform_check+'&type_of_licence_check='+type_of_licence_check+'&redirect=false';	
+	}
+	
+	if(licenceNo!=''){
+		$.ajax({
+			type: "GET",
+			dataType: "json",
+			url: "mail_license.cgi",
+			data: dataString,
+			cache: false,
+			success: function(html){
+				if(html.mailsent){		
+					__alertMessage('License Number sent to the Customer');
+				}
+		 		if(html.mailerror){		
+					__alertMessage(html.mailerror);
+				}
+	 
+			}
+		});
+	}else{
+		$("#validation").html("<span style='color:#CC0000;'>* Please generate a new License Number</span>");
+	}
+}
+
+	$(document).ready(function () {
+		<!--#4DIF (Records in selection([Companies])=0)-->
+			var new_acc_no='<!--#4DVAR  SequenceNumber (->[Companies]account_Number)-->';
+			var new_uuid='<!--#4DVAR Generate UUID-->';
+			$('#acc_no').val(new_acc_no);
+			$('#Company_uuid').val(new_uuid);
+		<!--#4DELSE--><!--#4DENDIF-->
+			
+		$('#new-customer-tab').tabCollapse();
+		
+        $('.datepicker').datepicker({
+           format: "dd/mm/yyyy"
+       	});  
+       	$('#new-customer-tab').on('click', function(e){
+			$('#new-customer-tab').toggleClass('glyphicon glyphicon-chevron-down , glyphicon glyphicon-chevron-up', 200);
+		});
+    });
+
+
+</script>
+<!-- END JAVASCRIPTS -->
+<script type='text/javascript' src='assets/js/contactcustomer.js'></script>
+<script type='text/javascript' src='assets/js/customerNotes.js'></script>
+</body>
+<!-- END BODY -->
+</html>

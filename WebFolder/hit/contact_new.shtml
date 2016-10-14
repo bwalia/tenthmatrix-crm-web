@@ -1,0 +1,658 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+C_TEXT(_HTMLTITLETXT)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+
+QUERY([Contacts];[Contacts]uuid=_HIT_WebApp_GetField ("uuid"))
+QUERY([Companies];[Companies]account_Number=num([Contacts]client_id))
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+
+IF (Records in selection([Contacts])=0)
+_HTMLTITLETXT:="New Contact"
+ELSE
+_HTMLTITLETXT:= "Edit Contact"
+if([Contacts]First name#"")
+_HTMLTITLETXT:= _HTMLTITLETXT+": "+[Contacts]First name
+end if
+
+if([Contacts]Surname#"")
+_HTMLTITLETXT:= _HTMLTITLETXT+" "+[Contacts]Surname
+end if
+
+END IF
+
+
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+-->
+<!DOCTYPE html>
+<html>
+<head>
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+	<!--<link rel="stylesheet" href="css/base/jquery-ui.css" />-->
+	<link rel="stylesheet" href="css/autocomplete.css" />
+	<link href="css/img-tabs.css" type="text/css" rel="stylesheet">
+	<link rel="stylesheet" media="all" type="text/css" href="css/jquery-impromptu.css" />
+<style>
+#ContactForm em.error {
+	margin-left: 10px;
+	width: auto;
+	display: inline;
+}
+#ContactForm em.error {
+    color: red;
+    font-style: italic;
+}
+#ContactForm input.error, textarea.error, select.error{
+    border: 1px solid red;
+}
+
+</style>
+</head>
+<body>
+
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
+
+
+	<!-- main container -->
+    <div class="content">
+        
+        <div class="container-fluid">
+            <div id="pad-wrapper" class="form-page">
+				 <div class="row-fluid header">
+					<h3><!--#4DIF (Records in selection([Contacts])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Contact</h3>
+                </div>
+                <!--#4DIF (Records in selection([Contacts])=1)-->
+                <div id="tabs">
+					<ul>
+						<li ><a style="color:#000000" href="#tabs-1">Basic Details</a></li>
+						<li ><a style="color:#000000" href="#tabs-2">Assign Modules</a></li>
+					</ul>
+					<div id="tabs-1" class="var_tabs">
+					<!--#4DENDIF-->  
+                <div class="row-fluid form-wrapper">
+					<!-- left column -->
+                    <div class="span9 with-sidebar">
+						<form name="ContactForm" id="ContactForm" action="savecontact.cgi" class="form-comment" method="post">							
+							<div class="field-box">
+								<label>Client Name <span style="color:#6E829B">*</span></label>
+								<div class="ui-widget">
+									<select id="Client_ID" name="Client_ID">
+									<!--#4DIF (Records in selection([Contacts])=0)-->
+										<option value=""></option>
+									<!--#4DSCRIPT/Web_LoadCustomers/-->
+									 <!--4DLOOP  [Companies]-->
+										<option value="<!--4DVAR [Companies]account_Number-->"  <!--#4DIF ([Contacts]client_id=[Companies]account_Number)-->selected<!--4DELSE--><!--4DENDIF-->><!--4DVAR [Companies]company_Name--></option>		
+									 <!--4DENDLOOP-->
+									 <!--#4DELSE-->
+										 <option value="<!--4DVAR [Companies]account_Number-->" selected><!--4DVAR [Companies]company_Name--></option>									 
+										 <!--#4DENDIF-->
+									</select>
+								</div>
+							</div>
+							<input name="form_name" class="span9" type="hidden" value="ContactForm" id="form_name">
+							<input name="Contact_uuid" class="span9" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="Contact_uuid">        
+							 <div class="field-box">
+								<label>First name <span style="color:#6E829B">*</span></label>
+								<input name="First_Name" class="span5" type="text" value="<!--#4DVAR [Contacts]First name-->" id="First_Name">
+							</div>
+							<div class="span12 field-box">
+								<label>Surname </label>
+								<input name="Surname" class="span5" type="text" value="<!--#4DVAR [Contacts]Surname-->" id="Surname">                                 
+							</div>
+							<div class="span12 field-box">
+								<label>Title</label>
+								<input name="Title" class="span5" type="text" value="<!--#4DVAR [Contacts]Title-->" id="Title">
+							</div>						   
+							<div class="span12 field-box">
+								<label>Salutation</label>
+								<input name="Salutation" class="span5" type="text" value="<!--#4DVAR [Contacts]Salutation-->" id="Salutation">						
+							</div>
+							<div class="span12 field-box">
+								<label>Email </label>
+								<input name="Email" class="span5" type="text" value="<!--#4DVAR [Contacts]Email-->" id="Email">
+							</div>
+							<div class="span12 field-box">
+								<label>Password </label>
+								<input name="zWebPassword" class="span5" type="password" value="<!--#4DVAR [Contacts]zWebPassword-->" id="zWebPassword">
+							</div>
+							<div class="span12 field-box">
+								<label>Direct Phone</label>
+								<input class="span5 phone" type="text" value="<!--#4DVAR [Contacts]Direct Phone-->" name="Direct_Phone" id="Direct_Phone">
+							</div>
+							<div class="span12 field-box">
+								<label>Mobile </label>
+								<input name="Mobile" class="span5 phone" type="text" value="<!--#4DVAR [Contacts]Mobile-->" id="Mobile">
+							</div>							
+							
+							<div class="span12 field-box">
+								<label>Direct fax</label>
+								<input name="Direct_fax" class="span5" type="text" value="<!--#4DVAR [Contacts]Direct fax-->" id="Direct_fax">
+							</div>
+							<input name="DateAdded" class="span5" type="hidden" value="<!--#4DVAR [Contacts]DateAdded-->" id="DateAdded">
+							<div class="span12 field-box">
+								<label>Comments</label>
+								<textarea name="Comments" class="span5" rows="4" id="Comments"><!--#4DVAR [Contacts]Comments --></textarea>
+							</div>
+							<div class="field-box">
+                                <label>News Letter Status</label>
+                                <div class="ui-select span5">
+									<Select name="News_Letter_Status" id="Task_Active" name="News_Letter_Status">
+										<option value="Subscriber" <!--#4DIF ([Contacts]GetsNewsletter=True)-->selected<!--4DELSE--><!--4DENDIF-->>Subscriber</option>
+										<option value="Non Subscriber" <!--#4DIF ([Contacts]GetsNewsletter=False)-->selected<!--4DELSE--><!--4DENDIF-->>Non Subscriber</option>
+									</select>                                     
+                                </div>
+                            </div>
+                            <div class="field-box">
+							<label></label>
+							<label class="checkbox" style="width:auto">							
+								<input name="allow_webAccess" class="span2" type="checkbox" value="true" id="allow_webAccess" <!--#4DIF ([Contacts]AllowWebAccess)-->checked<!--4DELSE--><!--4DENDIF--> >Allow WebAccess
+							</label>                                                         
+                            </div>
+							<div class="span11 field-box" style="text-align: center;">
+								<input type="submit" class="btn-glow primary" value="Submit">
+								<span>OR</span>
+								<a href="contacts.shtml">Cancel</a>
+								<!-- <input type="reset" value="Cancel" class="reset"> -->
+							</div>
+						</form>
+                    </div>
+				</div>
+				<!--#4DIF (Records in selection([Contacts])=1)-->
+				</div>
+					<div id="tabs-2" class="var_tabs">
+					<div class="moduleClass">
+					
+					</div>
+						<!--<div class="field-box span12">
+							<label style="padding-left: 2px;">							
+								<input disabled type="checkbox" value="true" id="module_contacts"> Contacts
+							</label> 
+						</div>
+						<div class="field-box span12">
+							<label class="span3">							
+								<input class="submenu submenu_12 module_contacts" type="checkbox" value="12" name="submenu_contacts" onClick="set_permissions('contacts',12)"> Contacts
+							</label> 
+							<label class="span2">							
+								<input disabled class="permission_12" type="radio" value="0" name="permission_12"> Invisible
+							</label> 
+							<label class="span2">							
+								<input disabled class="permission_12" type="radio" value="1" name="permission_12"> Read Only
+							</label> 
+							<label class="span2">							
+								<input disabled class="permission_12" type="radio" value="2" name="permission_12"> Read & Write
+							</label>                                                         
+                        </div>
+                                              
+						<div class="field-box span12">
+							<label class="span3">							
+								<input class="submenu submenu_23 module_contacts" type="checkbox" value="23" name="submenu_new_contact" onClick="set_permissions('contacts',23)"> Enter new Contact
+							</label> 
+							<label class=" span2">							
+								<input disabled class="permission_23" type="radio" value="0" name="permission_23"> Invisible
+							</label> 
+							<label class=" span2">							
+								<input disabled class="permission_23" type="radio" value="1" name="permission_23"> Read Only
+							</label> 
+							<label class=" span2">							
+								<input disabled class="permission_23" type="radio" value="2" name="permission_23"> Read & Write
+							</label>                                                       
+                        </div>
+                        
+                        <div class="field-box span12">
+							<label style="padding-left: 2px;">							
+								<input disabled type="checkbox" value="true" id="module_customers"> Customers Module
+							</label> 
+						</div>
+						<div class="field-box span12">
+							<label class="span3">							
+								<input class="submenu submenu_34 module_customers" type="checkbox" value="34" name="submenu_customers" onClick="set_permissions('customers',34)"> Customer
+							</label> 
+							<label class="span2">							
+								<input disabled class="permission_34" type="radio" value="0" name="permission_34"> Invisible
+							</label> 
+							<label class="span2">							
+								<input disabled class="permission_34" type="radio" value="1" name="permission_34"> Read Only
+							</label> 
+							<label class="span2">							
+								<input disabled class="permission_34" type="radio" value="2" name="permission_34"> Read & Write
+							</label>                                                         
+                        </div>
+                                              
+						<div class="field-box span12">
+							<label class="span3">							
+								<input class="submenu submenu_45 module_customers" type="checkbox" value="45" name="submenu_new_contact" onClick="set_permissions('customers',45)"> Enter new Customer
+							</label> 
+							<label class=" span2">							
+								<input disabled class="permission_45" type="radio" value="0" name="permission_45"> Invisible
+							</label> 
+							<label class=" span2">							
+								<input disabled class="permission_45" type="radio" value="1" name="permission_45"> Read Only
+							</label> 
+							<label class=" span2">							
+								<input disabled class="permission_45" type="radio" value="1" name="permission_45"> Read & Write
+							</label>                                                       
+                        </div>-->
+                        <div class="span11 field-box" style="text-align: center;">
+							<a href="javascript:void(0)" class="btn-glow primary" onClick="save_modules()">Save Modules</a>
+						</div>
+					</div>
+				</div>
+				<!--#4DENDIF--> 
+				 
+            </div>
+        </div>
+    </div>
+    <!-- end main container -->
+
+	<!-- scripts -->
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+	<!-- <script src="js/ui/jquery-ui.js"></script> -->
+	<script src="js/bootstrap.datepicker.js"></script>
+	<script src="js/jquery.validate.js"></script>
+	<script type="text/javascript" src="js/jquery-impromptu.js"></script>
+	<!-- call this page plugins -->
+
+<script type="text/javascript">
+function save_modules(){
+	var modulePermissionArr= new Array();
+	var i=0;
+	$('.submenu').each(function(){
+		if($(this).is(':checked')){
+			var sub_uuid= $(this).val();
+			$('.permission_'+sub_uuid).each(function(){
+				if($(this).is(':checked')){
+					modulePermissionArr[i]= sub_uuid+'_'+$(this).val();
+					i++;
+				}
+			});
+		}
+	});
+	//console.log(modulePermissionArr.join());
+	$.ajax({
+		type: "GET",
+		url: "saveusermodule.cgi",
+		data: {'user_uuid' : '<!--#4DVAR [Contacts]uuid-->', "user_access" : modulePermissionArr.join()},
+		dataType: "json",
+		cache: false,
+		success: function(response){
+			if(response.success){
+				$.prompt({
+					state0: {
+						title: response.success,
+						html:'',
+						buttons: { Ok: 1 },
+						submit:function(e,v,m,f){ 
+							if(v==1) {
+								$.prompt.close();
+								location.reload();
+							}
+						}
+					},
+				});
+			}else if(response.error){
+				__alertMessage(response.error);
+			}
+		}
+	});
+}
+function set_permissions(module, val){
+	val = typeof val !== 'undefined' ? val : '';
+	if(val!=""){
+		if($('.submenu_'+val).is(":checked")){
+			$('.permission_'+val).attr("disabled", false);
+			$(".permission_"+val+":radio[value=0]").attr('checked',true);
+		}else{
+			$('.permission_'+val).removeAttr("checked");
+			$('.permission_'+val).prop('checked', false);
+			$('.permission_'+val).attr("disabled", true);
+		}
+	}
+	var i=0, s_count=0;
+		$('.module_'+module).each(function(){
+			i++;
+			if($(this).is(':checked')){
+				s_count++;
+			}
+		});
+		
+		if(i!=0 && s_count!=0 && i==s_count){
+			$('#module_'+module).prop("indeterminate", false);
+			$('#module_'+module).prop("checked", true);
+		}else if(i!=0 && s_count!=0 && i>s_count){
+			$('#module_'+module).prop("checked", false);
+			$('#module_'+module).prop("indeterminate", true);
+		}else{
+			$('#module_'+module).prop("indeterminate", false);
+			$('#module_'+module).prop("checked", false);
+		}
+}
+
+function load_contacts_modules(){
+	
+	var jsonUrl= 'loadusermodules.cgi?user_uuid=<!--#4DVAR [Contacts]uuid-->';
+	
+	if(xhr) xhr.abort();
+	xhr=$.getJSON(jsonUrl,function(result){
+		if(result.Alert){
+			//
+		}else{
+			var table_html="";
+			var moduleStatusStr= new Array();
+			
+			$.each(result, function(i,item){
+				if(item.Sub_Module){
+					if(item.Sub_Module!=""){
+						if(item.uuid){
+							table_html+='<div class="field-box span12"><label style="padding-left: 2px;">';
+							table_html+='<input disabled type="checkbox" value="true" id="module_'+item.code+'"> '+item.Module_name;
+							table_html+='</label></div>';
+							var subTableHtmlStr='';
+							$.each(item.Sub_Module, function(i,row){
+								var permissionNum="";
+								if(row.displayed=="yes"){
+									if(row.permission!=""){
+										permissionNum=row.permission;
+										moduleStatusStr.push(item.code);
+									}
+								}
+								
+								subTableHtmlStr+='<div class="field-box span12">';
+								subTableHtmlStr+='<label class="span3"><input ';
+								if(permissionNum!=""){
+									subTableHtmlStr+=' checked ';
+								}
+								subTableHtmlStr+='class="submenu submenu_'+row.sub_module_uuid+' module_'+item.code+'" type="checkbox" value="'+row.sub_module_uuid+'" name="submenu_'+item.code+'" onClick="set_permissions(\''+item.code+'\',\''+row.sub_module_uuid+'\')"> '+row.sub_module_name+'</label>';
+								subTableHtmlStr+='<label class="span2"><input ';
+								if(permissionNum!="" && permissionNum==0){
+									subTableHtmlStr+=' checked ';
+								}else if(permissionNum!=""){
+									subTableHtmlStr+='';
+								}else{
+									subTableHtmlStr+=' disabled ';
+								}
+								subTableHtmlStr+='class="permission_'+row.sub_module_uuid+'" type="radio" value="i" name="permission_'+row.sub_module_uuid+'"> Invisible</label>';
+								subTableHtmlStr+='<label class="span2"><input ';
+								if(permissionNum!="" && permissionNum==1){
+									subTableHtmlStr+=' checked ';
+								}else if(permissionNum!=""){
+									subTableHtmlStr+='';
+								}else{
+									subTableHtmlStr+=' disabled ';
+								}
+								subTableHtmlStr+='class="permission_'+row.sub_module_uuid+'" type="radio" value="r" name="permission_'+row.sub_module_uuid+'"> Read Only</label>';
+								subTableHtmlStr+='<label class="span2"><input ';
+								if(permissionNum!="" && permissionNum==2){
+									subTableHtmlStr+=' checked ';
+								}else if(permissionNum!=""){
+									subTableHtmlStr+='';
+								}else{
+									subTableHtmlStr+=' disabled ';
+								}
+								subTableHtmlStr+='class="permission_'+row.sub_module_uuid+'" type="radio" value="rw" name="permission_'+row.sub_module_uuid+'"> Read & Write</label>';
+								subTableHtmlStr+='</div>';
+							});
+							table_html+=subTableHtmlStr;
+						}
+					}
+				}                
+			});
+			$(".moduleClass").html(table_html);
+			
+			moduleStatusStr=$.unique(moduleStatusStr);
+			//console.log(moduleStatusStr);
+
+			if(moduleStatusStr.length>=0){
+				for (i = 0; i < moduleStatusStr.length; i++) {
+					//console.log(moduleStatusStr[i]);
+    				set_permissions(moduleStatusStr[i]);
+				}
+			}
+			
+		}
+	});
+}
+
+	$(function () {
+		<!--#4DIF (_HIT_WebApp_GetField ("uuid")="")-->
+			$(':input','#ContactForm')
+ 			.not(':button, :submit, :reset, :hidden')
+ 			.val('')
+ 			.removeAttr('checked')
+ 			.removeAttr('selected');
+		<!--#4DELSE--><!--#4DENDIF-->
+		
+		<!--#4DIF (Records in selection([Contacts])=1)-->
+			$( "#tabs" ).tabs();
+			load_contacts_modules();
+		<!--#4DENDIF--> 
+		
+		// datepicker plugin
+		//$( "#Date_Added" ).datepicker();
+		$('.datepicker').datepicker().on('changeDate', function(){
+          $(this).blur();
+        });
+				
+		$('.phone').keypress(function(e){
+			var k = e.which;
+			/* numeric inputs can come from the keypad or the numeric row at the top */
+			 if ((k<48 || k>57) && (k!=45) && (k!=43) && (k!=40) && (k!=41) && (k!=32) && (k!=44) && (k!=46) && (k!=8) && (k!=0)) {
+				e.preventDefault();
+				return false;
+			}
+		}); 
+		
+		// validate signup form on keyup and submit
+		$("#ContactForm").validate({
+			ignore: "",
+			onkeyup: false,
+			errorClass: 'error',
+			validClass: 'valid',
+			errorElement: "em",
+			errorPlacement: function(error, element) {
+				$(element).closest('div').append(error);
+			},
+			rules: {
+				Client_ID: { required: true },
+				First_Name: { required: true },
+				Email: { required: true, email: true },
+				Date_Added: { required: true },
+			},
+			});	
+	});
+
+	 var xhr;
+  (function( $ ) {
+    $.widget( "custom.combobox", {
+      _create: function() {
+        this.wrapper = $( "<span>" )
+          .addClass( "custom-combobox" )
+          .insertAfter( this.element );
+ 
+        this.element.hide();
+        this._createAutocomplete();
+        this._createShowAllButton();
+      },
+ 
+      _createAutocomplete: function() {
+        var selected = this.element.children( ":selected" ),
+          value = selected.val() ? selected.text() : "";
+ 
+        this.input = $( "<input>" )
+          .appendTo( this.wrapper )
+          .val( value )
+          .attr( "title", "" )
+          .addClass( "custom-combobox-input ui-widget ui-widget-content ui-state-default ui-corner-left" )
+          .autocomplete({
+            delay: 0,
+            minLength: 0,
+            source: $.proxy( this, "_source" )
+          })
+          .tooltip({
+            tooltipClass: "ui-state-highlight"
+          });
+ 
+        this._on( this.input, {
+          autocompleteselect: function( event, ui ) {
+		  	//alert("show all");
+            ui.item.option.selected = true;
+			
+            this._trigger( "select", event, {
+              item: ui.item.option
+            });
+          },
+ 
+          autocompletechange: "_removeIfInvalid"
+        });
+      },
+ 
+      _createShowAllButton: function() {
+        var input = this.input,
+          wasOpen = false;
+ 
+        $( "<a>" )
+          .attr( "tabIndex", -1 )
+          .attr( "title", "Show All Items" )
+          .tooltip()
+          .appendTo( this.wrapper )
+          .button({
+            icons: {
+              primary: "ui-icon-triangle-1-s"
+            },
+            text: false
+          })
+          .removeClass( "ui-corner-all" )
+          .addClass( "custom-combobox-toggle ui-corner-right" )
+          .mousedown(function() {
+            wasOpen = input.autocomplete( "widget" ).is( ":visible" );
+          })
+          .click(function() {
+            input.focus();
+ 
+            // Close if already visible
+            if ( wasOpen ) {
+              return;
+            }
+ 
+            // Pass last search string as value to search for, displaying last results
+            input.autocomplete( "search", 'SHOWALL' );
+          });
+      },
+ 
+      _source: function( request, response ) {
+        //var matcher = new RegExp( $.ui.autocomplete.escapeRegex(request.term), "i" );
+		var ele_select= this.element;
+		if(request.term=='SHOWALL'){
+			response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+		
+		}
+		else
+		{
+		var jsonRow = 'getcompaniesonsearch.cgi?srch='+request.term;
+		
+
+		//alert(jsonRowURLStr);
+		if(xhr) xhr.abort();
+		xhr=$.getJSON(jsonRow,function(result){
+			
+			if(result){
+				var html='<option value=""></option>';
+
+				$.each(result, function(i,item)
+				{
+					html += '<option value="'+item.id+'">'+item.value+'</option>';
+				});
+				ele_select.html(html);
+				
+				
+				response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+				
+				
+			}
+		});
+       
+	  } 
+		
+      },
+ 
+      _removeIfInvalid: function( event, ui ) {
+ 
+        // Selected an item, nothing to do
+        if ( ui.item ) {
+
+          return;
+        }
+ 
+        // Search for a match (case-insensitive)
+        var value = this.input.val(),
+          valueLowerCase = value.toLowerCase(),
+          valid = false;
+        this.element.children( "option" ).each(function() {
+          if ( $( this ).text().toLowerCase() === valueLowerCase ) {
+            this.selected = valid = true;	
+			
+            return false;
+          }
+        });
+ 
+        // Found a match, nothing to do
+        if ( valid ) {
+          return;
+        }
+ 
+        // Remove invalid value
+        this.input
+          .val( "" )
+          .attr( "title", value + " didn't match any item" )
+          .tooltip( "open" );
+        this.element.val( "" );
+        this._delay(function() {
+          this.input.tooltip( "close" ).attr( "title", "" );
+        }, 2500 );
+        this.input.data( "ui-autocomplete" ).term = "";
+      },
+ 
+      _destroy: function() {
+        this.wrapper.remove();
+        this.element.show();
+      }
+    });
+  })( jQuery );
+ 
+  $(function() {
+    $( "#Client_ID" ).combobox();
+   
+	
+  });
+
+  </script>
+	
+	
+</body>
+</html>

@@ -1,0 +1,824 @@
+<!--HIT_EXECUTE
+
+
+
+C_TEXT(_HIT_HTMLTXT)
+
+C_LONGINT(_HIT_COUNTER)
+
+
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+
+QUERY([Lead_Contacts];[Lead_Contacts]uuid=_HIT_WebApp_GetField ("uuid"))
+
+QUERY([Leads];[Leads]RecordNumber=[Lead_Contacts]CompanyNumber)
+
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+
+else
+
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+
+end if 
+
+
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+
+-->
+
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+
+	<link rel="stylesheet" href="css/base/jquery-ui.css" />
+
+	<link rel="stylesheet" href="css/base/jquery.rating.css" />
+
+<style>
+
+  .custom-combobox {
+
+    position: relative;
+
+    display: inline-block;
+
+  }
+
+  .custom-combobox-toggle {
+
+    position: absolute;
+
+    top: 0;
+
+    bottom: 0;
+
+    margin-left: -1px;
+
+    padding: 0;
+
+    /* support: IE7 */
+
+    *height: 1.7em;
+
+    *top: 0.1em;
+
+  }
+
+  .custom-combobox-input {
+
+    margin: 0;
+
+    padding: 0.3em;
+
+  }
+
+  .ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {
+
+  	width:auto;
+
+	height:auto;
+
+  }
+
+  .ui-autocomplete{
+
+  	max-height:300px;
+
+	overflow:scroll;
+
+  }
+
+   
+
+  </style>
+
+</head>
+
+<body>
+
+
+
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+
+
+
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
+
+
+
+
+
+	<!-- main container -->
+
+    <div class="content">
+
+        
+
+        <div class="container-fluid">
+
+            <div id="pad-wrapper" class="form-page">
+
+				 <div class="row-fluid header">
+
+					<h3><!--#4DIF (Records in selection([Lead_Contacts])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Contact</h3>
+
+                </div>
+
+                <div class="row-fluid form-wrapper">
+
+					<!-- left column -->
+
+                    <div class="span9 with-sidebar">
+
+						<form name="ContactForm" action="saveLeadscontact.cgi" class="form-comment" method="post" onSubmit="return ValidateForm();">							
+
+							<div class="field-box">
+
+								<label>Lead Name <span style="color:#6E829B">*</span></label>
+
+								<div class="ui-widget">
+
+									<select id="Lead_ID" name="Lead_ID">
+
+									<!--#4DIF (Records in selection([Lead_Contacts])=0)-->
+
+										<option value=""></option>
+
+									<!--#4DSCRIPT/Web_LoadLeads/-->
+
+									 <!--4DLOOP  [Leads]-->
+
+										<!-- <option value="<!~~4DVAR [Leads]RecordNumber~~>"  ><!~~4DVAR [Leads]CompanyName~~></option>	 -->	
+										<option value="<!--4DVAR [Leads]RecordNumber-->"  <!--#4DIF ([Lead_Contacts]CompanyNumber=[Leads]RecordNumber)-->selected<!--4DELSE--><!--4DENDIF-->><!--4DVAR [Leads]CompanyName--></option>
+									 <!--4DENDLOOP-->
+
+									 <!--#4DELSE-->
+
+										 <option value="<!--4DVAR [Leads]RecordNumber-->" selected><!--4DVAR [Leads]CompanyName--></option>									 
+
+									 <!--#4DENDIF-->
+
+									</select>
+
+								</div>
+
+							</div>
+
+							<input name="Contact_uuid" class="span9" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="Contact_uuid">        
+
+							 <div class="field-box">
+
+								<label>Fore Name <span style="color:#6E829B">*</span></label>
+
+								<input name="Fore_name" class="span9" type="text" value="<!--#4DVAR [Lead_Contacts]Forename-->" id="Fore_name">
+
+							</div>
+
+							<div class="span12 field-box">
+
+								<label>Surname <span style="color:#6E829B">*</span></label>
+
+								<input name="Surname" class="span9" type="text" value="<!--#4DVAR [Lead_Contacts]Surname-->" id="Surname">                                 
+
+							</div>
+
+							<div class="span12 field-box">
+
+								<label>Title </label>
+
+								<input name="Title" class="span9" type="text" value="<!--#4DVAR [Lead_Contacts]Title-->" id="Title">
+
+							</div>						   
+
+							<div class="span12 field-box">
+
+								<label>Salutation </label>
+
+								<input name="Salutation" class="span9" type="text" value="<!--#4DVAR [Lead_Contacts]Salutation-->" id="Salutation">						
+
+							</div>
+
+							<div class="span12 field-box">
+
+								<label>Email <span style="color:#6E829B">*</span></label>
+
+								<input name="Email" class="span9" type="text" value="<!--#4DVAR [Lead_Contacts]Email-->" id="Email">
+
+							</div>
+
+							<div class="span12 field-box">
+
+								<label>Skype </label>
+
+								<input name="Skype" class="span9" type="text" value="<!--#4DVAR [Lead_Contacts]Skype-->" id="Skype">
+
+							</div>
+
+							<div class="span12 field-box">
+
+								<label>Direct Phone </label>
+
+								<input class="span9 phone" type="text" value="<!--#4DVAR [Lead_Contacts]Direct Phone-->" name="Direct_Phone" id="Direct_Phone">
+
+							</div>
+
+							<div class="span12 field-box">
+
+								<label>Direct Fax </label>
+
+								<input class="span9 phone" type="text" value="<!--#4DVAR [Lead_Contacts]DrectFax-->" name="Direct_Fax" id="Direct_Fax">
+
+							</div>
+
+							<div class="span12 field-box">
+
+								<label>Mobile </label>
+
+								<input name="Mobile" class="span9 phone" type="text" value="<!--#4DVAR [Lead_Contacts]Mobile-->" id="Mobile">
+
+							</div>							
+
+							
+
+							<div class="span12 field-box">
+
+								<label>Job Type</label>
+
+								<input name="job_type" class="span9" type="text" value="<!--#4DVAR [Lead_Contacts]JobType-->" id="job_type">
+
+							</div>
+ 							<div class="field-box">
+								<label></label>
+								<label class="checkbox" style="width:auto">							
+
+								<input name="dont_Email" class="span9" type="checkbox" value="true" id="dont_Email" <!--#4DIF ([Lead_Contacts]dontEmail)-->checked<!--4DELSE--><!--4DENDIF--> >Do not Email
+
+							</label>
+
+							<label class="checkbox" style="width:auto">							
+
+								<input name="Transferred_to_CC" class="span9" type="checkbox" value="true" id="Transferred_to_CC" <!--#4DIF ([Lead_Contacts]Transferred to CC)-->checked<!--4DELSE--><!--4DENDIF--> >Transferred to CC
+
+							</label>                                                             
+
+                            </div>
+
+							<div class="span11 field-box" style="text-align: center;">
+
+								<input type="submit" class="btn-glow primary" value="Submit">
+
+								<span>OR</span>
+
+								<a href="lead_contacts.shtml">Cancel</a>
+
+							</div>
+
+						</form>
+
+                    </div>
+
+				</div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- end main container -->
+
+    
+
+	<!-- scripts -->
+
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+
+	<script src="js/ui/jquery-ui.js"></script>
+
+	<script src="js/bootstrap.datepicker.js"></script>
+
+	<script src="js/jquery.uniform.min.js"></script>
+
+	<script src="http://code.jquery.com/jquery-1.9.1min.js" type="text/javascript" language="javascript"></script>
+
+	<script src="js/jquery.rating.js" type="text/javascript" language="javascript"></script>
+
+	<script src="js/jquery.rating.pack.js" type="text/javascript" language="javascript"></script>
+
+	 
+
+	<!-- call this page plugins -->
+
+	<script language="javascript">
+
+function ValidateForm () {
+
+var msg = '';
+
+if (document.ContactForm.Lead_ID.value=="")
+
+{ 
+
+	alert('Please Specify Client Name'); 
+
+	document.ContactForm.Lead_ID.focus();
+
+	return false;
+
+}
+
+if (document.ContactForm.Fore_name.value=="")
+
+{ 
+
+	alert('Please Specify Fore Name'); 
+
+	document.ContactForm.Fore_name.focus();
+
+	return false;
+
+}
+
+if (document.ContactForm.Surname.value=="")
+
+{ 
+
+	alert('Please Specify Surname'); 
+
+	document.ContactForm.Surname.focus();
+
+	return false;
+
+} 
+
+if (document.ContactForm.Email.value=="")
+
+{
+
+	alert('Please Specify Email'); 
+
+	document.ContactForm.Email.focus();
+
+	return false;
+
+}
+
+
+
+var regex = /^([a-zA-Z0-9_\.\-\+])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+
+if(document.ContactForm.Email.value!="" && !regex.test(document.ContactForm.Email.value))
+
+{ 
+
+	alert('Please Specify valid Email'); 
+
+	document.ContactForm.Email.focus();
+
+	return false;
+
+}
+
+
+
+/*if (document.ContactForm.Direct_Phone.value=="")
+
+{ 
+
+	alert('Please Specify Direct Phone'); 
+
+	document.ContactForm.Direct_Phone.focus();
+
+	return false;
+
+}*/
+
+
+
+
+
+}
+
+</script>
+
+<script type="text/javascript">
+
+	$(function () {
+
+		// datepicker plugin
+
+		//$( "#Date_Added" ).datepicker();
+
+		$('.datepicker').datepicker().on('changeDate', function(){
+
+          $(this).blur();
+
+        });
+
+		$("input:checkbox, input:radio").uniform();
+
+		$('.phone').keypress(function(e){
+
+						var k = e.which;
+
+    					/* numeric inputs can come from the keypad or the numeric row at the top */
+
+   						 if ((k<48 || k>57) && (k!=45) && (k!=43) && (k!=40) && (k!=41) && (k!=32) && (k!=44) && (k!=46) && (k!=8) && (k!=0)) {
+
+        					e.preventDefault();
+
+							//alert("Allowed characters are 0-9, +, -, (, )");
+
+        					return false;
+
+    					}
+
+					
+
+					}); 
+
+	});
+
+</script>
+
+    <script>
+
+	 var xhr;
+
+  (function( $ ) {
+
+    $.widget( "custom.combobox", {
+
+      _create: function() {
+
+        this.wrapper = $( "<span>" )
+
+          .addClass( "custom-combobox" )
+
+          .insertAfter( this.element );
+
+ 
+
+        this.element.hide();
+
+        this._createAutocomplete();
+
+        this._createShowAllButton();
+
+      },
+
+ 
+
+      _createAutocomplete: function() {
+
+        var selected = this.element.children( ":selected" ),
+
+          value = selected.val() ? selected.text() : "";
+
+ 
+
+        this.input = $( "<input>" )
+
+          .appendTo( this.wrapper )
+
+          .val( value )
+
+          .attr( "title", "" )
+
+          .addClass( "custom-combobox-input ui-widget ui-widget-content ui-state-default ui-corner-left" )
+
+          .autocomplete({
+
+            delay: 0,
+
+            minLength: 0,
+
+            source: $.proxy( this, "_source" )
+
+          })
+
+          .tooltip({
+
+            tooltipClass: "ui-state-highlight"
+
+          });
+
+ 
+
+        this._on( this.input, {
+
+          autocompleteselect: function( event, ui ) {
+
+		  	//alert("show all");
+
+            ui.item.option.selected = true;
+
+			
+
+            this._trigger( "select", event, {
+
+              item: ui.item.option
+
+            });
+
+          },
+
+ 
+
+          autocompletechange: "_removeIfInvalid"
+
+        });
+
+      },
+
+ 
+
+      _createShowAllButton: function() {
+
+        var input = this.input,
+
+          wasOpen = false;
+
+ 
+
+        $( "<a>" )
+
+          .attr( "tabIndex", -1 )
+
+          .attr( "title", "Show All Items" )
+
+          .tooltip()
+
+          .appendTo( this.wrapper )
+
+          .button({
+
+            icons: {
+
+              primary: "ui-icon-triangle-1-s"
+
+            },
+
+            text: false
+
+          })
+
+          .removeClass( "ui-corner-all" )
+
+          .addClass( "custom-combobox-toggle ui-corner-right" )
+
+          .mousedown(function() {
+
+            wasOpen = input.autocomplete( "widget" ).is( ":visible" );
+
+          })
+
+          .click(function() {
+
+            input.focus();
+
+ 
+
+            // Close if already visible
+
+            if ( wasOpen ) {
+
+              return;
+
+            }
+
+ 
+
+            // Pass last search string as value to search for, displaying last results
+
+            input.autocomplete( "search", 'SHOWALL' );
+
+          });
+
+      },
+
+ 
+
+      _source: function( request, response ) {
+
+        //var matcher = new RegExp( $.ui.autocomplete.escapeRegex(request.term), "i" );
+
+		var ele_select= this.element;
+
+		if(request.term=='SHOWALL'){
+
+			response(ele_select.children( "option" ).map(function() {
+
+          var text = $( this ).text();
+
+		 var value= $( this ).val();
+
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+
+            return {
+
+              label: text,
+
+              value: text,
+
+              option: this
+
+            };
+
+        }) );
+
+		
+
+		}
+
+		else
+
+		{
+
+		var jsonRow = 'getleadsonsearch.cgi?srch='+request.term;
+
+		
+
+
+
+		//alert(jsonRowURLStr);
+
+		if(xhr) xhr.abort();
+
+		xhr=$.getJSON(jsonRow,function(result){
+
+			
+
+			if(result){
+
+				var html='<option value=""></option>';
+
+
+
+				$.each(result, function(i,item)
+
+				{
+
+					html += '<option value="'+item.id+'">'+item.value+'</option>';
+
+				});
+
+				ele_select.html(html);
+
+				
+
+				
+
+				response(ele_select.children( "option" ).map(function() {
+
+          var text = $( this ).text();
+
+		 var value= $( this ).val();
+
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+
+            return {
+
+              label: text,
+
+              value: text,
+
+              option: this
+
+            };
+
+        }) );
+
+				
+
+				
+
+			}
+
+		});
+
+       
+
+	  } 
+
+		
+
+      },
+
+ 
+
+      _removeIfInvalid: function( event, ui ) {
+
+ 
+
+        // Selected an item, nothing to do
+
+        if ( ui.item ) {
+
+
+
+          return;
+
+        }
+
+ 
+
+        // Search for a match (case-insensitive)
+
+        var value = this.input.val(),
+
+          valueLowerCase = value.toLowerCase(),
+
+          valid = false;
+
+        this.element.children( "option" ).each(function() {
+
+          if ( $( this ).text().toLowerCase() === valueLowerCase ) {
+
+            this.selected = valid = true;	
+
+			
+
+            return false;
+
+          }
+
+        });
+
+ 
+
+        // Found a match, nothing to do
+
+        if ( valid ) {
+
+          return;
+
+        }
+
+ 
+
+        // Remove invalid value
+
+        this.input
+
+          .val( "" )
+
+          .attr( "title", value + " didn't match any item" )
+
+          .tooltip( "open" );
+
+        this.element.val( "" );
+
+        this._delay(function() {
+
+          this.input.tooltip( "close" ).attr( "title", "" );
+
+        }, 2500 );
+
+        this.input.data( "ui-autocomplete" ).term = "";
+
+      },
+
+ 
+
+      _destroy: function() {
+
+        this.wrapper.remove();
+
+        this.element.show();
+
+      }
+
+    });
+
+  })( jQuery );
+
+ 
+
+  $(function() {
+
+    $( "#Lead_ID" ).combobox();
+
+   
+
+	
+
+  });
+
+
+
+  </script>
+
+	
+
+	
+
+</body>
+
+</html>

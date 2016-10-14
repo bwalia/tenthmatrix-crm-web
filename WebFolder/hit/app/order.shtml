@@ -1,0 +1,1009 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+
+//if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+ALL RECORDS([Tax_Codes])
+QUERY([orders];[orders]uuid=_HIT_WebApp_GetField ("uuid"))
+QUERY([Companies];[Companies]account_Number=num([orders]client_id))
+QUERY([Projects];[Projects]proj_name=[orders]project_code)
+
+//else
+//_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+//end if 
+
+C_BOOLEAN(mUserIsCurrentBool)
+mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
+//_HIT_HTMLTXT:=_HIT_SessionStr
+-->
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Tenthmatrix CRM App : Order</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- bootstrap -->
+	<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="bootstrap/css/bootstrap-responsive.min.css" />
+	<!-- enhanced select -->
+        <link rel="stylesheet" href="lib/chosen/chosen.css" />
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/app/includes/header.shtml-->
+	
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    
+    <style type="text/css">
+		
+	.custom-combobox {
+    position: relative;
+    display: inline-block;
+  }
+  .custom-combobox-toggle {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    margin-left: -1px;
+    padding: 0;
+    /* support: IE7 */
+    *height: 1.7em;
+    *top: 0.1em;
+  }
+  .custom-combobox-input {
+    margin: 0;
+    padding: 0.3em;
+  }
+  .ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {
+  	width:auto;
+	height:auto;
+	 background: none repeat scroll 0% 0% #FFF;
+	 border: 1px solid #B6B6B6;
+  }
+  .ui-autocomplete{
+  	max-height:300px;
+	overflow:scroll;
+  }
+  
+  .ui-autocomplete li a{
+  	color: #737f8d;
+	text-shadow: 1px 1px 1px #fff;
+  }
+  .ui-widget-content {
+    border: 1px solid #B6B6B6;
+	width: 275px;
+	}
+
+	#items textarea {
+	width:300px;
+	height: 20px;
+	}
+	.rate{
+	width:50px;
+	}
+	.hours{
+	width:50px;
+	}
+	
+  #message, #tax_message{
+	color:#FF0000;
+}
+input[type="text"] + label.error, textarea + label.error{
+	margin-top:0px;
+	}
+	</style>
+	
+</head>
+<body>
+
+	<!-- main container -->
+    <div class="content wide-content">
+        <div class="container-fluid">
+            <div id="pad-wrapper" class="form-page">
+				<div class="row-fluid">
+					<div class="">
+						<form name="OrderForm" id="OrderForm" action="saveorder.cgi" class="form_validation_reg" method="post" >
+							<div class="tabbable">
+								<ul class="nav nav-tabs">
+									<li id="li1" class="active"><a href="#tab1" data-toggle="tab">Order Details</a></li>
+									<li id="li2"><a href="#tab2" data-toggle="tab">Internal Notes</a></li>
+								</ul>
+							</div>
+							<div class="tab-content">
+								<div class="tab-pane active" id="tab1">
+									<div class="row-fluid">
+										<div class="span12">
+											<div class="row-fluid">
+												<div class="span9">
+													<div class="form-horizontal well">
+														<fieldset>
+															<div class="control-group">
+																<label class="control-label">Order Number <span class="f_req">*</span></label>
+																<div class="controls">
+																	<input readonly type="hidden" class="span5" name="full_order_number" id="full_order_number" value="" />
+																	<input readonly type="text" class="span5" name="order_id" id="order_id" value="<!--#4DVAR [orders]order_id -->" />
+																</div>
+															</div>
+															<!--#4DIF (Records in selection([orders])=1)-->
+															<input name="order_uuid" class="span5" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="order_uuid"> 
+															<!--#4DELSE-->
+															<input name="order_uuid" class="span5" type="hidden" value="<!--#4DVAR Generate UUID-->" id="order_uuid"> 
+															<!--#4DENDIF-->
+															
+															<div class="control-group">
+																<label class="control-label">Client <span class="f_req">*</span></label><!--#4DIF (mUserIsCurrentBool)--><!--#4DVAR [Companies]company_Name--><!--#4DELSE-->
+																<div class="ui-widget" style="margin-left: 160px;">
+																	<select id="Client_ID" name="Client_ID">
+																	<!--#4DIF (Records in selection([orders])=0)-->
+																		<option value=""></option>
+																	<!--#4DSCRIPT/Web_LoadCustomers/-->
+																	 <!--4DLOOP  [Companies]-->
+																		<option value="<!--4DVAR [Companies]account_Number-->"  ><!--4DVAR [Companies]company_Name--></option>		
+																	 <!--4DENDLOOP-->
+																	 <!--#4DELSE-->
+																		 <option value="<!--4DVAR [Companies]account_Number-->" selected><!--4DVAR [Companies]company_Name--></option>									 
+																	 <!--#4DENDIF-->
+																	</select>
+																</div><!--#4DENDIF-->
+															</div>
+															<div class="control-group">
+																<label class="control-label">Bill To</label>
+																<div class="controls">
+																	<textarea <!--#4DIF (mUserIsCurrentBool)-->readonly<!--#4DELSE--><!--#4DENDIF--> name="order_bill_to" class="span5" cols="30" rows="3" id="order_bill_to"><!--#4DVAR [orders]bill_to --></textarea>
+																</div>
+															</div>
+															<div class="control-group">
+																<label class="control-label">Order By</label>
+																<div class="controls">
+																	<input <!--#4DIF (mUserIsCurrentBool)-->readonly<!--#4DELSE--><!--#4DENDIF--> name="ordered_by" class="span5" type="text" value="<!--#4DVAR [orders]ordered_by -->" id="ordered_by">
+																</div>
+															</div>
+															<div class="control-group">
+																<label class="control-label">Comments</label>
+																<div class="controls">
+																	<textarea <!--#4DIF (mUserIsCurrentBool)-->readonly<!--#4DELSE--><!--#4DENDIF--> name="comments" class="span7" rows="4" id="comments"><!--#4DVAR [orders]comments --></textarea>
+																</div>
+															</div>
+															<div class="control-group">
+																<label class="control-label">Project<span class="f_req">*</span></label>
+																 <div class="ui-widget" style="margin-left: 160px;" id="div_proj">
+																	<select name="Project_ID" id="Project_ID">
+																	<!--#4DIF (Records in selection([orders])=0)-->
+																		<option value=""></option>
+																	<!--#4DSCRIPT/Web_LoadProjects/-->
+																	<!--4DLOOP [Projects]-->
+																		<option value="<!--#4DVAR [Projects]proj_name-->" ><!--4DVAR [Projects]proj_name--></option>
+																	<!--4DENDLOOP--> 
+																	 <!--#4DELSE-->
+																		 <option value="<!--#4DVAR [Projects]proj_name-->" selected><!--4DVAR [Projects]proj_name--></option>									 
+																	 <!--#4DENDIF-->
+																	</select>
+																</div>
+															</div>
+															<br>						
+							<table id="items" class="items table table-condensed table-striped" data-provides="rowlink">
+								<thead>
+									<tr class="item">
+										<th>Item</th>
+										<th>Description</th>
+										<th>Rate</th>
+										<th>Qty</th>
+										<th>Discount(%)</th>
+										<th>Amount</th>
+										<th class="td_edit">Save</th>
+										<th class="td_remove">Cancel</th>
+									</tr>
+								</thead>
+							  <!--#4DIF (Records in selection([orders])=1)-->
+							   <!--#4DSCRIPT/Web_LoadOrderItems/-->
+							  <!--#4DLOOP [order_items]-->
+								<tbody>
+								<tr class="item-row" id="<!--#4DHTMLVAR [order_items]item_id-->">
+									<td class="item-id"><span class="item_id"><!--#4DHTMLVAR [order_items]item_id--></span>
+									<input class="item_uuid" type="hidden" value="<!--#4DHTMLVAR [order_items]uuid-->" />
+									</td>
+									<td >
+									<span class="s_description" ><!--#4DHTMLVAR [order_items]item_description--></span><input class="description" type="hidden" value="<!--#4DHTMLVAR [order_items]item_description-->" />
+									<div class="ui-widget div_i_description" style="display:none"><select name="product" id="get_products" class="i_description" onChange="get_details(this,this.value)"><option selected="selected" value="<!--#4DHTMLVAR [order_items]uuid_product-->"><!--#4DHTMLVAR [order_items]item_description--></option></select></textarea></div>
+									</td>
+									<td>
+									<span class="s_rate" ><!--#4DHTMLVAR [order_items]item_rate--></span>
+									<div><input type="text" class="rate num1" name="rate" style="display:none;" value="<!--#4DHTMLVAR [order_items]item_rate-->" ></div>
+									</td>
+									<td>
+									<span class="s_hours" ><!--#4DHTMLVAR [order_items]item_hours--></span>
+									<div><input type="text" class="hours num1" name="hours" style="display:none;" value="<!--#4DHTMLVAR [order_items]item_hours-->"></div>
+									</td>
+									<td>
+									<span class="s_discount" ><!--#4DHTMLVAR [order_items]item_discount--></span>
+									<div><input type="text" class="i_discount num1" name="i_discount" style="display:none;" value="<!--#4DHTMLVAR [order_items]item_discount-->"></div>
+									</td>
+									<td>
+									<span class="price" ><!--#4DHTMLVAR [order_items]item_amount--></span>
+										
+									</td>
+									<!--#4DIF (mUserIsCurrentBool)--><!--#4DELSE--><td class="td_edit">
+									<a href="javascript:void(0)" class="editlink">Edit</a>
+									<a href="javascript:void(0)" class="savelink" style="display:none">Save</a>
+									 </td>	
+									 <td class="td_remove"><a href="javascript:void(0)" class="removelink" >Remove</a>
+									<a href="javascript:void(0)" class="cancellink" style="display:none">Cancel</a>
+									</td>	<!--#4DENDIF--> 							
+									</tr>
+								
+		  
+								  <!--#4DENDLOOP-->
+								  <!--#4DENDIF-->
+							<!--#4DIF (mUserIsCurrentBool)--><!--#4DELSE-->		  <tr id="hiderow">
+									<td colspan="8"><a id="addrow" href="javascript:void(0)" title="Add a new Order Item">Add a new Order Item</a></td>
+								  </tr><!--#4DENDIF--> 
+								  </tbody>
+								</table>	<br/>			
+															<div class="control-group">
+																<label class="control-label">Total Hours</label>
+																<div class="controls">
+																	<input name="total_hours" class="span5" type="text" value="" id="total_hours" readonly>
+																</div>
+															</div>
+															<div class="control-group">
+																<label class="control-label">Order Subtotal</label><!--#4DIF (mUserIsCurrentBool)--><!--#4DVAR [orders]order_subtotal--><!--#4DELSE-->
+																<div class="controls">
+																	<input class="span5" type="text" value="<!--#4DVAR [orders]order_subtotal -->" name="order_subtotal" id="order_subtotal" readonly>
+																</div><!--#4DENDIF--> 
+															</div>
+															<div class="control-group">
+																<label class="control-label">Discount (%)</label><!--#4DIF (mUserIsCurrentBool)--><!--#4DVAR [orders]discount_applied--><!--#4DELSE-->
+																<div class="controls">
+																	<input class="span5" type="text" value="<!--#4DVAR [orders]discount_applied -->" name="discount_applied" id="discount_applied">
+																</div><!--#4DENDIF--> 
+															</div>
+															<div class="control-group">
+																<label class="control-label">Total Due</label>
+																<div class="controls">
+																	<input class="span5" type="text" value="<!--#4DVAR [orders]total_due_without_tax -->" name="total_due_without_tax" id="total_due_without_tax" readonly>
+																</div>
+															</div>
+															
+															<div class="control-group">
+																<label class="control-label">Tax Code</label>
+																<div class="controls">
+																	<select id="tax_code" name="tax_code" class="span5">
+																	<!--#4DSCRIPT/Web_LoadTax_Codes/-->
+																	<!--4DLOOP [Tax_Codes]-->
+																		<option value="<!--#4DVAR [Tax_Codes]Tax_Code-->" <!--#4DIF ([Tax_Codes]Tax_Code=[orders]tax_code)-->selected<!--4DELSE--><!--4DENDIF-->><!--4DVAR [Tax_Codes]Tax_Code--></option>
+																	<!--4DENDLOOP-->
+																	</select>
+																</div>
+															</div>
+															<div class="control-group">
+																<label class="control-label">Total Tax</label>
+																<div class="controls">
+																	<input name="total_tax" class="span5" type="text" value="<!--#4DVAR [orders]total_tax -->" id="total_tax" readonly>
+																</div>
+															</div>
+															<div class="control-group">
+																<label class="control-label">Total Due With Tax</label>
+																<div class="controls">
+																	<input name="total_due_with_tax" class="span5" type="text" value="<!--#4DVAR [orders]total_due_with_tax -->" id="total_due_with_tax" readonly>
+																</div>
+															</div>
+														</fieldset>
+													</div>
+												</div>
+												<div class="span3">
+													<div class="well form-inline">
+														<!--#4DIF (Records in selection([orders])=1)-->
+														<div class="control-group">
+															<div class="controls">
+																<a title="Generate Invoice" href="javascript:void(0)" onclick="generate_invoice()"><input type="button" id="generate_inv" class="btn-glow primary" value="Generate Invoice"></a>
+															</div>
+														</div>
+														<!--#4DELSE--><!--#4DENDIF-->
+														<div class="control-group">
+															<label class="control-label">Date <span class="f_req">*</span></label>
+															<div class="controls"><!--#4DIF (mUserIsCurrentBool)--><!--#4DVAR [orders]order_date--><!--#4DELSE-->
+																<div class="input-append date" id="dp1">
+																	<input class="span10" placeholder="Ordered Date" type="text" readonly="readonly"  name="ordered_date" id="ordered_date" <!--#4DIF ([orders]order_date=!00/00/00!)-->value=""<!--4DELSE-->value="<!--#4DVAR [orders]order_date-->"<!--4DENDIF--> data-date-format="dd/mm/yyyy" /><span class="add-on"><i class="splashy-calendar_day"></i></span>
+																</div>
+															</div><!--#4DENDIF-->
+														</div>
+														
+														<div class="control-group">
+															<label class="control-label">Balance Outstanding</label>
+															<div class="controls">
+																<input name="balance_due" class="span11 due" type="text" value="<!--#4DVAR [orders]balance_due -->" id="balance_due" readonly>
+															</div>
+														</div>
+														<div class="control-group">
+															<label class="control-label">Order Status</label><!--#4DIF (mUserIsCurrentBool)--><!--#4DVAR [orders]status--><!--#4DELSE-->
+															<div class="controls">
+																<select name="status" id="status" class="span11">
+																	<option value="0" <!--#4DIF ([orders]status=0)-->selected<!--4DELSE--><!--4DENDIF-->>Quote</option>
+																	<option value="1" <!--#4DIF ([orders]status=1)-->selected<!--4DELSE--><!--4DENDIF-->>Ordered</option>
+																	<option value="2" <!--#4DIF ([orders]status=2)-->selected<!--4DELSE--><!--4DENDIF-->>Acknowledged</option>
+																	<option value="3" <!--#4DIF ([orders]status=3)-->selected<!--4DELSE--><!--4DENDIF-->>Authorised</option>
+																	<option value="4" <!--#4DIF ([orders]status=4)-->selected<!--4DELSE--><!--4DENDIF-->>Delivered</option>
+																	<option value="5" <!--#4DIF ([orders]status=5)-->selected<!--4DELSE--><!--4DENDIF-->>Completed </option>
+																</select>                                    
+															</div><!--#4DENDIF--> 
+														</div>
+														
+														<div class="control-group">
+															<label class="control-label">Grand Total</label>
+															<div class="controls">
+																<input name="total" class="span11" type="text" value="" id="total" readonly>
+															</div>
+														</div>
+														
+														<div class="control-group">
+															<label class="control-label">Order Paid Date</label><!--#4DIF (mUserIsCurrentBool)--><!--#4DVAR [orders]approved_date--><!--#4DELSE-->
+															<div class="controls">
+																<div class="input-append date" id="dp3">
+																	<input class="span10" placeholder="Order Paid Date" type="text" readonly="readonly"  name="order_date_paid" id="order_date_paid" <!--#4DIF ([orders]approved_date=!00/00/00!)-->value=""<!--4DELSE-->value="<!--#4DVAR [orders]approved_date-->"<!--4DENDIF--> data-date-format="dd/mm/yyyy" /><span class="add-on"><i class="splashy-calendar_day"></i></span>
+																</div>
+															</div><!--#4DENDIF-->
+														</div>
+														<div class="example-container">
+															<pre class="code" style="display:none;" id="order_id_code">
+																var statesdemo = {
+																	state0: {
+																		title: 'Enter new Order ID manually?',
+																		html:'&lt;div id="message"&gt;&lt;/div&gt;&lt;input type="text" name="order_num" id="order_num" value=""&gt;&lt;br /&gt;',
+																		buttons: { Cancel : 0, Ok: 1 },
+																		focus: "#order_num",
+																		submit:function(e,v,m,f){ 
+																			//console.log(f);
+																			if(v==1) {
+																				if(f.order_num!=null && f.order_num!=""){
+																					e.preventDefault();
+																					var jsonRowURLStr = 'checkOrderID.cgi?orderId='+f.order_num;
+									
+																					$.getJSON(jsonRowURLStr,function(result){
+																						//alert(result.exist);
+																						
+																						if(result.exist=='false'){
+																							$('#order_id').val(f.order_num);
+																							$('#full_order_number').val(f.order_num);
+																							$.prompt.close()
+																						}
+																						else{
+																							e.preventDefault();
+																							document.getElementById("message").innerHTML = "* Order ID "+f.order_num+" already exists." ;
+																							$('#order_num').val('');
+																							$('#order_num').focus();
+																						}
+																						
+																					});
+																				}else {
+																					e.preventDefault();
+																					document.getElementById("message").innerHTML = "* Please enter order id." ;
+																					$('#order_num').focus();
+																				}
+																			}
+																			if(v==0) {
+																				$.prompt.close();
+																				var new_order='<!--#4DVAR Sequence number([orders])-->';
+																				$('#full_order_number').val(new_order);
+																				$('#order_id').val(new_order);
+																			}
+																		}
+																	},
+																	
+																};
+
+																$.prompt(statesdemo);
+															</pre>
+															<!--<a class="run">Run It!</a>-->
+														</div>
+														
+														<div class="example-container">
+															<pre class="code" style="display:none;" id="tax_rate_code">
+																var statesdemo = {
+																	state0: {
+																		title: 'Enter tax rate',
+																		html:'&lt;div id="tax_message"&gt;&lt;/div&gt;&lt;input type="text" class="num" name="dlg_tax_rate" id="dlg_tax_rate" value=""&gt;&lt;br /&gt;',
+																		buttons: { Cancel : 0, Ok: 1 },
+																		focus: "#dlg_tax_rate",
+																		submit:function(e,v,m,f){ 
+																			//console.log(f);
+																			if(v==1) {
+																				if(f.dlg_tax_rate!=null && f.dlg_tax_rate!=""){
+																					$('#tax_rate').val(f.dlg_tax_rate);
+																					update_total();
+																				}
+																				else {
+																					e.preventDefault();
+																					$('#tax_message').html('* Please enter Tax Rate.');
+																					$('#dlg_tax_rate').focus();
+																				}
+																			}
+																			if(v==0) {
+																				$.prompt.close();
+																				$('#tax_rate').val("20");
+																				$('#tax_code').val("UK");
+																			}
+																		}
+																	},
+																	
+																};
+
+																$.prompt(statesdemo);
+																$(".num").unbind();
+																$('.num').keypress(function(e){
+																	checknumber(e);	
+																}); 
+															</pre>
+															<!--<a class="run">Run It!</a>-->
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="tab-pane" id="tab2">
+									<div class="row-fluid">
+										<div class="span12">
+											<div class="row-fluid">
+												<div class="span9">
+													<div class="form-horizontal well">
+														<fieldset>
+															<div class="control-group">
+																<label class="control-label">Customer ref or PO</label>
+																<div class="controls">
+																	<input <!--#4DIF (mUserIsCurrentBool)-->readonly<!--#4DELSE--><!--#4DENDIF--> name="customer_ref_po" class="span5" type="text" value="<!--#4DVAR [orders]customer_ref_po -->" id="customer_ref_po">
+																</div>
+															</div>
+															<div class="control-group">
+																<label class="control-label">Tax Rate</label>
+																<div class="controls">
+																	<input <!--#4DIF (mUserIsCurrentBool)-->readonly<!--#4DELSE--><!--#4DENDIF--> name="tax_rate" class="span5 num" type="text" value="<!--#4DVAR [orders]tax_rate -->" id="tax_rate" readonly>
+																</div>
+															</div>
+															<div class="control-group">
+																<label class="control-label">Template</label><!--#4DIF (mUserIsCurrentBool)--><!--#4DVAR [orders]order_template--><!--#4DELSE-->
+																<div class="controls">
+																	<Select name="order_template" id="order_template" class="span5">
+																		<option value="TimeBilling" <!--#4DIF ([orders]order_template="TimeBilling")-->selected<!--4DELSE--><!--4DENDIF-->>TimeBilling</option>
+																		<option value="Monthly Contract" <!--#4DIF ([orders]order_template="Monthly Contract")-->selected<!--4DELSE--><!--4DENDIF-->>Monthly Contract</option>
+																		<option value="Day Rate" <!--#4DIF ([orders]order_template="Day Rate")-->selected<!--4DELSE--><!--4DENDIF-->>Day Rate</option>
+																	</select>                                     
+																</div><!--#4DENDIF-->
+															</div>
+														</fieldset>
+													</div>
+												</div>
+												<div class="span3">
+													<div class="well form-inline">
+														<div class="control-group">
+															<label class="control-label">Customer Currency Code</label>
+															<div class="controls">
+																<input <!--#4DIF (mUserIsCurrentBool)-->readonly<!--#4DELSE--><!--#4DENDIF--> name="currency_code" class="span8" type="text" value="<!--#4DVAR [orders]currency_code -->" id="currency_code">
+															</div>
+														</div>
+														<div class="control-group">
+															<label class="control-label">Base Currency Code</label>
+															<div class="controls">
+																<input <!--#4DIF (mUserIsCurrentBool)-->readonly<!--#4DELSE--><!--#4DENDIF--> name="base_currency_code" class="span8" type="text" value="<!--#4DVAR [orders]base_currency_code-->" id="base_currency_code">
+															</div>
+														</div>
+														<div class="control-group">
+															<label class="control-label">Exchange Customer Currency to Base Currency</label>
+															<div class="controls">
+																<input <!--#4DIF (mUserIsCurrentBool)-->readonly<!--#4DELSE--><!--#4DENDIF--> name="currency_exchange_rate" class="span8 num" type="text" value="<!--#4DVAR [orders]currency_exchange_rate -->" id="currency_exchange_rate">
+															</div>
+														</div>
+													</div>
+												</div>
+												
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="span9 field-box" style="text-align: center;">
+							<!--#4DIF (mUserIsCurrentBool)--><!--#4DELSE--><input type="button" id="btn_submit" class="btn-glow primary" value="Save Order"><!--#4DENDIF-->
+							
+							<span>OR</span>
+							<a href="orders.shtml">Cancel</a>
+							<!--<input type="reset" value="Cancel" class="reset">-->
+					</div>
+						</form>
+					</div>
+				</div>
+		
+            </div>
+		</div>
+    </div>
+    <!-- end main container -->
+
+	<!-- scripts -->
+	<script src="js/jquery.min.js"></script>
+    <script src="bootstrap/js/bootstrap.min.js"></script>
+
+	<script type="text/javascript" src="js/jquery-impromptu.js"></script>
+	<script src="lib/validation/jquery.validate.min.js"></script>
+	<!-- enhanced select (chosen) -->
+    <script src="lib/chosen/chosen.jquery.min.js"></script>
+	  <script type='text/javascript' src='js/order_items.js'></script>
+ <script src="js/jquery-ui-1.9.1.custom.js"></script>
+ <script>
+	 var xhr;
+  (function( $ ) {
+    $.widget( "custom.combobox", {
+      _create: function() {
+        this.wrapper = $( "<span>" )
+          .addClass( "custom-combobox" )
+          .insertAfter( this.element );
+ 
+        this.element.hide();
+        this._createAutocomplete();
+        this._createShowAllButton();
+      },
+ 
+      _createAutocomplete: function() {
+		  var ele_select= this.element;
+        var selected = this.element.children( ":selected" ),
+          value = selected.val() ? selected.text() : "";
+ 
+        this.input = $( "<input>" )
+          .appendTo( this.wrapper )
+          .val( value )
+          .attr( "title", "" )
+          .addClass( "custom-combobox-input ui-widget ui-widget-content ui-state-default ui-corner-left" )
+          .autocomplete({
+            delay: 0,
+            minLength: 0,
+            source: $.proxy( this, "_source" )
+          })
+          .tooltip({
+            tooltipClass: "ui-state-highlight"
+          });
+ 
+        this._on( this.input, {
+          autocompleteselect: function( event, ui ) {
+		  	//alert("show all");
+            ui.item.option.selected = true;
+			
+            this._trigger( "select", event, {
+              item: ui.item.option
+            });
+			
+			if(ele_select.attr('id')=='Client_ID'){
+				get_client_info();
+				get_projects();
+			}else if(ele_select.hasClass('i_description')){
+				get_details(ele_select);
+			}
+			
+          },
+ 
+          autocompletechange: "_removeIfInvalid"
+        });
+      },
+ 
+      _createShowAllButton: function() {
+        var input = this.input,
+          wasOpen = false;
+ 
+        $( "<a>" )
+          .attr( "tabIndex", -1 )
+         // .attr( "title", "Show All Items" )
+          .tooltip()
+          .appendTo( this.wrapper )
+          .button({
+            icons: {
+              primary: "ui-icon-triangle-1-s"
+            },
+            text: false
+          })
+          .removeClass( "ui-corner-all" )
+          .addClass( "custom-combobox-toggle ui-corner-right" )
+          .mousedown(function() {
+            wasOpen = input.autocomplete( "widget" ).is( ":visible" );
+          })
+          .click(function() {
+            input.focus();
+ 
+            // Close if already visible
+            if ( wasOpen ) {
+              return;
+            }
+ 
+            // Pass last search string as value to search for, displaying last results
+            input.autocomplete( "search", 'SHOWALL' );
+          });
+      },
+ 
+      _source: function( request, response ) {
+        //var matcher = new RegExp( $.ui.autocomplete.escapeRegex(request.term), "i" );
+		var ele_select= this.element;
+		if(request.term=='SHOWALL'){
+			response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+		
+		}
+		else
+		{
+		if(ele_select.attr('id')=='Client_ID'){
+		var jsonRow = 'getcompaniesonsearch.cgi?srch='+request.term;
+		}
+		else if(ele_select.attr('id')=='Project_ID'){
+			var jsonRow = 'getprojectsonsearch.cgi?srch='+request.term+'&client='+$('#Client_ID').val();
+		}
+		else if(ele_select.hasClass('i_description')){
+			var jsonRow = 'getproductsDropdown.cgi?srch='+request.term;
+		}
+		
+
+		//alert(jsonRowURLStr);
+		if(xhr) xhr.abort();
+		xhr=$.getJSON(jsonRow,function(result){
+			
+			if(result){
+				var html='<option value=""></option>';
+
+				$.each(result, function(i,item)
+				{
+					if(ele_select.attr('id')=='Client_ID'){
+						html += '<option value="'+item.id+'">'+item.value+'</option>';
+					}
+					else if(ele_select.attr('id')=='Project_ID'){
+						html += '<option value="'+item.value+'">'+item.value+'</option>';
+					}
+					else if(ele_select.hasClass('i_description')){
+						html += '<option value="'+item.uuid+'">'+item.value+'</option>';
+					}
+				});
+				//if(ele_select.attr('id')=='Project_ID' && html=='<option value=""></option>'){
+				//	html +='<!--HIT_EXECUTE _HIT_HTMLTXT:=Order_ProjectCodeHTMLPopUP-->';
+				//}
+				ele_select.html(html);
+				
+				
+				response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+				
+				
+			}
+		});
+       
+	  } 
+		
+      },
+ 
+      _removeIfInvalid: function( event, ui ) {
+ 
+        // Selected an item, nothing to do
+        if ( ui.item ) {
+
+          return;
+        }
+ 
+        // Search for a match (case-insensitive)
+        var value = this.input.val(),
+          valueLowerCase = value.toLowerCase(),
+          valid = false;
+		  var ele_select= this.element;
+        this.element.children( "option" ).each(function() {
+          if ( $( this ).text().toLowerCase() === valueLowerCase ) {
+            this.selected = valid = true;	
+		if(ele_select.attr('id')=='Client_ID'){
+			get_client_info();
+			get_projects();
+			}else if(ele_select.hasClass('i_description')){
+				get_details(ele_select);
+			}
+            return false;
+          }
+        });
+ 
+        // Found a match, nothing to do
+        if ( valid ) {
+          return;
+        }
+ 
+        // Remove invalid value
+        this.input
+          .val( "" )
+          .attr( "title", value + " didn't match any item" )
+          .tooltip( "open" );
+        this.element.val( "" );
+        this._delay(function() {
+          this.input.tooltip( "close" ).attr( "title", "" );
+        }, 2500 );
+        this.input.data( "ui-autocomplete" ).term = "";
+      },
+ 
+      _destroy: function() {
+        this.wrapper.remove();
+        this.element.show();
+      }
+    });
+  })( jQuery );
+ 
+  $(function() {
+    $( "#Client_ID" ).combobox();
+	$( "#Project_ID" ).combobox();
+	$('.i_description').combobox();
+  });
+
+  </script>
+  	<script src="lib/datepicker/bootstrap-datepicker.min.js"></script>
+	
+	<script type="text/javascript">
+	$(function(){
+		<!--#4DIF (Records in selection([orders])=0)-->
+			//code = $('#order_id_code').text();
+			//(new Function(code))();
+			var new_order='<!--#4DVAR Sequence number([orders])-->';
+			$('#order_id').val(new_order);
+		<!--#4DELSE--><!--#4DENDIF-->
+	});
+			
+		
+	function checknumber(e)
+	{
+		var k = e.which;
+    					/* numeric inputs can come from the keypad or the numeric row at the top */
+   						 if ((k<48 || k>57) && (k!=46) && (k!=8) && (k!=0)) {
+        					e.preventDefault();
+							//alert("Allowed characters are 0-9, +, -, (, )");
+        					return false;
+    					}
+	
+	}
+	function generate_invoice(){
+		var statesdemo = {
+			state0: {
+				title: "Do you want to generate Invoice?",
+				html:'',
+				buttons: { No : 0, Yes: 1 },																
+				submit:function(e,v,m,f){ 
+					//console.log(f);
+					if(v==1) {
+						var order_id= $("#order_id").val();
+						var uuid= $("#order_uuid").val();
+						var jsonRow = 'OrderGenerateInvoice.cgi?order_uuid='+uuid+'&order_id='+order_id;
+						$.getJSON(jsonRow,function(result){	
+							if(result.Success){
+								var statesdemo = {
+									state0: {
+										title: "Invoice successfully generated. Do you want to go to invoice?",
+										html:'',
+										buttons: { Cancel : 0, Ok: 1 },																
+										submit:function(e,v,m,f){ 
+											//console.log(f);
+											if(v==1) {
+												if(result.InvoiceUUID!=''){
+												window.location.href='invoice.shtml?uuid='+result.InvoiceUUID;
+												}else{
+													$.prompt.close();
+												}
+											}
+											if(v==0) {
+												$.prompt.close();
+											}
+											
+										}
+									},
+									
+								};
+								if(!($(".jqibox").length))
+								$.prompt(statesdemo);
+							}else if(result.Error){
+								var statesdemo = {
+									state0: {
+										title: result.Error,
+										html:'',
+										buttons: { Ok: 1 },																
+										submit:function(e,v,m,f){ 
+											if(v==1) {
+												$.prompt.close();
+											}
+											
+										}
+									},
+									
+								};
+								if(!($(".jqibox").length))
+								$.prompt(statesdemo);
+							}
+						});
+						document.getElementById("generate_inv").disabled=true;
+					}
+					if(v==0) {
+						$.prompt.close();
+					}
+					
+				}
+			},
+			
+		};
+		if(!($(".jqibox").length))
+		$.prompt(statesdemo);
+	}
+	function get_client_info()
+{
+	var Client_ID=	$("#Client_ID").val();
+	var dataString = 'Client_ID='+Client_ID;
+	//alert(dataString);
+
+	
+	$.ajax({
+type: "GET",
+url: "Returnvalues.cgi",
+data: dataString,
+cache: false,
+success: function(html)
+{
+	$("#order_bill_to").val(html);
+}
+});
+}
+	
+	function get_projects(){
+		$('#div_proj').find('.ui-autocomplete-input').val('');
+		var jsonRow = 'getprojectsonsearch.cgi?srch=&client='+$('#Client_ID').val();
+		$.getJSON(jsonRow,function(result){	
+			if(result){
+				var html='<option value=""></option>';
+
+				$.each(result, function(i,item)
+				{
+					html += '<option value="'+item.value+'">'+item.value+'</option>';
+				});
+				//if(html=='<option value=""></option>'){
+				//	html +='<!--HIT_EXECUTE _HIT_HTMLTXT:=Order_ProjectCodeHTMLPopUP-->';
+				//}
+				$('#Project_ID').html(html);
+			}
+		});
+	}
+	
+	$(function() {
+		
+		gebo_datepicker.init();
+		
+		$('#dp1 i.splashy-calendar_day').click(function(){
+			$('#ordered_date').datepicker( "show" );
+		});
+		
+		$('#dp3 i.splashy-calendar_day').click(function(){
+			$('#order_date_paid').datepicker( "show" );
+		});
+		
+		$(document).click(function(event){
+			//console.log($(event.target).closest('div').attr('id'));
+			if($(event.target).closest('div').attr('id')!='dp1') {
+				$('#ordered_date').datepicker( "hide" );
+			}
+			
+			if($(event.target).closest('div').attr('id')!='dp3') {
+				$('#order_date_paid').datepicker( "hide" );
+			}
+		});
+		
+	<!--#4DIF ([orders]status=5)-->
+	$('#OrderForm :input').attr('disabled', true);
+	$('#status').attr('disabled', false);
+	$('#hiderow').hide();
+	$('.td_edit').hide();
+	$('.td_remove').hide();
+	
+	$('#status').change(function(){
+		if($(this).val()!='Completed'){
+			$('#OrderForm :input').attr('disabled', false);
+			$('#hiderow').show();
+			$('.td_edit').show();
+			$('.td_remove').show();
+		}	
+	});
+	<!--4DELSE-->
+	<!--#4DENDIF-->
+	
+		<!--#4DIF (Records in selection([orders])=0)-->
+		
+		var new_uuid='<!--#4DVAR Generate UUID-->';	
+		$('#order_uuid').val(new_uuid);
+		<!--#4DELSE--><!--#4DENDIF-->
+		
+				
+		$('.num').keypress(function(e){
+			checknumber(e);	
+		}); 
+					
+		$('#order_num').keypress(function(e){
+			var k = e.which;
+			/* numeric inputs can come from the keypad or the numeric row at the top */
+			 if ((k<48 || k>57) && (k!=8) && (k!=0)) {
+				e.preventDefault();
+				//alert("Allowed characters are 0-9, +, -, (, )");
+				return false;
+			}
+		
+		}); 
+					
+		$( "#tabs" ).tabs();
+		
+		var val_flag=0;
+		
+		$.validator.setDefaults({
+			onkeyup: false,
+				errorClass: 'error',
+				validClass: 'valid',
+				highlight: function(element) {
+					$(element).closest('div').addClass("f_error");
+					var err_div_id=$(element).closest('div.tab-pane').attr('id');
+					if($("#"+err_div_id).hasClass("active")){
+					
+					val_flag=1;
+					}								
+					else if(!$("#"+err_div_id).hasClass("active") && val_flag==0){
+					//$(element).closest('div').addClass("f_error");
+						for(var i=1; i<=2; i++) {
+							if(err_div_id=="tab"+i){
+								$("#tab"+i).addClass("active");
+								$("#li"+i).addClass("active");
+
+							}
+							else {
+								$("#tab"+i).removeClass("active");
+								$("#li"+i).removeClass("active");
+							}
+						}
+					}
+				},
+				unhighlight: function(element) {
+					$(element).closest('div').removeClass("f_error");
+				},
+				errorPlacement: function(error, element) {
+					$(element).closest('div').append(error);
+				},
+		});
+		
+		$('#btn_submit').click(function(){
+			$('.form_validation_reg').removeData('validator');
+			$('.form_validation_reg').validate({
+				ignore: "",				
+				rules: {
+					order_id: { required: true },
+					ordered_date: { required: true},
+					Client_ID: { required: true },
+					Project_ID: { required: true },
+				},
+			});
+			if($('.form_validation_reg').valid()){
+				$('.form_validation_reg').submit();
+			}
+		});
+		
+	});
+	gebo_datepicker = {
+		init: function() {
+			$('#ordered_date').datepicker({"autoclose": true});
+			$('#order_date_paid').datepicker({"autoclose": true});
+		}
+	};
+	
+</script>
+
+
+</body>
+</html>

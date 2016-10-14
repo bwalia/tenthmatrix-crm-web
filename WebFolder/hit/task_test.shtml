@@ -1,0 +1,967 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+QUERY([Tasks];[Tasks]uuid=_HIT_WebApp_GetField ("uuid"))
+
+C_BOOLEAN (mtaskBoolen)
+mtaskBoolen:=(Records in selection([Employees])=1)
+
+
+QUERY([Projects];[Projects]proj_id=num([Tasks]proj_id))
+QUERY([Timeslips];[Timeslips]task_id=[Tasks]task_id)
+
+C_TEXT(_HIT_TSTXT)
+C_LONGINT(iCounter)
+_HIT_TSTXT:=""
+For (iCounter;1;Records in selection([Timeslips]))
+
+QUERY([Employees];[Employees]emp_id=[Timeslips]emp_id)
+
+_HIT_TSTXT:=_HIT_TSTXT+"<tr class='item-row' ><td class='item-id'>"+[Employees]emp_first_name+" "+[Employees]emp_last_name+"</td><td >"+[Timeslips]slip_description+"</td><td>"+string([Timeslips]slip_hours)+"</td><td ><a href='timeslip.shtml?uuid="+[Timeslips]uuid+"' >Edit</a></td></tr>"								
+
+NEXT RECORD([Timeslips])
+End for 
+
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+//_HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")
+_HIT_WebSession_SetVar ("last-clicked-uuid";_HIT_WebApp_GetField ("uuid"))
+-->
+<!DOCTYPE html>
+<html>
+<head>
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+	<link rel="stylesheet" href="css/base/jquery-ui.css" />
+	<link rel="stylesheet" href="css/base/jquery-ui.css" />
+	<link rel='stylesheet' type='text/css' href='css/style.css' />
+	<link rel='stylesheet' type='text/css' href='css/print.css' media="print" />
+	<link href="css/img-tabs.css" type="text/css" rel="stylesheet">
+	<link rel="stylesheet" media="all" type="text/css" href="css/jquery-impromptu.css" />
+	
+	<link rel="stylesheet" href="css/autocomplete.css" />
+<style>
+.custom-combobox a.ui-button, 
+  .custom-combobox a.ui-widget, 
+  .custom-combobox a.ui-state-default, 
+  .custom-combobox a.ui-button-icon-only, 
+  .custom-combobox a.custom-combobox-toggle, 
+  .custom-combobox a.ui-corner-right {
+	top:0px;
+  }
+   .file-table thead th{
+	  padding-bottom:10px;
+  }
+  .file-table tbody td{
+	  padding:5px;
+  }
+  .file-table td, .file-table th{
+	  border: 1px solid #ddd;
+  }
+  
+  .file-table td a:hover {
+	  text-decoration:none;
+  }
+</style>
+</head>
+<body>
+
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
+
+	<!-- main container -->
+    <div class="content">
+        
+        <div class="container-fluid">
+            <div id="pad-wrapper" class="form-page">
+				 <div class="row-fluid header" style="margin-bottom: 40px;">
+                    <h3><!--#4DIF (Records in selection([Tasks])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Task</h3>
+                </div>
+				
+				<form name="TaskForm" id="TaskForm" action="savetask.cgi" class="form-comment" method="post" onSubmit="return ValidateForm();" enctype="multipart/form-data">
+				
+				<div id="tabs">
+						<ul >
+							<li ><a style="color:#000000" href="#tabs-1">Task Details</a></li>
+							
+							<li ><a style="color:#000000" href="#tabs-2">Related Timeslips</a></li>
+							<li ><a style="color:#000000" href="#tabs-3">Related Tasks</a></li>
+						</ul>
+						<div id="tabs-1" class="var_tabs">  
+						
+                <div class="row-fluid form-wrapper">
+					<!-- left column -->
+                    <div class="span12 with-sidebar">
+						
+							<div class="span12 field-box">
+								<label>Task Name <span style="color:#6E829B">*</span></label>
+								<input name="Task_Name" class="span5" type="text" value="<!--#4DVAR [Tasks]task_name-->" id="Task_Name">
+							</div>
+							<input name="Task_uuid" class="span5" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="Task_uuid">
+							<input name="tsk_id" type="hidden" value="<!--#4DVAR [Tasks]task_id-->" id="tsk_id">
+							
+							<div class="field-box">
+								<label>Reported By</label>
+								<div class="ui-select span5">
+									<Select name="uuid_reported_by" id="uuid_reported_by">
+									<option value="">--Select Employee--</option>
+<!--HIT_EXECUTE
+_HIT_HTMLTXT:=""
+QUERY([Employees];[Employees]emp_active=True)
+ORDER BY([Employees];[Employees]emp_last_name;>)
+
+For (_HIT_COUNTER;1;Records in selection([Employees]))
+_HIT_HTMLTXT:=_HIT_HTMLTXT+"<option value=\""+[Employees]uuid+"\""
+If ([Tasks]uuid_reported_by=[Employees]uuid)
+_HIT_HTMLTXT:=_HIT_HTMLTXT+" selected"
+Else 
+End if 
+_HIT_HTMLTXT:=_HIT_HTMLTXT+">"+[Employees]emp_first_name+" "+[Employees]emp_last_name+"</option>"
+NEXT RECORD([Employees])
+End for 
+-->
+									</select>                                     
+								</div>
+							</div>                  
+
+							
+							<div class="field-box">
+								<label>Project Name <span style="color:#6E829B">*</span></label>
+								<div class="ui-widget">
+									<Select name="Project_ID" id="Project_ID">
+									<!--#4DIF (Records in selection([Tasks])=0)-->
+										<option value=""></option>
+									<!--#4DSCRIPT/Web_LoadProjects/-->
+									<!--4DLOOP [Projects]-->
+										<option value="<!--#4DVAR [Projects]proj_id-->" ><!--4DVAR [Projects]proj_name--></option>
+									<!--4DENDLOOP-->
+									<!--#4DELSE-->
+										 <option value="<!--4DVAR [Projects]proj_id-->" selected><!--4DVAR [Projects]proj_name--></option>									 
+										 <!--#4DENDIF-->
+									</select>                                     
+								</div>
+							</div>							
+							<div class="field-box">
+                                <label>Task Start Date </label>
+								
+								<input name="task_start_date" class="input-large datepicker" type="text" data-date-format="dd/mm/yyyy" <!--#4DIF (timestamp_unix_toDate([Tasks]Timestamp_start)=!01/01/1970!)-->value=""<!--4DELSE-->value="<!--#4DVAR timestamp_unix_toDate([Tasks]Timestamp_start)-->"<!--4DENDIF--> id="task_start_date" readonly >
+                            </div>
+							
+							<div class="field-box">
+                                <label>Task End Date </label>
+								<input name="task_end_date" class="input-large datepicker" type="text" data-date-format="dd/mm/yyyy" <!--#4DIF (timestamp_unix_toDate ([Tasks]Timestamp_end)=!01/01/1970!)-->value=""<!--4DELSE-->value="<!--#4DVAR timestamp_unix_toDate ([Tasks]Timestamp_end)-->"<!--4DENDIF--> id="task_end_date" readonly >
+                            </div>
+							
+							                 
+							<div class="span12 field-box">
+								<label>Task Estimated Hour </label>
+								<input name="Task_Estimated_Hour" class="span5 num" type="text" value="<!--#4DVAR [Tasks]task_estimated_hours-->" id="Task_Estimated_Hour">
+							</div>                                                                 
+							<div class="span12 field-box">
+								<label>Task Rate </label>
+								<input name="Task_Rate" class="span5 num" type="text" value="<!--#4DVAR [Tasks]task_rate-->" id="Task_Rate">
+							</div>
+							
+							<div class="field-box">
+								<label>Status</label>
+								<div class="ui-select span5">
+									<Select name="Task_Status" id="Task_Status"> mtaskBoolen
+									<!--#4DIF (Records in selection([Tasks])=0)-->
+									<option value="assigned" >assigned</option>
+									<!--#4DELSE-->
+									<!--HIT_EXECUTE _HIT_HTMLTXT:=Task_Status_HTMLPopup-->
+									 <!--#4DENDIF-->
+									</select>
+									<Select type="hidden"name="Task_Status_old" id="Task_Status_old">
+									<!--#4DIF (Records in selection([Tasks])=0)-->
+									<option value="assigned" >assigned</option>
+									<!--#4DELSE-->
+									<!--HIT_EXECUTE _HIT_HTMLTXT:=Task_Status_HTMLPopup-->
+									<!--#4DENDIF-->
+									</select>                                   
+								</div>
+							</div>
+							 
+							               
+
+<div class="field-box">
+								<label>Assigned to</label>
+								<div class="ui-select span5">
+									<Select name="uuid_assigned_to" id="uuid_assigned_to">
+									<option value="">--Select Employee--</option>
+<!--HIT_EXECUTE
+_HIT_HTMLTXT:=""
+QUERY([Employees];[Employees]emp_active=True)
+ORDER BY([Employees];[Employees]emp_last_name;>)
+
+For (_HIT_COUNTER;1;Records in selection([Employees]))
+_HIT_HTMLTXT:=_HIT_HTMLTXT+"<option value=\""+[Employees]uuid+"\""
+If ([Tasks]uuid_assigned_to=[Employees]uuid)
+_HIT_HTMLTXT:=_HIT_HTMLTXT+" selected"
+Else 
+End if 
+_HIT_HTMLTXT:=_HIT_HTMLTXT+">"+[Employees]emp_first_name+" "+[Employees]emp_last_name+"</option>"
+NEXT RECORD([Employees])
+End for 
+-->
+									</select>                                     
+								</div>
+							</div>                  
+
+							<!-- 
+<div class="span12 field-box">
+								<label>Task Activate</label>
+								<input style="margin-left: -22%;" type="checkbox" name="Task_Activate" value=""><br>
+							</div>
+ -->
+							<div class="field-box">
+                                <label>Task Active</label>
+                                <div class="ui-select span5">
+									<Select name="Task_Active" id="Task_Active" name="Task_Active">
+									<!--#4DIF (Records in selection([Tasks])=1)-->
+										<option value="Active" <!--#4DIF ([Tasks]task_active=True)-->selected<!--4DELSE--><!--4DENDIF-->>Active</option>
+										<option value="Done" <!--#4DIF ([Tasks]task_active=false)-->selected<!--4DELSE--><!--4DENDIF-->>Done</option>
+									<!--#4DELSE-->
+										<option value="Active">Active</option>
+										<!--#4DENDIF-->
+									</select>                                    
+                                </div>
+                            </div>
+							
+							<!--#4DIF (Records in selection([Tasks])=1)-->
+							<div class="span6 ">
+								<h3 style="font-size:14px; margin:0px 0 10px 0; padding-left:0px; font-weight:bold;">Attached Files</h3>
+                                <table class="table file-table table-condensed table-striped  table-hover" >
+              					<thead>
+                					<tr>
+                  						<!-- <th>File</th> -->
+                  						<th>File Name</th>
+                  						<th>Delete</th>
+                  						<th>Download</th>
+                					</tr>
+              					</thead>
+              					<tbody>
+              					<!--#4DSCRIPT/Web_LoadDocumentFile/-->	
+			  					<!--#4DLOOP [Documents]--><!-- row -->
+                				<tr>
+                  					<!-- <td width="30">1</td> -->
+                  					<td><a title="<!--#4DHTMLVAR [Documents]filename-->" target="_blank" href="<!--#4DHTMLVAR [Documents]doc_path-->"><!--#4DHTMLVAR [Documents]filename--></a></td>
+                  					<td width="75" ><a href="javascript:void(0)" onClick="del_file('<!--#4DHTMLVAR [Documents]uuid-->', $(this))"><i class="icon-remove" style="color:#f00;"></i></a ></td>
+                  					<td width="75"><a href="javascript:void(0)" onClick="download_file('<!--#4DHTMLVAR [Documents]uuid-->', $(this))"><i class="icon-download-alt"></i></a></td>                
+                				</tr>
+                				<!--#4DENDLOOP-->
+              					</tbody>
+           				 		</table>
+							</div>
+							<div class="field-box">
+                                <label>Upload File</label>
+									<input name="file_content" type="file" id="file_content">
+									<button type="button" class="btn btn-info" onClick="add_file()" >Upload</button>
+                            </div>
+							
+							<div class="span12 field-box">
+								<h3 style="font-size:14px; margin:0px 0 10px 0; padding-left:0px; font-weight:bold;">Notes</h3>
+								<!--#4DSCRIPT/Web_LoadTaskNotes/-->	
+								<!--#4DLOOP [Task_Notes]--><!-- row -->
+								<div class="notes">
+									<label><!--#4DHTMLVAR [Task_Notes]tasknote_user_name--> (<!--4DHTMLVAR timestamp_unix_toGMT ([Task_Notes]Timestamp_modified)-->) (Note: <!--#4DHTMLVAR [Task_Notes]tasknote_ID-->)</label>
+									<input class="note_uuid" type="hidden" value="<!--#4DHTMLVAR [Task_Notes]uuid-->" />
+									<textarea name="note" class="span6 note" rows="3" id="note" readonly> <!--#4DHTMLVAR [Task_Notes]Task_Note--></textarea>
+									<button type="button" id="edit" class="btn-glow" onClick="editNote($(this))">Edit Note</button>&nbsp;
+									<button type="button" id="delete" class="btn-glow" onClick="deleteNote($(this))">Delete</button>
+									<button type="button" id="save" class="btn-glow" onClick="saveNote($(this))" style="display:none">Save Note</button>
+									<button type="button" id="cancel" class="btn-glow" onClick="cancelNote($(this))" style="display:none">Cancel</button>
+								</div>
+								<!--#4DENDLOOP-->
+								
+								<div class='notes_end'></div>
+							</div>
+							<div class="span6" style="margin-left:0px;">
+								<label>Add Note</label>
+								<textarea name="Add_note" class="span6" rows="3" id="Add_note"></textarea>
+								<button type="button" id="add" class="btn btn-info" onClick="addNote()">Add Note</button>
+							</div>
+							<!--#4DELSE--><!--#4DENDIF-->
+							<div class="span7 " style="text-align: center;">
+								<input type="submit" class="btn-glow primary" value="Submit">
+								<span>OR</span>
+								<a href="tasks.shtml">Cancel</a>
+							</div>
+						
+                    </div>
+				</div>
+				
+				</div>
+					<div id="tabs-2" class="var_tabs">
+						 <div class="row-fluid form-wrapper">
+					<!-- left column -->
+                    <div class="span12 with-sidebar">
+					
+					<table id="items">
+		
+		  <tr class="item">
+		      <th>Employee</th>
+		      <th>Description</th>
+		      <th>Hours</th>		      
+			  <th >Edit</th>			  
+		  </tr>
+		  <!--#4DIF (Records in selection([Tasks])=1)-->
+		  <!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_TSTXT -->
+		  <!--#4DENDIF-->
+		  
+<tr id="hiderow">
+		    <td colspan="4"><a href="timeslip.shtml?task_id=<!--#4DVAR [Tasks]task_id-->" title="Add a row">Add new Timeslip</a></td>
+		  </tr>
+		  
+		</table>	<br/>
+					
+					</div>
+					</div>
+					
+					</div>
+					
+					<div id="tabs-3" class="var_tabs">
+						 <div class="row-fluid form-wrapper">
+					<!-- left column -->
+                    <div class="span12 with-sidebar">
+					
+					<table id="items">
+		  
+		  <tr class="item">
+		      <th>Relationship</th>
+		      <th>Task Name</th>
+		      <th>Status</th>	      
+			  <th >Delete</th>			  
+		  </tr>
+		  <!--#4DSCRIPT/Web_LoadRelatedTask/-->
+		  <!--#4DLOOP [Related_Task]--><!--#4DSCRIPT/Web_LoadRelatedTaskRelated/-->	
+		  <tr class="item-row">
+		      <td><!--#4DHTMLVAR [Related_Task]Relationship--></td>
+		      <td><!--#4DHTMLVAR [Tasks]task_name--></td>
+		      <td><!--#4DHTMLVAR [Tasks]task_status--></td>	      
+			  <td ><a href="javascript:void(0)" onClick="del_relation('<!--#4DHTMLVAR [Related_Task]uuid-->', $(this))" >Delete</a></td>			  
+		  </tr>
+		  <!--#4DENDLOOP-->
+		</table><br/><br/>
+		
+		
+		<h3>New Relationship</h3>
+		<br/>
+		<div class="field-box">
+			<label>Current Issue</label>
+			<div class="ui-select span2">
+				<Select name="current_issue" id="current_issue" >
+					<option value="parent of" >parent of</option>
+					<option value="child of" >child of</option>
+					<option value="duplicate of">duplicate of</option>
+					<option value="has duplicate">has duplicate</option>
+					<option value="related to">related to</option>
+				</select>                                    
+			</div>
+		</div>
+		
+		<div class="field-box">
+                                <label>Task Name </label>
+								<div class="ui-widget">
+									<select name="Task_ID" id="Task_ID">
+										<option value=""></option>
+									<!--#4DSCRIPT/Web_LoadTasks/-->
+									<!--4DLOOP  [Tasks]-->
+											<option value="<!--4DVAR [Tasks]task_id-->" <!--#4DIF ([Tasks]task_id= Num(_HIT_WebApp_GetField ("task_id")))-->selected<!--4DELSE--><!--4DENDIF-->><!--4DVAR [Tasks]task_name--></option>
+									<!--4DENDLOOP-->									
+									</select>
+								</div>
+							</div>
+				<div class="field-box">
+                                <label></label>			
+				<button type="button" class="btn-glow primary" onClick="add_relation()" >Add</button>
+				</div>
+					
+					</div>
+					</div>
+					
+					</div>
+				
+            </div><!-- tabs div-->
+				</form>
+            </div>
+        </div>
+    </div>
+    <!-- end main container -->
+
+	<!-- scripts -->
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+	<script src="js/ui/jquery-ui.js"></script>
+	<script src="js/bootstrap.datepicker.js"></script>
+	<script src="js/jquery.uniform.min.js"></script>
+	<script type="text/javascript" src="js/jquery-impromptu.js"></script>
+	
+
+	<!--HIT_EXECUTE
+		C_TEXT(_HIT_NAMETXT)
+		IF (_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
+		If (Web_isUserClient )
+		_HIT_NAMETXT:=[Contacts]First name+" "+[Contacts]Surname
+		Else 
+		_HIT_NAMETXT:="Admin"
+		End if 
+		ELSE
+		 If (Web_isUserStaff)
+		_HIT_NAMETXT:=[Employees]emp_first_name+" "+[Employees]emp_last_name
+		Else 
+		_HIT_NAMETXT:="Admin"
+		End if
+		END IF
+	-->
+
+<script language="javascript">
+function ValidateForm () {
+
+if (document.TaskForm.Task_Name.value=="")
+{ 
+	alert('Please Specify Task Name');
+	document.TaskForm.Task_Name.focus() ;
+	return false;
+}
+if (document.TaskForm.Project_ID.value=="")
+{ 
+	alert('Please Specify Project Name');
+	document.TaskForm.Project_ID.focus() ;
+	return false;
+}
+if (document.TaskForm.uuid_reported_by.value=="")
+{ 
+	alert('Please Specify Reported By');
+	document.TaskForm.uuid_reported_by.focus() ;
+	return false;
+}
+if (document.TaskForm.uuid_assigned_to.value=="")
+{ 
+	alert('Please Specify Assigned to');
+	document.TaskForm.uuid_assigned_to.focus() ;
+	return false;
+}
+/*if (document.TaskForm.task_start_date.value=="")
+{ 
+	alert('Please Specify Task Start Date');
+	document.TaskForm.task_start_date.focus() ;
+	return false;
+}
+if (document.TaskForm.task_end_date.value=="")
+{ 
+	alert('Please Specify Task End Date');
+	document.TaskForm.task_end_date.focus() ;
+	return false;
+}
+if (document.TaskForm.Task_Estimated_Hour.value=="" || document.TaskForm.Task_Estimated_Hour.value==0)
+{ 
+	alert('Please Specify Task Estimated Hour');
+	document.TaskForm.task_end_date.focus() ;
+	return false;
+}
+if (document.TaskForm.Task_Rate.value=="" || document.TaskForm.Task_Rate.value==0)
+{ 
+	alert('Please Specify Task Rate');
+	document.TaskForm.task_end_date.focus() ;
+	return false;
+
+}
+*/}
+
+function editNote(x)
+{
+	var note = x.parents('.notes');
+	note.find("#note").attr('readonly',false);
+	note.find('#edit').hide();
+	note.find('#delete').hide();
+	note.find('#save').show();
+	note.find('#cancel').show();
+}
+function cancelNote(x) {
+	var note = x.parents('.notes');
+	note.find('#edit').show();
+	note.find('#delete').show();
+	note.find('#save').hide();
+	note.find("#note").attr('readonly',true);
+	note.find('#cancel').hide();
+}
+function deleteNote(x) {
+	var note = x.parents('.notes');
+	var uuid_note= note.find('.note_uuid').val();
+	var Task_uuid=$('#Task_uuid').val();
+
+	var dataString = 'deletenotes_uuid='+uuid_note+'&redirect=false';
+
+	$.ajax({
+	type: "POST",
+	url: "deletetasksnotes.cgi",
+	data: dataString,
+	cache: false,
+	success: function(html)
+	{
+		note.hide();
+	}
+	});
+}	
+function saveNote(x)
+{	
+	var note = x.parents('.notes');
+	var uuid_note= note.find('.note_uuid').val();
+	var add_note=note.find('#note').val();
+	var Task_uuid=$('#Task_uuid').val();
+	var Task_Name=$('#Task_Name').val();
+	var uuid_reported_by=$('#uuid_reported_by').val();
+	
+	if(add_note!='') {
+		var dataString = 'note='+add_note+'&tasknote_uuid='+uuid_note+'&uuid_task='+Task_uuid+'&redirect=false';
+		
+		$.ajax({
+		type: "GET",
+		url: "savetasknotes.cgi",
+		data: dataString,
+		cache: false,
+		success: function(html)
+		{
+			//row.find('.item_uuid').val(html);
+			//document.getElementById("note").readOnly=true;
+			note.find("#note").attr('readonly',true);
+			note.find('#save').hide();
+			note.find('#cancel').hide();
+			note.find('#edit').show();
+			note.find('#delete').show();
+		}
+		});
+	}else{
+		alert('Please add some note');
+	}
+}
+function addNote()
+{
+	var add_note=$('#Add_note').val();
+	var Task_uuid=$('#Task_uuid').val();
+	 
+	
+	if(add_note!='') {
+		var dataString = 'note='+add_note+'&uuid_task='+Task_uuid+'&redirect=false';
+	
+		$.ajax({
+		type: "GET",
+		url: "savetasknotes.cgi",
+		data: dataString,
+		cache: false,
+		success: function(html)
+		{
+			//alert(html);
+			var result=html.split(",");
+			var note_uuid= result[0];
+			var date_time= result[1]+','+result[2];
+			$("#Add_note").val("");
+			var username="<!--HIT_EXECUTE _HIT_HTMLTXT:= _HIT_NAMETXT -->";
+			
+			$(".notes_end").before('<div class="notes"><label>'+username+' ('+date_time+')</label><input class="note_uuid" type="hidden" value="'+note_uuid+'" /><textarea name="note" class="span6 note" rows="3" id="note" readonly>'+add_note+'</textarea> <button type="button" id="edit" class="btn-glow" onclick="editNote($(this))">Edit Note</button><button type="button" id="delete" class="btn-glow" onclick="deleteNote($(this))">Delete</button><button type="button" id="save" class="btn-glow" onclick="saveNote($(this))" style="display:none">Save Note</button><button type="button" id="cancel" class="btn-glow" onclick="cancelNote($(this))" style="display:none">Cancel</button>');
+		}
+		});
+	}else{
+		alert('Please add some note');
+	}
+}
+
+function add_file(){
+	//$('#TaskForm').attr('action', 'upload_file.cgi');
+	//$('#TaskForm').submit();
+	if ($('#file_content')[0].files && $('#file_content')[0].files[0]) {
+		var val = $('#file_content').val().toLowerCase();   
+
+				var data = new FormData();
+				var files= $('#file_content')[0].files;
+				var Task_uuid=$('#Task_uuid').val();
+				data.append('Task_uuid', Task_uuid);
+				var tsk_id=$('#tsk_id').val();
+				data.append('tsk_id', tsk_id);
+				$.each(files, function(key, value)
+				{
+					data.append('file_content', value);
+				});
+
+				
+				$.ajax({
+					url: 'upload_file.cgi?files',
+					type: 'POST',
+					data: data,
+					cache: false,
+					dataType: 'json',
+					processData: false, // Don't process the files
+					contentType: false, // Set content type to false as jQuery will tell the server its a query string request
+					success: function(data)
+					{
+						var statesdemo = {
+										state0: {
+											title: data.Result,
+											buttons: { OK : 0 },
+											submit:function(e,v,m,f){ 
+												if(v==0) {
+													e.preventDefault();
+													$.prompt.close();
+													if(data.Result=='File Uploaded Successfully.'){
+														location.reload(true);
+													}
+												}
+											}
+										},
+										
+										
+									};
+									$.prompt(statesdemo);
+					},
+
+				});
+		
+			
+	}
+	else{
+		alert('Please select File to upload');
+		document.TaskForm.file_content.focus() ;
+		return false;
+	}
+}
+
+function del_file(del_uuid, ref){
+	var Task_uuid=$('#Task_uuid').val();
+	var task_id=$('#tsk_id').val();
+
+	var dataString = 'DocumentUUID='+del_uuid+'&task_id='+task_id+'&uuid_task='+Task_uuid+'&redirect=false';
+
+	$.ajax({
+		type: "GET",
+		url: "deletetaskfile.cgi",
+		data: dataString,
+		dataType: 'json',
+		cache: false,
+		success: function(html)
+		{
+			if(html.Success){
+			var title=html.Success;
+			}
+			else{
+			var title=html.Error;
+			}
+			var statesdemo = {
+				state0: {
+					title: title,
+					buttons: { OK : 0 },
+					submit:function(e,v,m,f){ 
+						if(v==0) {
+							if(html.Success){
+								ref.parents('tr').remove();
+							}
+						}
+					}
+				},
+				
+				
+			};
+			$.prompt(statesdemo);
+		}
+	});
+}
+
+function add_relation(){
+	if ($('#Task_ID').val()=="")
+	{ 
+		alert('Please Specify Task Name');
+		$('#Task_ID').focus();
+		return false;
+	}
+	else if($('#Task_ID').val()==$('#tsk_id').val()){
+		alert('Please Specify some other Task Name');
+		$('#Task_ID').focus();
+		return false;
+	}
+	else{
+		var relation=$('#current_issue').val();
+		var rel_task_id=$('#Task_ID').val();
+		var Task_uuid=$('#Task_uuid').val();
+		var task_id=$('#tsk_id').val();
+		var task_name=$('#Task_ID option:selected').text();
+
+		var dataString = 'relation='+relation+'&rel_task_id='+rel_task_id+'&task_id='+task_id+'&uuid_task='+Task_uuid+'&redirect=false';
+	
+		$.ajax({
+			type: "GET",
+			url: "saverelatedtask.cgi",
+			data: dataString,
+			dataType: 'json',
+			cache: false,
+			success: function(html)
+			{
+				if(html.Success){
+					$('#tabs-3 table#items').append('<tr class="item-row"><td>'+relation+'</td><td>'+task_name+'</td><td>assigned</td><td ><a href="javascript:void(0)" onClick="del_relation(\''+html.UUID+'\', $(this))" >Delete</a></td></tr>');
+				}
+			}
+		});
+	}	
+}
+
+function del_relation(del_uuid, ref){
+	var Task_uuid=$('#Task_uuid').val();
+	var task_id=$('#tsk_id').val();
+
+	var dataString = 'del_uuid='+del_uuid+'&task_id='+task_id+'&uuid_task='+Task_uuid+'&redirect=false';
+
+	$.ajax({
+		type: "GET",
+		url: "delrelatedtask.cgi",
+		data: dataString,
+		dataType: 'json',
+		cache: false,
+		success: function(html)
+		{
+			ref.parents('tr').remove();
+		}
+	});
+}
+
+</script>
+
+    <script type="text/javascript">
+        $(function () {
+			$( "#tabs" ).tabs();
+            // add uniform plugin styles to html elements
+            $("input:checkbox").uniform();
+
+			/* datepicker plugin */
+			$('#task_start_date').datepicker({"autoclose": true}).on('changeDate', function (ev) {
+				var arrStartDate= $('#task_start_date').val().split('/');
+				var dateText = new Date(arrStartDate[1]+'/'+arrStartDate[0]+'/'+arrStartDate[2]);
+				
+				$('#task_end_date').datepicker('setStartDate', dateText);
+			});
+			
+			$('#task_end_date').datepicker({"autoclose": true}).on('changeDate', function (ev) {
+				var arrEndDate= $('#task_end_date').val().split('/');
+				var dateText = new Date(arrEndDate[1]+'/'+arrEndDate[0]+'/'+arrEndDate[2]);
+				
+				$('#task_start_date').datepicker('setEndDate', dateText);
+			});
+			var arrStartDate= $('#task_start_date').val().split('/');
+			var dateText = new Date(arrStartDate[1]+'/'+arrStartDate[0]+'/'+arrStartDate[2]);			
+			$('#task_end_date').datepicker('setStartDate', dateText);
+			var arrEndDate= $('#task_end_date').val().split('/');
+			var dateText = new Date(arrEndDate[1]+'/'+arrEndDate[0]+'/'+arrEndDate[2]);			
+			$('#task_start_date').datepicker('setEndDate', dateText);
+			/* datepicker plugin */
+			
+				
+				
+			$('.num').keypress(function(e){
+				var k = e.which;
+				/* numeric inputs can come from the keypad or the numeric row at the top */
+				 if ((k<48 || k>57) && (k!=46) && (k!=8) && (k!=0)) {
+					e.preventDefault();
+					//alert("Allowed characters are 0-9, +, -, (, )");
+					return false;
+				}
+			
+			});
+			
+        });
+    </script> 
+	<script>
+	 var xhr;
+  (function( $ ) {
+    $.widget( "custom.combobox", {
+      _create: function() {
+        this.wrapper = $( "<span>" )
+          .addClass( "custom-combobox" )
+          .insertAfter( this.element );
+ 
+        this.element.hide();
+        this._createAutocomplete();
+        this._createShowAllButton();
+      },
+ 
+      _createAutocomplete: function() {
+        var selected = this.element.children( ":selected" ),
+          value = selected.val() ? selected.text() : "";
+ 
+        this.input = $( "<input>" )
+          .appendTo( this.wrapper )
+          .val( value )
+          .attr( "title", "" )
+          .addClass( "custom-combobox-input ui-widget ui-widget-content ui-state-default ui-corner-left" )
+          .autocomplete({
+            delay: 0,
+            minLength: 0,
+            source: $.proxy( this, "_source" )
+          })
+          .tooltip({
+            tooltipClass: "ui-state-highlight"
+          });
+ 
+        this._on( this.input, {
+          autocompleteselect: function( event, ui ) {
+		  	//alert("show all");
+            ui.item.option.selected = true;
+			
+            this._trigger( "select", event, {
+              item: ui.item.option
+            });
+          },
+ 
+          autocompletechange: "_removeIfInvalid"
+        });
+      },
+ 
+      _createShowAllButton: function() {
+        var input = this.input,
+          wasOpen = false;
+ 
+        $( "<a>" )
+          .attr( "tabIndex", -1 )
+          .attr( "title", "Show All Items" )
+          .tooltip()
+          .appendTo( this.wrapper )
+          .button({
+            icons: {
+              primary: "ui-icon-triangle-1-s"
+            },
+            text: false
+          })
+          .removeClass( "ui-corner-all" )
+          .addClass( "custom-combobox-toggle ui-corner-right" )
+          .mousedown(function() {
+            wasOpen = input.autocomplete( "widget" ).is( ":visible" );
+          })
+          .click(function() {
+            input.focus();
+ 
+            // Close if already visible
+            if ( wasOpen ) {
+              return;
+            }
+ 
+            // Pass last search string as value to search for, displaying last results
+            input.autocomplete( "search", 'SHOWALL' );
+          });
+      },
+ 
+      _source: function( request, response ) {
+        //var matcher = new RegExp( $.ui.autocomplete.escapeRegex(request.term), "i" );
+		var ele_select= this.element;
+		if(request.term=='SHOWALL'){
+			response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+		
+		}
+		else
+		{
+		if(ele_select.attr('id')=='Project_ID'){
+		var jsonRow = 'getprojectsonsearch.cgi?srch='+request.term;
+		}
+		else if(ele_select.attr('id')=='Task_ID'){
+			var jsonRow = 'gettaskonsearch.cgi?srch='+request.term;
+		}
+		
+
+		//alert(jsonRowURLStr);
+		if(xhr) xhr.abort();
+		xhr=$.getJSON(jsonRow,function(result){
+			
+			if(result){
+				var html='<option value=""></option>';
+
+				$.each(result, function(i,item)
+				{
+					html += '<option value="'+item.id+'">'+item.value+'</option>';
+				});
+				ele_select.html(html);
+				
+				
+				response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+				
+				
+			}
+		});
+       
+	  } 
+		
+      },
+ 
+      _removeIfInvalid: function( event, ui ) {
+ 
+        // Selected an item, nothing to do
+        if ( ui.item ) {
+
+          return;
+        }
+ 
+        // Search for a match (case-insensitive)
+        var value = this.input.val(),
+          valueLowerCase = value.toLowerCase(),
+          valid = false;
+        this.element.children( "option" ).each(function() {
+          if ( $( this ).text().toLowerCase() === valueLowerCase ) {
+            this.selected = valid = true;	
+			
+            return false;
+          }
+        });
+ 
+        // Found a match, nothing to do
+        if ( valid ) {
+          return;
+        }
+ 
+        // Remove invalid value
+        this.input
+          .val( "" )
+          .attr( "title", value + " didn't match any item" )
+          .tooltip( "open" );
+        this.element.val( "" );
+        this._delay(function() {
+          this.input.tooltip( "close" ).attr( "title", "" );
+        }, 2500 );
+        this.input.data( "ui-autocomplete" ).term = "";
+      },
+ 
+      _destroy: function() {
+        this.wrapper.remove();
+        this.element.show();
+      }
+    });
+  })( jQuery );
+ 
+  $(function() {
+    $( "#Project_ID" ).combobox();
+   $( "#Task_ID" ).combobox();
+	
+  });
+
+  </script>
+	
+</body>
+</html>

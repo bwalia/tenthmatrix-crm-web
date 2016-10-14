@@ -1,0 +1,186 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml?url="+HTTPD_DocumentURI)
+end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+-->
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/main-header.shtml-->
+
+<style>
+label.error {
+	float: left;
+	color: red;
+	padding-top: .5em;
+	vertical-align: top;
+	font-weight:bold
+}
+.label{
+width:auto;
+}
+.table-opt tbody tr:hover td a { color: #FFF!important; }
+.table-opt tbody tr:hover td a:hover { color: #FFF; text-decoration:underline}
+</style>
+<link rel="stylesheet" type="text/css" href="css/jqm-datebox.min.css" /> 
+<script type="text/javascript" src="js/jqm-datebox.core.min.js"></script>
+<script type="text/javascript" src="js/jqm-datebox.mode.calbox.min.js"></script>
+<script type="text/javascript" src="js/jquery.mobile.datebox.i18n.en_US.utf8.js"></script>
+<script src="js/jquery.validate.js"></script>
+<script src="js/additional-methods.js"></script>
+<script>
+function __showOverdueInvoices()
+{
+pUrlStr='invoices.shtml?keyword='+$("#keyword").val()+'&tab=overdue';
+window.location.href=pUrlStr;
+}
+
+
+function __showDueInvoices()
+{
+pUrlStr='invoices.shtml?keyword='+$("#keyword").val()+'&tab=due';
+window.location.href=pUrlStr;
+}
+
+function __showPaidInvoices()
+{
+pUrlStr='invoices.shtml?keyword='+$("#keyword").val()+'&tab=paid';
+window.location.href=pUrlStr;
+}
+
+function __showInvoices()
+{
+pUrlStr='invoices.shtml?keyword='+$("#keyword").val();
+window.location.href=pUrlStr;
+}
+function __showInvoiceForm(uuid)
+{
+pUrlStr='invoice.shtml?uuid='+uuid;
+window.location.href=pUrlStr;
+}
+   
+$(document).ready(function() {
+
+$('#keyword').focus();
+
+//setup before functions
+var typingTimer;                //timer identifier
+var doneTypingInterval = 1000;  //time in ms, 5 second for example
+
+//on keyup, start the countdown
+$('#keyword').keyup(function(){
+    clearTimeout(typingTimer);
+    if ($('#keyword').val) {
+        typingTimer = setTimeout(function(){
+            //do stuff here e.g ajax call etc....
+             var v = $("#keyword").val();
+__showInvoices();
+        }, doneTypingInterval);
+    }
+});
+
+    });
+
+    </script>
+
+</head>
+<body>
+<div data-role="page" id="home" data-add-back-btn="false">
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/top-header.shtml-->
+	<form method="get" onSubmit="__showInvoices(); return false;">
+	<div class="search-container" data-theme="a" style="height:30px;">
+		<div data-role="fieldcontain" >
+			<input name="keyword" id="keyword" type="search" placeholder="Enter customer name.." value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" />
+		</div>
+	</div>
+		<input type="button" value="All" onClick="__showInvoices(); return false;">
+	<input type="button" value="Due" onClick="__showDueInvoices(); return false;">
+	<input type="button" value="Overdue" onClick="__showOverdueInvoices(); return false;">
+	<input type="button" value="Paid" onClick="__showPaidInvoices(); return false;">		
+	</form>
+	<div data-role="content" style="padding: 15px;">
+		<ul data-role="listview" data-inset="true">
+			<li data-role="list-divider"><span style=" color:#2B89D0; font-stretch:narrower;">Invoices</span></li>
+		</ul>
+		<table class="table-opt" summary="Product Options">
+			<thead>
+				<tr>
+					<th>Invoice No</th>
+					
+					<th>Client</th>
+					
+					<th>Balance (&#163;)</th>
+					
+					
+					<th>Status</th>
+					
+					
+				</tr>
+			</thead>
+			<tbody>
+			<!--#4DSCRIPT/Web_LoadInvoices/-->
+                                <!--#4DLOOP [Invoices]--><!--#4DSCRIPT/Web_LoadInvoiceRelated/--><!-- row -->
+				<tr> 											
+					 <td ><a data-ajax="false" href="invoice.shtml?uuid=<!--#4DHTMLVAR [Invoices]uuid-->" >
+									<!--#4DIF ([Invoices]invoice_status="paid")--><span class="label label-success">
+<!--#4DELSE-->
+<!--#4DIF ((Current date-[Invoices]inv_date_due)>60)--><span class="label label-important">
+<!--#4DELSE-->
+<!--#4DIF ((Current date-[Invoices]inv_date_due)>30)--><span class="label label-warning">
+<!--#4DELSE--><span class="label label-info">
+<!--#4DENDIF-->
+<!--#4DENDIF--><!--#4DENDIF-->
+<!--#4DHTMLVAR [Invoices]Full_Invoice_Number-->
+
+                                    </a></td>
+                                    
+                                    <td>
+                                        <a data-ajax="false" href="customers.shtml?keyword=<!--#4DVAR [Companies]company_Name-->" ><span><!--#4DHTMLVAR _HIT_ISO8859_1CToHTMLEntities([Companies]company_Name)--></span></a>
+                                    </td>
+                                    
+                                    
+                                    <td>
+                                     <!--#4DHTMLVAR Invoice_AmtReturnAsText ([Invoices]balance_due_base_currency)-->
+                                    </td>
+                                    
+
+
+
+                                    <td>
+<!--#4DIF ([Invoices]invoice_status="paid")--><span class="label label-success">
+<!--#4DELSE-->
+<!--#4DIF ((Current date-[Invoices]inv_date_due)>60)--><span class="label label-important">
+<!--#4DELSE-->
+<!--#4DIF ((Current date-[Invoices]inv_date_due)>30)--><span class="label label-warning">
+<!--#4DELSE--><span class="label label-info">
+<!--#4DENDIF-->
+<!--#4DENDIF--><!--#4DENDIF-->
+<!--#4DVAR [Invoices]invoice_status-->
+<!--#4DIF ([Invoices]invoice_status#"paid")--><!--Pay Invoice by CC Online-->
+</span>
+
+<a title="Pay Invoice <!--#4DHTMLVAR String([Invoices]inv_id;"000000")--> by Credit or Debit Card" target="_blank" href="<!--#4DVAR Invoice_GetPayByCardLink-->">
+                                        <i class="icon-upload-alt"></i>&nbsp;Pay</a><!--#4DELSE--><!--#4DENDIF-->
+
+                                    </td>
+                                   
+
+				</tr>
+
+<!--#4DENDLOOP-->
+			</tbody>
+		</table>
+	</div><!-- END DATA ROLE CONTENT-->
+
+   <!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/footer.shtml-->
+   
+    
+ </div>
+ 
+</body>
+</html>

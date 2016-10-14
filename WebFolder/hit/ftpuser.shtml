@@ -1,0 +1,175 @@
+<!--HIT_EXECUTE
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+QUERY([ftp_users];[ftp_users]uuid=_HIT_WebApp_GetField ("uuid"))
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+_HIT_WebSession_SetVar ("last-payment-uuid";_HIT_WebApp_GetField ("uuid"))
+-->
+<!DOCTYPE html>
+<html>
+<head>
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+</head>
+<body>
+
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
+
+	<!-- main container -->
+    <div class="content">
+        
+        <div class="container-fluid">
+            <div id="pad-wrapper" class="form-page">
+				 <div class="row-fluid header">
+                    <h3><!--#4DIF (Records in selection([ftp_users])=1)-->View<!--#4DELSE-->New<!--#4DENDIF--> FTP User</h3>
+                </div>
+                <div class="row-fluid form-wrapper">
+					<!-- left column -->
+                    <div class="span9 with-sidebar">
+						<form name="ftpuserForm" action="saveftpuser.cgi" class="form-comment" method="post" onSubmit="return ValidateForm();">
+							<input name="uuid" class="span9" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="uuid">
+							<div class="span12 field-box">
+								<label>FTP User Name<span style="color:#6E829B">*</span></label>
+								<input name="ftp_user_name" class="span5" type="text" value="<!--#4DVAR [ftp_users]ftp_user_name-->" id="ftp_user_name" readonly>
+							</div>                                                                 
+							<!-- 
+<div class="span12 field-box">
+								<label>FTP User Directory</label>
+								<input class="span5" name="ftp_home_dir_path"  type="text" value="<!~~4DVAR [ftp_users]ftp_home_dir_path~~>" id="ftp_home_dir_path" readonly>
+							</div>
+ -->							
+							<div class="span12 field-box">
+								<label>FTP User Directory<span style="color:#6E829B">*</span></label>
+								<textarea name="ftp_home_dir_path" class="span7" rows="4" id="ftp_home_dir_path" readonly><!--#4DVAR [ftp_users]ftp_home_dir_path--></textarea>
+							</div>
+							<div class="span11 field-box" style="text-align: center;">
+								<!-- <input type="submit" id="submit" class="btn-glow primary" value="Submit"> -->
+								<!-- <span>OR</span> -->
+								<a href="ftpusers.shtml">Back to List</a>
+							</div>
+						</form>
+                    </div>
+				</div>
+            </div>
+        </div>
+    </div>
+    <!-- end main container -->
+
+	<!-- scripts -->
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+	<script src="js/bootstrap.datepicker.js"></script>
+	<script src="js/jquery.uniform.min.js"></script>
+	<!-- call this page plugins -->
+
+<script language="javascript">
+function ValidateForm () {
+
+if (document.ftpuserForm.ftp_user_name.value=="" || document.ftpuserForm.ftp_user_name.value==0)
+{  
+	alert('Please Specify User Name');
+	document.ftpuserForm.ftp_user_name.focus() ;
+	return false;
+}
+if (document.ftpuserForm.ftp_home_dir_path.value=="")
+{  
+	alert('Please Specify FTP Home Directory Path');
+	document.ftpuserForm.ftp_home_dir_path.focus() ;
+	return false;
+}
+ 
+
+}
+</script>
+    <script type="text/javascript">
+        $(function () {
+
+            // add uniform plugin styles to html elements
+            $("input:checkbox").uniform();
+
+            // datepicker plugin
+            $('.datepicker').datepicker().on('changeDate', function (ev) {
+                $(this).datepicker('hide');
+            });
+			
+        });
+    </script> 
+<script type="text/javascript">
+function get_client()
+{
+	var inv_no=	$("#inv_no").val();
+	if(inv_no!=''){
+	var dataString = 'inv_no='+inv_no;
+	$.ajax({
+type: "GET",
+dataType: "json",
+url: "getclientinvoice.cgi",
+data: dataString,
+cache: false,
+success: function(html)
+{
+	if(html.invoiceuuid){
+		if(html.paid){
+		alert("This Invoice is Already Paid");
+		$('#submit').attr('disabled',true);
+		}
+		else{
+		$('#err_msg').html('');
+		$("#invoice_uuid").val(html.invoiceuuid);
+		$("#amount").val(html.Amount);
+		$("#client_uuid").val(html.CustomerID);
+		$("#company_name").val(html.CustomerName);
+		$('#submit').attr('disabled',false);
+		}
+	}
+	else{
+		//alert("Invoice no "+inv_no+" doesn't exists.");
+		$('#err_msg').html("Invoice no "+inv_no+" doesn't exists.");
+		
+		$("#inv_no").val('0');
+		$("#invoice_uuid").val('');
+		$("#amount").val('0');
+		$("#client_uuid").val('');
+		$("#company_name").val('');
+	}
+	
+}
+});
+}
+}
+
+$('#inv_no').keypress(function(e){
+						var k = e.which;
+    					/* numeric inputs can come from the keypad or the numeric row at the top */
+   						 if ((k<48 || k>57) && (k!=8) && (k!=0)) {
+        					e.preventDefault();
+							//alert("Allowed characters are 0-9, +, -, (, )");
+        					return false;
+    					}
+					
+					}); 
+					
+		$('.num').keypress(function(e){
+					checknumber(e);	
+					
+					});
+					
+	function checknumber(e)
+	{
+		var k = e.which;
+    					/* numeric inputs can come from the keypad or the numeric row at the top */
+   						 if ((k<48 || k>57) && (k!=46) && (k!=8) && (k!=0)) {
+        					e.preventDefault();
+							//alert("Allowed characters are 0-9, +, -, (, )");
+        					return false;
+    					}
+	
+	}
+</script>
+	
+</body>
+</html>

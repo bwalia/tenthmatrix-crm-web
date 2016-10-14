@@ -1,0 +1,199 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+
+</head>
+<body>
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
+
+	<!-- main container -->
+    <div class="content">
+        
+        <div class="container-fluid">
+            <div id="pad-wrapper">
+
+                <!-- timeslips table -->
+                <div class="table-wrapper orders-table section">
+                    <div class="row-fluid head">
+                        <div class="span12">
+                            <h4>System Activity Log</h4>
+                        </div>
+                    </div>
+                            <form method="get" onSubmit="__showActivities(); return false;">
+
+                    <div class="row-fluid filter-block">
+                        <div class="pull-right">
+                            <div class="btn-group pull-right">
+                                <button class="glow left large" onClick="__showActivities(); return false;">All</button>
+                                <button class="glow middle large" onClick="__showActivitiesNotDone(); return false;">Active</button>
+                                <button class="glow middle large" onClick="__showActivitiesEmail(); return false;">Email</button>
+                                <button class="glow middle large" onClick="__showActivitiesPayment(); return false;">Payments</button>
+                                <button class="glow middle large" onClick="__showActivitiesInvoices(); return false;">Invoices</button>
+                                <button class="glow middle large" onClick="__showActivitiesPO(); return false;">PO</button>
+                                <button class="glow right large" onClick="__showActivitiesDone(); return false;">Done</button>
+                            </div>
+                            <input name="keyword" id="keyword" type="text" class="search order-search" placeholder="Enter customer name.." value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" />
+                        </div>
+                    </div>
+
+                            </form>
+
+                    <div class="row-fluid">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th class="span2">
+                                        Date
+                                    </th>
+                                    <th class="span3">
+                                        Type
+                                    </th>
+                                    <th class="span3">
+                                        <span class="line"></span>
+                                        Title
+                                    </th>
+                                    <th class="span3">
+                                        <span class="line"></span>
+                                        Notes
+                                    </th>
+                                    <th class="span3">
+                                        <span class="line"></span>
+                                        Status
+                                    </th>
+                                    <th class="span3">
+                                        <span class="line"></span>
+                                        Description
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody><!--#4DSCRIPT/Web_LoadActivityLog/-->
+                                <!--#4DLOOP [Activity_Log]--><!-- row -->
+                                <tr class="first">
+                                    <td>
+                                        <!--#4DHTMLVAR timestamp_unix_toGMT([Activity_Log]Timestamp_modified)-->
+                                    </td>
+                                    <td>
+                                        <a href="#"><!--#4DHTMLVAR [Activity_Log]Activity_Type--></a>
+                                    </td>
+                                    <td>
+                                        <a href="#"><!--#4DHTMLVAR [Activity_Log]Activity_Title--></a>
+                                    </td>
+                                                                        <td>
+                                        <!--#4DHTMLVAR [Activity_Log]Activity_Notes-->
+                                    </td>
+
+                                    <td>
+                                        <!--#4DIF ([Activity_Log]Activity_status=1)--><span class="label label-success">Done</span><!--#4DELSE--><!--#4DENDIF-->
+                                        <!--#4DIF ([Activity_Log]Activity_status=0)--><span class="label label-important">Assigned</span><!--#4DELSE--><!--#4DENDIF-->
+                                        <!--#4DIF ([Activity_Log]Activity_status=2)--><span class="label label-warning">System</span><!--#4DELSE--><!--#4DENDIF-->
+                                    </td>
+                                    <td>
+                                        <!--#4DHTMLVAR [Activity_Log]Activity_Description-->
+                                    </td>
+                                </tr>
+
+<!--#4DENDLOOP-->
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- end timeslips table -->
+
+            </div>
+        </div>
+    </div>
+    <!-- end main container -->
+
+	<!-- scripts -->
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+
+<script>
+
+function __showActivitiesPayment()
+{
+pUrlStr='system-activity.shtml?keyword='+$("#keyword").val()+'&tab=payment';
+window.location.href=pUrlStr;
+}
+
+function __showActivitiesInvoices()
+{
+pUrlStr='system-activity.shtml?keyword='+$("#keyword").val()+'&tab=invoices';
+window.location.href=pUrlStr;
+}
+
+function __showActivitiesPO()
+{
+pUrlStr='system-activity.shtml?keyword='+$("#keyword").val()+'&tab=po';
+window.location.href=pUrlStr;
+}
+
+function __showActivitiesEmail()
+{
+pUrlStr='system-activity.shtml?keyword='+$("#keyword").val()+'&tab=email';
+window.location.href=pUrlStr;
+}
+
+
+function __showActivitiesNotDone()
+{
+pUrlStr='system-activity.shtml?keyword='+$("#keyword").val()+'&tab=active';
+window.location.href=pUrlStr;
+}
+
+function __showActivitiesDone()
+{
+pUrlStr='system-activity.shtml?keyword='+$("#keyword").val()+'&tab=done';
+window.location.href=pUrlStr;
+}
+
+function __showActivities()
+{
+pUrlStr='system-activity.shtml?keyword='+$("#keyword").val();
+window.location.href=pUrlStr;
+}
+    
+$(document).ready(function() {
+
+$('#keyword').focus();
+
+//setup before functions
+var typingTimer;                //timer identifier
+var doneTypingInterval = 1000;  //time in ms, 5 second for example
+
+//on keyup, start the countdown
+$('#keyword').keyup(function(){
+    clearTimeout(typingTimer);
+    if ($('#keyword').val) {
+        typingTimer = setTimeout(function(){
+            //do stuff here e.g ajax call etc....
+             var v = $("#keyword").val();
+__showActivities();
+        }, doneTypingInterval);
+    }
+});
+
+    });
+
+    </script>
+
+    
+</body>
+</html>

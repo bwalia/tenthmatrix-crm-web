@@ -1,0 +1,218 @@
+<html>
+<head>
+	<title>Tenthmatrix CRM App : TableName</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- bootstrap -->
+	<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="bootstrap/css/bootstrap-responsive.min.css" />
+     <!-- jQuery UI theme-->
+     <link rel="stylesheet" href="lib/jquery-ui/css/Aristo/Aristo.css" />
+
+    <!-- global styles -->
+    <link rel="stylesheet" type="text/css" href="css/compiled/layout.css">
+    <link rel="stylesheet" type="text/css" href="css/compiled/elements.css">
+    <link rel="stylesheet" type="text/css" href="css/compiled/icons.css">
+	<!-- splashy icons -->
+    <link rel="stylesheet" href="img/splashy/splashy.css" />
+	<!-- datepicker -->
+    <link rel="stylesheet" href="lib/datepicker/datepicker.css" />
+	<link rel="stylesheet" href="css/style.css" />
+    <!-- open sans font -->
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!-- libraries -->
+    <link href="css/lib/font-awesome.css" type="text/css" rel="stylesheet" />
+</head>
+<body>
+
+	<!-- main container -->
+    <div class="content wide-content">
+        <div class="container-fluid">
+            <div id="pad-wrapper" class="form-page">
+				<div class="row-fluid">
+					<div class="span12">
+						<form name="Form" action="" method="post" class="form_validation_reg">
+						<input name="uuid" class="span7" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="uuid">
+						<div class="formSep">
+<div class="row-fluid">
+<div class="span3">
+<label>UUID</label>
+<input name="uuid" class="span12" type="text" value="" id="uuid">
+
+</div>
+</div>
+</div>
+<div class="formSep">
+<div class="row-fluid">
+<div class="span3">
+<label>DOMAIN NAME</label>
+<input name="domain_name" class="span12" type="text" value="" id="domain_name">
+
+</div>
+</div>
+</div>
+<div class="formSep">
+<div class="row-fluid">
+<div class="span3">
+<label>UUID CLIENT</label>
+<input name="uuid_client" class="span12" type="text" value="" id="uuid_client">
+
+</div>
+</div>
+</div>
+<div class="formSep">
+<div class="row-fluid">
+<div class="span3">
+<label>UUID PROJECT</label>
+<input name="uuid_project" class="span12" type="text" value="" id="uuid_project">
+
+</div>
+</div>
+</div>
+<div class="formSep">
+<div class="row-fluid">
+<div class="span3">
+<label>DOMAIN EXPIRY DATE</label><div class="input-append date" id=dp5>
+<input type=text class="span10" data-date-format="dd/mm/yyyy" value="" name="domain_expiry_date" id="domain_expiry_date" readonly ><span class=add-on><i class=splashy-calendar_day></i></span>
+</div>
+</div>
+</div>
+</div>
+<div class="formSep">
+<div class="row-fluid">
+<div class="span3">
+<label>DOMAIN RENEWAL DATE</label><div class="input-append date" id=dp6>
+<input type=text class="span10" data-date-format="dd/mm/yyyy" value="" name="domain_renewal_date" id="domain_renewal_date" readonly ><span class=add-on><i class=splashy-calendar_day></i></span>
+</div>
+</div>
+</div>
+</div>
+<div class="formSep">
+<div class="row-fluid">
+<div class="span3">
+<label>MANAGED BY UUID</label>
+<input name="managed_by_uuid" class="span12" type="text" value="" id="managed_by_uuid">
+
+</div>
+</div>
+</div>
+<div class="formSep">
+<div class="row-fluid">
+<div class="span3">
+<label>SALES PRICE</label>
+<input name="sales_price" class="span12" type="text" value="" id="sales_price">
+
+</div>
+</div>
+</div>
+<div class="formSep">
+<div class="row-fluid">
+<div class="span3">
+<label>COST PRICE</label>
+<input name="cost_price" class="span12" type="text" value="" id="cost_price">
+
+</div>
+</div>
+</div>
+<div class="formSep">
+<div class="row-fluid">
+<div class="span4">
+<label>COMMENTS</label>
+<textarea name="comments" class=span12 rows=4 id="comments"></textarea>
+</div>
+</div>
+</div><div class="formSep">
+<div class="row-fluid">
+<div class="span3">
+<label>DOMAIN STATUS</label>
+<input name="domain_status" class="span12" type="text" value="" id="domain_status">
+
+</div>
+</div>
+</div>
+<div class="formSep">
+<div class="row-fluid">
+<div class="span3">
+<label>CURRENCY CODE</label>
+<input name="currency_code" class="span12" type="text" value="" id="currency_code">
+
+</div>
+</div>
+</div>
+<div class="formSep">
+<div class="row-fluid">
+<div class="span3">
+<label>CREATED TIMESTAMP</label>
+<input name="created_timestamp" class="span12" type="text" value="" id="created_timestamp">
+
+</div>
+</div>
+</div>
+<div class="formSep">
+<div class="row-fluid">
+<div class="span3">
+<label>MODIFIED TIMESTAMP</label>
+<input name="modified_timestamp" class="span12" type="text" value="" id="modified_timestamp">
+
+</div>
+</div>
+</div>
+<div class="formSep">
+<div class="row-fluid">
+<div class="span4">
+<label>ZONE COMMENT</label>
+<textarea name="zone_comment" class=span12 rows=4 id="zone_comment"></textarea>
+</div>
+</div>
+</div>
+ 
+							<div style="text-align: center;" class="span9 field-box">
+								<input type="submit" value="Submit" class="btn-glow primary">
+								<span>OR</span>
+								<a href="#">Cancel</a>
+							</div>
+						</form>
+					</div>
+				</div>
+		
+            </div>
+		</div>
+    </div>
+    <!-- end main container -->
+</body>
+
+	<script src="js/jquery.min.js"></script>
+	<script src="bootstrap/js/bootstrap.min.js"></script>
+	<!-- validation -->
+    <script src="lib/validation/jquery.validate.min.js"></script>
+	<script src="lib/datepicker/bootstrap-datepicker.min.js"></script>
+	<script src="js/jquery-ui-1.9.1.custom.js"></script>
+	<script type="text/javascript">
+	
+	$(function() {
+	$('#domain_expiry_date').datepicker({"autoclose": true});
+$('#dp5 i.splashy-calendar_day').click(function(){
+$('#domain_expiry_date').datepicker("show");
+});
+$(document).click(function(event){
+if ($(event.target).closest('div').attr('id')!='dp5'){
+$('#domain_expiry_date').datepicker("hide");
+}
+});
+$('#domain_renewal_date').datepicker({"autoclose": true});
+$('#dp6 i.splashy-calendar_day').click(function(){
+$('#domain_renewal_date').datepicker("show");
+});
+$(document).click(function(event){
+if ($(event.target).closest('div').attr('id')!='dp6'){
+$('#domain_renewal_date').datepicker("hide");
+}
+});
+
+	
+	});
+	
+	</script>
+</html>
+</html>

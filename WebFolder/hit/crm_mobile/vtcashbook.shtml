@@ -1,0 +1,189 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+C_TEXT(_HTMLTITLETXT)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+
+QUERY([vt_cashbook_activity];[vt_cashbook_activity]uuid=_HIT_WebApp_GetField ("uuid"))
+
+IF (Records in selection([vt_cashbook_activity])=0)
+_HTMLTITLETXT:="New VT CashBook Activity"
+ELSE
+_HTMLTITLETXT:= "Edit VT CashBook Activity"
+END IF
+
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+
+_HIT_WebSession_SetVar ("last-payment-uuid";_HIT_WebApp_GetField ("uuid"))
+-->
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/main-header.shtml-->
+<link rel="stylesheet" href="css/jquery-ui.css">
+<script src="js/datepicker.js"></script>
+<script src="js/jquery.validate.js"></script>
+<script type="text/javascript">
+
+$(document).ready(function() {
+	$('#entry_date').datepicker({
+    		autoclose: true,
+    		changeMonth: true,
+      		changeYear: true,
+      		dateFormat: 'dd/mm/yy'
+    	});
+	
+	$.validator.addMethod('checkinteger', function(value, element, param) {
+    	return (value != 0);
+    }, 'Please enter a non zero value!');
+		
+	$("#DetailForm").validate({
+		ignore: "",
+        rules: {
+            inv_no: { required: true, checkinteger : true },
+			date_received: { required: true },
+			amount: { required: true, checkinteger : true },
+        }
+    });    
+});
+function get_client()	{
+    $('#err_msg').remove();
+	var inv_no=	$("#inv_no").val();
+	if(inv_no!=''){
+	var dataString = 'inv_no='+inv_no;
+	$.ajax({
+		type: "GET",
+		dataType: "json",
+		url: "getreceiptclient.cgi",
+		data: dataString,
+		cache: false,
+		success: function(html)	{
+			if(html.success){
+		
+				$('#err_msg').html('');
+				$("#invoice_uuid").val(html.invoice_uuid);
+				$("#amount").val(html.amount);
+				$("#client_uuid").val(html.customer_id);
+				$("#company_name").val(html.customer_name);
+				$('#submit').attr('disabled',false);
+		
+			}else if(html.error){
+				if(html.paid){
+					var errorMsg='<span id="err_msg" style="color:#FF0000;font-style: italic;">  This Invoice is Already Paid</span>';
+					$('.displayMsg').before(errorMsg);
+					$('#submit').attr('disabled',true);
+				}else{
+					var errorMsg='<span id="err_msg" style="color:#FF0000;font-style: italic;">  Invoice no '+inv_no+' doesn\'t exists.</span>';
+					$('.displayMsg').before(errorMsg);
+					$("#inv_no").val('0');
+				}
+				
+					$("#invoice_uuid").val('');
+					$("#amount").val('0');
+					$("#client_uuid").val('');
+					$("#company_name").val('');
+			}
+	
+		}
+	});
+	}
+}
+
+	$('#inv_no').keypress(function(e){
+		checknumber(e);	
+	}); 
+						
+	$('.num').keypress(function(e){
+		checknumber(e);	
+	});
+					
+	function checknumber(e)
+	{
+		var k = e.which;
+		/* numeric inputs can come from the keypad or the numeric row at the top */
+		 if ((k<48 || k>57) && (k!=46) && (k!=8) && (k!=0)) {
+			e.preventDefault();
+			//alert("Allowed characters are 0-9, +, -, (, )");
+			return false;
+		}
+	
+	}
+</script>
+<script type='text/javascript' src='js/customerNotes.js'></script>
+<style>
+label.error { 
+	float: left; 
+	color: red; 
+	padding-top: 1.5em; 
+	vertical-align: top; 
+}
+</style>
+</head>
+<body>
+<div data-role="page" class="jqm-demos" data-quicklinks="true">
+	<!-- header -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/top-header.shtml-->
+	<!-- /header -->
+	
+	<div role="main" class="ui-content jqm-content">
+		<h3><!--#4DIF (Records in selection([vt_cashbook_activity])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> VT CashBook Activity</h3>
+		<div data-demo-html="true">
+			<form name="DetailForm" action="savevtcashbook.cgi" id="DetailForm" data-ajax="false" method="post">
+				<input name="uuid" class="span6" type="hidden" value="<!--#4DVAR [vt_cashbook_activity]uuid-->" id="uuid">
+							
+					<div class="ui-field-contain">
+   						<label for="entry_date">Entry Date :</label>
+						<input name="entry_date" type="text" <!--#4DIF (timestamp_unix_toDate ([vt_cashbook_activity]entry_date)=!00/00/00!)-->value=""<!--4DELSE-->value="<!--#4DVAR [vt_cashbook_activity]entry_date-->"<!--4DENDIF--> id="entry_date" readonly placeholder="Entry Date">
+					</div>
+                  	<div class="ui-field-contain displayMsg">
+   						<label for="entry_amount">Amount :</label>
+   						<input name="entry_amount" type="text" value="<!--#4DVAR [vt_cashbook_activity]entry_amount-->" id="entry_amount">		
+					</div>
+					<div class="ui-field-contain">
+   						<label for="entry_ref">Reference:</label>
+   						<input name="entry_ref" type="text" value="<!--#4DVAR [vt_cashbook_activity]entry_ref-->" id="entry_ref">
+					</div>					
+					<div class="ui-field-contain">
+   						<label for="primary_account">Primary Account:</label>
+						<input name="primary_account" type="text" value="<!--#4DVAR [vt_cashbook_activity]primary_account-->" id="primary_account" placeholder="Primary Account">
+   					</div>
+   					<div class="ui-field-contain">
+   						<label for="analysis_code">Analysis:</label>
+						<input name="analysis_code" type="text" value="<!--#4DVAR [vt_cashbook_activity]analysis_code-->" id="analysis_code" placeholder="Analysis">
+   					</div>
+   					<div class="ui-field-contain">
+   						<label for="entry_extra_1">Entry Extra </label>
+						<input name="entry_extra_1" type="text" value="<!--#4DVAR [vt_cashbook_activity]entry_extra_1-->" id="entry_extra_1">
+   					</div>
+   					<div class="ui-field-contain">
+   						<label for="entry_int_str">Entry Int </label>
+						<input class="span6" name="entry_int_str" type="text" value="<!--#4DVAR [vt_cashbook_activity]entry_int_str-->" id="entry_int_str">
+					</div>
+   					
+   					<div class="ui-field-contain">
+   						<label for="date_received">Description :</label>
+						<textarea name="entry_description" id="entry_description" rows="5"><!--#4DVAR [vt_cashbook_activity]entry_description--></textarea>
+					</div>
+					<div class="ui-field-contain">
+   						<label>
+       						<input  type="checkbox" <!--#4DIF ([vt_cashbook_activity]push_to_vt_cashbook)-->checked<!--4DELSE--><!--4DENDIF--> id="push_to_vt_cashbook" value="true" class="span9" name="push_to_vt_cashbook" >IS ENABLED
+   						</label>
+   					</div>
+					<button type="submit" id="submit" class="ui-shadow ui-btn ui-corner-all ui-mini">Submit</button>
+					<a href="vtcashbooks.shtml" data-ajax="false" class="ui-shadow ui-btn ui-corner-all ui-mini">Cancel</a>
+				</form>	
+		    	
+		    </div>
+	</div><!-- /content -->
+	<!-- panel -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/sidebar.shtml-->
+	<!-- /panel -->
+
+	<!-- footer -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/footer.shtml-->
+	<!-- /footer -->
+</div><!-- /page -->
+
+</body>
+</html>

@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en"><!-- BEGIN HEAD --><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+
+	<title>Tenthmatrix</title>
+	
+	<link href="css/font-awesome.css" rel="stylesheet">
+	<link href="css/bootstrap.css" rel="stylesheet">
+	
+	<link href="css/icon.css" rel="stylesheet">
+<style>
+.ui-helper-hidden-accessible{
+display: none!important;
+}
+</style>
+</head>
+<body >
+
+
+
+	<div class="wrapper">
+	
+           		<div class="container-fluid" ><BR>
+				<div CLASS="row">
+				<div CLASS=" col-lg-3 col-md-6 col-sm-12">
+				
+				<div class="page-head bg-grey-100">
+				<h1 class="page-title">CRM Navigator<small>Tenthmatrix CRM</small></h1>
+			    </div>
+				</div>
+				<div CLASS=" col-lg-2 col-md-6 col-sm-9 pull-right" STYLE="margin-right:20px; margin-left:20px;" >
+				
+				<div class="input-group stylish-input-group">
+                    <input class="form-control" placeholder="Search" type="text" id="menu">
+                    <span class="input-group-addon">
+                        <button type="submit" STYLE="border: 0px none; background: transparent none repeat scroll 0% 0%; padding:0px;">
+                          <i class="fa fa-search" ></i>
+                        </button>  
+                    </span>
+                </div>
+				
+				</div>
+				
+				</div>
+				
+				<div class="row" style="padding:20px;" id="dashboard-menu">
+
+					<div class="col-lg-2 col-md-3 col-sm-3 col-xs-6">
+						<a class="panel panel-tile padding-md btn-dark bg-blue-grey-500 color-white display-block text-center" href="javascript:void(0)" onclick='$4d.WEBAREA_PROCESS_CALL("customers",function(result,error){ 	});' >
+							<div class="font-size-46"><i class="fa fa-users"></i></div>
+							<div class="bold">Companies</div>
+						</a>
+					</div>
+					<div class="col-lg-2 col-md-3 col-sm-3 col-xs-6 col-xs-6">
+						<a class="panel panel-tile padding-md btn-dark bg-light-green-600 color-white display-block text-center" href="javascript:void(0)" onclick='$4d.WEBAREA_PROCESS_CALL("contacts",function(result,error){ 	});' >
+							<div class="font-size-46"><i class="fa fa-envelope"></i></div>
+							<div class="bold">Contacts</div>
+						</a>
+					</div>
+					<div class="col-lg-2 col-md-3 col-sm-3 col-xs-6">
+						<a class="panel panel-tile padding-md btn-dark bg-light-blue-300 color-white display-block text-center" href="javascript:void(0)" onclick='$4d.WEBAREA_PROCESS_CALL("projects",function(result,error){ 	});' >
+							<div class="font-size-46"><i class="fa fa-list-alt"></i></div>
+							<div class="bold">Projects</div>
+						</a>
+					</div>
+					<div class="col-lg-2 col-md-3 col-sm-3 col-xs-6">
+						<a class="panel panel-tile padding-md btn-dark bg-red-300 color-white display-block text-center" href="javascript:void(0)" onclick='$4d.WEBAREA_PROCESS_CALL("tasks",function(result,error){ 	});' >
+							<div class="font-size-46"><i class="fa fa-tasks"></i></div>
+							<div class="bold">Tasks</div>
+						</a>
+					</div>
+					<div class="col-lg-2 col-md-3  col-sm-3 col-xs-6">
+						<a class="panel panel-tile padding-md btn-dark bg-purple-300 color-white display-block text-center" href="javascript:void(0)" onclick='$4d.WEBAREA_PROCESS_CALL("timeslips",function(result,error){ 	});'>
+							<div class="font-size-46"><i class="fa fa-calendar"></i></div>
+							<div class="bold">Timeslips</div>
+						</a>
+					</div>
+					<div class="col-lg-2  col-md-3 col-sm-3 col-xs-6">
+						<a class="panel panel-tile padding-md btn-dark bg-light-green-500 color-white display-block text-center" href="javascript:void(0)" onclick='$4d.WEBAREA_PROCESS_CALL("invoices",function(result,error){ 	});' >
+							<div class="font-size-46"><i class="fa fa-book"></i></div>
+							<div class="bold">Invoices</div>
+						</a>
+					</div>
+					<div class="col-lg-2 col-md-3 col-sm-3  col-xs-6">
+						<a class="panel panel-tile padding-md btn-dark bg-red-500 color-white display-block text-center" href="javascript:void(0)" onclick='$4d.WEBAREA_PROCESS_CALL("receipts",function(result,error){ 	});' >
+							<div class="font-size-46"><i class="fa fa-file-text"></i></div>
+							<div class="bold">Receipts</div>
+						</a>
+					</div>
+					<div class="col-lg-2 col-md-3 col-sm-3  col-xs-6">
+						<a class="panel panel-tile padding-md btn-dark bg-blue-grey-500 color-white display-block text-center" href="javascript:void(0)" onclick='$4d.WEBAREA_PROCESS_CALL("documents",function(result,error){ 	});'>
+							<div class="font-size-46"><i class="fa fa-envelope"></i></div>
+							<div class="bold">Documents</div>
+						</a>
+					</div>
+					
+				</div>
+				
+			
+             
+				<!-- BEGIN FOOTER -->
+				<footer class="bg-white">
+					<div class="pull-left">
+						<span class="pull-left margin-right-15">&copy;&nbsp;2015&nbsp;&nbsp;<a target="_blank" href="javascript:void(0)" onclick='$4d.WEBAREA_OPEN_WEB_URL("https://www.tenthmatrix.co.uk",function(result,error){ 	});'">Tenthmatrix.co.uk</a>&nbsp;&nbsp;</span>
+						<ul class="list-inline pull-left">
+							<li><a href="javascript:void(0)" onclick='$4d.WEBAREA_OPEN_WEB_URL("https://www.tenthmatrix.co.uk/privacy-policy.html",function(result,error){ 	});'>Privacy Policy</a></li>
+							<li><a href="javascript:void(0)" onclick='$4d.WEBAREA_OPEN_WEB_URL("https://www.tenthmatrix.co.uk/terms-of-business.html",function(result,error){ 	});'>Terms of Use</a></li>
+						</ul>
+					</div>
+				</footer>
+				<!-- END FOOTER -->
+            </div>
+	
+	
+
+
+<script src="js/jquery-latest.js"></script>
+<script src="js/ui/jquery-ui.js"></script>
+<script type="text/javascript">
+function bodyHtml(name,icon,style){
+	var code=name.replace(/ /g, '_');
+	code=code.toLowerCase(); 
+	var htmlStr='<div class="col-lg-2 col-md-3 col-sm-3 col-xs-6"><a class="panel panel-tile padding-md btn-dark '+style+' color-white display-block text-center" href="javascript:void(0)" onclick="$4d.WEBAREA_PROCESS_CALL(\''+code+'\',function(result,error){ 	});"><div class="font-size-46"><i class="'+icon+'"></i></div><div class="bold">'+name+'</div></a></div>';
+	return htmlStr;
+}
+
+$(document).ready(function() {
+    $.widget( "app.autocomplete", $.ui.autocomplete, {
+        options: {
+            suggest: false    
+        },
+        _suggest: function( items ) {
+            if ( $.isFunction( this.options.suggest ) ) {
+                return this.options.suggest( items );
+            }
+            this._super( items );
+        },
+    });
+
+	 var menu_details = [
+		{
+			label: 'Customers',
+			value: bodyHtml('Customers','fa fa-users','bg-blue-grey-500'),
+		},
+		{
+			label: 'Contacts',
+			value: bodyHtml('Contacts','fa fa-envelope','bg-light-green-600'),
+		},
+		{
+			label: 'Projects',
+			value: bodyHtml('Projects','fa fa-list-alt','bg-light-blue-300'),
+		},
+		{
+			label: 'Tasks',
+			value: bodyHtml('Tasks','fa fa-tasks','bg-red-300'),
+		},
+		{
+			label: 'Timeslips',
+			value: bodyHtml('Timeslips','fa fa-calendar','bg-purple-300'),
+		},
+		{
+			label: 'Invoices',
+			value: bodyHtml('Invoices','fa fa-book','bg-light-green-500 '),
+		},
+		{
+			label: 'Receipts',
+			value: bodyHtml('Receipts','fa fa-file-text','bg-red-500'),
+		},	
+		{
+			label: 'Documents',
+			value: bodyHtml('Documents','fa fa-file-o','bg-blue-grey-500'),
+		},	
+		{
+			label: 'Work Orders',
+			value: bodyHtml('Work Orders','fa fa-reorder','bg-light-green-600'),
+		},
+		{
+			label: 'Purchase Invoices',
+			value: bodyHtml('Purchase Invoices','fa fa-list-alt','bg-light-blue-300'),
+		},
+		{
+			label: 'Purchase Orders',
+			value: bodyHtml('Purchase Orders','fa fa-tasks','bg-red-300'),
+		},
+		{
+			label: 'Bank Statement Entries',
+			value: bodyHtml('Bank Statement Entries','fa fa-calendar','bg-purple-300'),
+		},
+		{
+			label: 'Payments',
+			value: bodyHtml('Payments','fa fa-book','bg-light-green-500 '),
+		},
+		{
+			label: 'Employees',
+			value: bodyHtml('Employees','fa fa-briefcase','bg-blue-grey-500'),
+		},	
+		{
+			label: 'Domains',
+			value: bodyHtml('Domains','fa fa-reorder','bg-light-green-600'),
+		},
+		{
+			label: 'Outstanding Invoices',
+			value: bodyHtml('Outstanding Invoice','fa fa-list-alt','bg-light-blue-300'),
+		},
+		{
+			label: 'Add Mileage Expenses',
+			value: bodyHtml('Add Mileage Expenses','fa fa-tasks','bg-red-300'),
+		},
+		{
+			label: 'Add Other Expenses',
+			value: bodyHtml('Add Other Expenses','fa fa-calendar','bg-purple-300'),
+		},
+		{
+			label: 'Mailing',
+			value: bodyHtml('Mailing','fa fa-book','bg-light-green-500 '),
+		},
+		{
+			label: 'Mailing Templates',
+			value: bodyHtml('Mailing Templates','fa fa-list-alt','bg-red-500'),
+		},		
+		{
+			label: 'Print Account Statements',
+			value: bodyHtml('Print Account Statements','fa fa-briefcase','bg-blue-grey-500'),
+		},		
+		{
+			label: 'Submit VAT Return',
+			value: bodyHtml('Submit VAT Return','fa fa-book','bg-light-green-600'),
+		},
+		{
+			label: 'VAT Calculator',
+			value: bodyHtml('VAT Calculator','fa fa-list-alt','bg-light-blue-300'),
+		},
+		{
+			label: 'Transactions',
+			value: bodyHtml('Transactions','fa fa-tasks','bg-red-300'),
+		},
+		{
+			label: 'Job Applications',
+			value: bodyHtml('Job Applications','fa fa-calendar','bg-purple-300'),
+		},
+		{
+			label: 'Cash Management',
+			value: bodyHtml('Cash Management','fa fa-book','bg-light-green-500 '),
+		},
+		{
+			label: 'Account Statements',
+			value: bodyHtml('Account Statements','fa fa-list-alt','bg-red-500'),
+		},		
+		{
+			label: 'Business Brands',
+			value: bodyHtml('Business Brands','fa fa-briefcase','bg-blue-grey-500'),
+		},	
+		{
+			label: 'Leads',
+			value: bodyHtml('Leads','fa fa-book','bg-light-green-600'),
+		},
+		{
+			label: 'Holidays',
+			value: bodyHtml('Holidays','fa fa-list-alt','bg-light-blue-300'),
+		},
+		{
+			label: 'Login to Online Banking',
+			value: bodyHtml('Login to Online Banking','fa fa-tasks','bg-red-300'),
+		},
+		{
+			label: 'Bank Accounts',
+			value: bodyHtml('Bank Accounts','fa fa-calendar','bg-purple-300'),
+		},
+		{
+			label: 'Bank Entry Types',
+			value: bodyHtml('Bank Entry Types','fa fa-book','bg-light-green-500 '),
+		},
+		{
+			label: 'Script Runner',
+			value: bodyHtml('Script Runner','fa fa-briefcase','bg-blue-grey-500'),
+		},		
+		{
+			label: 'FTP Accounts',
+			value: bodyHtml('FTP Accounts','fa fa-book','bg-light-green-600'),
+		},
+		{
+			label: 'Emails Direct',
+			value: bodyHtml('Emails Direct','fa fa-list-alt','bg-light-blue-300'),
+		},
+		{
+			label: 'Emails Queue',
+			value: bodyHtml('Emails Queue','fa fa-tasks','bg-red-300'),
+		},
+		{
+			label: 'Templates',
+			value: bodyHtml('Templates','fa fa-list-alt','bg-purple-300'),
+		},				
+	];
+	$( "#menu" ).autocomplete({
+		minLength: 0,
+		//maxResults: 4,
+		//source: function(request, response) {
+       //	 	var results = $.ui.autocomplete.filter(menu_details, request.term);
+		//	response(results.slice(0, 8));
+    	//},
+    	source: menu_details,
+		focus: function( event, ui ) {
+			$( "#menu" ).val( ui.item.label );
+			return false;
+		},
+		suggest: function( items ) {
+			var menu_val=$( "#menu" ).val();
+			$( "#dashboard-menu" ).empty();
+			var left_menu='';
+			for(var i=0; i<items.length; i++){
+				var label = items[i].label;
+				var str= label.search(menu_val);
+				var value= items[i].value;
+				left_menu+=value;
+			}
+			//console.log(left_menu);
+			$('#dashboard-menu').append(left_menu);
+		}
+	});
+	
+});
+
+</script>
+	</body></html>

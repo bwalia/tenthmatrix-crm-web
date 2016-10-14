@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+<h2>Get Session Data Form Name/Value Demo</h2>	
+<!--#4DSCRIPT/_HIT_LoadInclude/includes/session_get_code_1.shtml-->
+
+
+<h2>Get Session Data ( Arrays ) Demo</h2>	
+<!--#4DSCRIPT/_HIT_LoadInclude/includes/session_get_code.shtml-->
+<a target="_blank" href="session_set.shtml">Get Session Data Demo ( Set by session_set.shtml page )</a>
+
+	
+</body>
+</html>

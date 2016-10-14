@@ -1,0 +1,1164 @@
+<!--HIT_EXECUTE
+_HIT_HTTPD_SetHTTPHeader ("Content-type";"text/html; charset=utf-8")
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+C_TEXT(_HTMLTITLETXT)
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+_HTMLTITLETXT:="Bank Statement Entries"
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+<!--#4DIF (_HTMLTITLETXT#"")-->
+	<title><!--#4DVAR _HTMLTITLETXT--></title>
+	<!--4DELSE-->
+	<title>Tenthmatrix Billing</title>
+	<!--4DENDIF-->
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	
+    <!-- bootstrap -->
+    <link href="bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link href="css/bootstrap/bootstrap-responsive.css" rel="stylesheet">
+    <link href="css/bootstrap/bootstrap-overrides.css" type="text/css" rel="stylesheet">
+
+   <!-- libraries -->
+   <link href="css/lib/jquery-ui-1.10.2.custom_new.css" rel="stylesheet" type="text/css" />
+    <link href="css/lib/font-awesome.css" type="text/css" rel="stylesheet" />
+	<link href="css/lib/uniform.default.css" type="text/css" rel="stylesheet">
+    <link href="css/lib/bootstrap.datepicker.css" type="text/css" rel="stylesheet">
+	
+	<!-- global styles -->
+    <link rel="stylesheet" type="text/css" href="css/layout.css">
+    <link rel="stylesheet" type="text/css" href="css/elements.css">
+    <link rel="stylesheet" type="text/css" href="css/icons.css">
+    
+    <!-- this page specific styles -->
+    <link rel="stylesheet" href="css/compiled/tables.css" type="text/css" media="screen" />
+	<link rel="stylesheet" href="css/compiled/form-showcase.css" type="text/css" media="screen" />
+
+    <!-- open sans font -->
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+	<link rel="stylesheet" href="css/base/jquery-ui.css" />
+	
+<link rel="stylesheet" media="all" type="text/css" href="css/jquery-impromptu.css" />
+<link rel="stylesheet" href="css/autocomplete.css" />
+<link href="css/bootstrap-select.css" rel="stylesheet" />
+<style>
+.payment-detail{
+	border-bottom: solid 2px #e9e8e8 ;border-radius:5px;margin-bottom:10px; background:#dadada; padding:5px; margin-top:10px;
+}
+.payment-detail:before {
+	content: '';
+  	display: inline-block;
+  	border-left: 10px solid transparent;
+  	border-right: 10px solid transparent;
+  	border-bottom: 10px solid #ccc;
+  	border-bottom-color: rgba(0, 0, 0, 0.2);
+  	position: absolute;
+  	top: 11px;
+  	right: 17px;
+}
+.payment-detail:after {
+  	content: '';
+  	display: inline-block;
+  	border-left: 9px solid transparent;
+  	border-right: 9px solid transparent;
+  	border-bottom: 9px solid #dadada;
+  	position: absolute;
+  	top: 12px;
+	right: 18px;  
+}
+
+#message{
+	color:#FF0000;
+}
+.jqibox {
+	z-index:9999!important;
+}
+.table-wrapper .filter-block {
+    margin-bottom: 10px;
+}
+
+.datepicker{
+	z-index: 11000!important;
+}
+.selectTable{
+	background:#f5fafc;
+}
+.tdmrgnbtm{
+	background:#f5fafc;
+	border-bottom:5px solid #fff!important;
+}
+.ui-autocomplete {
+    max-height: 100px;
+    overflow-y: auto;
+    /* prevent horizontal scrollbar */
+	overflow-x: hidden;
+}
+.bordertable{
+	border:2px solid #68A3D5!important; 
+	border-radius:4px;
+	padding:0px;
+}
+.ui-autocomplete, ui-autocomplete-input {z-index:99999}
+
+.modal-modified .modal-header {
+	background: #f89406;
+	border-radius: 5px 5px 0 0px;
+	color: #fff;
+}
+.modal-modified  .modal-header h3 {
+	color: #fff;
+	font-size: 21px;
+	line-height: 21px;
+}
+.close {
+	outline: none;
+}
+.ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button{
+width: 203px; }
+.modal-body {
+    position: relative;
+	max-height: inherit;
+    /*max-height: 400px;*/
+    padding: 15px;
+    overflow-y: hidden;
+}
+.fixed-table-container {
+		margin:5px;
+	border: 1px solid #ddd;
+      width: 100%;
+      height: 200px;
+     
+    
+      position: relative; 
+      padding-top: 30px; 
+    }
+
+    .fixed-table-container-inner {
+      overflow-x: hidden;
+      overflow-y: auto;
+      height: 100%;
+    }
+	
+	.newtd td{
+		padding: 6px 52px 6px 6px;
+		border:1px solid #ddd;
+	}
+     
+    .header-background {
+     
+     
+      position: absolute;
+      top: 0;
+      right: 0;
+      left: 0;
+    }
+    
+  .th-inner {
+	
+      position: absolute;
+      top: 0;
+      line-height: 32px; / height of header /
+      text-align: left;
+   
+      padding-left: 5px;
+      margin-left: -2px;
+	   margin-right: -10px;
+	  margin-bottom:4px;
+	  
+	  border-left:1px solid #D4D4D4;
+    }
+    .first .th-inner {
+		border-radius:4px;
+	}
+.bootstrap-filestyle{
+	display:inline-block;
+}
+.bootstrap-filestyle .form-control{
+	margin-left:-3px;
+}
+</style>
+
+</head>
+<body>
+
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
+
+	<!-- main container -->
+    <div class="content">
+        
+        <div class="container-fluid">
+       		
+			
+		<div id="pad-wrapper">
+
+                <!-- timeslips table -->
+                <div class="table-wrapper orders-table section">
+                    <div class="row-fluid head">
+                        <div class="span12">
+                            <h4>Bank Statement Entries
+                            <!--#4DIF (_HIT_WebApp_GetField ("set")#"")--> Set : <!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("set")--><!--4DELSE--><!--4DENDIF--> 
+                            </h4>
+                        </div>
+                    </div>
+                    
+                    <div class="row-fluid filter-block">
+						<div class="pull-left">
+							<b>Date</b> From :
+							<input name="start_date" class="input-large datepicker span3" type="text" data-date-format="dd/mm/yyyy"  value="" id="start_date" readonly >
+							&nbsp;&nbsp;
+							Till :
+							<input name="end_date" class="input-large datepicker span3" type="text" data-date-format="dd/mm/yyyy"  value="" id="end_date" readonly >
+							<a href="javascript:void(0)" onClick="reset_dates()" class="btn-flat success new-product margn-lft35" style="margin-bottom:10px;margin-left:5px;">Reset Dates</a>
+						</div>
+                        <div class="pull-right">
+                            <input name="keyword" id="keyword" type="text" class="search order-search" placeholder="Enter bank entry ref.." value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" />
+                       		<a href="bank_entry.shtml" class="btn-flat success new-product" style="margin-left:5px;">+ Add New Bank Entry</a>
+                        </div>
+                    </div>
+					<div class="row-fluid filter-block">
+						<div class="pull-left">
+						Add to Set:
+										
+						<div class="ui-select">
+							<select name="add_sets" id="add_sets" onChange="__showForm_AddSet(this.value, $('#add_sets option:selected').text())">
+								<option value="">--Select Set--</option>
+								<!--#4DSCRIPT/Web_loadBankEnteriesSets/-->
+								<!--4DLOOP  [saved_sets]-->									
+									<option value="<!--#4DHTMLVAR [saved_sets]uuid-->" ><!--#4DHTMLVAR [saved_sets]name--></option>
+								<!--4DENDLOOP-->
+								<option id="opt_new_set" value="new_set">Create New Set</option>
+							</select>
+						</div>
+					
+						<a href="#setManagerModal" data-toggle="modal" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html('');" class="btn-flat success new-product">Set Manager</a> 
+					    </div>
+					    	<div class="pull-right">
+					    	 	<label style="display:inline-block;padding-left:10px; float:right; margin-top:2px;font-size:12px;margin-bottom:0px;vertical-align:top"><input type="checkbox" style="vertical-align:top"  id="hide_entry_details" value="true" onChange="__showHideEntryDetails()"> <strong>Hide Entry Details</strong></label>
+								
+					    	 	<div class="btn-group pull-right">
+                                	<button class="glow left large showAllBankStatements" style="color: #a8b5c7;" onClick="__filterResults(''); return false;" disabled>All</button>
+                                	<button class="glow middle large showPending" onClick="__filterResults('pending'); return false;">Pending</button>
+                                	<button class="glow right large showReconciled" onClick="__filterResults('reconciled'); return false;">Reconciled</button>
+                                	
+					    		</div>
+                           Select filters : 
+                            	<div class="ui-selects" style="display:inline-block">
+									<select name="filterOptions" class="selectpicker" multiple data-width="auto">
+               						<optgroup label="Select Bank" data-max-options="1">
+                						<!--#4DSCRIPT/Web_LoadAllBankAccount/-->
+										<!--4DLOOP  [bank_accounts]-->									
+										<option value="bank_<!--#4DHTMLVAR [bank_accounts]uuid-->"><!--#4DHTMLVAR [bank_accounts]account_name--></option>
+										<!--4DENDLOOP-->
+               						</optgroup>
+               						
+                					<optgroup label="Display entries with" data-max-options="1">
+               							<option value="display_paid_in">Money In</option>
+										<option value="display_paid_out">Money Out</option>
+									</optgroup>
+									<optgroup label="Show Entries with" data-max-options="1">
+               							<option value="show_with">Attached documents</option>
+										<option value="show_without">Without documents</option>
+									</optgroup>
+              						</select>
+              					</div>  
+						</div>            
+                    </div>
+                    <div class="row-fluid display_records" style="text-align:right;font-weight:bold; margin-bottom:5px;">
+                    </div>
+                    <div class="row-fluid">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th class="span1">
+                                        <input name="select" class="check" type="checkbox" id="chk_all" >
+                                    </th>
+                                    <th class="span2">
+                                       DATE
+                                    </th>
+                                    <th class="span2">
+										<span class="line"></span>
+                                        TYPE
+                                    </th>
+                                    <th class="span5">
+                                        <span class="line"></span>
+                                        DESCRIPTION
+                                    </th>
+                                    <th class="span2">
+                                        <span class="line"></span>
+                                       MONEY OUT
+                                    </th>
+                                    <th class="span2">
+                                        <span class="line"></span>
+                                        MONEY IN
+                                    </th>
+                                    <th class="span2">
+                                        <span class="line"></span>
+                                        Outstanding Balance
+                                    </th>
+									<th class="span2">
+                                        <span class="line"></span>
+                                        Status
+                                    </th>
+                                    
+                                    <th class="span6">
+                                        <span class="line"></span>
+                                        Note
+                                    </th>
+									<th class="span3">
+                                        <span class="line">Action</span>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tfoot>
+                            <tr>  
+                            	<th align="left">&nbsp;</th>
+                                <th align="left">DATE</th>
+                                <th align="left">TYPE</th>
+                                <th align="left">DESCRIPTION</th>
+                                <th align="left">MONEY OUT</th>
+                                <th align="left">MONEY IN</th>
+                                <th align="left">Outstanding Balance</th>
+                                <th align="left">Status</th>
+                                <th align="left">Note</th>
+                                <th align="left">Action</th>
+                            </tr>
+                        	</tfoot>
+                            <tbody id="payment_table_body">
+
+                            </tbody>
+                        </table>
+						<div id="img_loading_div" style="text-align:center">
+							<img src="loading.gif"  style="padding:20px;" width="34" >
+						</div>
+                    </div>
+                </div>
+                <!-- end timeslips table -->
+
+            </div>
+        </div>
+    </div>
+    <!-- end main container -->
+
+	<div class="example-container">
+		
+		<pre class="code" style="display:none;" id="load_prompt">
+			var statesdemo = {
+				state0: {
+					title: 'Do you want to load the records of '+$('#add_sets option:selected').text()+'?',
+					html:'',
+					buttons: { No : 0, Yes: 1 },																		
+					submit:function(e,v,m,f){ 
+						if(v==1) {
+							location.href='bank_enteries.shtml?set='+$('#add_sets option:selected').text()+'&set_uuid='+$('#add_sets').val();
+						}
+						if(v==0) {
+							$.prompt.close();
+							$('#add_sets').val('');
+							$('.check').prop('checked', false);
+						}
+					}
+				},
+		
+			};
+			$.prompt(statesdemo);
+		</pre>
+		<pre class="code" style="display:none;" id="new_set_prompt">
+									var statesdemo = {
+										state0: {
+											title: 'Please enter name of new set',
+											html:'&lt;div id="message"&gt;&lt;/div&gt;&lt;input type="text" name="new_set" id="new_set" value="userset_1"&gt;&lt;br /&gt;',
+											buttons: { Cancel : 0, Ok: 1 },
+											focus: "#new_set",																		
+											submit:function(e,v,m,f){ 
+												//console.log(f);
+												if(v==1) {
+													e.preventDefault();
+													var new_set=$('#new_set').val().trim();
+													if(new_set!=''){
+														var exist=false;
+														$('#add_sets option').each(function() {
+															if(new_set.toLowerCase()==$(this).text().toLowerCase()){
+																exist=true;
+															}
+														});
+														if(exist==false){
+															if(add_from_manager==true){
+																jsonRow = 'addDelBankEnteriesSets.cgi?tablname='+tablname+'&set='+new_set;
+															}
+															else{
+																jsonRow = 'load_bankenteriesnew.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&selected='+selected+'&set=add_to_'+new_set;
+															}
+															$.getJSON(jsonRow,function(result){
+																if(result.setUUID){
+																	$('#opt_new_set').before('&lt;option value="'+result.setUUID+'"&gt;'+new_set+'&lt;/option&gt;');
+																	$('#add_sets').val(result.setUUID);
+																	$('#sets_list').prepend('&lt;option value="'+result.setUUID+'" &gt;'+ new_set+'&lt;/option&gt;');
+																	$(".jqibox").remove();
+																	show_load_prompt();
+																}
+																else if(result.Succ){
+																	$('#opt_new_set').before('&lt;option value="'+result.UUID+'"&gt;'+new_set+'&lt;/option&gt;');
+																	
+																	//$('#load_sets').append('&lt;option value="'+result.UUID+'" &gt;'+ new_set+'&lt;/option&gt;');
+																	$('#sets_list').prepend('&lt;option value="'+result.UUID+'" &gt;'+ new_set+'&lt;/option&gt;');
+																	set_add_to=new_set;
+																	
+																	$(".jqibox").remove();
+																	
+																	$("#set_mgr_msg").html('* Set added successfully');
+																	
+																	add_from_manager=false;
+																}else if(result.Err){
+																	$('#message').html('* '+result.Err);
+																}
+															});				
+														}
+														else{
+															$('#message').html('* '+new_set+' already exists. Please enter another name of set');
+														}
+													}
+													else{
+														$('#message').html('* Please enter name of new set');
+														$('#new_set').focus();
+													}
+												}
+												if(v==0) {
+													$.prompt.close();
+													$('#add_sets').val('');
+													add_from_manager=false;
+												}
+											}
+										},
+										
+									};
+
+									$.prompt(statesdemo);
+								</pre>
+	</div>
+			<div id="setManagerModal" class="modal modal-modified   hide fade" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h3 class="modal-title">Set Manager</h3>
+				</div>
+				<div class="modal-body">
+					<p><span class="label-default" id="set_mgr_msg" style="color:#006600"></span><span class="label-default" id="set_mgr_err" style="color:#FF0000"></span></p>
+					<div>
+						<select name="sets_list" id="sets_list" class="form-control" size="10" style="width:100%" >
+						 	<!--#4DSCRIPT/Web_loadBankEnteriesSets/-->
+							<!--4DLOOP  [saved_sets]-->									
+								<option value="<!--#4DHTMLVAR [saved_sets]uuid-->" ><!--#4DHTMLVAR [saved_sets]name--></option>
+							<!--4DENDLOOP-->
+						</select>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-info sm-btn" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); add_new_set()">Add new Set</button>
+					<button type="button" class="btn btn-info sm-btn" style="margin-left:0px;" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); load_from_set($('#sets_list').val(), $('#sets_list option:selected').text())">Load</button>
+					<div class="btn-group">
+						<button type="button" class="btn btn-info sm-btn" >Delete</button>
+						<button type="button" class="btn btn-info  sm-btn  dropdown-toggle" data-toggle="dropdown" >
+        					<span class="caret"></span>
+         			 	</button>
+      					<ul class="dropdown-menu" role="menu" style="text-align:left">
+       						<li><a href="javascript:void(0)" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); del_set($('#sets_list').val(),$('#sets_list option:selected').text(),1)">Delete Selected Set</a></li>
+							<li><a href="javascript:void(0)" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); del_set($('#sets_list').val(),$('#sets_list option:selected').text(),2)">Delete Bank statements in selected set</a></li>
+						</ul>
+		 			</div>
+					<button type="button" class="btn btn-default sm-btn" data-dismiss="modal">OK</button>
+				</div>
+			</div>
+			
+			<!-- Reconcile -->
+			<div id="reconcileManager" class="modal modal-modified hide fade" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true" onClick="refreshReconcileManager();$('#r_window_smsg').html(''); $('#r_window_emsg').html('');">&times;</button>
+					<h3 class="modal-title">Reconcile</h3>
+				</div>
+				<div class="modal-body">
+					<p><span class="label-default" id="r_window_smsg" style="color:#006600"></span><span class="label-default" id="r_window_emsg" style="color:#FF0000"></span></p>
+					<div>
+						
+						<input  type="hidden" value="" id="formTypeField">
+						<input  type="hidden" value="" id="bankamountField">
+						<input  type="hidden" value="" id="selectedStatusField">
+						<input  type="hidden" value="" id="bankentryuuidField">
+						<input  type="hidden" value="" id="invUUIDVal">
+						<input  type="hidden" value="" id="clientName">
+						<input  type="hidden" value="" id="clientUUID">
+						<div id="reconcileWin">
+						<input  type="text" value="" id="searchInvoiceField" style="width:97%; ">
+                        <div class="fixed-table-container">
+                        	<div class="header-background"> </div>
+							<div class="fixed-table-container-inner">
+        						<table CLASS="table-hover newtd reconcileTable" style="width:100%;">
+        						
+       							</table>
+      						</div>
+      					</div>
+     					<div style="clear:both;border-top:1px solids #ccc; padding-top:5px;">
+      						<label style="display:inline-block; margin-right:5px;"><strong><span id="invnoLabel">Sales Invoice Number:</span></strong></label>
+      						<input style="width:90px;" type="text" value="" id="invNoVal" readonly>
+      						<label style="display:inline-block;margin-right:5px; margin-left:15px;"><strong><span id="invamountLabel">Invoice Amount:</span></strong></label>
+      						<input style="width:90px;" class="num"  type="text" value="" id="invamountVal" >
+      						<br/>
+      						<label style="display:inline-block;margin-right:5px;" class="attachLabel"><strong><span id="attachdocumentLabel">Attach</span></strong></label>
+      						<input name="document_attach" class="filestyle" type="file" id="document_attach">
+      						<br/>
+      						<button type="button" class="btn btn-info sm-btn" style="margin-left:0px; margin-top:10px;" onClick="$('#r_window_smsg').html(''); $('#r_window_emsg').html(''); reconcile_bankentry()">Reconcile</button>
+						</div>
+						</div>
+      					<div style="clear:both;border: 1px solid #ddd; border-radius: 4px; padding-bottom: 10px; display:none; padding-top:10px; padding-left:10px" id="purchaseInvEntry">
+      						<h4>Add new Purchase Invoice</h4><br/>
+      						<p><span class="label-default" id="pi_window_smsg" style="color:#FF0000"></span></p>
+      						<label style="display:inline-block; margin-right:5px;width:180px;"><strong>Supplier Name:</strong></label>
+      						<div class="ui-widget" style="display:inline-block;"><select id="supplierDropdown" class="companiesDropDown"></select></div>
+      						<br/><br/>
+      						<label style="display:inline-block;margin-right:5px;width:180px;"><strong>Amount:</strong></label>
+      						<input style="width:90px;" class="num" type="text" value="" id="n_purchase_amount" >
+      						<label style="display:inline-block;margin-right:5px;padding-left:10px;">
+      							<input type="checkbox" id="is_vat" value="true" class="span1">VAT
+      						</label>
+      						 <br/><br/>
+      						<label style="display:inline-block;margin-right:5px;width:150px;"><strong>Attach Bill:</strong></label>
+      						<input name="n_purchase_bill" class="filestyle" type="file" id="n_purchase_bill">
+      						<div style="margin-left: 60px;">
+      							<button type="button" class="btn btn-info sm-btn" style="margin-left:100px;margin-top:10px;" onclick="saveNewPurchaseInvoice()">Save</button>
+      							<button type="button" class="btn btn-default sm-btn" style="margin-left:15px;margin-top:10px;" onclick="cancelNewPurchaseInvoice()">Cancel</button>
+      						</div>
+      					</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<a href="invoice.shtml" target="_blank" class="btn btn-info sm-btn addInvbtn" style="display:none;">Add new Invoice</a>
+					<a href="javascript:void(0)" onClick="addPurchaseInvWin()" class="btn btn-info sm-btn addPurchasbtn" style="display:none;">Add new Purchase Invoice</a>
+					<button type="button" class="btn btn-default sm-btn" data-dismiss="modal" onClick="$('#r_window_smsg').html(''); $('#r_window_emsg').html(''); refreshReconcileManager();">Close</button>
+				</div>
+			</div>
+			
+			<!-- Create Missing Links-->
+			<div id="createMissingLinksManager" class="modal modal-modified hide fade" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true" onClick="refreshMissingLinksManager()">&times;</button>
+					<h3 class="modal-title">Create Missing Links</h3>
+				</div>
+				<div class="modal-body" >
+					<p><span class="label-default" id="c_window_smsg" style="color:#006600"></span></p>
+					<div>
+						<input  type="hidden" value="" id="c_formTypeField">
+						<input  type="hidden" value="" id="c_bankentryuuidField">
+						<input  type="hidden" value="" id="c_bankamountField">
+						<input  type="hidden" value="" id="c_selectedStatusField">
+						<div style="max-height:200px;clear:both; margin-bottom:15px; overflow:auto;  ">
+       						<table class="table table-bordered table-hover" style="margin-bottom:0px;">
+       							<thead id="createMisLinkHead">
+       							
+       							</thead>
+       							<tbody id="createMissingTable">
+       							
+       							</tbody>
+      						</table>
+      					</div>
+      					<a href="javascript:void(0)" style="text-decoration:none;margin-bottom:10px;" onClick="openmissingLinkForm(); $('#c_window_smsg').html(''); $('#c_window_emsg').html('');"><strong>+ Create new Link</strong></a>	
+      					
+      					<div style="padding-top: 10px;padding-left:10px; border: 1px solid #ddd; border-radius: 4px; padding-bottom: 10px; display:none;" id="missingLinkForm">
+     						<p><span class="label-default" id="c_window_emsg" style="color:#FF0000"></span></p>
+     						<label style="display:inline-block; margin-right:5px;"><strong><span id="c_CustomerLabel"></span></strong></label>
+     						<div class="ui-widget" style="display:inline-block;"><select id="c_linkcustomer" class=""></select></div>
+     						<div class="c_newCreateMisLinkDiv" style="display:none;">
+     							 <div class="fixed-table-container" style="margin: 5px -6px;">
+                        			<div class="header-background"> </div>
+									<div class="fixed-table-container-inner">
+        								<table CLASS="table-hover newtd" style="width:100%;">
+     										<thead id="c_newCreateMisLinkHead">
+       						
+       										</thead>
+       										<tbody id="c_newCreateMissingBody">
+       							
+       										</tbody>
+      									</table>
+      								</div>
+      							</div>
+      							<br/>
+      							<div style="clear:both;border-top:1px solids #ccc; padding-top:5px;">
+      								<input type="hidden" id="c_receipt_uuid" value="">
+     								<input type="hidden" id="c_invoice_uuid" value="">
+     								<label style="display:inline-block; margin-right:5px;"><strong><span id="c_reciptNoLabel"></span></strong></label>
+      								<input style="width:90px;" type="text" value="" id="c_recipt_no" readonly>
+      								
+      								<label style="display:inline-block;margin-right:5px;"><strong><span id="c_invnoLabel"></span></strong></label>
+      								<input style="width:90px;" type="text" value="" id="c_inv_no" readonly>
+      								<br/>
+      								<label style="display:inline-block;margin-right:5px;" class="attachLabel"><strong><span id="c_attachdocumentLabel">Attach</span></strong></label>
+      								<input name="c_document_attach" class="filestyle" type="file" id="c_document_attach">
+      								<br/>
+      							</div>
+       						     						
+
+      						</div>
+      						 <div style="margin-left: 100px;"><button type="button" class="btn btn-info sm-btn" style="margin-left:100px;margin-top:10px;" onclick="saveCreateMissingLinks()">Save new link</button></div>
+      						
+      						
+      					</div>
+      					<div style="clear:both;border: 1px solid #ddd; border-radius: 4px; padding-bottom: 10px; display:none; padding-top:10px; padding-left:10px" id="c_purchaseInvEntry">
+      						<h4>Add new Purchase Invoice</h4><br/>
+      						<p><span class="label-default" id="cpi_window_emsg" style="color:#FF0000"></span></p>
+      						<label style="display:inline-block; margin-right:5px;width:180px;"><strong>Supplier Name:</strong></label>
+      						<div class="ui-widget" style="display:inline-block;"><select id="c_n_supplierDropdown" class="companiesDropDown"></select></div>
+      						<br/><br/>
+      						<label style="display:inline-block;margin-right:5px;width:180px;"><strong>Amount:</strong></label>
+      						<input style="width:90px;" class="num" type="text" value="" id="c_n_purchase_amount" >
+      						<label style="display:inline-block;margin-right:5px;padding-left:10px;">
+      							<input type="checkbox" id="c_is_vat" value="true" class="span1">VAT
+      						</label>
+      						 <br/><br/>
+      						<label style="display:inline-block;margin-right:5px;width:150px;"><strong>Attach Bill:</strong></label>
+      						<input name="c_n_purchase_bill" class="filestyle" type="file" id="c_n_purchase_bill">
+      						<div style="margin-left: 60px;">
+      							<button type="button" class="btn btn-info sm-btn" style="margin-left:100px;margin-top:10px;" onclick="c_saveNewPurchaseInvoice()">Save</button>
+      							<button type="button" class="btn btn-default sm-btn" style="margin-left:15px;margin-top:10px;" onclick="c_cancelNewPurchaseInvoice()">Cancel</button>
+      						</div>
+      					</div>
+      				</div>
+				</div>
+				<div class="modal-footer">
+					<a href="javascript:void(0)" onClick="addPurchaseInvForMisiingLinks()" class="btn btn-info sm-btn c_addPurchasbtn" style="display:none;">Add new Purchase Invoice</a>
+					<button type="button" class="btn btn-default sm-btn" data-dismiss="modal" onClick="refreshMissingLinksManager()">Cancel</button>
+				</div>
+			</div>
+			
+			<!--upload document-->
+			<div id="uploadDocumentManager" class="modal modal-modified hide fade" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true" onClick="refreshMissingLinksManager()">&times;</button>
+					<h3 class="modal-title">Upload Document</h3>
+				</div>
+				<div class="modal-body" >
+					<p><span class="label-default" id="u_window_smsg" style="color:#006600"></span><span class="label-default" id="u_window_emsg" style="color:#FF0000"></span></p>
+					<div>
+						<input  type="hidden" value="" id="u_table_uuid">
+						<input  type="hidden" value="" id="u_bankuuid">
+						<input  type="hidden" value="" id="u_tableName">
+						<label style="display:inline-block;margin-right:5px;" class="attachLabel"><strong>Attach Document</strong></label>
+      					<input name="u_document_attach" class="filestyle" type="file" id="u_document_attach">
+      				</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-info sm-btn" onclick="uploadDocument()">Upload</button>
+					<button type="button" class="btn btn-default sm-btn" data-dismiss="modal" onClick="refreshMissingLinksManager()">Cancel</button>
+				</div>
+			</div>
+			
+			<div style="text-align:center" id="dialog" ></div>
+	<!-- scripts -->
+
+
+<script src="js/jquery-latest.js"></script>
+<script src="bootstrap/js/bootstrap.min.js"></script>
+<script src="js/theme.js"></script>
+<script src="js/ui/jquery-ui.js"></script>
+<script>
+var url = window.location.pathname;
+ var filename = url.substring(url.lastIndexOf('/')+1);
+ var filelink = $("a[href='"+filename+"']");
+ var ulparent = filelink.parents('.submenu');
+ var liparent = ulparent.parent('li');
+ filelink.addClass('active');
+ ulparent.addClass('active');
+ liparent.addClass('active');
+ var mainlink = liparent.children('.dropdown-toggle');
+ mainlink.after('<div class="pointer"><div class="arrow"></div><div class="arrow_border"></div></div>');
+ 
+ function chng_activity_status(act_uuid, location){
+ <!--#4DIF (Web_isUserStaff | Web_isUserClient)-->
+		var dataString = 'act_uuid='+act_uuid+'&redirect=false';
+		$.ajax({
+		type: "GET",
+		dataType: "json",
+		url: "chng_noti_status.cgi",
+		data: dataString,
+		cache: false,
+		success: function(html)
+		{
+			if(html.succ){
+				//alert("status changed");
+				window.location.href=location;
+			}
+		}
+		});
+<!--#4DELSE-->
+	window.location.href=location;
+<!--#4DENDIF-->	
+	}
+	
+function __alertMessage(msg){
+	$.prompt(" ", {
+		title: msg,
+		buttons: { "Close": false }
+	});
+}
+	</script>
+	   
+<script type="text/javascript">
+$(document).ready(function() {
+    $.widget( "app.autocomplete", $.ui.autocomplete, {
+        options: {
+            suggest: false    
+        },
+        _suggest: function( items ) {
+            if ( $.isFunction( this.options.suggest ) ) {
+                return this.options.suggest( items );
+            }
+            this._super( items );
+        },
+    });
+	<!--#4DIF (_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")-->
+	var menu_details = [
+		{
+			label: 'Account Company Contacts',
+			value: '<li><a class="dropdown-toggle" href="javascript:void(0)" onclick="toggle_left_submenu(this)"><i class="icon-edit"></i><span>Account</span><i class="icon-chevron-down"></i></a><ul class="submenu"><li><a target="_blank" href="customers.shtml">Company</a></li><li><a target="_blank" href="contacts.shtml">List Contacts</a></li><li><a target="_blank" href="contact.shtml">Enter New Contact</a></li></ul></li>',
+		},
+		{
+			label: "Tasks",
+			value: '<li><a class="dropdown-toggle" href="javascript:void(0)" onclick="toggle_left_submenu(this)"><i class="icon-tasks"></i><span>Tasks</span><i class="icon-chevron-down"></i></a><ul class="submenu"><li><a target="_blank" href="tasks.shtml">List Tasks</a></li><li><a target="_blank" href="task.shtml">Enter New Task</a></li></ul></li>',
+		},
+		{
+			label: "Timeslips",
+			value: ' <li><a class="dropdown-toggle" href="javascript:void(0)" onclick="toggle_left_submenu(this)"><i class="icon-calendar"></i><span>Timeslips</span><i class="icon-chevron-down"></i></a><ul class="submenu"><li><a target="_blank" href="timeslips.shtml">List Timeslips</a></li></ul></li>',
+		},
+		{
+			label: "Documents",
+			value: '<li><a class="dropdown-toggle" href="javascript:void(0)" onclick="toggle_left_submenu(this)"><i class="icon-briefcase"></i><span>Documents</span><i class="icon-chevron-down"></i></a><ul class="submenu"><li><a target="_blank" href="documents.shtml">List Documents</a></li><li><a target="_blank" href="document.shtml">Enter New Document</a></li></ul></li>'
+		},
+		{
+			label: "Invoices",
+			value: '<li><a class="dropdown-toggle" href="javascript:void(0)" onclick="toggle_left_submenu(this)"><i class="icon-book"></i><span>Invoices</span><i class="icon-chevron-down"></i></a><ul class="submenu"><li><a target="_blank" href="invoices.shtml">List Invoices</a></li></ul></li>',
+		},
+		{
+			label: "Receipts",
+			value: '<li><a class="dropdown-toggle" href="javascript:void(0)" onclick="toggle_left_submenu(this)"><i class="icon-reorder"></i><span>Receipts</span><i class="icon-chevron-down"></i></a><ul class="submenu"><li><a target="_blank" href="receipts.shtml">List Receipts</a></li></ul></li> ',
+		},
+		{
+			label: "Projects",
+			value: '<li><a class="dropdown-toggle" href="javascript:void(0)" onclick="toggle_left_submenu(this)"><i class="icon-edit"></i><span>Projects</span><i class="icon-chevron-down"></i></a><ul class="submenu"><li><a target="_blank" href="projects.shtml">List Projects</a></li><li><a target="_blank" href="project.shtml">Enter New Project</a></li></ul></li>',
+		}
+	];
+	 <!--#4DELSE-->
+	 var menu_details = [
+		{
+			label: 'Customers Projects projects',
+			value: '<li><a class="dropdown-toggle" href="javascript:void(0)" onclick="toggle_left_submenu(this)"><i class="icon-group"></i><span>Customers</span><i class="icon-chevron-down"></i></a><ul class="submenu"><li><a target="_blank" href="customers.shtml">Customers</a></li><li><a target="_blank" href="customer.shtml">Enter New Customer</a></li><li><a target="_blank" href="projects.shtml">Projects</a></li><li><a target="_blank" href="project.shtml">Enter New Project</a></li><li><a class="dropdown-toggle" href="javascript:void(0)" onclick="toggle_left_submenu(this)"><span style="margin-left: 1px;"><strong>Customer Sets</strong></span><i class="icon-chevron-down" style="padding-right: 13px;"></i></a><ul class="submenu" style="padding-left: 15px;padding-bottom: 1px;list-style-type: none; border-bottom: 1px ; box-shadow: 0 0px 1px -1px;"><!--#4DSCRIPT/Web_LoadCustomerSets/--><!--4DLOOP  [saved_sets]--><li><a href="javascript:void(0)" onClick="__showCustomerForm_LoadSet(\'<!--#4DHTMLVAR [saved_sets]name-->\',\'<!--#4DHTMLVAR [saved_sets]uuid-->\')"><!--4DVAR [saved_sets]name--></a></li><!--4DENDLOOP--></ul></li></ul></li>',
+		},
+		{
+			label: "Contacts",
+			value: '<li><a class="dropdown-toggle" href="javascript:void(0)" onclick="toggle_left_submenu(this)"><i><img src="img/contact2.png"  alt=""/></i><span>Contacts</span><i class="icon-chevron-down"></i></a><ul class="submenu"><li><a target="_blank" href="contacts.shtml">Contacts</a></li><li><a target="_blank" href="contact.shtml">Enter New Contact</a></li><li><a class="dropdown-toggle" target="_blank" href="javascript:void(0)" onclick="toggle_left_submenu(this)"><span style="margin-left: 1px;"><strong>Sets</strong></span><i class="icon-chevron-down" style="padding-right: 13px;"></i></a><ul class="submenu" style="padding-left: 15px;padding-bottom: 1px;list-style-type: none; border-bottom: 1px ; box-shadow: 0 0px 1px -1px;"><!--#4DSCRIPT/Web_LoadContactSets/--><!--4DLOOP  [saved_sets]--><li><a target="_blank" href="javascript:void(0)" onClick="__showContactForm_LoadSet(\'<!--#4DHTMLVAR [saved_sets]name-->\',\'<!--#4DHTMLVAR [saved_sets]uuid-->\')"><!--4DVAR [saved_sets]name--></a><!--4DENDLOOP--></ul></li></ul></li>',
+		},
+		{
+			label: "Tasks",
+			value: '<li><a class="dropdown-toggle" target="_blank" href="javascript:void(0)" onclick="toggle_left_submenu(this)"><i class="icon-tasks"></i><span>Tasks</span><i class="icon-chevron-down"></i></a><ul class="submenu"><li><a target="_blank" href="tasks.shtml">Tasks</a></li><li><a target="_blank" href="task.shtml">Enter New Task</a></li></ul></li>',
+		},
+		{
+			label: "Timeslips",
+			value: '<li><a class="dropdown-toggle" href="javascript:void(0)" onclick="toggle_left_submenu(this)"><i class="icon-calendar"></i><span>Timeslips</span><i class="icon-chevron-down"></i></a><ul class="submenu"><li><a target="_blank" href="timeslips.shtml">Timeslips</a></li><li><a target="_blank" href="calendar.shtml?mode=week">Calendar View</a></li><li><a class="dropdown-toggle" href="javascript:void(0)" onclick="toggle_left_submenu(this)"><span style="margin-left: 1px;">View Timeslips of</span><i class="icon-chevron-down"></i></a><ul class="submenu" style="padding-left: 15px;padding-bottom: 1px;list-style-type: none; border-bottom: 1px ; box-shadow: 0 0px 1px -1px;"><li><a href="javascript:void(0)" onClick="__showTimesheets(\'today\');">Today</a></li><li><a href="javascript:void(0)" onClick="__showTimesheets(\'week\');">This week</a></li><li><a href="javascript:void(0)" onClick="__showTimesheets(\'month\');">This month</a></li></ul></li><li><a target="_blank" href="timeslip.shtml">Enter New Timeslip</a></li></ul></li>',
+		},
+		{
+			label: "Documents",
+			value: '<li><a class="dropdown-toggle" href="javascript:void(0)" onclick="toggle_left_submenu(this)"><i class="icon-edit"></i><span>Documents</span><i class="icon-chevron-down"></i></a><ul class="submenu"><li><a target="_blank" href="documents.shtml">Documents</a></li><li><a target="_blank" href="document.shtml">Enter New Document</a></li></ul></li>'
+		},
+		{
+			label: "Sites FTP Details",
+			value: '<li><a class="dropdown-toggle" href="javascript:void(0)" onclick="toggle_left_submenu(this)"><i><img src="img/domain.png" width="24" height="24"  alt=""/></i><span>Sites</span><i class="icon-chevron-down"></i></a><ul class="submenu"><li><a href="sites.shtml" target="_blank">Sites</a></li><li><a href="site.shtml" target="_blank">Enter New Site</a></li><li><a href="ftpservers.shtml" target="_blank">FTP Details</a></li><li><a href="ftpserver.shtml" target="_blank">Enter New FTP Detail</a></li></ul></li>',
+		},
+		{
+			label: "Work Orders",
+			value: '<li><a class="dropdown-toggle" href="javascript:void(0)" onclick="toggle_left_submenu(this)"><i > <img src="img/order.png" width="24" height="24"  alt=""/></i><span>Work Orders</span><i class="icon-chevron-down"></i></a><ul class="submenu"><li><a target="_blank" href="orders.shtml">Orders</a></li><li><a target="_blank" href="order.shtml">Enter New Work Order</a></li></ul></li>',
+		},
+		{
+			label: "IT inventory Servers Domain",
+			value: '<li><a class="dropdown-toggle" href="javascript:void(0)" onclick="toggle_left_submenu(this)"><i ><img src="img/it-inventory.png" width="24" height="24"  alt=""/></i><span>IT inventory</span><i class="icon-chevron-down"></i></a><ul class="submenu"><li><a target="_blank" href="servers.shtml">Servers</a></li><li><a target="_blank" href="server.shtml">Enter New Server</a></li><li><a target="_blank" href="domains.shtml">Domains</a></li><li><a target="_blank" href="domain.shtml">Enter New Domain</a></li><li><a class="dropdown-toggle" href="javascript:void(0)" onclick="toggle_left_submenu(this)"><span style="margin-left: 1px;"><strong>Sets</strong></span><i class="icon-chevron-down" style="padding-right: 13px;"></i></a><ul class="submenu" style="padding-left: 15px;padding-bottom: 1px;list-style-type: none; border-bottom: 1px ; box-shadow: 0 0px 1px -1px;"><!--#4DSCRIPT/Web_LoadDomainSets/--><!--4DLOOP  [saved_sets]--><li><a href="javascript:void(0)" onClick="__showDomainsForm_LoadSet(\'<!--#4DHTMLVAR [saved_sets]name-->\',\'<!--#4DHTMLVAR [saved_sets]uuid-->\')"><!--4DVAR [saved_sets]name--></a></li><!--4DENDLOOP--></ul></li></ul></li>',
+		},
+		{
+			label: "Invoices outstanding",
+			value: '<li><a class="dropdown-toggle" href="javascript:void(0)" onclick="toggle_left_submenu(this)"><i class="icon-book"></i><span>Invoices</span><i class="icon-chevron-down"></i></a><ul class="submenu"><li><a target="_blank" href="invoices.shtml">Invoices</a></li><li><a href="outstanding_invoices.shtml" target="_blank">Outstanding Invoices</a></li><li><a target="_blank" href="invoice.shtml">Enter New Invoice</a></li><li><a class="dropdown-toggle" href="javascript:void(0)" onclick="toggle_left_submenu(this)"><span style="margin-left: 1px;"><strong>Sets</strong></span><i class="icon-chevron-down" style="padding-right: 13px;"></i></a><ul class="submenu" style="padding-left: 15px;padding-bottom: 1px;list-style-type: none; border-bottom: 1px ; box-shadow: 0 0px 1px -1px;"><!--#4DSCRIPT/Web_LoadInvoicesSets/--><!--4DLOOP  [saved_sets]--><li><a href="javascript:void(0)" onClick="__showInvoicesForm_LoadSet(\'<!--#4DHTMLVAR [saved_sets]name-->\',\'<!--#4DHTMLVAR [saved_sets]uuid-->\')"><!--4DVAR [saved_sets]name--></a></li><!--4DENDLOOP--></ul></li></ul></li>',
+		},
+		{
+			label: "Receipts",
+			value: '<li><a class="dropdown-toggle" href="javascript:void(0)" onclick="toggle_left_submenu(this)"><i class="icon-reorder"></i><span>Receipts</span><i class="icon-chevron-down"></i></a><ul class="submenu"><li><a target="_blank" href="receipts.shtml">List Receipts</a></li><li><a target="_blank" href="receipt.shtml">Enter New Receipt</a></li></ul></li> ',
+		},
+		{
+			label: "Purchase Invoices",
+			value: '<li><a class="dropdown-toggle" href="javascript:void(0)" onclick="toggle_left_submenu(this)"><i class="icon-book"></i><span>Purchase Invoices</span><i class="icon-chevron-down"></i></a><ul class="submenu"><li><a target="_blank" href="purchase_invoices.shtml">List Purchase Invoices</a></li><li><a target="_blank" href="purchase_invoice.shtml">Enter New Purchase Invoice</a></li></ul></li>',
+		},
+		{
+			label: "Payments",
+			value: '<li><a class="dropdown-toggle" href="javascript:void(0)" onclick="toggle_left_submenu(this)"><i class="icon-reorder"></i><span>Payments</span><i class="icon-chevron-down"></i></a><ul class="submenu"><li><a target="_blank" href="payments.shtml">List Payments</a></li><li><a target="_blank" href="payment.shtml">Enter New Payment</a></li></ul></li>',
+		},
+		{
+			label: "VT CashBook Activities",
+			value: '<li><a class="dropdown-toggle" href="javascript:void(0)" onclick="toggle_left_submenu(this)"><i class="icon-book"></i><span>VT CashBook Activities</span><i class="icon-chevron-down"></i></a><ul class="submenu"><li><a target="_blank" href="vtcashbooks.shtml">List Activities</a></li><li><a target="_blank" href="vtcashbook.shtml">Enter New Activity</a></li></ul></li>',
+		},
+		{
+			label: "Bank Entries",
+			value: '<li><a class="dropdown-toggle" href="javascript:void(0)" onclick="toggle_left_submenu(this)"><i><img src="img/bank-enteries.png" width="22" height="22"  alt=""/></i><span>Bank Entries</span><i class="icon-chevron-down"></i></a><ul class="submenu"><li><a target="_blank" href="bank_enteries.shtml">List Bank Entries</a></li><li><a target="_blank" href="bank_entry.shtml">Enter New Bank Entry</a></li><li><a class="dropdown-toggle" href="javascript:void(0)" onclick="toggle_left_submenu(this)"><span style="margin-left: 1px;"><strong>Sets</strong></span><i class="icon-chevron-down" style="padding-right: 13px;"></i></a><ul class="submenu" style="padding-left: 15px;padding-bottom: 1px;list-style-type: none; border-bottom: 1px ; box-shadow: 0 0px 1px -1px;"><!--#4DSCRIPT/Web_loadBankEnteriesSets/--><!--4DLOOP  [saved_sets]--><li><a href="javascript:void(0)" onClick="__showBanksForm_LoadSet(\'<!--#4DHTMLVAR [saved_sets]name-->\', \'<!--#4DHTMLVAR [saved_sets]uuid-->\')"><!--4DVAR [saved_sets]name--></a></li><!--4DENDLOOP--></ul></li></ul></li>',
+		},
+		{
+			label: "Analysis Account",
+			value: '<li><a class="dropdown-toggle" href="javascript:void(0)" onclick="toggle_left_submenu(this)"><i> <img src="img/analysis-acount.png" width="22" height="22"  alt=""/></i><span>Analysis Account</span><i class="icon-chevron-down"></i></a><ul class="submenu"><li><a target="_blank" href="analysisaccounts.shtml">List Analysis Account</a></li><li><a target="_blank" href="analysisaccount.shtml">Enter Analysis Account</a></li></ul></li>',
+		},
+		{
+			label: "Analysis Ledger",
+			value: '<li><a class="dropdown-toggle" href="javascript:void(0)" onclick="toggle_left_submenu(this)"><i> <img src="img/ledger.png" width="22" height="22"  alt=""/></i><span>Analysis Ledger</span><i class="icon-chevron-down"></i></a><ul class="submenu"><li><a target="_blank" href="analysisledgers.shtml">List Analysis Ledger</a></li><li><a target="_blank" href="analysisledger.shtml">Enter Analysis Ledger</a></li></ul></li>',
+		},
+		{
+			label: "Rsync Scripts",
+			value: '<li><a class="dropdown-toggle" href="javascript:void(0)" onclick="toggle_left_submenu(this)"><i> <img src="img/script.png" width="22" height="22"  alt=""/></i><span>Rsync Scripts</span><i class="icon-chevron-down"></i></a><ul class="submenu"><li><a target="_blank" href="projectscripts.shtml">List Rsync Scripts</a></li><li><a target="_blank" href="projectscript.shtml">Enter Rsync Script</a></li></ul></li>',
+		},
+		{
+			label: "FR Scripts",
+			value: '<li><a class="dropdown-toggle" href="javascript:void(0)" onclick="toggle_left_submenu(this)"><i> <img src="img/script.png" width="22" height="22"  alt=""/></i><span>FR Scripts</span><i class="icon-chevron-down"></i></a><ul class="submenu"><li><a target="_blank" href="scripts.shtml">List FR Scripts</a></li><li><a target="_blank" href="script.shtml">Enter FR Script</a></li></ul></li>',
+		},
+		{
+			label: "Purchase Orders",
+			value: '<li><a class="dropdown-toggle" href="javascript:void(0)" onclick="toggle_left_submenu(this)"><i> <img src="img/purchase-order.png" width="22" height="22"  alt=""/></i><span>Purchase Orders</span><i class="icon-chevron-down"></i></a><ul class="submenu"><li><a href="purchase_orders.shtml" target="_blank">List Purchase Orders</a></li><li><a target="_blank" href="purchase_order.shtml">Enter Purchase Order</a></li></ul></li>',
+		},
+		{
+			label: "Leads",
+			value: '<li><a class="dropdown-toggle" href="javascript:void(0)" onclick="toggle_left_submenu(this)"><i class="icon-group"></i><span>Leads</span><i class="icon-chevron-down"></i></a><ul class="submenu"><li><a target="_blank" href="leads.shtml">Leads</a></li><li><a target="_blank" href="lead.shtml">Enter New Lead</a></li><ul class="submenu"><li><a target="_blank" href="lead_contacts.shtml">Lead Contacts</a></li><li><a target="_blank" href="lead_contact.shtml">Enter New Lead Contact</a></li></ul><li><a class="dropdown-toggle" href="javascript:void(0)" onclick="toggle_left_submenu(this)"><span style="margin-left: 1px;"><strong>Sets</strong></span><i class="icon-chevron-down" style="padding-right: 13px;"></i></a><ul class="submenu" style="padding-left: 15px;padding-bottom: 1px;list-style-type: none; border-bottom: 1px ; box-shadow: 0 0px 1px -1px;"><!--#4DSCRIPT/Web_LoadLeadsSets/--><!--4DLOOP  [saved_sets]--><li><a href="javascript:void(0)" onClick="__showleadForm_LoadSet(\'<!--#4DHTMLVAR [saved_sets]name-->\', \'<!--#4DHTMLVAR [saved_sets]uuid-->\')"><!--4DVAR [saved_sets]name--></a></li><!--4DENDLOOP--></ul></li></ul></li>',
+		},
+		{
+			label: "Products",
+			value: '<li><a class="dropdown-toggle" href="javascript:void(0)" onclick="toggle_left_submenu(this)"><i class="icon-file"></i><span>Products</span><i class="icon-chevron-down"></i></a><ul class="submenu"><li><a target="_blank" href="products.shtml">Products</a></li><li><a target="_blank" href="product.shtml">Enter New Product</a></li></ul></li>',
+		},
+		{
+			label: "Mileage",
+			value: '<li><a class="dropdown-toggle" href="javascript:void(0)" onclick="toggle_left_submenu(this)"><i class="icon-edit"></i><span>Mileage</span><i class="icon-chevron-down"></i></a><ul class="submenu"><li><a target="_blank" href="travel_expenses.shtml">Travel Expense Sheet</a></li><li><a target="_blank" href="travel_expense.shtml">Enter New Travel Expense Sheet</a></li></ul></li>',
+		},
+		{
+			label: "Holidays",
+			value: '<li><a class="dropdown-toggle" href="javascript:void(0)" onclick="toggle_left_submenu(this)"><i class="icon-tags"></i><span>Holidays</span><i class="icon-chevron-down"></i></a><ul class="submenu"><li><a target="_blank" href="holidays.shtml">Holidays</a></li><li><a target="_blank" href="holiday_calender.shtml">Calendar View</a></li><li><a target="_blank" href="holiday.shtml">Request New Holiday</a></li> <li><a href="company_holiday.shtml" target="_blank">Add New Company Holiday</a></li></ul></li>',
+		},
+		{
+			label: "Employees",
+			value: '<li><a class="dropdown-toggle" href="javascript:void(0)" onclick="toggle_left_submenu(this)"><i class="icon-group"></i><span>Employees</span><i class="icon-chevron-down"></i></a><ul class="submenu"><li><a target="_blank" href="employees.shtml">Employees</a></li><li><a target="_blank" href="employeeholidays.shtml">Employees Holidays</a></li><!--#4DIF ((IsUserBookKeeper) | (IsUserAdmin))--><li><a target="_blank" href="<!--#4DHTMLVAR IsBookKeeper-->.shtml">Enter New Employee</a></li><!--#4DENDIF--><li><a class="dropdown-toggle" href="javascript:void(0)" onclick="toggle_left_submenu(this)"><span style="margin-left: 1px;"><strong>Manager</strong></span><i class="icon-chevron-down" style="padding-right: 13px;"></i></a><ul class="submenu" style="padding-left: 15px;padding-bottom: 1px;list-style-type: none; border-bottom: 1px ; box-shadow: 0 0px 1px -1px;"><!--#4DSCRIPT/Web_LoadManager/--><!--4DLOOP  [Employees]--><li><a href="javascript:void(0)" onClick="__showEmployeeForm_Loadmanager(\'<!--#4DHTMLVAR [Employees]emp_first_name--> <!--#4DHTMLVAR [Employees]emp_last_name-->\',\'<!--#4DHTMLVAR [Employees]uuid-->\')"><!--#4DHTMLVAR [Employees]emp_first_name--> <!--#4DHTMLVAR [Employees]emp_last_name--></a></li><!--4DENDLOOP--><!--#4DSCRIPT/Web_LoadManager/restore--></ul></li></ul></li>',
+		},
+		
+		{
+			label: "Admin System Activity Log Email queue",
+			value: '<li><a class="dropdown-toggle" href="javascript:void(0)" onclick="toggle_left_submenu(this)"><i class="icon-share-alt"></i><span>Admin</span><i class="icon-chevron-down"></i></a><ul class="submenu"><li><a target="_blank" href="emailqueue.shtml">Email queue</a></li><li><a target="_blank" href="emailsend.shtml">New Mail</a></li><li><a target="_blank" href="system-activity.shtml">System Activity</a></li></ul></li>',
+		}
+	];
+	 <!--#4DENDIF-->
+	//console.log(menu_details)
+	$( "#menu" ).autocomplete({
+		minLength: 0,
+		source: menu_details,
+		 focus: function( event, ui ) {
+			$( "#project" ).val( ui.item.label );
+			return false;
+		},
+		suggest: function( items ) {
+			var menu_val=$( "#menu" ).val();
+			
+			$( "#dashboard-menu" ).empty();
+			var left_menu='<li><a href="index.shtml"><i><img src="img/home.png" alt=""/></i><span>Home</span></a></li>';
+			for(var i=0; i<items.length; i++){
+				var label = items[i].label;
+				var str= label.search(menu_val);
+				var value= items[i].value;
+				if(str>0 && (label=="Customers Projects projects" || label=="IT inventory Servers Domain")){
+					value = value.replace('<li>', '<li class="active">');
+					value = value.replace('<ul class="submenu">', '<ul class="submenu active">');
+				}
+				var url = window.location.pathname;
+				var filename = url.substring(url.lastIndexOf('/')+1);
+				var searchLink= value.search(filename);
+				if(searchLink>0){
+					//value = value.replace('<li>', '<li class="active">');
+					//value = value.replace('<ul class="submenu">', '<ul class="submenu active">');
+					value = value.replace('<i class="icon-chevron-down"></i></a>', '<i class="icon-chevron-down"></i></a><div class="pointer"><div class="arrow"></div><div class="arrow_border"></div></div>');
+				}
+				left_menu+=value;
+			}
+			$('#dashboard-menu').append(left_menu);
+		}
+	});
+	
+});
+
+function toggle_left_submenu(id){
+	
+	var liparent = $(id).parent('li');
+	var ulparent = liparent.find('.submenu');
+	if(liparent.hasClass('active')){
+		liparent.removeClass('active');
+		ulparent.removeClass('active');
+	}else{
+		liparent.addClass('active');
+		ulparent.addClass('active');
+	}
+	//if(ulparent==openedulparent){
+		//var mainlink = liparent.children('.dropdown-toggle');
+		//mainlink.after('<div class="pointer"><div class="arrow"></div><div class="arrow_border"></div></div>');
+	//}
+}
+</script>
+
+ <script type="text/javascript" src="js/jquery-impromptu.js"></script>   
+    <script src="js/bootstrap.datepicker.js"></script>
+<script>
+var JSONdata;
+var start=0, end=50;
+var old_srch='',keyword='', jsonRow='', tab='', set='',start_date='',end_date='',date_selected='no';
+var tablname='bank_statement_entries';
+var complete=false;
+var completeScroll=false;
+var checkAllFlag=false;
+var add_from_manager=false;
+var bank_account='', entry_type='', bill='';
+var status='',xhrAbortCustomerLoad;
+var selected_set='<!--#4DVAR _HIT_WebApp_GetField ("set") -->';
+var setUUID='<!--#4DVAR _HIT_WebApp_GetField ("set_uuid") -->';
+var showallReceiptsFlag=true;
+var isAdminUser='<!--#4DVAR IsUserAdmin -->';
+var entryFormFlag=false;
+
+$(document).ready(function() {
+	$('select.selectpicker').on('change', function(e){
+  		bank_account='', entry_type='', bill='';
+  		$('.selectpicker :selected').each(function(i, selectedElement) {
+ 			var selectedValues = $(selectedElement).val();
+ 			var selectedValues = $(selectedElement).val();
+ 			if(selectedValues.indexOf("bank_")>=0){
+ 				var valStr = selectedValues.replace("bank_", ""); 
+				bank_account= valStr;
+ 			}else if(selectedValues.indexOf("display_")>=0){
+ 				var valStr = selectedValues.replace("display_", ""); 
+				entry_type=valStr;
+ 			}
+ 			else if(selectedValues.indexOf("show_")>=0){
+ 				var valStr = selectedValues.replace("show_", ""); 
+				bill=valStr;
+ 			}
+		});
+		
+		refreshTable();
+	});
+	
+	$('#keyword').focus();
+	keyword= $("#keyword").val();
+	jsonRow = 'load_bankenteriesnew.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&start_date='+start_date+'&end_date='+end_date+'&set='+selected_set+'&setUUID='+setUUID+'&uuid_bank='+bank_account;
+	if(start_date!='' || end_date!=''){
+		jsonRow +='&date_selected=yes';
+	}else{
+		jsonRow +='&date_selected=no';
+	}
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}	
+	if(bank_account!=''){
+	jsonRow +='&uuid_bank='+bank_account;
+	}
+	if(status!=''){
+	jsonRow +='&status='+status;
+	}	
+	load_data(jsonRow);			 
+	
+	$(window).scroll(function(){
+		if ($(window).scrollTop() == $(document).height() - $(window).height()){
+			if(complete==false && completeScroll==false) {
+				$('#img_loading_div').show();
+				start=end+1;
+				end=start+25;
+				jsonRow = 'load_bankenteriesnew.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&start_date='+start_date+'&end_date='+end_date+'&set='+selected_set+'&setUUID='+setUUID;
+				if(start_date!='' || end_date!=''){
+					jsonRow +='&date_selected=yes';
+				}else{
+					jsonRow +='&date_selected=no';
+				}
+				if(keyword!=''){
+					jsonRow +='&keyword='+keyword;
+				}
+					
+				if(bank_account!=''){
+					jsonRow +='&uuid_bank='+bank_account;
+				}
+				if(status!=''){
+					jsonRow +='&status='+status;
+				}
+				load_data(jsonRow);
+			}
+		}
+	});	
+	
+	//setup before functions
+	var typingTimer;                //timer identifier
+	var doneTypingInterval = 600;  //time in ms, 5 second for example
+	
+	//on keyup, start the countdown
+	$('#keyword').keyup(function(){
+		clearTimeout(typingTimer);
+		if ($('#keyword').val) {
+			typingTimer = setTimeout(function(){
+				//do stuff here e.g ajax call etc....
+				$('#payment_table_body').html('');
+				$('#img_loading_div').show();
+				start=0;
+				end=start+25;
+				tab='';
+				keyword= $("#keyword").val();
+				jsonRow = 'load_bankenteriesnew.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&start_date='+start_date+'&end_date='+end_date+'&set='+selected_set+'&setUUID='+setUUID;
+				if(start_date!='' || end_date!=''){
+					jsonRow +='&date_selected=yes';
+				}else{
+					jsonRow +='&date_selected=no';
+				}
+				if(keyword!=''){
+					jsonRow +='&keyword='+keyword;
+				}
+				
+				if(bank_account!=''){
+				jsonRow +='&uuid_bank='+bank_account;
+				}
+				if(status!=''){
+					jsonRow +='&status='+status;
+				}
+				load_data(jsonRow);
+			}, doneTypingInterval);
+		}
+	});		
+	
+	//on keyup, start the countdown
+	var doneTypingInterval = 1000;  //time in ms, 5 second for example
+	$('#searchInvoiceField').keyup(function(){
+		clearTimeout(typingTimer);
+		if ($('#searchInvoiceField').val) {
+			typingTimer = setTimeout(function(){
+				var formtypeStr= $("#formTypeField").val();
+				if(formtypeStr=="Payment"){
+					refreshPurInvoiceTable();
+				}else if(formtypeStr=="Receipt"){
+					refreshInvoicesTable();
+				}
+			}, doneTypingInterval);
+		}
+	});		
+	$('#start_date').datepicker({"autoclose": true}).on('changeDate', function (ev) {
+		start_date=$('#start_date').val();
+		var arrStartDate= $('#start_date').val().split('/');
+		var dateText = new Date(arrStartDate[1]+'/'+arrStartDate[0]+'/'+arrStartDate[2]);
+		$('#end_date').datepicker('setStartDate', dateText);
+		
+		$('#payment_table_body').html('');
+		$('#img_loading_div').show();
+		if(checkAllFlag==true){
+			$("#chk_all").trigger('click');
+		}
+		start=0,end=start+25;
+		keyword= $("#keyword").val();
+		jsonRow = 'load_bankenteriesnew.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&start_date='+start_date+'&end_date='+end_date+'&set='+selected_set+'&setUUID='+setUUID;
+		if(keyword!=''){
+			jsonRow +='&keyword='+keyword;
+		}
+		if(bank_account!=''){
+			jsonRow +='&uuid_bank='+bank_account;
+		}
+		if(start_date!='' || end_date!=''){
+			jsonRow +='&date_selected=yes';
+		}else{
+			jsonRow +='&date_selected=no';
+		}
+		if(status!=''){
+			jsonRow +='&status='+status;
+		}
+		load_data(jsonRow);
+	});
+	
+	$('#end_date').datepicker({"autoclose": true}).on('changeDate', function (ev) {
+		end_date=$('#end_date').val();
+		var arrEndDate= $('#end_date').val().split('/');
+		var dateText = new Date(arrEndDate[1]+'/'+arrEndDate[0]+'/'+arrEndDate[2]);
+		
+		$('#start_date').datepicker('setEndDate', dateText);
+		
+		$('#payment_table_body').html('');
+		$('#img_loading_div').show();
+		if(checkAllFlag==true){
+			$("#chk_all").trigger('click');
+		}
+		start=0, end=start+25;
+		keyword= $("#keyword").val();
+		jsonRow = 'load_bankenteriesnew.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&start_date='+start_date+'&end_date='+end_date+'&set='+selected_set+'&setUUID='+setUUID;
+		if(keyword!=''){
+			jsonRow +='&keyword='+keyword;
+		}
+		if(bank_account!=''){
+			jsonRow +='&uuid_bank='+bank_account;
+		}
+		if(start_date!='' || end_date!=''){
+			jsonRow +='&date_selected=yes';
+		}else{
+			jsonRow +='&date_selected=no';
+		}
+		
+		if(status!=''){
+			jsonRow +='&status='+status;
+		}
+		load_data(jsonRow);
+	});
+	
+	$('#start_date').datepicker().on('changeDate', function (ev) {
+		$(this).datepicker('hide');
+	});
+	$('#end_date').datepicker().on('changeDate', function (ev) {
+		$(this).datepicker('hide');
+	});
+	
+	// toggle all checkboxes from a table when header checkbox is clicked
+  	$(".table th input:checkbox").click(function () {
+  		$checks = $(this).closest(".table").find("tbody input:checkbox");
+  		if ($(this).is(":checked")) {
+			checkAllFlag=true;
+			$('#chk_all').prop("checked", true);
+  			$checks.prop("checked", true);
+  		} else {
+			checkAllFlag=false;
+			$('#chk_all').prop("checked", false);
+  			$checks.prop("checked", false);
+  		}  		
+  	});
+	
+	$('.num').keypress(function(e){
+		var k = e.which;
+    	/* numeric inputs can come from the keypad or the numeric row at the top */
+   		if ((k<48 || k>57) && (k!=46) && (k!=8) && (k!=0)) {
+        	e.preventDefault();
+			//alert("Allowed characters are 0-9, +, -, (, )");
+        	return false;
+    	}
+	}); 
+	
+	$('#n_purchase_amount').change(function(e){
+		 clearAlertMsg()
+	}); 
+});
+  </script>
+    <script src="js/bank_enteries.js"></script>
+  <script src="js/file-uploader.js"></script> 
+  
+   	<script src="js/bootstrap-select.js" type="text/javascript"></script>
+</body>
+</html>

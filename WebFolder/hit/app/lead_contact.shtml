@@ -1,0 +1,448 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+
+//if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+QUERY([Lead_Contacts];[Lead_Contacts]uuid=_HIT_WebApp_GetField ("uuid"))
+QUERY([Leads];[Leads]RecordNumber=[Lead_Contacts]CompanyNumber)
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+//else
+//_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+//end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+-->
+<!DOC html>
+<html>
+<head>
+	<title>Tenthmatrix CRM App : Lead Contact</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- bootstrap -->
+	<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="bootstrap/css/bootstrap-responsive.min.css" />
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/app/includes/header.shtml-->
+	<style type="text/css">
+		
+	.custom-combobox {
+    position: relative;
+    display: inline-block;
+  }
+  .custom-combobox-toggle {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    margin-left: -1px;
+    padding: 0;
+    /* support: IE7 */
+    *height: 1.7em;
+    *top: 0.1em;
+  }
+  .custom-combobox-input {
+    margin: 0;
+    padding: 0.3em;
+  }
+  .ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {
+  	width:auto;
+	height:auto;
+	 background: none repeat scroll 0% 0% #FFF;
+	 border: 1px solid #B6B6B6;
+  }
+  .ui-autocomplete{
+  	max-height:300px;
+	overflow:scroll;
+  }
+  
+  .ui-autocomplete li a{
+  	color: #737f8d;
+	text-shadow: 1px 1px 1px #fff;
+  }
+  .ui-widget-content {
+    border: 1px solid #B6B6B6;
+	width: 275px;
+	}
+
+	#items textarea {
+	width:300px;
+	height: 20px;
+	}
+	.rate{
+	width:50px;
+	}
+	.hours{
+	width:50px;
+	}
+	
+  #message, #tax_message{
+	color:#FF0000;
+}
+	</style>
+</head>
+<body>
+
+	<!-- main container -->
+    <div class="content wide-content">
+        <div class="container-fluid">
+            <div id="pad-wrapper" class="form-page">
+				<div class="row-fluid">
+					<div class="span12">
+						<form name="ContactForm" action="saveLeadscontact.cgi" class="form-comment form_validation_reg" method="post"> 
+						<input name="Contact_uuid" class="span6" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="Contact_uuid"> 
+							<div class="formSep">
+								<div class="row-fluid">
+									<div class="span9">
+										<label>Lead Name <span class="f_req">*</span></label>
+										<div class="ui-widget">
+											<select id="Lead_ID" name="Lead_ID">
+
+									<!--#4DIF (Records in selection([Lead_Contacts])=0)-->
+
+										<option value=""></option>
+
+									<!--#4DSCRIPT/Web_LoadLeads/-->
+
+									 <!--4DLOOP  [Leads]-->
+
+										<!-- <option value="<!~~4DVAR [Leads]RecordNumber~~>"  ><!~~4DVAR [Leads]CompanyName~~></option>	 -->	
+										<option value="<!--4DVAR [Leads]RecordNumber-->"  <!--#4DIF ([Lead_Contacts]CompanyNumber=[Leads]RecordNumber)-->selected<!--4DELSE--><!--4DENDIF-->><!--4DVAR [Leads]CompanyName--></option>
+									 <!--4DENDLOOP-->
+
+									 <!--#4DELSE-->
+
+										 <option value="<!--4DVAR [Leads]RecordNumber-->" selected><!--4DVAR [Leads]CompanyName--></option>									 
+
+									 <!--#4DENDIF-->
+
+									</select>
+										</div>
+									</div>
+									</div>
+							</div>
+							        
+							<div class="formSep">
+								<div class="row-fluid">
+							
+									<div class="span3">
+										<label>Fore Name <span class="f_req">*</span></label>
+										<input name="Fore_name" class="span12" type="text" value="<!--#4DVAR [Lead_Contacts]Forename-->" id="Fore_name">
+									</div>
+								
+									<div class="span3">
+										<label>Surname <span class="f_req">*</span></label>
+										<input name="Surname" class="span12" type="text" value="<!--#4DVAR [Lead_Contacts]Surname-->" id="Surname">  
+									</div>
+								</div>
+							</div>
+							<div class="formSep">
+								<div class="row-fluid">
+									<div class="span3">
+										<label>Title</label>
+										<input name="Title" class="span12" type="text" value="<!--#4DVAR [Lead_Contacts]Title-->" id="Title">								
+										</div>
+									
+								
+									<div class="span3">
+										<label>Salutation</label>
+										<input name="Salutation" class="span12" type="text" value="<!--#4DVAR [Lead_Contacts]Salutation-->" id="Salutation">	
+									</div>
+								</div>
+							</div>
+							<div class="formSep">
+								<div class="row-fluid">
+								
+									<div class="span3">
+										<label>Email <span class="f_req">*</span></label>
+										<input name="Email" class="span12" type="text" value="<!--#4DVAR [Lead_Contacts]Email-->" id="Email">							
+										</div>
+									
+									
+									<div class="span3">
+										<label>Skype</label>
+										<input name="Skype" class="span12" type="text" value="<!--#4DVAR [Lead_Contacts]Skype-->" id="Skype">
+									</div>
+									
+									</div>
+							</div>
+							<div class="formSep">
+								<div class="row-fluid">
+									
+									<div class="span3">
+										<label>Direct Phone</label>
+										<input class="span12 phone" type="text" value="<!--#4DVAR [Lead_Contacts]Direct Phone-->" name="Direct_Phone" id="Direct_Phone">									</div>
+								
+									<div class="span3">
+										<label>Direct Fax </label>
+										<input class="span12 phone" type="text" value="<!--#4DVAR [Lead_Contacts]DrectFax-->" name="Direct_Fax" id="Direct_Fax">
+									</div>
+								</div>
+							</div>
+							<div class="formSep">
+								<div class="row-fluid">
+									<div class="span3">
+										<label>Mobile</label>
+										<input name="Mobile" class="span12 phone" type="text" value="<!--#4DVAR [Lead_Contacts]Mobile-->" id="Mobile">									</div>
+								
+									<div class="span3">
+										<label>Job Type</label>
+										<input name="job_type" class="span12" type="text" value="<!--#4DVAR [Lead_Contacts]JobType-->" id="job_type">
+									</div>
+								</div>
+							</div>
+							<div class="formSep">
+								<div class="row-fluid">
+									<div class="span9">
+										<label></label>
+										<label class="checkbox inline">							
+								<input name="dont_Email"  type="checkbox" value="true" id="dont_Email" <!--#4DIF ([Lead_Contacts]dontEmail)-->checked<!--4DELSE--><!--4DENDIF--> >Do not Email
+							</label>
+							<label class="checkbox inline">
+														
+								<input name="Transferred_to_CC" type="checkbox" value="true" id="Transferred_to_CC" <!--#4DIF ([Lead_Contacts]Transferred to CC)-->checked<!--4DELSE--><!--4DENDIF--> >Transferred to CC
+							</label>   
+									</div>
+								</div>
+							</div>
+							
+							
+							<div style="text-align: center;" class="span9 field-box">
+								<input type="submit" id="btn_submit" value="Submit" class="btn-glow primary">
+								<span>OR</span>
+								<a href="lead_contacts.shtml">Cancel</a>							</div>
+						</form>
+					</div>
+				</div>
+            </div>
+		</div>
+    </div>
+	
+    <!-- end main container -->
+
+	
+	<script src="js/jquery.min.js"></script>
+	<script src="bootstrap/js/bootstrap.min.js"></script>
+	<!-- validation -->
+    <script src="lib/validation/jquery.validate.min.js"></script>
+	<script type="text/javascript" src="js/jquery-impromptu.js"></script>
+	<script src="js/jquery-ui-1.9.1.custom.js"></script>
+	
+<script type="text/javascript">
+
+	$(document).ready(function() {
+
+		$('.form_validation_reg').validate({
+				ignore: "",
+				onkeyup: false,
+				errorClass: 'error',
+				validClass: 'valid',
+				highlight: function(element) {
+					$(element).closest('div').addClass("f_error");
+				},
+				unhighlight: function(element) {
+					$(element).closest('div').removeClass("f_error");
+				},
+				errorPlacement: function(error, element) {
+					$(element).closest('div').append(error);
+				},
+				rules: {
+					Lead_ID: { required: true },
+					Fore_name: { required: true },
+					Surname: { required: true  },
+					Email: { required: true, email: true  }
+				},
+			});
+
+				 
+});
+	
+
+</script>
+
+<script>
+	 var xhr;
+  (function( $ ) {
+    $.widget( "custom.combobox", {
+      _create: function() {
+        this.wrapper = $( "<span>" )
+          .addClass( "custom-combobox" )
+          .insertAfter( this.element );
+ 
+        this.element.hide();
+        this._createAutocomplete();
+        this._createShowAllButton();
+      },
+ 
+      _createAutocomplete: function() {
+        var selected = this.element.children( ":selected" ),
+          value = selected.val() ? selected.text() : "";
+ 
+        this.input = $( "<input>" )
+          .appendTo( this.wrapper )
+          .val( value )
+          .attr( "title", "" )
+          .addClass( "custom-combobox-input ui-widget ui-widget-content ui-state-default ui-corner-left" )
+          .autocomplete({
+            delay: 0,
+            minLength: 0,
+            source: $.proxy( this, "_source" )
+          })
+          .tooltip({
+            tooltipClass: "ui-state-highlight"
+          });
+ 
+        this._on( this.input, {
+          autocompleteselect: function( event, ui ) {
+		  	//alert("show all");
+            ui.item.option.selected = true;
+			
+            this._trigger( "select", event, {
+              item: ui.item.option
+            });
+          },
+ 
+          autocompletechange: "_removeIfInvalid"
+        });
+      },
+ 
+      _createShowAllButton: function() {
+        var input = this.input,
+          wasOpen = false;
+ 
+        $( "<a>" )
+          .attr( "tabIndex", -1 )
+          .attr( "title", "Show All Items" )
+          .tooltip()
+          .appendTo( this.wrapper )
+          .button({
+            icons: {
+              primary: "ui-icon-triangle-1-s"
+            },
+            text: false
+          })
+          .removeClass( "ui-corner-all" )
+          .addClass( "custom-combobox-toggle ui-corner-right" )
+          .mousedown(function() {
+            wasOpen = input.autocomplete( "widget" ).is( ":visible" );
+          })
+          .click(function() {
+            input.focus();
+ 
+            // Close if already visible
+            if ( wasOpen ) {
+              return;
+            }
+ 
+            // Pass last search string as value to search for, displaying last results
+            input.autocomplete( "search", 'SHOWALL' );
+          });
+      },
+ 
+      _source: function( request, response ) {
+        //var matcher = new RegExp( $.ui.autocomplete.escapeRegex(request.term), "i" );
+		var ele_select= this.element;
+		if(request.term=='SHOWALL'){
+			response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+
+              value: text,
+              option: this
+            };
+        }) );
+		
+		}
+		else
+		{
+		var jsonRow = 'getleadsonsearch.cgi?srch='+request.term;
+		
+
+		//alert(jsonRowURLStr);
+		if(xhr) xhr.abort();
+		xhr=$.getJSON(jsonRow,function(result){
+			
+			if(result){
+				var html='<option value=""></option>';
+
+				$.each(result, function(i,item)
+				{
+					html += '<option value="'+item.id+'">'+item.value+'</option>';
+				});
+				ele_select.html(html);
+				
+				
+				response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+				
+				
+			}
+		});
+       
+	  } 
+		
+      },
+ 
+      _removeIfInvalid: function( event, ui ) {
+ 
+        // Selected an item, nothing to do
+        if ( ui.item ) {
+
+          return;
+        }
+ 
+        // Search for a match (case-insensitive)
+        var value = this.input.val(),
+          valueLowerCase = value.toLowerCase(),
+          valid = false;
+        this.element.children( "option" ).each(function() {
+          if ( $( this ).text().toLowerCase() === valueLowerCase ) {
+            this.selected = valid = true;	
+			
+            return false;
+          }
+        });
+ 
+        // Found a match, nothing to do
+        if ( valid ) {
+          return;
+        }
+ 
+        // Remove invalid value
+        this.input
+          .val( "" )
+          .attr( "title", value + " didn't match any item" )
+          .tooltip( "open" );
+        this.element.val( "" );
+        this._delay(function() {
+          this.input.tooltip( "close" ).attr( "title", "" );
+        }, 2500 );
+        this.input.data( "ui-autocomplete" ).term = "";
+      },
+ 
+      _destroy: function() {
+        this.wrapper.remove();
+        this.element.show();
+      }
+    });
+  })( jQuery );
+ 
+  $(function() {
+    $( "#Lead_ID" ).combobox();
+   
+	
+  });
+
+  </script>
+
+</body>
+</html>

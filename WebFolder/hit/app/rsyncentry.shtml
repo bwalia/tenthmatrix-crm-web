@@ -1,0 +1,164 @@
+<!--HIT_EXECUTE
+QUERY([rsync_enteries];[rsync_enteries]uuid=_HIT_WebApp_GetField ("uuid"))
+-->
+	<!-- main container -->
+    <div class="content wide-content" style="margin-bottom:0px">
+        <div class="container-fluid">
+            <div id="pad-wrapper" class="form-page">
+				<div class="row-fluid">
+					<div class="span12" id="display_message">
+						<form name="Form" id="form_rsyncentry" action="" class="form-comment form_validation_reg" method="post"> 
+						<input name="entry_uuid" class="span7" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="entry_uuid">
+						<input name="proj_script_uuid" class="span7" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("proj_script_uuid")-->" id="proj_script_uuid">
+						<!--#4DIF (Records in selection([rsync_enteries])=1)-->
+						<input name="action" class="span7" type="hidden" value="edit" id="action">
+						<!--#4DELSE-->
+						<input name="action" class="span7" type="hidden" value="new" id="action">
+						<!--#4DENDIF-->
+						<div class="formSep">
+							<div class="row-fluid">
+								<div class="span3">
+									<label>Command Option</label>
+									<select name="command_type" id="command_type">
+										<option value="RSYNC" <!--#4DIF ([rsync_enteries]command_type="RSYNC")-->selected<!--4DELSE--><!--4DENDIF-->>RSYNC</option>
+										<option value="SSH" <!--#4DIF ([rsync_enteries]command_type="SSH")-->selected<!--4DELSE--><!--4DENDIF-->>SSH</option>
+									</select>
+								</div>
+							</div>
+						</div>
+						<div class="formSep">
+							<div class="row-fluid">
+								<div class="span4">
+									<label>Script Name</label>
+									<input name="entry_script_name" class="span12" type="text" value="<!--4DVAR [rsync_enteries]script_name-->" id="entry_script_name">
+								</div>
+							</div>
+						</div>
+						<div class="formSep" id="directory_paths">
+							<div class="row-fluid">
+								<div class="span4">
+									<label>Directory Source</label>
+									<textarea name="dir_source" class="span12" rows="2" id="dir_source"><!--4DVAR [rsync_enteries]dir_source--></textarea>
+								</div>
+
+								<div class="span4">
+									<label>Directory Target</label>
+									<textarea name="dir_target" class="span12" rows="2" id="dir_target"><!--4DVAR [rsync_enteries]dir_target--></textarea>
+								</div>
+							</div>
+						</div>
+						<div class="formSep">
+							<div class="row-fluid">
+								<div class="span6">
+									<label>RSYNC Option</label>
+									<textarea name="rsync_options" class="span12" rows="4" id="rsync_options"><!--4DVAR [rsync_enteries]rsync_options--></textarea>
+								</div>
+							</div>
+						</div>
+						<div class="formSep">
+							<div class="row-fluid">
+								<div class="span3">
+								<label><input name="is_enabled_entry" class="span1" type="checkbox" value="true" id="is_enabled_entry" <!--#4DIF ([rsync_enteries]is_enabled)-->checked<!--4DELSE--><!--4DENDIF--> >  IS ENABLED</label>
+								</div>
+							</div>
+						</div>
+						<div style="text-align: center;" class="span9 field-box">
+							<input type="button" value="Submit" class="btn-glow primary" onclick="validate_form()">
+							<span>OR</span>
+							<a href="javascript:void(0)" onclick="close_colorbox()">Cancel</a>
+						</div>
+						</form>
+					</div>
+				</div>
+		
+            </div>
+		</div>
+    </div>
+
+
+	<script type="text/javascript">
+	$(function() {
+		$.validator.setDefaults({
+			ignore: ":hidden",
+			onkeyup: false,
+			errorClass: 'error',
+			validClass: 'valid',
+			highlight: function(element) {
+				$(element).closest('div').addClass("f_error");
+			},
+			unhighlight: function(element) {
+				$(element).closest('div').removeClass("f_error");
+			},
+			errorPlacement: function(error, element) {
+				$(element).closest('div').append(error);
+			},
+		});
+					
+		$("#command_type").change(function () {
+			var option_selected= $(this).val();
+			if(option_selected=='SSH'){
+				$('#directory_paths').hide();
+			}else{
+				$('#directory_paths').show();
+			}
+		});
+		$('#command_type').trigger('change');
+		$("body").on('click','cbox_complete', function(){
+			validate_form();
+		});
+			
+	});
+	function validate_form(){
+		
+		var entry_uuid= $('#entry_uuid').val();
+		var proj_script_uuid= $('#proj_script_uuid').val();
+		var command_type= $('#command_type').val();
+		var rsync_options= $('#rsync_options').val();
+		var dir_source= $('#dir_source').val();
+		var dir_target= $('#dir_target').val();
+		var entry_script_name= $('#entry_script_name').val();
+		var is_enabled_entry= '';
+		var action= $('#action').val();
+		if($("#is_enabled_entry").prop('checked') == true){
+			is_enabled_entry=true;
+		}
+		$('#form_rsyncentry').removeData('validator');
+		$('#form_rsyncentry').validate({				
+			rules: {
+				command_type: { required: true },
+				rsync_options: { required: true },	
+				dir_source: { required: true },	
+				dir_target: { required: true },	
+			},
+		});
+		if($('#form_rsyncentry').valid()){
+			$('#error_msg').remove('');
+			var dataString = 'dir_source='+dir_source+'&dir_target='+dir_target+'&rsync_options='+rsync_options+'&command_type='+command_type+'&is_enabled='+is_enabled_entry+'&script_name='+entry_script_name+'&proj_script_uuid='+proj_script_uuid+'&action='+action+'&uuid='+entry_uuid;
+			//console.log(jsonRowURLStr);
+			$.ajax({
+				type: "GET",
+				dataType: "json",
+				url: "saversycscript.cgi",
+				data: dataString,
+				cache: false,
+				success: function(html)
+				{
+					if(html.Success){	
+						//window.parent.load_entries();
+						window.parent.location.reload();
+						$('#cboxClose').click();
+					}else if(html.Error){
+						var error_msg='<span style="color:#CC0000;font-size:18px;margin-left:20%;" id="error_msg"><strong>'+html.Error+'</strong></span></br></br>';
+						$('#display_message').before(error_msg);
+						$('#entry_script_name').focus();
+					}
+				}
+			});
+		}
+	}
+	function close_colorbox(){
+		$('#cboxClose').click();
+	}
+	
+	
+	</script>

@@ -1,0 +1,96 @@
+	<!-- BEGIN CORE PLUGINS -->
+	<script src="assets/plugins/jquery-1.11.1.min.js" type="text/javascript"></script>
+	
+	<script src="assets/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+	<!--<script src="assets/plugins/bootstrap/js/holder.js"></script>-->
+	<script src="assets/plugins/pace/pace.min.js" type="text/javascript"></script>
+	<script src="assets/plugins/slimScroll/jquery.slimscroll.min.js" type="text/javascript"></script>
+	<script src="assets/js/core.js" type="text/javascript"></script>
+	<script src="assets/js/jquery-impromptu.js" type="text/javascript"></script>
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/v2/includes/InitJS4DCallBacks.shtml-->
+	<!-- END CORE PLUGINS -->
+	<script type="text/javascript">
+		var url = window.location.pathname;
+ 		var filename = url.substring(url.lastIndexOf('/')+1);
+ 		//console.log(filename);
+ 		var filelink = $("a[href='"+filename+"']");
+ 		var parentLinkLi = filelink.parents('li');
+ 		var ulparent = filelink.parents('ul');
+ 		var liparent = ulparent.parent('li.nav-dropdown');
+ 		//filelink.addClass('active');
+ 		parentLinkLi.addClass('active');
+ 		ulparent.attr('style','display: block;');
+ 		liparent.addClass('open');
+ 		var mainlink = liparent.children('.pull-right');
+		mainlink.removeClass('ion-chevron-right');
+		mainlink.addClass('ion-chevron-down');
+ 
+	var isMobile = {
+    	Android: function() {
+     	   return navigator.userAgent.match(/Android/i);
+    	},
+   		BlackBerry: function() {
+        	return navigator.userAgent.match(/BlackBerry/i);
+    	},
+    	iOS: function() {
+        	return navigator.userAgent.match(/iPhone|iPad|iPod/i);
+   		},
+    	Opera: function() {
+        	return navigator.userAgent.match(/Opera Mini/i);
+    	},
+    	Windows: function() {
+        	return navigator.userAgent.match(/IEMobile/i);
+    	},
+    	any: function() {
+      		return (isMobile.Android() || isMobile.BlackBerry() || isMobile.iOS() || isMobile.Opera() || isMobile.Windows());
+   	 	}
+	};
+	var pTokenStr='<!--#4DVAR Web_TokenGetAny-->'; 
+	var call4DurlBool='<!--#4DVAR _HIT_WebSession_GetVar ("platform")-->'; 
+	//alert(call4DurlBool);
+	function __alertMessage(msg){
+		$.prompt(" ", {
+			title: msg,
+			buttons: { "Close": false }
+		});
+	}	
+		
+		function funURLHandler(webUrlStr,appUrlStr, targetBool){
+			targetBool = typeof targetBool !== 'undefined' ? targetBool : false;
+	
+			if(call4DurlBool=="app"){
+				$4d.Web_URLFilteringGo("oMainWebAreaObj",appUrlStr,pTokenStr,function(result,error){
+	
+				});
+			}else{		
+				if(webUrlStr!=""){
+					if(targetBool==true || targetBool=="true"){
+					window.open(webUrlStr, '_blank');
+					}else{
+					window.location.href=webUrlStr;
+					}
+					
+				}else{
+					__alertMessage("Can't be accessed by web browser");
+				}
+			}
+		}
+		
+		$(document).ready(function () {
+			if(call4DurlBool=="app"){
+				//$('.hideNavigationBtn').hide();
+			}
+		});
+		
+		$.__4D_Init__ = function __4D_Init__(p4DVersionStr, pIn4DBoolStr, pDevModeStr, pDebugModeStr)
+{
+
+$.__Alert_IfDebug__("__4D_Init__ called by 4D. p4DVersionStr: " + p4DVersionStr + ", pIn4DBoolStr: "+pIn4DBoolStr);
+$( "#__4D_version" ).val(p4DVersionStr);
+$( "#__in_4D" ).val(pIn4DBoolStr);
+$( "#__in_DevMode" ).val(pIn4DBoolStr);
+$( "#__in_DebugMode" ).val(pDebugModeStr);
+
+return "OK";
+}
+		</script>

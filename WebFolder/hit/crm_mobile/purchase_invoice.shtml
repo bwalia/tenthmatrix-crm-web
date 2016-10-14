@@ -1,0 +1,333 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+ALL RECORDS([Tax_Codes])
+QUERY([purchase_invoices];[purchase_invoices]uuid=_HIT_WebApp_GetField ("uuid"))
+QUERY([purchase_invoice_items];[purchase_invoice_items]payment_uuid=[purchase_invoices]uuid)
+QUERY([Companies];[Companies]uuid=[purchase_invoices]uuid_company)
+QUERY([Projects];[Projects]uuid=[purchase_invoices]project_uuid)
+QUERY([bank_accounts];[bank_accounts]id=[purchase_invoices]bank_paid_from_id)
+QUERY([analysis_ledger];[analysis_ledger]uuid=[purchase_invoices]uuid_analysis_ledger)
+QUERY([analysis_account];[analysis_account]uuid=[purchase_invoices]uuid_analysis_account)
+IF (Records in selection([purchase_invoices])=0)
+_HTMLTITLETXT:="New Purchase Invoice"
+ELSE
+_HTMLTITLETXT:= "Edit Purchase Invoice"
+END IF
+
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+
+C_BOOLEAN(mUserIsCurrentBool)
+mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
+
+-->
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/main-header.shtml-->
+<link rel="stylesheet" href="css/jquery-ui.css">
+<script src="js/datepicker.js"></script>
+<script src="js/jquery.validate.js"></script>
+<script src="js/purchase_inv.js"></script>
+<script type="text/javascript">
+var new_inv='';
+$(document).ready(function() {
+	$('#payment_date').datepicker({
+    	autoclose: true,
+    	changeMonth: true,
+      	changeYear: true,
+      	dateFormat: 'dd/mm/yy'
+	});
+	<!--#4DIF (Records in selection([purchase_invoices])=0)-->
+		//$("#popupForNewID").popup("open");
+			
+		var new_uuid='<!--#4DVAR Generate UUID-->';	
+		$('#purchase_uuid').val(new_uuid);
+		
+		var new_id='<!--#4DVAR Sequence number([purchase_invoices])-->';
+		$('#purchase_id').val(new_id);
+		
+		new_inv='<!--#4DVAR SequenceNumber (->[purchase_invoices]id)-->';
+		$('#purchase_inv_no').val(new_inv);
+		$('#tax_rate').val("20");
+		$('#tax_code').val("UK");
+
+	<!--#4DELSE--><!--#4DENDIF-->    
+});
+</script>
+<style>
+label.error { 
+	float: left; 
+	color: red; 
+	padding-top: 1.5em; 
+	vertical-align: top; 
+}
+.movie-list thead th,
+.movie-list tbody tr:last-child {
+	border-bottom: 1px solid #d6d6d6; /* non-RGBA fallback */
+	border-bottom: 1px solid rgba(0,0,0,.1);
+}
+.movie-list tbody th,
+.movie-list tbody td {
+	border-bottom: 1px solid #e6e6e6; /* non-RGBA fallback  */
+	border-bottom: 1px solid rgba(0,0,0,.05);
+}
+.movie-list tbody tr:last-child th,
+.movie-list tbody tr:last-child td {
+	border-bottom: 0;
+}
+.movie-list tbody tr:nth-child(odd) td,
+.movie-list tbody tr:nth-child(odd) th {
+	background-color: #eeeeee; /* non-RGBA fallback  */
+	background-color: rgba(0,0,0,.04);
+}
+</style>
+</head>
+<body>
+<div data-role="page" class="jqm-demos" data-quicklinks="true">
+	<!-- header -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/top-header.shtml-->
+	<!-- /header -->
+	
+	<div role="main" class="ui-content jqm-content">
+		<!--#4DIF (mUserIsCurrentBool)--><h3>Purchase Invoice</h3><!--#4DELSE--><!--#4DENDIF-->
+		<div data-demo-html="true">
+			<div data-role="tabs" id="tabs">
+		      <div data-role="navbar">
+			    <ul>
+			      <li><a href="#one" data-ajax="false" class="ui-btn-active">Purchase Invoice</a></li>
+			      <li><a href="#two" data-ajax="false">Other Details</a></li>
+			     </ul>
+		      </div>
+		      <form data-ajax="false" name="TaskForm" id="TaskForm" action="savepurchaseinvoice.cgi" method="post">
+		     	<div id="one" class="ui-body-d ui-content">
+		     		<div class="ui-field-contain">
+   						<label for="purchase_inv_no">Purchase Invoice Number:</label>
+						<input readonly name="purchase_inv_no" id="purchase_inv_no" placeholder="Purchase Invoice Number" value="<!--#4DVAR [purchase_invoices]purchase_inv_no-->" type="text">
+   					</div>
+   					<input name="purchase_uuid" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="purchase_uuid">
+					<input name="purchase_id" type="hidden" value="<!--#4DVAR [purchase_invoices]id-->" id="purchase_id">
+							
+   					<div class="ui-field-contain">
+   						<label for="payment_date">Payment Date :</label>
+						<input data-role="date" type="text" name="payment_date" id="payment_date" data-date-format="dd/mm/yyyy" <!--#4DIF ([purchase_invoices]payment_date=!00/00/00!)-->value=""<!--4DELSE-->value="<!--#4DVAR [purchase_invoices]payment_date -->"<!--4DENDIF--> readonly>
+					</div>
+								
+					<div class="ui-field-contain">
+						<label for="uuid_reported_by" class="select">Beneficiary Name:</label>
+						<input name="Client_ID" id="Client_ID" type="hidden" value="<!--4DVAR [Companies]company_Name-->">
+						<span class="ui-filterable">
+   							<input id="inset-autocomplete-input" data-type="search" placeholder="Search client..." class="clientNameStr" value="<!--4DVAR [Companies]company_Name-->" name="clientNameStr">
+						</span>
+						<ul data-role="listview" data-inset="true" data-filter="true" data-filter-reveal="true" data-input="#inset-autocomplete-input" class="clientListView">
+   							<!--#4DIF (Records in selection([purchase_invoices])=0)-->
+								<!--#4DSCRIPT/Web_LoadCustomers/-->
+                                <!--4DLOOP  [Companies]-->
+									<li><a href="javascript:void(0)" onClick="selectValue('[Companies]uuid','<!--4DVAR [Companies]company_Name-->')"><!--4DVAR [Companies]company_Name--></a></li>
+								<!--4DENDLOOP-->							 
+							<!--#4DENDIF-->
+						</ul>
+					</div>
+					<div class="ui-field-contain">
+   						<label for="beneficiary_address">Beneficiary Address:</label>
+   						<textarea cols="40" rows="8"<!--#4DIF (mUserIsCurrentBool)-->readonly<!--#4DELSE--><!--#4DENDIF--> name="beneficiary_address" id="beneficiary_address" placeholder="Beneficiary Address"><!--#4DVAR [purchase_invoices]beneficiary_address--></textarea>
+					</div>
+					
+					<div class="ui-field-contain">
+   						<label for="payment_method">Payment Method:</label>
+						<input<!--#4DIF (mUserIsCurrentBool)-->readonly<!--#4DELSE--><!--#4DENDIF--> name="payment_method" value="<!--#4DVAR [purchase_invoices]payment_method -->" id="payment_method" placeholder="" type="text">
+   					</div>
+   					<div class="ui-field-contain">
+						<label for="Project_UUID" class="select">Project:</label>
+						<input name="Project_UUID" id="Project_UUID" type="hidden" value="<!--4DVAR [Projects]uuid-->">
+						<span class="ui-filterable">
+   							<input id="inset-autocomplete-input" data-type="search" placeholder="Search project..." class="projectNameStr" value="<!--4DVAR [Projects]proj_name-->" name="projectNameStr">
+						</span>
+						<ul data-role="listview" data-inset="true" data-filter="true" data-filter-reveal="true" data-input="#inset-autocomplete-input" class="projectListView">
+   							<!--#4DIF (Records in selection([purchase_invoices])=0)-->
+								<li><a href="javascript:void(0)" onClick="selectClient('[Projects]uuid','<!--4DVAR [Projects]proj_name-->')"><!--4DVAR [Projects]proj_name--></a></li>
+							<!--#4DENDIF-->
+						</ul>
+					</div>
+					<div class="ui-field-contain">
+						<label for="employee_uuid" class="select">Employee:</label>
+						<select name="employee_uuid" id="employee_uuid" data-native-menu="false">
+							<option value="">--Select Employee--</option>
+									<!--HIT_EXECUTE
+										_HIT_HTMLTXT:=""
+										QUERY([Employees];[Employees]emp_active=True)
+										ORDER BY([Employees];[Employees]emp_last_name;>)
+
+										For (_HIT_COUNTER;1;Records in selection([Employees]))
+										_HIT_HTMLTXT:=_HIT_HTMLTXT+"<option value=\""+[Employees]uuid+"\""
+										If ([purchase_invoices]employee_uuid=[Employees]uuid)
+										_HIT_HTMLTXT:=_HIT_HTMLTXT+" selected"
+										Else 
+										End if 
+										_HIT_HTMLTXT:=_HIT_HTMLTXT+">"+[Employees]emp_first_name+" "+[Employees]emp_last_name+"</option>"
+										NEXT RECORD([Employees])
+										End for 
+									-->
+						</select>
+					</div>
+					<div class="ui-field-contain">
+					<label for="employee_uuid" class="select">Items:</label>	
+					<a href="javascript:void(0)" class="ui-btn ui-icon-edit ui-btn-icon-left ui-shadow-icon ui-btn-b" onClick="$('#popupForNewPurchaseInvoice').popup('open');">Add new item</a>
+					<table data-role="table" id="movie-table-custom" data-mode="reflow" class="movie-list ui-responsive loadedTable">
+						<thead>
+						<tr>
+							<th data-priority="1">Item</th>
+		      				<th data-priority="3">Quantity</th>
+			  				<th data-priority="4">Unit Price</th>
+			  				<th data-priority="5">Total</th>
+	               		</tr>
+	           	 		</thead>
+	            		<tbody id="contentoftable">
+	              			<!--#4DLOOP [purchase_invoice_items]-->
+		  					<tr>
+							<td ><!--#4DHTMLVAR [purchase_invoice_items]item_purchased-->
+								<input class="item_uuid" name="item_uuid" type="hidden" value="<!--#4DHTMLVAR [purchase_invoice_items]item_uuid-->" />
+								<input class="item_id" name="item_id" type="hidden" value="<!--#4DHTMLVAR [purchase_invoice_items]item_id-->" />
+							</td>
+							<td><!--#4DHTMLVAR [purchase_invoice_items]item_quantity--></td>
+							<td><!--#4DHTMLVAR [purchase_invoice_items]item_unit_price--></td>
+							<td><!--#4DHTMLVAR [purchase_invoice_items]item_total-->
+							<input type="hidden" class="s_item_total" value="<!--#4DHTMLVAR [purchase_invoice_items]item_total-->" ></td>
+							</tr>
+							<!--#4DENDLOOP-->
+	        			</tbody>
+	        		</table>
+	        		</div>
+	        		<div class="ui-field-contain">
+   						<label for="payment_method">Tax Code:</label>
+						<select data-native-menu="false" id="tax_code" name="tax_code">
+							<!--#4DSCRIPT/Web_LoadTax_Codes/-->
+							<!--4DLOOP [Tax_Codes]-->
+								<option value="<!--#4DVAR [Tax_Codes]Tax_Code-->" <!--#4DIF ([Tax_Codes]Tax_Code=[purchase_invoices]tax_code)-->selected<!--4DELSE--><!--4DENDIF-->><!--4DVAR [Tax_Codes]Tax_Code--></option>
+							<!--4DENDLOOP-->
+						</select>
+   					</div>
+   					<div class="ui-field-contain">
+   						<label for="tax_rate">Tax Rate:</label>
+						<input readonly name="tax_rate" value="<!--#4DVAR [purchase_invoices]tax_rate -->" id="tax_rate" placeholder="" type="text">
+   					</div>
+   					<div class="ui-field-contain">
+   						<label for="payment_subtotal">Payment Subtotal:</label>
+						<input <!--#4DIF (mUserIsCurrentBool)-->readonly<!--#4DELSE--><!--#4DENDIF--> name="payment_subtotal" value="<!--#4DVAR [purchase_invoices]payment_subtotal -->" id="payment_subtotal" placeholder="" type="text">
+   					</div>
+   					<div class="ui-field-contain">
+   						<label for="payment_tax">Payment Tax:</label>
+						<input <!--#4DIF (mUserIsCurrentBool)-->readonly<!--#4DELSE--><!--#4DENDIF--> name="payment_tax" value="<!--#4DVAR [purchase_invoices]payment_tax -->" id="payment_tax" placeholder="" type="text">
+   					</div>
+   					<div class="ui-field-contain">
+   						<label for="payment_total">Payment Total:</label>
+						<input <!--#4DIF (mUserIsCurrentBool)-->readonly<!--#4DELSE--><!--#4DENDIF--> name="payment_total" value="<!--#4DVAR [purchase_invoices]payment_total -->" id="payment_total" placeholder="" type="text">
+   					</div>
+					<button type="submit" class="ui-shadow ui-btn ui-corner-all ui-mini">Submit</button>
+					<a href="purchase_invoices.shtml" data-ajax="false" class="ui-shadow ui-btn ui-corner-all ui-mini">Cancel</a>
+		    	</div>
+		    	<div id="two">
+		    		<div class="ui-field-contain">
+   						<label for="status">Invoice Status :</label>
+   						<select name="status" id="status"  data-native-menu="false">
+							<option value="Invoiced" <!--#4DIF ([purchase_invoices]purchase_invoice_status="Invoiced")-->selected<!--4DELSE--><!--4DENDIF-->>Invoiced</option>
+							<option value="Paid" <!--#4DIF ([purchase_invoices]purchase_invoice_status="Paid")-->selected<!--4DELSE--><!--4DENDIF-->>Paid</option>
+							<option value="Bad debt" <!--#4DIF ([purchase_invoices]purchase_invoice_status="Bad debt")-->selected<!--4DELSE--><!--4DENDIF-->>Bad debt</option>
+							<option value="Needs chasing" <!--#4DIF ([purchase_invoices]purchase_invoice_status="Needs chasing")-->selected<!--4DELSE--><!--4DENDIF-->>Needs chasing</option>
+						</select>
+   					</div>
+   					
+		    		<div class="ui-field-contain">
+   						<label>
+       						<input type="checkbox" <!--#4DIF ([purchase_invoices]is_cost_of_sales)-->checked<!--4DELSE--><!--4DENDIF--> id="is_cost_of_sales" value="true" name="is_cost_of_sales" > Cost of Sales
+   						</label>
+   					</div>
+   					
+					<div class="ui-field-contain">
+   						<label for="payment_method">Sort Code:</label>
+						<input<!--#4DIF (mUserIsCurrentBool)-->readonly<!--#4DELSE--><!--#4DENDIF--> name="sort_code" id="sort_code" value="<!--#4DVAR [purchase_invoices]sort_code-->"  placeholder="Sort Code" type="text">
+   					</div>
+   					
+					<div class="ui-field-contain">
+   						<label for="payment_method">Swift Code:</label>
+						<input<!--#4DIF (mUserIsCurrentBool)-->readonly<!--#4DELSE--><!--#4DENDIF--> name="swift_code" id="swift_code" value="<!--#4DVAR [purchase_invoices]swift_code-->" type="text">
+   					</div>
+   					
+					<div class="ui-field-contain">
+   						<label for="payment_method">Routing:</label>
+						<input<!--#4DIF (mUserIsCurrentBool)-->readonly<!--#4DELSE--><!--#4DENDIF--> name="routing" id="routing" value="<!--#4DVAR [purchase_invoices]routing-->" type="text">
+   					</div>
+   					<div class="ui-field-contain">
+   						<label for="payment_method">IBAN:</label>
+						<input<!--#4DIF (mUserIsCurrentBool)-->readonly<!--#4DELSE--><!--#4DENDIF--> value="<!--#4DVAR [purchase_invoices]iban -->" id="iban" name="iban" type="text">
+   					</div>
+   					<div class="ui-field-contain">
+   						<label for="Currency">Currency :</label>
+   						<select name="currency_code" id="currency_code"  data-native-menu="false">
+							<option value="">--Select Currency--</option>
+							<!--4DLOOP [Tax_Codes]-->
+							<option value="<!--#4DVAR [Tax_Codes]Currency_Code-->" <!--#4DIF ([Tax_Codes]Currency_Code=[purchase_invoices]currency_code-->selected<!--4DELSE--><!--4DENDIF-->><!--4DVAR [Tax_Codes]Currency_Code--></option>	
+							<!--4DENDLOOP-->
+						</select>
+   					</div>
+   					
+		      		<div class="ui-field-contain">
+   						<label for="beneficiary_address">Payment Notes:</label>
+   						<textarea cols="40" rows="8" name="payment_notes" id="payment_notes" placeholder="Payment Notes"><!--#4DVAR [purchase_invoices]payment_notes--></textarea>
+					</div>
+					<button type="submit" class="ui-shadow ui-btn ui-corner-all ui-mini">Submit</button>
+					<a href="purchase_invoices.shtml" data-ajax="false" class="ui-shadow ui-btn ui-corner-all ui-mini">Cancel</a>
+		      	</div>
+		      	</form>	
+		    </div>
+		</div>
+		<div data-role="popup" id="popupForNewID" data-overlay-theme="a" class="ui-content">
+			<div style="padding:10px 20px;">
+        	  	<h3>Enter new Purchase Invoice Number manually?</h3>
+        		<label for="siteIDNum" class="ui-hidden-accessible newMsgStr"></label>
+            	<input id="newIDNum" value="" type="text">
+            	<button type="button" class="ui-btn ui-corner-all ui-shadow ui-btn-b ui-btn-icon-left ui-icon-check" onClick="addNewID(1)">Ok</button>
+             	<button type="button" class="ui-btn ui-corner-all ui-shadow ui-btn-b ui-btn-icon-left ui-icon-delete" onClick="addNewID(0)">Close</button>
+        	</div>
+		</div>
+		<div data-role="popup" id="popupForTax" data-overlay-theme="a" class="ui-content">
+			<div style="padding:10px 20px;">
+        	  	<h3>Enter tax rate</h3>
+        		<input id="dlg_tax_rate" value="" type="text">
+            	<button type="button" class="ui-btn ui-corner-all ui-shadow ui-btn-b ui-btn-icon-left ui-icon-check" onClick="evaluateTaxRateID(1)">Ok</button>
+             	<button type="button" class="ui-btn ui-corner-all ui-shadow ui-btn-b ui-btn-icon-left ui-icon-delete" onClick="evaluateTaxRateID(0)">Close</button>
+        	</div>
+		</div>
+		<div data-role="popup" id="popupForNewPurchaseInvoice" data-overlay-theme="a" class="ui-content">
+			<div style="padding:10px 20px;">
+        	  	<h3 class="newPurInvMsg">Add new item</h3>
+        	  	<label for="new_line_num">Line no:</label>
+        		<input id="new_line_num" value="" type="text" placeholder="Line no">
+        		<label for="new_item">Item:</label>
+        		<input id="new_item" value="" type="text" placeholder="Item">
+        		<label for="new_quantity">Quantity:</label>
+        		<input id="new_quantity" value="" type="text" placeholder="Quantity">
+        		<label for="new_unit_price" >Unit Price:</label>
+        		<input id="new_unit_price" value="" type="text" placeholder="Unit Price">
+        		
+        		<button type="button" class="ui-btn ui-corner-all ui-shadow ui-btn-b ui-btn-icon-left ui-icon-check" onClick="addnewPurchaseItem()">Ok</button>
+             	<button type="button" class="ui-btn ui-corner-all ui-shadow ui-btn-b ui-btn-icon-left ui-icon-delete" onClick="$('#popupForNewPurchaseInvoice').popup('close');">Close</button>
+        	</div>
+		</div>
+
+		
+		
+	</div><!-- /content -->
+	<!-- panel -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/sidebar.shtml-->
+	<!-- /panel -->
+
+	<!-- footer -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/footer.shtml-->
+	<!-- /footer -->
+</div><!-- /page -->
+
+</body>
+</html>

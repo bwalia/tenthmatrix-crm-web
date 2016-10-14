@@ -1,0 +1,157 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+C_TEXT(_HTMLTITLETXT)
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+QUERY([analysis_account];[analysis_account]uuid=_HIT_WebApp_GetField ("uuid"))
+
+IF (Records in selection([analysis_account])=0)
+_HTMLTITLETXT:="New Analysis Account"
+ELSE
+QUERY([analysis_ledger];[analysis_ledger]uuid=[analysis_account]uuid_anlaysis_ledger)
+_HTMLTITLETXT:= "Edit Analysis Account"
+END IF
+
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+C_BOOLEAN(mUserIsCurrentBool)
+mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
+ 
+-->
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/main-header.shtml-->
+<script src="js/jquery.validate.js"></script>
+<script type="text/javascript">
+var xhrAbortSearch;
+$(document).ready(function() {
+	$(".ui-table-columntoggle-btn").hide();
+	$("#DetailForm").validate({
+		ignore: "",
+        rules: {
+            ledger_uuid: { required: true  },
+			account_name: { required: true  },
+			currency_code: { required: true  },
+			money_in_or_out : { required: true  }
+        }
+    });
+    
+    //on keyup, start the countdown
+	$('.ledgerNameStr').keyup(function(){
+    	if ($('.ledgerNameStr').val()) {
+      		var jsonRow="getledgersonsearch.cgi?srch="+$('.ledgerNameStr').val()+"&"+Math.random();
+			if(xhrAbortSearch) xhrAbortSearch.abort();
+			xhrAbortLoxhrAbortSearchad=$.getJSON(jsonRow,function(result){
+				if(result){
+					var html='';
+					$.each(result, function(i,item){
+						html += '<li><a class="ui-btn ui-btn-icon-right ui-icon-carat-r" href="javascript:void(0)" onClick="selectProject(\''+item.uuid+'\',\''+item.name+'\')">'+item.name+'</a></li>';
+					});
+					$( ".ledgerListView").html("");
+					$( ".ledgerListView").html(html);
+				}
+			});
+          
+    	}
+    });
+    
+    $('.ui-input-clear').click(function(){
+    	$("#ledger_uuid").val("");
+    });
+    
+});
+
+function selectProject(val, name){
+	$(".ledgerNameStr").val(name);
+	$("#ledger_uuid").val(val);
+	$( ".ledgerListView" ).listview( "refresh" );
+	$( ".ledgerListView li" ).addClass("ui-screen-hidden");
+}
+</script>
+<script type='text/javascript' src='js/customerNotes.js'></script>
+<style>
+label.error { 
+	float: left; 
+	color: red; 
+	padding-top: 1.5em; 
+	vertical-align: top; 
+}
+</style>
+</head>
+<body>
+<div data-role="page" class="jqm-demos" data-quicklinks="true">
+	<!-- header -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/top-header.shtml-->
+	<!-- /header -->
+	
+	<div role="main" class="ui-content jqm-content">
+		<h3><!--#4DIF (Records in selection([analysis_account])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Analysis Account</h3>
+		<div data-demo-html="true">
+		     <form name="DetailForm" action="saveanalaccount.cgi" id="DetailForm" data-ajax="false" method="post">
+					<input name="domain_uuid" class="span9" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="domain_uuid"> 
+					
+					<div class="ui-field-contain">
+						<label for="ledger_uuid" class="select">Legder Name</label>
+						<input name="ledger_uuid" id="ledger_uuid" type="hidden" value="<!--4DVAR [analysis_ledger]uuid-->">
+						<span class="ui-filterable">
+   							<input id="inset-autocomplete-input" data-type="search" placeholder="Search ledger..." class="ledgerNameStr" name="ledgerNameStr" value="<!--4DVAR [analysis_ledger]ledger_name-->">
+						</span>
+					
+						<ul data-role="listview" data-inset="true" data-filter="true" data-filter-reveal="true" data-input="#inset-autocomplete-input" class="ledgerListView">
+   							<!--#4DIF (Records in selection([analysis_account])=0)-->
+								<!--#4DSCRIPT/Web_LoadAnalysisLegder/-->
+									<!--4DLOOP [analysis_ledger]-->
+										<li><a href="javascript:void(0)" onClick="selectClient('<!--4DVAR [analysis_ledger]uuid-->','<!--4DVAR [analysis_ledger]ledger_name-->')"><!--4DVAR [analysis_ledger]ledger_name--></a></li>
+									<!--4DENDLOOP-->
+							<!--#4DENDIF-->
+						</ul>
+					</div>
+                   
+					<div class="ui-field-contain">
+						<label for="money_in_or_out">Money in our out</label>
+   						<select data-native-menu="false" id="money_in_or_out" name="money_in_or_out">
+							<option value="">--Select--</option>
+							<option value="money in" <!--#4DIF ([analysis_account]money_in_or_out="money in")-->selected<!--4DELSE--><!--4DENDIF-->>Money in</option>
+							<option value="money out" <!--#4DIF ([analysis_account]money_in_or_out="money out")-->selected<!--4DELSE--><!--4DENDIF-->>Money out</option>
+						</select>
+   					</div>
+   					<input name="uuid" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="uuid">               
+                            
+   					<div class="ui-field-contain">
+   						<label>Account Name</label>
+                        <input type="text" name="account_name" id="account_name" value="<!--#4DVAR [analysis_account]account_name-->">
+					</div>
+					<div class="ui-field-contain">
+						<label>Currency Code</label>
+						<select id="currency_code" name="currency_code" data-native-menu="false">
+							<option value="">--Select--</option>
+							<!--HIT_EXECUTE _HIT_HTMLTXT:=Currency_HTMLPopup-->					 
+						</select>
+					</div>						   
+					<div class="ui-field-contain">
+						<label>Notes</label>
+						<textarea name="notes" rows="4" id="notes"><!--#4DVAR [analysis_account]notes--></textarea>				
+					</div>
+					<div class="ui-field-contain">
+                        <label>
+       						<input name="is_in_scope_of_tax" type="checkbox" value="true" id="is_in_scope_of_tax" <!--#4DIF ([analysis_account]is_in_scope_of_tax)-->checked<!--4DELSE--><!--4DENDIF--> > Entries in this account are in scope of Tax (VAT) ?
+   						</label>
+					</div>
+					<button type="submit" class="ui-shadow ui-btn ui-corner-all ui-mini">Submit</button>
+					<a href="analysisaccounts.shtml" class="ui-shadow ui-btn ui-corner-all ui-mini" data-ajax="false">Cancel</a>
+					</form>	
+		    	
+		</div>
+
+	</div><!-- /content -->
+	<!-- panel -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/sidebar.shtml-->
+	<!-- /panel -->
+
+	<!-- footer -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/footer.shtml-->
+	<!-- /footer -->
+</div><!-- /page -->
+
+</body>
+</html>

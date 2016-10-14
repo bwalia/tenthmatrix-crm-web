@@ -1,0 +1,203 @@
+<!--HIT_EXECUTE
+_HIT_HTTPD_SetHTTPHeader ("Content-type";"text/html; charset=utf-8")
+C_TEXT(_HTMLTITLETXT)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+
+_HTMLTITLETXT:="Bank Statement Entries"
+
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml?url="+HTTPD_DocumentURI)
+end if 
+-->
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/main-header.shtml-->
+
+<script type="text/javascript">
+var JSONdata, nPageSize=10;
+var start=0, end=nPageSize;
+var old_srch='',keyword='', status='';
+var tablname='bank_statement_entries';
+var complete=false;
+var completeScroll=false;
+
+$(document).ready(function() {
+	$('#keyword').focus();
+	load_data();			 
+		
+	$(window).scroll(function(){
+		if ($(window).scrollTop() == $(document).height() - $(window).height()){
+			if(complete==false && completeScroll==false) {
+				$('#load_more_btn').parent().hide();
+				$('#img_loading_div').show();
+				start=end+1;
+				end=start+nPageSize;
+				load_data();
+			}
+		}
+	});
+	$('.ui-btn').bind("click","#load_more_btn", function(){
+		$('#load_more_btn').parent().hide();
+		$('#img_loading_div').show();
+		start=end+1;
+		end=start+nPageSize;
+		load_data();
+	});
+	
+	//setup before functions
+	var typingTimer;                //timer identifier
+	var doneTypingInterval = 1000;  //time in ms, 5 second for example
+
+	//on keyup, start the countdown
+	$('#keyword').keyup(function(){
+    	clearTimeout(typingTimer);
+    	if ($('#keyword').val) {
+      		typingTimer = setTimeout(function(){
+           		$('#contentoftable').html('');
+           		$('#load_more_btn').parent().hide();
+				$('#img_loading_div').show();
+				start=0;
+				end=start+nPageSize;
+				load_data();
+        	}, doneTypingInterval);
+    	}
+    });
+    
+});
+
+function __showDetailForm(uuid){
+var pUrlStr='bank_entry.shtml?uuid='+uuid;
+window.location.href=pUrlStr;
+}
+function __filterResults(str){
+	status=str;
+	$('#contentoftable').html('');
+    $('#load_more_btn').parent().hide();
+	$('#img_loading_div').show();
+	start=0;
+	end=start+nPageSize;
+	load_data();
+}
+var xhrAbort;
+function load_data(){
+	$('#errorMsgStr').remove();
+	keyword= $("#keyword").val();
+	jsonRow = 'load_bankenteriesnew.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&date_selected=no&start_date=&end_date=';
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}
+	if(status!=''){
+		jsonRow +='&status='+status;
+	}
+	completeScroll=true;
+	JSONdata=new Array();
+	if(xhrAbort) xhrAbort.abort();
+	xhrAbort=$.getJSON(jsonRow,function(result){
+		if(result.Alert){
+			var contentStr=$('#contentoftable').html();
+			if(contentStr.length>=1){
+			
+			}else{
+				$(".loadedTable").before("<span id='errorMsgStr' style='color:red;font-style:italic;'>Sorry, no records found!</span>");
+			}
+			$('#load_more_btn').parent().hide();
+			$('#img_loading_div').hide();
+			complete=true;
+		}else{
+			var table_html='';
+			$.each(result.aadata, function(i,row){
+				var statusStr=row.status;
+				table_html+='<tr>';
+				table_html+='<td class="title"><a href="javascript:void(0)" onClick="__showDetailForm(\''+row.uuid+'\')">'+row.description+'</a></td>';
+				table_html+='<td>'+row.date+'</td>';
+				table_html+='<td>'+row.type+'</td>';
+				table_html+='<td>'+row.paid_out+'</td>';
+				table_html+='<td>'+row.paid_in+'</td>';
+				if(row.status=="reconciled"){
+					table_html+='<td>Reconciled</td>';
+				}else if(row.status=="need to confirm" || row.status=="Create missing links"){
+					table_html+='<td>Create missing links</td>';
+				}else{
+					table_html+='<td>Pending</td>';
+				}
+				table_html+='</tr>';
+			});
+				//console.log(table_html)
+				if(old_srch!=keyword){
+					$('#contentoftable').html('');
+					old_srch=keyword;
+				}
+				
+				$('#contentoftable').append(table_html);
+				$( ".loadedTable" ).table( "rebuild" );
+				complete=false;
+			
+			$('#img_loading_div').hide();
+			$('#load_more_btn').parent().show();
+		}
+		completeScroll=false;
+	});
+}
+</script>
+
+<link rel="stylesheet" href="css/jquery-table-custom.css">
+</head>
+<body>
+<div data-role="page" class="jqm-demos" data-quicklinks="true">
+	<!-- header -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/top-header.shtml-->
+	<!-- /header -->
+	
+	<div role="main" class="ui-content jqm-content">
+		<h3>Bank Statement Entries</h3>
+		<div class="ui-grid-b ui-responsive">
+        	<div class="ui-block-a">
+				<div class="jqm-block-content" style="min-height: 3em; padding:0em;">
+    				<div class="ui-input-search  ui-corner-all ui-shadow-inset "><input name="keyword" id="keyword" value="" placeholder="Search for name or client.." data-type="search" type="text"><a title="Clear text" href="#" tabindex="-1" aria-hidden="true" class="ui-input-clear ui-btn ui-icon-delete ui-btn-icon-notext ui-corner-all ui-input-clear-hidden">Clear text</a></div>
+				</div>
+        	</div>  
+        	<div class="ui-block-b">
+        		<div class="jqm-block-content" style="min-height: 5em; padding:0em;">
+        			<select name="type" id="type" onChange="__filterResults(this.value)"  data-native-menu="false">
+        				<option value="" selected="selected">All</option>
+        				<option value="pending">Pending</option>
+						<option value="reconciled" >Reconciled</option>
+					</select>
+				</div>
+        	</div> 
+				
+        </div>
+		<div data-demo-html="true">
+			<table data-role="table" id="movie-table-custom" data-mode="reflow" class="movie-list loadedTable">
+				<thead>
+					<tr>
+	              		<th data-priority="1" style="width:40%">Description</th>
+	               		<th data-priority="2">Date</th>
+	               		<th data-priority="3">Type</th>
+	               		<th data-priority="4">Money Out</th>
+	               		<th data-priority="5">Money In</th>
+	               		<th data-priority="5">Status</th>
+	               </tr>
+	            </thead>
+	            <tbody id="contentoftable">
+	              
+	        	</tbody>
+	        </table>
+	        <div id="img_loading_div" style="text-align:center">
+				<img src="loading.gif"  style="padding:20px;">
+			</div>
+
+			<input id="load_more_btn" type="button" value="load more" style="display:none;">
+		</div><!--/demo-html -->
+
+	</div><!-- /content -->
+	<!-- panel -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/sidebar.shtml-->
+	<!-- /panel -->
+
+	<!-- footer -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/footer.shtml-->
+	<!-- /footer -->
+</div><!-- /page -->
+
+</body>
+</html>

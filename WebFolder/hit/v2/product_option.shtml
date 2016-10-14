@@ -1,0 +1,258 @@
+<!--HIT_EXECUTE
+
+C_LONGINT(_HIT_COUNTER)
+C_TEXT(_HIT_HTMLTXT;_HTMLTITLETXT)
+
+QUERY([product_options];[product_options]uuid=_HIT_WebApp_GetField ("uuid"))
+
+
+IF (Records in selection([product_options])=0)
+_HTMLTITLETXT:="New Product Option"
+ELSE
+_HTMLTITLETXT:= "Edit: "+[product_options]name
+END IF
+
+
+-->
+<!DOCTYPE html>
+<html lang="en">
+<!-- BEGIN HEAD -->
+<head>
+<!--#4DIF (Records in selection([product_options])=1)-->
+<title>Product:<!--#4DVAR [product_options]name--></title>
+<!--#4DELSE-->
+<title>New Category</title>
+<!--#4DENDIF-->
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<meta content="" name="description"/>
+<meta content="" name="author"/>
+
+<!-- BEGIN CORE FRAMEWORK -->
+<link href="assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+<link href="assets/plugins/ionicons/css/ionicons.min.css" rel="stylesheet" />
+<link href="assets/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+<!-- END CORE FRAMEWORK -->
+
+<!-- BEGIN PLUGIN STYLES -->
+<link href="assets/plugins/animate/animate.css" rel="stylesheet" />
+
+<link href="assets/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css" rel="stylesheet" />
+<!-- END PLUGIN STYLES -->
+
+<!-- BEGIN THEME STYLES -->
+<link href="assets/css/material.css" rel="stylesheet" />
+<link href="assets/css/style.css" rel="stylesheet" />
+<link href="assets/css/plugins.css" rel="stylesheet" />
+<link href="assets/css/helpers.css" rel="stylesheet" />
+<link href="assets/css/responsive.css" rel="stylesheet" />
+<!-- END THEME STYLES -->
+
+<link rel="stylesheet" media="all" type="text/css" href="assets/css/jquery-impromptu.css" />
+</head>
+<style>
+.rightside {
+	padding-top: 0px!important;
+}
+.chosen-container-multi .chosen-choices {
+	background: #fafafa!important;
+	border: 1px solid #eeeeee!important;
+	border-radius: 3px;
+	padding: 3px;
+}
+
+.boxbcg{
+	border:1px solid #E1E1E1!important;
+	padding: 0px 8px 8px 8px !important;
+	border-radius:4px!important;
+	margin-bottom:10px!important;
+}
+
+.boxbcg h3{
+	padding: 0px 0px 0px 6px;
+font-size: 21px;
+color: #108cd3;
+}
+
+.pdng3{
+	padding:3px 0px;
+}
+
+.labelnew{
+	padding-left: 0px; float: left; width: 124px; padding-top: 5px;
+}
+
+.labtext{
+	position: relative; padding-right: 7px; bottom: 4px; float: left;
+}
+
+.tablebox{
+width: 97%;
+margin: 6px;
+}
+
+.overflowdata{
+height: 146px;
+margin-bottom: 10px;
+overflow-x: none;
+overflow-y: scroll;
+}
+
+.savebtn{
+	  text-align: center;
+    width: 97%;
+    color: rgb(255, 255, 255);
+    padding-right: 0px;
+    margin-left: 7px;
+}
+
+.savebtn a{
+	color:#fff;
+}
+
+.savebtn a:hover{
+	text-decoration:none;
+}
+</style>
+<!-- END HEAD -->
+<!-- BEGIN BODY -->
+<body class="fixed-leftside fixed-header">
+<div class="wrapper"> 
+		
+		<!-- BEGIN RIGHTSIDE -->
+		<div class="rightside bg-grey-100"> 
+				<!-- BEGIN PAGE HEADING -->
+				<div class="page-head">
+						<div class="row">
+								<div class="col-sm-6">
+										<h1 class="page-title"><!--#4DIF (Records in selection([product_options])=1)-->Edit <!--#4DVAR [product_options]name--><!--#4DELSE-->New Product Option<!--#4DENDIF--></h1>
+								</div>
+						</div>
+				</div>
+				<!-- END PAGE HEADING -->
+				<div class="container-fluid">
+						<div class="row">
+								<div class="col-md-12">
+										<div class="panel" style="padding-top:20px;">
+												<div class="panel-body no-padding-top bg-white">
+														<form name="ProductForm" action="savecategory.cgi" id="ProductForm" method="post" class="form-horizontal" >
+																<div class="row">
+																		<div class=" col-sm-12 ">
+																				<input name="uuid" class="span9" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="uuid">
+																				<div class="form-group">
+																						<label for="" class="col-sm-2 control-label">Heading<sup class="req">*</sup></label>
+																						<div class=" col-sm-6">
+																							<input class="form-control" type="text" name="name" id="name" value="<!--#4DVAR [product_options]name-->">
+                                    														<input type="hidden" name="sub_options" id="sub_options" value="">                            
+																						</div>
+																				</div>
+																				
+																				<div class="form-group">
+   		        																	<div class="col-sm-offset-2 col-sm-9">
+    			  																		<div class="checkbox">
+      		  																				<label> <input type="checkbox" name="status" value="true" id="status" <!--#4DIF ([product_options]status)-->checked<!--4DELSE--><!--4DENDIF--> >Active</label>
+    			  																		</div>
+  																					</div>
+  																				</div>
+																				<h3>Add Options</h3>
+																				<div class="row specMsg">
+																						<div class="col-sm-8">
+																								<div class="table-responsive padding-left-5">
+																										<table class="table table-bordered">
+																												<tbody>
+																														<tr style="background:#fafafa;" class="item">
+																																<th class="vertical-middle" >Name</th>
+																																<th class="vertical-middle">Action</th>
+																														</tr>
+																														<tr id="hiderow">
+																																<td colspan="7"><a id="addrow" href="javascript:void(0)" title="Add new option">Add new option</a></td>
+																														</tr>
+																												</tbody>
+																										</table>
+																								</div>
+																						</div>
+																				</div>																
+																				
+																		</div>
+																</div>
+																<div class="row">
+																		<div class="col-sm-12 text-center">
+																				<input type="submit" class="btn palette-carrot btn-color margin-right-5 btn-sm save_exit">
+																				<!--#4DIF (Records in selection([product_options])=0)-->
+																				<input type="reset" class="btn btn-primary btn-sm">
+																				<!--4DENDIF--> 
+																		</div>
+																</div>
+														</form>
+												</div>
+										</div>
+								</div>
+								<!-- /.col --> 
+						</div>
+						<!-- /.row --> 
+				</div>
+				<!-- /.container-fluid --> 
+		</div>
+		<!-- /.rightside --> 
+</div>
+<!-- /.wrapper --> 
+
+<!-- END CONTENT --> 
+
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/v2/includes/InitJs.shtml--> 
+<!-- BEGIN JAVASCRIPTS --> 
+
+<!-- bootstrap validator --> 
+<script src="assets/plugins/bootstrapValidator/bootstrapValidator.min.js" type="text/javascript"></script> 
+
+<!-- maniac --> 
+<script src="assets/js/maniac.js" type="text/javascript"></script> 
+<script type="text/javascript">
+	$('#ProductForm').bootstrapValidator({
+			message: 'This value is not valid',
+			excluded: ':disabled',
+			fields: {
+				name: {
+					message: 'Name is not valid',
+					validators: {
+						notEmpty: {
+							message: 'Name is required and can\'t be empty'
+						}
+					}
+				}
+			},
+				submitHandler: function (form) {
+					var sub_options= subOptionArr.toString(); 
+					$('#sub_options').val(sub_options);
+    				var uuid= $('#uuid').val();  
+					var name= $('#name').val(); 
+					var status=false;
+					if($('#status').is(':checked')){
+						status= true;
+					}
+				
+    				var sub_optionsStr= $('#sub_options').val(); 
+					$.ajax({
+						type: "POST",
+						url: "saveproductoptions.cgi",
+						data: {'uuid' : uuid, "sub_options" : sub_optionsStr,"name" :name, "status": status},
+						cache: false,
+						success: function(response){
+							if(response.error){
+								$.prompt(response.error);
+							}else if(response.success){
+								
+								location.href="product_option.shtml?uuid="+response.success;
+							}
+						}
+					});
+				}
+		});
+</script> 
+<script src="assets/js/product_options.js" type="text/javascript"></script> 
+<!-- END JAVASCRIPTS -->
+</body>
+<!-- END BODY -->
+</html>

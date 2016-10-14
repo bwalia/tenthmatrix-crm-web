@@ -1,0 +1,221 @@
+<!--HIT_EXECUTE
+_HIT_HTTPD_SetHTTPHeader ("Content-type";"text/html; charset=utf-8")
+C_TEXT(_HTMLTITLETXT)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+
+_HTMLTITLETXT:="Invoices"
+
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml?url="+HTTPD_DocumentURI)
+end if 
+-->
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/main-header.shtml-->
+
+<script type="text/javascript">
+var JSONdata, nPageSize=10;
+var start=0, end=nPageSize;
+var old_srch='',keyword='', tab='';
+var complete=false;
+var completeScroll=false;
+
+$(document).ready(function() {
+	$('#keyword').focus();
+	load_data();			 
+		
+	$(window).scroll(function(){
+		if ($(window).scrollTop() == $(document).height() - $(window).height()){
+			if(complete==false && completeScroll==false) {
+				$('#load_more_btn').parent().hide();
+				$('#img_loading_div').show();
+				start=end+1;
+				end=start+nPageSize;
+				load_data();
+			}
+		}
+	});
+	$('.ui-btn').bind("click","#load_more_btn", function(){
+		$('#load_more_btn').parent().hide();
+		$('#img_loading_div').show();
+		start=end+1;
+		end=start+nPageSize;
+		load_data();
+	});
+	
+	//setup before functions
+	var typingTimer;                //timer identifier
+	var doneTypingInterval = 1000;  //time in ms, 5 second for example
+
+	//on keyup, start the countdown
+	$('#keyword').keyup(function(){
+    	clearTimeout(typingTimer);
+    	if ($('#keyword').val) {
+      		typingTimer = setTimeout(function(){
+           		$('#contentoftable').html('');
+           		$('#load_more_btn').parent().hide();
+				$('#img_loading_div').show();
+				start=0;
+				end=start+nPageSize;
+				tab='';
+				load_data();
+        	}, doneTypingInterval);
+    	}
+    });
+    
+});
+
+function __showDetailForm(uuid){
+	var pUrlStr='invoice.shtml?uuid='+uuid;
+	window.location.href=pUrlStr;
+}
+
+function __filterResults(str){
+	tab=str;
+	$('#contentoftable').html('');
+    $('#load_more_btn').parent().hide();
+	$('#img_loading_div').show();
+	start=0;
+	end=start+nPageSize;
+	load_data();
+}
+
+var xhrAbort;
+function load_data(){
+	$('#errorMsgStr').remove();
+	keyword= $("#keyword").val();
+	jsonRow = 'loadinvoices.cgi?start='+start+'&end='+end;
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}
+	if(tab!=''){
+		jsonRow +='&tab='+tab;
+	}
+	completeScroll=true;
+	JSONdata=new Array();
+	if(xhrAbort) xhrAbort.abort();
+	xhrAbort=$.getJSON(jsonRow,function(result){
+		if(result.Alert){
+			var contentStr=$('#contentoftable').html();
+			if(contentStr.length>=1){
+			
+			}else{
+				$(".loadedTable").before("<span id='errorMsgStr' style='color:red;font-style:italic;'>Sorry, no records found!</span>");
+			}
+			$('#load_more_btn').parent().hide();
+			$('#img_loading_div').hide();
+			complete=true;
+		}else{
+			var table_html='';
+			$.each(result, function(i,row){
+				if(row.uuid){
+					var invoiceStatus='';
+					if(row.invoice_status){
+						invoiceStatus=row.invoice_status;
+					}
+					table_html+='<tr>';
+				
+					table_html+='<td class="title"><a href="javascript:void(0)" onClick="__showDetailForm(\''+row.uuid+'\')">'+row.Full_Invoice_Number+'</a></td>';
+					
+					table_html+= '<td>'+row.inv_date+'</td>';
+					if(row.company_Name!=''){
+						table_html+='<td><a href="customers.shtml?keyword='+row.company_Name+'" target="_blank">'+row.company_Name+'</a></td>';
+					}else{
+						table_html+='<td></td>';
+					}
+					table_html+='<td><a href="projects.shtml?keyword='+row.project_code+'" target="_blank">'+row.project_code+'</a></td>';
+					table_html+='<td>'+row.inv_currency_code;
+					table_html+=' '+row.inv_total_due_with_tax+'</td>';
+					table_html+='<td>'+row.balance_due_base_currency+'</td>';
+				
+					table_html+='<td>'+row.inv_date_due+'</td>';
+					table_html+='<td>'+row.inv_total_paid+'</td>';
+					table_html+='<td>'+row.invoice_status+'</td>';
+					table_html+='</tr>';
+				}
+			});
+				if(old_srch!=keyword){
+					$('#contentoftable').html('');
+					old_srch=keyword;
+				}
+				
+				$('#contentoftable').append(table_html);
+				$( ".loadedTable" ).table( "rebuild" );
+				complete=false;
+			
+			$('#img_loading_div').hide();
+			$('#load_more_btn').parent().show();
+		}
+		completeScroll=false;
+	});
+}
+</script>
+
+<link rel="stylesheet" href="css/jquery-table-custom.css">
+</head>
+<body>
+<div data-role="page" class="jqm-demos" data-quicklinks="true">
+	<!-- header -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/top-header.shtml-->
+	<!-- /header -->
+	
+	<div role="main" class="ui-content jqm-content">
+		<h3>Invoices</h3>
+		<div class="ui-grid-b ui-responsive">
+        	<div class="ui-block-a">
+				<div class="jqm-block-content" style="min-height: 3em; padding:0em;">
+    				<div class="ui-input-search  ui-corner-all ui-shadow-inset "><input name="keyword" id="keyword" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" placeholder="Search for invoices, customers.." data-type="search" type="text"><a title="Clear text" href="#" tabindex="-1" aria-hidden="true" class="ui-input-clear ui-btn ui-icon-delete ui-btn-icon-notext ui-corner-all ui-input-clear-hidden">Clear text</a></div>
+				</div>
+        	</div>  
+        	<div class="ui-block-b">
+        		<div class="jqm-block-content" style="min-height: 3em; padding:0em;">
+        			<select name="type" id="type" onChange="__filterResults(this.value)"  data-native-menu="false">
+        				<option value="" selected="selected">All</option>
+        				<option value="due">Due</option>
+						<option value="overdue" >Overdue</option><option value="paid" >Paid</option>
+					</select>
+				</div>
+        	</div> 
+			<div class="ui-block-b">
+        		<div class="jqm-block-content" style="min-height: 5em; padding:0em;">
+        			<div class="success"><a href="invoice.shtml" data-ajax="false">+ Add New Invoice</a></div>
+				</div>
+        	</div>      	
+        </div>
+		<div data-demo-html="true">
+			<table data-role="table" id="movie-table-custom" data-mode="reflow" class="movie-list loadedTable">
+				<thead>
+					<tr>
+	              		<th data-priority="1">Invoice no</th>
+	               		<th data-priority="2">Invoice Date</th>
+	               		<th data-priority="3">Client</th>
+	               		<th data-priority="4">Project</th>
+	               		<th data-priority="5">Total</th>
+	               		<th data-priority="6">Balance</th>
+	               		<th data-priority="7">Due Date</th>
+	               		<th data-priority="8">Paid</th>
+	               		<th data-priority="9">Status</th>
+	               </tr>
+	            </thead>
+	            <tbody id="contentoftable">
+	              
+	        	</tbody>
+	        </table>
+	        <div id="img_loading_div" style="text-align:center">
+				<img src="loading.gif"  style="padding:20px;">
+			</div>
+
+			<input id="load_more_btn" type="button" value="load more" style="display:none;">
+		</div><!--/demo-html -->
+
+	</div><!-- /content -->
+	<!-- panel -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/sidebar.shtml-->
+	<!-- /panel -->
+
+	<!-- footer -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/footer.shtml-->
+	<!-- /footer -->
+</div><!-- /page -->
+
+</body>
+</html>

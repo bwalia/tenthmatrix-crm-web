@@ -1,0 +1,233 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml?url="+HTTPD_DocumentURI)
+end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+-->
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/main-header.shtml-->
+
+<style>
+label.error {
+	float: left;
+	color: red;
+	padding-top: .5em;
+	vertical-align: top;
+	font-weight:bold
+}
+.label{
+width:auto;
+}
+.table-opt tbody tr:hover td a { color: #FFF!important; }
+.table-opt tbody tr:hover td a:hover { color: #FFF; text-decoration:underline}
+</style>
+<link rel="stylesheet" type="text/css" href="css/jqm-datebox.min.css" /> 
+<script type="text/javascript" src="js/jqm-datebox.core.min.js"></script>
+<script type="text/javascript" src="js/jqm-datebox.mode.calbox.min.js"></script>
+<script type="text/javascript" src="js/jquery.mobile.datebox.i18n.en_US.utf8.js"></script>
+<script src="js/jquery.validate.js"></script>
+<script src="js/additional-methods.js"></script>
+<script>
+    
+    function __showChargeable()
+{
+pUrlStr='timeslips.shtml?keyword='+$('#keyword').val()+'&chargeable=on';
+window.location.href=pUrlStr;
+}
+
+function __showNotChargeable()
+{
+pUrlStr='timeslips.shtml?keyword='+$('#keyword').val()+'&chargeable=off';
+window.location.href=pUrlStr;
+}
+
+function __showBilled()
+{
+pUrlStr='timeslips.shtml?keyword='+$('#keyword').val()+'&chargeable=billed';
+window.location.href=pUrlStr;
+}
+
+
+function __showAllTimeslips()
+{
+pUrlStr='timeslips.shtml';
+window.location.href=pUrlStr;
+}
+
+function __showTimeslips()
+{
+pUrlStr='timeslips.shtml?keyword='+$('#keyword').val();
+window.location.href=pUrlStr;
+}
+
+function __showTimeslipForm(uuid)
+{
+pUrlStr='timeslip.shtml?uuid='+uuid;
+window.location.href=pUrlStr;
+}
+
+function chng_time_format(){
+
+	$('.first').each(function(){
+		var s_date_time=$(this).find('.start_time').html().split(' ');
+		var e_date_time=$(this).find('.end_time').html().split(' ');
+		//alert(s_date_time);
+		//alert(e_date_time);
+		var s_time=s_date_time[1];
+		var e_time=e_date_time[1];
+		var s_time_arr=s_time.split(":");
+		var e_time_arr=e_time.split(":");
+		var s_hour= Number(s_time_arr[0]);
+		var e_hour= Number(e_time_arr[0]);
+		var s_min= Number(s_time_arr[1]);
+		var e_min= Number(e_time_arr[1]);
+		var s_ampm='AM';
+		var e_ampm='AM';
+		if(s_hour>=12){
+			s_ampm='PM';
+		}
+		if(e_hour>=12){
+			e_ampm='PM';
+		}
+		if(s_hour>12){
+			s_hour= s_hour-12;
+		}
+		if(e_hour>12){
+			e_hour= e_hour-12;
+		}
+		/*if(s_hour<10){
+			s_hour= '0'+String(s_hour);
+		}
+		if(e_hour<10){
+			e_hour= '0'+String(e_hour);
+		}*/		
+		if(s_min<10){
+			s_min= '0'+String(s_min);
+		}
+		if(e_min<10){
+			e_min= '0'+String(e_min);
+		}
+		s_time=s_hour+':'+s_min+' '+s_ampm;
+		e_time=e_hour+':'+e_min+' '+e_ampm;	
+		//$('#setStartTime').val(s_time);
+		//$('#setEndTIme').val(e_time);	
+		$(this).find('.start_time').html(s_date_time[0]+'<br/>'+s_time);
+		$(this).find('.end_time').html(e_date_time[0]+'<br/>'+e_time);
+	});
+}
+
+$(document).ready(function() {
+
+chng_time_format();
+
+$('#keyword').focus();
+
+//setup before functions
+var typingTimer;                //timer identifier
+var doneTypingInterval = 1000;  //time in ms, 5 second for example
+
+//on keyup, start the countdown
+$('#keyword').keyup(function(){
+    clearTimeout(typingTimer);
+    if ($('#keyword').val) {
+        typingTimer = setTimeout(function(){
+            //do stuff here e.g ajax call etc....
+             var v = $("#keyword").val();
+__showTimeslips();
+        }, doneTypingInterval);
+    }
+});
+
+    });
+
+    </script>
+
+</head>
+<body>
+<div data-role="page" id="home" data-add-back-btn="false">
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/top-header.shtml-->
+	<form method="get" onSubmit="__showTimeslips(); return false;">
+	<div class="search-container" data-theme="a" style="height:30px;">
+		<div data-role="fieldcontain" >
+			<input name="keyword" id="keyword" type="search" placeholder="Enter client or staff name.." value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" />
+		</div>
+	</div>
+				
+	<input type="submit" value="Chargeable" onClick="__showChargeable(); return false;">
+	<input type="submit" value="Not Chargeable" onClick="__showNotChargeable(); return false;">
+	<input type="submit" value="Billed" onClick="__showBilled(); return false;">
+	
+	</form>
+	
+	<div data-role="content" style="padding: 15px;">
+		<ul data-role="listview" data-inset="true">
+			<li data-role="list-divider"><span style=" color:#2B89D0; font-stretch:narrower;">Timeslips</span></li>
+		</ul>
+		<table class="table-opt" summary="Product Options">
+			<thead>
+				<tr>
+					<th></th>
+					<th>Start Date</th>
+					<th>End Date</th>
+					<th>Task Name</th>
+					<th>Project Name</th>
+					<th>Employee Name</th>
+					<th>Hours</th>
+					<th>Time slip Status</th>
+					<th>Estimated Amt.</th>
+					
+				</tr>
+			</thead>
+			<tbody><!--#4DSCRIPT/Web_LoadTimeslips/-->
+                                <!--#4DLOOP [Timeslips]--><!--#4DSCRIPT/Web_LoadTimeslipRelated/--><!-- row -->
+				<tr class="first"> 											
+					<td width="10%">
+						<a data-ajax="false" href="timeslip.shtml?uuid=<!--#4DHTMLVAR [Timeslips]uuid-->" >&raquo;&nbsp;<!--#4DVAR Selected record number([Timeslips])--></a>
+					</td>
+					 <td width="10%" class="start_time"><!--#4DHTMLVAR timestamp_unix_toDate ([Timeslips]Timestamp_start)--> <!--#4DHTMLVAR timestamp_unix_toTime ([Timeslips]Timestamp_start)--></td>
+					<td width="10%" class="end_time"><!--#4DHTMLVAR timestamp_unix_toDate ([Timeslips]Timestamp_end)--> <!--#4DHTMLVAR timestamp_unix_toTime ([Timeslips]Timestamp_end)--> </td>
+					<td width="10%">
+						<a data-ajax="false" href="tasks.shtml?keyword=<!--#4DHTMLVAR [Tasks]task_name-->" ><!--#4DHTMLVAR [Tasks]task_name--></a>
+					</td>
+					<td width="10%">
+						<a data-ajax="false" href="projects.shtml?keyword=<!--#4DHTMLVAR [Projects]proj_name-->" ><!--#4DHTMLVAR [Projects]proj_name--></a>
+					</td>
+					<td width="10%">
+						 <a href="#"><!--#4DHTMLVAR [Employees]emp_first_name--> <!--#4DHTMLVAR [Employees]emp_last_name--></a>
+					</td>
+					<td width="10%">
+						<!--#4DIF ([Timeslips]slip_hours=0)-->
+                                    	Under Working
+                                    	<!--4DELSE-->
+                                        <!--#4DHTMLVAR [Timeslips]slip_hours-->
+                                        <!--4DENDIF-->
+					</td>
+					<td width="10%">
+						<span class="label label-success"><!--#4DIF ([Timeslips]billing_status=1)-->Chargeable<!--#4DELSE-->Not Chargeable<!--#4DENDIF--></span>
+					</td>
+					<td width="10%">
+						<!--#4DHTMLVAR Invoice_AmtReturnAsText([Timeslips]slip_hours*[Timeslips]slip_rate)-->
+					</td>
+					
+					
+
+				</tr>
+
+<!--#4DENDLOOP-->
+			</tbody>
+		</table>
+	</div><!-- END DATA ROLE CONTENT-->
+
+   <!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/footer.shtml-->
+   
+    
+ </div>
+ 
+</body>
+</html>

@@ -1,0 +1,163 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+QUERY([Employees];[Employees]uuid=_HIT_WebApp_GetField ("uuid"))
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+-->
+<!DOCTYPE html>
+<html>
+<head>
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+</head>
+<body>
+
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
+
+
+	<!-- main container -->
+    <div class="content">
+        
+        <div class="container-fluid">
+            <div id="pad-wrapper" class="form-page">
+				 <div class="row-fluid header">
+					<h3><!--#4DIF (Records in selection([Employees])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Employee</h3>
+                </div>
+                <div class="row-fluid form-wrapper">
+					<!-- left column -->
+                    <div class="span9 with-sidebar">
+						<form name="EmployeeForm" action="saveemployee.cgi" class="form-comment" method="post" onSubmit="return ValidateForm();">							
+							 <div class="span12 field-box">
+								<label>Position <span style="color:#6E829B">*</span></label>
+								<input class="span9" type="text" value="<!--#4DVAR [Employees]emp_position-->" name="Position" id="Position">
+							</div>
+							 <input name="Employee_uuid" class="span9" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="Employee_uuid">        
+							 <div class="field-box">
+								<label>First Name <span style="color:#6E829B">*</span></label>
+								<input name="FirstName" class="span9" type="text" value="<!--#4DVAR [Employees]emp_first_name-->" id="FirstName">
+							</div>
+							<div class="span12 field-box">
+								<label>Last Name <span style="color:#6E829B">*</span></label>
+								<input name="Lastname" class="span9" type="text" value="<!--#4DVAR [Employees]emp_last_name-->" id="Lastname">                                 
+							</div>
+							<div class="span12 field-box">
+								<label>Email <span style="color:#6E829B">*</span></label>
+								<input name="Email" class="span9" type="text" value="<!--#4DVAR [Employees]email-->" id="Email">
+							</div>						   
+							<div class="span12 field-box">
+								<label>Password <span style="color:#6E829B">*</span></label>
+								<input name="Password" class="span9" type="password" value="<!--#4DVAR [Employees]zWebPassword-->" id="Password">						
+							</div>
+							<div class="span12 field-box">
+								<label>Type</label>
+								<div class="ui-select span5">
+									<select name="Type" id="Type">
+										<option value="0">Select an option</option>
+										<option value="Administrator" <!--#4DIF ([Employees]emp_type="Administrator")-->selected<!--4DELSE--><!--4DENDIF-->>Administrator</option>
+										<option value="Bookkeeper" <!--#4DIF ([Employees]emp_type="Bookkeeper")-->selected<!--4DELSE--><!--4DENDIF-->>Bookkeeper</option>
+										<option value="Customer Relationship Manager" <!--#4DIF ([Employees]emp_type="Customer Relationship Manager")-->selected<!--4DELSE--><!--4DENDIF-->>Customer Relationship Manager</option>
+										<option value="Designer" <!--#4DIF ([Employees]emp_type="Designer")-->selected<!--4DELSE--><!--4DENDIF-->>Designer</option>
+										<option value="Developer" <!--#4DIF ([Employees]emp_type="Developer")-->selected<!--4DELSE--><!--4DENDIF-->>Developer</option>
+										<option value="Manager" <!--#4DIF ([Employees]emp_type="Manager")-->selected<!--4DELSE--><!--4DENDIF-->>Manager</option>
+										<option value="Shareholder" <!--#4DIF ([Employees]emp_type="Shareholder")-->selected<!--4DELSE--><!--4DENDIF-->>Shareholder</option>
+										<option value="Support" <!--#4DIF ([Employees]emp_type="Support")-->selected<!--4DELSE--><!--4DENDIF-->>Support</option>
+										<option value="Technical" <!--#4DIF ([Employees]emp_type="Technical")-->selected<!--4DELSE--><!--4DENDIF-->>Technical</option>
+									</select>                                     
+                                </div>
+							</div>
+							<div class="field-box">
+                                <label>Status</label>
+                                <div class="ui-select span5">
+									<Select name="Status" id="Status">
+										<option value="Active" <!--#4DIF ([Employees]emp_active=True)-->selected<!--4DELSE--><!--4DENDIF-->>Active</option>
+										<option value="Inactive" <!--#4DIF ([Employees]emp_active=False)-->selected<!--4DELSE--><!--4DENDIF-->>Inactive</option>
+									</select>                                     
+                                </div>
+                            </div>
+							<div class="field-box">
+                                <label>Web Access</label>
+                                <div class="ui-select span5">
+									<Select name="Allow_Web_Access" id="Allow_Web_Access">
+										<option value="Allow" <!--#4DIF ([Employees]AllowWebAccess=True)-->selected<!--4DELSE--><!--4DENDIF-->>Allow</option>
+										<option value="Deny" <!--#4DIF ([Employees]AllowWebAccess=False)-->selected<!--4DELSE--><!--4DENDIF-->>Deny</option>
+									</select>                                     
+                                </div>
+                            </div>
+							<div class="span11 field-box" style="text-align: center;">
+								<input type="submit" class="btn-glow primary" value="Submit">
+								<span>OR</span>
+								<a href="employees.shtml">Cancel</a>
+								<!-- <input type="reset" value="Cancel" class="reset"> -->
+							</div>
+						</form>
+                    </div>
+				</div>
+            </div>
+        </div>
+    </div>
+    <!-- end main container -->
+
+	<!-- scripts -->
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+	<script src="js/ui/jquery-ui.js"></script>
+	<script src="js/bootstrap.datepicker.js"></script>
+	<script src="js/jquery.uniform.min.js"></script>
+	
+	<!-- call this page plugins -->
+	<script language="javascript">
+function ValidateForm () {
+
+if (document.EmployeeForm.Position.value=="")
+{ 
+	alert('Please Specify the Position'); 
+	document.EmployeeForm.Position.focus();
+	return false;
+}
+if (document.EmployeeForm.FirstName.value=="")
+{ 
+	alert('Please Specify First Name'); 
+	document.EmployeeForm.FirstName.focus();
+	return false;
+}
+if (document.EmployeeForm.Lastname.value=="")
+{
+	alert('Please Specify Last Name'); 
+	document.EmployeeForm.Lastname.focus();
+	return false;
+} 
+if (document.EmployeeForm.Email.value=="")
+{ 
+	alert('Please Specify Email'); 
+	document.EmployeeForm.Email.focus();
+	return false;
+}
+
+var regex = /^([a-zA-Z0-9_\.\-\+])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+if(document.EmployeeForm.Email.value!="" && !regex.test(document.EmployeeForm.Email.value))
+{ 
+	alert('Please Specify valid Email'); 
+	document.EmployeeForm.Email.focus();
+	return false;
+}
+
+if (document.EmployeeForm.Password.value=="")
+{ 
+	alert('Please Specify Password'); 
+	document.EmployeeForm.Password.focus();
+	return false;
+}
+
+}
+</script>
+	
+</body>
+</html>

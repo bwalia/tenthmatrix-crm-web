@@ -1,0 +1,110 @@
+<!--HIT_EXECUTE
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+C_TEXT(pValidtoken)
+pValidtoken:=_HIT_TokenGetAny
+
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+-->
+<!DOCTYPE html>
+<html lang="en">
+<!-- BEGIN HEAD -->
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+	<meta content="" name="description"/>
+	<meta content="" name="author"/>
+	
+	<title>Navigator</title>
+	
+	<!-- BEGIN CORE FRAMEWORK -->
+	<link href="assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+	<link href="assets/plugins/ionicons/css/ionicons.min.css" rel="stylesheet" />
+	<link href="assets/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+	<!-- END CORE FRAMEWORK -->
+	
+	<!-- BEGIN THEME STYLES -->
+	<link href="assets/css/material.css" rel="stylesheet" />
+	<link href="assets/css/style.css" rel="stylesheet" />
+	<link href="assets/css/plugins.css" rel="stylesheet" />
+	<link href="assets/css/helpers.css" rel="stylesheet" />
+	<!--<link href="assets/css/responsive.css" rel="stylesheet" /> -->
+	<!-- END THEME STYLES -->
+</head>
+<!-- END HEAD -->
+<!-- BEGIN BODY -->
+<body class="fixed-leftsides">
+	<div class="wrapper" style="width:240px;">
+		<!-- BEGIN LEFTSIDE -->
+        <div class="leftside">
+			<div class="sidebar">
+			<!-- BEGIN RPOFILE 
+				<div class="nav-profile">
+					
+					<div class="info">
+						<a href="#">John Doe</a>
+					</div>
+					<a href="login.html" class="button"><i class="ion-log-out"></i></a>
+				</div>-->
+				<!-- END RPOFILE -->
+				<!-- BEGIN NAV -->
+				<div class="title">Navigation</div>
+					<ul class="nav-sidebar">
+					 	<li>
+                            <a href="javascript:void(0)" onclick="open_import_window()">
+                               <i class="fa fa-download"></i><span>Import File</span>
+                            </a>
+                        </li>
+						<li>
+                            <a href="javascript:void(0)" onclick="open_ftp_window()">
+                                <i class="fa fa-upload"></i> <span>Upload FTP File</span>
+                            </a>
+                        </li>
+                       
+                    </ul>
+					<!-- END NAV -->
+				</div><!-- /.sidebar -->
+        	</div>
+		<!-- END LEFTSIDE -->
+
+		
+    </div><!-- /.wrapper -->
+	<!-- END CONTENT -->
+			
+	<!-- BEGIN JAVASCRIPTS -->
+	
+	<!-- BEGIN CORE PLUGINS -->
+	<script src="assets/plugins/jquery-1.11.1.min.js" type="text/javascript"></script>
+	<script src="assets/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+	<script src="assets/plugins/bootstrap/js/holder.js"></script>
+	<script src="assets/plugins/pace/pace.min.js" type="text/javascript"></script>
+	<script src="assets/plugins/slimScroll/jquery.slimscroll.min.js" type="text/javascript"></script>
+	<script src="assets/js/core.js" type="text/javascript"></script>
+	<!-- END CORE PLUGINS -->
+	<script type="text/javascript">
+		var pTokenStr='<!--#4DVAR Web_TokenGetAny-->'; 
+
+		$.__4D_UserToken_Get = function __4D_UserToken_Get(){
+			return '<!--#4DHTMLVAR pValidtoken-->';
+		}
+		function open_import_window(){
+			$4d.Web_URLFilteringGo("oMainWebAreaObj","open-import-widnow",pTokenStr,function(result,error){
+	
+			});
+		}
+		
+		function open_ftp_window(){
+			$4d.Web_URLFilteringGo("oMainWebAreaObj","open-ftp-widnow",pTokenStr,function(result,error){
+	
+			});
+		}
+		
+		//console.log($.__4D_UserToken_Get);
+	</script>
+	<!-- END JAVASCRIPTS -->
+</body>
+<!-- END BODY -->
+</html>

@@ -1,0 +1,182 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+C_BOOLEAN(mUserIsCurrentBool)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+QUERY([Payments];[Payments]uuid=_HIT_WebApp_GetField ("uuid"))
+QUERY([Companies];[Companies]account_Number=[Payments]client_accountnumber)
+
+QUERY([Invoices];[Invoices]inv_idzzz=[Payments]invoice_number)
+
+Web_LoadPaymentRelated
+
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+-->
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/main-header.shtml-->
+
+
+<style>
+label.error {
+	float: left;
+	color: red;
+	padding-top: .5em;
+	vertical-align: top;
+	font-weight:bold
+}
+</style>
+<link rel="stylesheet" type="text/css" href="css/jqm-datebox.min.css" /> 
+<script type="text/javascript" src="js/jqm-datebox.core.min.js"></script>
+<script type="text/javascript" src="js/jqm-datebox.mode.calbox.min.js"></script>
+<script type="text/javascript" src="js/jquery.mobile.datebox.i18n.en_US.utf8.js"></script>
+<script src="js/jquery.validate.js"></script>
+<script src="js/additional-methods.js"></script>
+
+
+<script type="text/javascript">
+function __showPays()
+{
+pUrlStr='payments.shtml';
+window.location.href=pUrlStr;
+}
+
+
+$(document).on('pageinit', function(){
+
+	$("#frm").validate({
+        rules: {
+            inv_no: { required: true, digits: true },
+            date_received : "required",
+            amount : { required: true, number: true },
+            
+        },
+		messages: {
+			inv_no: { required: "Please Specify Invoice Number", digits: "Please enter only digits" },
+			date_received: "Please Specify Date Received",
+			amount: { required: "Please Specify Amount", number: "Please Specify a numeric value" },
+			
+			
+		}
+    });
+});
+</script>
+
+<script>
+function isInt(n) {
+    return +n === n && !(n % 1);
+}
+
+
+	    function get_client()
+{
+	var inv_no=	$("#inv_no").val();
+	if(inv_no!='' && isInt(Number(inv_no))){
+	var dataString = 'inv_no='+inv_no;
+	$.ajax({
+type: "GET",
+dataType: "json",
+url: "getclientinvoice.cgi",
+data: dataString,
+cache: false,
+success: function(html)
+{
+	if(html.invoiceuuid){
+		$('#err_msg').html('');
+		$("#invoice_uuid").val(html.invoiceuuid);
+		$("#amount").val(html.Amount);
+		$("#client_uuid").val(html.CustomerID);
+		$("#company_name").val(html.CustomerName);
+	}
+	else{
+		//alert("Invoice no "+inv_no+" doesn't exists.");
+		$('#err_msg').html("<label class='error'>Invoice no "+inv_no+" doesn't exists</label>");
+		$("#inv_no").val('');
+		$("#invoice_uuid").val('');
+		$("#amount").val('0');
+		$("#client_uuid").val('');
+		$("#company_name").val('');
+	}
+	
+}
+});
+}
+}
+
+
+    </script>
+	
+
+
+</head>
+<body>
+<div data-role="page" id="home" data-add-back-btn="false">
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/top-header.shtml-->
+	<div data-role="content" style="padding: 15px;">
+		<ul data-role="listview" data-inset="true">
+			<li data-role="list-divider"><span style=" color:#2B89D0; font-stretch:narrower;"><!--#4DIF (Records in selection([Payments])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Payment</span></li>
+		</ul>
+		<form data-ajax="false" name="PaymentForm" action="savepayment.cgi" method="post" id="frm" >
+		
+		<input name="uuid" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="uuid">
+		
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput1">Invoice no<font color="#FF0000">*</font></label>
+					<input name="inv_no" onBlur="get_client()" type="text" <!--#4DIF ([Payments]invoice_number=0)-->value=""<!--4DELSE-->value="<!--#4DVAR [Payments]invoice_number-->"<!--4DENDIF-->  id="inv_no" placeholder="Invoice no" >
+					<span id="err_msg" ></span>
+								<input name="invoice_uuid" id="invoice_uuid" type="hidden" value="<!--#4DVAR [Invoices]uuid-->">
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput12">Company<font color="#FF0000">*</font></label>
+					<input name="company_name"  type="text" value="<!--4DVAR [Companies]company_Name-->" id="company_name" readonly placeholder="Company">
+								<input name="client_uuid" id="client_uuid" type="hidden" value="<!--#4DVAR [Companies]uuid-->">
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput12">Date<font color="#FF0000">*</font></label>
+						<input name="date_received" <!--#4DIF ([Payments]date_received=!00/00/00!)-->value=""<!--4DELSE-->value="<!--#4DVAR [Payments]date_received-->"<!--4DENDIF--> id="date_received" type="date" data-role="datebox" data-options='{"mode": "calbox"}' readonly placeholder="Date"> 
+				</fieldset>
+			</div>
+			
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput13">Amount<font color="#FF0000">*</font></label>
+					<input name="amount" class="num" type="text" value="<!--#4DVAR [Payments]amount_received-->" id="amount" placeholder="Amount">
+					
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput14">Mode of Payment</label>
+					<Select name="mode_of_payment" id="mode_of_payment">
+										<option value="Active" <!--#4DIF ([Payments]mode_of_payment="BACS")-->selected<!--4DELSE--><!--4DENDIF-->>BACS</option>
+										<option value="Paid by Debit or Credit Card" <!--#4DIF ([Payments]mode_of_payment="Paid by Debit or Credit Card")-->selected<!--4DELSE--><!--4DENDIF-->>Paid by Debit or Credit Card</option>
+										<option value="Cash" <!--#4DIF ([Payments]mode_of_payment="Cash")-->selected<!--4DELSE--><!--4DENDIF-->>Cash</option>
+										<option value="Cheque" <!--#4DIF ([Payments]mode_of_payment="Cheque")-->selected<!--4DELSE--><!--4DENDIF-->>Cheque</option>
+										<option value="International Banking" <!--#4DIF ([Payments]mode_of_payment="International Banking")-->selected<!--4DELSE--><!--4DENDIF-->>International Banking</option>
+										<option value="PayPal" <!--#4DIF ([Payments]mode_of_payment="PayPal")-->selected<!--4DELSE--><!--4DENDIF-->>PayPal</option>
+									</select>       
+				</fieldset>
+			</div>
+			
+			
+			
+			<input type="submit" value="Submit" id="submit" name="submit" onClick="$('#err_msg').html('');" >
+			<input type="submit" value="Cancel" onClick="__showPays(); return false;">
+		</form>
+	</div><!-- END DATA ROLE CONTENT-->
+
+   <!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/footer.shtml-->
+    
+ </div>
+ 
+</body>
+</html>

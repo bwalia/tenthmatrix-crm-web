@@ -1,0 +1,349 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+C_TEXT(_HTMLTITLETXT)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+QUERY([site_options];[site_options]uuid=_HIT_WebApp_GetField ("uuid"))
+QUERY([Sites];[Sites]uuid=[site_options]site_uuid)
+C_LONGINT(mJSONObject)
+C_TEXT(mUserName;mServerName;mPassword;mDbName)
+mUserName:=""
+mServerName:=""
+mPassword:=""
+mDbName:=""
+If (Records in selection([site_options])=1)
+If ([site_options]json_object_data#"")
+mJSONObject:=JSON Parse Text ([site_options]json_object_data)
+mServerName:=JSON Get Text (mJSONObject;"server_name"))
+mUserName:=JSON Get Text (mJSONObject;"user_name"))
+mPassword:=JSON Get Text(mJSONObject;"password"))
+mDbName:=JSON Get Text (mJSONObject;"db_name"))
+JSON Release (mJSONObject)
+End if
+End if
+
+If (Records in selection([site_options])=0)
+_HTMLTITLETXT:="New Mysql Details"
+ELSE
+_HTMLTITLETXT:= "Edit  Mysql Details"
+END IF
+
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+-->
+<!DOCTYPE html>
+<html>
+<head>
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+    <link rel="stylesheet" type="text/css" href="lib/base.css" />
+
+	<!-- <link rel="stylesheet" href="css/base/jquery-ui.css" /> -->
+	<link rel="stylesheet" type="text/css" href="css/jquery.ptTimeSelect.css" />
+	<link rel="stylesheet" media="all" type="text/css" href="css/jquery-impromptu.css" />
+	<link rel="stylesheet" href="css/autocomplete.css" />
+	<style>
+		#SiteOptionsForm em.error {
+			margin-left: 10px;
+			width: auto;
+			display: inline;
+		}
+		#SiteOptionsForm em.error {
+			color: red;
+			font-style: italic;
+		}
+		#SiteOptionsForm input.error, textarea.error, select.error{
+			border: 1px solid red;
+		}
+	</style>
+</head>
+<body>
+
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
+
+	<!-- main container -->
+    <div class="content">
+        
+        <div class="container-fluid">
+            <div id="pad-wrapper" class="form-page">
+				 <div class="row-fluid header">
+                    <h3><!--#4DIF (Records in selection([site_options])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Mysql details</h3>
+                </div>
+                <div class="row-fluid form-wrapper">
+					<!-- left column -->
+                    <div class="span9 with-sidebar">
+						<form name="SiteOptionsForm" action="savesiteoptions.cgi" class="form-comment" method="post" id="SiteOptionsForm">         
+							<div class="field-box">
+                                <label>Site <span style="color:#6E829B">*</span></label>
+								<div class="ui-widget">
+									<select name="site_guid" id="site_guid">
+									<!--#4DIF (Records in selection([site_options])=0)-->
+										<option value=""></option>
+									<!--#4DSCRIPT/Web_LoadSites/-->
+									<!--4DLOOP  [Sites]-->
+											<option value="<!--4DVAR [Sites]uuid-->" <!--#4DIF ([Sites]uuid=[site_options]site_uuid)-->selected<!--4DELSE--><!--4DENDIF-->><!--4DVAR [Sites]name--></option>
+									<!--4DENDLOOP-->
+									<!--#4DELSE-->
+										 <option value="<!--4DVAR [Sites]uuid-->" selected><!--4DVAR [Sites]name--></option>									 
+									<!--#4DENDIF-->
+									</select>
+								</div>
+							</div>
+							
+                            <input name="uuid" class="span9" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="uuid">                      
+                            <input class="span4 num" name="code" id="code" type="hidden" value="<!--#4DVAR [site_options]code-->">
+                            <!--<div class="field-box">
+                                <label>Code <span style="color:#6E829B">*</span></label>
+								
+                           	</div>-->
+                           	<div class="field-box">
+                                <label>Host Name <span style="color:#6E829B">*</span></label>
+								<input class="span4 num" name="host_name" id="host_name" type="text" value="<!--#4DVAR mServerName-->">
+                           	</div>
+                           	<div class="field-box">
+                                <label>User Name <span style="color:#6E829B">*</span></label>
+								<input class="span4 num" name="user_name" id="user_name" type="text" value="<!--#4DVAR mUserName-->">
+                           	</div>
+                           	<div class="field-box">
+                                <label>Password <span style="color:#6E829B">*</span></label>
+								<input class="span4 num" name="password" id="password" type="password" value="<!--#4DVAR mPassword-->">
+                           	</div>                          	
+							<div class="field-box">
+                                <label>Database Name <span style="color:#6E829B">*</span></label>
+								<input class="span4 num" name="db_name" id="db_name" type="text" value="<!--#4DVAR mDbName-->">
+                           	</div>    
+							
+							<div class="span11 field-box" style="text-align: center;">
+                            	<input type="submit" name="Submit" class="btn-glow primary" value="Submit">
+                                <span>OR</span>
+                                <a href="site_options.shtml">Cancel</a>
+                            </div>							
+                        </form>
+                    </div>
+				</div>
+            </div>
+        </div>
+    </div>
+    <!-- end main container -->
+
+	<!-- scripts for this page -->
+   <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+   <!-- <script src="js/ui/jquery-ui.js"></script> -->
+   	<script src="js/jquery.uniform.min.js"></script>
+	<script type="text/javascript" src="js/jquery-impromptu.js"></script>
+	<script src="js/jquery.validate.js"></script>
+	
+    <!-- call this page plugins -->
+
+<script type="text/javascript">
+	$(function () {
+		// validate form on keyup and submit
+		$("#SiteOptionsForm").validate({
+			ignore: "",
+			onkeyup: false,
+			errorClass: 'error',
+			validClass: 'valid',
+			errorElement: "em",
+			errorPlacement: function(error, element) {
+				$(element).closest('div').append(error);
+			},
+			rules: {
+				site_guid: { required: true },
+				//code: { required: true },
+				host_name: { required: true },
+				user_name: { required: true },
+				password: { required: true },
+				db_name: { required: true },
+			},
+		});	
+	});
+        
+	 var xhr;
+  (function( $ ) {
+    $.widget( "custom.combobox", {
+      _create: function() {
+        this.wrapper = $( "<span>" )
+          .addClass( "custom-combobox" )
+          .insertAfter( this.element );
+ 
+        this.element.hide();
+        this._createAutocomplete();
+        this._createShowAllButton();
+      },
+ 
+      _createAutocomplete: function() {
+        var selected = this.element.children( ":selected" ),
+          value = selected.val() ? selected.text() : "";
+ 
+        this.input = $( "<input>" )
+          .appendTo( this.wrapper )
+          .val( value )
+          .attr( "title", "" )
+          .addClass( "custom-combobox-input ui-widget ui-widget-content ui-state-default ui-corner-left" )
+          .autocomplete({
+            delay: 0,
+            minLength: 0,
+            source: $.proxy( this, "_source" )
+          })
+          .tooltip({
+            tooltipClass: "ui-state-highlight"
+          });
+ 
+        this._on( this.input, {
+          autocompleteselect: function( event, ui ) {
+		  	//alert("show all");
+            ui.item.option.selected = true;
+			
+            this._trigger( "select", event, {
+              item: ui.item.option
+            });
+          },
+ 
+          autocompletechange: "_removeIfInvalid"
+        });
+      },
+ 
+      _createShowAllButton: function() {
+        var input = this.input,
+          wasOpen = false;
+ 
+        $( "<a>" )
+          .attr( "tabIndex", -1 )
+          .attr( "title", "Show All Items" )
+          .tooltip()
+          .appendTo( this.wrapper )
+          .button({
+            icons: {
+              primary: "ui-icon-triangle-1-s"
+            },
+            text: false
+          })
+          .removeClass( "ui-corner-all" )
+          .addClass( "custom-combobox-toggle ui-corner-right" )
+          .mousedown(function() {
+            wasOpen = input.autocomplete( "widget" ).is( ":visible" );
+          })
+          .click(function() {
+            input.focus();
+ 
+            // Close if already visible
+            if ( wasOpen ) {
+              return;
+            }
+ 
+            // Pass last search string as value to search for, displaying last results
+            input.autocomplete( "search", 'SHOWALL' );
+          });
+      },
+ 
+      _source: function( request, response ) {
+        //var matcher = new RegExp( $.ui.autocomplete.escapeRegex(request.term), "i" );
+		var ele_select= this.element;
+		if(request.term=='SHOWALL'){
+			response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+		
+		}
+		else
+		{
+		var jsonRow = 'getsiteonsearch.cgi?srch='+request.term+'&closed=false';
+		
+
+		//alert(jsonRowURLStr);
+		if(xhr) xhr.abort();
+		xhr=$.getJSON(jsonRow,function(result){
+			
+			if(result){
+				var html='<option value=""></option>';
+
+				$.each(result, function(i,item)
+				{
+					html += '<option value="'+item.uuid+'">'+item.value+'</option>';
+				});
+				ele_select.html(html);
+				
+				
+				response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+				
+				
+			}
+		});
+       
+	  } 
+		
+      },
+ 
+      _removeIfInvalid: function( event, ui ) {
+ 
+        // Selected an item, nothing to do
+        if ( ui.item ) {
+
+          return;
+        }
+ 
+        // Search for a match (case-insensitive)
+        var value = this.input.val(),
+          valueLowerCase = value.toLowerCase(),
+          valid = false;
+        this.element.children( "option" ).each(function() {
+          if ( $( this ).text().toLowerCase() === valueLowerCase ) {
+            this.selected = valid = true;	
+			
+            return false;
+          }
+        });
+ 
+        // Found a match, nothing to do
+        if ( valid ) {
+          return;
+        }
+ 
+        // Remove invalid value
+        this.input
+          .val( "" )
+          .attr( "title", value + " didn't match any item" )
+          .tooltip( "open" );
+        this.element.val( "" );
+        this._delay(function() {
+          this.input.tooltip( "close" ).attr( "title", "" );
+        }, 2500 );
+        this.input.data( "ui-autocomplete" ).term = "";
+      },
+ 
+      _destroy: function() {
+        this.wrapper.remove();
+        this.element.show();
+      }
+    });
+  })( jQuery );
+ 
+  $(function() {
+    $( "#site_guid" ).combobox();
+  });
+
+  </script>
+
+</body>
+</html>
+</html>

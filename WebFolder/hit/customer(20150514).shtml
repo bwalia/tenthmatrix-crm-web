@@ -1,0 +1,332 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+C_TEXT(_HTMLTITLETXT)
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+
+QUERY([Companies];[Companies]uuid=_HIT_WebApp_GetField ("uuid"))
+QUERY([Contacts];[Contacts]client_id=[Companies]account_Number)
+IF (Records in selection([Companies])=0)
+_HTMLTITLETXT:="New Customer"
+ELSE
+_HTMLTITLETXT:= "Customer: "+[Companies]company_Name
+END IF
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+	<link rel='stylesheet' type='text/css' href='css/style.css' />
+	<link rel='stylesheet' type='text/css' href='css/print.css' media="print" />
+	<link rel="stylesheet" href="css/compiled/ui-elements.css" type="text/css" media="screen" />
+	<link rel="stylesheet" href="css/colorbox.css" />
+	<link rel="stylesheet" media="all" type="text/css" href="css/jquery-impromptu.css" />
+	<link href="css/img-tabs.css" type="text/css" rel="stylesheet">
+	<style>
+	table { border-collapse: collapse; }
+table td, table th { border: 1px solid black; padding: 5px; }
+	.items { clear: both; width: 100%; margin: 30px 0 0 0; border: 1px solid black; }
+.items th { background: #eee; }
+.items tr.item-row td { border: 0; vertical-align: top; }
+table td input { width:100px; }
+
+#CompanyForm em.error {
+	margin-left: 10px;
+	width: auto;
+	display: inline;
+}
+#CompanyForm em.error {
+    color: red;
+    font-style: italic;
+}
+#CompanyForm input.error, textarea.error, select.error{
+    border: 1px solid red;
+}
+
+	</style>
+</head>
+<body>
+
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
+	
+	<!-- main container -->
+    <div class="content">
+        
+        <div class="container-fluid">
+            <div id="pad-wrapper" class="form-page">
+				 <div class="row-fluid header">
+					<h3><!--#4DIF (Records in selection([Companies])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Customer</h3>
+					
+                </div>
+				
+                <div class="row-fluid form-wrapper">
+				
+					<!-- left column -->
+                    <div class="span9 with-sidebar">
+					
+						<form name="CompanyForm" id="CompanyForm" action="savecustomer.cgi" class="form-comment" method="post">
+						<div id="tabs">
+								<ul >
+									<li ><a style="color:#000000" href="#tabs-1">Basic</a></li>
+									<li ><a style="color:#000000" href="#tabs-2">Contact</a></li>
+								</ul>
+							<div id="tabs-1" class="var_tabs">    
+							<div class="field-box">
+								<label>Company Name <span style="color:#6E829B">*</span></label>
+								<input class="span5" name="Company_Name" type="text" value="<!--#4DVAR [Companies]company_Name-->" id="Company_Name">
+								<input class="span2" name="acc_no" type="text" value="<!--#4DVAR [Companies]account_Number-->" id="acc_no" readonly>
+							</div>
+							<input name="Company_uuid" class="span6" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="Company_uuid">
+
+							<div class="field-box">
+								<label>Contact First Name </label>
+								<input class="span5" type="text" id="Contact_First_Name" name="Contact_First_Name" value="<!--#4DVAR [Companies]contact_firstname-->">
+							</div>
+							<div class="field-box">
+								<label>Contact Last Name </label>
+								<input class="span5" type="text" id="Contact_Last_Name" name="Contact_Last_Name" value="<!--#4DVAR [Companies]contact_Lastname-->">
+							</div>
+							
+							<div class="field-box">
+								<label>Email <span style="color:#6E829B">*</span></label>
+								<input class="span5" type="text" name="Email" id="Email" value="<!--#4DVAR [Companies]email_address-->">
+							</div>
+							<div class="field-box">
+								<label>Type </label>
+								<input class="span5" type="text" name="business_type" id="business_type" value="<!--#4DVAR [Companies]business_type-->">
+							</div>
+							<div class="field-box">
+								<label>Catbase Type </label>
+								<input class="span5" type="text" name="catBase_type" id="catBase_type" value="<!--#4DVAR [Companies]catBase_type-->">
+							</div>
+							<div class="field-box">
+								<label>Licence Number </label>
+								<input class="span5" type="text" name="license_number" id="license_number" value="<!--#4DVAR [Companies]licence_number-->"></br>
+                                          <a href="licencemanager.shtml" class="btn-flat info Licence" id="lnk_licence" name="lnk_licence">Generate New License</a>          
+								<a href="licencemanager.shtml" class="btn-flat info Licence" id="lnk_active_licence" name="lnk_active_licence">Activate License Number</a>
+							</div>
+							<div class="field-box">
+								<label>Address 1 <span style="color:#6E829B">*</span></label>
+								<textarea class="span5" name="Address_1" id="Address_1" rows="4"><!--#4DVAR [Companies]address_line_1--></textarea>
+							</div>
+							<div class="field-box">
+								<label>Address 2</label>
+								<textarea class="span5" name="Address_2" id="Address_2" rows="4"><!--#4DVAR [Companies]address_line_2--></textarea>
+							</div>
+							
+							<div class="field-box">
+								<label>City </label>
+								<input class="span5" name="City" type="text" value="<!--#4DVAR [Companies]city_or_town-->" id="City">
+							</div>
+							<div class="field-box">
+								<label>Country</label>
+								<input class="span5" name="Country" type="text" value="<!--#4DVAR [Companies]country-->" id="Country">
+							</div>								
+							<div class="field-box">
+								<label>Post Code </label>
+								<input class="span5" name="Post_Code" type="text" value="<!--#4DVAR [Companies]post_zip_code-->" id="Post_Code">
+							</div>
+							<div class="field-box">
+								<label>Phone </label>
+								<input class="span5 phone" name="Phone" type="text" value="<!--#4DVAR [Companies]telephone-->" id="Phone">
+							</div>
+							
+							<div class="field-box">
+								<label>Relation</label>
+								<input class="span5" name="Relation" type="text" maxlength="2" value="<!--#4DVAR [Companies]relationship-->" id="Relation">
+							</div>
+							
+							<div class="span12 field-box">
+								<label>Referred by</label>
+								<input class="span5" type="text" id="Referred_by" name="Referred_by" value="<!--#4DVAR [Companies]referred_by-->">
+							</div>
+							<div class="span12 field-box">
+								<label>Follow Up Date </span></label>
+								<input type="text" class="input-large datepicker" data-date-format="dd/mm/yyyy" <!--#4DIF ([Companies]enter_date=!00/00/00!)-->value=""<!--4DELSE-->value="<!--#4DHTMLVAR ([Companies]enter_date)-->"<!--4DENDIF--> name="follow_date" id="follow_date" readonly >
+							</div>
+							<div class="span12 field-box">
+								<label>Comments</label>
+								<input type="text" class="span6" name="Comments" id="Comments" value="<!--#4DVAR [Companies]comments-->">
+							</div>
+							</div>
+		<div id="tabs-2" class="var_tabs" style="display:none" >
+		<table id="items">		
+		  <tr class="item">
+		      
+		      <th>First Name</th>
+		      <th>Surname</th>
+		      <th>E-mail</th>
+		     
+			  <th>Mobile</th>
+			  <th>Save</th>
+			  <th>Cancel</th>
+		  </tr>
+		 									<input id="edited_contact_uuid" type="hidden" value="edited_contact_uuid" />
+
+		  <!--#4DLOOP [Contacts]--><!--#4DSCRIPT/Web_LoadContactRelated/--><!-- row -->
+		  
+		  <tr class="item-row" id="<!--#4DHTMLVAR [Companies]company_Name-->">
+									<td>
+									<span class="s_firstname" ><!--#4DHTMLVAR [Contacts]First name--></span>
+
+									<input class="contact_uuid" type="hidden" value="<!--#4DHTMLVAR [Contacts]uuid-->" />
+									<input type="text" class="firstname" style="display:none;" value="<!--#4DHTMLVAR [Contacts]First name-->" >
+									</td>
+									<td >
+									<span class="s_surname" ><!--#4DHTMLVAR [Contacts]Surname--></span>
+									<input type="text" class="surname" style="display:none;" value="<!--#4DHTMLVAR [Contacts]Surname-->" >
+									</td>
+									<td>
+									<span class="s_email" ><!--#4DHTMLVAR [Contacts]Email--></span>
+									<input type="text" class="email" style="display:none;" value="<!--#4DHTMLVAR [Contacts]Email-->" >
+									</td>
+									
+									<td>
+									<span class="s_mobile" ><!--#4DHTMLVAR [Contacts]Mobile--></span>
+									<input type="text" class="mobile phone" style="display:none;" value="<!--#4DHTMLVAR [Contacts]Mobile-->">
+									</td>
+									<td >
+									<a href="javascript:void(0)" class="editlink">Edit</a>
+									<a href="javascript:void(0)" class="savelink" style="display:none">Save</a>
+									 </td>	
+									 <td><a href="javascript:void(0)" class="removelink" >Remove</a>
+									<a href="javascript:void(0)" class="cancellink" style="display:none">Cancel</a>
+									</td>								
+									</tr>
+		  
+		  <!--#4DENDLOOP-->
+		  
+		  
+		  
+		  <tr id="hiderow">
+		    <td colspan="7"><a id="addrow" href="javascript:;" title="Add a row">Add a row</a></td>
+		  </tr>
+		  
+		</table>
+		</div>	<br/>
+							
+						
+							<div class="span11 field-box" style="text-align: center;">
+								<input type="submit" name="Submit" class="btn-glow primary" value="Submit"> 
+								<!--#4DIF (Records in selection([Companies])=1)-->     
+								<input type="button" name="Submit" class="btn-glow primary" value="Send Mail" onClick="__showEmailForm('<!--#4DHTMLVAR [Companies]uuid-->')"> 
+								<!--#4DELSE--><!--#4DENDIF-->
+								<span>OR</span>
+								<a href="customers.shtml">Cancel</a>
+								
+								<!-- <input type="reset" value="Cancel" class="reset"> -->
+							</div>
+                   					
+								</form>
+								 </div>
+					</div>
+				
+            </div>
+            
+            
+        </div>
+    </div>
+    <!-- end main container -->
+
+	<!-- scripts -->
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+	
+	<script src="js/jquery-ui.custom.min.js"></script>
+	<script src="js/jquery.uniform.min.js"></script>
+	<script src="js/bootstrap.datepicker.js"></script>
+	<script src="js/jquery.colorbox.js"></script>
+	<script type="text/javascript" src="js/jquery-impromptu.js"></script>
+	<script src='js/jquery.MetaData.js' type="text/javascript" language="javascript"></script>
+	<!-- call this page plugins -->
+	<script src="js/jquery.validate.js"></script>
+
+<script>
+function __showEmailForm(uuid)
+{
+pUrlStr='email.shtml?company_uuid='+uuid;
+window.location.href=pUrlStr;
+}
+</script>
+
+    <script type="text/javascript">
+	
+	function checkphone(e)
+	{
+		var k = e.which;
+    					/* numeric inputs can come from the keypad or the numeric row at the top */
+   						 if ((k<48 || k>57) && (k!=45) && (k!=43) && (k!=40) && (k!=41) && (k!=32) && (k!=44) && (k!=46) && (k!=8) && (k!=0)) {
+        					e.preventDefault();
+							//alert("Allowed characters are 0-9, +, -, (, ), , ,, .");
+        					return false;
+    					}
+	}
+	
+
+
+        $(function () {
+		$("a.info").colorbox({maxWidth:'60%', maxHeight:'90%'});
+		
+		<!--#4DIF (Records in selection([Companies])=0)-->
+		
+		//var new_acc_no='<!--#X4DVAR Sequence number([Companies])-->';
+		var new_acc_no='<!--#4DVAR Web_GetNextID (->[Companies]account_Number)-->';
+		
+		
+		var new_uuid='<!--#4DVAR Generate UUID-->';
+		$('#acc_no').val(new_acc_no);
+		$('#Company_uuid').val(new_uuid);
+		<!--#4DELSE--><!--#4DENDIF-->
+		
+		$('#lnk_licence').attr('href','licencemanager.shtml?client_uuid='+$('#Company_uuid').val());
+		$('#lnk_active_licence').attr('href','licencemanager.shtml?client_uuid='+$('#Company_uuid').val()+'&licenceNo='+$('#license_number').val());
+
+            // add uniform plugin styles to html elements
+            $("input:checkbox").uniform();
+
+            // datepicker plugin
+            $('.datepicker').datepicker().on('changeDate', function (ev) {
+                $(this).datepicker('hide');
+            });
+				
+		$( "#tabs" ).tabs();
+				
+			$('.phone').keypress(function(e){
+						checkphone(e);
+					
+					}); 
+			$("#CompanyForm").validate({
+				ignore: "",
+				onkeyup: false,
+				errorClass: 'error',
+				validClass: 'valid',
+				errorElement: "em",
+				errorPlacement: function(error, element) {
+					if (element.attr("name") == "uuid_reported_by") {
+						error.insertAfter(".selectClass");
+					}else if (element.attr("name") == "uuid_assigned_to") {
+						error.insertAfter(".selectAsClass");
+					}else{
+						$(element).closest('div').append(error);
+					}
+				},
+				rules: {
+					Company_Name: { required: true },
+					Email: { required: true, email: true },
+					Address_1: { required: true},
+				},
+			});
+        });
+    </script>
+	 <script type='text/javascript' src='js/contactcustomer.js'></script>
+</body>
+</html>

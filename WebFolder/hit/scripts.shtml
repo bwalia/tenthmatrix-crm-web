@@ -1,0 +1,355 @@
+<!--HIT_EXECUTE
+_HIT_HTTPD_SetHTTPHeader ("Content-type";"text/html; charset=utf-8")
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+C_TEXT(_HTMLTITLETXT)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+_HTMLTITLETXT:="Scripts"
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+<link rel="stylesheet" media="all" type="text/css" href="css/jquery-impromptu.css" />
+</head>
+<body>
+
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+	
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
+
+	<!-- main container -->
+    <div class="content">
+        
+        <div class="container-fluid">
+<div id="pad-wrapper">
+
+                <!-- timeslips table -->
+                <div class="table-wrapper orders-table section">
+                    <div class="row-fluid head">
+                        <div class="span12">
+                            <h4>Scripts</h4>
+                        </div>
+                    </div>
+                    <form method="get" onSubmit="__showInvoices(); return false;">
+                    <div class="row-fluid filter-block">
+					<!--#4DIF (_HIT_WebSession_GetVar ("auth_user_type")#"CLIENTS")-->
+                    <a href="javascript:void(0)" onClick="__deleteMultipleEntries()" class="btn-flat success new-product">Delete</a>
+                    <!--#4DENDIF-->
+                        <div class="pull-right">
+                            <div class="btn-group pull-right">
+                            </div>
+                            <input name="keyword" id="keyword" type="text" class="search order-search" placeholder="Enter script name or code.." value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" />
+                       		<!--#4DIF (_HIT_WebSession_GetVar ("auth_user_type")#"CLIENTS")-->
+                       		<a href="script.shtml" class="btn-flat success new-product margn-lft35">+ Add New Script</a>
+                       		<!--#4DENDIF-->
+                        </div>
+                    </div>
+                    </form>
+
+                    <div class="row-fluid">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr> 
+                                	<th width="6%">
+                                	<input name="Select" class="chk_all" type="checkbox" id="select" >
+                                    </th>
+                                    <th class="span2">
+                                       Script Name
+                                    </th>
+                                    <th class="span3">
+										<span class="line"></span>
+                                        Run Level
+                                    </th>
+                                    <th class="span3">
+                                        <span class="line"></span>
+                                        Script Code
+                                    </th>
+									<th class="span3">
+                                        <span class="line"></span>
+                                        Action
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tfoot>
+                            <tr>  	
+                            	<th align="left">&nbsp;</th>
+                                <th align="left">Script Name</th>
+                                <th align="left">Run Level</th>
+                                <th align="left">Script Code</th>
+                                <th align="left">Action</th>
+                            </tr>
+                        	</tfoot>
+                            <tbody id="script_table_body">
+
+                            </tbody>
+                        </table>
+						<div id="img_loading_div" style="text-align:center">
+		<img src="loading.gif"  style="padding:20px;" width="34" >
+		</div>
+                    </div>
+                </div>
+                <!-- end timeslips table -->
+
+            </div>
+        </div>
+    </div>
+    <!-- end main container -->
+
+	<div class="example-container">
+	<pre class="code" style="display:none;" id="no_rec_prompt">
+									var statesdemo = {
+										state0: {
+											title: 'No more records found',
+											html:'',
+											buttons: { OK: 1 },																		
+											submit:function(e,v,m,f){ 
+												//console.log(f);
+												if(v==1) {
+													$.prompt.close();
+												}
+												
+											}
+										},
+										
+									};
+									if(!($(".jqibox").length))
+									$.prompt(statesdemo);
+								</pre>
+								<pre class="code" style="display:none;" id="del_prompt">
+								var html='';
+								
+									var statesdemo = {
+										state0: {
+											title: 'Are you sure to delete?',
+											html:html,
+											buttons: { No : 0, Yes: 1 },																		
+											submit:function(e,v,m,f){ 
+												if(v==1) {
+													var dataString = 'delete_uuids='+deleteuuid;
+													$.ajax({
+														type: "GET",
+														dataType: "json",
+														url: "deletescript.cgi",
+														data: dataString,
+														cache: false,
+														success: function(html)	{
+															if(html.success){		
+																$.prompt.close();
+																__alertMessage(html.success);				
+																start=0;
+																end=50;
+																jsonRow = 'loadscripts.cgi?start='+start+'&end='+end+'&tablname='+tablname;
+																if(keyword!=''){
+																	jsonRow +='&keyword='+keyword;
+																}
+																if(tab!=''){
+																	jsonRow +='&tab='+tab;
+																}
+																$('#script_table_body').html('');
+																$('#img_loading_div').show();	
+																load_data(jsonRow);
+															}else{
+																$.prompt.close();
+																__alertMessage(html.error);
+															}
+														}
+													});
+												}
+												if(v==0) {
+													$.prompt.close();
+												}
+											}
+										},
+										
+									};
+									
+									$.prompt(statesdemo);
+								</pre>
+							</div>
+
+	<!-- scripts -->
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+ <script type="text/javascript" src="js/jquery-impromptu.js"></script>   
+    
+<script>
+var JSONdata;
+ var start=0, end=50;
+ var old_srch='',keyword='', jsonRow='', tab='', set='';
+ var tablname='Receipts';
+ var complete=false;
+ var completeScroll=false;  
+ var checkAllFlag=false;
+$(document).ready(function() {
+
+	$('#keyword').focus();
+	keyword= $("#keyword").val();
+	jsonRow = 'loadscripts.cgi?start='+start+'&end='+end+'&tablname='+tablname;
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}		
+	load_data(jsonRow);			 
+	
+	$(window).scroll(function(){
+		if ($(window).scrollTop() == $(document).height() - $(window).height()){
+		if(complete==false && completeScroll==false) {
+			$('#img_loading_div').show();
+			//alert("scrolling...");
+			start=end+1;
+			end=start+25;
+			jsonRow = 'loadscripts.cgi?start='+start+'&end='+end+'&tablname='+tablname;
+			if(keyword!=''){
+				jsonRow +='&keyword='+keyword;
+			}
+			if(tab!=''){
+				jsonRow +='&tab='+tab;
+			}		
+			load_data(jsonRow);
+		}
+		}
+	});	
+	
+	//setup before functions
+	var typingTimer;                //timer identifier
+	var doneTypingInterval = 1000;  //time in ms, 5 second for example
+	
+	//on keyup, start the countdown
+	$('#keyword').keyup(function(){
+		clearTimeout(typingTimer);
+		if ($('#keyword').val) {
+			typingTimer = setTimeout(function(){
+				//do stuff here e.g ajax call etc....
+				$('#script_table_body').html('');
+				$('#img_loading_div').show();
+				start=0;
+				end=start+25;
+				tab='';
+				keyword= $("#keyword").val();
+				jsonRow = 'loadscripts.cgi?start='+start+'&end='+end+'&tablname='+tablname;
+				if(keyword!=''){
+					jsonRow +='&keyword='+keyword;
+				}
+				if(tab!=''){
+					jsonRow +='&tab='+tab;
+				}	
+				load_data(jsonRow);
+			}, doneTypingInterval);
+		}
+	});		
+	// toggle all checkboxes from a table when header checkbox is clicked
+  	$(".table th input:checkbox").click(function () {
+  		$checks = $(this).closest(".table").find("tbody input:checkbox");
+  		if ($(this).is(":checked")) {
+			checkAllFlag=true;
+			$('#chk_all').prop("checked", true);
+  			$checks.prop("checked", true);
+  		} else {
+			checkAllFlag=false;
+			$('#chk_all').prop("checked", false);
+  			$checks.prop("checked", false);
+  		}  		
+  	});
+});
+
+ 
+ function __deleteMultipleEntries(){
+	var selected='';
+	$('.check').each(function(){
+		if($(this).is(":checked")){
+			if(selected==''){
+				selected=$(this).val();
+			}else{
+				selected+=","+$(this).val();
+			}
+		}
+	});
+	if(selected!=""){
+		deleteuuid=selected;
+		code = $('#del_prompt').text();
+		(new Function(code))();
+	}else{
+		__alertMessage("Please select one or more scripts for deletion!");
+	}
+}  
+function __deleteSelectedEntry(uuid){
+	deleteuuid=uuid;
+	code = $('#del_prompt').text();
+	(new Function(code))();
+}
+function load_data(jsonRow){
+	completeScroll=true;
+	JSONdata=new Array();
+	$.getJSON(jsonRow,function(result){
+			if(result.Alert){
+				code = $('#no_rec_prompt').text();
+				(new Function(code))();
+				complete=true;
+			}
+			else{
+			 
+				$.each(result.script_name, function(i,item)
+				{
+				    JSONdata[i]=new Array();
+					JSONdata[i][1]=item;
+				});
+				$.each(result.uuid, function(i,item)
+				{
+					if(checkAllFlag==true){
+					JSONdata[i][0]='<input name="Select" checked class="check" type="checkbox" id="Select" value="'+item+'">';
+					}else{
+					JSONdata[i][0]='<input name="Select" class="check" type="checkbox" id="Select" value="'+item+'">';
+					}
+					JSONdata[i][4]='<ul class="actions"><li><a href="script.shtml?uuid='+item+'"><i class="table-edit"></i></a></li><li><i class="table-settings"></i></li><li class="last"><a onclick="__deleteSelectedEntry(\''+item+'\')" href="javascript:void(0)"><i class="table-delete"></i></a></li></ul>';					
+				});
+				
+				$.each(result.run_level, function(i,item)
+				{
+					JSONdata[i][2]=item;
+				});
+				$.each(result.script_code, function(i,item)
+				{
+					JSONdata[i][3]=item;
+				});
+				
+				
+				var table_html='';
+				
+				$.each(JSONdata, function(i,row)
+				{
+				
+					table_html+='<tr >';
+					
+					$.each(row, function(i,col){
+						table_html+='<td>'+col+'</td>';
+					});
+					table_html+='</tr>';
+				});
+				if(old_srch!=keyword){
+					$('#script_table_body').html('');
+					old_srch=keyword;
+				}
+				//alert(table_html);
+				
+				$('#script_table_body').append(table_html);
+				complete=false;
+			
+		}
+		$('#img_loading_div').hide();
+		completeScroll=false;
+		});
+}
+
+    </script>
+
+    
+</body>
+</html>

@@ -1,0 +1,537 @@
+<!--HIT_EXECUTE
+_HIT_HTTPD_SetHTTPHeader ("Content-type";"text/html; charset=utf-8")
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+C_TEXT(_HTMLTITLETXT)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+
+_HTMLTITLETXT:="Suppliers"
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml?url="+HTTPD_DocumentURI)
+end if 
+C_BOOLEAN(mUserIsCurrentBool)
+mUserIsCurrentBool:=userHasAccessToDelete
+//_HIT_HTMLTXT:=_HIT_SessionStr
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+<link rel="stylesheet" media="all" type="text/css" href="css/jquery-impromptu.css" />
+<link rel="stylesheet" href="lib/jquery-ui/css/Aristo/Aristo.css" />
+<style>
+#message{
+	color:#FF0000;
+}
+.table-wrapper .table ul.actions{
+	float:left;
+}
+.jqibox {
+	z-index:9999!important;
+	
+	}
+</style>
+</head>
+<body>
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
+
+	<!-- main container -->
+    <div class="content">
+        
+        <div class="container-fluid">
+            <div id="pad-wrapper">
+
+                <!-- timeslips table -->
+                <div class="table-wrapper orders-table section">
+                    <div class="row-fluid head">
+                        <div class="span12">
+                            <h4>Suppliers</h4>
+                        </div>
+                    </div>
+                    <div class="row-fluid filter-block">
+                    
+					<!--#4DIF (_HIT_WebSession_GetVar ("auth_user_type")#"CLIENTS")-->
+									
+					<a href="javascript:void(0)" onClick="__deleteMultipleCustomers()" class="btn-flat success new-product">Delete</a>
+                     <!--#4DENDIF-->
+                    
+                        <div class="pull-right">
+                            <div class="btn-group pull-right">
+                           		<!--#4DIF (_HIT_WebSession_GetVar ("auth_user_type")#"CLIENTS")-->
+                                <div class="ui-select">
+									<select id="vat_claimed" name="vat_claimed" onChange="__filterByVatClaimed(this.value)">
+										<option value="">--Select VAT Claimed--</option>
+										<option value="Yes">Yes</option>
+										<option value="No">No</option>
+										<option value="Depend upon bill">Depend upon bill</option>	
+									</select>
+								</div>
+                               
+                                <a href="customer.shtml" class="btn-flat success new-product margn-lft35">+ Add New Supplier</a>
+                                <!--#4DENDIF-->
+                            </div>
+                            <input name="keyword" id="keyword_type" type="text" class="search order-search" placeholder="Enter supplier name.." value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" />
+                        </div>
+                    </div>
+
+                            
+
+                    <div class="row-fluid">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                	<th width="6%">
+                                        <!-- Select For Sets -->
+                                        <input name="Select" class="check" type="checkbox" id="chk_all" >
+                                    </th>
+                                    <th class="span3">
+									<span class="line"></span>
+                                        Customer
+                                    </th>
+                                    <th class="span2">
+									<span class="line"></span>
+                                        Telephone
+                                    </th>
+                                    <th class="span2">
+                                        <span class="line"></span> 
+                                        City/Town
+                                    </th>
+                                    <th class="span3">
+                                        <span class="line"></span>
+                                        Address
+                                    </th>
+									<th class="span2">
+                                        <span class="line"></span>
+                                         E-MAIL 
+                                    </th>
+                                    <th class="span2">
+                                        <span class="line"></span>
+                                        Total Spent
+                                    </th>
+                                    <th class="span2">
+                                        <span class="line"></span>
+                                        VAT Claimed
+                                    </th>
+                                    <th class="span2">
+                                        <span class="line"></span>
+                                        Statement
+                                    </th>
+                                    <th class="span2">
+                                        <span class="line"></span>
+                                        ACTION
+                                    </th>
+									 
+                                </tr>
+                            </thead>
+							<tfoot>
+                            <tr> 
+                            	<th align="left">&nbsp;</th>
+                                <th align="left">CUSTOMER</th>
+                                <th align="left">TELEPHONE</th>
+                                <th align="left">CITY/TOWN</th>
+                                <th align="left">ADDRESS</th>
+                                <th align="left">E-MAIL</th>
+                                <th align="left">TOTAL SPENT</th>
+                                <th align="left">VAT CALIMED</th>
+								<th align="left">STATEMENT</th>
+								<th align="left">ACTION</th>
+                            </tr>
+                        	</tfoot>
+                            <tbody id="customers_table_body">
+                                
+                            </tbody>
+                        </table>
+						<div id="img_loading_div" style="text-align:center">
+							<img src="loading.gif"  style="padding:20px;" width="34" >
+						</div>
+                    </div>
+                </div>
+                <!-- end timeslips table -->
+
+            </div>
+        </div>
+    </div>
+    <!-- end main container -->
+	
+	<div class="example-container">
+								
+								<pre class="code" style="display:none;" id="no_rec_prompt">
+									var statesdemo = {
+										state0: {
+											title: 'No more records found',
+											html:'',
+											buttons: { OK: 1 },																		
+											submit:function(e,v,m,f){ 
+												//console.log(f);
+												if(v==1) {
+													$.prompt.close();
+												}
+												
+											}
+										},
+										
+									};
+									if(!($(".jqibox").length))
+									$.prompt(statesdemo);
+								</pre>
+								
+								<pre class="code" style="display:none;" id="del_prompt">
+									var html='';
+									if(selected_set!=''){
+										html= '&lt;div id="message"&gt;&lt;/div&gt;&lt;label style="width:auto; display:inline" &gt&lt;input type="radio" class="radio" name="opt_set_del" id="opt1" value="permanentely" &gt; Permanentely &lt;/label&gt;'+
+											'&lt;label style="width:auto; display:inline" &gt;&lt;input type="radio" class="radio" name="opt_set_del" id="opt2" value="from_set"&gt; From '+selected_set+' &lt;/label&gt;';
+									}
+									else{
+										html= '';
+									}
+									
+									var statesdemo = {
+										state0: {
+											title: 'Are you sure to delete?',
+											html:html,
+											buttons: { Cancel : 0, OK: 1 },																		
+											submit:function(e,v,m,f){ 
+												//console.log(f);
+												if(v==1) {
+													if(selected_set!='' && f.opt_set_del == null){
+														e.preventDefault();
+														document.getElementById("message").innerHTML = "* Please select an option." ;
+													}else{
+														var dataString = 'deleteuuid='+deleteuuid+'&setUUID='+setUUID;
+														if(f.opt_set_del=='from_set'){
+															dataString+='&del_type=from_set';
+														}
+														else{
+															dataString+='&del_type=permanent';
+														}
+														console.log(dataString);
+														$.ajax({
+															type: "GET",
+															dataType: "json",
+															url: "deletecustomer.cgi",
+															data: dataString,
+															cache: false,
+															success: function(html)
+															{
+																if(html.Succ){		
+																//alert(html.Result);
+																$.prompt.close();				
+																start=0;
+																end=50;
+																jsonRow = 'loadcustomers.cgi?start='+start+'&end='+end+'&tablname='+tablname;
+																if(keyword!=''){
+																	jsonRow +='&keyword='+keyword;
+																}
+																if(tab!=''){
+																	jsonRow +='&tab='+tab;
+																}
+																	$('#customers_table_body').html('');
+																	$('#img_loading_div').show();		
+																	load_data(jsonRow);
+																}
+															}
+														});
+													}
+												}
+												if(v==0) {
+													$.prompt.close();
+												}
+												
+											}
+										},
+										
+									};
+									
+									$.prompt(statesdemo);
+								</pre>
+								
+							</div>
+<div style="text-align:center" id="dialog" ></div>
+
+
+
+	<!-- scripts -->
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+    <script type="text/javascript" src="js/jquery-impromptu.js"></script>
+	<script src="lib/jquery-ui/jquery-ui-1.10.0.custom.min.js"></script>
+    
+<script>
+
+var JSONdata;
+var selected='';
+var start=0, end=25;
+var old_srch='',keyword='', jsonRow='', tab='suppliers', set='', vat_claimed='';
+var tablname='Companies';
+var deleteuuid='';
+var complete=false;
+var add_from_manager=false;
+var completeScroll=false;
+var checkAllFlag=false;
+
+var selected_set='<!--#4DVAR _HIT_WebApp_GetField ("set") -->';
+var setUUID='<!--#4DVAR _HIT_WebApp_GetField ("set_uuid") -->';
+
+function getMonthName(m) {
+	if(m==1){ monthName= "Jan";}
+	else if(m==2){ monthName= "Feb";}
+	else if(m==3){ monthName= "Mar"; }
+	else if(m==4){ monthName= "Apr"; }
+	else if(m==5){ monthName= "May"; }
+	else if(m==6){ monthName= "Jun"; }
+	else if(m==7){ monthName= "Jul"; }
+	else if(m==8){ monthName= "Aug"; }
+	else if(m==9){ monthName= "Sep"; }
+	else if(m==10){ monthName= "Oct"; }
+	else if(m==11){ monthName= "Nov"; }
+	else if(m==12){ monthName= "Dec"; }
+	else{ monthName= m; }
+	return monthName;
+ }
+
+function __showEmailForm(uuid)
+{
+pUrlStr='email.shtml?company_uuid='+uuid;
+window.location.href=pUrlStr;
+}
+
+function __showCustomerForm(uuid)
+{
+pUrlStr='customer.shtml?uuid='+uuid;
+window.location.href=pUrlStr;
+}
+
+
+function __filterByVatClaimed(value){
+	vat_claimed=value;
+	if(checkAllFlag==true){
+		$("#chk_all").trigger('click');
+	}
+	start=0;
+	end=25;
+	jsonRow = 'loadcustomers.cgi?start='+start+'&end='+end+'&tablname='+tablname;
+	keyword= $("#keyword_type").val();
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}
+	if(vat_claimed!=""){
+		jsonRow +='&vat_claimed='+vat_claimed;
+	}
+	$('#customers_table_body').html('');
+	$('#img_loading_div').show();		
+	load_data(jsonRow);
+}
+
+function __deleteMultipleCustomers(){
+	selected='';
+	$('.check').each(function(){
+		if($(this).is(":checked")){
+			if(selected==''){
+				selected=$(this).val();
+			}
+			else{
+				selected+=","+$(this).val();
+			}
+		}
+	});
+	if(selected!=""){
+		deleteuuid=selected;
+		code = $('#del_prompt').text();
+		(new Function(code))();
+	}else{
+		__alertMessage("Please select supplier(s) to delete!");
+	}
+}
+
+function __deleteSelected(deluuid) {
+	deleteuuid=deluuid;
+	code = $('#del_prompt').text();
+	(new Function(code))();
+}
+
+function processPrompt(title,msg,start_prmt,stop_prmt){
+	if(start_prmt){
+		$( "#dialog" ).attr('title', title);
+		$( "#dialog" ).html(msg);
+		$( "#dialog" ).dialog({ modal: true, resizable: false, draggable: false, closeOnEscape: false });
+		$('.ui-dialog-titlebar-close').remove();
+		$('.ui-dialog').css('z-index', 99999);
+		$('.ui-widget-overlay').css('z-index', 99998);
+	}
+	else if(stop_prmt){
+		$( "#dialog" ).dialog( "destroy" );
+		$( "#dialog" ).html('');
+	}
+}
+
+
+$(document).ready(function() {
+	// toggle all checkboxes from a table when header checkbox is clicked
+  	$(".table th input:checkbox").click(function () {
+  		$checks = $(this).closest(".table").find("tbody input:checkbox");
+  		if ($(this).is(":checked")) {
+			checkAllFlag=true;
+  			$checks.prop("checked", true);
+  		} else {
+			checkAllFlag=false;
+  			$checks.prop("checked", false);
+  		}  		
+  	});
+
+	$('#keyword_type').focus();
+	$('#add_sets option[value="'+setUUID+'"]').hide();
+	keyword= $("#keyword_type").val();
+	jsonRow = 'loadcustomers.cgi?start='+start+'&end='+end+'&tablname='+tablname;
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}	
+	if(vat_claimed!=""){
+		jsonRow +='&vat_claimed='+vat_claimed;
+	}
+	load_data(jsonRow);	
+	
+	$(window).scroll(function(){
+		if ($(window).scrollTop() == $(document).height() - $(window).height()){
+		
+		if(complete==false && completeScroll==false) {
+			$('#img_loading_div').show();
+			//alert("scrolling...");
+			start=end+1;
+			end=start+25;
+			jsonRow = 'loadcustomers.cgi?start='+start+'&end='+end+'&tablname='+tablname;
+			if(keyword!=''){
+				jsonRow +='&keyword='+keyword;
+			}
+			if(vat_claimed!=""){
+				jsonRow +='&vat_claimed='+vat_claimed;
+			}	
+			load_data(jsonRow);
+		}
+		
+		}
+	});
+	
+	//setup before functions
+	var typingTimer;                //timer identifier
+	var doneTypingInterval = 1000;  //time in ms, 5 second for example
+
+	//on keyup, start the countdown
+	$('#keyword_type').keyup(function(){
+		clearTimeout(typingTimer);
+		if ($('#keyword_type').val) {
+			typingTimer = setTimeout(function(){
+				//do stuff here e.g ajax call etc....
+				$('#customers_table_body').html('');
+				$('#img_loading_div').show();
+				start=0;
+				end=start+25;
+				keyword= $("#keyword_type").val();
+				jsonRow = 'loadcustomers.cgi?start='+start+'&end='+end+'&tablname='+tablname;
+				if(keyword!=''){
+					jsonRow +='&keyword='+keyword;
+				}
+				if(vat_claimed!=""){
+					jsonRow +='&vat_claimed='+vat_claimed;
+				}
+				
+				load_data(jsonRow);
+			}, doneTypingInterval);
+		}
+	});
+	
+		
+
+});
+ 
+ var cust_uuid=new Array();   
+function load_data(jsonRow){
+	if(tab!=''){
+		jsonRow +='&tab='+tab;
+	}
+	completeScroll=true;
+	JSONdata=new Array();
+	$.getJSON(jsonRow,function(result){
+			if(result.Alert){
+				code = $('#no_rec_prompt').text();
+				(new Function(code))();
+				complete=true;
+			}
+			else{
+				$.each(result.uuid, function(i,item)
+				{
+					JSONdata[i]=new Array();
+					if(checkAllFlag==true){
+					JSONdata[i][0]='<input name="Select" class="check" checked type="checkbox" id="Select" value="'+item+'">';
+					}else{
+					JSONdata[i][0]='<input name="Select" class="check" type="checkbox" id="Select" value="'+item+'">';
+					}
+					JSONdata[i][8]='<span><a title="Download Statement" target="_blank" style="text-decoration:none;" href="statement_preview.shtml?uuid='+item+'&token=<!--#4DVAR _HIT_TokenGetAny-->&preview=pdf"><span class="icon-download-alt"></span>&nbsp;</a></span>&nbsp;&nbsp;<a title="Download Full Statement" target="_blank" href="statement_preview.shtml?uuid='+item+'&token=<!--#4DVAR _HIT_TokenGetAny-->&preview=pdf&full=true">Full Statement</a>&nbsp;';
+					JSONdata[i][9]='<ul class="actions"><li><a href="javascript:void(0)" onClick="__showCustomerForm(\''+item+'\')"><i class="table-edit"></i></a></li><li><a href="javascript:void(0)" onClick="__showEmailForm(\''+item+'\')"><i class="icon-envelope"></i></a></li>';
+					<!--#4DIF (mUserIsCurrentBool)-->
+					JSONdata[i][9]+='<li class="last"><a href="javascript:void(0)" onClick="__deleteSelected(\''+item+'\')"><i class="table-delete"></i></li>';
+					<!--#4DELSE--><!--#4DENDIF-->
+					JSONdata[i][9]+='</ul>';
+					cust_uuid[i]=item;
+					
+				}); 
+				$.each(result.company_Name, function(i,item)
+				{
+					JSONdata[i][1]='<a href="javascript:void(0)" onClick="__showCustomerForm(\''+cust_uuid[i]+'\')">'+item+'</a>';
+				});
+				
+				$.each(result.telephone, function(i,item)
+				{	
+					JSONdata[i][2]=item;
+				});
+				$.each(result.city_or_town, function(i,item)
+				{					
+					JSONdata[i][3]=item;
+				});
+				$.each(result.address_line_1, function(i,item)
+				{					
+					JSONdata[i][4]=item;
+				}); 
+				$.each(result.EmailAdd, function(i,item)
+				{					
+					JSONdata[i][5]=item;
+				});
+				$.each(result.TotalSpent, function(i,item)
+				{					
+					JSONdata[i][6]='&pound;'+item;
+				});
+				$.each(result.vat_claimed, function(i,item)
+				{					
+					JSONdata[i][7]=item;
+				});
+				
+				var table_html='';
+				$.each(JSONdata, function(i,row)
+				{
+					table_html+='<tr >';
+					$.each(row, function(i,col){
+						table_html+='<td>'+col+'</td>';
+					});
+					table_html+='</tr>';
+				});
+				if(old_srch!=keyword){
+					$('#customers_table_body').html('');
+					old_srch=keyword;
+				}
+				//alert(table_html);
+				
+				$('#customers_table_body').append(table_html);
+				complete=false;
+	
+		}
+		$('#img_loading_div').hide();
+		completeScroll=false;
+		});
+}
+</script>    
+</body>
+</html>

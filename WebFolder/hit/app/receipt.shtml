@@ -1,0 +1,241 @@
+<!--HIT_EXECUTE
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+QUERY([Receipts];[Receipts]uuid=_HIT_WebApp_GetField ("uuid"))
+QUERY([Companies];[Companies]account_Number=[Receipts]client_accountnumber)
+
+QUERY([Invoices];[Invoices]inv_idzzz=[Receipts]invoice_number)
+
+Web_LoadPaymentRelated
+
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+_HIT_WebSession_SetVar ("last-payment-uuid";_HIT_WebApp_GetField ("uuid"))
+-->
+<!DOC html>
+<html>
+<head>
+	<title>Tenthmatrix CRM App : Receipt</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- bootstrap -->
+	<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="bootstrap/css/bootstrap-responsive.min.css" />
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/app/includes/header.shtml-->
+	
+</head>
+<body>
+
+	<!-- main container -->
+    <div class="content wide-content">
+        <div class="container-fluid">
+            <div id="pad-wrapper" class="form-page">
+				<div class="row-fluid">
+					<div class="span12">
+						<form name="PaymentForm" action="savereceipt.cgi" method="post" class="form_validation_reg">
+							<input name="uuid" class="span9" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="uuid">
+							<div class="formSep">
+								<div class="row-fluid">
+									<div class="span3">
+										<label>Invoice No. <span class="f_req">*</span></label>
+										<input name="inv_no" onBlur="get_client()" class="span12" type="text" value="<!--#4DVAR [Receipts]invoice_number-->" id="inv_no" >
+										<br/>
+										<span id="err_msg" style="color:#FF0000"></span>
+										<input class="span5" name="invoice_uuid" id="invoice_uuid" type="hidden" value="<!--#4DVAR [Invoices]uuid-->">
+									</div>
+									<div class="span3">
+										<label>Company </label>
+										<input class="span12" name="company_name"  type="text" value="<!--4DVAR [Companies]company_Name-->" id="company_name" readonly>
+										<input class="span5" name="client_uuid" id="client_uuid" type="hidden" value="<!--#4DVAR [Companies]uuid-->">
+									</div>
+								</div>
+							</div>
+							<div class="formSep">
+								<div class="row-fluid">
+									<div class="span3">
+										<label>Date Received <span class="f_req">*</span></label>
+										<div class="input-append date" id="dp2">
+											<input class="span6" placeholder="Received Date" type="text" readonly="readonly"  name="date_received" id="date_received" <!--#4DIF ([Receipts]date_received=!00/00/00!)-->value=""<!--4DELSE-->value="<!--#4DVAR [Receipts]date_received-->"<!--4DENDIF-->  data-date-format="dd/mm/yyyy" /><span class="add-on"><i class="splashy-calendar_day"></i></span>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="formSep">
+								<div class="row-fluid">
+									<div class="span3">
+										<label>Amount <span class="f_req">*</span></label>
+										<input name="amount" class="span12 num" type="text" value="<!--#4DVAR [Receipts]amount_received-->" id="amount">
+									</div>
+								</div>
+							</div>
+							<div class="formSep">
+								<div class="row-fluid">
+									<div class="span3">
+										<label>Mode of Payment <span class="f_req">*</span></label>
+										<Select name="mode_of_payment" id="mode_of_payment">
+											<option value="BACS" <!--#4DIF ([Receipts]mode_of_payment="BACS")-->selected<!--4DELSE--><!--4DENDIF-->>BACS</option>
+											<option value="Paid by Debit or Credit Card" <!--#4DIF ([Receipts]mode_of_payment="Paid by Debit or Credit Card")-->selected<!--4DELSE--><!--4DENDIF-->>Paid by Debit or Credit Card</option>
+											<option value="Cash" <!--#4DIF ([Receipts]mode_of_payment="Cash")-->selected<!--4DELSE--><!--4DENDIF-->>Cash</option>
+											<option value="Cheque" <!--#4DIF ([Receipts]mode_of_payment="Cheque")-->selected<!--4DELSE--><!--4DENDIF-->>Cheque</option>
+											<option value="International Banking" <!--#4DIF ([Receipts]mode_of_payment="International Banking")-->selected<!--4DELSE--><!--4DENDIF-->>International Banking</option>
+											<option value="PayPal" <!--#4DIF ([Receipts]mode_of_payment="PayPal")-->selected<!--4DELSE--><!--4DENDIF-->>PayPal</option>
+										</select>
+									</div>
+								</div>
+							</div>
+							<div class="formSep">
+								<div class="row-fluid">
+									<div class="span4">
+										<label>Notes</label>
+										<textarea name="notes" class="span12" rows="4" id="notes"><!--#4DVAR [Receipts]notes--></textarea>
+									</div>
+								</div>
+							</div>
+							<div style="text-align: center;" class="span9 field-box">
+								<input type="submit" value="Submit" class="btn-glow primary">
+								<span>OR</span>
+								<a href="receipts.shtml">Cancel</a>
+							</div>
+						</form>
+					</div>
+				</div>
+		
+            </div>
+		</div>
+    </div>
+    <!-- end main container -->
+
+	
+	<script src="js/jquery.min.js"></script>
+	
+	<script src="bootstrap/js/bootstrap.min.js"></script>
+	<!-- validation -->
+    <script src="lib/validation/jquery.validate.min.js"></script>
+	<!-- datepicker -->
+	<script src="lib/datepicker/bootstrap-datepicker.min.js"></script>
+<script type="text/javascript">
+
+	$(document).ready(function() {
+		gebo_datepicker.init();
+		//* regular validation
+		gebo_validation.reg();
+		
+		$('.splashy-calendar_day').click(function(){
+			$('#date_received').datepicker( "show" );
+		});
+		
+		$(document).click(function(event){
+			//console.log($(event.target).closest('div').attr('id'));
+			if($(event.target).closest('div').attr('id')!='dp2') {
+				$('#date_received').datepicker( "hide" );
+			}
+		});
+		
+		$.validator.addMethod('checkinteger', function(value, element, param) {
+            return (value != 0);
+        }, 'Please enter a non zero value!');
+	});
+    function get_client()
+{
+	var inv_no=	$("#inv_no").val();
+	if(inv_no!=''){
+	var dataString = 'inv_no='+inv_no;
+	$.ajax({
+type: "GET",
+dataType: "json",
+url: "getreceiptclient.cgi",
+data: dataString,
+cache: false,
+success: function(html)
+{
+	if(html.invoiceuuid){
+		if(html.paid){
+		alert("This Invoice is Already Paid");
+		$('#submit').attr('disabled',true);
+		}
+		else{
+		$('#err_msg').html('');
+		$("#invoice_uuid").val(html.invoiceuuid);
+		$("#amount").val(html.Amount);
+		$("#client_uuid").val(html.CustomerID);
+		$("#company_name").val(html.CustomerName);
+		$('#submit').attr('disabled',false);
+		}
+	}
+	else{
+		//alert("Invoice no "+inv_no+" doesn't exists.");
+		$('#err_msg').html("Invoice no "+inv_no+" doesn't exists.");
+		
+		$("#inv_no").val('0');
+		$("#invoice_uuid").val('');
+		$("#amount").val('0');
+		$("#client_uuid").val('');
+		$("#company_name").val('');
+	}
+	
+}
+});
+}
+}
+
+$('#inv_no').keypress(function(e){
+						var k = e.which;
+    					/* numeric inputs can come from the keypad or the numeric row at the top */
+   						 if ((k<48 || k>57) && (k!=8) && (k!=0)) {
+        					e.preventDefault();
+							//alert("Allowed characters are 0-9, +, -, (, )");
+        					return false;
+    					}
+					
+					}); 
+					
+		$('.num').keypress(function(e){
+					checknumber(e);	
+					
+					});
+					
+	function checknumber(e)
+	{
+		var k = e.which;
+    					/* numeric inputs can come from the keypad or the numeric row at the top */
+   						 if ((k<48 || k>57) && (k!=46) && (k!=8) && (k!=0)) {
+        					e.preventDefault();
+							//alert("Allowed characters are 0-9, +, -, (, )");
+        					return false;
+    					}
+	
+	}
+	gebo_datepicker = {
+		init: function() {
+			$('#date_received').datepicker({"autoclose": true});
+		}
+	};
+	gebo_validation = {
+		reg: function() {
+			reg_validator = $('.form_validation_reg').validate({
+				onkeyup: false,
+				errorClass: 'error',
+				validClass: 'valid',
+				highlight: function(element) {
+					$(element).closest('div').addClass("f_error");
+				},
+				unhighlight: function(element) {
+					$(element).closest('div').removeClass("f_error");
+				},
+				errorPlacement: function(error, element) {
+					$(element).closest('div').append(error);
+				},
+				rules: {
+					inv_no: { required: true, checkinteger : true },
+					date_received: { required: true },
+					amount: { required: true, checkinteger : true },
+				},
+			})
+		}
+	};
+</script>
+</body>
+</html>

@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Tenthmatrix CRM App : Projects</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- bootstrap -->
+	<link href="css/bootstrap/bootstrap.css" rel="stylesheet">
+    <link href="css/bootstrap/bootstrap-responsive.css" rel="stylesheet">
+    <link href="css/bootstrap/bootstrap-overrides.css" type="text/css" rel="stylesheet">
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/app/includes/header.shtml-->
+
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    
+    	<style type="text/css">
+		.Highlight
+		{
+			background-color: #dcfac9!important;
+			cursor: pointer;
+		}
+		
+		.pull-right
+		{
+		
+		margin: 0 4px 4px 4px;
+		padding:0 4px 4px 4px;
+		
+		}ul.actions{
+			list-style:none;
+		}
+		
+	</style>
+
+
+</head>
+<body>
+
+	<!-- main container -->
+    <div class="content wide-content">
+	<div class="container-fluid">
+		<form id="frm_set" name="frm_set"  method="post" action="">
+		
+         <div class="" style=" padding:15px 0 0 0;">
+         <div class="pull-right">
+			<div class="btn-group pull-right">
+				<button class="glow left large" onClick="__showAllEmails(); return false;">All</button>
+				<button class="glow middle large" onClick="__showSentEmails(); return false;">Sent</button>
+				<button class="glow right large" onClick="__showNotSentEmails(); return false;">Not Sent</button>
+				<a href="emailsend.shtml" class="btn-flat success new-product margn-lft35"  style="margin-left:15px;">+ New Mail</a>
+			</div>
+			<input style="margin-top:3px;" name="keyword_type" id="keyword_type" type="text" class="search order-search" placeholder="Search for Recipeint, Subject..." value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" />
+		</div>
+        </div>
+        <div class="container-fluid">
+            <div id="pad-wrapper" class="datatables-page">
+                <div class="row-fluid">
+                    <div class="span12">
+
+                        <table cellpadding="0" cellspacing="0" border="0" class="dataTable" id="emailqueue_table">
+                            <thead>
+                                <tr role="row">
+									<th align="left">RECIPIENT</th>
+									<th align="left">SUBJECT</th>
+									<th align="left">EMAIL STATUS</th>
+									<th align="left">EMAIL TYPE</th>
+									<th align="left">SENDER</th> 
+									<th align="left"></th>
+                                </tr>
+                            </thead>
+                           <tfoot>
+                            <tr>
+								 <th align="left">RECIPIENT</th>
+                                <th align="left">SUBJECT</th>
+                                <th align="left">EMAIL STATUS</th>
+                                <th align="left">EMAIL TYPE</th>
+                                <th align="left">SENDER</th> 
+								<th align="left"></th>
+                            </tr>
+                        </tfoot>
+
+                        <tbody id="emailqueue_table_body">
+
+                        </tbody>
+                        </table>
+						<div id="img_loading_div" style="text-align:center">
+							<img src="../loading.gif"  style="padding:20px;" width="34" >
+						</div>
+
+                    </div>
+                </div>
+            </div>
+       </form>
+        </div>
+    </div>
+	<div class="example-container">
+		<pre class="code" style="display:none;" id="no_rec_prompt">
+			var statesdemo = {
+				state0: {
+					title: 'No more records found',
+					html:'',
+					buttons: { OK: 1 },																		
+					submit:function(e,v,m,f){ 
+						//console.log(f);
+						if(v==1) {
+							$.prompt.close();
+						}
+						
+					}
+				},
+				
+			};
+			if(!($(".jqibox").length))
+			$.prompt(statesdemo);
+		</pre>
+		
+		<pre class="code" style="display:none;" id="del_prompt">
+			var statesdemo = {
+				state0: {
+					title: 'Are you sure to delete?',
+					html:'',
+					buttons: { Cancel : 0, OK: 1 },																		
+					submit:function(e,v,m,f){ 
+						//console.log(f);
+						if(v==1) {
+							var dataString = 'selected='+deleteuuid;
+
+							$.ajax({
+								type: "GET",
+								dataType: "json",
+								url: "deletemail.cgi",
+								data: dataString,
+								cache: false,
+								success: function(html)
+								{
+									if(html.Succ){		
+										
+										$.prompt.close();				
+										start=0;
+										end=50;
+										jsonRow = 'loademails.cgi?start='+start+'&end='+end+'&tablname='+tablname;
+										if(keyword!=''){
+											jsonRow +='&keyword='+keyword;
+										}
+										if(tab!=''){
+											jsonRow +='&tab='+tab;
+										}
+										$('#emailqueue_table_body').html('');
+										$('#img_loading_div').show();		
+										load_data(jsonRow);
+									}
+								}
+							});
+							
+						}
+						if(v==0) {
+							$.prompt.close();
+						}
+						
+					}
+				},
+				
+			};
+			
+			$.prompt(statesdemo);
+		</pre>
+	</div>
+    <!-- end main container -->
+
+	<!-- scripts -->
+    <script src="js/jquery-latest.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.dataTables.js"></script>
+	<script type="text/javascript" src="js/jquery-impromptu.js"></script>
+    <script src="js/theme.js"></script>
+   
+<script>
+var JSONdata;
+var start=0, end=25;
+var old_srch='',keyword='', jsonRow='', tab='', set='';
+var tablname='_emailc_queue';
+var process=false;
+$('#emailqueue_table td:first-child').hide();
+// Assign a click handler that grabs the URL from the first cell and redirects the user.
+$('#emailqueue_table tbody tr').click(function ()
+{					
+	//location.href = 'project.shtml?uuid='+$(this).find(':input').val()+'&token='+Math.random();
+})
+function __showEmailForm(uuid)
+{
+pUrlStr='emailsend.shtml?uuid='+uuid;
+window.location.href=pUrlStr;
+}
+
+function __showSentEmails()
+{
+	start=0;
+	end=25;
+	tab='sent';
+	keyword= $("#keyword_type").val();
+	jsonRow = 'loademails.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab;
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}
+	$('#emailqueue_table_body').html('');
+	$('#img_loading_div').show();		
+	load_data(jsonRow);
+}
+
+function __showNotSentEmails()
+{
+	start=0;
+	end=25;
+	tab='notsent';
+	jsonRow = 'loademails.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab;
+	keyword= $("#keyword_type").val();
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}
+	$('#emailqueue_table_body').html('');
+	$('#img_loading_div').show();		
+	load_data(jsonRow);
+}
+
+function __showAllEmails()
+{
+	start=0;
+	end=25;
+	tab='';
+	jsonRow = 'loademails.cgi?start='+start+'&end='+end+'&tablname='+tablname;
+	$('#emailqueue_table_body').html('');
+	$('#img_loading_div').show();	
+	load_data(jsonRow);
+}
+
+function __deleteSelected(deluuid) {
+	deleteuuid=deluuid;
+	code = $('#del_prompt').text();
+	(new Function(code))();
+}
+
+$(document).ready(function() {
+
+	$('#keyword_type').focus();
+	keyword= $("#keyword_type").val();
+	jsonRow = 'loademails.cgi?start='+start+'&end='+end+'&tablname='+tablname;
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}		
+	load_data(jsonRow);	
+	
+	$(window).scroll(function(){
+		if ($(window).scrollTop() == $(document).height() - $(window).height()){
+		
+		//alert("scrolling...");
+		start=end+1;
+		end=start+25;
+		jsonRow = 'loademails.cgi?start='+start+'&end='+end+'&tablname='+tablname;
+		if(keyword!=''){
+			jsonRow +='&keyword='+keyword;
+		}
+		if(tab!=''){
+			jsonRow +='&tab='+tab;
+		}		
+		load_data(jsonRow);
+		
+		}
+	});
+	
+	//setup before functions
+	var typingTimer;                //timer identifier
+	var doneTypingInterval = 1000;  //time in ms, 5 second for example
+
+	//on keyup, start the countdown
+	$('#keyword_type').keyup(function(){
+		clearTimeout(typingTimer);
+		if ($('#keyword_type').val) {
+			typingTimer = setTimeout(function(){
+				//do stuff here e.g ajax call etc....
+				$('#emailqueue_table_body').html('');
+				$('#img_loading_div').show();
+				start=0;
+				end=start+25;
+				tab='';
+				keyword= $("#keyword_type").val();
+				jsonRow = 'loademails.cgi?start='+start+'&end='+end+'&tablname='+tablname;
+				if(keyword!=''){
+					jsonRow +='&keyword='+keyword;
+				}
+				if(tab!=''){
+					jsonRow +='&tab='+tab;
+				}	
+				load_data(jsonRow);
+			}, doneTypingInterval);
+		}
+	});
+
+});
+    
+	 var Email_uuid=new Array(); 
+function load_data(jsonRow){
+	JSONdata=new Array();
+	$.getJSON(jsonRow,function(result){
+			if(result.Alert){
+				code = $('#no_rec_prompt').text();
+				(new Function(code))();
+			}
+			else{
+				
+				$.each(result.Recipient, function(i,item)
+				{
+					JSONdata[i]=new Array();
+					JSONdata[i][0]=item;
+				});
+				$.each(result.uuid, function(i,item)
+				{	
+					JSONdata[i][0]+='<input type="hidden" value="'+item+'">';
+				});				
+				$.each(result.Subject, function(i,item)
+				{
+					JSONdata[i][1]=item;
+				});	
+				$.each(result.Status, function(i,item)
+				{	
+				switch(item)
+					{
+					case -1:
+					  JSONdata[i][2]='<span class="label label-success"> Once Mail Sent </span>';
+					  break;
+					case 0:
+					  JSONdata[i][2]='<span class="label label-success"> Mail is to be Sent </span>';
+					  break;
+					case 1:
+					  JSONdata[i][2]='<span class="label label-success"> Mail Sent </span>';
+					  break;
+					default :
+					   JSONdata[i][2]='<span class="label label-success"> Try To Send'+item+' </span>';
+					  } 
+				});
+				$.each(result.Type, function(i,item)
+				{	
+					JSONdata[i][3]=item;
+				});
+			
+				$.each(result.Sender, function(i,item)
+				{					
+					JSONdata[i][4]=item;
+				});
+				$.each(result.uuid, function(i,item)
+				{					
+					JSONdata[i][5]='<ul class="actions"><li><a href="javascript:void(0)" onClick="__deleteSelected(\''+item+'\')"><i class="icon-remove"></i></a></li></ul>';
+				}); 
+				
+				
+				var table_html='';
+				var trClassStr='odd';
+				$.each(JSONdata, function(i,row)
+				{
+					table_html+='<tr class="'+trClassStr+'">';
+					if(trClassStr=='odd') { trClassStr='even'; } else { trClassStr='odd' };
+					$.each(row, function(i,col){
+						table_html+='<td>'+col+'</td>';
+					});
+					table_html+='</tr>';
+				});
+				if(old_srch!=keyword){
+					$('#emailqueue_table_body').html('');
+					old_srch=keyword;
+				}
+				//alert(table_html);
+				
+				$('#emailqueue_table_body').append(table_html);
+				
+				// Apply a class on mouse over and remove it on mouse out.
+				$('#emailqueue_table tbody tr').unbind();
+				$('#emailqueue_table tbody tr').hover(function ()
+				{
+					$(this).toggleClass('Highlight');
+				});
+				// Assign a click handler that grabs the URL from the first cell and redirects the user.
+				$('#emailqueue_table tbody tr').click(function ()
+				{
+					if(!$(this).find('a').length){
+						location.href = 'emailsend.shtml?uuid='+$(this).find(':input').val()+'&token='+Math.random();
+					}
+				});
+				
+		}
+		$('#img_loading_div').hide();
+		});
+}
+
+</script>
+
+
+</body>
+</html>

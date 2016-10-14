@@ -1,0 +1,25 @@
+<div data-role="header" class="head-border" data-theme="a">
+	<div style="text-align:right">
+	<a href="sign-in.shtml" class="my-account" style="color: #FFFFFF;font-size:12px;text-decoration: none;" data-ajax="false">Logout</a>
+	</div>
+</div>
+		
+<div class="search-container" data-theme="a">
+	<div id="search-home"><a href="index.shtml"><span>Click here for Home</span></a></div>
+</div>
+<!--
+<div class="search-container" data-theme="a" style="height:30px;">
+	
+	<form action="search_results.php" method="GET" name="msearch" class="ui-link-inherit search">
+		<div data-role="fieldcontain" >
+			<input id="iws_search" name="s" placeholder="Search europa..." value="" type="search"   />
+		</div>
+	</form>
+</div>-->
+		
+<script type="text/javascript">
+$(document).ready(function(){
+$('.ui-page').live('pagehide',function(){ $(this).remove(); });
+});
+
+</script>

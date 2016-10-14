@@ -1,0 +1,355 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+C_TEXT(_HTMLTITLETXT)
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+  _HTMLTITLETXT:="Analysis Account"
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml?url="+HTTPD_DocumentURI)
+end if 
+  
+-->
+<!DOCTYPE html>
+<html>
+<head>
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+<link rel="stylesheet" media="all" type="text/css" href="css/jquery-impromptu.css" />
+<link rel="stylesheet" href="lib/jquery-ui/css/Aristo/Aristo.css" />
+<style>
+#message{
+	color:#FF0000;
+}
+.table-wrapper .table ul.actions{
+	float:left;
+}
+.jqibox {
+	z-index:9999!important;
+	
+	}
+</style>
+</head>
+<body>
+
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
+
+	<!-- main container -->
+    <div class="content">
+        
+        <div class="container-fluid">
+            <div id="pad-wrapper">
+
+                <!-- projects table -->
+                <div class="table-wrapper orders-table section">
+                    <div class="row-fluid filter-block">
+					<h3>List Analysis Account</h3>
+                        <div class="pull-right">
+                            <div class="btn-group pull-right">
+                                <!-- 
+								<button class="glow left large" onClick="__showAllContacts(); return false;" id="tab">All</button>
+                                <button class="glow middle large" onClick="__showSubscribers(); return false;" id="tab">Subscribers</button>
+                                -->
+                                <button class="glow large" onClick="__showAllanalysis_account(); return false;" id="tab">All</button>
+                                <a href="analysisaccount.shtml" class="btn-flat success new-product margn-lft35">+ Add New Analysis Account</a>
+                            </div>
+                            <input name="keyword" id="keyword" type="text" class="search order-search" placeholder="Search for Name or Client" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" />
+                        </div>
+						  
+                    </div>
+					
+					
+                    <div class="row-fluid">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                	<th width="6%">
+                                        <!-- Select For Sets -->
+                                        <input name="Select" class="check chk_all" type="checkbox" id="Select" >
+                                    </th>
+                                    <th class="span3">
+                                    	<span class="line"></span>LEDGER NAME
+                                    </th>
+                                    <th  class="span3">
+                                    	<span class="line"></span>ACCOUNT NAME 
+                                    </th>
+									
+									<th class="span2">
+                                        <span class="line"></span>CURRENCY CODE 
+                                    </th>
+                                    <th class="span2">
+                                        <span class="line"></span>SCOPE OF TAX(VAT) 
+                                    </th>
+                                    <th  class="span2">
+                                        <span class="line"></span>NOTES
+                                    </th>
+                                    <th class="span2">
+                                        <span class="line"></span>LAST MODIFIED
+                                    </th>
+                                    <th class="span2">
+                                        <span class="line"></span>ACTION
+                                    </th>
+                                </tr>
+                            </thead>
+							 <tfoot>
+                            <tr> 
+                            	<th align="left"><input name="chk_all" type="checkbox" id="chk_all" class="chk_all" value="">
+                                </th>
+                                <th align="left">LEDGER NAME</th>
+                                <th align="left">ACCOUNT NAME</th>
+                                <th align="left">CURRENCY CODE  </th>
+                                <th align="left">SCOPE OF TAX(VAT)</th>
+                                <th align="left">NOTES</th>
+                                <th align="left">LAST MODIFIED</th>
+								<th align="left">ACTION</th>
+                            </tr>
+                        	</tfoot>
+                            <tbody id="analysis_account_table_body">
+                            </tbody>
+                        </table>
+						<div id="img_loading_div" style="text-align:center">
+						<img src="loading.gif"  style="padding:20px;" width="34" >
+						</div>
+                    </div>
+                </div>
+                <!-- End Contacts table -->
+
+            </div>
+        </div>
+    </div>
+	<div class="example-container">
+		<pre class="code" style="display:none;" id="no_rec_prompt">
+			var statesdemo = {
+				state0: {
+					title: 'No more records found',
+					html:'',
+					buttons: { OK: 1 },																		
+					submit:function(e,v,m,f){ 
+						//console.log(f);
+						if(v==1) {
+							$.prompt.close();
+						}
+						
+					}
+				},
+				
+			};
+			if(!($(".jqibox").length))
+			$.prompt(statesdemo);
+		</pre>
+	</div>
+    <!-- end main container -->
+ 
+ 
+	<!-- scripts -->
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+	<script type="text/javascript" src="js/jquery-impromptu.js"></script>
+	<script src="lib/jquery-ui/jquery-ui-1.10.0.custom.min.js"></script>
+<script>
+var JSONdata;
+var selected='';
+var start=0, end=50;
+var old_srch='',keyword='', jsonRow='', tab='', set='';
+var tablname='analysis_account';
+var complete=false;
+var completeScroll=false;  
+var add_from_manager=false;
+var checkAllFlag=false;
+var del_id;
+ 
+function show_load_prompt(){ 
+	code = $('#load_prompt').text();
+	(new Function(code))();
+}
+
+function __showAllanalysis_account(){
+	if(checkAllFlag==true){
+		$("#select").trigger('click');
+	}
+    $('#keyword').val('');		
+	start=0;
+	end=25;
+	jsonRow = 'loadanalysisaccount.cgi?start='+start+'&end='+end+'&tablname='+tablname;
+	if(keyword!=''){
+		//jsonRow +='&keyword='+keyword;
+		jsonRow +='&keyword='+"";
+	}	
+	$('#analysis_account_table_body').html('');
+	$('#img_loading_div').show();
+	load_data(jsonRow);
+	
+}
+
+
+
+$(document).ready(function() {
+
+	$('#keyword').focus();
+	//$('#load_sets').val(selected_set);
+	keyword= $("#keyword").val();
+	jsonRow = 'loadanalysisaccount.cgi?start='+start+'&end='+end+'&tablname='+tablname;	
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}	
+	load_data(jsonRow);			 
+	
+	$(window).scroll(function(){
+		if ($(window).scrollTop() == $(document).height() - $(window).height()){
+		if(complete==false && completeScroll==false) {
+			$('#img_loading_div').show();
+			//alert("scrolling...");
+			start=end+1;
+			end=start+25;
+			jsonRow = 'loadanalysisaccount.cgi?start='+start+'&end='+end+'&tablname='+tablname;
+			if(keyword!=''){
+				jsonRow +='&keyword='+keyword;
+			}
+			if(tab!=''){
+				jsonRow +='&tab='+tab;
+			}		
+			load_data(jsonRow);
+		}
+		
+		}
+	});	
+	
+	//setup before functions
+	var typingTimer;                //timer identifier
+	var doneTypingInterval = 1000;  //time in ms, 5 second for example
+	
+	//on keyup, start the countdown
+	$('#keyword').keyup(function(){
+		clearTimeout(typingTimer);
+		if ($('#keyword').val) {
+			typingTimer = setTimeout(function(){
+				//do stuff here e.g ajax call etc....
+				$('#analysis_account_table_body').html('');
+				$('#img_loading_div').show();
+				start=0;
+				end=start+25;
+				tab='';
+				keyword= $("#keyword").val();
+				jsonRow = 'loadanalysisaccount.cgi?start='+start+'&end='+end+'&tablname='+tablname;
+				if(keyword!=''){
+					jsonRow +='&keyword='+keyword;
+				}
+				if(tab!=''){
+					jsonRow +='&tab='+tab;
+				}	
+				load_data(jsonRow);
+			}, doneTypingInterval);
+		}
+	});	
+	
+	// toggle all checkboxes from a table when header checkbox is clicked
+  	$(".table th input:checkbox").click(function () {
+  		$checks = $(this).closest(".table").find("tbody input:checkbox");
+  		if ($(this).is(":checked")) {
+			checkAllFlag=true;
+			$('.chk_all').prop("checked", true);
+  			$checks.prop("checked", true);
+  		} else {
+			checkAllFlag=false;
+			$('.chk_all').prop("checked", false);
+  			$checks.prop("checked", false);
+  		}  		
+  	});
+	
+});
+
+
+function load_data(jsonRow){
+	completeScroll=true;
+	JSONdata=new Array();
+	$.getJSON(jsonRow,function(result){
+			if(result.Alert){
+				code = $('#no_rec_prompt').text();
+				(new Function(code))();
+				complete=true;
+			}
+			else{
+			 
+				$.each(result.uuid, function(i,item)
+				{
+					JSONdata[i]=new Array();
+					if(checkAllFlag==true){
+					JSONdata[i][0]='<input class="check" checked type="checkbox" value="'+item+'">';
+					}else{
+					JSONdata[i][0]='<input class="check" type="checkbox" value="'+item+'">';
+					}
+					JSONdata[i][7]='<ul class="actions"><li><a href="analysisaccount.shtml?uuid='+item+'" ><i class="table-edit"></i><a></li><li><i class="table-settings"></i></li><li class="last"><i class="table-delete"></i></li></ul>';
+				});
+				
+				$.each(result.ledger_name, function(i,item)
+				{
+					JSONdata[i][1]=item;
+						
+				});
+				
+				$.each(result.account_name, function(i,item)
+				{
+					JSONdata[i][2]=item;
+						
+				});
+				  
+				$.each(result.notes, function(i,item)
+				{
+					JSONdata[i][5]=item;
+						
+				});
+				  
+				$.each(result.currency_code, function(i,item)
+				{
+					JSONdata[i][3]=item;
+						
+				});
+				
+				$.each(result.timestamp_modified, function(i,item)
+				{
+					JSONdata[i][6]=item;
+						
+				});
+				
+				$.each(result.enteries_allowed, function(i,item)
+				{
+					if(item==true){
+						JSONdata[i][4]='<span class="label label-success"> yes </span>';
+					}
+					else{
+						JSONdata[i][4]='<span class="label label-important"> No </span>';
+					}
+						
+				});
+				
+				
+				var table_html='';
+				var trClassStr='odd';
+				$.each(JSONdata, function(i,row)
+				{
+				
+					table_html+='<tr >';
+					$.each(row, function(i,col){
+						table_html+='<td>'+col+'</td>';
+					});
+					table_html+='</tr>';
+				});
+				if(old_srch!=keyword){
+					$('#analysis_account_table_body').html('');
+					old_srch=keyword;
+				}
+				//alert(table_html);
+				
+				$('#analysis_account_table_body').append(table_html);
+				complete=false;
+
+		}
+		$('#img_loading_div').hide();
+		completeScroll=false;
+		});
+		
+}
+
+</script>
+</body>
+</html>

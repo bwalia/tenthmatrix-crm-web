@@ -1,0 +1,192 @@
+<!--HIT_EXECUTE
+_HIT_HTTPD_SetHTTPHeader ("Content-type";"text/html; charset=utf-8")
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml?url="+HTTPD_DocumentURI)
+end if 
+-->
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/main-header.shtml-->
+<style>
+
+.table-opt tbody tr:hover td a { color: #FFF!important; }
+.table-opt tbody tr:hover td a:hover { color: #FFF; text-decoration:underline}
+</style>
+
+<script type="text/javascript">
+var JSONdata, nPageSize=10;
+var start=0, end=nPageSize;
+var old_srch='',keyword='', tab='';
+var tablname='Tasks';
+var complete=false;
+var completeScroll=false;
+
+$(document).ready(function() {
+	$('#keyword').focus();
+	load_data();			 
+		
+	$(window).scroll(function(){
+		if ($(window).scrollTop() == $(document).height() - $(window).height()){
+			if(complete==false && completeScroll==false) {
+				$('#load_more_btn').hide();
+				$('#img_loading_div').show();
+				start=end+1;
+				end=start+nPageSize;
+				load_data();
+			}
+		}
+	});
+	
+	$( "#load_more_btn" ).click(function() {
+  		$('#load_more_btn').hide();
+		$('#img_loading_div').show();
+		start=end+1;
+		end=start+nPageSize;
+		load_data();
+	});
+	
+	//setup before functions
+	var typingTimer;                //timer identifier
+	var doneTypingInterval = 1000;  //time in ms, 5 second for example
+
+	//on keyup, start the countdown
+	$('#keyword').keyup(function(){
+    	clearTimeout(typingTimer);
+    	if ($('#keyword').val) {
+      		typingTimer = setTimeout(function(){
+           		$('#tasks_table_body').html('');
+				$('#img_loading_div').show();
+				start=0;
+				end=start+nPageSize;
+				tab='';
+				load_data();
+        	}, doneTypingInterval);
+    	}
+    });
+    
+});
+
+function __showTaskForm(uuid){
+var pUrlStr='task.shtml?uuid='+uuid;
+window.location.href=pUrlStr;
+}
+
+var task_uuid= new Array();
+function load_data(){
+	keyword= $("#keyword").val();
+	jsonRow = 'loadtasks.cgi?start='+start+'&end='+end+'&tablname='+tablname;
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}
+	if(tab!=''){
+		jsonRow +='&tab='+tab;
+	}
+	completeScroll=true;
+	JSONdata=new Array();
+	$.getJSON(jsonRow,function(result){
+		if(result.Alert){
+			code = $('#no_rec_prompt').text();
+			(new Function(code))();
+			complete=true;
+		}else{
+				$.each(result.uuid, function(i,item)
+				{
+					JSONdata[i]=new Array();
+					task_uuid[i]=item;				
+				}); 
+				$.each(result.TaskName, function(i,item)
+				{
+					JSONdata[i][0]='<a href="javascript:void(0)" onClick="__showTaskForm(\''+task_uuid[i]+'\')">'+item+'</a>';
+					
+				});
+				$.each(result.ProjName, function(i,item)
+				{
+					JSONdata[i][1]=item;
+				});
+		
+				$.each(result.TaskStatus, function(i,item)
+				{			
+					switch(item){
+						case 'resolved':
+					 		JSONdata[i][2]='<span class="label label-success">'+item+'</span>';
+					 	 	break;
+						case 'assigned':
+					  		JSONdata[i][2]='<span class="label label-important">'+item+'</span>';
+					  		break;
+						case 'new':
+					  		JSONdata[i][2]='<span class="label label-warning">'+item+'</span>';
+					  		break;
+						default :
+					   		JSONdata[i][2]='<span class="label label-info">'+item+'</span>';
+					  }
+				}); 
+				var table_html='';
+				
+				$.each(JSONdata, function(i,row){
+				
+					table_html+='<tr >';
+					
+					$.each(row, function(i,col){
+						table_html+='<td>'+col+'</td>';
+					});
+					table_html+='</tr>';
+				});
+				if(old_srch!=keyword){
+					$('#tasks_table_body').html('');
+					old_srch=keyword;
+				}
+				
+				$('#tasks_table_body').append(table_html);
+
+				complete=false;
+
+		}
+		$('#img_loading_div').hide();
+		$('#load_more_btn').show();
+		completeScroll=false;
+	});
+}
+</script>
+</head>
+<body>
+<div data-role="page" id="home" data-add-back-btn="false">
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/top-header.shtml-->
+	<div class="search-container" data-theme="a" style="height:30px;">
+		<div data-role="fieldcontain" >
+			<input id="keyword" name="keyword" placeholder="Search for Task.." value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" type="search"   />
+		</div>
+	</div>
+				
+	<div data-role="content" style="padding: 15px;">
+		<ul data-role="listview" data-inset="true">
+			<li data-role="list-divider"><span style=" color:#2B89D0; font-stretch:narrower;">Tasks</span></li>
+		</ul>
+		<table class="table-opt" summary="Product Options">
+			<thead>
+				<tr>
+					<th>Task Name</th>
+					<th>Project</th>
+					<th>Active</th>
+				</tr>
+			</thead>
+			<tbody id="tasks_table_body">
+			</tbody>
+		</table>
+		<div id="img_loading_div" style="text-align:center">
+			<img src="loading.gif"  style="padding:20px;" width="34" >
+		</div>
+
+		<input id="load_more_btn" type="button" value="load more" style="display:none;">
+		
+	</div><!-- END DATA ROLE CONTENT-->
+
+   <!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/footer.shtml-->
+    
+ </div>
+ 
+</body>
+</html>

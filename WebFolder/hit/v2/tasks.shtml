@@ -1,0 +1,753 @@
+<!--HIT_EXECUTE
+_HIT_HTTPD_SetHTTPHeader ("Content-type";"text/html; charset=utf-8")
+
+C_TEXT(_HIT_HTMLTXT)
+ 
+If(_HIT_AuthenticateSession="Session-Authenticated-OK")
+
+Else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml?url="+HTTPD_DocumentURI)
+End if 
+ 
+-->
+<!DOCTYPE html>
+<html lang="en">
+<!-- BEGIN HEAD -->
+<head>
+	<title>Tasks</title>
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/v2/includes/InitCss.shtml-->
+	<link rel="stylesheet" href="assets/css/autocomplete.css" />
+	 
+	<style>
+		#message{
+			color:#FF0000;
+		}
+
+		.jqibox {
+			z-index:9999!important;
+		}
+	   
+	</style>
+	
+</head>
+
+<!-- END HEAD -->
+<!-- BEGIN BODY -->
+<body class="fixed-leftside fixed-header">
+	<!-- BEGIN HEADER -->	
+		<!--#4DSCRIPT/_HIT_LoadInclude/hit/v2/includes/header.shtml-->
+	<!-- END HEADER -->
+			 
+	<div class="wrapper"> 
+		
+ 		<!-- BEGIN LEFTSIDE -->
+ 		 <!--#4DIF (mPlatform="web")-->
+ 		<!--#4DSCRIPT/_HIT_LoadInclude/hit/v2/includes/left-navigation.shtml-->
+ 		<!--#4DENDIF-->
+		<!-- END LEFTSIDE -->
+	
+  
+  <!-- BEGIN RIGHTSIDE -->
+  <div class="rightside bg-grey-100"> 
+    <!-- BEGIN PAGE HEADING -->
+    <div class="page-head">
+    <div class="row">
+     	<div class="col-sm-6">
+      		<h1 class="page-title">Tasks</h1>
+            </div>
+      <!-- BEGIN BREADCRUMB -->
+       
+     	<div class="col-sm-6 ">
+      <ol class="breadcrumb sm-pullright">
+        <li><a href="javascript:void(0)" onclick="funURLHandler('index.shtml','open-index-window')"><i class="ion-home margin-right-5"></i> Dashboard</a></li>
+        <li>Tasks</li>
+      </ol>
+      </div>
+      </div>
+      <!-- END BREADCRUMB --> 
+   
+    </div>
+    <!-- END PAGE HEADING -->
+    	<div class="container-fluid">
+    		<div class="margin-bottom-15">
+     			<div class="pull-left">
+     				<div class="form-group hideComponentsClass" style="display:none;">
+      					<select class="form-control" name="proj" id="proj" onChange="__showProjectTask(this.value)">
+							<option value="">--Select Project--</option>
+								<!--#4DSCRIPT/Web_LoadProjects/-->
+								<!--4DLOOP [Projects]-->
+									<option value="<!--#4DVAR [Projects]proj_id-->" ><!--4DVAR [Projects]proj_name--></option>
+								<!--4DENDLOOP-->
+								</select>					
+						</select>
+        			</div>
+         		</div>
+         		<div class="pull-right">
+                 	<Div class="form-inline">
+               			<input type="text" class="form-control  no-border-right " placeholder="Search..." id="keyword">
+								<div class="btn-group srch-filter xs-margin-btm10">
+                               
+									<a class="btn btn-info btn-sm dropdown-toggle btn-sm filter-menu xs-margin-btm10 margin-top10-xs" style="min-width:145px; text-align:left;" data-toggle="dropdown">All
+                                            <span> 
+                                                <span class="caret"></span>
+                                                <span class="sr-only">Toggle Dropdown</span>
+                                            </span></a>
+										<ul class="dropdown-menu" role="menu">
+											<li><a href="javascript:void(0)" onClick="__showTasks('','All'); return false;">All</a></li>
+											<li><a href="javascript:void(0)" onClick="__showTasks('Active','Active'); return false;">Active</a></li>
+											<li><a href="javascript:void(0)" onClick="__showTasks('Done','Done'); return false;">Done</a></li>
+										
+										</ul>
+									</div><!-- /btn-group -->
+								
+                            <a href="javascript:void(0)" onclick="funURLHandler('task.shtml','open-task-window')" class="btn palette-carrot btn-color btn-icon-left  btn-sm  " > <i class="fa fa-plus-square-o"></i> Add New</a>
+                        </div>                                           
+       				</div>
+      				<div class="clearfix"></div>
+     			</div>
+      			<div class="row">
+        			<div class="col-md-12">
+       					<div class="panel" style="padding-top:20px;"> 
+                			<div class="panel-body no-padding-top bg-white"> 
+              					<div class="table-responsive">
+                
+                					<table class="table table-striped no-border table-hover no-margin" id="Table">
+					
+									</table>
+									<div class="text-center margin-top-10  margin-bottom-10"><button style="width: 50%;display:none;" class="btn palette-belize-hole btn-color" href="javascript:void(0);" onclick="show_more()" title="Show more" id="display_more_btn" >Show more</button></div>
+              						<div class="text-center margin-bottom-10" id="img_loading_div"><img width="32" src="assets/img/loader.gif"></div>
+              					
+              					</div>
+            				</div>
+          				</div>
+        			</div>
+        			<!-- /.col --> 
+      			</div>
+      			<!-- /.row --> 
+      
+      <!-- BEGIN FOOTER -->
+      <!--#4DSCRIPT/_HIT_LoadInclude/hit/v2/includes/footer.shtml-->
+      <!-- END FOOTER --> 
+    </div>
+    <!-- /.container-fluid --> 
+  </div>
+  <!-- /.rightside --> 
+</div>
+<!-- /.wrapper --> 
+<!-- END CONTENT --> 
+<div class="example-container">
+								 
+								 
+								<pre class="code" style="display:none;" id="no_rec_prompt">
+									var statesdemo = {
+										state0: {
+											title: 'No more records found',
+											html:'',
+											buttons: { OK: 1 },																		
+											submit:function(e,v,m,f){ 
+												//console.log(f);
+												if(v==1) {
+													$.prompt.close();
+												}
+												
+											}
+										},
+										
+									};
+									if(!($(".jqibox").length))
+									$.prompt(statesdemo);
+								</pre>
+								 
+								<pre class="code" style="display:none;" id="del_prompt">
+									var html='';
+									if(selected_set!=''){
+										html= '&lt;div id="message"&gt;&lt;/div&gt;&lt;label style="width:auto; display:inline" &gt&lt;input type="radio" class="radio" name="opt_set_del" id="opt1" value="permanentely" &gt; Permanentely &lt;/label&gt;'+
+											'&lt;label style="width:auto; display:inline" &gt;&lt;input type="radio" class="radio" name="opt_set_del" id="opt2" value="from_set"&gt; From '+selected_set+' &lt;/label&gt;';
+									}
+									else{
+										html= '';
+									}
+									
+									var statesdemo = {
+										state0: {
+											title: 'Are you sure to delete?',
+											html:html,
+											buttons: { Cancel : 0, OK: 1 },																		
+											submit:function(e,v,m,f){ 
+												//console.log(f);
+												if(v==1) {
+													if(selected_set!='' && f.opt_set_del == null){
+														e.preventDefault();
+														document.getElementById("message").innerHTML = "* Please select an option." ;
+													}else{
+														var dataString = 'deleteuuid='+deleteuuid+'&setUUID='+setUUID;
+														if(f.opt_set_del=='from_set'){
+															dataString+='&del_type=from_set';
+														}
+														else{
+															dataString+='&del_type=permanent';
+														}
+														console.log(dataString);
+														$.ajax({
+															type: "GET",
+															dataType: "json",
+															url: "deletetask.cgi",
+															data: dataString,
+															cache: false,
+															success: function(html)
+															{
+																if(html.Succ){		
+																//alert(html.Result);
+																$.prompt.close();				
+																start=0;
+																end=50;
+																jsonRow = 'loadtasks.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&set='+selected_set+'&setUUID='+setUUID;
+																if(keyword!=''){
+																	jsonRow +='&keyword='+keyword;
+																}
+																if(tab!=''){
+																	jsonRow +='&tab='+tab;
+																}
+																	$('#TableContent').html('');
+																	$('#img_loading_div').show();		
+																	load_data(jsonRow);
+																}
+															}
+														});
+													}
+												}
+												if(v==0) {
+													$.prompt.close();
+												}
+												
+											}
+										},
+										
+									};
+									
+									$.prompt(statesdemo);
+								</pre>
+								
+							</div>
+<!-- BEGIN JAVASCRIPTS -->  
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/v2/includes/InitJs.shtml-->
+
+<script type="text/javascript">
+
+var JSONdata;
+var nPageSize=25;
+var selected='';
+var start=0, end=25;
+var old_srch='',keyword='', jsonRow='', tab='', project='';
+var tablname='Tasks';
+var deleteuuid='';
+var complete=false;
+var completeScroll=false;
+var checkAllFlag=false;
+var WebAreaInit=false;
+
+function __showProjectTask(name){			
+	project=name;
+	start=0;
+	end=25;
+	tab='';
+	keyword='';
+	$("#keyword_type").val('');
+	jsonRow = 'loadtasks.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab+'&project='+project;
+	$('#TableContent').html('');
+	$('#display_more_btn').hide();
+	$('#img_loading_div').show();		
+	load_data(jsonRow);
+}
+
+function __showTasks(sel,selText){
+$('.filter-menu').html(selText+' <span class="caret"></span>');
+	
+	if(checkAllFlag==true){
+		$("#chk_all").trigger('click');
+	}
+	start=0;
+	end=25;
+	tab=sel;
+	jsonRow = 'loadtasks.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab+'&project='+project;
+	keyword= $("#keyword").val();
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}
+ 	$('#display_more_btn').hide();
+	$('#TableContent').html('');
+	$('#img_loading_div').show();		
+	load_data(jsonRow);
+}
+
+function __deleteMultipleTasks(){
+	selected='';
+	$('.check').each(function(){
+		if($(this).is(":checked")){
+			if(selected==''){
+				selected=$(this).val();
+			}
+			else{
+				selected+=","+$(this).val();
+			}
+		}
+	});
+	deleteuuid=selected;
+	code = $('#del_prompt').text();
+	(new Function(code))();
+}
+
+function __deleteSelected(deluuid) {
+	deleteuuid=deluuid;
+	code = $('#del_prompt').text();
+	(new Function(code))();
+}
+
+
+function show_load_prompt(){
+	code = $('#load_prompt').text();
+	(new Function(code))();
+}
+
+$(document).ready(function() {
+	var TableHtml='<thead><tr>';
+	if(isMobile.any()) {
+		$('.hideComponentsClass').hide();
+   		TableHtml+='<th class="vertical-middle">Name</th>';
+		TableHtml+='<th class="vertical-middle">Action</th>';
+	}else{
+		$('.hideComponentsClass').show();
+		TableHtml+='<th class="vertical-middle"><div class="checkbox checkbox-theme no-margin"><input type="checkbox" id="chk_all"><label for="chk_all" class="no-padding"></label></div></th>';
+		TableHtml+='<th class="vertical-middle">ID</th>';
+		TableHtml+='<th class="vertical-middle col-md-4">Name</th>';
+		TableHtml+='<th class="vertical-middle">Project</th>';
+		TableHtml+='<th class="vertical-middle">Start Date</th>';
+		TableHtml+='<th class="vertical-middle">End Date</th>';
+		TableHtml+='<th class="vertical-middle">Est. Hours</th>';
+		TableHtml+='<th class="vertical-middle">Rate</th>';
+		TableHtml+='<th class="vertical-middle">Time Spent</th>';
+		TableHtml+='<th class="vertical-middle">Active</th>';
+		TableHtml+='<th class="vertical-middle">Status</th>';
+		TableHtml+='<th class="vertical-middle">Action</th>';
+	}
+	TableHtml+='</tr></thead>';
+	TableHtml+='<tbody id="TableContent">';
+	TableHtml+='</tbody>';
+	$('#Table').append(TableHtml);
+	
+	$('#keyword').focus();
+	jsonRow = 'loadtasks.cgi?start='+start+'&end='+end+'&tablname='+tablname;
+	
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}	
+	 
+	load_data(jsonRow);	
+		 
+	
+	$(window).scroll(function(){
+		if ($(window).scrollTop() == $(document).height() - $(window).height()){
+		if(complete==false && completeScroll==false) {
+			$('#display_more_btn').hide();
+			$('#img_loading_div').show();
+			start=end+1;
+			end=parseInt(start)+parseInt(nPageSize);
+			jsonRow = 'loadtasks.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&project='+project;
+			if(keyword!=''){
+				jsonRow +='&keyword='+keyword;
+			}
+			if(tab!=''){
+				jsonRow +='&tab='+tab;
+			}	
+			 
+			load_data(jsonRow);	
+		}
+		}
+	});	
+	
+	//setup before functions
+	var typingTimer;                //timer identifier
+	var doneTypingInterval = 1000;  //time in ms, 5 second for example
+	
+	//on keyup, start the countdown
+	$('#keyword').keyup(function(){
+		clearTimeout(typingTimer);
+		if ($('#keyword').val) {
+			typingTimer = setTimeout(function(){
+				$('#display_more_btn').hide();
+				$('#Table tbody').html('');
+				$('#img_loading_div').show();
+				start=0;
+				end=parseInt(start)+parseInt(nPageSize);
+				tab='';
+				keyword= $("#keyword").val();
+				jsonRow = 'loadtasks.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&project='+project;
+				if(keyword!=''){
+					jsonRow +='&keyword='+keyword;
+				}
+				if(tab!=''){
+					jsonRow +='&tab='+tab;
+				}	
+				
+				load_data(jsonRow);
+			}, doneTypingInterval);
+		}
+	}).keydown(function( event ) {
+		if ( event.which == 13 ) {
+			event.preventDefault();
+	  	}
+	});		
+	
+	$('#Table').on("click","#chk_all", function(){
+		if($(this).is(":checked")){
+			checkAllFlag=true;
+			$('.check').prop('checked', true);
+		}else{
+			checkAllFlag=false;
+			$('.check').prop('checked', false);
+		}
+	});	
+    
+});
+
+function show_more(){
+	$('#display_more_btn').hide();
+	$('#img_loading_div').show();
+	start=end+1;
+	end=parseInt(start)+parseInt(nPageSize);
+	jsonRow = 'loadtasks.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&project='+project;
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}
+	if(tab!=''){
+		jsonRow +='&tab='+tab;
+	}
+	load_data(jsonRow);	
+}
+
+function load_data(jsonRow){
+	completeScroll=true;
+	
+	JSONdata=new Array();
+	$.getJSON(jsonRow,function(result){
+		
+			if(result.Alert){
+				code = $('#no_rec_prompt').text();
+				(new Function(code))();
+				complete=true;
+			}else{
+			 	if(isMobile.any()) {
+			 	$.each(result.uuid, function(i,item){
+				 	JSONdata[i]=new Array();
+				 
+					JSONdata[i][1]='<a href="task.shtml?uuid='+item+'"><i class="fa fa-pencil"></i></a>';
+				}); 
+				$.each(result.TaskName, function(i,item)
+				{
+					JSONdata[i][0]=item;
+				});
+				
+			 	}else{
+				$.each(result.uuid, function(i,item){
+				 JSONdata[i]=new Array();
+				 if(checkAllFlag==true){
+				 JSONdata[i][0]='<div class="checkbox checkbox-theme no-margin"><input class="check" checked type="checkbox" value="'+item+'" id="'+item+'"><label for="'+item+'" class="no-padding"></label></div>';
+				 }else{
+					 JSONdata[i][0]='<div class="checkbox checkbox-theme no-margin"><input class="check" type="checkbox" value="'+item+'" id="'+item+'"><label for="'+item+'" class="no-padding"></label></div>';
+				 }
+				 JSONdata[i][11]='<a href="javascript:void(0)" onclick="funURLHandler(\'task.shtml?uuid='+item+'\',\'open-task-window\')"><i class="fa fa-pencil"></i></a>';
+				});
+				
+				$.each(result.TaskID, function(i,item)
+				{
+					JSONdata[i][1]=item;
+				});
+				
+				$.each(result.TaskName, function(i,item)
+				{					
+					JSONdata[i][2]=item;
+				});
+				
+				$.each(result.ProjName, function(i,item)
+				{	
+					JSONdata[i][3]='<a href="projects.shtml?keyword='+item+'" target="_blank">'+item+'</a>';
+				});
+				
+				$.each(result.TaskStart, function(i,item)
+				{				
+					JSONdata[i][4]=item;
+				});
+				
+				$.each(result.TaskEnd, function(i,item)
+				{					
+					JSONdata[i][5]=item;
+				}); 
+				
+				$.each(result.TaskEsthour, function(i,item)
+				{					
+					JSONdata[i][6]=item;
+				});
+				
+				$.each(result.TaskRate, function(i,item)
+				{					
+					JSONdata[i][7]=item;
+				});
+				
+				$.each(result.TotalTime, function(i,item)
+				{					
+					JSONdata[i][8]=item;
+				});
+				
+				$.each(result.TaskActive, function(i,item)
+				{
+					if(item==true){
+						JSONdata[i][9]='<span class="label palette-carrot  padding-5"> ACTIVE </span>';
+					}
+					else{
+						JSONdata[i][9]='<span class="label bg-green-400 padding-5"> DONE </span>';
+					}
+				});
+				
+				$.each(result.TaskStatus, function(i,item)
+				{			
+				
+				switch(item)
+					{
+					case 'resolved':
+					  JSONdata[i][10]='<span class="label bg-green-400 padding-5">RESOLVED</span>';
+					  break;
+					case 'assigned':
+					  JSONdata[i][10]='<span class="label  bg-cyan-600  padding-5">ASSIGNED</span>';
+					  break;
+					case 'new':
+					  JSONdata[i][10]='<span class="label bg-light-blue-800 padding-5">NEW</span>';
+					  break;
+					case 'feedback':
+					  JSONdata[i][10]='<span class="label bg-blue-grey-400 padding-5"> FEEDBACK </span>';
+					  break;
+				   case 'acknowledged':
+					  JSONdata[i][10]='<span class="label bg-blue-grey-400 padding-5"> ACKNOWLEGDED  </span>';
+					  break;
+					case 'confirmed':
+					  JSONdata[i][10]='<span class="label bg-teal-500  padding-5"> CONFIRMED </span>';
+					  break;
+					default :
+					   JSONdata[i][10]='<span class="label bg-blue-700 padding-5">'+item+'</span>';
+					  }
+				});
+			
+				}
+  				
+				var table_html='';
+				$.each(JSONdata, function(i,row){
+					table_html+='<tr>';
+					$.each(row, function(i,col){
+						table_html+='<td class="vertical-middle">'+col+'</td>';
+					});
+					table_html+='</tr>';
+				});
+				
+				if(old_srch!=keyword){
+					$('#TableContent').html('');
+					old_srch=keyword;
+				}
+				
+				$('#TableContent').append(table_html);
+				complete=false;
+			$('#display_more_btn').show();
+		}
+		$('#img_loading_div').hide();
+		completeScroll=false;
+	});
+}
+</script>
+<script type="text/javascript" src="assets/js/autocomplete.js"></script>
+<script>
+	 var xhr;
+  (function( $ ) {
+    $.widget( "custom.combobox", {
+      _create: function() {
+        this.wrapper = $( "<span>" )
+          .addClass( "custom-combobox" )
+          .insertAfter( this.element );
+ 
+        this.element.hide();
+        this._createAutocomplete();
+        this._createShowAllButton();
+      },
+ 
+      _createAutocomplete: function() {
+	  var ele_select= this.element;
+        var selected = this.element.children( ":selected" ),
+          value = selected.val() ? selected.text() : "";
+ 
+        this.input = $( "<input>" )
+          .appendTo( this.wrapper )
+          .val( value )
+          .attr( "title", "" )
+          .addClass( "custom-combobox-input ui-widget ui-widget-content ui-state-default ui-corner-left" )
+          .autocomplete({
+            delay: 0,
+            minLength: 0,
+            source: $.proxy( this, "_source" )
+          })
+          .tooltip({
+            tooltipClass: "ui-state-highlight"
+          });
+ 
+        this._on( this.input, {
+          autocompleteselect: function( event, ui ) {
+		  	//alert("show all");
+            ui.item.option.selected = true;
+			
+            this._trigger( "select", event, {
+              item: ui.item.option
+            });
+			ele_select.trigger('change');
+			$("#keyword").val('');
+          },
+ 
+          autocompletechange: "_removeIfInvalid"
+        });
+      },
+ 
+      _createShowAllButton: function() {
+        var input = this.input,
+          wasOpen = false;
+ 
+        $( "<a>" )
+          .attr( "tabIndex", -1 )
+          .attr( "title", "Show All Items" )
+          .tooltip()
+          .appendTo( this.wrapper )
+          .button({
+            icons: {
+              primary: "ui-icon-triangle-1-s"
+            },
+            text: false
+          })
+          .removeClass( "ui-corner-all" )
+          .addClass( "custom-combobox-toggle ui-corner-right" )
+          .mousedown(function() {
+            wasOpen = input.autocomplete( "widget" ).is( ":visible" );
+          })
+          .click(function() {
+            input.focus();
+ 
+            // Close if already visible
+            if ( wasOpen ) {
+              return;
+            }
+ 
+            // Pass last search string as value to search for, displaying last results
+            input.autocomplete( "search", 'SHOWALL' );
+          });
+      },
+ 
+      _source: function( request, response ) {
+        //var matcher = new RegExp( $.ui.autocomplete.escapeRegex(request.term), "i" );
+		var ele_select= this.element;
+		if(request.term=='SHOWALL'){
+			response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+		
+		}
+		else
+		{
+		var jsonRow = 'getprojectsonsearch.cgi?srch='+request.term;
+		
+
+		//alert(jsonRowURLStr);
+		if(xhr) xhr.abort();
+		xhr=$.getJSON(jsonRow,function(result){
+			
+			if(result){
+				var html='<option value=""></option>';
+
+				$.each(result, function(i,item)
+				{
+					html += '<option value="'+item.id+'">'+item.value+'</option>';
+				});
+				ele_select.html(html);
+				
+				
+				response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+				
+				
+			}
+		});
+       
+	  } 
+		
+      },
+ 
+      _removeIfInvalid: function( event, ui ) {
+ 
+        // Selected an item, nothing to do
+        if ( ui.item ) {
+
+          return;
+        }
+ 
+        // Search for a match (case-insensitive)
+        var value = this.input.val(),
+          valueLowerCase = value.toLowerCase(),
+          valid = false;
+		  var ele_select= this.element;
+        this.element.children( "option" ).each(function() {
+          if ( $( this ).text().toLowerCase() === valueLowerCase ) {
+            this.selected = valid = true;	
+
+			ele_select.trigger('change');
+			$("#keyword").val('');
+            return false;
+          }
+        });
+ 
+        // Found a match, nothing to do
+        if ( valid ) {
+          return;
+        }
+ 
+        // Remove invalid value
+        this.input
+          .val( "" )
+          .attr( "title", value + " didn't match any item" )
+          .tooltip( "open" );
+        this.element.val( "" );
+        this._delay(function() {
+          this.input.tooltip( "close" ).attr( "title", "" );
+        }, 2500 );
+        this.input.data( "ui-autocomplete" ).term = "";
+      },
+ 
+      _destroy: function() {
+        this.wrapper.remove();
+        this.element.show();
+      }
+    });
+  })( jQuery );
+ 
+  $(function() {
+    $( "#proj" ).combobox();
+  });
+   </script>
+</body>
+<!-- END BODY -->

@@ -1,0 +1,872 @@
+<!--HIT_EXECUTE
+_HIT_HTTPD_SetHTTPHeader ("Content-type";"text/html; charset=utf-8")
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+C_TEXT(_HTMLTITLETXT)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+_HTMLTITLETXT:="VT CashBook Activities"
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+<link rel="stylesheet" media="all" type="text/css" href="css/jquery-impromptu.css" />
+</head>
+<body>
+
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+	
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
+
+	<!-- main container -->
+    <div class="content">
+        
+<div class="container-fluid">
+<div id="pad-wrapper">
+
+                <!-- timeslips table -->
+                <div class="table-wrapper orders-table section">
+                    <div class="row-fluid head">
+                        <div class="span12">
+                            <h4>VT CashBook Activities</h4>
+                        </div>
+                    </div>
+                    <!--<div class="pull-left">
+						<button style="margin-left:15px;" class="btn-flat success new-product margn-lft35" onclick="__deleteScripts(); return false;">Delete</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					</div>-->
+					<div class="row-fluid filter-block" style="margin-bottom:0px;">
+						<div class="pull-left">
+							<b>Date</b> From :
+							<input name="start_date" class="input-large datepicker span3" type="text" data-date-format="dd/mm/yyyy"  value="" id="start_date" readonly >
+							&nbsp;&nbsp;
+							Till :
+							<input name="end_date" class="input-large datepicker span3" type="text" data-date-format="dd/mm/yyyy"  value="" id="end_date" readonly >
+							<a href="javascript:void(0)" onclick="reset_dates()" class="btn-flat success new-product margn-lft35" style="margin-bottom:10px;margin-left:5px;">Reset Dates</a>
+						</div>
+						<div class="pull-right">
+							<input style="margin-right:10px;" name="keyword" id="keyword" type="text" class="search order-search" placeholder="Enter amout, account name, desc... " value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" />
+							<a href="vtcashbook.shtml" class="btn-flat success new-product">+ Add New VT CashBook Activity</a>
+						</div>
+                    </div>
+					<div class="row-fluid" style="margin-bottom:20px; line-height:31px;">
+						<div class="pull-left">
+							<input type="checkbox" class="saleInvoiceCheck selectedCheckClass" name="saleInvoiceCheck" value="SIN" style="margin-left:10px; margin-right:5px;margin-top:-2px;"> Sales Invoice
+							&nbsp;&nbsp;
+							<input type="checkbox" class="receiptCheck selectedCheckClass" name="receiptCheck" value="REC" style="margin-left:10px; margin-right:5px;margin-top:-2px;"> Receipts
+							&nbsp;&nbsp;
+							<input type="checkbox" class="paymentCheck selectedCheckClass" name="paymentCheck" value="PAY" style="margin-left:10px; margin-right:5px;margin-top:-2px;"> Payment
+							&nbsp;&nbsp;
+							<input type="checkbox" class="purchaseInvoiceCheck selectedCheckClass" name="purchaseInvoiceCheck" value="PIN" style="margin-left:10px; margin-right:5px;margin-top:-2px;"> Purchase Invoice
+							&nbsp;&nbsp;
+							<input type="radio" class="vatInput" name="vatRadio" value="vatInput" style="margin-right:5px;margin-top:-2px;"> Vat Input
+							&nbsp;&nbsp;
+							<input type="radio" class="vatOutput" name="vatRadio" value="vatOutput" style="margin-right:5px;margin-top:-2px;"> Vat Output
+							<a href="javascript:void(0)" onclick="resetVatFields()" class="btn-flat success new-product margn-lft35 resetVatFieldsBtn" style="margin-bottom:10px;margin-left:5px;display:none;">Reset VAT</a>
+							<a href="javascript:void(0)" onclick="vatReturn()" class="btn-flat success new-product margn-lft35 vatReturnBtn" style="margin-bottom:10px;margin-left:5px;display:none;">VAT Return</a>
+							<a href="javascript:void(0)" onclick="exportSpreadSheet()" class="btn-flat success new-product margn-lft35 exportSpreadSheetBtn" style="margin-bottom:10px;margin-left:5px;display:none;">Export Spreadsheet</a>
+							
+						</div>
+						<div class="pull-right">
+							<button style="margin-left:15px;" class="btn-flat success new-product margn-lft35" onclick="__deleteScripts(); return false;">Delete</button>
+						</div>
+                    </div>
+                    <div class="row-fluid">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                	<th class="span1">
+										<input name="chek_all[]" type="checkbox" class="chk_all" />
+                                    </th>
+                                    <th class="span2">
+                                       ENTRY DATE
+                                    </th>
+                                    <th class="span2">
+                                       AMOUNT
+                                    </th>
+                                    <th class="span2">
+                                       REFRENCE
+                                    </th>
+                                    <th class="span2">
+                                       PRIMARY ACCOUNT
+                                    </th>
+                                    <th class="span2">
+                                       ANALYSIS
+                                    </th>
+                                    <th class="span3">
+										<span class="line"></span>
+                                        ENTRY DESCRIPTION
+                                    </th>
+                                    <th class="span2">
+                                       NEED SYNC
+                                    </th>
+									<th class="span3">
+                                        <span class="line"></span>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tfoot>
+                            <tr>  	
+                            	<th align="left">&nbsp;</th>
+                                <th align="left">ENTRY DATE</th>
+                                <th align="left">AMOUNT</th>
+                                <th align="left">REFRENCE</th>
+                                <th align="left">PRIMARY ACCOUNT</th>
+                                <th align="left">ANALYSIS</th>
+                                <th align="left">ENTRY DESCRIPTION</th>
+                                <th align="left">NEED SYNC</th>
+                            </tr>
+                        	</tfoot>
+                            <tbody id="vt_cashbook_activity_table_body">
+
+                            </tbody>
+                        </table>
+						<div id="img_loading_div" style="text-align:center">
+		<img src="loading.gif"  style="padding:20px;" width="34" >
+		</div>
+                    </div>
+                </div>
+                <!-- end timeslips table -->
+
+            </div>
+        </div>
+    </div>
+    <!-- end main container -->
+
+	<div class="example-container">
+		<pre class="code" style="display:none;" id="no_rec_prompt">
+			var statesdemo = {
+				state0: {
+					title: 'No more records found',
+					html:'',
+					buttons: { OK: 1 },																		
+					submit:function(e,v,m,f){ 
+						//console.log(f);
+						if(v==1) {
+							$.prompt.close();
+						}
+						
+					}
+				},
+				
+			};
+			if(!($(".jqibox").length))
+			$.prompt(statesdemo);
+		</pre>
+	</div>
+
+ <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml-->
+	<script type="text/javascript" src="js/jquery-impromptu.js"></script>  
+    <script src="js/ui/jquery-ui.js"></script>
+	<script src="js/bootstrap.datepicker.js"></script>
+	<script src="js/jquery.uniform.min.js"></script>
+	
+<script>
+var JSONdata;
+var start=0, end=50;
+var old_srch='',keyword='', jsonRow='', tab='', set='',start_date='',end_date='',date_selected='no';
+var tablname='vt_cashbook_activity';
+var complete=false;
+var completeScroll=false;  
+var checkAllFlag=false;
+//var selectedCheckbox='';
+var SIN='no';
+var PIN='no';
+var PAY='no';
+var REC='no';
+var enteriesSelected='no';
+
+function vatReturn(){
+	/**$.prompt({
+		state0: {
+			title: 'Please select VAT type to export!',
+			html:'',
+			buttons: { OK: 1 },																		
+			submit:function(e,v,m,f){ 
+				if(v==1) {
+					$.prompt.close();
+				}		
+			}
+		}		
+	});**/ 
+}
+function exportSpreadSheet(){
+	selected='';
+	$('.check').each(function(){
+		if($(this).is(":checked")){
+			if(selected==''){
+				selected=$(this).val();
+			}
+			else{
+				selected+=","+$(this).val();
+			}
+		}
+	
+	});
+	if(selected!=''){
+		console.log('export');
+	}
+	else{
+		$.prompt({
+			state0: {
+				title: 'Please select some VT cashbook enteries to export!',
+				html:'',
+				buttons: { OK: 1 },																		
+				submit:function(e,v,m,f){ 
+					//console.log(f);
+					if(v==1) {
+						$.prompt.close();
+					}
+					
+				}
+			},
+				
+		});
+		complete=true;
+	}
+}
+function reset_dates(){
+	if(checkAllFlag==true){
+		$(".chk_all").trigger('click');
+	}
+	start=0;
+	end=25;
+	$('#start_date').val('');
+	$('#end_date').val('');
+	$('#start_date').datepicker('setEndDate', null);
+	$('#end_date').datepicker('setStartDate', null);
+	
+	start_date=$('#start_date').val();
+	end_date=$('#end_date').val();
+	keyword= $("#keyword").val();
+	$('#vt_cashbook_activity_table_body').html('');
+			$('#img_loading_div').show();
+	jsonRow = 'loadvtcbactivity.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&start_date='+start_date+'&end_date='+end_date+'date_selected=no';	
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}	
+		if(SIN=='yes'){
+			jsonRow +='&SIN='+SIN;
+		}
+		if(PIN=='yes'){
+			jsonRow +='&PIN='+PIN;
+		}
+		if(PAY=='yes'){
+			jsonRow +='&PAY='+PAY;
+		}
+		if(REC=='yes'){
+			jsonRow +='&REC='+REC;
+		}
+		if(REC=='yes' || PAY=='yes' || SIN=='yes' || PIN=='yes'){
+			enteriesSelected='yes';
+		}else{
+			enteriesSelected='no';
+		}
+		jsonRow +='&enteriesSelected='+enteriesSelected;
+	load_data(jsonRow);	
+}
+
+$(document).ready(function() {
+	
+	$('#keyword').focus();
+	keyword= $("#keyword").val();
+	jsonRow = 'loadvtcbactivity.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&start_date='+start_date+'&end_date='+end_date;	
+	if(start_date!='' || end_date!=''){
+		jsonRow +='&date_selected=yes';
+	}else{
+		jsonRow +='&date_selected=no';
+	}
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}		
+	if(SIN=='yes'){
+			jsonRow +='&SIN='+SIN;
+		}
+		if(PIN=='yes'){
+			jsonRow +='&PIN='+PIN;
+		}
+		if(PAY=='yes'){
+			jsonRow +='&PAY='+PAY;
+		}
+		if(REC=='yes'){
+			jsonRow +='&REC='+REC;
+		}
+		if(REC=='yes' || PAY=='yes' || SIN=='yes' || PIN=='yes'){
+			enteriesSelected='yes';
+		}else{
+			enteriesSelected='no';
+		}
+		jsonRow +='&enteriesSelected='+enteriesSelected;
+	load_data(jsonRow);			 
+	
+	$(window).scroll(function(){
+		if ($(window).scrollTop() == $(document).height() - $(window).height()){
+		if(complete==false && completeScroll==false) {
+			$('#img_loading_div').show();
+			//alert("scrolling...");
+			start=end+1;
+			end=start+25;
+			jsonRow = 'loadvtcbactivity.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&start_date='+start_date+'&end_date='+end_date;
+			if(keyword!=''){
+				jsonRow +='&keyword='+keyword;
+			}
+			if(start_date!='' || end_date!=''){
+				jsonRow +='&date_selected=yes';
+			}else{
+				jsonRow +='&date_selected=no';
+			}		
+			if(SIN=='yes'){
+				jsonRow +='&SIN='+SIN;
+			}
+			if(PIN=='yes'){
+				jsonRow +='&PIN='+PIN;
+			}
+			if(PAY=='yes'){
+				jsonRow +='&PAY='+PAY;
+			}
+			if(REC=='yes'){
+				jsonRow +='&REC='+REC;
+			}
+			if(REC=='yes' || PAY=='yes' || SIN=='yes' || PIN=='yes'){
+				enteriesSelected='yes';
+			}else{
+				enteriesSelected='no';
+			}
+			jsonRow +='&enteriesSelected='+enteriesSelected;
+			
+			load_data(jsonRow);
+		}
+		
+		}
+	});	
+	
+	//setup before functions
+	var typingTimer;                //timer identifier
+	var doneTypingInterval = 1000;  //time in ms, 5 second for example
+	
+	//on keyup, start the countdown
+	$('#keyword').keyup(function(){
+		clearTimeout(typingTimer);
+		if ($('#keyword').val) {
+			typingTimer = setTimeout(function(){
+				//do stuff here e.g ajax call etc....
+				$('#vt_cashbook_activity_table_body').html('');
+				$('#img_loading_div').show();
+				start=0;
+				end=start+25;
+				tab='';
+				keyword= $("#keyword").val();
+				jsonRow = 'loadvtcbactivity.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&start_date='+start_date+'&end_date='+end_date;
+				if(keyword!=''){
+					jsonRow +='&keyword='+keyword;
+				}
+				if(start_date!='' || end_date!=''){
+					jsonRow +='&date_selected=yes';
+				}else{
+					jsonRow +='&date_selected=no';
+				}	
+				if(SIN=='yes'){
+					jsonRow +='&SIN='+SIN;
+				}
+				if(PIN=='yes'){
+					jsonRow +='&PIN='+PIN;
+				}
+				if(PAY=='yes'){
+					jsonRow +='&PAY='+PAY;
+				}		
+				if(REC=='yes'){
+					jsonRow +='&REC='+REC;
+				}
+				if(REC=='yes' || PAY=='yes' || SIN=='yes' || PIN=='yes'){
+					enteriesSelected='yes';
+				}else{
+					enteriesSelected='no';
+				}
+				jsonRow +='&enteriesSelected='+enteriesSelected;
+				load_data(jsonRow);
+			}, doneTypingInterval);
+		}
+	});		
+	
+	
+	$('#start_date').datepicker({"autoclose": true}).on('changeDate', function (ev) {
+		start_date=$('#start_date').val();
+		var arrStartDate= $('#start_date').val().split('/');
+		var dateText = new Date(arrStartDate[1]+'/'+arrStartDate[0]+'/'+arrStartDate[2]);
+		$('#end_date').datepicker('setStartDate', dateText);
+		
+		$('#vt_cashbook_activity_table_body').html('');
+		$('#img_loading_div').show();
+		if(checkAllFlag==true){
+			$(".chk_all").trigger('click');
+		}
+		start=0;
+		end=25;
+		keyword= $("#keyword").val();
+		jsonRow = 'loadvtcbactivity.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&start_date='+start_date+'&end_date='+end_date;
+		if(keyword!=''){
+			jsonRow +='&keyword='+keyword;
+		}
+		if(start_date!='' || end_date!=''){
+			jsonRow +='&date_selected=yes';
+		}else{
+			jsonRow +='&date_selected=no';
+		}
+		if(SIN=='yes'){
+			jsonRow +='&SIN='+SIN;
+		}
+		if(PIN=='yes'){
+			jsonRow +='&PIN='+PIN;
+		}
+		if(PAY=='yes'){
+			jsonRow +='&PAY='+PAY;
+		}
+		if(REC=='yes'){
+			jsonRow +='&REC='+REC;
+		}
+		if(REC=='yes' || PAY=='yes' || SIN=='yes' || PIN=='yes'){
+			enteriesSelected='yes';
+		}else{
+			enteriesSelected='no';
+		}
+		jsonRow +='&enteriesSelected='+enteriesSelected;
+		load_data(jsonRow);
+	});
+	$('#end_date').datepicker({"autoclose": true}).on('changeDate', function (ev) {
+		end_date=$('#end_date').val();
+		var arrEndDate= $('#end_date').val().split('/');
+		var dateText = new Date(arrEndDate[1]+'/'+arrEndDate[0]+'/'+arrEndDate[2]);
+		
+		$('#start_date').datepicker('setEndDate', dateText);
+		
+		$('#vt_cashbook_activity_table_body').html('');
+		$('#img_loading_div').show();
+		if(checkAllFlag==true){
+			$(".chk_all").trigger('click');
+		}
+		start=0;
+		end=25;
+		keyword= $("#keyword").val();
+		jsonRow = 'loadvtcbactivity.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&start_date='+start_date+'&end_date='+end_date;
+		if(keyword!=''){
+			jsonRow +='&keyword='+keyword;
+		}
+		if(start_date!='' || end_date!=''){
+			jsonRow +='&date_selected=yes';
+		}else{
+			jsonRow +='&date_selected=no';
+		}
+		if(SIN=='yes'){
+			jsonRow +='&SIN='+SIN;
+		}
+		if(PIN=='yes'){
+			jsonRow +='&PIN='+PIN;
+		}
+		if(PAY=='yes'){
+			jsonRow +='&PAY='+PAY;
+		}
+		if(REC=='yes'){
+			jsonRow +='&REC='+REC;
+		}
+		if(REC=='yes' || PAY=='yes' || SIN=='yes' || PIN=='yes'){
+			enteriesSelected='yes';
+		}else{
+			enteriesSelected='no';
+		}
+		jsonRow +='&enteriesSelected='+enteriesSelected;
+		load_data(jsonRow);
+	});
+	
+	$('#start_date').datepicker().on('changeDate', function (ev) {
+		$(this).datepicker('hide');
+	});
+	$('#end_date').datepicker().on('changeDate', function (ev) {
+		$(this).datepicker('hide');
+	});	
+	// toggle all checkboxes from a table when header checkbox is clicked
+  	$(".table th input:checkbox").click(function () {
+  		$checks = $(this).closest(".table").find("tbody").find(".check");
+  		if ($(this).is(":checked")) {
+			checkAllFlag=true;
+			$('.chk_all').prop("checked", true);
+  			$checks.prop("checked", true);
+  		} else {
+			checkAllFlag=false;
+			$('.chk_all').prop("checked", false);
+  			$checks.prop("checked", false);
+  		}  		
+  	});
+	
+	$('input[type=radio][name=vatRadio]').change(function() {
+		$('.resetVatFieldsBtn').show();
+		$('.vatReturnBtn').show();
+		$('.exportSpreadSheetBtn').show();
+		
+        if (this.value == 'vatOutput') {
+			$('.paymentCheck').prop('checked', false);
+			$('.receiptCheck').prop('checked', true);
+			$('.purchaseInvoiceCheck').prop('checked', false);
+			$('.saleInvoiceCheck').prop('checked', false);
+			
+		    $("input.saleInvoiceCheck").attr("disabled", true);
+		    $("input.receiptCheck").attr("disabled", true);
+		    $("input.purchaseInvoiceCheck").attr("disabled", true);
+			$('input.paymentCheck').prop('disabled', false);
+			__filterResults();
+        }else if (this.value == 'vatInput') {
+			$('.paymentCheck').prop('checked', true);
+			$('.receiptCheck').prop('checked', false);
+			$('.purchaseInvoiceCheck').prop('checked', false);
+			$('.saleInvoiceCheck').prop('checked', false);
+			$("input.saleInvoiceCheck").prop("disabled", true);
+			$("input.paymentCheck").attr("disabled", true);
+		    $("input.receiptCheck").attr("disabled", false);
+		    $("input.purchaseInvoiceCheck").attr("disabled", true);
+		    __filterResults();
+        }
+    });
+    
+    $("input.saleInvoiceCheck").on("click", function() {
+   		__filterResults();
+  	});
+  	
+  	$("input.receiptCheck").on("click", function() {
+   		__filterResults();
+  	});
+  	
+  	$("input.purchaseInvoiceCheck").on("click", function() {
+   		__filterResults();
+  	});
+
+	$("input.paymentCheck").on("click", function() {
+   		__filterResults();
+  	});
+
+
+});
+
+function __filterResults(){
+	/**selectedCheckbox='';**/
+	$('.selectedCheckClass').each(function(){
+		var selected= $(this).val();
+		var setValue='no';
+		if($(this).is(":checked")){
+			setValue='yes';
+		}else{
+			setValue='no';
+		}
+		if(selected=='PAY'){
+			PAY=setValue
+		}else if(selected=='PIN'){
+			PIN=setValue
+		}else if(selected=='REC'){
+			REC=setValue;
+		}else if(selected=='SIN'){
+			SIN=setValue
+		}
+	});
+	
+		
+		$('#vt_cashbook_activity_table_body').html('');
+		$('#img_loading_div').show();
+		if(checkAllFlag==true){
+			$(".chk_all").trigger('click');
+		}
+		start=0;
+		end=25;
+		keyword= $("#keyword").val();
+		jsonRow = 'loadvtcbactivity.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&start_date='+start_date+'&end_date='+end_date;
+		if(keyword!=''){
+			jsonRow +='&keyword='+keyword;
+		}
+		if(start_date!='' || end_date!=''){
+			jsonRow +='&date_selected=yes';
+		}else{
+			jsonRow +='&date_selected=no';
+		}
+		
+		/**if(selectedCheckbox!=''){
+			jsonRow +='&enteries='+selectedCheckbox;
+			enteriesSelected='yes';
+		}else{
+			enteriesSelected='no';
+		}**/
+		
+		if(SIN=='yes'){
+			jsonRow +='&SIN='+SIN;
+		}
+		if(PIN=='yes'){
+			jsonRow +='&PIN='+PIN;
+		}
+		if(PAY=='yes'){
+			jsonRow +='&PAY='+PAY;
+		}
+		if(REC=='yes'){
+			jsonRow +='&REC='+REC;
+		}
+		if(REC=='yes' || PAY=='yes' || SIN=='yes' || PIN=='yes'){
+			enteriesSelected='yes';
+		}else{
+			enteriesSelected='no';
+		}
+		jsonRow +='&enteriesSelected='+enteriesSelected;
+		load_data(jsonRow);
+}
+
+function resetVatFields(){
+	$('.resetVatFieldsBtn').hide();
+	$('.vatReturnBtn').hide();
+	$('.exportSpreadSheetBtn').hide();
+	$("input[type=radio][name=vatRadio]").removeAttr("checked");
+	$('.paymentCheck').prop('checked', false);
+	$('.receiptCheck').prop('checked', false);
+	$('.purchaseInvoiceCheck').prop('checked', false);
+	$('.saleInvoiceCheck').prop('checked', false);
+	$("input.saleInvoiceCheck").prop("disabled", false);
+	$("input.paymentCheck").attr("disabled", false);
+	$("input.receiptCheck").attr("disabled", false);
+	$("input.purchaseInvoiceCheck").attr("disabled", false);
+	__filterResults();
+}
+
+function __deleteScripts()
+{
+	selected='';
+	$('.check').each(function(){
+		if($(this).is(":checked")){
+			if(selected==''){
+				selected=$(this).val();
+			}
+			else{
+				selected+=","+$(this).val();
+			}
+		}
+	
+	});
+	if(selected!=''){
+		var statesdemo1 = {
+			state0: {
+				title: 'Are you sure to delete the entries?',
+				html:'',
+				buttons: { Yes: 1, No : 0 },																		
+				submit:function(e,v,m,f){ 
+					if(v==1) {
+						console.log(selected);
+						var jsonRowURLStr = 'managevtactivity.cgi?select_uuids='+selected;
+						$.getJSON(jsonRowURLStr,function(result){
+							if(result.Success){
+								keyword= $("#keyword").val();
+								if(checkAllFlag==true){
+									$(".chk_all").trigger('click');
+								}
+								jsonRow = 'loadvtcbactivity.cgi?start='+start+'&end='+end+'&tablname='+tablname;	
+								if(keyword!=''){
+									jsonRow +='&keyword='+keyword;
+								}	
+								$('#vt_cashbook_activity_table_body').html('');
+								$('#img_loading_div').show();
+								load_data(jsonRow);	
+							}else if(result.Error){
+								var statesdemo = {
+									state0: {
+										title: result.Error,
+										html:'',
+										buttons: { OK: 1 },																		
+										submit:function(e,v,m,f){ 
+											if(v==1) {
+												$.prompt.close();
+											}
+											
+										}
+									},
+									
+								};
+								if(!($(".jqibox").length))
+								$.prompt(statesdemo);
+							}
+						});
+					}else {
+						$.prompt.close();
+					}
+				}
+			},
+		};
+		$.prompt(statesdemo1);
+	}
+	else{
+		code = $('#no_selection_prompt').text();
+		(new Function(code))();
+		complete=true;
+		//alert("Please select invoices");
+	}
+}
+
+
+function __showAllvt_cashbook_activity()
+{
+	if(checkAllFlag==true){
+		$(".chk_all").trigger('click');
+	}
+	start=0;
+	end=25;
+	$('#keyword').val('');		
+	jsonRow = 'loadvtcbactivity.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&start_date='+start_date+'&end_date='+end_date;
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+		jsonRow +='&keyword='+"";
+	}	
+	if(start_date!='' || end_date!=''){
+		jsonRow +='&date_selected=yes';
+	}else{
+		jsonRow +='&date_selected=no';
+	}
+	
+	if(SIN=='yes'){
+			jsonRow +='&SIN='+SIN;
+		}
+		if(PIN=='yes'){
+			jsonRow +='&PIN='+PIN;
+		}
+		if(PAY=='yes'){
+			jsonRow +='&PAY='+PAY;
+		}
+		if(REC=='yes'){
+			jsonRow +='&REC='+REC;
+		}
+		if(REC=='yes' || PAY=='yes' || SIN=='yes' || PIN=='yes'){
+			enteriesSelected='yes';
+		}else{
+			enteriesSelected='no';
+		}
+		jsonRow +='&enteriesSelected='+enteriesSelected;
+	
+	$('#vt_cashbook_activity_table_body').html('');
+	$('#img_loading_div').show();	
+	load_data(jsonRow);
+}
+var entry_uuid=new Array();
+function load_data(jsonRow){
+	completeScroll=true;
+	JSONdata=new Array();
+	$.getJSON(jsonRow,function(result){
+			if(result.Alert){
+				code = $('#no_rec_prompt').text();
+				(new Function(code))();
+				complete=true;
+			}
+			else{
+			 	
+			 	$.each(result.uuid, function(i,item)
+				{	
+					JSONdata[i]=new Array();
+					entry_uuid[i]=item;
+					if(checkAllFlag==true){
+					JSONdata[i][0]='<input name="check" checked class="check" type="checkbox" id="check" value="'+item+'">';
+					}else{
+					JSONdata[i][0]='<input name="check" class="check" type="checkbox" id="check" value="'+item+'">';
+					}
+					JSONdata[i][8]+='<input type="hidden" value="'+item+'">';
+					JSONdata[i][8]='<ul class="actions"><li><a href="vtcashbook.shtml?uuid='+item+'"><i class="table-edit"></i></a></li><li><i class="table-settings"></i></li><li class="last"><i class="table-delete"></i></li></ul>';					
+				});
+				
+				$.each(result.entry_date, function(i,item)
+				{
+					JSONdata[i][1]=item;
+						
+				});
+				
+				$.each(result.entry_amount, function(i,item)
+				{
+					JSONdata[i][2]=item;
+						
+				});
+				
+				$.each(result.entry_ref, function(i,item)
+				{
+					JSONdata[i][3]=item;
+						
+				});
+				
+				$.each(result.primary_account, function(i,item)
+				{
+					JSONdata[i][4]=item;
+						
+				});
+				
+				$.each(result.analysis_code, function(i,item)
+				{
+					JSONdata[i][5]=item;
+						
+				});
+				
+				$.each(result.entry_description, function(i,item)
+				{
+					JSONdata[i][6]=item;
+						
+				});
+   
+				$.each(result.push_to_vt_cashbook, function(i,item)
+				{
+					if(item==true){
+						JSONdata[i][7]='<label><input name="push_to_vt_cashbook" class="" type="checkbox" value="true" id="push_to_vt_cashbook"  checked onchange="change_status(this,\''+entry_uuid[i]+'\')" > push to vt cashbook </label>'
+					}
+					else{
+						JSONdata[i][7]='<label><input name="push_to_vt_cashbook" class="" type="checkbox" value="true" id="push_to_vt_cashbook" onchange="change_status(this,\''+entry_uuid[i]+'\')"> push to vt cashbook </label>'
+					}
+						
+				});
+				
+				var table_html='';
+				
+				$.each(JSONdata, function(i,row)
+				{
+				
+					table_html+='<tr >';
+					
+					$.each(row, function(i,col){
+						table_html+='<td>'+col+'</td>';
+					});
+					table_html+='</tr>';
+				});
+				if(old_srch!=keyword){
+					$('#vt_cashbook_activity_table_body').html('');
+					old_srch=keyword;
+				}
+				//alert(table_html);
+				
+				$('#vt_cashbook_activity_table_body').append(table_html);
+				complete=false;
+			
+		}
+		$('#img_loading_div').hide();
+			completeScroll=false;
+		});
+}
+function change_status(id,uuid){
+	var entry_enabled='';
+	if($(id).is(":checked")){
+		var selected= $(id).val();
+		if(selected){
+			entry_enabled= true;
+		}
+	}
+	
+	var jsonRowURLStr = 'managevtactivity.cgi?select_uuids='+uuid+'&push_to_vt_cashbook='+entry_enabled+'&action=edit';
+	console.log(jsonRowURLStr);
+	$.getJSON(jsonRowURLStr,function(result){
+		console.log(result);
+	});
+}
+    </script>
+
+    
+</body>
+</html>

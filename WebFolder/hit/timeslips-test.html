@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+
+<style>
+.table{
+	padding:0px;
+	margin:0px;
+	text-align:left;
+
+}
+
+.table th{
+	background:#0270C0;
+	color:#fff;
+	padding:10px;
+}
+
+.table td{
+	background-color:#E7E5E5;
+	color:#4B4B4B;
+	padding:10px;
+	}
+
+</style>
+
+
+
+
+<!-- main container -->
+    <div class="content">
+        
+        <div class="container-fluid">
+            <div id="pad-wrapper">
+
+                <!-- timeslips table -->
+                <div class="table-wrapper orders-table section">
+                   
+					
+
+                    <div class="row-fluid">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th class="span4">
+                                        Status
+                                    </th>
+									 <th class="span4">
+                                        EstAmount
+                                    </th>
+									 <th class="span4">
+                                        Project 
+                                    </th>
+									
+									 <th class="span4">
+Start                                    </th>
+									
+									 <th class="span4">
+                                         	End
+                                    </th>
+									 
+									
+                                </tr>
+                            </thead>
+                            
+                            <tbody id="timeslip_table_body">
+                            
+                            </tbody>
+                        </table>
+					
+                    </div>
+                </div>
+                <!-- end timeslips table -->
+
+            </div>
+        </div>
+    </div>
+
+   
+	<!-- scripts -->
+<script src="js/jquery-latest.js"></script>
+
+<script>
+$(document).ready(function() {	
+	$.getJSON("loadtimeslips.cgi?start=1&end=40", function (response){
+		var JSONDataArr=[];
+		var tableContent="";
+		$.each(response.ProjName, function (i, item){
+			JSONDataArr[i]=new Array();
+			JSONDataArr[i][0]=item;
+		});
+		
+		$.each (response.EmpName, function (i, item){
+			JSONDataArr[i][1]=item;
+		});
+		
+		$.each (response.Status, function (i, item){
+			JSONDataArr[i][2]=item;
+		});
+		
+		$.each (response.Start, function (i, item){
+			JSONDataArr[i][3]=item;
+		});
+		
+		$.each (response.End, function (i, item){
+			JSONDataArr[i][4]=item;
+		});
+		
+		$.each(JSONDataArr, function (i,row){
+		tableContent+="<tr>";
+		$.each(row, function (i,row1){
+		tableContent+="<td>"+row1+"</td>";
+		});
+	
+	tableContent+="</tr>";
+	
+});
+$("#timeslip_table_body").html(tableContent);
+		
+	});
+	
+});
+
+
+
+  </script>  
+  
+  
+    
+  
+</body>
+</html>

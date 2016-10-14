@@ -1,0 +1,858 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+
+//if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+ALL RECORDS([Tax_Codes])
+QUERY([purchase_invoices];[purchase_invoices]uuid=_HIT_WebApp_GetField ("uuid"))
+QUERY([purchase_invoice_items];[purchase_invoice_items]payment_uuid=[purchase_invoices]uuid)
+QUERY([Companies];[Companies]uuid=[purchase_invoices]uuid_company)
+QUERY([Projects];[Projects]uuid=[purchase_invoices]project_uuid)
+QUERY([bank_accounts];[bank_accounts]id=[purchase_invoices]bank_paid_from_id)
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+//else
+//_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+//end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+
+C_BOOLEAN(mUserIsCurrentBool)
+mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
+mUserIsCurrentBool:=false
+-->
+<!DOC html>
+<html>
+<head>
+	<title>Tenthmatrix CRM App : Purchase Invoice</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- bootstrap -->
+	<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="bootstrap/css/bootstrap-responsive.min.css" />
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/app/includes/header.shtml-->
+	<style type="text/css">
+	.custom-combobox {
+    position: relative;
+    display: inline-block;
+  }
+  .custom-combobox-toggle {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    margin-left: -1px;
+    padding: 0;
+    /* support: IE7 */
+    *height: 1.7em;
+    *top: 0.1em;
+  }
+  .custom-combobox-input {
+    margin: 0;
+    padding: 0.3em;
+  }
+  .ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {
+  	width:auto;
+	height:auto;
+	 background: none repeat scroll 0% 0% #FFF;
+	 border: 1px solid #B6B6B6;
+  }
+  .ui-autocomplete{
+  	max-height:300px;
+	overflow:scroll;
+  }
+  
+  .ui-autocomplete li a{
+  	color: #737f8d;
+	text-shadow: 1px 1px 1px #fff;
+  }
+  .ui-widget-content {
+    border: 1px solid #B6B6B6;
+	width: 275px;
+	}
+	
+	#items input {
+	width:100px;
+	height: auto;
+	}
+	
+	#dlg_tax_rate {
+	height: auto;
+	}
+	
+  #message, #tax_message{
+	color:#FF0000;
+}
+
+input[type="text"] + label.error, textarea + label.error{
+	margin-top:0px;
+	}
+	</style>
+</head>
+<body>
+
+	<!-- main container -->
+    <div class="content wide-content">
+        <div class="container-fluid">
+            <div id="pad-wrapper" class="form-page">
+				<div class="row-fluid">
+				<form name="PurchaseInvoiceForm" action="savepurchaseinvoice.cgi" class="form-comment form_validation_reg" method="post"> 
+					<div class="span9 form-horizontal well">
+						<fieldset>
+						<input name="purchase_uuid" class="span9" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="purchase_uuid">
+						<input name="purchase_id" class="span9" type="hidden" value="<!--#4DVAR [purchase_invoices]id-->" id="purchase_id">
+							<div class="control-group">
+										<label class="control-label">Payment Date <span class="f_req">*</span></label>
+										<div class="controls">
+										<div class="input-append date" id="dp1">
+										<input class="span10" data-date-format="dd/mm/yyyy" type="text" <!--#4DIF ([purchase_invoices]payment_date=!00/00/00!)-->value=""<!--4DELSE-->value="<!--#4DVAR [purchase_invoices]payment_date-->"<!--4DENDIF--> name="payment_date" id="payment_date" readonly ><span class="add-on"><i class="splashy-calendar_day"></i></span>
+																	</div>	
+										</div>								
+							</div>
+							        
+							<div class="control-group">
+										<label class="control-label">Beneficiary Name <span class="f_req">*</span></label>
+										<div class="ui-widget" style="margin-left: 160px;">
+											<select id="Client_ID" name="Client_ID">
+												<!--#4DIF (Records in selection([purchase_invoices])=0)-->
+											
+												<!--#4DELSE-->
+											<option value="<!--4DVAR [Companies]uuid-->" selected><!--4DVAR [Companies]company_Name--></option>									 
+												<!--#4DENDIF-->
+											</select>
+										</div>		
+							</div>
+							
+							<div class="control-group">
+										<label class="control-label">Beneficiary Address</label>
+										<div class="controls">
+										<textarea name="beneficiary_address" class="span8" rows="4" id="beneficiary_address"><!--#4DVAR [purchase_invoices]beneficiary_address --></textarea>										
+									</div>	
+							</div>
+
+							
+							<div class="control-group">
+										<label class="control-label">Payment Method <span class="f_req">*</span></label>
+									<div class="controls">
+										<input class="span8" name="payment_method" id="payment_method" type="text" value="<!--#4DVAR [purchase_invoices]payment_method-->" >
+									</div>
+							</div>
+							
+							
+							
+							<div class="control-group">
+										<label class="control-label">Project </label>
+										<div class="ui-widget" id="div_proj" style="margin-left: 160px;">
+											<select name="Project_UUID" id="Project_UUID">
+											<!--#4DIF (Records in selection([purchase_invoices])=0)-->
+												
+											 <!--#4DELSE-->
+												 <option value="<!--#4DVAR [Projects]uuid-->" selected><!--4DVAR [Projects]proj_name--></option>									 
+											 <!--#4DENDIF-->
+											</select>
+										</div>
+							</div>
+							
+							
+							
+							<div class="control-group">
+										<label class="control-label">Employee <span class="f_req">*</span></label>
+								<div class="controls">
+										<Select name="employee_uuid" id="employee_uuid" class="span8">
+<!--HIT_EXECUTE
+_HIT_HTMLTXT:=""
+QUERY([Employees];[Employees]emp_active=True)
+ORDER BY([Employees];[Employees]emp_last_name;>)
+
+For (_HIT_COUNTER;1;Records in selection([Employees]))
+_HIT_HTMLTXT:=_HIT_HTMLTXT+"<option value=\""+[Employees]uuid+"\""
+If ([purchase_invoices]employee_uuid=[Employees]uuid)
+_HIT_HTMLTXT:=_HIT_HTMLTXT+" selected"
+Else 
+End if 
+_HIT_HTMLTXT:=_HIT_HTMLTXT+">"+[Employees]emp_first_name+" "+[Employees]emp_last_name+"</option>"
+NEXT RECORD([Employees])
+End for 
+-->
+									</select>   										
+									</div>
+							</div>
+							
+							<div class="control-group">
+										<label class="control-label">Payment Notes </label>
+									<div class="controls">
+										<textarea name="payment_notes" class="span8" rows="4" id="payment_notes"><!--#4DVAR [purchase_invoices]payment_notes --></textarea>
+									</div>
+							</div>
+							
+							
+							
+							<div class="control-group">
+										
+									<div class="controls">
+									
+										<label class="checkbox" style="vertical-align:inherit;">
+										<input name="is_cost_of_sales"  type="checkbox" value="true" id="is_cost_of_sales" <!--#4DIF ([purchase_invoices]is_cost_of_sales)-->checked<!--4DELSE--><!--4DENDIF--> >&nbsp;Cost of Sales
+										</label>
+									</div>
+							</div>
+							
+							<div class="control-group">
+							
+							<table id="items" class="items table table-condensed table-striped" data-provides="rowlink">
+		<thead>
+		  <tr class="item">
+		      <th>Line Number</th>
+		      <th>Item</th>
+		      <th>Quantity</th>
+			  <th>Unit Price</th>
+			  <th>Total</th>
+			  <th colspan="2">Actions</th>
+		  </tr>
+		  </thead>
+		  <tbody>
+		  
+		<!--#4DIF(Records in selection([purchase_invoices])=1)-->
+			  <!--#4DLOOP [purchase_invoice_items]-->
+
+					<tr class="item-row" id="<!--#4DHTMLVAR [purchase_invoice_items]item_id-->">
+					<td class="item-id">
+					<span class="s_line_number" ><!--#4DHTMLVAR [purchase_invoice_items]line_number--></span>
+					<div><input type="text" class="line_number" name="line_number" style="display:none;" value="<!--#4DHTMLVAR [purchase_invoice_items]line_number-->" ></div>
+					<input class="item_uuid" name="item_uuid" type="hidden" value="<!--#4DHTMLVAR [purchase_invoice_items]item_uuid-->" />
+					<input class="item_id" name="item_id" type="hidden" value="<!--#4DHTMLVAR [purchase_invoice_items]item_id-->" />
+					</td>
+					<td >
+					<span class="s_item_purchased" ><!--#4DHTMLVAR [purchase_invoice_items]item_purchased--></span>
+					<div><input type="text" class="item_purchased" name="item_purchased" style="display:none;" value="<!--#4DHTMLVAR [purchase_invoice_items]item_purchased-->" ></div>
+					</td>
+					<td>
+					<span class="s_item_quantity" ><!--#4DHTMLVAR [purchase_invoice_items]item_quantity--></span>
+					
+					<div><input type="text" class="item_quantity" name="item_quantity" style="display:none;" value="<!--#4DHTMLVAR [purchase_invoice_items]item_quantity-->" ></div>
+					</td>
+					<td>
+					<span class="s_item_unit_price" ><!--#4DHTMLVAR [purchase_invoice_items]item_unit_price--></span>
+					
+					<div><input type="text" class="item_unit_price" name="item_unit_price" style="display:none;" value="<!--#4DHTMLVAR [purchase_invoice_items]item_unit_price-->" ></div>
+					</td>
+					
+					<td>
+					<span class="s_item_total" ><!--#4DHTMLVAR [purchase_invoice_items]item_total--></span>
+					</td>
+					
+					<td>
+					<a href="javascript:void(0)" class="editlink">Edit</a>
+					<a href="javascript:void(0)" class="savelink" style="display:none">Save</a>
+					 </td>	
+					 <td><a href="javascript:void(0)" class="removelink" >Remove</a>
+					<a href="javascript:void(0)" class="cancellink" style="display:none">Cancel</a>
+					</td>	 						
+					</tr>
+		  
+		  <!--#4DENDLOOP-->
+		  <!--#4DENDIF-->
+ 		  <tr id="hiderow">
+		    <td colspan="9"><a id="addrow" href="javascript:void(0)" title="Add a row">Add a row</a></td>
+		  </tr>
+		  </tbody>
+		</table>	
+						</div>	
+							
+							<div class="control-group">
+										<label class="control-label">Tax Code </label>
+									<div class="controls">
+										<select id="tax_code" name="tax_code" class="span8">
+										<!--#4DSCRIPT/Web_LoadTax_Codes/-->
+										<!--4DLOOP [Tax_Codes]-->
+											<option value="<!--#4DVAR [Tax_Codes]Tax_Code-->" <!--#4DIF ([Tax_Codes]Tax_Code=[purchase_invoices]tax_code)-->selected<!--4DELSE--><!--4DENDIF-->><!--4DVAR [Tax_Codes]Tax_Code--></option>
+										<!--4DENDLOOP-->
+										</select>
+									</div>
+							</div>
+							
+							<div class="control-group">
+										<label class="control-label">Tax Rate </label>
+									<div class="controls">
+										<input name="tax_rate" class="span8" type="text" value="<!--#4DVAR [purchase_invoices]tax_rate -->" id="tax_rate" readonly>
+									</div>
+							</div>
+		
+							<div class="control-group">
+										<label class="control-label">Payment Subtotal </label>
+									<div class="controls">
+										<input class="span8" name="payment_subtotal" id="payment_subtotal" type="text" value="<!--#4DVAR [purchase_invoices]payment_subtotal-->" readonly>
+									</div>
+							</div>
+							
+							<div class="control-group">
+										<label class="control-label">Payment Tax </label>
+									<div class="controls">
+										<input class="span8" name="payment_tax" id="payment_tax" type="text" value="<!--#4DVAR [purchase_invoices]payment_tax-->" readonly>
+									</div>
+							</div>
+							
+							<div class="control-group">
+										<label class="control-label">Payment Total </label>
+									<div class="controls">
+										<input class="span8" name="payment_total" id="payment_total" type="text" value="<!--#4DVAR [purchase_invoices]payment_total-->" readonly>
+									</div>
+							</div>
+
+							<div style="text-align: center;" class="span9 field-box">
+								<input type="button" id="btn_submit" value="Submit" class="btn-glow primary">
+								<span>OR</span>
+								<a href="purchase_invoices.shtml">Cancel</a>							</div>
+						
+					</div>
+					
+					<div class="span3 well form-inline">
+					
+					<div class="control-group">
+										<label class="control-label">Bank paid from </label>	
+										
+										<div class="ui-widget" id="div_proj" >
+											<select name="bank_paid_from_id" id="bank_paid_from_id">
+											<!--#4DIF (Records in selection([purchase_invoices])=0)-->
+												
+											 <!--#4DELSE-->
+												 <option value="<!--#4DVAR [bank_accounts]id-->" selected><!--4DVAR [bank_accounts]account_name--></option>									 
+											 <!--#4DENDIF-->
+											</select>
+										</div>
+							</div>
+						<div class="control-group">
+										<label class="control-label">Sort Code </label>	
+									<div class="controls">									
+										<input class="span8" type="text"  name="sort_code" id="sort_code" value="<!--#4DVAR [purchase_invoices]sort_code-->" >																	
+									</div>
+							</div>
+							<div class="control-group">
+										<label class="control-label">Swift Code </label>
+									<div class="controls">	
+										<input class="span8" name="swift_code" id="swift_code" type="text" value="<!--#4DVAR [purchase_invoices]swift_code-->">
+									</div>
+							</div>
+							<div class="control-group">
+										<label class="control-label">Routing </label>
+									<div class="controls">	
+										<input class="span8" name="routing" id="routing" type="text" value="<!--#4DVAR [purchase_invoices]routing-->">
+									</div>
+							</div>
+							
+							<div class="control-group">
+										<label class="control-label">Iban </label>
+									<div class="controls">	
+										<input type="text" name="iban" id="iban" class="span8"  value="<!--#4DVAR [purchase_invoices]iban-->">
+									</div>
+							</div>
+							
+							<div class="control-group">
+										<label class="control-label">Bic Code </label>
+									<div class="controls">	
+										<input type="text" name="bic_code" id="bic_code" class="span8"  value="<!--#4DVAR [purchase_invoices]bic_code-->">
+									</div>
+							</div>
+							
+							<div class="control-group">
+										<label class="control-label">Currency Code </label>
+									<div class="controls">	
+										<input type="text" name="currency_code" id="currency_code" class="span8"  value="<!--#4DVAR [purchase_invoices]currency_code-->">
+									</div>
+							</div>
+							<div class="control-group">
+								<label class="control-label">Invoice Status</label><!--#4DIF (mUserIsCurrentBool)--><!--#4DVAR [purchase_invoices]purchase_invoice_status--><!--#4DELSE-->
+									<div class="controls">
+									<select name="status" id="status" class="span8">
+										<option value="Invoiced" <!--#4DIF ([purchase_invoices]purchase_invoice_status="Invoiced")-->selected<!--4DELSE--><!--4DENDIF-->>Invoiced</option>
+										<option value="Paid" <!--#4DIF ([purchase_invoices]purchase_invoice_status="Paid")-->selected<!--4DELSE--><!--4DENDIF-->>Paid</option>
+										<option value="Bad debt" <!--#4DIF ([purchase_invoices]purchase_invoice_status="Bad debt")-->selected<!--4DELSE--><!--4DENDIF-->>Bad debt</option>
+										<option value="Needs chasing" <!--#4DIF ([purchase_invoices]purchase_invoice_status="Needs chasing")-->selected<!--4DELSE--><!--4DENDIF-->>Needs chasing</option>
+									</select>                                    
+									</div><!--#4DENDIF--> 
+							</div>	
+					</div>
+					</form>
+					
+				</div>
+            </div>
+		</div>
+    </div>
+	<div class="example-container">
+								<pre class="code" style="display:none;" id="err_msg">
+									var statesdemo = {
+										state0: {
+											title: message,
+											buttons: {  OK: 1 },
+											submit:function(e,v,m,f){ 
+												if(v==1) {
+													$.prompt.close();
+												}
+											}
+										},
+										
+									};
+									$.prompt(statesdemo);
+								</pre>
+								<pre class="code" style="display:none;" id="tax_rate_code">
+																var statesdemo = {
+																	state0: {
+																		title: 'Enter tax rate',
+																		html:'&lt;div id="tax_message"&gt;&lt;/div&gt;&lt;input type="text" class="num" name="dlg_tax_rate" id="dlg_tax_rate" value=""&gt;&lt;br /&gt;',
+																		buttons: { Cancel : 0, Ok: 1 },
+																		focus: "#dlg_tax_rate",
+																		submit:function(e,v,m,f){ 
+																			//console.log(f);
+																			if(v==1) {
+																				if(f.dlg_tax_rate!=null && f.dlg_tax_rate!=""){
+																					$('#tax_rate').val(f.dlg_tax_rate);
+																					calculate_tax();
+																				}
+																				else {
+																					e.preventDefault();
+																					$('#tax_message').html('* Please enter Tax Rate.');
+																					$('#dlg_tax_rate').focus();
+																				}
+																			}
+																			if(v==0) {
+																				$.prompt.close();
+																				$('#tax_rate').val("20");
+																				$('#tax_code').val("UK");
+																				//$('#invoice_tax_rate').val('');
+																			}
+																		}
+																	},
+																	
+																};
+
+																$.prompt(statesdemo);
+																$(".num").unbind();
+																$('.num').keypress(function(e){
+																	checknumber(e);	
+																}); 
+															</pre>
+</div>
+    <!-- end main container -->
+
+	
+	<script src="js/jquery.min.js"></script>
+	<script src="bootstrap/js/bootstrap.min.js"></script>
+	<!-- validation -->
+    <script src="lib/validation/jquery.validate.min.js"></script>
+	<script type="text/javascript" src="js/jquery-impromptu.js"></script>
+	<script src="js/jquery-ui-1.9.1.custom.js"></script>
+	<script src="js/purchase_inv.js"></script>
+	<script>
+	 var xhr;
+  (function( $ ) {
+    $.widget( "custom.combobox", {
+      _create: function() {
+        this.wrapper = $( "<span>" )
+          .addClass( "custom-combobox" )
+          .insertAfter( this.element );
+ 
+        this.element.hide();
+        this._createAutocomplete();
+        this._createShowAllButton();
+      },
+ 
+      _createAutocomplete: function() {
+		  var ele_select= this.element;
+        var selected = this.element.children( ":selected" ),
+          value = selected.val() ? selected.text() : "";
+ 
+        this.input = $( "<input>" )
+          .appendTo( this.wrapper )
+          .val( value )
+          .attr( "title", "" )
+          .addClass( "custom-combobox-input ui-widget ui-widget-content ui-state-default ui-corner-left" )
+          .autocomplete({
+            delay: 0,
+            minLength: 0,
+            source: $.proxy( this, "_source" )
+          })
+          .tooltip({
+            tooltipClass: "ui-state-highlight"
+          });
+ 
+        this._on( this.input, {
+          autocompleteselect: function( event, ui ) {
+		  	//alert("show all");
+            ui.item.option.selected = true;
+			
+            this._trigger( "select", event, {
+              item: ui.item.option
+            });
+			
+			if(ele_select.attr('id')=='Client_ID'){
+				get_client_info();
+				get_projects();
+			}
+			else if(ele_select.attr('id')=='bank_paid_from_id'){
+				get_account_info();
+			}
+			
+          },
+ 
+          autocompletechange: "_removeIfInvalid"
+        });
+      },
+ 
+      _createShowAllButton: function() {
+        var input = this.input,
+          wasOpen = false;
+ 
+        $( "<a>" )
+          .attr( "tabIndex", -1 )
+         // .attr( "title", "Show All Items" )
+          .tooltip()
+          .appendTo( this.wrapper )
+          .button({
+            icons: {
+              primary: "ui-icon-triangle-1-s"
+            },
+            text: false
+          })
+          .removeClass( "ui-corner-all" )
+          .addClass( "custom-combobox-toggle ui-corner-right" )
+          .mousedown(function() {
+            wasOpen = input.autocomplete( "widget" ).is( ":visible" );
+          })
+          .click(function() {
+            input.focus();
+ 
+            // Close if already visible
+            if ( wasOpen ) {
+              return;
+            }
+ 
+            // Pass last search string as value to search for, displaying last results
+            input.autocomplete( "search", 'SHOWALL' );
+          });
+      },
+ 
+      _source: function( request, response ) {
+        //var matcher = new RegExp( $.ui.autocomplete.escapeRegex(request.term), "i" );
+		var ele_select= this.element;
+		if(request.term=='SHOWALL'){
+			response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+		
+		}
+		else
+		{
+		if(ele_select.attr('id')=='Client_ID'){
+		var jsonRow = 'getcompaniesonsearch.cgi?srch='+request.term+'&companies=supplier';
+		}
+		else if(ele_select.attr('id')=='Project_UUID'){
+			var jsonRow = 'getprojectsonsearch.cgi?srch='+request.term+'&client_uuid='+$('#Client_ID').val();
+		}
+		else if(ele_select.attr('id')=='bank_paid_from_id'){
+			var jsonRow = 'getaccountonsearch.cgi?srch='+request.term;
+		}
+		
+
+		//alert(jsonRowURLStr);
+		if(xhr) xhr.abort();
+		xhr=$.getJSON(jsonRow,function(result){
+			
+			if(result){
+				var html='<option value=""></option>';
+
+				$.each(result, function(i,item)
+				{
+					if(ele_select.attr('id')=='Client_ID'){
+						html += '<option value="'+item.CustoemrUUID+'">'+item.value+'</option>';
+					}
+					else if(ele_select.attr('id')=='Project_UUID'){
+						html += '<option value="'+item.ProjectUUID+'">'+item.value+'</option>';
+					}
+					else if(ele_select.attr('id')=='bank_paid_from_id'){
+						html += '<option value="'+item.AccountID+'">'+item.AccountName+'</option>';
+					}
+				});
+				
+				ele_select.html(html);
+				
+				
+				response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+				
+				
+			}
+		});
+       
+	  } 
+		
+      },
+ 
+      _removeIfInvalid: function( event, ui ) {
+ 
+        // Selected an item, nothing to do
+        if ( ui.item ) {
+
+          return;
+        }
+ 
+        // Search for a match (case-insensitive)
+        var value = this.input.val(),
+          valueLowerCase = value.toLowerCase(),
+          valid = false;
+		  var ele_select= this.element;
+        this.element.children( "option" ).each(function() {
+          if ( $( this ).text().toLowerCase() === valueLowerCase ) {
+            this.selected = valid = true;	
+		if(ele_select.attr('id')=='Client_ID'){
+			get_client_info();
+			get_projects();
+			}
+		else if(ele_select.attr('id')=='bank_paid_from_id'){
+				get_account_info();
+			}	
+            return false;
+          }
+        });
+ 
+        // Found a match, nothing to do
+        if ( valid ) {
+          return;
+        }
+ 
+        // Remove invalid value
+        this.input
+          .val( "" )
+          .attr( "title", value + " didn't match any item" )
+          .tooltip( "open" );
+        this.element.val( "" );
+        this._delay(function() {
+          this.input.tooltip( "close" ).attr( "title", "" );
+        }, 2500 );
+        this.input.data( "ui-autocomplete" ).term = "";
+      },
+ 
+      _destroy: function() {
+        this.wrapper.remove();
+        this.element.show();
+      }
+    });
+  })( jQuery );
+ 
+  $(function() {
+    $( "#Client_ID" ).combobox();
+	$( "#Project_UUID" ).combobox();
+	$('#bank_paid_from_id').combobox();
+  });
+
+  </script>
+	
+	<script src="lib/datepicker/bootstrap-datepicker.min.js"></script>
+
+	
+<script type="text/javascript">
+
+	$(document).ready(function() {
+	
+		<!--#4DIF (Records in selection([purchase_invoices])=0)-->
+		var new_uuid='<!--#4DVAR Generate UUID-->';	
+		$('#purchase_uuid').val(new_uuid);
+		
+		var new_id='<!--#4DVAR Sequence number([purchase_invoices])-->';
+	
+		$('#purchase_id').val(new_id);
+		
+		$('#tax_rate').val("20");
+		$('#tax_code').val("UK");
+
+		<!--#4DELSE--><!--#4DENDIF-->
+		
+		if(!$( "#Client_ID" ).val() || $( "#Client_ID" ).val()==''){
+			get_clients();
+		}
+		if(!$( "#Project_UUID" ).val() || $( "#Project_UUID" ).val()==''){
+			get_projects();
+		}
+		if(!$( "#bank_paid_from_id" ).val() || $( "#bank_paid_from_id" ).val()==''){
+			get_accounts();
+		}
+		
+		
+		$('#dp1 i.splashy-calendar_day').click(function(){
+			$('#payment_date').datepicker( "show" );
+		});
+
+		
+		$(document).click(function(event){
+			//console.log($(event.target).closest('div').attr('id'));
+			if($(event.target).closest('div').attr('id')!='dp1') {
+				$('#payment_date').datepicker( "hide" );
+			}
+
+		});
+		
+		
+		
+		
+		$.validator.setDefaults({
+			onkeyup: false,
+				errorClass: 'error',
+				validClass: 'valid',
+				highlight: function(element) {
+					$(element).closest('div').addClass("f_error");
+				},
+				unhighlight: function(element) {
+					$(element).closest('div').removeClass("f_error");
+				},
+				errorPlacement: function(error, element) {
+					$(element).closest('div').append(error);
+				},
+		});
+		
+		$('#btn_submit').click(function(){
+			$('.form_validation_reg').removeData('validator');
+			$('.form_validation_reg').validate({
+
+				ignore: "",				
+				rules: {
+					payment_date: { required: true },
+					Client_ID: { required: true },
+					payment_method: { required: true },
+					employee_uuid: { required: true },
+				},
+			});	
+			if($('.form_validation_reg').valid()){
+				$('.form_validation_reg').submit();
+			}
+		});
+			
+			
+});
+
+function get_client_info()
+{
+	var Client_ID=	$("#Client_ID").val();
+	var dataString = 'Client_ID='+Client_ID;
+	//alert(dataString);
+
+	
+	$.ajax({
+type: "GET",
+url: "Returnvalues.cgi",
+data: dataString,
+cache: false,
+success: function(html)
+{
+	$("#beneficiary_address").val(html);
+}
+});
+}
+
+function get_account_info(){
+	var account_id=	$("#bank_paid_from_id").val();
+	var dataString = 'Account_ID='+account_id;
+		//alert(dataString);
+			
+	$.ajax({
+		type: "GET",
+		url: "returnaccountdetail.cgi",
+		data: dataString,
+		cache: false,
+		success: function(html)
+		{
+			$("#sort_code").val(html.Sort_Code);
+			$("#swift_code").val(html.Swift_Code);
+			$("#routing").val(html.Routing);
+			$("#iban").val(html.Iban);
+			$("#bic_code").val(html.Bic_Code);
+			$("#currency_code").val(html.Currency_Code);
+		}
+	});
+
+}
+	
+	function get_projects(){
+		if($('#Client_ID').val() && $('#Client_ID').val()!=''){
+			$('#div_proj').find('.ui-autocomplete-input').val('');
+			var jsonRow = 'getprojectsonsearch.cgi?srch=&client_uuid='+$('#Client_ID').val();
+		}
+		else{
+			var jsonRow = 'getprojectsonsearch.cgi?srch=';
+		}
+		$.getJSON(jsonRow,function(result){	
+			if(result){
+				var html='<option value=""></option>';
+
+				$.each(result, function(i,item)
+				{
+					html += '<option value="'+item.ProjectUUID+'">'+item.value+'</option>';
+				});
+				
+				$('#Project_UUID').html(html);
+			}
+		});
+	}
+	
+	function get_clients(){
+		var jsonRow = 'getcompaniesonsearch.cgi?srch=&companies=supplier';
+		$.getJSON(jsonRow,function(result){	
+			if(result){
+				var html='<option value=""></option>';
+
+				$.each(result, function(i,item)
+				{
+					html += '<option value="'+item.CustomerUUID+'">'+item.value+'</option>';
+				});
+				
+				$('#Client_ID').html(html);
+			}
+		});
+	}
+	
+	function get_accounts(){
+		var jsonRow = 'getaccountonsearch.cgi?srch=';
+		$.getJSON(jsonRow,function(result){	
+			if(result){
+				var html='<option value=""></option>';
+
+				$.each(result, function(i,item)
+				{
+					html += '<option value="'+item.AccountID+'">'+item.AccountName+'</option>';
+				});
+				
+				$('#bank_paid_from_id').html(html);
+			}
+		});
+	}
+
+	function checknumber(e)
+	{
+		var k = e.which;
+    					/* numeric inputs can come from the keypad or the numeric row at the top */
+   						 if ((k<48 || k>57) && (k!=46) && (k!=8) && (k!=0)) {
+        					e.preventDefault();
+							//alert("Allowed characters are 0-9, +, -, (, )");
+        					return false;
+    					}
+	
+	}
+
+</script>
+
+
+
+</body>
+</html>

@@ -1,0 +1,512 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+C_BOOLEAN(mUserIsCurrentBool)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+QUERY([Expense_Items];[Expense_Items]uuid_mileage=_HIT_WebApp_GetField ("uuid"))
+QUERY([Mileage];[Mileage]uuid=_HIT_WebApp_GetField ("uuid"))
+QUERY([Companies];[Companies]uuid=[Mileage]uuid_client)
+QUERY([Projects];[Projects]proj_name=[Mileage]Project_Code)
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+-->
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/main-header.shtml-->
+<link rel="stylesheet" href="css/jquery.ui.button.css" />
+	<link rel="stylesheet" href="css/jquery.ui.tooltip.css" />
+<link rel="stylesheet" href="css/combobox.css" />
+
+<style>
+label.error {
+	float: left;
+	color: red;
+	padding-top: .5em;
+	vertical-align: top;
+	font-weight:bold
+}
+</style>
+<link rel="stylesheet" type="text/css" href="css/jqm-datebox.min.css" /> 
+<script type="text/javascript" src="js/jqm-datebox.core.min.js"></script>
+<script type="text/javascript" src="js/jqm-datebox.mode.calbox.min.js"></script>
+<script type="text/javascript" src="js/jquery.mobile.datebox.i18n.en_US.utf8.js"></script>
+<script src="js/jquery.validate.js"></script>
+<script src="js/additional-methods.js"></script>
+<script src="js/ui/jquery-ui.js"></script>
+
+<script type="text/javascript">
+function __showExps()
+{
+pUrlStr='travel_expenses.shtml';
+window.location.href=pUrlStr;
+}
+
+$( '#home' ).live( 'pagebeforecreate',function(event){
+	
+	$( "#project_code" ).combobox();
+	 	 
+});
+
+
+
+$(document).on('pageinit', function(){
+
+	$( "#project_code" ).parents('div.ui-btn').hide();
+
+	$("#frm").validate({
+        rules: {
+            inv_no: { required: true, digits: true },
+            start_mile : { required: true, number: true },
+            end_mile : { required: true, number: true },
+            distance: { required: true, number: true },
+            price_per : { required: true, number: true },
+            start_date : "required",
+			end_date: "required",
+            start_zip : "required",
+            end_zip : "required",
+			tax_amount: { required: true, number: true },
+            project_code : "required",
+            total_amount : { required: true, number: true },
+			tax_rate : { required: true, number: true },
+        },
+		messages: {
+			inv_no: { required: "Please Specify Invoice Number", number: "Please enter numbers only" },
+			start_mile: { required: "Please Specify Vehicle Mileage at Start", number: "Please Specify a numeric value" },
+			end_mile: { required: "Please Specify Vehicle Mileage at End", number: "Please Specify a numeric value" },
+			distance: { required: "Please Specify Distance Travelled", number: "Please Specify a numeric value" },
+			price_per: { required: "Please Specify Price Per Mile/KM", number: "Please Specify a numeric value" },
+			start_date: "Please Specify Start Date",
+			end_date: "Please Specify End Date",
+			start_zip: "Please Specify Start Post/Zip Code",
+			end_zip: "Please Specify End Post/Zip Code",
+			tax_amount: { required: "Please Specify Tax Amount", number: "Please Specify a numeric value" },
+			project_code: "Please Specify Project Name",
+			total_amount: { required: "Please Specify Total Expenses", number: "Please Specify a numeric value" },
+			tax_rate: { required: "Please Specify Tax Rate", number: "Please Specify a numeric value" },
+			
+		}
+    });
+});
+
+$(function () {
+	
+	<!--#4DIF (Records in selection([Mileage])=0)-->
+	var new_uuid='<!--#4DVAR Generate UUID-->';
+	
+		$('#mileage_uuid').val(new_uuid);
+		<!--#4DELSE--><!--#4DENDIF-->
+
+	});
+
+</script>
+
+<script>
+	 var xhr;
+  (function( $ ) {
+    $.widget( "custom.combobox", {
+      _create: function() {
+        this.wrapper = $( "<span>" )
+          .addClass( "custom-combobox" )
+          .insertAfter( this.element );
+ 
+        this.element.hide();
+        this._createAutocomplete();
+        this._createShowAllButton();
+      },
+ 
+      _createAutocomplete: function() {
+        var selected = this.element.children( ":selected" ),
+          value = selected.val() ? selected.text() : "";
+ 
+        this.input = $( "<input>" )
+          .appendTo( this.wrapper )
+          .val( value )
+          .attr( "title", "" )
+          .addClass( "custom-combobox-input ui-widget ui-widget-content ui-state-default ui-corner-left" )
+          .autocomplete({
+            delay: 0,
+            minLength: 0,
+            source: $.proxy( this, "_source" )
+          })
+          .tooltip({
+            tooltipClass: "ui-state-highlight"
+          });
+ 
+        this._on( this.input, {
+          autocompleteselect: function( event, ui ) {
+		  	//alert("show all");
+            ui.item.option.selected = true;
+			
+            this._trigger( "select", event, {
+              item: ui.item.option
+            });
+          },
+ 
+          autocompletechange: "_removeIfInvalid"
+        });
+      },
+ 
+      _createShowAllButton: function() {
+        var input = this.input,
+          wasOpen = false;
+ 
+        $( "<a>" )
+          .attr( "tabIndex", -1 )
+          .attr( "title", "Show All Items" )
+          .tooltip()
+          .appendTo( this.wrapper )
+          .button1({
+            icons: {
+              primary: "ui-icon-triangle-1-s"
+            },
+            text: false
+          })
+          .removeClass( "ui-corner-all" )
+          .addClass( "custom-combobox-toggle ui-corner-right" )
+          .mousedown(function() {
+            wasOpen = input.autocomplete( "widget" ).is( ":visible" );
+          })
+          .click(function() {
+            input.focus();
+ 
+            // Close if already visible
+            if ( wasOpen ) {
+              return;
+            }
+ 
+            // Pass last search string as value to search for, displaying last results
+            input.autocomplete( "search", 'SHOWALL' );
+          });
+      },
+ 
+      _source: function( request, response ) {
+        //var matcher = new RegExp( $.ui.autocomplete.escapeRegex(request.term), "i" );
+		var ele_select= this.element;
+		if(request.term=='SHOWALL'){
+			response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+		
+		}
+		else
+		{
+		var jsonRow = 'getprojectsonsearch.cgi?srch='+request.term;
+		
+
+		//alert(jsonRowURLStr);
+		if(xhr) xhr.abort();
+		xhr=$.getJSON(jsonRow,function(result){
+			
+			if(result){
+				var html='<option value=""></option>';
+
+				$.each(result, function(i,item)
+				{
+					html += '<option value="'+item.value+'">'+item.value+'</option>';
+				});
+				ele_select.html(html);
+				
+				
+				response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+				
+				
+			}
+		});
+       
+	  } 
+		
+      },
+ 
+      _removeIfInvalid: function( event, ui ) {
+ 
+        // Selected an item, nothing to do
+        if ( ui.item ) {
+
+          return;
+        }
+ 
+        // Search for a match (case-insensitive)
+        var value = this.input.val(),
+          valueLowerCase = value.toLowerCase(),
+          valid = false;
+        this.element.children( "option" ).each(function() {
+          if ( $( this ).text().toLowerCase() === valueLowerCase ) {
+            this.selected = valid = true;	
+			
+            return false;
+          }
+        });
+ 
+        // Found a match, nothing to do
+        if ( valid ) {
+          return;
+        }
+ 
+        // Remove invalid value
+        this.input
+          .val( "" )
+          .attr( "title", value + " didn't match any item" )
+          .tooltip( "open" );
+        this.element.val( "" );
+        this._delay(function() {
+          this.input.tooltip( "close" ).attr( "title", "" );
+        }, 2500 );
+        this.input.data( "ui-autocomplete" ).term = "";
+      },
+ 
+      _destroy: function() {
+        this.wrapper.remove();
+        this.element.show();
+      }
+    });
+  })( jQuery );
+
+
+  </script>
+
+<script type='text/javascript' src='js/expense.js'></script>
+
+
+</head>
+<body>
+<div data-role="page" id="home" data-add-back-btn="false">
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/top-header.shtml-->
+	<div data-role="content" style="padding: 15px;">
+		<ul data-role="listview" data-inset="true">
+			<li data-role="list-divider"><span style=" color:#2B89D0; font-stretch:narrower;"><!--#4DIF (Records in selection([Mileage])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Travel Expense</span></li>
+		</ul>
+		<form data-ajax="false" name="TravelExpenseForm" action="savemileage.cgi" method="post" id="frm" >
+		
+		
+		
+		<input name="mileage_uuid" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="mileage_uuid">
+		
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput1">Invoice Number<font color="#FF0000">*</font></label>
+					<input name="inv_no" id="inv_no" type="text" value="<!--#4DVAR [Mileage]Client_Invoice_Number-->" placeholder="Invoice Number" >
+					<span id="err_msg" style="color:#FF0000"></span>
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput12">Company Name<font color="#FF0000">*</font></label>
+					<input name="client_name" id="client_name" type="text" value="<!--#4DVAR [Companies]company_Name-->" readonly placeholder="Company Name" >
+									<input class="span8" name="client_id" id="client_id" type="hidden" value="<!--#4DVAR [Companies]uuid-->">
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput12">Mileage at Start<font color="#FF0000">*</font></label>
+						<input class="num" name="start_mile" id="start_mile" type="text" value="<!--#4DVAR [Mileage]Vehicle_Start_Reading-->" placeholder="Mileage at Start" >
+				</fieldset>
+			</div>
+			
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput13">Mileage at End<font color="#FF0000">*</font></label>
+					<input class="num" name="end_mile" id="end_mile" type="text" value="<!--#4DVAR [Mileage]Vehicle_End_Reading-->" placeholder="Mileage at End">
+					
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput14">Distance Travelled<font color="#FF0000">*</font></label>
+					<input class="num" name="distance" id="distance" type="text" value="<!--#4DVAR [Mileage]Total_Distance_Travelled-->" placeholder="Distance Travelled"> 
+				</fieldset>
+			</div>
+			
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput14">Price Per Mile/KM<font color="#FF0000">*</font></label>
+					<input class="num" name="price_per" id="price_per" type="text" <!--#4DIF ([Mileage]PricePerMileKm=0)-->value="0.45"<!--4DELSE-->value="<!--#4DVAR  [Mileage]PricePerMileKm-->"<!--4DENDIF--> placeholder="Price Per Mile/KM" >
+				</fieldset>
+			</div>
+			
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput14">Start Date<font color="#FF0000">*</font></label>
+					<input <!--#4DIF (timestamp_unix_toDate([Mileage]Travel_Start_Timestamp)=!01/01/1970!)-->value=""<!--4DELSE-->value="<!--#4DVAR timestamp_unix_toDate([Mileage]Travel_Start_Timestamp)-->"<!--4DENDIF--> name="start_date" id="start_date" type="date" data-role="datebox" data-options='{"mode": "calbox"}' readonly placeholder="Start Date"  >
+				</fieldset>
+			</div>
+			
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput12">End Date<font color="#FF0000">*</font></label>
+						<input <!--#4DIF (timestamp_unix_toDate([Mileage]Travel_End_Timestamp)=!01/01/1970!)-->value=""<!--4DELSE-->value="<!--#4DVAR timestamp_unix_toDate([Mileage]Travel_End_Timestamp)-->"<!--4DENDIF--> name="end_date" id="end_date" type="date" data-role="datebox" data-options='{"mode": "calbox"}' readonly placeholder="End Date"  >
+				</fieldset>
+			</div>
+			
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput13">Start Post/Zip Code<font color="#FF0000">*</font></label>
+					<input name="start_zip" id="start_zip" type="text" value="<!--#4DVAR [Mileage]Start_PostZipCode-->" placeholder="Start Post/Zip Code" >
+					
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput14">End Post/Zip Code<font color="#FF0000">*</font></label>
+					<input name="end_zip" id="end_zip" type="text" value="<!--#4DVAR [Mileage]End_PostZipCode-->" placeholder="End Post/Zip Code" >
+				</fieldset>
+			</div>
+			
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput14">Tax Amount<font color="#FF0000">*</font></label>
+					<input type="text" name="tax_amount" id="tax_amount" class="num" readonly="readonly" value="<!--#4DVAR [Mileage]Tax_Total_Amount-->" placeholder="Tax Amount">
+				</fieldset>
+			</div>
+			
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput14">Project Code<font color="#FF0000">*</font></label>
+					<div class="ui-widget">
+					<Select name="project_code" id="project_code">
+										<!--#4DIF (Records in selection([Mileage])=0)-->
+										<option value=""></option>
+									<!--#4DSCRIPT/Web_LoadProjects/-->
+									<!--4DLOOP [Projects]-->
+										<option value="<!--#4DVAR [Projects]proj_name-->" ><!--4DVAR [Projects]proj_name--></option>
+									<!--4DENDLOOP-->
+									<!--#4DELSE-->
+										 <option value="<!--4DVAR [Projects]proj_name-->" selected><!--4DVAR [Projects]proj_name--></option>									 
+										 <!--#4DENDIF-->
+									</select>
+									</div>
+				</fieldset>
+			</div>
+			
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+		<input name="expenses_claimed" id="checkbox-1" type="checkbox" value="true" <!--#4DIF ([Mileage]Expense_Claimed_by_Employee)-->checked<!--4DELSE--><!--4DENDIF--> style="margin-left:10px;" >
+		<label for="checkbox-1">Expenses Claimed By Employee</label>
+				</fieldset>
+			</div>
+			
+			<table id="items">
+		
+		  <tr class="item">
+		      <th>Type</th>
+		      <th>Description</th>
+		      <th>Amount</th>
+			  <th>Save</th>
+			  <th>Cancel</th>
+		  </tr>
+		  
+	
+		  <!--#4DLOOP [Expense_Items]-->
+		  
+		  <tr class="item-row" id="<!--#4DHTMLVAR [Invoice_Items]item_id-->">
+									<td class="item-id">
+									<span class="s_type" ><!--#4DHTMLVAR [Expense_Items]expense_type--></span>
+									<input type="text" class="type" style="display:none;" value="<!--#4DHTMLVAR [Expense_Items]expense_type-->" >
+									<input class="item_uuid" type="hidden" value="<!--#4DHTMLVAR [Expense_Items]uuid-->" />
+									</td>
+									<td >
+									<span class="s_description" ><!--#4DHTMLVAR [Expense_Items]Expense_Desc--></span>
+									<textarea class="description" style="display:none;" ><!--#4DHTMLVAR [Expense_Items]Expense_Desc--></textarea>
+									</td>
+									<td>
+									<span class="s_amount" ><!--#4DHTMLVAR [Expense_Items]Expense_Amount--></span>
+									<input type="text" class="amount num1" style="display:none;" value="<!--#4DHTMLVAR [Expense_Items]Expense_Amount-->" >
+									</td>
+									
+									<!--#4DIF (mUserIsCurrentBool)--><!--#4DELSE--><td>
+									<a href="javascript:void(0)" class="editlink">Edit</a>
+									<a href="javascript:void(0)" class="savelink" style="display:none">Save</a>
+									 </td>	
+									 <td><a href="javascript:void(0)" class="removelink" >Remove</a>
+									<a href="javascript:void(0)" class="cancellink" style="display:none">Cancel</a>
+									</td>	<!--#4DENDIF--> 							
+									</tr>
+		  
+		  <!--#4DENDLOOP-->
+		  
+<!--#4DIF (mUserIsCurrentBool)--><!--#4DELSE-->		  <tr id="hiderow">
+		    <td colspan="7"><a id="addrow" href="javascript:;" title="Add a row">Add a row</a></td>
+		  </tr><!--#4DENDIF--> 
+		  
+		</table>	<br/>	
+			
+			
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput14">Total Expenses<font color="#FF0000">*</font></label>
+					<input type="text" name="total_amount" id="total_amount"  readonly="readonly" value="<!--#4DVAR [Mileage]Total_Amount-->" placeholder="Total Expenses" >
+				</fieldset>
+			</div>
+			
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput14">Job Description</label>
+					<textarea  name="job_desc" id="job_desc" placeholder="Job Description"><!--#4DVAR [Mileage]Job_Description--></textarea>
+				</fieldset>
+			</div>
+			
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<input name="veh_hired"  id="checkbox-1" type="checkbox" value="true" <!--#4DIF ([Mileage]Vechicle_Hired)-->checked<!--4DELSE--><!--4DENDIF--> style="margin-left:10px;" >
+					<label for="checkbox-1">Vehicle Hired</label>
+				</fieldset>
+			</div>
+			
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<input name="stay_charged" id="checkbox-1" type="checkbox" value="true" <!--#4DIF ([Mileage]Accomodation_Charged)-->checked<!--4DELSE--><!--4DENDIF--> style="margin-left:10px;" >
+					<label for="checkbox-1">Stay Charged</label>
+				</fieldset>
+			</div>
+			
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput14">Internal Notes</label>
+					<textarea name="notes" id="notes"  placeholder="Internal Notes"><!--#4DVAR [Mileage]Sfaff_Notes--></textarea>
+				</fieldset>
+			</div>
+			
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput14">Tax Rate<font color="#FF0000">*</font></label>
+					<input <!--#4DIF (mUserIsCurrentBool)-->readonly<!--#4DELSE--><!--#4DENDIF--> name="tax_rate" class="num" type="text" value="<!--#4DVAR [Mileage]Tax_Rate -->" id="tax_rate" placeholder="Tax Rate">
+				</fieldset>
+			</div>
+			
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput14">Currency Code</label>
+					<input <!--#4DIF (mUserIsCurrentBool)-->readonly<!--#4DELSE--><!--#4DENDIF--> name="currency_code" type="text" value="<!--#4DVAR [Mileage]currency_code -->" id="currency_code" placeholder="Currency Code">
+				</fieldset>
+			</div>
+			
+			<input type="submit" value="Submit" id="submit" name="submit" >
+			<input type="submit" value="Cancel" onClick="__showExps(); return false;">
+		</form>
+	</div><!-- END DATA ROLE CONTENT-->
+
+   <!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/footer.shtml-->
+    
+ </div>
+ 
+</body>
+</html>

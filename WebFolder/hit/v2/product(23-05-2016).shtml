@@ -1,0 +1,433 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+C_TEXT(_HTMLTITLETXT)
+
+QUERY([Products];[Products]uuid=_HIT_WebApp_GetField ("uuid"))
+
+IF (Records in selection([Products])=0)
+_HTMLTITLETXT:="New Product"
+ELSE
+_HTMLTITLETXT:= "Edit: "+[Products]ProductName
+END IF
+
+-->
+<!DOCTYPE html>
+<html lang="en">
+<!-- BEGIN HEAD -->
+<head>
+<!--#4DIF (Records in selection([Products])=1)-->
+<title>Product:<!--#4DVAR [Products]ProductName--></title>
+<!--#4DELSE-->
+<title>New Product</title>
+<!--#4DENDIF-->
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<meta content="" name="description"/>
+<meta content="" name="author"/>
+
+<!-- BEGIN CORE FRAMEWORK -->
+<link href="assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+<link href="assets/plugins/ionicons/css/ionicons.min.css" rel="stylesheet" />
+<link href="assets/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+<!-- END CORE FRAMEWORK -->
+
+<!-- BEGIN PLUGIN STYLES -->
+<link href="assets/plugins/animate/animate.css" rel="stylesheet" />
+
+<link href="assets/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css" rel="stylesheet" />
+<!-- END PLUGIN STYLES -->
+
+<!-- BEGIN THEME STYLES -->
+<link href="assets/css/material.css" rel="stylesheet" />
+<link href="assets/css/style.css" rel="stylesheet" />
+<link href="assets/css/plugins.css" rel="stylesheet" />
+<link href="assets/css/helpers.css" rel="stylesheet" />
+<link href="assets/css/responsive.css" rel="stylesheet" />
+<!-- END THEME STYLES -->
+
+<link rel="stylesheet" media="all" type="text/css" href="assets/css/jquery-impromptu.css" />
+<link rel="stylesheet" href="assets/css/chosen.css">
+<!-- BEGIN PLUGIN STYLES -->
+<link href="assets/plugins/jquery-jvectormap/jquery-jvectormap-1.2.2.css" rel="stylesheet" />
+<!-- END PLUGIN STYLES -->
+
+</head>
+<style>
+.rightside {
+	padding-top: 0px!important;
+}
+.chosen-container-multi .chosen-choices {
+	background: #fafafa!important;
+	border: 1px solid #eeeeee!important;
+	border-radius: 3px;
+	padding: 3px;
+}
+
+.boxbcg{
+	border:1px solid #E1E1E1!important;
+	padding: 0px 8px 8px 8px !important;
+	border-radius:4px!important;
+	margin-bottom:10px!important;
+}
+
+.boxbcg h3{
+	padding: 0px 0px 0px 6px;
+font-size: 21px;
+color: #108cd3;
+}
+
+.pdng3{
+	padding:3px 0px;
+}
+
+.labelnew{
+	padding-left: 0px; float: left; width: 124px; padding-top: 5px;
+}
+
+.labtext{
+	position: relative; padding-right: 7px; bottom: 4px; float: left;
+}
+
+.tablebox{
+width: 97%;
+margin: 6px;
+}
+
+.overflowdata{
+height: 146px;
+margin-bottom: 10px;
+overflow-x: none;
+overflow-y: scroll;
+}
+
+.savebtn{
+	  text-align: center;
+    width: 97%;
+    color: rgb(255, 255, 255);
+    padding-right: 0px;
+    margin-left: 7px;
+}
+
+.savebtn a{
+	color:#fff;
+}
+
+.savebtn a:hover{
+	text-decoration:none;
+}
+</style>
+<!-- END HEAD -->
+<!-- BEGIN BODY -->
+<body class="fixed-leftside fixed-header">
+<div class="wrapper"> 
+		
+		<!-- BEGIN RIGHTSIDE -->
+		<div class="rightside bg-grey-100"> 
+				<!-- BEGIN PAGE HEADING -->
+				<div class="page-head">
+						<div class="row">
+								<div class="col-sm-6">
+										<h1 class="page-title"><!--#4DIF (Records in selection([Products])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Product</h1>
+								</div>
+						</div>
+				</div>
+				<!-- END PAGE HEADING -->
+				<div class="container-fluid">
+						<div class="row">
+								<div class="col-md-12">
+										<div class="panel" style="padding-top:20px;">
+												<div class="panel-body no-padding-top bg-white">
+												<!--#4DIF (_HIT_WebApp_GetField ("msg")="success")-->
+			<div role="alert" class="alert alert-success">Product saved successfully</div>
+		<!--#4DENDIF-->
+		<!--#4DIF (_HIT_WebApp_GetField ("msg")="error")-->
+			<div role="alert" class="alert alert-danger">Sorry, some error occurred while saving product. Please try after some time!</div>
+		<!--#4DENDIF-->
+														<form name="ProductForm" action="saveproduct.cgi" id="ProductForm" method="post" class="form-horizontal" >
+																<div class="row">
+																		<div class=" col-sm-12 col-lg-8">
+																				<input name="Product_uuid" class="span9" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="Product_uuid">
+																				<div class="form-group">
+																						<label for="" class="col-sm-2 control-label">Categories<sup class="req">*</sup></label>
+																						<div class="col-sm-4  ">
+																								<input  type="hidden" id="selected_categories" value="" name="selected_categories">
+																								<select class="chosen-select" name="categories" id="categories" multiple style="width: 100%;">
+																										<!--HIT_EXECUTE
+							 																				_HIT_HTMLTXT:=Web_ProductCategoriesHTMLPopup([Products]uuid)
+																										-->
+																								</select>
+																						</div>
+																				</div>
+																				<div class="form-group errorNameClass">
+																						<label for="" class="col-sm-2 control-label">Product Name<sup class="req">*</sup></label>
+																						<div class="col-sm-6">
+																							<input type="hidden" name="actualName" id="actualName" value="<!--#4DVAR [Products]ProductName-->">
+																							
+																							<input type="text" class="form-control" name="ProductName" id="ProductName" value="<!--#4DVAR [Products]ProductName-->"  onKeyUp="generate_code('ProductName','product_code')" onBlur="generate_code('ProductName','product_code')">
+																							<small id="errorEM" style="display: none;" data-bv-validator-for="title" class="help-block">This name already exists!</small>
+																						</div>
+																				</div>
+																				<div class="form-group">
+																						<label for="" class="col-sm-2 control-label">Product Code</label>
+																						<div class="col-sm-6">
+																							<input type="text" readonly class="form-control" name="product_code" id="product_code" value="<!--#4DVAR [Products]product_code-->">
+																						</div>
+																				</div>
+																				<div class="form-group">
+																					<label for="" class="col-sm-2 control-label">Description <sup class="req">*</sup></label>
+																					<div class="col-sm-8">
+																						<textarea rows="15" id="Description" class="form-control bs-texteditor" name="Description"><!--#4DVAR [Products]Description--></textarea>
+																					</div>
+																				</div>
+																				
+																				<!--#4DIF (Records in selection([Products])=1)-->
+																				<h3>Specification</h3>
+																				<div class="row specMsg">
+																						<div class="col-sm-8">
+																								<div class="table-responsive padding-left-5">
+																										<table class="table table-bordered">
+																												<tbody>
+																														<tr style="background:#fafafa;" class="item">
+																																<th class="vertical-middle" >Specification Name</th>
+																																<th class="vertical-middle" >Specification Value</th>
+																																<th class="vertical-middle">Action</th>
+																														</tr>
+																														<tr id="hiderow">
+																																<td colspan="7"><a id="addrow" href="javascript:void(0)" title="Add new parameter">Add new parameter</a></td>
+																														</tr>
+																												</tbody>
+																										</table>
+																								</div>
+																						</div>
+																				</div>
+																				<!--#4DENDIF--> 
+																				
+																		</div>
+																		<div class=" col-sm-12 col-lg-3">
+																				<div class="form-group errorSkuClass">
+																						<label for="" class="col-sm-4 control-label">Product SKU <sup class="req">*</sup></label>
+																						<div class="col-sm-8">
+																								<input class="form-control" type="hidden" id="actualsku" value="<!--#4DVAR [Products]sku-->" name="actualsku">
+																								<input class="form-control" type="text" id="sku" value="<!--#4DVAR [Products]sku-->" name="sku">
+																								<small id="errorskuEM" style="display: none;" data-bv-validator-for="sku" class="help-block">This SKU already exists!</small>
+																						</div>
+																				</div>
+																				<div class="form-group">
+   		        																	<div class="col-sm-offset-4 col-sm-5">
+    			  																		<div class="checkbox">
+      		  																				<label> <input type="checkbox" name="publish_on_web" value="true" id="publish_on_web" <!--#4DIF ([Products]publish_on_web)-->checked<!--4DENDIF-->>Publish on web</label>
+    			  																		</div>
+  																					</div>
+  																				</div>
+																				<div class="form-group">
+																						<label for="" class="col-sm-4 control-label">Stock available <sup class="req">*</sup></label>
+																						<div class="col-sm-8">
+																								<input class="form-control num" type="text" id="stock_available" value="<!--#4DVAR [Products]stock_available-->" name="stock_available">
+																						</div>
+																				</div>
+																				<div class="form-group">
+																						<label for="" class="col-sm-4 control-label">Unit Price <sup class="req">*</sup></label>
+																						<div class="col-sm-8">
+																								<input class="form-control num" type="text" id="Unit_Price" value="<!--#4DVAR [Products]Unit_Price-->" name="Unit_Price">
+																						</div>
+																				</div>
+																				<div id="ava_options">
+																					
+																				</div>
+																			</div>
+																</div>
+																<div class="row">
+																		<div class="col-sm-12 text-center">
+																				<input type="submit" class="btn palette-carrot btn-color margin-right-5 btn-sm save_exit">
+																				<!--#4DIF (Records in selection([Products])=0)-->
+																				<input type="reset" class="btn btn-primary btn-sm">
+																				<!--4DENDIF--> 
+																		</div>
+																</div>
+														</form>
+												</div>
+										</div>
+								</div>
+								<!-- /.col --> 
+						</div>
+						<!-- /.row --> 
+				</div>
+				<!-- /.container-fluid --> 
+		</div>
+		<!-- /.rightside --> 
+</div>
+<!-- /.wrapper --> 
+
+<!-- END CONTENT --> 
+
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/v2/includes/InitJs.shtml--> 
+<!-- BEGIN JAVASCRIPTS --> 
+
+<!-- bootstrap validator --> 
+<script src="assets/plugins/bootstrapValidator/bootstrapValidator.min.js" type="text/javascript"></script> 
+<!-- bootstrap wysihtml5 -->
+<script src="assets/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js" type="text/javascript"></script>
+<!-- maniac --> 
+<script src="assets/js/maniac.js" type="text/javascript"></script> 
+<script src="assets/js/chosen.jquery.js" type="text/javascript"></script> 
+<script type="text/javascript">
+	maniac.loadbstexteditor();
+	$('#ProductForm').bootstrapValidator({
+			message: 'This value is not valid',
+			excluded: ':disabled',
+			fields: {
+				ProductName: {
+					message: 'Name is not valid',
+					validators: {
+						notEmpty: {
+							message: 'Name is required and can\'t be empty'
+						}
+					}
+				},
+				stock_available: {
+					validators: {
+						notEmpty: {
+							message: 'This field is required and can\'t be empty'
+						}/**,
+						greaterThan: {
+							value: 1,
+							inclusive: false,
+							message: 'The field can\'t than 0'
+						}**/
+					}
+				},
+				Description: {
+					validators: {
+						notEmpty: {
+							message: 'This field is required and can\'t be empty'
+						}
+					}
+				},
+				categories: {
+					validators: {
+						notEmpty: {
+							message: 'This field is required and can\'t be empty'
+						}
+					}
+				},
+				sku: {
+					validators: {
+						notEmpty: {
+							message: 'This field is required and can\'t be empty'
+						}
+					}
+				}
+				
+			},
+			submitHandler: function(validator, form, submitButton) {
+					//var actualNameStr= '<!--#4DVAR [Products]ProductName-->';
+					var actualNameStr=$("#actualName").val();
+					var prodNameStr=$("#ProductName").val();
+					
+					var actualskuStr=$("#actualsku").val();
+					var skuStr=$("#sku").val();
+       				<!--#4DIF (Records in selection([Products])=1)-->	
+						if(actualNameStr!=prodNameStr){
+							var jsonRow = 'checkalready.cgi?field_value='+prodNameStr+'&table_name=Products&field_name=ProductName';
+							$.getJSON(jsonRow,function(html){
+								if(html.result=="yes" ){
+									$('#errorEM').show();
+									$('.errorNameClass').addClass("has-error");
+									return false;
+									
+								}else{
+									$('#errorEM').hide();
+									$('.errorNameClass').removeClass("has-error");
+									if(actualskuStr!=skuStr){
+										var jsonRow = 'checkalready.cgi?field_value='+skuStr+'&table_name=Products&field_name=sku';
+										$.getJSON(jsonRow,function(html){
+											if(html.result=="yes" ){
+												$('#errorskuEM').show();
+												$('.errorSkuClass').addClass("has-error");
+												return false;
+											}else{
+												$('#errorskuEM').hide();
+												$('.errorSkuClass').removeClass("has-error");
+												validator.defaultSubmit();
+											}
+										});
+									}else{
+										validator.defaultSubmit();
+									}
+								}
+							});
+						}else if(actualskuStr!=skuStr){
+							var jsonRow = 'checkalready.cgi?field_value='+skuStr+'&table_name=Products&field_name=sku';
+							$.getJSON(jsonRow,function(html){
+								if(html.result=="yes" ){
+									$('#errorskuEM').show();
+									$('.errorSkuClass').addClass("has-error");
+									return false;
+								}else{
+									$('#errorskuEM').hide();
+									$('.errorSkuClass').removeClass("has-error");
+									//validator.defaultSubmit();
+								}
+							});
+						}else{
+							validator.defaultSubmit();
+						}
+					<!--#4DELSE-->
+						var jsonRow = 'checkalready.cgi?field_value='+prodNameStr+'&table_name=Products&field_name=ProductName';
+						$.getJSON(jsonRow,function(html){
+							if(html.result=="yes" ){
+								$('#errorEM').show();
+								$('.errorNameClass').addClass("has-error");
+								return false;
+
+							}else{
+								$('#errorEM').hide();
+								$('.errorNameClass').removeClass("has-error");
+								//validator.defaultSubmit();
+									var jsonRow = 'checkalready.cgi?field_value='+skuStr+'&table_name=Products&field_name=sku';
+									$.getJSON(jsonRow,function(response2){
+										if(response2.result=="yes" ){
+											$('#errorskuEM').show();
+											$('.errorSkuClass').addClass("has-error");
+											return false;
+										}else{
+											$('#errorskuEM').hide();
+											$('.errorSkuClass').removeClass("has-error");
+											validator.defaultSubmit();
+										}
+									});
+							}
+						});
+					<!--#4DENDIF-->
+			}
+		});
+
+	$(document).ready(function () {
+       	<!--#4DIF (Records in selection([Products])=1)-->
+			fetchavailableoptions();
+			fetchspecifications();
+		<!--#4DENDIF-->
+    });
+
+	//chosen
+	var config = {
+      '.chosen-select'           : {},
+      '.chosen-select-deselect'  : {allow_single_deselect:true},
+      '.chosen-select-no-single' : {disable_search_threshold:10},
+      '.chosen-select-no-results': {no_results_text:'Oops, nothing found!'},
+      '.chosen-select-width'     : {width:"95%"}
+    }
+    for (var selector in config) {
+      $(selector).chosen(config[selector]);
+    }
+
+</script> 
+<script src="assets/js/product.js" type="text/javascript"></script> 
+<!-- END JAVASCRIPTS -->
+</body>
+<!-- END BODY -->
+</html>

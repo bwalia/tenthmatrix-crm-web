@@ -1,0 +1,229 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+C_TEXT(_HTMLTITLETXT)
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+
+_HTMLTITLETXT:="Company Holiday"
+QUERY([employee_holidays];[employee_holidays]uuid=_HIT_WebApp_GetField ("uuid"))
+
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml?url="+HTTPD_DocumentURI)
+end if 
+
+C_BOOLEAN(mReadOnly)
+mReadOnly:=(Records in selection([employee_holidays])=1)
+
+-->
+<!DOCTYPE html>
+<html>
+<head>
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+</head>
+<body>
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
+
+	<!-- main container -->
+    <div class="content">
+    
+        <div class="container-fluid">
+            <div id="pad-wrapper" class="form-page">
+				 <div class="row-fluid header">
+                    <h3>New Holiday</h3>
+                </div>
+                <div class="row-fluid form-wrapper">
+					<!-- left column -->
+					<div class="span8 column">
+					   <form name="HolidayForm" action="savecompanyholiday.cgi" id="HolidayForm" method="post" class="form-comment" onSubmit="return ValidateForm();" >
+							<input name="holiday_uuid" class="span4" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="holiday_uuid">        
+							<div class="span12 field-box">
+								<label>Start Date :</label>
+								<input type="text" class="input-large span4 datepicker" data-date-format="dd/mm/yyyy" <!--#4DIF (timestamp_unix_toDate([employee_holidays]timestamp_start)=!01/01/1970!)-->value=""<!--4DELSE-->value="<!--#4DVAR timestamp_unix_toDate ([employee_holidays]timestamp_start)-->"<!--4DENDIF--> name="Start_Date" id="Start_Date" readonly>
+							</div>
+							
+							<div class="span12 field-box">
+								<label>End Date :</label>
+									<input type="text" class="input-large span4 datepicker" data-date-format="dd/mm/yyyy" <!--#4DIF (timestamp_unix_toDate([employee_holidays]timestamp_end)=!01/01/1970!)-->value=""<!--4DELSE-->value="<!--#4DVAR timestamp_unix_toDate ([employee_holidays]timestamp_end)-->"<!--4DENDIF--> name="End_Date" id="End_Date" readonly>
+								<span id="err_msg" style="color:#FF0000"></span>
+							</div>
+							<div class="span12 field-box">
+								<label>Days Used</label>
+									<input name="days_used" class="span4" type="text" value="" id="days_used"   readonly>        
+							</div>
+							<div class="span12 field-box">
+								<label>Subject :</label>
+								<!--#4DIF (mReadOnly)--><textarea class="span4" rows="2" name="Subject" id="Subject"><!--#4DVAR [employee_holidays]subject--></textarea><!--#4DELSE-->
+								<textarea  class="span4" rows="2" name="Subject" id="Subject"><!--#4DVAR [employee_holidays]subject--></textarea><!--#4DENDIF-->
+							
+							</div>
+							<div class="span12 field-box" >
+							<LABEL></LABEL>
+								<input type="submit" class="btn-glow primary" value="Submit">
+															<a href="holidays.shtml" CLASS="cancelbtn">Cancel</a>
+							</div>
+						</form>
+                    </div>
+					<!--<div class="span4 column pull-right">
+						<h4>* You have X annual holidays left</h4>
+					</div>-->
+				</div>
+            </div>
+        </div>
+    </div>
+    <!-- end main container -->
+
+	<!-- scripts -->
+	<script src="js/wysihtml5-0.3.0.js"></script>
+   <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+	<script src="js/bootstrap.datepicker.js"></script>
+	<script src="js/jquery.uniform.min.js"></script>
+	<!-- call this page plugins -->
+<script language="javascript">
+function ValidateForm () {
+var msg = '';
+if (document.HolidayForm.Start_Date.value=="")
+{ msg = msg + 'Please Specify Start Date\n'; }
+if (document.HolidayForm.End_Date.value=="")
+{ msg = msg + 'Please Specify End_Date\n'; }
+if (document.HolidayForm.Subject.value=="")
+{ msg = msg + 'Please Enter Subject\n'; }
+if (msg=="") {
+return true;
+} else {
+alert (msg);
+return false;
+}}
+</script>
+    <script type="text/javascript">
+	function check_ondates(check_date,ele){
+	
+		var current_date=new Date();
+		var d = current_date.getDate();
+		var m = current_date.getMonth();
+		var y = current_date.getFullYear();
+		current_date = new Date(y, m, d);
+		current_date = current_date.getTime();
+		//console.log(current_date);
+						
+		var check_date_arr= check_date.split("/");
+		var check_date= new Date(check_date_arr[2],check_date_arr[1]-1,check_date_arr[0]);
+		var check_date = check_date.getTime();
+		//console.log(start_date);
+		var ONE_DAY = 1000 * 60 * 60 * 24;
+		
+		//var today = Math.abs(current_date - start_date);
+		var today = check_date - current_date;
+		//console.log(Math.round(today/ONE_DAY));
+		if(check_date<current_date){
+			//alert('Please Select appropriate Date');
+			//$(ele).val('');
+		}
+		else if((Math.round(today/ONE_DAY))<1){
+			alert('Please add request only if there is an emergency');
+		}else if((Math.round(today/ONE_DAY))<=6){
+			alert('Please add request a week before or only if there is an emergency');
+		}
+		
+	}
+function days_between(date1, date2) {
+	var end_date_arr= date1.split("/");
+	
+	var start_date_arr= date2.split("/");
+	
+	var end_date= new Date(end_date_arr[2],end_date_arr[1]-1,end_date_arr[0]);
+	var start_date= new Date(start_date_arr[2],start_date_arr[1]-1,start_date_arr[0]);
+	
+	if(end_date>=start_date){	
+		 // The number of milliseconds in one day
+		var ONE_DAY = 1000 * 60 * 60 * 24
+
+		// Convert both dates to milliseconds
+		var date1_ms = end_date.getTime()
+		//alert(date1_ms);
+		var date2_ms = start_date.getTime()
+
+		// Calculate the difference in milliseconds
+		var difference_ms = Math.abs(date1_ms - date2_ms)
+
+		// Convert back to days and return
+		$("#days_used").val(Math.round(difference_ms/ONE_DAY)+1)
+		$('#err_msg').html("");
+	}
+	else if(end_date<start_date){
+		$('#err_msg').html("End date must be greater than start date");
+		$("#days_used").val('');
+	}
+
+}
+        $(function () {
+			var s_date= $("#Start_Date").val();
+			var e_date= $("#End_Date").val();
+			
+            // add uniform plugin styles to html elements
+            $("input:checkbox").uniform();
+
+            // datepicker plugin
+             $('#Start_Date').datepicker({"autoclose": true}).on('changeDate', function (ev) {
+                var arrStartDate= $('#Start_Date').val().split('/');
+				var dateText = new Date(arrStartDate[1]+'/'+arrStartDate[0]+'/'+arrStartDate[2]);				
+				$('#End_Date').datepicker('setStartDate', dateText);
+            });
+			//End date
+			$('#End_Date').datepicker({"autoclose": true}).on('changeDate', function (ev) {
+				var arrEndDate= $('#End_Date').val().split('/');
+				var dateText = new Date(arrEndDate[1]+'/'+arrEndDate[0]+'/'+arrEndDate[2]);
+				$('#Start_Date').datepicker('setEndDate', dateText);
+			});
+			var arrStartDate= $('#Start_Date').val().split('/');
+			var dateText = new Date(arrStartDate[1]+'/'+arrStartDate[0]+'/'+arrStartDate[2]);				
+			$('#End_Date').datepicker('setStartDate', dateText);
+			var arrEndDate= $('#End_Date').val().split('/');
+			var dateText = new Date(arrEndDate[1]+'/'+arrEndDate[0]+'/'+arrEndDate[2]);
+			$('#Start_Date').datepicker('setEndDate', dateText);
+			
+			
+			
+			$('.num').keypress(function(e){
+				var k = e.which;
+				/* numeric inputs can come from the keypad or the numeric row at the top */
+				 if ((k<48 || k>57) && (k!=46) && (k!=8) && (k!=0)) {
+					e.preventDefault();
+					//alert("Allowed characters are 0-9, +, -, (, )");
+					return false;
+				}
+			
+			}); 
+					
+        });
+		  </script>
+	<script>
+		$(document).ready(function(){
+			var s_date= $("#Start_Date").val();
+			var e_date= $("#End_Date").val();
+			if(s_date!='' && e_date !=""){
+				days_between(e_date, s_date);
+			}
+			$("#End_Date").change(function() {
+				var s_date= $("#Start_Date").val();
+				var e_date= $("#End_Date").val();
+				if(s_date!='' && e_date !=""){
+					days_between(e_date, s_date);
+				}
+				check_ondates(e_date,'#End_Date');
+			});
+			$("#Start_Date").change(function() {
+				var s_date= $("#Start_Date").val();
+				var e_date= $("#End_Date").val();
+				if(s_date!='' && e_date !=""){
+					days_between(e_date, s_date);
+				}
+				check_ondates(s_date,'#Start_Date');
+				
+			}); 
+		}); 
+    </script>
+</body>
+</html>

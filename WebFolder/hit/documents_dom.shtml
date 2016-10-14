@@ -1,0 +1,182 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml?url="+HTTPD_DocumentURI)
+end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+</head>
+<body>
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
+
+	<!-- main container -->
+    <div class="content">
+        
+        <div class="container-fluid">
+            <div id="pad-wrapper">
+
+                <!-- timeslips table -->
+                <div class="table-wrapper orders-table section">
+                    <div class="row-fluid head">
+                        <div class="span12">
+                            <h4>Documents</h4>
+                        </div>
+                    </div>
+                    <form method="get" onSubmit="__showDocuments(); return false;">
+
+						<div class="row-fluid filter-block">
+							<div class="pull-right">
+								<div class="btn-group pull-right">
+									<!--<button class="glow left large" onClick="__showAllDocuments(); return false;">All</button>
+									<button class="glow middle large" onClick="__showSuppliers(); return false;">Suppliers</button>
+									<button class="glow right large" onClick="__showActiveCustomers(); return false;">Active</button>-->
+									<a href="document.shtml" class="btn-flat success new-product margn-lft35">+ Add new document</a>
+								</div>
+								<input name="keyword" id="keyword" type="text" class="search order-search" placeholder="Enter document name.." value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" />
+							</div>
+						</div>
+
+                   </form>
+
+                    <div class="row-fluid">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+									 <th class="span3">
+                                        <span class="line"></span>
+                                        Client Name
+                                    </th>
+                                    <th class="span2">
+                                        Filename
+                                    </th>
+                                    <th class="span3">
+                                        Type
+                                    </th>
+									<th class="span3">
+                                        Size
+                                    </th>
+                                    <th class="span3">
+                                        
+                                        Date Modified
+                                    </th>
+                                    <th class="span3">
+                                        Date Created
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody><!--#4DSCRIPT/Web_LoadDocuments/-->
+                                <!--#4DLOOP [Documents]--><!--#4DSCRIPT/Web_LoadDocumentRelated/--><!-- row -->
+                                <tr class="first">
+								<td><!--#4DHTMLVAR [Companies]company_Name--></td>
+                                    <td>
+                                        <a href="javascript:void(0)" onClick="__showDocumentForm('<!--#4DHTMLVAR [Documents]uuid-->')"><!--#4DHTMLVAR [Documents]filename--></a>
+                                    </td>
+									
+                                    <td>
+                                        <!--#4DHTMLVAR [Documents]doctype-->
+                                    </td>
+									<td>
+									
+                                        <!--#4DHTMLVAR _HIT_FileSizeHumanReadable (BLOB size([Documents]filecontent))-->
+                                    </td>
+                                    <td>
+                                        <!--#4DHTMLVAR timestamp_unix_toDate([Documents]created_timestamp)-->
+                                    </td>
+                                    <td>
+                                        <!--#4DHTMLVAR timestamp_unix_toDate([Documents]modified_timestamp)-->
+                                        <ul class="actions">
+                                    		<li><a href="javascript:void(0)" onClick="__showDocumentForm('<!--#4DHTMLVAR [Documents]uuid-->')"><i class="table-edit"></i></a></li>
+                                        	<li><i class="table-settings"></i></li>
+                                        	<li class="last"><i class="table-delete"></i></li>
+                                   	 	</ul>
+                                    </td>
+                                </tr>
+									<!--#4DENDLOOP-->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- end timeslips table -->
+
+            </div>
+        </div>
+    </div>
+    <!-- end main container -->
+
+	<!-- scripts -->
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+    
+    
+<script>
+
+function __showSuppliers()
+{
+pUrlStr='documents.shtml?keyword='+$("#keyword").val()+'&tab=suppliers';
+window.location.href=pUrlStr;
+}
+
+function __showActiveCustomers()
+{
+pUrlStr='documents.shtml?keyword='+$("#keyword").val()+'&tab=active';
+window.location.href=pUrlStr;
+}
+
+function __showAllDocuments()
+{
+pUrlStr='documents.shtml';
+window.location.href=pUrlStr;
+}
+
+function __showDocuments()
+{
+pUrlStr='documents.shtml?keyword='+$("#keyword").val();
+window.location.href=pUrlStr;
+}
+
+function __showDocumentForm(uuid)
+{
+pUrlStr='document.shtml?uuid='+uuid;
+window.location.href=pUrlStr;
+}
+    
+    
+$(document).ready(function() {
+
+$('#keyword').focus();
+
+//setup before functions
+var typingTimer;                //timer identifier
+var doneTypingInterval = 1000;  //time in ms, 5 second for example
+
+//on keyup, start the countdown
+$('#keyword').keyup(function(){
+    clearTimeout(typingTimer);
+    if ($('#keyword').val) {
+        typingTimer = setTimeout(function(){
+            //do stuff here e.g ajax call etc....
+             var v = $("#keyword").val();
+__showDocuments();
+        }, doneTypingInterval);
+    }
+});
+
+    });
+
+    </script>
+
+    
+</body>
+</html>

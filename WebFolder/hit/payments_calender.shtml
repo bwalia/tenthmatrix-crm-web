@@ -1,0 +1,404 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml?url="+HTTPD_DocumentURI)
+end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+	<link href='css/lib/fullcalendar.css' rel='stylesheet' />
+    <link href='css/lib/fullcalendar.print.css' rel='stylesheet' media='print' />
+    <link rel="stylesheet" href="css/compiled/calendar.css" type="text/css" media="screen" />
+	<link rel="stylesheet" type="text/css" href="lib/base.css" />
+	<link rel="stylesheet" type="text/css" href="css/jquery.timepicker.css" />
+	<link rel="stylesheet" href="css/base/jquery-ui.css" />
+	<link rel="stylesheet" href="css/autocomplete.css" />
+<style>
+  
+  .ui-front {
+    z-index: 1000;
+	}
+  
+  </style>
+	
+</head>
+<body>
+
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+
+     <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
+
+	<!-- main container -->
+    <div class="content">
+        
+        <div class="container-fluid">
+		 <div id="pad-wrapper">
+            <div class="row-fluid calendar-wrapper">
+                    <div class="span12">
+
+                        <!-- div that fullcalendar plugin uses  -->
+                        <div id='calendar'></div>
+
+                        <!-- edit image pop up -->
+                        <div class="new-event popup" style="display:none" >
+                            <div class="pointer">
+                                <div class="arrow"></div>
+                                <div class="arrow_border"></div>
+                            </div>
+                            <i class="close-pop table-delete"></i>
+                            <h5>Date 
+                                <span class="date"></span></h5>
+                            <form name="frm_payment" class="form-comment" > 
+								<input type="hidden" value="" name="curr_date" id="curr_date">
+								
+								<div class="field">
+									<span id="err_msg" style="color:#FF0000"></span><br>
+									Invoice No.<span style="color:#6E829B">*</span>
+									<input style="width:50px;" type="text" name="inv_no" onBlur="get_client()" id="inv_no">
+									<input name="invoice_uuid" id="invoice_uuid" type="hidden" value="">
+									Amount<span style="color:#6E829B">*</span>
+									<input style="width:50px;" class="num" type="text" name="amount" id="amount">
+								</div>
+								<div class="field">
+									Company<span style="color:#6E829B">*</span>
+									<input style="width:150px;" type="text" name="company_name" id="company_name" readonly>
+									<input name="client_uuid" id="client_uuid" type="hidden" value="">
+								</div>
+								<div class="field">
+								   Mode of Payment<span style="color:#6E829B">*</span>
+								   <div class="ui-select">
+										<select name="mode_of_payment" id="mode_of_payment">
+											<option value="BACS" <!--#4DIF ([Payments]mode_of_payment="BACS")-->selected<!--4DELSE--><!--4DENDIF-->>BACS</option>
+											<option value="Paid by Debit or Credit Card" <!--#4DIF ([Payments]mode_of_payment="Paid by Debit or Credit Card")-->selected<!--4DELSE--><!--4DENDIF-->>Paid by Debit or Credit Card</option>
+											<option value="Cash" <!--#4DIF ([Payments]mode_of_payment="Cash")-->selected<!--4DELSE--><!--4DENDIF-->>Cash</option>
+											<option value="Cheque" <!--#4DIF ([Payments]mode_of_payment="Cheque")-->selected<!--4DELSE--><!--4DENDIF-->>Cheque</option>
+											<option value="International Banking" <!--#4DIF ([Payments]mode_of_payment="International Banking")-->selected<!--4DELSE--><!--4DENDIF-->>International Banking</option>
+											<option value="PayPal" <!--#4DIF ([Payments]mode_of_payment="PayPal")-->selected<!--4DELSE--><!--4DENDIF-->>PayPal</option>
+										</select> 
+									</div>
+								</div>
+								<div class="field">
+									Notes
+									<textarea name="notes" id="notes" rows="1" cols="10" class="event-input" style="width:45%; height:20px"></textarea>
+								</div>
+								<input type="button" value="Create" class="btn-glow primary" onClick="return ValidateForm();">
+							</form>
+                        </div>
+                    </div>
+                </div>
+			</div>
+        </div>
+    </div>
+    <!-- end main container -->
+
+	<!-- scripts for this page -->
+   <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+   
+   <script src="js/jquery-ui-1.10.2.custom.min.js"></script>
+    <script src='js/fullcalendar_new.min.js'></script>
+
+<script language="javascript">
+var new_event=new Array();
+
+
+function ValidateForm () {
+
+if (document.frm_payment.inv_no.value=="" || document.frm_payment.inv_no.value==0)
+{ 
+	alert('Please specify invoice number'); 
+	document.frm_payment.inv_no.focus();
+	return false;
+}
+else if (document.frm_payment.amount.value=="" || document.frm_payment.amount.value=="0")
+{ 
+	alert('Please specify amount'); 
+	document.frm_payment.amount.focus();
+	return false;
+}else if (document.frm_payment.mode_of_payment.value=="")
+{ 
+	alert('Please select mode of payment'); 
+	document.frm_payment.mode_of_payment.focus();
+	return false;
+}else{
+	save();
+}
+}
+
+function save(){
+	var date_received=$("#curr_date").val();
+	var client_uuid=$("#client_uuid").val();
+	var inv_no=$("#inv_no").val();
+	var amount=$("#amount").val();
+	var mode_of_payment=$("#mode_of_payment").val();
+	var notes=$("#notes").val();
+	var calenderpage="calenderpage";
+	var dataString = 'date_received='+date_received+'&client_uuid='+client_uuid+'&inv_no='+inv_no+'&amount='+amount+'&mode_of_payment='+mode_of_payment+'&notes='+notes+'&calenderpage='+calenderpage+'&redirect=false';
+	$.ajax({
+		type: "GET",
+		url: "savecalenderpayment.cgi",
+		data: dataString,
+		dataType: "json",
+		cache: false,
+		success: function(html)
+		{
+			var new_arr=new Array();
+			new_arr['id']=html.uuid;
+			new_arr['title']=html.Payment_details;;
+			new_arr['start']=get_datetime(date_received);
+			new_arr['end']=get_datetime(date_received);
+			new_arr['url']='payment.shtml?uuid='+html.uuid;
+			new_arr['allDay']=true;
+			new_event.push(new_arr);
+			
+			$('#calendar').fullCalendar( 'removeEventSource', new_event );
+			$('#calendar').fullCalendar( 'addEventSource', new_event );
+			$(".new-event").fadeOut("fast");
+		}
+	});
+
+}
+</script>
+
+<script type="text/javascript">
+    function get_client()
+	{
+		var inv_no=	$("#inv_no").val();
+		if(inv_no!=''){
+			var dataString = 'inv_no='+inv_no;
+			$.ajax({
+				type: "GET",
+				dataType: "json",
+				url: "getclientinvoice.cgi",
+				data: dataString,
+				cache: false,
+				success: function(html)
+				{
+					if(html.invoiceuuid){
+						if(html.paid){
+							alert("This Invoice is Already Paid");
+							$("#inv_no").val('');
+							//$('#submit').attr('disabled',true);
+						}
+						else{
+						$('#err_msg').html('');
+						$("#invoice_uuid").val(html.invoiceuuid);
+						$("#amount").val(html.Amount);
+						$("#client_uuid").val(html.CustomerID);
+						$("#company_name").val(html.CustomerName);
+						$('#submit').attr('disabled',false);
+						}
+					}
+					else{
+						//alert("Invoice no "+inv_no+" doesn't exists.");
+						$('#err_msg').html("Invoice no "+inv_no+" doesn't exists.");
+						
+						$("#inv_no").val('0');
+						$("#invoice_uuid").val('');
+						$("#amount").val('0');
+						$("#client_uuid").val('');
+						$("#company_name").val('');
+					}
+					
+				}
+			});
+		}
+	}
+
+	$('#inv_no').keypress(function(e){
+		checknumber(e);	
+	}); 
+						
+	$('.num').keypress(function(e){
+		checknumber(e);	
+	});
+						
+	function checknumber(e) {
+		var k = e.which;
+		/* numeric inputs can come from the keypad or the numeric row at the top */
+		 if ((k<48 || k>57) && (k!=46) && (k!=8) && (k!=0)) {
+			e.preventDefault();
+			//alert("Allowed characters are 0-9, +, -, (, )");
+			return false;
+		}
+	}
+</script>
+
+    <!-- builds fullcalendar example -->
+    <script>
+	function get_datetime(date)
+	{
+
+		var date_arr=date.split('/');		
+		
+		var new_date = new Date(date_arr[2], Number(date_arr[1])-1, date_arr[0]);
+		//alert(new_date);
+		return new_date;
+	}
+	var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+	var days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+	
+        $(document).ready(function() {
+            var flag=0;
+			
+            $('#calendar').fullCalendar({
+                header: {
+                    left: 'month,agendaWeek,agendaDay',
+                    center: 'title',
+                    right: 'today prev,next'
+                },
+                selectable: true,
+                selectHelper: true,
+                editable: true,
+				timeFormat: 'd MMM { - d MMM }',
+                eventBackgroundColor: '#278ccf',
+				
+				<!--#4DIF (_HIT_WebApp_GetField ("mode")="week")-->
+				defaultView: 'agendaWeek',
+				<!--#4DENDIF-->
+				
+				 dayClick: function(date, allDay, jsEvent, view) {
+				 
+			var s_time='';
+        if (allDay) {
+           // alert('Clicked on the entire day: ' + date);
+        }else{
+            //alert('Clicked on the slot: ' + date);
+			
+			var date_arr=String(date).split(" ");
+			var timestring='';
+			for(var i=0; i<date_arr.length; i++){
+				var contains = (date_arr[i].indexOf(":") > -1);
+					if(contains){
+						timestring=date_arr[i];
+						break;
+					}
+			}
+			var time_arr=timestring.split(":");
+			if(time_arr[0]>12){ var h=time_arr[0]-12; s_time=h+":"+time_arr[1]+"pm"; }
+			else{ s_time=time_arr[0]+":"+time_arr[1]+"am"; }
+			
+        }
+
+        //alert('Coordinates: ' + jsEvent.pageX + ',' + jsEvent.pageY);
+		//alert('caloffset: ' + $('#calendar').offset().left + ',' + $('#calendar').offset().top);
+		//alert('widthheight: ' + $(".new-event").outerWidth()/2 + ',' + $(".new-event").outerHeight()+','+$(".arrow_border").outerHeight());
+
+        //alert('Current view: ' + view.name);
+		var cal_left=Number($('#calendar').offset().left);
+		var cal_top=Number($('#calendar').offset().top);
+		var left = jsEvent.pageX - cal_left - (Number($(".new-event").outerWidth())/2);
+		var top = jsEvent.pageY - cal_top - Number($(".new-event").outerHeight()) - Number($(".arrow_border").outerHeight());
+		
+	
+		if(left<0){
+			left=0;
+		}
+		else if(left>(Number($('#calendar').outerWidth())-Number($(".new-event").outerWidth()))){
+			left=Number($('#calendar').outerWidth())-Number($(".new-event").outerWidth());
+		}
+		if(top<0){
+			top=0;
+		}
+        $(".new-event").css('left', left);
+		$(".new-event").css('top', top);
+				
+		
+		var converted = days[date.getDay()] + ", " + date.getDate() + " " +months[date.getMonth()];
+		var curr_month=Number(date.getMonth())+1;
+		var curr_date=	date.getDate()+'/'+	curr_month+'/'+date.getFullYear();
+		
+		$(".new-event").find('.date').html(converted);
+		$("#curr_date").val(curr_date);
+		$("#inv_no").val('');
+		$("#invoice_uuid").val('');
+		$("#company_name").val('');
+		$("#client_uuid").val('');
+		$("#amount").val('');
+		$("#mode_of_payment").val('');
+		$("#notes").val('');
+        $(".new-event").fadeIn("fast");
+
+    },
+			viewRender: function( view, element ) {
+				
+				var s_month=Number(view.visStart.getMonth())+1;
+				var s_date=	view.visStart.getDate()+'/'+s_month+'/'+view.visStart.getFullYear();
+				var e_month=Number(view.end.getMonth())+1;
+				var e_date=	view.end.getDate()+'/'+e_month+'/'+view.end.getFullYear();
+				
+				var date_arr=String(view.visStart).split(" ");
+				var s_time='';
+				for(var i=0; i<date_arr.length; i++){
+					var contains = (date_arr[i].indexOf(":") > -1);
+					if(contains){
+						s_time=date_arr[i];
+						break;
+					}
+				}
+				
+				var date_arr1=String(view.end).split(" ");
+				var e_time='';
+				for(var i=0; i<date_arr1.length; i++){
+					var contains = (date_arr1[i].indexOf(":") > -1);
+					if(contains){
+						e_time=date_arr1[i];
+						break;
+					}
+				}
+				
+				
+				//var s_date=	view.start.getTime();
+				//var e_date= view.end.getTime();
+				var dataString = 's_date='+s_date+'&e_date='+e_date+'&redirect=false';
+				jsonRow = 'return_calender_payments.cgi?'+dataString;
+			
+			
+		
+				
+		$.getJSON(jsonRow,function(result){
+		$('#calendar').fullCalendar( 'removeEventSource', new_event );
+			if(result){
+				
+				new_event=new Array();
+				$.each(result, function(i,item)
+				{
+					var new_arr=new Array();
+					new_arr['id']=Number(item.inv_num);
+					new_arr['title']=item.Payment_details;
+					new_arr['start']=get_datetime(item.Start_date);
+					new_arr['url']='payment.shtml?uuid='+item.uuid;
+					
+					console.log(new_arr);
+					new_event.push(new_arr);
+					
+					
+				});
+				//console.log(new_event);
+				$('#calendar').fullCalendar( 'addEventSource', new_event );
+			}
+		});
+		
+			},
+	
+            });
+			
+            // handler to close the new event popup just for displaying purposes
+            // more documentation for fullcalendar on http://arshaw.com/fullcalendar/
+            $(".popup .close-pop").click(function () {
+                $(".new-event").fadeOut("fast");
+            });
+			
+        });
+    </script>
+</body>
+</html>

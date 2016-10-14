@@ -1,0 +1,393 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+C_TEXT(_HTMLTITLETXT)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+QUERY([Tasks];[Tasks]uuid=_HIT_WebApp_GetField ("uuid"))
+
+C_BOOLEAN (mtaskBoolen)
+mtaskBoolen:=(Records in selection([Employees])=1)
+
+C_BOOLEAN(mUserIsCurrentBool)
+mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
+
+QUERY([Timeslips];[Timeslips]task_id=[Tasks]task_id)
+
+IF (Records in selection([Tasks])=0)
+_HTMLTITLETXT:="New Task"
+
+//select default project
+C_TEXT(pUserUUIDStr;pUserProject)
+pUserUUIDStr:=_HIT_WebSession_GetVar ("auth_user_uuid")
+pUserProject:=User_GetPreferences (pUserUUIDStr;"project_id")
+QUERY([Projects];[Projects]proj_id=num(pUserProject))
+
+ELSE
+_HTMLTITLETXT:= "Edit Task"
+
+//selected project
+QUERY([Projects];[Projects]proj_id=num([Tasks]proj_id))
+END IF
+
+
+C_TEXT(_HIT_TSTXT;taskNameStr)
+C_LONGINT(iCounter;taskNameLength)
+_HIT_TSTXT:=""
+For (iCounter;1;Records in selection([Timeslips]))
+
+QUERY([Employees];[Employees]emp_id=[Timeslips]emp_id)
+
+_HIT_TSTXT:=_HIT_TSTXT+"<tr class='item-row' ><td class='item-id'>"+[Employees]emp_first_name+" "+[Employees]emp_last_name+"</td><td >"+[Timeslips]slip_description+"</td><td>"+string([Timeslips]slip_hours)+"</td><td ><a href='timeslip.shtml?uuid="+[Timeslips]uuid+"' >Edit</a></td></tr>"								
+
+NEXT RECORD([Timeslips])
+End for 
+
+taskNameLength:=Length([Tasks]task_name)
+
+If(taskNameLength>=50)
+taskNameStr:=Substring ([Tasks]task_name; 1; 100)+"..."
+Else
+taskNameStr:=[Tasks]task_name
+End If
+
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+-->
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/main-header.shtml-->
+<link rel="stylesheet" href="css/jquery-ui.css">
+<script src="js/datepicker.js"></script>
+<script src="js/jquery.validate.js"></script>
+<script type="text/javascript">
+var tableUUIDStr= '<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->';
+var tableNameStr='Tasks';
+var taskNameStr='',xhrAbortLoad, xhrAbortSearch;
+var loadmoreNum=10, start=0, end=loadmoreNum;
+function saveChecklist(){
+	$("#errMsg").remove();
+	var desc=$("#textarea").val();
+	var uuid="";
+	var duplicateOption="";
+	$('.duplicate_checklist').each(function(){
+		if($(this).is(':checked')){
+			duplicateOption= $(this).val();
+		}
+	});
+	//console.log(duplicateOption);
+	if(desc!=""){
+		$.ajax({
+			type: "GET",
+			url: "savetaskchecklist.cgi",
+			data: {'table' : 'Tasks', 'task_uuid' : tableUUIDStr, 'description': desc, 'duplicate' : duplicateOption },
+			success: function(response){
+				alert(response.success);
+				$('#popupLogin').popup('close');
+			
+				$('#checkListData').html("");
+				end=start+loadmoreNum;
+				start=0;
+				loadCheckList();
+			}
+		});
+	}else{
+		$(".newMsgStr").before('<span id="errMsg" style="color:#CC0000">* Please add description for new Checklist item!</span>');
+	}
+}
+
+function changeStatus(evt,uuid){
+	$.ajax({
+		type: "GET",
+		url: "managetaskchecllist.cgi",
+		data: {'status' : evt.checked, 'uuid' : uuid, "action" : "active_status", 'task_uuid' : tableUUIDStr},
+		success: function(response){
+			$('#checkListData').html("");
+			end=start+loadmoreNum;
+			start=0;
+			loadCheckList();
+		}
+	});
+}
+function loadCheckList(){
+	$("#load_more_checklist").hide();
+	
+	var jsonRow="loadtaskchecklist.cgi?task_uuid="+tableUUIDStr+"&start="+start+"&end="+end+"&"+Math.random();
+	if(xhrAbortLoad) xhrAbortLoad.abort();
+	xhrAbortLoad=$.getJSON(jsonRow,function(result){
+		if(result.Alert){
+			//$.prompt("* No more record found!");
+		}else{
+		if(result.aaData!=""){
+			$(".checklistTable").show();
+				var table_html="";
+				$.each(result.aaData, function(i,row){
+					if(row.status==1 || row.status=="1"){
+						table_html+='<input name="checkbox_'+row.uuid+'" id="checkbox_'+row.uuid+'" type="checkbox" checked value="true"  onChange="changeStatus(this,\''+row.uuid+'\')">';
+						table_html+='<label for="checkbox_'+row.uuid+'" style="background-color:#f0f8ff">'+row.description+' <br/><span style="font-size:11px; font-weight: 400;">Last Modified: '+row.user_name+' ('+row.last_modified+')</span></label>';
+					}else{
+						table_html+='<input name="checkbox_'+row.uuid+'" id="checkbox_'+row.uuid+'" type="checkbox" value="false"  onChange="changeStatus(this,\''+row.uuid+'\')" >';
+						table_html+='<label for="checkbox_'+row.uuid+'">'+row.description+' <br/><span style="font-size:11px; font-weight: 400;">Last Modified: '+row.user_name+' ('+row.last_modified+')</span></label>';
+					}
+				});
+			
+				$('#checkListData').append(table_html);
+				$("input[type='checkbox']").checkboxradio();
+				if(end< result.total_records){
+					$("#load_more_checklist").show();
+				}
+		}else{
+			$.prompt("* No more record found!");
+		}
+		}
+	});
+}
+$(document).ready(function() {
+	$('#task_start_date').datepicker({
+    	autoclose: true,
+    	changeMonth: true,
+      	hangeYear: true,
+      	dateFormat: 'dd/mm/yy',
+      	onClose: function( selectedDate ) {
+        	$( "#task_end_date" ).datepicker( "option", "minDate", selectedDate );
+      	}
+    });
+    $('#task_end_date').datepicker({
+    	autoclose: true,
+    	changeMonth: true,
+      	hangeYear: true,
+      	dateFormat: 'dd/mm/yy',
+      	onClose: function( selectedDate ) {
+        	$( "#task_start_date" ).datepicker( "option", "maxDate", selectedDate );
+      	}
+    });
+    var startDateTxt= $('#task_start_date').val();
+	$('#task_end_date').datepicker("option", "minDate", startDateTxt);
+		
+	var endDateTxt= $('#task_end_date').val();	
+	$('#task_start_date').datepicker("option", "maxDate", endDateTxt);
+	loadCheckList();
+	$("#TaskForm").validate({
+        rules: {
+            Task_Name: { required: true },
+			Project_ID: { required: true },
+			uuid_reported_by: { required: true },
+			uuid_assigned_to: { required: true },
+			Task_Estimated_Hour: { number: true},
+			Task_Rate: { number: true},
+        }
+    });
+    
+    //on keyup, start the countdown
+	$('.projectNameStr').keyup(function(){
+    	if ($('.projectNameStr').val()) {
+      		var jsonRow="getprojectsonsearch.cgi?srch="+$('.projectNameStr').val()+"&"+Math.random();
+			if(xhrAbortSearch) xhrAbortSearch.abort();
+			xhrAbortLoxhrAbortSearchad=$.getJSON(jsonRow,function(result){
+				if(result){
+					var html='';
+					$.each(result, function(i,item){
+						html += '<li><a class="ui-btn ui-btn-icon-right ui-icon-carat-r" href="javascript:void(0)" onClick="selectValue(\''+item.id+'\',\''+item.value+'\')">'+item.value+'</a></li>';
+					});
+					$( ".projectListView").html("");
+					$( ".projectListView").html(html);
+				}
+			});
+          
+    	}
+    });
+    $('.ui-input-clear').click(function(){
+    	$("#Project_ID").val("");
+    });
+    
+});
+function selectValue(val, name){
+	$(".projectNameStr").val(name);
+	$("#Project_ID").val(val);
+	$( ".projectListView" ).listview( "refresh" );
+	$( ".projectListView li" ).addClass("ui-screen-hidden");
+}
+</script>
+<style>
+label.error { 
+	float: left; 
+	color: red; 
+	padding-top: 1.5em; 
+	vertical-align: top; 
+}
+</style>
+</head>
+<body>
+<div data-role="page" class="jqm-demos" data-quicklinks="true">
+	<!-- header -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/top-header.shtml-->
+	<!-- /header -->
+	
+	<div role="main" class="ui-content jqm-content">
+		<h3><!--#4DIF (Records in selection([Tasks])=1)-->"<!--#4DVAR taskNameStr-->"<!--#4DELSE-->New<!--#4DENDIF--> Task</h3>
+		<div data-demo-html="true">
+			<div data-role="tabs" id="tabs">
+		      <div data-role="navbar">
+			    <ul>
+			      <li><a href="#one" data-ajax="false" class="ui-btn-active">Task Details</a></li>
+			      <!--#4DIF (Records in selection([Tasks])=1)-->
+			      <li><a href="#two" data-ajax="false">Checklist</a></li>
+			      <!--#4DENDIF-->
+			    </ul>
+		      </div>
+		     	<div id="one" class="ui-body-d ui-content">
+		     		<form data-ajax="false" name="TaskForm" id="TaskForm" action="savetask.cgi" method="post">
+				
+					<div class="ui-field-contain">
+   						<label for="Task_Name">Task Name:</label>
+   						<textarea cols="40" rows="8" name="Task_Name" id="Task_Name" placeholder="Task Name"><!--#4DVAR [Tasks]task_name--></textarea>
+					</div>
+					<input name="Task_uuid" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="Task_uuid">
+					<input name="tsk_id" type="hidden" value="<!--#4DVAR [Tasks]task_id-->" id="tsk_id">
+					<div class="ui-field-contain">
+					<label for="uuid_reported_by" class="select">Reported By:</label>
+					<select name="uuid_reported_by" id="uuid_reported_by" data-native-menu="false">
+						<option value="">--Select Employee--</option>
+<!--HIT_EXECUTE
+_HIT_HTMLTXT:=""
+QUERY([Employees];[Employees]emp_active=True)
+ORDER BY([Employees];[Employees]emp_last_name;>)
+
+For (_HIT_COUNTER;1;Records in selection([Employees]))
+_HIT_HTMLTXT:=_HIT_HTMLTXT+"<option value=\""+[Employees]uuid+"\""
+If ([Tasks]uuid_reported_by=[Employees]uuid)
+_HIT_HTMLTXT:=_HIT_HTMLTXT+" selected"
+Else 
+End if 
+_HIT_HTMLTXT:=_HIT_HTMLTXT+">"+[Employees]emp_first_name+" "+[Employees]emp_last_name+"</option>"
+NEXT RECORD([Employees])
+End for 
+-->
+					</select>
+					</div>
+					
+					<div class="ui-field-contain">
+					<label for="uuid_reported_by" class="select">Project:</label>
+					<input name="Project_ID" id="Project_ID" type="hidden" value="<!--4DVAR [Projects]proj_id-->">
+					<!--#4DIF (Records in selection([Tasks])=1)-->
+					<span class="ui-filterable">
+   						<input id="inset-autocomplete-input" data-type="search" placeholder="Search project..." class="projectNameStr" value="<!--4DVAR [Projects]proj_name-->">
+					</span>
+					<!--#4DELSE-->
+						<!--#4DIF (pUserProject#"")-->
+							<span class="ui-filterable">
+   								<input id="inset-autocomplete-input" data-type="search" placeholder="Search project..." class="projectNameStr" value="<!--4DVAR [Projects]proj_name-->">
+							</span>
+						<!--#4DELSE-->
+						<span class="ui-filterable">
+   							<input id="inset-autocomplete-input" data-type="search" placeholder="Search project..." class="projectNameStr">
+						</span>
+						<!--#4DENDIF-->
+					<!--#4DENDIF-->
+					
+					<ul data-role="listview" data-inset="true" data-filter="true" data-filter-reveal="true" data-input="#inset-autocomplete-input" class="projectListView">
+   						<!--#4DIF (Records in selection([Tasks])=0)-->
+							<!--#4DIF (pUserProject="")-->
+								<!--#4DSCRIPT/Web_LoadProjects/-->
+								<!--4DLOOP [Projects]-->
+									<li><a href="javascript:void(0)" onClick="selectValue('<!--4DVAR [Projects]proj_id-->','<!--4DVAR [Projects]proj_name-->')"><!--4DVAR [Projects]proj_name--></a></li>
+								<!--4DENDLOOP-->
+							<!--#4DENDIF-->								 
+						<!--#4DENDIF-->
+					</ul>
+					   
+					</div>
+					<div class="ui-field-contain">
+   						<label for="Task_Name">Start Date :</label>
+						<input data-role="date" type="text" name="task_start_date" id="task_start_date" data-date-format="dd/mm/yyyy" <!--#4DIF (timestamp_unix_toDate([Tasks]Timestamp_start)=!01/01/1970!)-->value=""<!--4DELSE-->value="<!--#4DVAR timestamp_unix_toDate([Tasks]Timestamp_start)-->"<!--4DENDIF--> id="task_start_date" readonly>
+					</div>
+					<div class="ui-field-contain">
+   						<label for="Task_Name">End Date :</label>
+						<input data-role="date" type="text" name="task_end_date" id="task_end_date" data-date-format="dd/mm/yyyy" <!--#4DIF (timestamp_unix_toDate([Tasks]Timestamp_end)=!01/01/1970!)-->value=""<!--4DELSE-->value="<!--#4DVAR timestamp_unix_toDate([Tasks]Timestamp_end)-->"<!--4DENDIF--> id="task_end_date" readonly>
+					</div>
+					<div class="ui-field-contain">
+   						<label for="Task_Estimated_Hour">Estimated Hour:</label>
+						<input name="Task_Estimated_Hour" id="Task_Estimated_Hour" placeholder="Estimated Hour" value="<!--#4DVAR [Tasks]task_estimated_hours-->" type="text">
+   					</div>
+					<div class="ui-field-contain">
+   						<label for="Task_Rate">Rate:</label>
+   						<input name="Task_Rate" id="Task_Rate" placeholder="Rate" value="<!--#4DVAR [Tasks]task_rate-->" type="text">
+   					</div>
+					<div class="ui-field-contain">
+   						<label for="uuid_assigned_to">Assigned to :</label>
+   						<select name="uuid_assigned_to" id="uuid_assigned_to"  data-native-menu="false">
+							<option value="">--Select Employee--</option>
+							<!--HIT_EXECUTE
+								_HIT_HTMLTXT:=""
+								QUERY([Employees];[Employees]emp_active=True)
+								ORDER BY([Employees];[Employees]emp_last_name;>)
+
+								For (_HIT_COUNTER;1;Records in selection([Employees]))
+									_HIT_HTMLTXT:=_HIT_HTMLTXT+"<option value=\""+[Employees]uuid+"\""
+									If ([Tasks]uuid_assigned_to=[Employees]uuid)
+										_HIT_HTMLTXT:=_HIT_HTMLTXT+" selected"
+									End if 
+									_HIT_HTMLTXT:=_HIT_HTMLTXT+">"+[Employees]emp_first_name+" "+[Employees]emp_last_name+"</option>"
+									NEXT RECORD([Employees])
+								End for 
+							-->
+						</select>
+   					</div>
+					<div class="ui-field-contain">
+   						<label for="Task_Status">Status:</label>
+   						<Select name="Task_Status" id="Task_Status"  data-native-menu="false">
+						<!--#4DIF (Records in selection([Tasks])=0)-->
+							<option value="assigned" >assigned</option>
+						<!--#4DELSE-->
+							<!--HIT_EXECUTE _HIT_HTMLTXT:=Task_Status_HTMLPopup-->
+						<!--#4DENDIF-->
+						</select>
+					</div>
+					<button type="submit" class="ui-shadow ui-btn ui-corner-all ui-mini">Submit</button>
+					</form>	
+		    	</div>
+		    	<!--#4DIF (Records in selection([Tasks])=1)-->
+		      	<div id="two">
+		      		<a href="#popupLogin" data-rel="popup" data-position-to="window" data-transition="pop"><input type="button" value="Add new Checklist"></a>
+					<div data-role="popup" id="popupLogin" data-overlay-theme="a" class="ui-content">
+						<div style="padding:10px 20px;">
+        				   	<h3>Add new Checklist</h3>
+        					<label for="textarea" class="ui-hidden-accessible newMsgStr">Description:</label>
+            				<textarea name="description" id="textarea" value="" placeholder="Description" cols="50"  type="text"></textarea>
+            		
+            				<fieldset data-role="controlgroup" >
+        						<legend>Duplicate this checklist:</legend>
+        						<input name="duplicate_checklist" class="duplicate_checklist" id="c_a" value="daily" type="radio">
+        						<label for="c_a">Daily</label>
+        						<input name="duplicate_checklist" class="duplicate_checklist" id="c_b" value="weekly" type="radio">
+        						<label for="c_b">Weekly</label>
+        						<input name="duplicate_checklist" class="duplicate_checklist" id="c_c" value="monthly" type="radio">
+       							<label for="c_c">Monthly</label>
+        						<input name="duplicate_checklist" class="duplicate_checklist" id="c_d" value="yearly" type="radio">
+        						<label for="c_d">Yearly</label>
+    						</fieldset>
+            		
+            				<button type="button" class="ui-btn ui-corner-all ui-shadow ui-btn-b ui-btn-icon-left ui-icon-check" onClick="saveChecklist()">Save</button>
+             				<button type="button" class="ui-btn ui-corner-all ui-shadow ui-btn-b ui-btn-icon-left ui-icon-delete" onClick="$('#popupLogin').popup('close')">Close</button>
+        				</div>
+					</div>
+		<fieldset data-role="controlgroup" id="checkListData">
+    					
+					</fieldset>
+		      	</div>
+		      	<!--#4DENDIF-->
+		    </div>
+		</div>
+
+	</div><!-- /content -->
+	<!-- panel -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/sidebar.shtml-->
+	<!-- /panel -->
+
+	<!-- footer -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/footer.shtml-->
+	<!-- /footer -->
+</div><!-- /page -->
+
+</body>
+</html>

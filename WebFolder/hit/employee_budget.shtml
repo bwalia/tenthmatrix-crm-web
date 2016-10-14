@@ -1,0 +1,522 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+//_HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")
+-->
+<!DOCTYPE html>
+<html>
+<head>
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+	<link rel="stylesheet" href="css/base/jquery-ui.css" />
+<link rel="stylesheet" href="css/autocomplete.css" />
+</head>
+<body>
+
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
+
+	<!-- main container -->
+    <div class="content">
+        
+        <div class="container-fluid">
+            <div id="pad-wrapper" class="form-page">
+				 <div class="row-fluid header">
+                    <h3>Employee Budget</h3>
+                </div>
+                <div class="row-fluid form-wrapper">
+					<!-- left column -->
+                    <div class="span9 with-sidebar">
+						<form name="TaskForm" class="form-comment" method="post" onSubmit="return ValidateForm();">
+						
+							<div class="field-box">
+                                <label>Employee Name</label>
+								<div class="ui-select span3">
+									<select name="Employee_ID" id="Employee_ID">
+									<!--#4DSCRIPT/Web_LoadEmployees/-->
+									<!--4DLOOP  [Employees]-->
+										<option value="<!--4DVAR [Employees]emp_id-->" <!--#4DIF ([Timeslips]emp_id=[Employees]emp_id)-->selected<!--4DELSE--><!--4DENDIF-->><!--4DVAR [Employees]emp_first_name--> <!--4DVAR [Employees]emp_last_name--></option>
+									<!--4DENDLOOP-->	
+									</select>
+								</div>
+                            </div>
+							
+							<div class="field-box">
+								<label>Project Name <!-- <span style="color:#6E829B">*</span> --></label>
+								<div class="ui-widget">
+									<Select name="Project_ID" id="Project_ID">
+									<!--#4DIF (Records in selection([Tasks])=0)-->
+										<option value=""></option>
+									<!--#4DSCRIPT/Web_LoadProjects/-->
+									<!--4DLOOP [Projects]-->
+										<option value="<!--#4DVAR [Projects]proj_id-->" ><!--4DVAR [Projects]proj_name--></option>
+									<!--4DENDLOOP-->
+									<!--#4DELSE-->
+										 <option value="<!--4DVAR [Projects]proj_id-->" selected><!--4DVAR [Projects]proj_name--></option>									 
+										 <!--#4DENDIF-->
+									</select>                                     
+								</div>
+							</div>
+							<div class="span4 field-box load_tasks">
+								<label>Load Project's Tasks</label>	
+								<label class="checkbox">					
+									<input name="loadtasks" class="span9" type="checkbox" value="true" id="loadtasks"></label>
+							</div>
+							<div class="span4 field-box tasks">
+								<label>Tasks</label>	
+								<div class="ui-select span3">
+									<select name="tasks" id="tasks">
+									</select>
+								</div>
+							</div>								
+							<div class="field-box">
+                                <label>Start Date </label>	
+                                <input class="input-large datepicker time" type="text"  data-date-format="dd/mm/yyyy" value="" name="start_date" id="start_date"  >
+                            </div>
+							<div class="field-box">
+                                <label>End Date </label>	
+                                <input class="input-large datepicker time" type="text"  data-date-format="dd/mm/yyyy" value="" name="end_date" id="end_date"  >
+                            </div>
+							<div class="field-box">
+								<label>Billing Status</label>
+								<div class="ui-select span3">
+									<select name="status" id="status">
+										<option value="">All</option>
+										<option value="2">Billed</option>
+										<option value="1">Chargeable</option>
+										<option value="0">Non Chargeable</option>
+									</select>                                     
+								</div>                                    
+							</div>
+							<div class="span11 field-box" style="text-align: center;">
+								<input type="button" class="btn-glow primary" value="Submit" id="btn">
+								<!--<span>OR</span>
+								<a href="tasks.shtml">Cancel</a>-->
+							</div>
+						</form>
+						<br>
+						<span id="message" class="span11" style="text-align: center;font-size:20px;color:red;"></span>
+						
+						<div class="row-fluid filter-block" id="display">
+							<form method="post" action="">
+								<!-- <input type="button" class="btn-glow primary" value="Delete Selected" onclick="deleteSelection()"><br><br> -->
+								<div class="ui-select">
+									<select name="change_status" id="change_status" onChange="__showStatus(this.value)">
+										<option value="">--Select Status--</option>
+										<option value="2">Billed</option>
+										<option value="1">Chargeable</option>
+										<option value="0">Non Chargeable</option>
+									</select>
+								</div>
+								
+								<input type="button" class="btn-glow primary" value="Change Status" id="chngStatus">
+								
+								<input type="hidden" name="selected" id="selected" value="">
+								<input type="hidden" name="add_status" id="add_status" value="">
+								
+								<div class="pull-right" style="font-size:20px;">
+									Employee's Total Amount: <span id="amount"></span>
+								</div>
+							</form>
+						</div>
+					
+						<div class="table-wrapper orders-table section">
+							<div class="row-fluid">
+								<table class="table table-hover items">
+								
+								</table>
+							</div>
+						</div>
+                    </div>
+				</div>
+            </div>
+        </div>
+    </div>
+    <!-- end main container -->
+
+	<!-- scripts -->
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+	<script src="js/ui/jquery-ui.js"></script>
+	<script src="js/bootstrap.datepicker.js"></script>
+	<script src="js/jquery.uniform.min.js"></script>
+	
+	<!-- call this page plugins -->
+
+<script language="javascript">
+function ValidateForm () {
+
+if (document.TaskForm.Task_Name.value=="")
+{ 
+	alert('Please Specify Task Name');
+	document.TaskForm.Task_Name.focus() ;
+	return false;
+}
+if (document.TaskForm.Project_ID.value=="")
+{ 
+	alert('Please Specify Project Name');
+	document.TaskForm.Project_ID.focus() ;
+	return false;
+}
+}
+
+//
+function __showStatus(name)
+{
+	var selected='';
+	$('.check').each(function(){
+		if($(this).is(":checked")){
+			if(selected==''){
+				selected=$(this).val();
+			}
+			else{
+				selected+=","+$(this).val();
+			}
+		}
+	
+	});
+	if(selected!=''){
+		$('#selected').val(selected);
+		$('#add_status').val(name);
+		//$('#frm_set').submit();
+	}
+}
+
+</script>
+
+    <script type="text/javascript">
+        $(function () {
+			$('.items').hide();
+			$('#message').hide();
+			$('#display').hide();
+			$('.load_tasks').hide();
+			$('.tasks').hide();
+			document.getElementById("loadtasks").checked = false;
+			
+            // add uniform plugin styles to html elements
+            $("input:checkbox").uniform();
+
+            // datepicker plugin
+            $('.datepicker').datepicker().on('changeDate', function (ev) {
+                $(this).datepicker('hide');
+            });
+			$('.num').keypress(function(e){
+				var k = e.which;
+				/* numeric inputs can come from the keypad or the numeric row at the top */
+				 if ((k<48 || k>57) && (k!=46) && (k!=8) && (k!=0)) {
+					e.preventDefault();
+					//alert("Allowed characters are 0-9, +, -, (, )");
+					return false;
+				}
+			
+			});
+		 $('#Project_ID').change(function() {
+			if($("#Project_ID").val() == ''){
+				$('.load_tasks').hide();
+				$('.tasks').hide();
+			}else{
+				document.getElementById("loadtasks").checked = false;
+				$('.load_tasks').show();
+				
+			}
+		 });
+		 $('#loadtasks').click(function() {
+			if($('#loadtasks').filter(':checked').length>0){
+				$('.tasks').show();
+				var Project_ID = $("#Project_ID").val() ;
+				//alert(employeeID);
+				jsonRow = 'loadprojecttasks.cgi?ProjectID='+Project_ID;
+				$.getJSON(jsonRow,function(result){
+					if(result){	
+						$('.tasks').show();
+						$('#tasks').html("");
+						var html='<option value=""></option>';
+						$.each(result, function(i,item) {
+							html += '<option value="'+item.id+'">'+item.value+'</option>';
+						});
+						$('#tasks').append(html);
+					}
+				});
+			}else{
+				$('.tasks').hide();
+				$("#tasks").val("");
+			}
+		});
+			$('#btn').click(function(){
+				$('.msg').show();
+				var employeeID = $("#Employee_ID").val() ;
+				var Project_ID = $("#Project_ID").val() ;
+				var start_date = $("#start_date").val() ;
+				var end_date = $("#end_date").val() ;
+				var status = $("#status").val() ;
+				var tasks = $("#tasks").val() ;
+				dataString = 'employeeID='+employeeID+'&projectID='+Project_ID+'&start_date='+start_date+'&end_date='+end_date+'&status='+status+'&taskid='+tasks;
+				
+				$.ajax({
+				type: "GET",
+				url: "returnTimeslips.cgi",
+				data: dataString,
+				cache: false,
+				success: function(result)
+				{
+					if(result.nResult=="No Records found."){
+						$('#message').show();
+						$('#display').hide();
+						$('.items').hide();
+						$('#message').html("");
+						$('#message').append(result.nResult);
+					}else{
+						$('#message').hide();
+						$('#display').show();
+						$('#amount').html("");
+						$('#message').html("");
+						$('.items').show();
+						$('.items').html("");
+						
+						var html='<thead><tr><th></th><th>Task Name</th><th>Slip Hours</th><th>Slip Rate</th><th>Amount</th><th>Status</th></tr></thead><tbody>';
+						$.each(result, function(i,item) {
+							if(item.Task=="TOTAL"){
+								$('#amount').append(item.Amount);
+							}else if(item.Task!="TOTAL"){
+								html += '<tr><td><input name="tasks_uuid" class="span3 check" type="checkbox" value="'+item.UUID+'" id="tasks_uuid"></td><td>'+item.Task+'</td><td>'+item.Hours+'</td><td>'+item.Rate+'</td><td>'+item.Amount+'</td><td>'+item.Status+'</td></tr>';
+							}
+						});
+						html += '</tbody>';
+						$('.items').append(html);
+					}
+				}
+				});
+			});
+			$('#chngStatus').click(function(){
+				var selected = $("#selected").val() ;
+				var add_status = $("#add_status").val() ;
+				dataString = 'selected='+selected+'&changed_status='+add_status;
+				//alert(dataString);
+				$.ajax({
+					type: "GET",
+					url: "changeStatusTimeslips.cgi",
+					data: dataString,
+					cache: false,
+					success: function(result)
+					{
+						$('#message').hide();
+						$('#display').show();
+						$('#amount').html("");
+						$('#message').html("");
+						$('.items').show();
+						$('.items').html("");
+						$("#change_status").val("")
+						
+						var html='<thead><tr><th></th><th>Task Name</th><th>Slip Hours</th><th>Slip Rate</th><th>Total Amount</th><th>Status</th></tr></thead><tbody>';
+						$.each(result, function(i,item) {
+							if(item.Task=="TOTAL"){
+								$('#amount').append(item.Amount);
+							}else if(item.Task!="TOTAL"){
+								html += '<tr><td><input name="tasks_uuid" class="span3 check" type="checkbox" value="'+item.UUID+'" id="tasks_uuid"></td><td>'+item.Task+'</td><td>'+item.Hours+'</td><td>'+item.Rate+'</td><td>'+item.Amount+'</td><td>'+item.Status+'</td></tr>';
+							}
+						});
+						html += '</tbody>';
+						$('.items').append(html);
+					}
+				});
+			});
+        });
+    </script> 
+	<script>
+	 var xhr;
+  (function( $ ) {
+    $.widget( "custom.combobox", {
+      _create: function() {
+        this.wrapper = $( "<span>" )
+          .addClass( "custom-combobox" )
+          .insertAfter( this.element );
+ 
+        this.element.hide();
+        this._createAutocomplete();
+        this._createShowAllButton();
+      },
+ 
+      _createAutocomplete: function() {
+		var ele_select= this.element;
+        var selected = this.element.children( ":selected" ),
+          value = selected.val() ? selected.text() : "";
+ 
+        this.input = $( "<input>" )
+          .appendTo( this.wrapper )
+          .val( value )
+          .attr( "title", "" )
+          .addClass( "custom-combobox-input ui-widget ui-widget-content ui-state-default ui-corner-left" )
+          .autocomplete({
+            delay: 0,
+            minLength: 0,
+            source: $.proxy( this, "_source" )
+          })
+          .tooltip({
+            tooltipClass: "ui-state-highlight"
+          });
+ 
+        this._on( this.input, {
+          autocompleteselect: function( event, ui ) {
+		  	//alert("show all");
+            ui.item.option.selected = true;
+			
+            this._trigger( "select", event, {
+              item: ui.item.option
+            });
+			ele_select.trigger('change');
+          },
+ 
+          autocompletechange: "_removeIfInvalid"
+        });
+      },
+ 
+      _createShowAllButton: function() {
+        var input = this.input,
+          wasOpen = false;
+ 
+        $( "<a>" )
+          .attr( "tabIndex", -1 )
+          .attr( "title", "Show All Items" )
+          .tooltip()
+          .appendTo( this.wrapper )
+          .button({
+            icons: {
+              primary: "ui-icon-triangle-1-s"
+            },
+            text: false
+          })
+          .removeClass( "ui-corner-all" )
+          .addClass( "custom-combobox-toggle ui-corner-right" )
+          .mousedown(function() {
+            wasOpen = input.autocomplete( "widget" ).is( ":visible" );
+          })
+          .click(function() {
+            input.focus();
+ 
+            // Close if already visible
+            if ( wasOpen ) {
+              return;
+            }
+ 
+            // Pass last search string as value to search for, displaying last results
+            input.autocomplete( "search", 'SHOWALL' );
+          });
+      },
+ 
+      _source: function( request, response ) {
+        //var matcher = new RegExp( $.ui.autocomplete.escapeRegex(request.term), "i" );
+		var ele_select= this.element;
+		if(request.term=='SHOWALL'){
+			response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+		
+		}
+		else
+		{
+		var jsonRow = 'getprojectsonsearch.cgi?srch='+request.term;
+		
+
+		//alert(jsonRowURLStr);
+		if(xhr) xhr.abort();
+		xhr=$.getJSON(jsonRow,function(result){
+			
+			if(result){
+				var html='<option value=""></option>';
+
+				$.each(result, function(i,item)
+				{
+					html += '<option value="'+item.id+'">'+item.value+'</option>';
+				});
+				ele_select.html(html);
+				
+				
+				response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+				
+				
+			}
+		});
+       
+	  } 
+		
+      },
+ 
+      _removeIfInvalid: function( event, ui ) {
+ 
+        // Selected an item, nothing to do
+        if ( ui.item ) {
+
+          return;
+        }
+ 
+        // Search for a match (case-insensitive)
+        var value = this.input.val(),
+          valueLowerCase = value.toLowerCase(),
+          valid = false;
+		  var ele_select= this.element;
+        this.element.children( "option" ).each(function() {
+          if ( $( this ).text().toLowerCase() === valueLowerCase ) {
+            this.selected = valid = true;	
+			ele_select.trigger('change');
+            return false;
+          }
+        });
+ 
+        // Found a match, nothing to do
+        if ( valid ) {
+          return;
+        }
+ 
+        // Remove invalid value
+        this.input
+          .val( "" )
+          .attr( "title", value + " didn't match any item" )
+          .tooltip( "open" );
+        this.element.val( "" );
+        this._delay(function() {
+          this.input.tooltip( "close" ).attr( "title", "" );
+        }, 2500 );
+        this.input.data( "ui-autocomplete" ).term = "";
+      },
+ 
+      _destroy: function() {
+        this.wrapper.remove();
+        this.element.show();
+      }
+    });
+  })( jQuery );
+ 
+  $(function() {
+    $( "#Project_ID" ).combobox();
+   
+	
+  });
+
+  </script>
+	
+</body>
+</html>

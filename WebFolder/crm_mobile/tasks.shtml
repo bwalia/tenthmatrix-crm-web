@@ -1,0 +1,126 @@
+<!--HIT_EXECUTE
+_HIT_HTTPD_SetHTTPHeader ("Content-type";"text/html; charset=utf-8")
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml?url="+HTTPD_DocumentURI)
+end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+-->
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/main-header.shtml-->
+<style>
+
+.table-opt tbody tr:hover td a { color: #FFF!important; }
+.table-opt tbody tr:hover td a:hover { color: #FFF; text-decoration:underline}
+</style>
+
+<script type="text/javascript">
+function __showAllTasks()
+{
+pUrlStr='tasks.shtml';
+window.location.href=pUrlStr;
+}
+function __showActive()
+{
+pUrlStr='tasks.shtml?keyword='+$('#keyword').val()+'&tab=active';
+window.location.href=pUrlStr;
+}
+function __showDone()
+{
+pUrlStr='tasks.shtml?keyword='+$('#keyword').val()+'&tab=done';
+window.location.href=pUrlStr;
+}
+function __showTaskForm(uuid)
+{
+pUrlStr='task.shtml?uuid='+uuid;
+window.location.href=pUrlStr;
+}
+function __showTasks()
+{
+pUrlStr='tasks.shtml?keyword='+$('#keyword').val();
+window.location.href=pUrlStr;
+}
+
+$(document).ready(function() {
+
+$('#keyword').focus();
+
+//setup before functions
+var typingTimer;                //timer identifier
+var doneTypingInterval = 1000;  //time in ms, 5 second for example
+
+//on keyup, start the countdown
+$('#keyword').keyup(function(){
+    clearTimeout(typingTimer);
+    if ($('#keyword').val) {
+        typingTimer = setTimeout(function(){
+            //do stuff here e.g ajax call etc....
+             var v = $("#keyword").val();
+__showTasks();
+        }, doneTypingInterval);
+    }
+});
+
+    });
+
+</script>
+</head>
+<body>
+<div data-role="page" id="home" data-add-back-btn="false">
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/top-header.shtml-->
+	<form method="get" onSubmit="__showTasks(); return false;">
+	<div class="search-container" data-theme="a" style="height:30px;">
+		<div data-role="fieldcontain" >
+			<input id="keyword" name="keyword" placeholder="Search for Task.." value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" type="search"   />
+		</div>
+	</div>
+				
+	<input type="button" value="All" onClick="__showAllTasks(); return false;">
+	<input type="button" value="Active" onClick="__showActive(); return false;">
+	<input type="button" value="Done" onClick="__showDone(); return false;">
+	</form>
+	
+	<div data-role="content" style="padding: 15px;">
+		<ul data-role="listview" data-inset="true">
+			<li data-role="list-divider"><span style=" color:#2B89D0; font-stretch:narrower;">Tasks</span></li>
+		</ul>
+		<table class="table-opt" summary="Product Options">
+			<thead>
+				<tr>
+					<th>Task Name</th>
+					<th>Project</th>
+					<th>Active</th>
+				</tr>
+			</thead>
+			<tbody><!--#4DSCRIPT/Web_LoadTasks/-->
+                            <!--#4DLOOP [Tasks]--><!--#4DSCRIPT/Web_LoadTaskRelated/--><!-- row -->
+				<tr> 											
+					 <td width="10%">
+						<a data-ajax="false" href="task.shtml?uuid=<!--#4DHTMLVAR [Tasks]uuid-->"><!--#4DHTMLVAR [Tasks]task_name--></a>
+					</td>
+					<td width="10%">
+						<a data-ajax="false" href="projects.shtml?keyword=<!--#4DHTMLVAR [Projects]proj_name-->"><!--#4DHTMLVAR [Projects]proj_name--></a>
+					</td>
+					
+					<td width="10%">
+						<span class="label label-success"><!--#4DIF ([Tasks]task_active=True)-->Active<!--#4DELSE-->Done<!--#4DENDIF--></span>
+					</td>		
+	
+				</tr>
+
+<!--#4DENDLOOP-->
+			</tbody>
+		</table>
+	</div><!-- END DATA ROLE CONTENT-->
+
+   <!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/footer.shtml-->
+    
+ </div>
+ 
+</body>
+</html>

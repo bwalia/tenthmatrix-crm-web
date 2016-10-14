@@ -1,0 +1,200 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+QUERY([Tasks];[Tasks]uuid=_HIT_WebApp_GetField ("uuid"))
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+//_HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")
+_HIT_WebSession_SetVar ("last-clicked-uuid";_HIT_WebApp_GetField ("uuid"))
+-->
+<!DOCTYPE html>
+<html>
+<head>
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+</head>
+<body>
+
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
+
+	<!-- main container -->
+    <div class="content">
+        
+        <div class="container-fluid">
+            <div id="pad-wrapper" class="form-page">
+				 <div class="row-fluid header">
+                    <h3><!--#4DIF (Records in selection([Tasks])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Task</h3>
+                </div>
+                <div class="row-fluid form-wrapper">
+					<!-- left column -->
+                    <div class="span9 with-sidebar">
+						<form name="TaskForm" action="savetask.cgi" class="form-comment" method="post" onSubmit="return ValidateForm();">
+							<div class="span12 field-box">
+								<label>Task Name</label>
+								<input name="Task_Name" class="span9" type="text" value="<!--#4DVAR [Tasks]task_name-->" id="Task_Name">
+							</div>
+							<input name="Task_uuid" class="span9" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="Task_uuid">
+							
+							<div class="field-box">
+								<label>Reported By</label>
+								<div class="ui-select span5">
+									<Select name="uuid_reported_by" id="uuid_reported_by">
+<!--HIT_EXECUTE
+_HIT_HTMLTXT:=""
+QUERY([Employees];[Employees]emp_active=True)
+ORDER BY([Employees];[Employees]emp_last_name;>)
+
+For (_HIT_COUNTER;1;Records in selection([Employees]))
+_HIT_HTMLTXT:=_HIT_HTMLTXT+"<option value=\""+[Employees]uuid+"\""
+If ([Tasks]uuid_reported_by=[Employees]uuid)
+_HIT_HTMLTXT:=_HIT_HTMLTXT+" selected"
+Else 
+End if 
+_HIT_HTMLTXT:=_HIT_HTMLTXT+">"+[Employees]emp_first_name+" "+[Employees]emp_last_name+"</option>"
+NEXT RECORD([Employees])
+End for 
+-->
+									</select>                                     
+								</div>
+							</div>                  
+
+							
+							<div class="field-box">
+								<label>Project Name</label>
+								<div class="ui-select span5">
+									<Select name="Project_ID" id="Project_ID">
+									<!--#4DSCRIPT/Web_LoadProjects/-->
+									<!--4DLOOP [Projects]-->
+										<option value="<!--#4DVAR [Projects]proj_id-->" <!--#4DIF ([Tasks]proj_id=[Projects]proj_id)-->selected<!--4DELSE--><!--4DENDIF-->><!--4DVAR [Projects]proj_name--></option>
+									<!--4DENDLOOP-->
+									</select>                                     
+								</div>
+							</div>                  
+							<div class="span12 field-box">
+								<label>Task Estimated Hour</label>
+								<input name="Task_Estimated_Hour" class="span9 num" type="text" value="<!--#4DVAR [Tasks]task_estimated_hours-->" id="Task_Estimated_Hour">
+							</div>                                                                 
+							<div class="span12 field-box">
+								<label>Task Rate</label>
+								<input name="Task_Rate" class="span9 num" type="text" value="<!--#4DVAR [Tasks]task_rate-->" id="Task_Rate">
+							</div>
+							
+<div class="field-box">
+								<label>Status</label>
+								<div class="ui-select span5">
+									<Select name="Task_Status" id="Task_Status">
+<!--HIT_EXECUTE _HIT_HTMLTXT:=Task_Status_HTMLPopup-->
+									</select>                                     
+								</div>
+							</div>                  
+
+<div class="field-box">
+								<label>Assigned to</label>
+								<div class="ui-select span5">
+									<Select name="uuid_assigned_to" id="uuid_assigned_to">
+<!--HIT_EXECUTE
+_HIT_HTMLTXT:=""
+QUERY([Employees];[Employees]emp_active=True)
+ORDER BY([Employees];[Employees]emp_last_name;>)
+
+For (_HIT_COUNTER;1;Records in selection([Employees]))
+_HIT_HTMLTXT:=_HIT_HTMLTXT+"<option value=\""+[Employees]uuid+"\""
+If ([Tasks]uuid_assigned_to=[Employees]uuid)
+_HIT_HTMLTXT:=_HIT_HTMLTXT+" selected"
+Else 
+End if 
+_HIT_HTMLTXT:=_HIT_HTMLTXT+">"+[Employees]emp_first_name+" "+[Employees]emp_last_name+"</option>"
+NEXT RECORD([Employees])
+End for 
+-->
+									</select>                                     
+								</div>
+							</div>                  
+
+							<!-- 
+<div class="span12 field-box">
+								<label>Task Activate</label>
+								<input style="margin-left: -22%;" type="checkbox" name="Task_Activate" value=""><br>
+							</div>
+ -->
+							<div class="field-box">
+                                <label>Task Active</label>
+                                <div class="ui-select span5">
+									<Select name="Task_Active" id="Task_Active" name="Task_Active">
+										<option value="Active" <!--#4DIF ([Tasks]task_active=True)-->selected<!--4DELSE--><!--4DENDIF-->>Active</option>
+										<option value="Done" <!--#4DIF ([Tasks]task_active=false)-->selected<!--4DELSE--><!--4DENDIF-->>Done</option>
+									</select>                                     
+                                </div>
+                            </div>
+							<div class="span11 field-box" style="text-align: center;">
+								<input type="submit" class="btn-glow primary" value="Submit">
+								<span>OR</span>
+								<a href="tasks.shtml">Cancel</a>
+							</div>
+						</form>
+                    </div>
+				</div>
+            </div>
+        </div>
+    </div>
+    <!-- end main container -->
+
+	<!-- scripts -->
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+	<script src="js/bootstrap.datepicker.js"></script>
+	<script src="js/jquery.uniform.min.js"></script>
+	<!-- call this page plugins -->
+
+<script language="javascript">
+function ValidateForm () {
+var msg = '';
+if (document.TaskForm.Task_Name.value=="")
+{ msg = msg + 'Please Specify Task Name\n'; }
+if (document.TaskForm.Task_ID.value=="")
+{ msg = msg + 'Please Specify Task ID\n'; }
+if (document.TaskForm.Task_Estimated_Hour.value=="")
+{ msg = msg + 'Please Specify Task Estimated Hour\n'; }
+if (document.TaskForm.Task_Rate.value=="")
+{ msg = msg + 'Please Specify Task Rate\n'; }
+if (msg=="") {
+return true;
+} else {
+alert (msg);
+return false;
+}}
+</script>
+    <script type="text/javascript">
+        $(function () {
+
+            // add uniform plugin styles to html elements
+            $("input:checkbox").uniform();
+
+            // datepicker plugin
+            $('.datepicker').datepicker().on('changeDate', function (ev) {
+                $(this).datepicker('hide');
+            });
+			
+			$('.num').keypress(function(e){
+						var k = e.which;
+    					/* numeric inputs can come from the keypad or the numeric row at the top */
+   						 if ((k<48 || k>57) && (k!=46) && (k!=8) && (k!=0)) {
+        					e.preventDefault();
+							//alert("Allowed characters are 0-9, +, -, (, )");
+        					return false;
+    					}
+					
+					}); 
+			
+        });
+    </script> 
+	
+</body>
+</html>

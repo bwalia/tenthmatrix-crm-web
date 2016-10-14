@@ -1,0 +1,96 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<style type="text/css">
+.xls_field{
+width:270px;height:22px;
+    background:#CCC;
+    border:#000;
+    -moz-border-radius: 15px;
+    border-radius: 15px;
+padding-left: 20px;
+}
+.table_field {
+    -moz-border-radius: 15px;
+    border-radius: 15px;
+
+width:300px;height:45px;padding:2px;border:1px solid #aaaaaa;
+padding-left: 20px;
+}
+</style>
+<script>
+
+var mapXLSFieldsArrStr = [];
+
+
+function allowDrop(ev)
+{
+ev.preventDefault();
+}
+
+function drag(ev)
+{
+ev.dataTransfer.setData("Text",ev.target.id);
+}
+
+function drop(ev)
+{
+ev.preventDefault();
+var data=ev.dataTransfer.getData("Text");
+ev.target.appendChild(document.getElementById(data));
+
+mapXLSFieldsArrStr.push(ev.target.id, data);
+showJSON();
+
+}
+
+function showJSON()
+{
+document.getElementById("map_json").value = JSON.stringify(mapXLSFieldsArrStr);
+}
+
+</script>
+</head>
+<body>
+
+<p>Map Data Import, Drag File columns on to the Table columns to:</p>
+
+<table>
+<th>
+File column
+</th>
+<th>
+Table column
+</th>
+
+<tr>
+<td>
+<div class="xls_field" id="file1" draggable="true" ondragstart="drag(event)">Page URL</div>
+</td>
+<td>
+<div class="table_field" id="field1" ondrop="drop(event)" ondragover="allowDrop(event)">Table.Code</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class="xls_field" id="file2" draggable="true" ondragstart="drag(event)">Location</div>
+</td>
+<td>
+<div class="table_field" id="field2" ondrop="drop(event)" ondragover="allowDrop(event)">Table.Field 2</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class="xls_field" id="file3" draggable="true" ondragstart="drag(event)">H1</div>
+</td>
+<td>
+<div class="table_field" id="field3" ondrop="drop(event)" ondragover="allowDrop(event)">Table.Body</div>
+</td>
+</tr>
+
+</table>
+
+<input type="xhidden" size="200" id="map_json" />
+</body>
+</html>

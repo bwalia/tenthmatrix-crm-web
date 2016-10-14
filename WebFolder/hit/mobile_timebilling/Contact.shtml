@@ -1,0 +1,176 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+<title>Add New Contact</title>
+	
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+	
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="robots" content="noindex, nofollow" />	
+<link rel="stylesheet" href="css/jquery.fumobile.theme-1.1.0.min.css?" />
+<link rel="stylesheet" href="css/jquery.mobile.structure-1.3.1.min.css" /> 
+<link rel="stylesheet" href="css/jquery.fumobile.extra-1.1.0.css" />
+<link rel="stylesheet" href="themes/selectedtheme.min.css" />
+	 
+<script src="js/jquery-1.7.1.min.js"></script>
+<script>
+	$(document).bind("mobileinit", function() {
+    $.mobile.defaultPageTransition = 'slide';
+    $.mobile.page.prototype.options.addBackBtn = true;
+    $.mobile.page.prototype.options.headerTheme = 'b'; // page headers
+    $.mobile.listview.prototype.options.headerTheme = 'd'; // nested list headers
+	});
+</script>
+	
+<script src="js/jquery.mobile-1.3.1.min.js"></script>
+<script src="js/swipe-carousel.min.js"></script>  
+<script src="js/lists.js"></script>        
+<script src="js/job_detail.js"></script>
+<script src="http://jquery.bassistance.de/validate/jquery.validate.js"></script>
+<script src="http://jquery.bassistance.de/validate/additional-methods.js"></script>
+<script type="text/javascript">
+	$(document).on('pageinit', function(){
+	$("#ContactForm").validate({
+        rules: {
+            First_Name: "required",
+            Surname: "required",
+            Salutation: "required",
+            Direct_Phone: "required",
+            Email: "required",
+            Date_Added: "required",
+            Mobile: "required"
+        },
+		messages: {
+			First_Name: "Please enter First Name",
+			Surname: "Please enter Surname",
+			Salutation: "Please enter Salutaion",
+			Direct_Phone: "Please enter Direct Phone",
+			Email: "Please enter Email",
+			Date_Added: "Please enter Date",
+			Mobile: "Please enter Mobile"
+		}
+    });
+	});
+</script>
+</head>
+<link rel="stylesheet" type="text/css" href="css/jqm-datebox.min.css" /> 
+<script type="text/javascript" src="js/jqm-datebox.core.min.js"></script>
+<script type="text/javascript" src="js/jqm-datebox.mode.calbox.min.js"></script>
+<script type="text/javascript" src="js/jquery.mobile.datebox.i18n.en_US.utf8.js"></script>
+<body>
+<div data-role="page" id="home" data-add-back-btn="false">
+	<div data-role="header" class="head-border" data-theme="a">
+		<div style="text-align:right">
+			<a href="#" class="my-account" style="color: #FFFFFF;font-size:12px;text-decoration: none;">Sign out</a>
+		</div>
+	</div>
+	<div class="search-container" data-theme="a">
+		<div id="search-home"><a href="index.shtml"><span>Click here for Home</span></a></div>
+	</div>
+    <div data-role="content" style="padding: 15px;" >
+		<ul data-role="listview" data-inset="true">
+			<li data-role="list-divider"><span style=" color:#2B89D0; font-size:15px; font-stretch:narrower;">Add New Contact</span></li>
+		</ul>
+		 <form name="ContactForm" action="SaveContact.cgi" method="post" id="ContactForm">
+		 <div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput9">Client ID<font color="#FF0000"></font></label>
+					<select name="Client ID" id="Client ID" >
+					 <!--4DLOOP  [Companies]-->
+							<option value="<!--4DVAR [Companies]account_Number-->" name=""><!--4DVAR [Companies]account_Number--></option>
+					 <!--4DENDLOOP-->
+					</select>
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput1">First Name<font color="#FF0000">*</font></label>
+					<input name="First_Name" id="First_Name" placeholder="First Name" />
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput2">Surname<font color="#FF0000">*</font></label>
+					<input name="Surname" id="Surname" placeholder="Surname">
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput3">Title<font color="#FF0000"></font></label>
+					<input name="Title" id="Title" placeholder="Title">
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput4">Salutation<font color="#FF0000">*</font></label>
+					<input name="Salutation" id="Salutation" placeholder="Salutation">
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput5">Direct Phone<font color="#FF0000">*</font></label>
+					<input name="Direct_Phone" id="Direct_Phone" placeholder="Direct Phone">
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput6">Email<font color="#FF0000">*</font></label>
+					<input name="Email" id="Email" placeholder="Email">
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput7">Date Added<font color="#FF0000">*</font></label>
+					<input name="Date_Added" id="Date_Added" type="date" value="" data-role="datebox" data-options='{"mode": "calbox"}' placeholder="Date Added">
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput8">Direct fax<font color="#FF0000"></font></label>
+					<input name="Direct_fax" id="Direct_fax" placeholder="Direct fax">
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput8">Mobile<font color="#FF0000">*</font></label>
+					<input name="Mobile" id="Mobile" placeholder="Mobile">
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput10">Comments<font color="#FF0000"></font></label>
+					<input name="Comments" id="Comments" placeholder="Comments">
+				</fieldset>
+			</div>
+			<input type="submit" value="Add New Contact" id="submit" name="submit">
+			<div>
+			<a class="ui-btn ui-shadow ui-btn-corner-all ui-btn-inline ui-btn-icon-left ui-btn-up-c" data-inline="true" data-theme="c" data-iconpos="left" data-icon="back" data-role="button" href="index.shtml" data-corners="true" data-shadow="true" data-iconshadow="true" data-wrapperels="span">
+			<span class="ui-btn-inner">
+			<span class="ui-btn-text">Back</span>
+			<span class="ui-icon ui-icon-back ui-icon-shadow"> </span>
+			</span>
+			</a>
+			</div>
+		</form>
+		</div><!-- END DATA ROLE CONTENT-->
+    
+ </div>
+ 
+</body>
+</html>

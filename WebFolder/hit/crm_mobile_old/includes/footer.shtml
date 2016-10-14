@@ -1,0 +1,8 @@
+<div data-theme="a" data-role="footer" style=" background-color:#383838;">
+	<h3>
+	   <span style="color:#FFF; font-size:16px;"> View  : <a href="https://dev-billing.tenthmatrix.co.uk/hit/sign-in.shtml" rel="external" target="_blank">Desktop System</a></span> 
+	</h3>
+</div>
+<!--HIT_EXECUTE
+_HIT_WebSession_SetVar("mobile_page";"")
+-->

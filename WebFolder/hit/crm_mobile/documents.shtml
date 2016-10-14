@@ -1,0 +1,204 @@
+<!--HIT_EXECUTE
+_HIT_HTTPD_SetHTTPHeader ("Content-type";"text/html; charset=utf-8")
+C_TEXT(_HTMLTITLETXT)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+
+_HTMLTITLETXT:="Documents"
+
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml?url="+HTTPD_DocumentURI)
+end if 
+-->
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/main-header.shtml-->
+
+<script type="text/javascript">
+var JSONdata, nPageSize=10;
+var start=0, end=nPageSize;
+var old_srch='',keyword='', tab='';
+var tablname='Documents';
+var complete=false;
+var completeScroll=false;
+
+$(document).ready(function() {
+	$('#keyword').focus();
+	load_data();			 
+		
+	$(window).scroll(function(){
+		if ($(window).scrollTop() == $(document).height() - $(window).height()){
+			if(complete==false && completeScroll==false) {
+				$('#load_more_btn').parent().hide();
+				$('#img_loading_div').show();
+				start=end+1;
+				end=start+nPageSize;
+				load_data();
+			}
+		}
+	});
+	$('.ui-btn').bind("click","#load_more_btn", function(){
+		$('#load_more_btn').parent().hide();
+		$('#img_loading_div').show();
+		start=end+1;
+		end=start+nPageSize;
+		load_data();
+	});
+	
+	//setup before functions
+	var typingTimer;                //timer identifier
+	var doneTypingInterval = 1000;  //time in ms, 5 second for example
+
+	//on keyup, start the countdown
+	$('#keyword').keyup(function(){
+    	clearTimeout(typingTimer);
+    	if ($('#keyword').val) {
+      		typingTimer = setTimeout(function(){
+           		$('#contentoftable').html('');
+           		$('#load_more_btn').parent().hide();
+				$('#img_loading_div').show();
+				start=0;
+				end=start+nPageSize;
+				tab='';
+				load_data();
+        	}, doneTypingInterval);
+    	}
+    });
+    
+});
+
+function __showDetailForm(uuid){
+var pUrlStr='document.shtml?uuid='+uuid;
+window.location.href=pUrlStr;
+}
+
+var row_uuid= new Array();
+function load_data(){
+	$('#errorMsgStr').remove();
+	keyword= $("#keyword").val();
+	jsonRow = 'loaddocuments.cgi?start='+start+'&end='+end+'&tablname='+tablname;
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}
+	completeScroll=true;
+	JSONdata=new Array();
+	$.getJSON(jsonRow,function(result){
+		if(result.Alert){
+			var contentStr=$('#contentoftable').html();
+			if(contentStr.length>=1){
+			
+			}else{
+				$(".loadedTable").before("<span id='errorMsgStr' style='color:red;font-style:italic;'>Sorry, no records found!</span>");
+			}
+			$('#load_more_btn').parent().hide();
+			$('#img_loading_div').hide();
+			complete=true;
+		}else{
+				$.each(result.uuid, function(i,item){
+					JSONdata[i]=new Array();
+					row_uuid[i]=item;				
+				}); 
+				$.each(result.FileName, function(i,item){
+					JSONdata[i][0]='<a href="javascript:void(0)" onClick="__showDetailForm(\''+row_uuid[i]+'\')">'+item+'</a>';
+					
+				});
+				$.each(result.Client, function(i,item){
+					JSONdata[i][1]=item;
+				});
+		
+				$.each(result.DocType, function(i,item){			
+					JSONdata[i][2]=item;
+				}); 
+				
+				$.each(result.DocSize, function(i,item){			
+					JSONdata[i][3]=item;
+				}); 
+				
+				$.each(result.Modified, function(i,item){			
+					JSONdata[i][4]=item;
+				}); 
+				
+				var table_html='';
+				
+				$.each(JSONdata, function(i,row){
+					table_html+='<tr>';
+					$.each(row, function(i,col){
+						if(i==0){
+						table_html+='<td class="title">'+col+'</td>';
+						}else{
+						table_html+='<td>'+col+'</td>';
+						}
+					});
+					table_html+='</tr>';
+				});
+				if(old_srch!=keyword){
+					$('#contentoftable').html('');
+					old_srch=keyword;
+				}
+				
+				$('#contentoftable').append(table_html);
+				$( ".loadedTable" ).table( "rebuild" );
+				complete=false;
+			
+			$('#img_loading_div').hide();
+			$('#load_more_btn').parent().show();
+		}
+		completeScroll=false;
+	});
+}
+</script>
+
+<link rel="stylesheet" href="css/jquery-table-custom.css">
+</head>
+<body>
+<div data-role="page" class="jqm-demos" data-quicklinks="true">
+	<!-- header -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/top-header.shtml-->
+	<!-- /header -->
+	
+	<div role="main" class="ui-content jqm-content">
+		<h3>Documents</h3>
+		<div class="ui-grid-b ui-responsive">
+        	<div class="ui-block-a">
+				<div class="jqm-block-content" style="min-height: 3em; padding:0em;">
+    				<div class="ui-input-search  ui-corner-all ui-shadow-inset "><input name="keyword" id="keyword" value="" placeholder="Search for name or client.." data-type="search" type="text"><a title="Clear text" href="#" tabindex="-1" aria-hidden="true" class="ui-input-clear ui-btn ui-icon-delete ui-btn-icon-notext ui-corner-all ui-input-clear-hidden">Clear text</a></div>
+				</div>
+        	</div>  
+			<div class="ui-block-b">
+        		<div class="jqm-block-content" style="min-height: 5em; padding:0em;">
+        			<div class="success"><a href="document.shtml" data-ajax="false">+ Add New Document</a></div>
+				</div>
+        	</div>      	
+        </div>
+		<div data-demo-html="true">
+			<table data-role="table" id="movie-table-custom" data-mode="reflow" class="movie-list loadedTable">
+				<thead>
+					<tr>
+	              		<th data-priority="1" style="width:40%">FILE Name</th>
+	               		<th data-priority="2">Client Name</th>
+	               		<th data-priority="3">DOCUMENT TYPE</th>
+	               		<th data-priority="4">SIZE</th>
+	               		<th data-priority="5">Modified On</th>
+	               </tr>
+	            </thead>
+	            <tbody id="contentoftable">
+	              
+	        	</tbody>
+	        </table>
+	        <div id="img_loading_div" style="text-align:center">
+				<img src="loading.gif"  style="padding:20px;">
+			</div>
+
+			<input id="load_more_btn" type="button" value="load more" style="display:none;">
+		</div><!--/demo-html -->
+
+	</div><!-- /content -->
+	<!-- panel -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/sidebar.shtml-->
+	<!-- /panel -->
+
+	<!-- footer -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/footer.shtml-->
+	<!-- /footer -->
+</div><!-- /page -->
+
+</body>
+</html>

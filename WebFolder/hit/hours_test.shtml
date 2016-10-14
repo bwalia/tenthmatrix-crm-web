@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Detail Admin - Home</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+    
+
+	<link rel="stylesheet" href="css/base/jquery-ui.css" />
+
+    <!-- this page specific styles -->
+    <link rel="stylesheet" href="css/compiled/index.css" type="text/css" media="screen" />   
+	
+	<link rel="stylesheet" href="css/autocomplete.css" />
+
+
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+</head>
+<body>
+<!--#4DIF (_HIT_WebApp_GetField ("view")="small")-->
+   <div id="container" style="margin: 0 auto"></div>
+<!--#4DELSE-->
+
+	<!-- main container -->
+    <div style="background:#fff;">
+        <div id="pad-wrapper" style="margin-top:0px;">
+			
+			<div class="row-fluid form-wrapper">
+					<form  action="" class="form-comment" method="post" >
+						<div style="display:inline;padding-right:20px;">
+						<div class="ui-select"  id="div_emp"  >
+						<select name="Employee_ID" id="Employee_ID">
+									<option value="">All Employees</option>
+									<!--#4DSCRIPT/Web_LoadEmployees/-->
+									<!--4DLOOP  [Employees]-->
+										<option value="<!--4DVAR [Employees]emp_id-->" ><!--4DVAR [Employees]emp_first_name--> <!--4DVAR [Employees]emp_last_name--></option>
+									<!--4DENDLOOP-->	
+									</select>
+					</div>
+					</div>
+					Project &nbsp;
+					<div class="ui-widget"  style="display:inline;padding-right:20px;">
+									<Select name="Project_ID" id="Project_ID">
+									
+										<option value=""></option>
+									<!--#4DSCRIPT/Web_LoadProjects/-->
+									<!--4DLOOP [Projects]-->
+										<option value="<!--#4DVAR [Projects]proj_id-->" ><!--4DVAR [Projects]proj_name--></option>
+									<!--4DENDLOOP--> 
+									
+									</select>
+								</div>
+					Task &nbsp;
+					<div class="ui-widget" style="display:inline;padding-right:20px;">
+									<select name="Task_ID" id="Task_ID">
+									
+										<option value=""></option>
+									<!--#4DSCRIPT/Web_LoadTasks/-->
+									<!--4DLOOP  [Tasks]-->
+											<option value="<!--4DVAR [Tasks]task_id-->" ><!--4DVAR [Tasks]task_name--></option>
+									<!--4DENDLOOP-->
+									
+									</select>
+								</div>
+						<input type="button" class="btn-glow primary" value="Submit" id="btn_redraw">		
+					</form>
+					</div>
+				
+                <!-- statistics chart built with jQuery Flot -->
+                <div class="row-fluid chart">
+				
+					<div class="btn-group pull-right">
+						
+						<button class="glow left" onClick="set_defaults(); draw_year_chart()" id="yearly">Year</button>
+						<button class="glow middle" onClick="set_defaults(); draw_month_chart()" id="monthly">Month</button>
+						<button class="glow middle" onClick="set_defaults(); draw_week_chart()" id="weekly">Week</button>
+						<button class="glow right" onClick="set_defaults(); draw_day_chart()" id="daily">Day</button>
+					</div>
+					
+					<div class="btn-group pull-left" id="weeks">
+						<button class="glow left" onClick="draw_prev_chart()" id="prev">Previous</button>
+						<button class="glow right active" onClick="draw_next_chart()" id="next" disabled="disabled">Next</button><br/>
+
+					</div>
+					 
+					
+                    <div class="span12">
+					   <div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+                    </div>
+                </div>
+                <!-- end statistics chart -->
+            </div>
+        </div>
+	<!--#4DENDIF-->
+
+	<!-- scripts -->
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+   <script src="js/ui/jquery-ui.js"></script>
+    <script src="js/bootstrap.datepicker.js"></script>
+    <script src="js/jquery.uniform.min.js"></script>
+	<!-- charts -->
+	<script src="https://code.highcharts.com/highcharts.js"></script>
+	<script src="https://code.highcharts.com/modules/exporting.js"></script>
+
+	
+	<script type="text/javascript">
+	var title;
+	var emp_id='', task_id='', project_id='';
+	var mode='year', nav='prev';
+			var diff=1, loop=30;
+			var one_day=1000*60*60*24;
+			var start_date=new Date();
+			var end_date=new Date();
+			end_date.setTime(start_date.getTime()+(one_day));	
+			var curr_date=new Date(String(end_date.getMonth()+1)+'/'+String(end_date.getDate())+'/'+String(end_date.getFullYear()));
+			
+			
+			function getMonthName(m) {
+				if(m==1){ monthName= "Jan";}
+				else if(m==2){ monthName= "Feb";}
+				else if(m==3){ monthName= "Mar"; }
+				else if(m==4){ monthName= "Apr"; }
+				else if(m==5){ monthName= "May"; }
+				else if(m==6){ monthName= "Jun"; }
+				else if(m==7){ monthName= "Jul"; }
+				else if(m==8){ monthName= "Aug"; }
+				else if(m==9){ monthName= "Sep"; }
+				else if(m==10){ monthName= "Oct"; }
+				else if(m==11){ monthName= "Nov"; }
+				else if(m==12){ monthName= "Dec"; }
+				else{ monthName= "Null"; }
+				return monthName;
+			}
+			
+			function date_to_str(date){
+				var day=date.getDate();
+				var month=date.getMonth()+1;
+				var year=date.getFullYear();
+				return String(month)+'/'+String(day)+'/'+String(year);
+			}
+			
+			
+			function set_defaults() {
+				nav='prev';
+				start_date=new Date();
+				end_date=new Date();
+				end_date.setTime(start_date.getTime()+(one_day));
+				diff=1;
+				loop=30;
+				$('#next').addClass('active');
+				$('#next').attr('disabled', true);	
+				$('#div_emp').show();		
+			}
+			
+			function draw_year_chart(){
+
+				if(nav=='prev') {
+					var day=end_date.getDate();
+					var month=end_date.getMonth()+1;
+					var year=end_date.getFullYear();
+					var s_date=String(month)+'/'+String(day)+'/'+String(year-1);
+					var e_date=String(month)+'/'+String(day)+'/'+String(year);
+				}
+				else if(nav=='next') {
+					var day=start_date.getDate();
+					var month=start_date.getMonth()+1;
+					var year=start_date.getFullYear();
+					var s_date=String(month)+'/'+String(day)+'/'+String(year);
+					var e_date=String(month)+'/'+String(day)+'/'+String(year+1);
+				}
+				mode='year';
+				diff=1;
+				loop=12;
+				end_date=new Date(e_date);
+				start_date=new Date(s_date);
+				get_data(date_to_str(start_date),date_to_str(end_date));
+				
+				$('#yearly').addClass('active');
+				$('#monthly').removeClass('active');
+				$('#weekly').removeClass('active');
+				$('#daily').removeClass('active');
+				$('#yearly').attr('disabled', true);
+				$('#monthly').attr('disabled', false);
+				$('#weekly').attr('disabled', false);
+				$('#daily').attr('disabled', false);
+				title= String(start_date.getDate())+' '+getMonthName(start_date.getMonth()+1)+' '+String(start_date.getFullYear())+' - '+String(end_date.getDate())+' '+getMonthName(end_date.getMonth()+1)+' '+String(end_date.getFullYear());
+				
+			}
+			
+			function draw_month_chart(){
+				if(nav=='prev') {
+					var day=end_date.getDate();
+					var month=end_date.getMonth()+1;
+					var year=end_date.getFullYear();
+					var last_month=month-1;
+					var last_year=year;
+					if(last_month==0){
+						last_month=12;
+						last_year=year-1;
+					}
+					var s_date=String(last_month)+'/'+String(day)+'/'+String(last_year);
+					var e_date=String(month)+'/'+String(day)+'/'+String(year);
+				}
+				else if(nav=='next') {
+					var day=start_date.getDate();
+					var month=start_date.getMonth()+1;
+					var year=start_date.getFullYear();
+					var next_month=month+1;
+					var next_year=year;
+					if(next_month==13){
+						next_month=1;
+						next_year=year+1;
+					}
+					var s_date=String(month)+'/'+String(day)+'/'+String(year);
+					var e_date=String(next_month)+'/'+String(day)+'/'+String(next_year);
+				}
+				
+				
+				mode='month';
+				diff=4;
+				end_date=new Date(e_date);
+				start_date=new Date(s_date);
+				
+				var utc1 = Date.UTC(start_date.getFullYear(), start_date.getMonth(), start_date.getDate());
+  				var utc2 = Date.UTC(end_date.getFullYear(), end_date.getMonth(), end_date.getDate());
+  				loop= Math.floor((utc2 - utc1) / one_day);
+				get_data(date_to_str(start_date),date_to_str(end_date));
+				
+				$('#yearly').removeClass('active');
+				$('#monthly').addClass('active');
+				$('#weekly').removeClass('active');
+				$('#daily').removeClass('active');
+				$('#yearly').attr('disabled', false);
+				$('#monthly').attr('disabled', true);
+				$('#weekly').attr('disabled', false);
+				$('#daily').attr('disabled', false);
+				title= String(start_date.getDate())+' '+getMonthName(start_date.getMonth()+1)+' '+String(start_date.getFullYear())+' - '+String(end_date.getDate())+' '+getMonthName(end_date.getMonth()+1)+' '+String(end_date.getFullYear());
+				
+			}
+			
+			function draw_week_chart(){
+				
+				if(nav=='prev') {
+					var day=end_date.getDate();
+					var month=end_date.getMonth()+1;
+					var year=end_date.getFullYear();
+					var week_start=new Date();
+					week_start.setTime(end_date.getTime()-(7*one_day));										
+					var s_date = String(week_start.getMonth()+1)+'/'+week_start.getDate()+'/'+week_start.getFullYear();
+					var e_date=String(month)+'/'+String(day)+'/'+String(year);
+				}
+				else if(nav=='next') {
+					var day=start_date.getDate();
+					var month=start_date.getMonth()+1;
+					var year=start_date.getFullYear();
+					var week_end=new Date();
+					week_end.setTime(end_date.getTime()+(7*one_day));										
+					var s_date = String(month)+'/'+String(day)+'/'+String(year);
+					var e_date=String(week_end.getMonth()+1)+'/'+week_end.getDate()+'/'+week_end.getFullYear();
+				}
+				
+				mode='week';
+				diff=1;
+				loop=7;
+				end_date=new Date(e_date);
+				start_date=new Date(s_date);
+				get_data(date_to_str(start_date),date_to_str(end_date));
+				
+				$('#yearly').removeClass('active');
+				$('#monthly').removeClass('active');
+				$('#weekly').addClass('active');
+				$('#daily').removeClass('active');
+				$('#yearly').attr('disabled', false);
+				$('#monthly').attr('disabled', false);
+				$('#weekly').attr('disabled', true);
+				$('#daily').attr('disabled', false);
+				title= String(start_date.getDate())+' '+getMonthName(start_date.getMonth()+1)+' '+String(start_date.getFullYear())+' - '+String(end_date.getDate())+' '+getMonthName(end_date.getMonth()+1)+' '+String(end_date.getFullYear());
+				
+			}
+			
+			function draw_day_chart(){
+				
+				if(nav=='prev') {
+					var day=end_date.getDate();
+					var month=end_date.getMonth()+1;
+					var year=end_date.getFullYear();
+					var day_start=new Date();
+					day_start.setTime(end_date.getTime()-(one_day));										
+					var s_date = String(day_start.getMonth()+1)+'/'+day_start.getDate()+'/'+day_start.getFullYear();
+					var e_date=String(month)+'/'+String(day)+'/'+String(year);
+				}
+				else if(nav=='next') {
+					var day=start_date.getDate();
+					var month=start_date.getMonth()+1;
+					var year=start_date.getFullYear();
+					var day_end=new Date();
+					day_end.setTime(end_date.getTime()+(one_day));										
+					var s_date = String(month)+'/'+String(day)+'/'+String(year);
+					var e_date=String(day_end.getMonth()+1)+'/'+day_end.getDate()+'/'+day_end.getFullYear();
+				}
+				
+				mode='day';
+				diff=1;
+				
+				end_date=new Date(e_date);
+				start_date=new Date(s_date);
+				get_day_data(date_to_str(start_date),date_to_str(end_date));
+				
+				$('#div_emp').hide();
+				$('#yearly').removeClass('active');
+				$('#monthly').removeClass('active');
+				$('#weekly').removeClass('active');
+				$('#daily').addClass('active');
+				$('#yearly').attr('disabled', false);
+				$('#monthly').attr('disabled', false);
+				$('#weekly').attr('disabled', false);
+				$('#daily').attr('disabled', true);
+				title= String(start_date.getDate())+' '+getMonthName(start_date.getMonth()+1)+' '+String(start_date.getFullYear());
+				
+			}
+			
+			
+			function draw_prev_chart(){
+				nav='prev';
+				end_date.setTime(start_date.getTime());
+				if(mode=='year'){
+					draw_year_chart();
+				}
+				if(mode=='month'){
+					draw_month_chart();
+				}
+				if(mode=='week'){
+					draw_week_chart();
+				}
+				if(mode=='day'){
+					draw_day_chart();
+				}
+				$('#next').removeClass('active');
+				$('#next').attr('disabled', false);
+			}
+			function draw_next_chart(){
+				nav='next';
+				start_date.setTime(end_date.getTime());
+				if(mode=='year'){
+					draw_year_chart();
+				}
+				if(mode=='month'){
+					draw_month_chart();
+				}
+				if(mode=='week'){
+					draw_week_chart();
+				}
+				if(mode=='day'){
+					draw_day_chart();
+				}
+				if(end_date>=curr_date) {
+					$('#next').removeClass('active');
+					$('#next').addClass('active');
+					$('#next').attr('disabled', true);
+				}
+			}
+			
+			
+			
+    
+	
+		
+		function get_data(s_date, e_date) {
+			var s_date_arr=s_date.split('/');
+			var sdate=s_date_arr[1]+'/'+s_date_arr[0]+'/'+s_date_arr[2];
+			var e_date_arr=e_date.split('/');
+			var edate=e_date_arr[1]+'/'+e_date_arr[0]+'/'+e_date_arr[2];
+			var dataString = 's_date='+sdate+'&e_date='+edate+'&loop='+loop+'&emp_id='+emp_id+'&task_id='+task_id+'&project_id='+project_id+'&mode='+mode;
+			jsonRow = 'return_Y_M_W_Worked.cgi?'+dataString;
+			$.getJSON(jsonRow,function(result){
+				var chargeble_arr=new Array();
+				var not_chargeble_arr=new Array();
+				var billed_arr=new Array();
+				var hours_arr=new Array();
+				$.each(result, function(i,item)
+				{
+					var chargeble=Math.round(item.Chargeble * 100)/100;
+					chargeble_arr.push(chargeble);
+					
+					var not_chargeble=Math.round(item.NotChargeble * 100)/100;	
+					not_chargeble_arr.push(not_chargeble);
+					
+					var billed=Math.round(item.Billed * 100)/100;	
+					billed_arr.push(billed);
+					
+					var hour_date_arr=item.Date_Time.split('/');
+					var hour_date=new Date(Number(hour_date_arr[2]), Number(hour_date_arr[1])-1, Number(hour_date_arr[0]));
+					if(mode=='month' || mode=='week') {
+						hours_arr.push(hour_date.getDate()+' '+getMonthName(hour_date.getMonth()+1));
+					}
+					else{
+						hours_arr.push(hour_date.getDate()+' '+getMonthName(hour_date.getMonth()+1));
+					}
+					
+				})
+				
+				load_chart(hours_arr,chargeble_arr,not_chargeble_arr,billed_arr);
+			});
+		}
+		
+		function get_day_data(s_date, e_date) {
+			var s_date_arr=s_date.split('/');
+			var sdate=s_date_arr[1]+'/'+s_date_arr[0]+'/'+s_date_arr[2];
+			var e_date_arr=e_date.split('/');
+			var edate=e_date_arr[1]+'/'+e_date_arr[0]+'/'+e_date_arr[2];
+			var dataString = 's_date='+sdate+'&e_date='+edate+'&task_id='+task_id+'&project_id='+project_id;
+			jsonRow = 'returnDayHoursWorked.cgi?'+dataString;
+			
+			$.getJSON(jsonRow,function(result){
+				var chargeble_arr=new Array();
+				var not_chargeble_arr=new Array();
+				var billed_arr=new Array();
+				var emp_arr=new Array();
+				$.each(result, function(i,item)
+				{
+					var chargeble=Math.round(item.Chargeble * 100)/100;
+					chargeble_arr.push(chargeble);
+					
+					var not_chargeble=Math.round(item.NotChargeble * 100)/100;	
+					not_chargeble_arr.push(not_chargeble);
+					
+					var billed=Math.round(item.Billed * 100)/100;	
+					billed_arr.push(billed);
+					
+					var emp=item.EmpName;
+					emp_arr.push(emp);
+					
+				})
+				
+				load_day_chart(emp_arr,chargeble_arr,not_chargeble_arr,billed_arr);
+			});
+		}
+		
+		
+		function load_chart(categories,data1,data2,data3){
+			$('#container').highcharts({
+				chart: {
+                type: 'area'
+            },
+            title: {
+                text: 'Hours Worked'
+            },
+            subtitle: {
+                text: title
+            },
+			colors: ["#2f7ed8", "#30a0eb", "#a7b5c5"],
+            xAxis: {
+				categories: categories,
+                labels: {
+                    formatter: function() {
+                        return this.value; // clean, unformatted number for year
+                    }
+                },
+				tickInterval:diff
+				
+            },
+            yAxis: {
+                title: {
+                    text: 'Number Of hours',
+					margin: 60
+                },
+                labels: {
+                    formatter: function() {
+                        return this.value;
+                    }
+                }
+            },
+            /*tooltip: {
+                pointFormat: '{series.name} produced <b>{point.y:,.0f}</b><br/>warheads in {point.x}'
+            },*/
+            plotOptions: {
+                area: {
+                    //pointStart: Date.UTC(2014, 0, 1),
+                    marker: {
+                        enabled: false,
+                        symbol: 'circle',
+                        radius: 2,
+                        states: {
+                            hover: {
+                                enabled: true
+                            }
+                        }
+                    }
+                }
+            },
+            series: [{
+					name: 'Billed',
+					data: data3
+				}, {
+					name: 'Chargeble',
+					data: data1
+				}, {
+					name: 'Not Chargeble',
+					data: data2
+				}]
+			});
+		}
+		
+		function load_day_chart(categories,data1,data2,data3){
+			$('#container').highcharts({
+				chart: {
+					type: 'column'
+				},
+				title: {
+					text: 'Hours Worked'
+				},
+				subtitle: {
+					text: title
+				},
+				colors: ["#2f7ed8", "#30a0eb", "#a7b5c5"],
+				xAxis: {
+					categories: categories
+				},
+				yAxis: {
+					min: 0,
+					title: {
+						text: 'Number Of hours',
+						margin: 60
+					},
+					stackLabels: {
+						enabled: true,
+						style: {
+							fontWeight: 'bold'
+							//color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
+						}
+					}
+				},
+				/*legend: {
+					align: 'right',
+					x: -70,
+					verticalAlign: 'top',
+					y: 20,
+					floating: true,
+					backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColorSolid) || 'white',
+					borderColor: '#CCC',
+					borderWidth: 1,
+					shadow: false
+				},*/
+				
+				plotOptions: {
+					column: {
+						stacking: 'normal',
+						dataLabels: {
+							enabled: true
+							//color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white'
+						}
+					}
+				},
+				series: [{
+					name: 'Billed',
+					data: data3
+				}, {
+					name: 'Chargeble',
+					data: data1
+				}, {
+					name: 'Not Chargeble',
+					data: data2
+				}]
+			});
+		
+		}
+		
+		$(document).ready(function() {
+		$( "#Project_ID" ).combobox();
+		$( "#Task_ID" ).combobox();
+		draw_year_chart();
+		$("#Employee_ID").change(function(){
+			 emp_id=$(this).val();
+			//get_day_data(date_to_str(start_date),date_to_str(end_date));
+		});
+		$("#Task_ID").change(function(){
+			task_id=$(this).val();
+			//get_day_data(date_to_str(start_date),date_to_str(end_date));
+		});
+		
+		$("#Project_ID").change(function(){
+			project_id=$(this).val();
+			var jsonRow = 'gettaskonsearch.cgi?srch=&project='+project_id;
+			$.getJSON(jsonRow,function(result){	
+				if(result){
+					var html='<option value=""></option>';
+	
+					$.each(result, function(i,item)
+					{
+						html += '<option value="'+item.id+'">'+item.value+'</option>';
+					});
+					$('#Task_ID').html(html);
+				}
+			});
+		});
+		
+		$('#btn_redraw').click(function(){
+			if(mode=='day') {
+				get_day_data(date_to_str(start_date),date_to_str(end_date));
+			}
+			else {
+				get_data(date_to_str(start_date),date_to_str(end_date));
+			}
+		});
+		
+});
+		
+    </script>
+	
+	<script>
+	 var xhr;
+  (function( $ ) {
+    $.widget( "custom.combobox", {
+      _create: function() {
+        this.wrapper = $( "<span>" )
+          .addClass( "custom-combobox" )
+          .insertAfter( this.element );
+ 
+        this.element.hide();
+        this._createAutocomplete();
+        this._createShowAllButton();
+      },
+ 
+      _createAutocomplete: function() {
+	  var ele_select= this.element;
+        var selected = this.element.children( ":selected" ),
+          value = selected.val() ? selected.text() : "";
+ 
+        this.input = $( "<input>" )
+          .appendTo( this.wrapper )
+          .val( value )
+          .attr( "title", "" )
+          .addClass( "custom-combobox-input ui-widget ui-widget-content ui-state-default ui-corner-left" )
+          .autocomplete({
+            delay: 0,
+            minLength: 0,
+            source: $.proxy( this, "_source" )
+          })
+          .tooltip({
+            tooltipClass: "ui-state-highlight"
+          });
+ 
+        this._on( this.input, {
+          autocompleteselect: function( event, ui ) {
+		  	//alert("show all");
+            ui.item.option.selected = true;
+			
+            this._trigger( "select", event, {
+              item: ui.item.option
+            });
+			ele_select.trigger('change');
+          },
+ 
+          autocompletechange: "_removeIfInvalid"
+        });
+      },
+ 
+      _createShowAllButton: function() {
+        var input = this.input,
+          wasOpen = false;
+ 
+        $( "<a>" )
+          .attr( "tabIndex", -1 )
+          .attr( "title", "Show All Items" )
+          .tooltip()
+          .appendTo( this.wrapper )
+          .button({
+            icons: {
+              primary: "ui-icon-triangle-1-s"
+            },
+            text: false
+          })
+          .removeClass( "ui-corner-all" )
+          .addClass( "custom-combobox-toggle ui-corner-right" )
+          .mousedown(function() {
+            wasOpen = input.autocomplete( "widget" ).is( ":visible" );
+          })
+          .click(function() {
+            input.focus();
+ 
+            // Close if already visible
+            if ( wasOpen ) {
+              return;
+            }
+ 
+            // Pass last search string as value to search for, displaying last results
+            input.autocomplete( "search", 'SHOWALL' );
+          });
+      },
+ 
+      _source: function( request, response ) {
+        //var matcher = new RegExp( $.ui.autocomplete.escapeRegex(request.term), "i" );
+		var ele_select= this.element;
+		if(request.term=='SHOWALL'){
+			response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+		
+		}
+		else
+		{
+		if(ele_select.attr('id')=='Project_ID'){
+			var jsonRow = 'getprojectsonsearch.cgi?srch='+request.term;
+		}
+		else if(ele_select.attr('id')=='Task_ID'){
+			var jsonRow = 'gettaskonsearch.cgi?srch='+request.term+'&project='+$('#Project_ID').val();
+		}
+		
+		
+
+		//alert(jsonRowURLStr);
+		if(xhr) xhr.abort();
+		xhr=$.getJSON(jsonRow,function(result){
+			
+			if(result){
+				var html='<option value=""></option>';
+
+				$.each(result, function(i,item)
+				{
+					html += '<option value="'+item.id+'">'+item.value+'</option>';
+				});
+				ele_select.html(html);
+				
+				
+				response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+				
+				
+			}
+		});
+       
+	  } 
+		
+      },
+ 
+      _removeIfInvalid: function( event, ui ) {
+ 
+        // Selected an item, nothing to do
+        if ( ui.item ) {
+
+          return;
+        }
+ 
+        // Search for a match (case-insensitive)
+        var value = this.input.val(),
+          valueLowerCase = value.toLowerCase(),
+          valid = false;
+		  var ele_select= this.element;
+        this.element.children( "option" ).each(function() {
+          if ( $( this ).text().toLowerCase() === valueLowerCase ) {
+            this.selected = valid = true;	
+			ele_select.trigger('change');
+            return false;
+          }
+        });
+ 
+        // Found a match, nothing to do
+        if ( valid ) {
+          return;
+        }
+ 
+        // Remove invalid value
+        this.input
+          .val( "" )
+          .attr( "title", value + " didn't match any item" )
+          .tooltip( "open" );
+        this.element.val( "" );
+        this._delay(function() {
+          this.input.tooltip( "close" ).attr( "title", "" );
+        }, 2500 );
+        this.input.data( "ui-autocomplete" ).term = "";
+      },
+ 
+      _destroy: function() {
+        this.wrapper.remove();
+        this.element.show();
+      }
+    });
+  })( jQuery );
+ 
+
+
+  </script>
+	
+</body>
+</html>

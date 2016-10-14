@@ -1,0 +1,190 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+QUERY([employee_holidays];[employee_holidays]uuid=_HIT_WebApp_GetField ("uuid"))
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+
+C_BOOLEAN(mReadOnly)
+mReadOnly:=(Records in selection([employee_holidays])=1)
+-->
+
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/main-header.shtml-->
+
+<style>
+label.error {
+	float: left;
+	color: red;
+	padding-top: .5em;
+	vertical-align: top;
+	font-weight:bold
+}
+</style>
+<link rel="stylesheet" type="text/css" href="css/jqm-datebox.min.css" /> 
+<script type="text/javascript" src="js/jqm-datebox.core.min.js"></script>
+<script type="text/javascript" src="js/jqm-datebox.mode.calbox.min.js"></script>
+<script type="text/javascript" src="js/jquery.mobile.datebox.i18n.en_US.utf8.js"></script>
+<script src="js/jquery.validate.js"></script>
+<script src="js/additional-methods.js"></script>
+
+<script type="text/javascript">
+function __showHolidays()
+{
+pUrlStr='holidays.shtml';
+window.location.href=pUrlStr;
+}
+
+function days_between(date1, date2) {
+	var end_date_arr= date1.split("/");
+	var start_date_arr= date2.split("/");
+	var end_date= new Date(end_date_arr[2],end_date_arr[0]-1,end_date_arr[1]);
+	var start_date= new Date(start_date_arr[2],start_date_arr[0]-1,start_date_arr[1]);
+	
+    // The number of milliseconds in one day
+    var ONE_DAY = 1000 * 60 * 60 * 24;
+
+    // Convert both dates to milliseconds
+    var date1_ms = end_date.getTime();
+	//alert(date1_ms);
+    var date2_ms = start_date.getTime();
+
+    // Calculate the difference in milliseconds
+    var difference_ms = Math.abs(date1_ms - date2_ms);
+
+    // Convert back to days and return
+    return Math.round(difference_ms/ONE_DAY)+1;
+
+}
+
+
+$(document).on('pageinit', function(){
+
+	var s_date= $("#Start_Date").val();
+			var e_date= $("#End_Date").val();
+			$("#days_used").val(days_between(e_date, s_date));
+
+	$("#HolidayForm").validate({
+        rules: {
+            Employee_ID: "required",
+            Start_Date : "required",
+            End_Date : "required",
+			Subject : "required",
+			status : "required",
+        },
+		messages: {
+			Employee_ID: "Please Select Employee Name",
+			Start_Date: "Please Specify Start Date",
+			End_Date: "Please Specify End_Date",
+			Subject: "Please Enter Subject",
+			status: "Please Select the Status",
+		}
+    });
+});
+</script>
+
+
+</head>
+<body>
+<div data-role="page" id="home" data-add-back-btn="false">
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/top-header.shtml-->
+	<div data-role="content" style="padding: 15px;">
+		<ul data-role="listview" data-inset="true">
+			<li data-role="list-divider"><span style=" color:#2B89D0; font-stretch:narrower;"><!--#4DIF (Records in selection([employee_holidays])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Request</span></li>
+		</ul>
+		<form data-ajax="false" action="saveholiday.cgi" method="post" name="form" id="HolidayForm" >
+		<input name="holiday_uuid" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="holiday_uuid">  
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput1">Employee Name<font color="#FF0000">*</font></label>
+					
+					<select name="Employee_ID">
+										<!--#4DSCRIPT/Web_LoadEmployees/-->
+										<!--4DLOOP  [Employees]-->
+											<option value="<!--4DVAR [Employees]uuid-->" <!--#4DIF ([employee_holidays]uuid_employee=[Employees]uuid)-->selected<!--4DELSE--><!--4DENDIF-->><!--4DVAR [Employees]emp_first_name--> <!--4DVAR [Employees]emp_last_name--></option>
+										<!--4DENDLOOP-->	
+									</select>
+					
+				</fieldset>
+			</div>
+			     
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput1">Start Date<font color="#FF0000">*</font></label>
+					<!--#4DIF (mReadOnly)-->
+								
+									<input id="Start_Date" name="Start_Date" type="text" value="<!--#4DVAR timestamp_unix_toDate ([employee_holidays]timestamp_start)-->" readonly>
+								<!--#4DELSE-->
+									<input type="text" type="date" data-role="datebox" data-options='{"mode": "calbox"}' placeholder="Start Date" value="" name="Start_Date" id="Start_Date" >
+								<!--#4DENDIF-->
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput1">End Date<font color="#FF0000">*</font></label>
+					<!--#4DIF (mReadOnly)-->
+									<input id="End_Date" name="End_Date" type="text"  value="<!--#4DVAR timestamp_unix_toDate ([employee_holidays]timestamp_end)-->" readonly>
+								<!--#4DELSE-->
+									<input type="text" type="date" data-role="datebox" data-options='{"mode": "calbox"}' placeholder="End Date" value="" name="End_Date" id="End_Date">
+								<!--#4DENDIF-->
+				</fieldset>
+			</div>
+			
+			<!--#4DIF (Records in selection([employee_holidays])=1)-->
+							<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput1">Days Used</label>
+									<input name="days_used" type="text" value="" id="days_used" placeholder="Days Used" readonly>        
+							</fieldset>
+			</div>
+							<!--#4DELSE--><!--#4DENDIF--> 
+			
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput1">Type Of Holiday</label>
+					<Select name="type_of_holiday" id="type_of_holiday">
+										<option value="0">Select an option</option>
+										<option value="Paid Leave" <!--#4DIF ([employee_holidays]type_of_holiday="Paid Leave")-->selected<!--4DELSE--><!--4DENDIF-->>Paid Leave</option>
+										<option value="Unpaid Leave" <!--#4DIF ([employee_holidays]type_of_holiday="Unpaid Leave")-->selected<!--4DELSE--><!--4DENDIF-->>Unpaid Leave</option>
+									</select> 
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput1">Reason For Leave</label>					
+								<textarea name="Subject" id="Subject" placeholder="Reason For Leave"><!--#4DVAR [employee_holidays]subject--></textarea>
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput1">Manager Notes</label>					
+								<textarea name="Comments" id="Comments" placeholder="Manager Notes"><!--#4DVAR [employee_holidays]comments--></textarea>
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput1">Status<font color="#FF0000">*</font></label>
+					<Select name="status" id="status">
+										<option value="">Select an option</option>
+										<option value="Requested" <!--#4DIF ([employee_holidays]status="Requested")-->selected<!--4DELSE--><!--4DENDIF-->>Requested</option>
+										<option value="Approved" <!--#4DIF ([employee_holidays]status="Approved")-->selected<!--4DELSE--><!--4DENDIF-->>Approved</option>
+										<option value="Revoked" <!--#4DIF ([employee_holidays]status="Revoked")-->selected<!--4DELSE--><!--4DENDIF-->>Revoked</option>
+									</select>  
+				</fieldset>
+			</div>
+			
+			<input type="submit" value="Submit" id="submit" name="submit">
+			<input type="submit" value="Cancel" onClick="__showHolidays(); return false;">
+		</form>
+	</div><!-- END DATA ROLE CONTENT-->
+
+
+   <!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/footer.shtml-->
+    
+ </div>
+ 
+</body>
+</html>

@@ -1,0 +1,241 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+C_TEXT(_HTMLTITLETXT)
+ 
+If(_HIT_AuthenticateSession="Session-Authenticated-OK")
+QUERY([Employees];[Employees]uuid=_HIT_WebApp_GetField ("uuid"))
+
+IF (Records in selection([Employees])=0)
+_HTMLTITLETXT:="New Employee"
+ELSE
+_HTMLTITLETXT:= "Edit "+[Employees]emp_first_name
+END IF
+
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+
+-->
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/main-header.shtml-->
+<link rel="stylesheet" href="css/jquery-ui.css">
+<script src="js/datepicker.js"></script>
+<script src="js/jquery.validate.js"></script>
+<script type="text/javascript">
+var annual_holidays=20;
+
+function set_no_of_employement_holidays(){
+	var ONE_DAY = 1000 * 60 * 60 * 24
+
+	var start_date= $('#employment_start_date').val();
+	start_date=new Date(start_date);
+	var now = new Date();
+	
+	// Convert both dates to milliseconds
+    var date1_ms = start_date.getTime();
+    var date2_ms = now.getTime()
+
+    // Calculate the difference in milliseconds
+    var difference_ms = Math.abs(date1_ms - date2_ms)
+	
+    // Convert back to days and return
+    var days = Math.round(difference_ms/ONE_DAY)
+	
+	var s_year=start_date.getFullYear();
+	var thisyear = now.getFullYear();
+	var number_of_long_years = 0;
+	for(var y=s_year; y <= thisyear; y++){ 
+		if(days>=365){
+			days = days-366;
+			number_of_long_years++; 
+		} else {
+			days=days-365;
+		}
+	}
+	console.log(number_of_long_years);
+	$('#number_of_years_in_employment').val(number_of_long_years);
+	var current_holiday_entitlement=annual_holidays+number_of_long_years;
+	console.log(current_holiday_entitlement);
+	$('#current_holiday_entitlement').val(current_holiday_entitlement);
+}
+$(document).ready(function() {
+	$('#DOB').datepicker({
+    	autoclose: true,
+    	changeMonth: true,
+      	changeYear: true,
+      	dateFormat: 'dd/mm/yy'
+    });
+    
+	set_no_of_employement_holidays();
+ 	$('#DOB').datepicker({"autoclose": true});
+	$('#employment_start_date').datepicker({"autoclose": true}).on('changeDate', function (ev) {
+		set_no_of_employement_holidays();
+	});
+	
+	$("#DetailForm").validate({
+		ignore: "",
+        rules: {
+			Position: "required",
+			FirstName: "required",
+			Lastname: "required",
+			employment_start_date: "required",
+			Email: {
+				required: true,
+				email: true
+			},
+			Password: "required",
+		}
+    });
+});
+</script>
+<script type='text/javascript' src='js/customerNotes.js'></script>
+<style>
+label.error { 
+	float: left; 
+	color: red; 
+	padding-top: 1.5em; 
+	vertical-align: top; 
+}
+</style>
+</head>
+<body>
+<div data-role="page" class="jqm-demos" data-quicklinks="true">
+	<!-- header -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/top-header.shtml-->
+	<!-- /header -->
+	
+	<div role="main" class="ui-content jqm-content">
+		<h3><!--#4DIF (Records in selection([Employees])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Employee</h3>
+		<div data-demo-html="true">
+			<form name="DetailForm" action="saveemployee.cgi" id="DetailForm" data-ajax="false" method="post">
+				<div data-role="tabs" id="tabs">
+		     		<div data-role="navbar">
+			    		<ul>
+			     			<li><a href="#one" data-ajax="false" class="ui-btn-active">Basic Details</a></li>
+			      			<li><a href="#two" data-ajax="false">Other Information</a></li>
+			      		</ul>
+		     		 </div>
+		     	<div id="one" class="ui-body-d ui-content">
+                   	<input name="Employee_uuid" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="Employee_uuid">        
+							 
+					<div class="ui-field-contain displayMsg">
+   						<label for="Position">Position</label>
+						<input type="text" value="<!--#4DTEXT [Employees]emp_position-->" name="Position" id="Position" placeholder="Position">
+					</div>	
+					
+					<div class="ui-field-contain">
+   						<label for="FirstName">First Name</label>
+						<input name="FirstName" type="text" value="<!--#4DTEXT [Employees]emp_first_name-->" id="FirstName">
+					</div>
+					
+					<div class="ui-field-contain">
+   						<label for="DOB">Last Name</label>
+						<input name="Lastname" type="text" value="<!--#4DTEXT [Employees]emp_last_name-->" id="Lastname">                             
+					</div>
+					<div class="ui-field-contain">
+   						<label for="DOB">Date Of Birth</label>
+						<input type="text" data-role="date" name="DOB" id="DOB" <!--#4DIF ([Employees]date_of_birth=!00/00/00!)-->value=""<!--4DELSE-->value="<!--#4DVAR [Employees]date_of_birth-->"<!--4DENDIF--> readonly>                               
+   					</div>
+   					<div class="ui-field-contain">
+   						<label for="Address">Address</label>
+						<textarea name="Address" rows="4" id="Address"><!--#4DTEXT [Employees]emp_address--></textarea>                        
+   					</div>
+   					<div class="ui-field-contain">
+   						<label>Telephone Number</label>
+						<input name="telephone" class="span5" type="text" value="<!--#4DTEXT [Employees]emp_telephone-->" id="telephone">
+					</div>
+					<div class="ui-field-contain">
+						<label>Email</label>
+						<input name="Email" type="text" value="<!--#4DTEXT [Employees]email-->" id="Email">
+					</div>						   
+					<div class="ui-field-contain">
+						<label>Password</label>
+						<input name="Password" type="password" value="<!--#4DTEXT [Employees]zWebPassword-->" id="Password">						
+					</div>
+						<div class="ui-field-contain">
+                                <label>Status</label>
+                               	<select data-native-menu="false" name="Status" id="Status">
+										<option value="Active" <!--#4DIF ([Employees]emp_active=True)-->selected<!--4DELSE--><!--4DENDIF-->>Active</option>
+										<option value="Inactive" <!--#4DIF ([Employees]emp_active=false)-->selected<!--4DELSE--><!--4DENDIF-->>Inactive</option>
+									</select>                                     
+                            </div>
+							<div class="ui-field-contain">
+                                <label>Web Access</label>
+                                <select data-native-menu="false" name="Allow_Web_Access" id="Allow_Web_Access">
+									<option value="Allow" <!--#4DIF ([Employees]AllowWebAccess=True)-->selected<!--4DELSE--><!--4DENDIF-->>Allow</option>
+									<option value="Deny" <!--#4DIF ([Employees]AllowWebAccess=False)-->selected<!--4DELSE--><!--4DENDIF-->>Deny</option>
+								</select>
+                            </div>
+					</div>
+					<div id="two">
+						<div class="ui-field-contain">
+								<label>Type</label>
+								<select data-native-menu="false" name="Type" id="Type">
+										<option value="0">Select an option</option>
+										<option value="Administrator" <!--#4DIF ([Employees]emp_type="Administrator")-->selected<!--4DELSE--><!--4DENDIF-->>Administrator</option>
+										<option value="Bookkeeper" <!--#4DIF ([Employees]emp_type="Bookkeeper")-->selected<!--4DELSE--><!--4DENDIF-->>Bookkeeper</option>
+										<option value="Customer Relationship Manager" <!--#4DIF ([Employees]emp_type="Customer Relationship Manager")-->selected<!--4DELSE--><!--4DENDIF-->>Customer Relationship Manager</option>
+										<option value="Designer" <!--#4DIF ([Employees]emp_type="Designer")-->selected<!--4DELSE--><!--4DENDIF-->>Designer</option>
+										<option value="Developer" <!--#4DIF ([Employees]emp_type="Developer")-->selected<!--4DELSE--><!--4DENDIF-->>Developer</option>
+										<option value="Manager" <!--#4DIF ([Employees]emp_type="Manager")-->selected<!--4DELSE--><!--4DENDIF-->>Manager</option>
+										<option value="Shareholder" <!--#4DIF ([Employees]emp_type="Shareholder")-->selected<!--4DELSE--><!--4DENDIF-->>Shareholder</option>
+										<option value="Support" <!--#4DIF ([Employees]emp_type="Support")-->selected<!--4DELSE--><!--4DENDIF-->>Support</option>
+										<option value="Technical" <!--#4DIF ([Employees]emp_type="Technical")-->selected<!--4DELSE--><!--4DENDIF-->>Technical</option>
+									</select>   
+							</div>
+							<div class="ui-field-contain">
+								<label>Manager</label>
+								<select data-native-menu="false" name="Select_Manager" id="Select_Manager">
+										<option value="0">Select an option</option>
+										<!--#4DSCRIPT/Web_LoadManager/-->
+										<!--4DLOOP  [Employees]-->
+										<option value="<!--#4DHTMLVAR [Employees]uuid-->"><!--#4DHTMLVAR [Employees]emp_first_name--> <!--#4DHTMLVAR [Employees]emp_last_name--></option>
+										<!--4DENDLOOP-->
+									</select> 
+							</div>
+							
+							
+					<div class="ui-field-contain">
+   						<label>Emergency Contact Name</label>
+						<input name="EcontactName" class="span5" type="text" value="<!--#4DTEXT [Employees]emergency_contact_name-->" id="EcontactName">
+					</div>
+					<div class="ui-field-contain">
+   						<label>Emergency Contact Number</label>
+						<input name="EcontactNumber" class="span5" type="text" value="<!--#4DTEXT [Employees]emergency_contact_number-->" id="EcontactNumber">                         
+					</div>
+					<div class="ui-field-contain">
+   						<label>Employement Start Date</label>
+   						<input type="text" data-role="date" data-date-format="dd/mm/yyyy"  name="employment_start_date" id="employment_start_date" <!--#4DIF ([Employees]employment_start_date=!00/00/00!)-->value=""<!--4DELSE-->value="<!--#4DVAR [Employees]employment_start_date-->"<!--4DENDIF--> readonly>                              
+					</div>
+					<div class="ui-field-contain">
+							<label>Number of years in Employement </label>
+							<input type="text" class="span5" name="number_of_years_in_employment" id="number_of_years_in_employment" value="" readonly>                               
+						</div>
+						<div class="ui-field-contain">
+							<label>Current Holidays Entitlement </label>
+							<input type="text" class="span5" name="current_holiday_entitlement" id="current_holiday_entitlement" value="<!--#4DTEXT [Employees]current_holiday_entitlement-->" readonly>                               
+						</div>
+						<div class="ui-field-contain">
+							<label>NI Number</label>
+							<input name="ni_number" class="span5" type="text" value="<!--#4DTEXT [Employees]ni_number-->" id="ni_number">                                 
+						</div>
+					</div>
+					</div>
+					<button type="submit" id="submit" class="ui-shadow ui-btn ui-corner-all ui-mini">Submit</button>
+					<a href="employees.shtml" data-ajax="false" class="ui-shadow ui-btn ui-corner-all ui-mini">Cancel</a>
+				</form>	
+		    	
+		    </div>
+	</div><!-- /content -->
+	<!-- panel -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/sidebar.shtml-->
+	<!-- /panel -->
+
+	<!-- footer -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/footer.shtml-->
+	<!-- /footer -->
+</div><!-- /page -->
+
+</body>
+</html>

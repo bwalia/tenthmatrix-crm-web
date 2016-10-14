@@ -1,0 +1,503 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+QUERY([Tasks];[Tasks]task_id=num(_HIT_WebApp_GetField ("task")))
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+
+_HIT_HTMLTXT:=_HIT_HTTP_GetReferer
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+<link rel="stylesheet" href="css/base/jquery-ui.css" />
+<link rel="stylesheet" href="css/autocomplete.css" />
+</head>
+<body>
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
+
+	<!-- main container -->
+    <div class="content">
+        
+        <div class="container-fluid">
+            <div id="pad-wrapper">
+
+                <!-- timeslips table -->
+                <div class="table-wrapper orders-table section">
+                    <div class="row-fluid head">
+                        <div class="span12">
+                            <h4>Timeslips</h4>
+                        </div>
+                    </div>
+					<form id="frm_set" name="frm_set" method="get" action="">
+						<div class="row-fluid filter-block">
+							<div class="ui-widget" style="margin-bottom: -26px;">
+								Tasks:
+								<select name="task" id="task" onChange="__showTaskTimeslips(this.value)" >
+								<!--#4DIF (_HIT_WebApp_GetField ("task")#"")-->
+								<option value="<!--4DVAR [Tasks]task_id-->"  ><!--4DVAR [Tasks]task_name--></option>
+								<!--#4DELSE-->
+								<option value=""></option>
+								<!--#4DSCRIPT/Web_LoadTasks/-->
+								<!--4DLOOP [Tasks]-->
+									<option value="<!--4DVAR [Tasks]task_id-->"  ><!--4DVAR [Tasks]task_name--></option>
+								<!--4DENDLOOP-->
+								<!--#4DENDIF-->
+								</select>
+							</div>
+							<div class="pull-right">
+								<div class="btn-group pull-right">
+									<button class="glow left large" onClick="__showChargeable(); return false;">Chargeable</button>
+									<button class="glow middle large" onClick="__showNotChargeable(); return false;">Not Chargeable</button>
+									<button class="glow right large" onClick="__showBilled(); return false;">Billed</button>
+									<a href="timeslip.shtml" class="btn-flat success new-product margn-lft35">+ Add New TimeSheet</a>
+								</div>
+								<input name="keyword" id="keyword" type="text" class="search order-search" placeholder="Enter client or staff name.." value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" />
+							</div>
+						</div>
+                    </form>
+
+                    <div class="row-fluid">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th class="span4">
+                                        Task
+                                    </th>
+
+                                    <th>
+                                       Start
+                                    </th>
+									<th>
+                                       End
+                                    </th>
+                                    <th class="span3">
+                                        Project
+                                    </th>
+                                    <th>
+                                        <span class="line"></span>
+                                        Employee
+                                    </th>
+                                    <th>
+                                        <span class="line"></span>
+                                        Est. Hours
+                                    </th>
+                                    <th>
+                                        <span class="line"></span>
+                                        Time slip Status
+                                    </th>
+                                    <th class="span2">
+                                        <span class="span1"></span>
+                                        Est. Amount
+                                    </th>
+                                   <th class="span4">
+                                        <span class="line"></span>
+                                        Download TimeSheets
+                                    </th>
+
+                                </tr>
+                            </thead>
+                            <tbody><!--#4DSCRIPT/Web_LoadTimeslips/-->
+                                <!--#4DLOOP [Timeslips]--><!--#4DSCRIPT/Web_LoadTimeslipRelated/-->
+                                <tr class="first">
+                                  <td >
+                                        <a href="tasks.shtml?keyword=<!--#4DHTMLVAR [Tasks]task_name-->" target="_blank"><!--#4DHTMLVAR [Tasks]task_name--></a>
+                                  </td>
+
+								   <td class="start_time"><!--#4DHTMLVAR timestamp_unix_toDate ([Timeslips]Timestamp_start)--> <!--#4DHTMLVAR timestamp_unix_toTime ([Timeslips]Timestamp_start)--></td>
+									<td class="end_time"><!--#4DHTMLVAR timestamp_unix_toDate ([Timeslips]Timestamp_end)--> <!--#4DHTMLVAR timestamp_unix_toTime ([Timeslips]Timestamp_end)--></td>
+                                    <td>
+                                        <a href="projects.shtml?keyword=<!--#4DHTMLVAR [Projects]proj_name-->" target="_blank"><!--#4DHTMLVAR [Projects]proj_name--></a>
+                                    </td>
+                                    <td>
+                                        <a href="#"><!--#4DHTMLVAR [Employees]emp_first_name--> <!--#4DHTMLVAR [Employees]emp_last_name--></a>
+                                    </td>
+                                    <td>
+                                        <!--#4DIF ([Timeslips]slip_hours=0)-->WIP<!--4DELSE--><!--#4DHTMLVAR [Timeslips]slip_hours--><!--4DENDIF-->
+                                    </td>
+                                    <td>
+                                        <!--#4DIF ([Timeslips]billing_status=1)--><span class="label label-success">Chargeable</span><!--#4DELSE--><!--#4DIF ([Timeslips]billing_status=2)--><span class="label label-warning">Billed</span><!--#4DELSE--><span class="label label-info">Not Chargeable</span><!--#4DENDIF--><!--#4DENDIF-->
+                                    </td>
+                                    <td>
+                                        <!--#4DHTMLVAR Invoice_AmtReturnAsText([Timeslips]slip_hours*[Timeslips]slip_rate)-->
+                                    </td>
+                                   
+                                   <td>
+                                    <span class="label label-success"><a title="Download Invoice <!--#4DHTMLVAR String([Employees]emp_first_name;"000000")-->" target="_blank" href="timeslips_preview.shtml?uuid=<!--#4DVAR [Employees]uuid-->&token=<!--#4DVAR _HIT_TokenGetAny-->&preview=pdf">
+                                        <i class="icon-download-alt"></i>&nbsp;</a>
+                                    </span>Download
+                                        <ul class="actions">
+                                            <li><a href="javascript:void(0)" onClick="__showTimeslipForm('<!--#4DHTMLVAR [Timeslips]uuid-->')"><i class="table-edit"></i></a></li>
+                                            <li><i class="table-settings"></i></li>
+                                            <li class="last"><i class="table-delete"></i></li>
+                                        </ul>
+                                    </td>
+
+                                </tr>
+
+<!--#4DENDLOOP-->
+
+<tr>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td><span class="label label-warning"><!--#4DVAR Sum([Timeslips]slip_hours)--></span></td>
+<td>&nbsp;</td>
+<td><span class="label label-warning"><!--#4DSCRIPT/Web_InitTimeslipsTotals/--></span></td>
+</tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- end timeslips table -->
+
+            </div>
+        </div>
+    </div>
+    <!-- end main container -->
+
+	<!-- scripts -->
+   <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+    <script src="js/ui/jquery-ui.js"></script>
+    <script>
+function __showTaskTimeslips(name)
+{			
+	$('#frm_set').submit();
+}
+function __showChargeable()
+{
+	if($('#task').val()!=''){
+	pUrlStr='timeslips.shtml?task='+$('#task').val()+'&keyword='+$('#keyword').val()+'&chargeable=on';
+	}
+	else {
+	pUrlStr='timeslips.shtml?keyword='+$('#keyword').val()+'&chargeable=on';
+	}
+	window.location.href=pUrlStr;
+
+}
+
+function __showNotChargeable()
+{
+	if($('#task').val()!=''){
+		pUrlStr='timeslips.shtml?task='+$('#task').val()+'&keyword='+$('#keyword').val()+'&chargeable=off';
+	}
+	else {
+		pUrlStr='timeslips.shtml?keyword='+$('#keyword').val()+'&chargeable=off';
+	}
+	window.location.href=pUrlStr;
+}
+
+function __showBilled()
+{
+	if($('#task').val()!=''){
+		pUrlStr='timeslips.shtml?task='+$('#task').val()+'&keyword='+$('#keyword').val()+'&chargeable=billed';
+	}
+	else {
+		pUrlStr='timeslips.shtml?keyword='+$('#keyword').val()+'&chargeable=billed';
+	}
+	window.location.href=pUrlStr;
+}
+
+
+function __showAllTimeslips()
+{
+pUrlStr='timeslips.shtml';
+window.location.href=pUrlStr;
+}
+
+function __showTimeslips()
+{
+pUrlStr='timeslips.shtml?keyword='+$('#keyword').val();
+if($('#task').val()!=''){
+pUrlStr='timeslips.shtml?task='+$('#task').val()+'&keyword='+$('#keyword').val();
+}
+window.location.href=pUrlStr;
+}
+
+function __showTimeslipForm(uuid)
+{
+pUrlStr='timeslip.shtml?uuid='+uuid;
+window.location.href=pUrlStr;
+}
+
+function chng_time_format(){
+
+	$('.first').each(function(){
+		var s_date_time=$(this).find('.start_time').html().split(' ');
+		var e_date_time=$(this).find('.end_time').html().split(' ');
+		//alert(s_date_time);
+		//alert(e_date_time);
+		var s_time=s_date_time[1];
+		var e_time=e_date_time[1];
+		var s_time_arr=s_time.split(":");
+		var e_time_arr=e_time.split(":");
+		var s_hour= Number(s_time_arr[0]);
+		var e_hour= Number(e_time_arr[0]);
+		var s_min= Number(s_time_arr[1]);
+		var e_min= Number(e_time_arr[1]);
+		var s_ampm='AM';
+		var e_ampm='AM';
+		if(s_hour>=12){
+			s_ampm='PM';
+		}
+		if(e_hour>=12){
+			e_ampm='PM';
+		}
+		if(s_hour>12){
+			s_hour= s_hour-12;
+		}
+		if(e_hour>12){
+			e_hour= e_hour-12;
+		}
+		/*if(s_hour<10){
+			s_hour= '0'+String(s_hour);
+		}
+		if(e_hour<10){
+			e_hour= '0'+String(e_hour);
+		}*/		
+		if(s_min<10){
+			s_min= '0'+String(s_min);
+		}
+		if(e_min<10){
+			e_min= '0'+String(e_min);
+		}
+		s_time=s_hour+':'+s_min+' '+s_ampm;
+		e_time=e_hour+':'+e_min+' '+e_ampm;	
+		//$('#setStartTime').val(s_time);
+		//$('#setEndTIme').val(e_time);	
+		$(this).find('.start_time').html(s_date_time[0]+'<br/>'+s_time);
+		$(this).find('.end_time').html(e_date_time[0]+'<br/>'+e_time);
+	});
+}
+
+
+$(document).ready(function() {
+
+	chng_time_format();
+$('#task').val('<!--#4DVAR _HIT_WebApp_GetField ("task") -->');
+$('#keyword').focus();
+
+//setup before functions
+var typingTimer;                //timer identifier
+var doneTypingInterval = 1000;  //time in ms, 5 second for example
+
+//on keyup, start the countdown
+$('#keyword').keyup(function(){
+    clearTimeout(typingTimer);
+    if ($('#keyword').val) {
+        typingTimer = setTimeout(function(){
+            //do stuff here e.g ajax call etc....
+             var v = $("#keyword").val();
+__showTimeslips();
+        }, doneTypingInterval);
+    }
+});
+
+    });
+
+    </script>
+<script>
+	 var xhr;
+  (function( $ ) {
+    $.widget( "custom.combobox", {
+      _create: function() {
+        this.wrapper = $( "<span>" )
+          .addClass( "custom-combobox" )
+          .insertAfter( this.element );
+ 
+        this.element.hide();
+        this._createAutocomplete();
+        this._createShowAllButton();
+      },
+ 
+      _createAutocomplete: function() {
+	  var ele_select= this.element;
+        var selected = this.element.children( ":selected" ),
+          value = selected.val() ? selected.text() : "";
+ 
+        this.input = $( "<input>" )
+          .appendTo( this.wrapper )
+          .val( value )
+          .attr( "title", "" )
+          .addClass( "custom-combobox-input ui-widget ui-widget-content ui-state-default ui-corner-left" )
+          .autocomplete({
+            delay: 0,
+            minLength: 0,
+            source: $.proxy( this, "_source" )
+          })
+          .tooltip({
+            tooltipClass: "ui-state-highlight"
+          });
+ 
+        this._on( this.input, {
+          autocompleteselect: function( event, ui ) {
+		  	//alert("show all");
+            ui.item.option.selected = true;
+			
+            this._trigger( "select", event, {
+              item: ui.item.option
+            });
+			ele_select.trigger('change');
+          },
+ 
+          autocompletechange: "_removeIfInvalid"
+        });
+      },
+ 
+      _createShowAllButton: function() {
+        var input = this.input,
+          wasOpen = false;
+ 
+        $( "<a>" )
+          .attr( "tabIndex", -1 )
+          .attr( "title", "Show All Items" )
+          .tooltip()
+          .appendTo( this.wrapper )
+          .button({
+            icons: {
+              primary: "ui-icon-triangle-1-s"
+            },
+            text: false
+          })
+          .removeClass( "ui-corner-all" )
+          .addClass( "custom-combobox-toggle ui-corner-right" )
+          .mousedown(function() {
+            wasOpen = input.autocomplete( "widget" ).is( ":visible" );
+          })
+          .click(function() {
+            input.focus();
+ 
+            // Close if already visible
+            if ( wasOpen ) {
+              return;
+            }
+ 
+            // Pass last search string as value to search for, displaying last results
+            input.autocomplete( "search", 'SHOWALL' );
+          });
+      },
+ 
+      _source: function( request, response ) {
+        //var matcher = new RegExp( $.ui.autocomplete.escapeRegex(request.term), "i" );
+		var ele_select= this.element;
+		if(request.term=='SHOWALL'){
+			response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+		
+		}
+		else
+		{
+		var jsonRow = 'gettaskonsearch.cgi?srch='+request.term;
+		
+
+		//alert(jsonRowURLStr);
+		if(xhr) xhr.abort();
+		xhr=$.getJSON(jsonRow,function(result){
+			
+			if(result){
+				var html='<option value=""></option>';
+
+				$.each(result, function(i,item)
+				{
+					html += '<option value="'+item.id+'">'+item.value+'</option>';
+				});
+				ele_select.html(html);
+				
+				
+				response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+				
+				
+			}
+		});
+       
+	  } 
+		
+      },
+ 
+      _removeIfInvalid: function( event, ui ) {
+ 
+        // Selected an item, nothing to do
+        if ( ui.item ) {
+
+          return;
+        }
+ 
+        // Search for a match (case-insensitive)
+        var value = this.input.val(),
+          valueLowerCase = value.toLowerCase(),
+          valid = false;
+		  var ele_select= this.element;
+        this.element.children( "option" ).each(function() {
+          if ( $( this ).text().toLowerCase() === valueLowerCase ) {
+            this.selected = valid = true;	
+
+			ele_select.trigger('change');
+            return false;
+          }
+        });
+ 
+        // Found a match, nothing to do
+        if ( valid ) {
+          return;
+        }
+ 
+        // Remove invalid value
+        this.input
+          .val( "" )
+          .attr( "title", value + " didn't match any item" )
+          .tooltip( "open" );
+        this.element.val( "" );
+        this._delay(function() {
+          this.input.tooltip( "close" ).attr( "title", "" );
+        }, 2500 );
+        this.input.data( "ui-autocomplete" ).term = "";
+      },
+ 
+      _destroy: function() {
+        this.wrapper.remove();
+        this.element.show();
+      }
+    });
+  })( jQuery );
+ 
+  $(function() {
+    $( "#task" ).combobox();
+   
+	
+  });
+
+  </script>    
+</body>
+</html>

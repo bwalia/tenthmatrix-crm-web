@@ -1,0 +1,149 @@
+<!--HIT_EXECUTE
+QUERY([rsync_enteries];[rsync_enteries]uuid=_HIT_WebApp_GetField ("uuid"))
+-->
+
+	<!-- main container -->
+            <div id="pad-wrapper" class="form-page">
+				 <div class="row-fluid header">
+					<h3>Add Entries</h3>
+					
+                </div>
+				
+                <div class="row-fluid form-wrapper">
+				
+					<!-- left column -->
+                    <div class="span10">
+					
+						<form name="Form" id="form_rsyncentry" action="" class="form-comment form_validation_reg" method="post"> 
+						<div id="validation" align="center"></div>
+						<input name="entry_uuid" class="span7" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="entry_uuid">
+						<input name="proj_script_uuid" class="span7" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("proj_script_uuid")-->" id="proj_script_uuid">
+						<!--#4DIF (Records in selection([rsync_enteries])=1)-->
+						<input name="action" class="span7" type="hidden" value="edit" id="action">
+						<!--#4DELSE-->
+						<input name="action" class="span7" type="hidden" value="new" id="action">
+						<!--#4DENDIF-->
+							<div class="field-box">
+								<label>Command Option</label>
+								<div class="ui-select span5">
+									<select name="command_type" id="command_type">
+										<option value="RSYNC" <!--#4DIF ([rsync_enteries]command_type="RSYNC")-->selected<!--4DELSE--><!--4DENDIF-->>RSYNC</option>
+										<option value="SSH" <!--#4DIF ([rsync_enteries]command_type="SSH")-->selected<!--4DELSE--><!--4DENDIF-->>SSH</option>
+									</select>                                   
+								</div>
+							</div>
+							<div class="field-box">
+								<label>Script Name</label>
+									<input name="entry_script_name" class="span9" type="text" value="<!--4DVAR [rsync_enteries]script_name-->" id="entry_script_name">
+							</div>
+														
+							<div class="field-box" id="directory_paths">
+								<div class="span5">
+									<label>Directory Source</label>
+									<textarea name="dir_source" class="span12" rows="2" id="dir_source"><!--4DVAR [rsync_enteries]dir_source--></textarea>
+								</div>
+
+								<div class="span5">
+									<label>Directory Target</label>
+									<textarea name="dir_target" class="span12" rows="2" id="dir_target"><!--4DVAR [rsync_enteries]dir_target--></textarea>
+								</div>
+							</div>
+							<div class="field-box">
+								<label>RSYNC Option</label>
+									<textarea name="rsync_options" class="span12" rows="4" id="rsync_options"><!--4DVAR [rsync_enteries]rsync_options--></textarea>
+							</div>
+							<div class="field-box">
+								<label><input name="is_enabled_entry" class="span1" type="checkbox" value="true" id="is_enabled_entry" <!--#4DIF ([rsync_enteries]is_enabled)-->checked<!--4DELSE--><!--4DENDIF--> >  IS ENABLED</label>
+							</div>
+							<br>
+							<span id="err_msg" style="color:#FF0000"></span>
+						
+							<div class="span11 field-box" style="text-align: center;">
+							 
+								<input type="button" value="Submit" class="btn-glow primary" onclick="validate_form()">
+								<a href="javascript:void(0)" class="btn-glow primary" onclick="close_colorbox()">Cancel</a>
+							</div>
+                   					
+						</form>
+					</div>
+				</div>
+            </div>
+            
+            
+    <!-- end main container -->
+
+	<!-- scripts -->
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+	<script src="js/jquery.uniform.min.js"></script>
+	<!-- call this page plugins -->
+		
+    <script type="text/javascript">
+        $(function () {
+			// add uniform plugin styles to html elements
+            $("input:radio").uniform();
+			
+			$("#done").click(function(){
+				$('#cboxClose').click();
+			});
+									
+			$("#command_type").change(function () {
+				$('#error_msg').remove('');
+				var option_selected= $(this).val();
+				if(option_selected=='SSH'){
+					$('#directory_paths').hide();
+				}else{
+					$('#directory_paths').show();
+				}
+			});
+			$('#command_type').trigger('change');
+			
+        });
+		function validate_form(){
+		
+			var entry_uuid= $('#entry_uuid').val();
+			var proj_script_uuid= $('#proj_script_uuid').val();
+			var command_type= $('#command_type').val();
+			var rsync_options= $('#rsync_options').val();
+			var dir_source= $('#dir_source').val();
+			var dir_target= $('#dir_target').val();
+			var entry_script_name= $('#entry_script_name').val();
+			var is_enabled_entry= '';
+			var action= $('#action').val();
+			if($("#is_enabled_entry").prop('checked') == true){
+				is_enabled_entry=true;
+			}
+			
+			if(command_type!='' && rsync_options!=''){
+				if(command_type=='RSYNC' && dir_source=='' && dir_target==''){
+					document.getElementById("validation").innerHTML = "<span  id='error_msg' style='color: #CC0000;font-size: 14px;font-weight: bold;'>* Please specify Directory Source and Target<span><br><br>" ;
+				}else{
+					$('#error_msg').remove('');
+					var dataString = 'dir_source='+dir_source+'&dir_target='+dir_target+'&rsync_options='+rsync_options+'&command_type='+command_type+'&is_enabled='+is_enabled_entry+'&script_name='+entry_script_name+'&proj_script_uuid='+proj_script_uuid+'&action='+action+'&uuid='+entry_uuid;
+					$.ajax({
+						type: "GET",
+						dataType: "json",
+						url: "saversycscript.cgi",
+						data: dataString,
+						cache: false,
+						success: function(html)
+						{
+							if(html.Success){	
+								//window.parent.load_entries();
+								window.parent.location.reload();
+								$('#cboxClose').click();
+							}else if(html.Error){
+								document.getElementById("validation").innerHTML ='<span style="color:#CC0000;font-size:18px;margin-left:20%;" id="error_msg"><strong>'+html.Error+'</strong></span></br></br>';
+								$('#entry_script_name').focus();
+							}
+						}
+					});
+				}
+			}else{
+				document.getElementById("validation").innerHTML = "<span id='error_msg' style='color: #CC0000;font-size: 14px;font-weight: bold;'>* Please specify RSYNC Options<span><br><br>" ;
+			}
+		}
+		function close_colorbox(){
+			$('#cboxClose').click();
+		}
+	
+    </script>

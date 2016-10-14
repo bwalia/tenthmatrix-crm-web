@@ -1,0 +1,209 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Tenthmatrix Billing Secure Site - Pay Invoice Online</title>
+
+<!--#4DSCRIPT/_HIT_LoadInclude/includes/static_files.shtml-->
+<script language="javascript">
+
+$(document).ready(function() {
+
+$("#response_msg").hide();
+if($('#amount').val()=='0'){//when encrypted link auto loads we have amount otherwise system displays zero; kill pointless zero
+$('#amount').val('');
+}
+
+
+$.__customAlert = function(pMsgTxt){
+
+$("#response_msg").html('<strong>'+pMsgTxt+'</strong>');
+$("#response_msg").css("color","red");
+$("#response_msg").show();
+
+}
+
+	$('#name').focus();
+
+
+});
+
+function validateEmail()
+{
+ 
+   var emailID = document.invoice.email.value;
+   var filter=/^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i
+   if (!filter.test(emailID))
+   {
+		$.__customAlert('Please enter a valid email');
+       document.invoice.email.focus() ;
+       return false;
+   }
+   return( true );
+}
+
+function ValidateForm () {
+var msg = '';
+if (document.invoice.name.value=="")
+{ $.__customAlert('Please enter your name');
+	document.invoice.name.focus() ;
+	return false; 
+}
+
+if (document.invoice.email.value=="")
+{ $.__customAlert('Please enter your email');
+	document.invoice.email.focus() ;
+	return false; 
+}else{
+     // Put extra check for data format
+     var ret = validateEmail();
+     if( ret == false )
+     {
+          return false;
+     }
+   }
+
+if (document.invoice.amount.value=="")
+{ $.__customAlert('Please enter Payment amount');
+	document.invoice.amount.focus() ;
+	return false; 
+}
+if (isNaN(document.invoice.amount.value) || Number(document.invoice.amount.value)<=0)
+{ $.__customAlert('Please enter a valid Payment amount');
+	document.invoice.amount.focus() ;
+	return false; 
+}
+
+if (Number(document.invoice.amount.value)>5000)
+{ $.__customAlert('A max of £5000.00 can be paid in a single transaction! Please enter amount less than £5000.00');
+	document.invoice.amount.focus() ;
+	return false; 
+}
+
+
+}
+</script>
+</head>
+
+<body>
+
+<a id="top"></a>
+
+<!--Begin main wrapper -->
+<div class="wrap_wide background_white">
+<div class="wrap">
+<!--Begin header --> 
+<div class="header">
+   <!--Begin logo -->
+
+                <div class="logo">
+
+                    <a href="https://www.tenthmatrix.co.uk/index.php" class="logo" title="Tenthmatrix Information Systems">
+
+                        <img src="images/tenthmatrix.png" alt="Tenthmatrix Information Systems" />
+
+                    </a>
+
+                    
+
+                </div>
+
+                <!--End logo -->
+        
+<!--#4DSCRIPT/_HIT_LoadInclude/includes/search.shtml-->
+                
+                </div>
+<!--End header -->
+</div>
+</div>
+
+<div class="wrap_wide menu_single">
+<!--#4DSCRIPT/_HIT_LoadInclude/includes/topmenu.shtml-->
+</div>
+                    
+<div class="wide_wrap content">
+<div class="wrap">
+
+<!--Extra holder for the sidebar background line-->
+<div class="sidebar_back_holder">
+
+<!--Begin sidebar-->
+<div class="sidebar">
+
+<!--#4DSCRIPT/_HIT_LoadInclude/includes/company_info_sidebar.shtml-->
+
+</div> 
+<!--End sidebar-->
+
+<!--Left content area-->
+<div class="content_area">
+<div class="post_entry contact no-border">
+
+<h1>Make a payment with your credit or debit card securely</h1>
+
+<div id="note"><i>Note: We do not store your personal data or credit card information.</i></div>
+<div id="response_msg"></div>
+
+<form action="confirm_payment_multiple.cgi" id="ajax-contact-form" class="form-comment" method="POST" name="invoice" onSubmit="return ValidateForm();">
+    <input type="hidden" name="pay" value="multiple_invoices">
+
+<div class="holder">
+    <label>Your Name</label>
+    <input type="text" value="" name="name" class="textbox">
+</div>
+                                
+<div class="holder">
+    <label>E-Mail</label>
+    <input type="text" value="" name="email" class="textbox">
+</div>
+                                
+<div class="holder">
+    <label>Amount (&#163;)</label>
+    <input type="text" value="<!--#4DVar Web_RoundAmount([Invoices]inv_total_due_with_tax)-->" name="amount" id="amount" class="textbox" ><i>Payments to be made in GPB(&#163;) unless stated otherwise on the Invoice.</i>
+</div>
+                                
+<div class="holder">
+    <label>Notes</label>
+    <textarea cols="25" rows="5" name="message" id="message" class="textbox"></textarea>
+</div>
+        
+<input type="hidden" name="testMode" value="0"><!--100 for test mode-->
+<input type="hidden" name="accid1" value="TENTHMATRIXIM1">
+<input type="hidden" name="instId" value="303468">
+<input type="hidden" name="cartId" id="cartId" value="">
+<input type="hidden" name="currency" value="GBP">
+                        
+<div class="holder">
+	<input type="submit" value="Continue to Enter Card Details" name="submit" id="submit_next" class="submit">
+</div>
+            
+</form>
+<table cellspacing="2" border="0" align="center" style="border:none" >
+<tr><td style="border:none">
+<script language="JavaScript" src="https://secure.worldpay.com/wcc/logo?instId=303468"></script>
+</td>
+<td style="border:none">
+<table cellspacing="2" border="0" align="center" style="border:none" >
+<td style="border:none">
+<a target="_blank" href="https://www.americanexpress.com">
+<img border="0" width="90px" height="90px"  alt="" src="images/amex.jpeg">
+</a>
+</td>
+</table>
+</td></tr>
+</table>
+</div>
+</div>
+<!--End left content area-->
+</div>
+
+</div>
+</div>
+
+<!--#4DSCRIPT/_HIT_LoadInclude/includes/footer.shtml-->
+
+<!--End content -->
+<!--End main wrapper -->
+
+</body>
+</html>

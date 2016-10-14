@@ -1,0 +1,928 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+C_TEXT(_HTMLTITLETXT)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+QUERY([Products];[Products]uuid=_HIT_WebApp_GetField ("uuid"))
+
+IF (Records in selection([Products])=0)
+_HTMLTITLETXT:="New Product"
+ELSE
+_HTMLTITLETXT:= "Edit: "+[Products]ProductName
+END IF
+
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+
+-->
+<!DOCTYPE html>
+<html>
+<head>
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+<link rel="stylesheet" href="css/chosen.css">
+<link rel='stylesheet' type='text/css' href='css/style.css' />
+<link rel='stylesheet' type='text/css' href='css/print.css' media="print" />
+<link rel="stylesheet" media="all" type="text/css" href="css/jquery-impromptu.css" />
+<style>
+.fileUpload {
+	position: relative;
+	overflow: hidden;
+	margin: 10px;
+	margin-left:0px;
+	
+}
+.fileUpload input.upload {
+	position: absolute;
+	top: 0;
+	right: 0;
+	margin: 0;
+	padding: 0;
+	font-size: 19px;
+	cursor: pointer;
+	opacity: 0;
+	filter: alpha(opacity=0);
+}
+.ui-widget-overlay {
+	position: fixed;
+}
+#ProductForm em.error {
+	margin-left: 10px;
+	width: auto;
+	display: inline;
+}
+#ProductForm em.error {
+	color: red;
+	font-style: italic;
+}
+#ProductForm input.error, textarea.error, select.error{
+	border: 1px solid red;
+}
+#items textarea {
+	width:300px;
+}
+
+
+
+
+.chosen-container-multi .chosen-choices{
+	width:470px!important;
+	border:1px solid #ff!important;
+	border-radius:4px;
+	background:#fff!important;
+	margin-bottom: 10px;
+}
+.chosen-container .chosen-drop{
+ width: 470px !important;
+}
+.mrgntp{
+	margin-top:10px;
+}
+.imgbrdr{
+	border:1px solid #ddd; padding:2px; border-radius:4px;
+	margin-bottom: 12px;
+	margin-top: 10px;
+}
+
+.table td {
+    color: #526273;
+    border: 1px solid #edf2f7;
+    vertical-align: middle;
+}
+
+
+
+</style>
+
+
+
+
+
+</head>
+<body>
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
+
+	<!-- main container -->
+    <div class="content">
+    	<div class="container-fluid">
+            <div id="pad-wrapper" class="form-page">
+				 <div class="row-fluid header">
+					<h3><!--#4DIF (Records in selection([Products])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Product</h3>
+                </div>
+            </div>
+			  <div class="row-fluid form-wrapper">
+			
+			<div class="scrtabs-tab-container">
+			<div  class="scrtabs-tabs-fixed-container"><ul class="nav nav-tabs" role="tablist">
+  <li  class="active"><a aria-expanded="false" href="#tab1" role="tab" data-toggle="tab">Product Detail</a></li>
+  <!--#4DIF (Records in selection([Products])=1)-->
+  <li class="" role="presentation"><a aria-expanded="false" href="#tab2" role="tab" data-toggle="tab">Product Images</a></li>
+  <li class="" role="presentation"><a aria-expanded="false" href="#tab3" role="tab" data-toggle="tab">Available Options</a></li>
+  <!--#4DENDIF-->
+</ul></div></div></div>
+<div class="tab-content">
+  <div class="tab-pane active" id="tab1">	
+		<form name="ProductForm" action="saveproduct.cgi" id="ProductForm" method="post" class="form-comment" >
+			<div class="span10 column">
+								<input name="Product_uuid" class="span9" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="Product_uuid">               
+                               	<div class="span12 field-box">
+                                	<label>Categories </label>
+                                	<input class="span5" type="hidden" id="selected_categories" value="" name="selected_categories" STYLE="width::100%;">
+									<select class="chosen-select" name="categories" id="categories" multiple style="width: 650px;">
+										<!--HIT_EXECUTE
+											 _HIT_HTMLTXT:=Web_ProductCategoriesHTMLPopup([Products]uuid)
+										--> 
+									</select>
+                                </div>
+                               	<div class="span12 field-box">
+                                    <label>Product Name <span style="color: #F10004;">*</span></label>
+                                    <input class="span5" type="text" name="ProductName" id="ProductName" value="<!--#4DVAR [Products]ProductName-->">
+                                </div>
+                                
+                                 <div class="span12 field-box">
+                                    <label>Description <span style="color:#F10004">*</span></label>
+									<textarea rows="4" id="Description" class="span5" name="Description"><!--#4DVAR [Products]Description--></textarea>
+                                </div>
+                                <div class="span12 field-box">
+                                    <label>Stock available <span style="color:#F10004">*</span></label>
+									<input class="span5 num" type="text" id="stock_available" value="<!--#4DVAR [Products]stock_available-->" name="stock_available">
+                                </div>
+                                <div class="span12 field-box">
+                                    <label>Unit Price <span style="color:#F10004">*</span></label>
+									<input class="span5 num" type="text" id="Unit_Price" value="<!--#4DVAR [Products]Unit_Price-->" name="Unit_Price">
+                                </div>
+                                <!--#4DIF (Records in selection([Products])=1)-->
+                              
+                              <div class="span12 " >  <h3 STYLE="padding:5px 0 15px 0px;">Specifications</h3>		</div>			
+								<div STYLE="margin-left:30px; padding:0px;"><table id="items" style="width:70%">
+									<tr class="item">
+								  		<th>Specification Name</th>
+										
+								  		<th>Value</th>
+								 		<th>Action</th>
+							  		</tr>
+		  							<tr id="hiderow"><td colspan="7"><a id="addrow" href="javascript:void(0)" title="Add new parameter">Add new parameter</a></td></tr> 
+								</table>
+<br/>
+								</div>
+								<!--#4DENDIF-->	
+            			</div>
+						<div class="span2 column">
+								<div class=" field-box">
+                					<label>Product Type</label>
+                                    <input class="span5" type="text" id="Product_Type" value="<!--#4DVAR [Products]Product_Type-->" name="Product_Type">
+                                </div>
+								<div class=" field-box" class="pdng3">
+                                  
+									<label  style="width:300px; padding-left:0px;">			
+									<div id="uniform-is_in_scope_of_tax"  STYLE="float: left; position: relative; padding-right: 7px;  bottom: 4px;"><span >
+									 <input name="SerialNumberRequired" type="checkbox" value="true" id="SerialNumberRequired" <!--#4DIF ([Products]SerialNumberRequired)-->checked<!--4DENDIF-->></span></div> Serial Number Required</label>
+									</label>
+									
+									
+                                   
+                               	</div>
+								<div class=" field-box">
+                                    <label>Number Of Users </label>
+                                    <input class="span5" type="text" id="NumberOfUsers" value="<!--#4DVAR [Products]NumberOfUsers-->" name="NumberOfUsers" >
+                                </div>
+								<div class=" field-box">
+                                    <label>Current Version </label>
+                                    <input class="span5" type="text" id="CurrentVersion" value="<!--#4DVAR [Products]CurrentVersion-->" name="CurrentVersion">
+                                </div>
+								<div class=" field-box">
+                                    <label>Platform </label>
+                                    <input class="span5" type="text" id="Platform" value="<!--#4DVAR [Products]Platform-->" name="Platform">
+                                </div>
+			
+			</div>
+			<div class="span12 field-box" style="padding-left:220px;">
+					<input type="submit" class="btn-glow primary save_exit" value="Submit">
+					<span>OR</span>
+					<a href="products.shtml">Cancel</a>
+			</div>
+		</form>
+              
+        </div>
+        <!--#4DIF (Records in selection([Products])=1)-->
+  <div role="tabpanel" class="tab-pane" id="tab2"><div class="span4 column">
+                     	<div class="span12 field-box">
+                          	<label>Upload Image</label>
+                          </div>
+                          <div class="span12 field-box">
+        					<img class="set_upload_image" onerror="this.src='img/no_image.gif'" name="set_upload_image" id="set_upload_image" alt="" src="" width="250" height="250"> 
+							<div>
+								<div class="fileUpload btn btn-default btn-file btn-xs">
+									<span>Select file</span>
+									<input id="uploadImageBtn" name="uploadImageBtn" type="file" class="upload" accept="image/*"/>
+								</div>
+								<button class="btn  btn-info btn-file btn-xs" onClick="upload_image('uploadImageBtn',event)" style="padding-left:15px; padding-right:15px;">Upload</button>
+                          </div>
+						  
+						  
+						  <div CLASS="row" STYLE=" margin-top:20px;">
+						  					  
+						  <div CLASS="span3 mrgntp">
+						  	<IMG SRC="images/1.jpg" CLASS="imgbrdr" ALT=""/>
+						  	<div class=" field-box" class="pdng3">
+                                  
+									<label class="labelnew">			
+									<div id="uniform-is_in_scope_of_tax" class="labtext"><span>
+									 <input name="SerialNumberRequired" value="true" id="SerialNumberRequired" type="checkbox"></span></div>Default Image</label>
+									
+									<a href="#" class="btn  btn-danger btn-file btn-xs"> <i class="icon-trash"></i> </a>
+									
+                                   
+                               	</div>
+						  </div>
+						  
+						  <div CLASS="span3 mrgntp">
+						  		<IMG SRC="images/1.jpg" CLASS="imgbrdr" ALT=""/>
+						  		<div class=" field-box" class="pdng3">
+                                  
+									<label class="labelnew">			
+									<div id="uniform-is_in_scope_of_tax" class="labtext"><span>
+									 <input name="SerialNumberRequired" value="true" id="SerialNumberRequired" type="checkbox"></span></div>Default Image</label>
+									
+									<a href="#" class="btn  btn-danger btn-file btn-xs"> <i class="icon-trash"></i> </a>
+									
+                                   
+                               	</div>
+						  </div>
+						  
+						  <div CLASS="span3 mrgntp">
+						  		<IMG SRC="images/1.jpg" CLASS="imgbrdr" ALT=""/>
+						  		<div class=" field-box" class="pdng3">
+                                  
+									<label class="labelnew">			
+									<div id="uniform-is_in_scope_of_tax" class="labtext"><span>
+									 <input name="SerialNumberRequired" value="true" id="SerialNumberRequired" type="checkbox"></span></div>Default Image</label>
+									
+									<a href="#" class="btn  btn-danger btn-file btn-xs"> <i class="icon-trash"></i> </a>
+									
+                                   
+                               	</div>
+						  </div>
+						  
+						  <div CLASS="span3 mrgntp">
+						  <IMG SRC="images/1.jpg" CLASS="imgbrdr" ALT=""/>
+						  <div class=" field-box" class="pdng3">
+                                  
+									<label class="labelnew">			
+									<div id="uniform-is_in_scope_of_tax" class="labtext"><span>
+									 <input name="SerialNumberRequired" value="true" id="SerialNumberRequired" type="checkbox"></span></div>Default Image</label>
+									
+									<a href="#" class="btn  btn-danger btn-file btn-xs"> <i class="icon-trash"></i> </a>
+									
+                                   
+                               	</div>
+						  </div>
+						  <div class="span3 mrgntp">
+						  <img alt="" class="imgbrdr" src="images/1.jpg">
+						  <input type="radio" id="default" value="true" name="default"> Default Image
+						 <a HREF="#" class="btn btn-xs"> <i class="icon-trash"></i> </a>
+						  
+						  
+						  </div>
+						  <div class="span3 mrgntp">
+						  <img alt="" class="imgbrdr" src="images/1.jpg">
+						  <input type="radio" id="default" value="true" name="default"> Default Image
+						   <a HREF="#" class="btn btn-xs"> <i class="icon-trash"></i> </a>
+						  
+						  
+						  </div>
+						  <div class="span3 mrgntp">
+						  <img alt="" class="imgbrdr" src="images/1.jpg">
+						  <input type="radio" id="default" value="true" name="default"> Default Image
+						 <a HREF="#"class="btn btn-xs"> <i class="icon-trash"></i> </a>
+						  
+						  
+						  </div>
+						  </div>
+						  
+						  
+						
+
+                          
+                        </div>
+                    </div></div>
+<div role="tabpanel" class="tab-pane" id="tab3">
+
+
+<div CLASS="row">
+<div CLASS="span3 boxbcg">
+<h3>Colors</h3>
+<div CLASS="overflowdata">
+<table class="table table-hover tablebox">
+            
+           
+              <tr>
+              
+                <td>
+				<div class=" field-box" class="pdng3">
+                                  
+									<label class="labelnew">			
+									<div id="uniform-is_in_scope_of_tax" class="labtext"><span>
+									 <input name="SerialNumberRequired" value="true" id="SerialNumberRequired" type="checkbox"></span></div>Red</label>
+									
+								
+									
+                                   
+                               	</div>
+				</td>
+               
+              </tr>
+			  
+			  <tr>
+              
+                <td>
+			<div class=" field-box" class="pdng3">
+                                  
+									<label class="labelnew">			
+									<div id="uniform-is_in_scope_of_tax" class="labtext"><span>
+									 <input name="SerialNumberRequired" value="true" id="SerialNumberRequired" type="checkbox"></span></div>Blue</label>
+									
+									
+                               	</div>
+				</td>
+               
+              </tr>
+			  
+			  
+			  <tr>
+              
+                <td>
+			<div class=" field-box" class="pdng3">
+                                  
+									<label class="labelnew">			
+									<div id="uniform-is_in_scope_of_tax" class="labtext"><span>
+									 <input name="SerialNumberRequired" value="true" id="SerialNumberRequired" type="checkbox"></span></div>Black</label>
+								
+                               	</div>
+				</td>
+               
+              </tr>
+			  
+			  
+			  
+			  
+			  
+			<tr>
+              
+                <td>
+			<div class=" field-box" class="pdng3">
+                                  
+									<label class="labelnew">			
+									<div id="uniform-is_in_scope_of_tax" class="labtext"><span>
+									 <input name="SerialNumberRequired" value="true" id="SerialNumberRequired" type="checkbox"></span></div>Orange</label>
+								
+                                   
+                               	</div>
+				</td>
+               
+              </tr>
+			  
+			  
+			<tr>
+              
+                <td>
+			<div class=" field-box" class="pdng3">
+                                  
+									<label class="labelnew"><div id="uniform-is_in_scope_of_tax" class="labtext"><span><input name="SerialNumberRequired" value="true" id="SerialNumberRequired" type="checkbox"></span></div>Sky Blue</label>
+								
+                                   
+                               	</div>
+				</td>
+               
+              </tr>
+       
+          </table>
+		  
+		  </div>
+<div  CLASS="btn btn-danger savebtn" >  <a HREF="#"  >Save</a>  </div>
+
+</div>
+<div CLASS="span3 boxbcg">
+<h3>Sizes</h3>
+<div CLASS="overflowdata">
+<table class="table table-hover tablebox" >
+            
+           
+              <tr>
+              
+                <td>
+				<div class=" field-box" class="pdng3">
+                                  
+									<label class="labelnew">			
+									<div id="uniform-is_in_scope_of_tax" class="labtext"><span>
+									 <input name="SerialNumberRequired" value="true" id="SerialNumberRequired" type="checkbox"></span></div>Medium</label>
+									
+								
+									
+                                   
+                               	</div>
+				</td>
+               
+              </tr>
+			  
+			  <tr>
+              
+                <td>
+			<div class=" field-box" class="pdng3">
+                                  
+									<label class="labelnew">			
+									<div id="uniform-is_in_scope_of_tax" class="labtext"><span>
+									 <input name="SerialNumberRequired" value="true" id="SerialNumberRequired" type="checkbox"></span></div>Small</label>
+									
+									
+                               	</div>
+				</td>
+               
+              </tr>
+			  
+			  
+			  <tr>
+              
+                <td>
+			<div class=" field-box" class="pdng3">
+                                  
+									<label class="labelnew">			
+									<div id="uniform-is_in_scope_of_tax" class="labtext"><span>
+									 <input name="SerialNumberRequired" value="true" id="SerialNumberRequired" type="checkbox"></span></div>Extra Large</label>
+								
+                               	</div>
+				</td>
+               
+              </tr>
+			  
+			  
+			  
+			  
+			  
+			<tr>
+              
+                <td>
+			<div class=" field-box" class="pdng3">
+                                  
+									<label class="labelnew">			
+									<div id="uniform-is_in_scope_of_tax" class="labtext"><span>
+									 <input name="SerialNumberRequired" value="true" id="SerialNumberRequired" type="checkbox"></span></div>Medium</label>
+								
+                                   
+                               	</div>
+				</td>
+               
+              </tr>
+			  
+			  
+			<tr>
+              
+                <td>
+			<div class=" field-box" class="pdng3">
+                                  
+									<label class="labelnew">			
+									<div id="uniform-is_in_scope_of_tax" class="labtext"><span>
+									 <input name="SerialNumberRequired" value="true" id="SerialNumberRequired" type="checkbox"></span></div>Extra Small</label>
+								
+                                   
+                               	</div>
+				</td>
+               
+              </tr>
+       
+          </table>
+		  </div>
+<div  CLASS="btn btn-danger savebtn" >  <a HREF="#"  >Save</a>  </div>
+
+
+</div>
+<div CLASS="span3 boxbcg">
+<h3>Weight</h3>
+<div CLASS="overflowdata">
+<table class="table table-hover tablebox">
+            
+           
+              <tr>
+              
+                <td>
+				<div class=" field-box" class="pdng3">
+                                  
+									<label class="labelnew">			
+									<div id="uniform-is_in_scope_of_tax" class="labtext"><span>
+									 <input name="SerialNumberRequired" value="true" id="SerialNumberRequired" type="checkbox"></span></div>20kg</label>
+									
+								
+									
+                                   
+                               	</div>
+				</td>
+               
+              </tr>
+			  
+			  <tr>
+              
+                <td>
+			<div class=" field-box" class="pdng3">
+                                  
+									<label class="labelnew">			
+									<div id="uniform-is_in_scope_of_tax" class="labtext"><span>
+									 <input name="SerialNumberRequired" value="true" id="SerialNumberRequired" type="checkbox"></span></div>40kg</label>
+									
+									
+                               	</div>
+				</td>
+               
+              </tr>
+			  
+			  
+			  <tr>
+              
+                <td>
+			<div class=" field-box" class="pdng3">
+                                  
+									<label class="labelnew">			
+									<div id="uniform-is_in_scope_of_tax" class="labtext"><span>
+									 <input name="SerialNumberRequired" value="true" id="SerialNumberRequired" type="checkbox"></span></div>40kg</label>
+								
+                               	</div>
+				</td>
+               
+              </tr>
+			  
+			  
+			  
+			  
+			  
+			<tr>
+              
+                <td>
+			<div class=" field-box" class="pdng3">
+                                  
+									<label class="labelnew">			
+									<div id="uniform-is_in_scope_of_tax" class="labtext"><span>
+									 <input name="SerialNumberRequired" value="true" id="SerialNumberRequired" type="checkbox"></span></div>80kg</label>
+								
+                                   
+                               	</div>
+				</td>
+               
+              </tr>
+			  
+			  
+			<tr>
+              
+                <td>
+			<div class=" field-box" class="pdng3">
+                                  
+									<label class="labelnew">			
+									<div id="uniform-is_in_scope_of_tax" class="labtext"><span>
+									 <input name="SerialNumberRequired" value="true" id="SerialNumberRequired" type="checkbox"></span></div>72kg</label>
+								
+                                   
+                               	</div>
+				</td>
+               
+              </tr>
+       
+          </table>
+		  
+		  </div>
+<div  CLASS="btn btn-danger savebtn" >  <a HREF="#"  >Save</a>  </div>
+
+</div>
+<div CLASS="span3 boxbcg">
+<h3>Dimention</h3>
+<div CLASS="overflowdata">
+<table class="table table-hover tablebox">
+            
+           
+              <tr>
+              
+                <td>
+				<div class=" field-box" class="pdng3">
+                                  
+									<label class="labelnew">			
+									<div id="uniform-is_in_scope_of_tax" class="labtext"><span>
+									 <input name="SerialNumberRequired" value="true" id="SerialNumberRequired" type="checkbox"></span></div>20x20x56</label>
+									
+								
+									
+                                   
+                               	</div>
+				</td>
+               
+              </tr>
+			  
+			  <tr>
+              
+                <td>
+			<div class=" field-box" class="pdng3">
+                                  
+									<label class="labelnew">			
+									<div id="uniform-is_in_scope_of_tax" class="labtext"><span>
+									 <input name="SerialNumberRequired" value="true" id="SerialNumberRequired" type="checkbox"></span></div>40x30x50</label>
+									
+									
+                               	</div>
+				</td>
+               
+              </tr>
+			  
+			  
+			  <tr>
+              
+                <td>
+			<div class=" field-box" class="pdng3">
+                                  
+									<label class="labelnew">			
+									<div id="uniform-is_in_scope_of_tax" class="labtext"><span>
+									 <input name="SerialNumberRequired" value="true" id="SerialNumberRequired" type="checkbox"></span></div>10x10x26</label>
+								
+                               	</div>
+				</td>
+               
+              </tr>
+			  
+			  
+			  
+			  
+			  
+			<tr>
+              
+                <td>
+			<div class=" field-box" class="pdng3">
+                                  
+									<label class="labelnew">			
+									<div id="uniform-is_in_scope_of_tax" class="labtext"><span>
+									 <input name="SerialNumberRequired" value="true" id="SerialNumberRequired" type="checkbox"></span></div>20x25x42</label>
+								
+                                   
+                               	</div>
+				</td>
+               
+              </tr>
+			  
+			  
+			<tr>
+              
+                <td>
+			<div class=" field-box" class="pdng3">
+                                  
+									<label class="labelnew">			
+									<div id="uniform-is_in_scope_of_tax" class="labtext"><span>
+									 <input name="SerialNumberRequired" value="true" id="SerialNumberRequired" type="checkbox"></span></div>50x50x45</label>
+								
+                                   
+                               	</div>
+				</td>
+               
+              </tr>
+       
+          </table>
+		  </div>
+<div  CLASS="btn btn-danger savebtn" >  <a HREF="#"  >Save</a>  </div>
+
+</div>
+
+
+</div>
+
+
+  	<div class="field-box span12">
+		<label style="padding-left: 2px;"><input type="checkbox" id="option_A4D94532C1487046870C74824D3294E4" value="true" onClick="mainOptionChecked('A4D94532C1487046870C74824D3294E4')"> Colors</label>
+	</div>
+	<div class="field-box span12" id="submenu_A4D94532C1487046870C74824D3294E4" style="display:none;">
+		<label class="span2"><input type="checkbox" onclick="set_permissions('A4D94532C1487046870C74824D3294E4',event)" value="Red" class="option_A4D94532C1487046870C74824D3294E4"> Red</label>
+		<label class="span2"><input type="checkbox" onclick="set_permissions('A4D94532C1487046870C74824D3294E4',event)" value="Blue" class="option_A4D94532C1487046870C74824D3294E4"> Blue</label>
+		<label class="span2"><input type="checkbox" onclick="set_permissions('A4D94532C1487046870C74824D3294E4',event)" value="Green" class="option_A4D94532C1487046870C74824D3294E4"> Green</label>
+		<label class="span2"><input type="checkbox" onclick="set_permissions('A4D94532C1487046870C74824D3294E4',event)" value="Yellow" class="option_A4D94532C1487046870C74824D3294E4"> Yellow</label>
+		<label class="span2"><button onclick="saveOption('A4D94532C1487046870C74824D3294E4')"> Save</button></span>
+	</div>
+	
+	<div class="field-box span12">
+		<label style="padding-left: 2px;"><input type="checkbox" id="option_A4D94532C1487046870C7482" value="true" onClick="mainOptionChecked('A4D94532C1487046870C7482')"> Size</label>
+	</div>
+	<div class="field-box span12" id="submenu_A4D94532C1487046870C7482" style="display:none;">
+		<label class="span2"><input type="checkbox" onclick="set_permissions('A4D94532C1487046870C7482',event)" value="2" class="option_A4D94532C1487046870C7482"> 2</label>
+		<label class="span2"><input type="checkbox" onclick="set_permissions('A4D94532C1487046870C7482',event)" value="4" class="option_A4D94532C1487046870C7482"> 4</label>
+		<label class="span2"><input type="checkbox" onclick="set_permissions('A4D94532C1487046870C7482',event)" value="5" class="option_A4D94532C1487046870C7482"> 5</label>
+		<label class="span2"><button onclick="saveOption('A4D94532C1487046870C7482')"> Save</button></span>
+	</div>
+<div id="ava_options">
+</div>
+</div>
+  <!--#4DENDIF-->
+  
+</div>
+	</div>
+			
+			
+        </div>
+    </div>
+	
+    <!-- end main container -->
+
+	<!-- scripts -->
+	<script src="js/wysihtml5-0.3.0.js"></script>
+   <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+	<script src="js/jquery.uniform.min.js"></script>
+	<script src="js/jquery.validate.js"></script>
+	<script src="js/chosen.jquery.js" type="text/javascript"></script>
+	<script type="text/javascript" src="js/jquery-impromptu.js"></script>
+	<!-- call this page plugins -->
+	<script src="js/product.js"></script>
+	<script>
+function fetchavailableoptions() {
+	$.getJSON("loadavailableproductoptions.cgi?product_uuid="+$('#Product_uuid').val(),function(result){
+		var htmlStr="";
+		if(result.error){
+		
+		}else{
+			var table_html="";
+			var optionStatusStr= new Array();
+			
+			$.each(result, function(i,item){
+				if(item.options){
+					if(item.options!=""){
+						table_html+='<div class="field-box span12"><label style="padding-left: 2px;">';
+						table_html+='<input type="checkbox" value="true" id="option_'+item.uuid+'" onClick="mainOptionChecked(\''+item.uuid+'\')"> '+item.name;
+						table_html+='</label></div>';
+						var subTableHtmlStr='';
+						subTableHtmlStr+='<div class="field-box span12" id="submenu_'+item.uuid+'" style="display:none;">';
+								
+						$.each(item.options, function(i,row){
+							subTableHtmlStr+='<label class="span2"><input ';
+							if(row.displayed=="yes"){
+								subTableHtmlStr+=' checked ';
+							}
+							subTableHtmlStr+='class="option_'+row.value+' module_'+item.uuid+'" type="checkbox" value="'+row.value+'" onClick="set_permissions(\''+item.uuid+'\',event)"> '+row.value+'</label>';
+								
+						});
+						subTableHtmlStr+='<label class="span2"><button onclick="saveOption(\''+item.uuid+'\')"> Save</button></span>';
+						subTableHtmlStr+='</div>';
+						table_html+=subTableHtmlStr;
+						
+					}
+				}                
+			});
+			$("#ava_options").html(table_html);
+			
+		}
+	});
+	
+}
+	
+function mainOptionChecked(val){
+	val = typeof val !== 'undefined' ? val : '';
+	if(val!=""){
+		if($('#option_'+val).is(":checked")){
+			$('.option_'+val).prop('checked', true);
+			$('#submenu_'+val).show();
+		}else{
+			$('.option_'+val).prop('checked', false);
+			$('#submenu_'+val).hide();
+		}
+	}
+}
+function saveOption(module){
+	var valueStr="";
+	$('.option_'+module).each(function(){
+		if($(this).is(':checked')){
+			if(valueStr!=""){
+				valueStr+=","+$(this).val();
+			}else{
+				valueStr+=$(this).val();
+			}
+		}
+	});
+	if(valueStr!=""){
+	$.ajax({
+		type: "POST",
+		url: "saveproductoptionavailable.cgi",
+		data: { "product_uuid" : $('#Product_uuid').val(), "product_option_uuid" : module, "option_value" :valueStr},
+		cache: false,
+		success: function(response){
+			if(response.success){
+				$.prompt(response.success);
+			}else if(response.error){
+				$.prompt(response.error);
+			}	
+		}
+	});
+	}else{
+	
+	}
+}
+function set_permissions(module, elem){
+	var i=0, s_count=0;
+		$('.option_'+module).each(function(){
+			i++;
+			if($(this).is(':checked')){
+				s_count++;
+			}
+		});
+		
+		if(i!=0 && s_count!=0 && i==s_count){
+			$('#option_'+module).prop("indeterminate", false);
+			$('#option_'+module).prop("checked", true);
+		}else if(i!=0 && s_count!=0 && i>s_count){
+			$('#option_'+module).prop("checked", false);
+			$('#option_'+module).prop("indeterminate", true);
+		}else{
+			$('#option_'+module).prop("indeterminate", false);
+			$('#option_'+module).prop("checked", false);
+		}
+}
+function upload_image(id,e){
+	e.preventDefault();
+	
+	if ($('#'+id)[0].files && $('#'+id)[0].files[0] && $('#'+id)[0].files[0].name!="no_image.gif") {
+		var val = $('#'+id).val().toLowerCase();   
+		var regex  =  new RegExp("(.*?)\.(jpg|jpeg|png|gif|bmp|tiff)$");
+		if(!(regex.test(val))){
+			__alertMessage("Please select valid image file");
+			$('#'+id).val('');
+		}else{
+			var filesize=Number($('#'+id)[0].files[0].size)/(1024*1024);
+			if(filesize>1){
+				__alertMessage("You can upload files only upto 1 MB");
+				$('#'+id).val('');
+			}else{
+				var data = new FormData();
+				var files= $('#'+id)[0].files;
+				var curr_uuid=$('#Product_uuid').val();
+				data.append('product_uuid', curr_uuid);
+				$.each(files, function(key, value)
+				{
+					data.append('image', value);
+				});
+				
+				var prompt_title='Uploading Image';
+				var prompt_html='<img src="loading.gif"  style="padding:20px;" width="64" >';
+				//processPrompt(prompt_title,prompt_html,true,false);
+				
+				if(true){
+					$.ajax({
+						url: 'uploadproductimage.cgi?files',
+						type: 'POST',
+						data: data,
+						cache: false,
+						dataType: 'json',
+						processData: false, // Don't process the files
+						contentType: false, // Set content type to false as jQuery will tell the server its a query string request
+						success: function(data, textStatus, jqXHR){
+							//processPrompt(prompt_title,prompt_html,false,true);
+							if(data.Result=="Image Uploaded Successfully."){
+								__alertMessage(data.Result);
+								$( "#validate_wizard" ).trigger('submit');
+							}else{
+								__alertMessage("Error uploading image");
+							}
+						},
+						complete:function( jqXHR, textStatus){
+							$('#uploadImageBtn').button('reset');
+							//processPrompt(prompt_title,prompt_html,false,true);
+						},
+						error(){
+							$('#uploadImageBtn').button('reset');
+						}
+					});
+				}
+			}
+		}	
+	}else{
+		if(type==1){
+			var errMsg= "Please select basic set image";
+		}else{
+			var errMsg= "Please select cover image";
+		}
+		__alertMessage(errMsg);
+		$('#'+id).focus();
+	}
+}
+
+$(document).ready(function() {
+	$("#uploadImageBtn").change(function(){
+		if (this.files && this.files[0]) {
+			var reader = new FileReader();
+
+			reader.onload = function (e) {
+				$('.set_upload_image').attr('src', e.target.result);
+			};
+
+			 reader.readAsDataURL(this.files[0]);
+		 }
+	});
+	<!--#4DIF (Records in selection([Products])=1)-->
+	fetchavailableoptions();
+	<!--#4DENDIF-->
+	
+});
+	</script>
+	
+</body>
+</htm

@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Tenthmatrix CRM App : Projects</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- bootstrap -->
+	<link href="css/bootstrap/bootstrap.css" rel="stylesheet">
+    <link href="css/bootstrap/bootstrap-responsive.css" rel="stylesheet">
+    <link href="css/bootstrap/bootstrap-overrides.css" type="text/css" rel="stylesheet">
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/app/includes/header.shtml-->
+
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    
+    	<style type="text/css">
+		.Highlight
+		{
+			background-color: #dcfac9!important;
+			cursor: pointer;
+		}
+		
+		.pull-right
+		{
+		
+		margin: 0 4px 4px 4px;
+		padding:0 4px 4px 4px;
+		
+		}
+		
+	</style>
+
+
+</head>
+<body>
+
+	<!-- main container -->
+    <div class="content wide-content">
+	<div class="container-fluid">
+		<form id="frm_set" name="frm_set"  method="post" action="">
+		
+         <div class="" style=" padding:15px 0 0 0;">
+         <div class="pull-right">
+			<div class="btn-group pull-right">
+				<button class="glow left large" onClick="__showAllProjects(); return false;">All</button>
+				<button class="glow middle large" onClick="__showActiveprojects(); return false;">Active</button>
+				<button class="glow right large" onClick="__showCompletedProjects(); return false;">Completed</button>
+				<a href="project.shtml" class="btn-flat success new-product margn-lft35"  style="margin-left:15px;">+ Add New Project</a>
+			</div>
+			<input style="margin-top:3px;" name="keyword_type" id="keyword_type" type="text" class="search order-search" placeholder="Enter Client, Project name.." value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" />
+		</div>
+        </div>
+        <div class="container-fluid">
+            <div id="pad-wrapper" class="datatables-page">
+                <div class="row-fluid">
+                    <div class="span12">
+
+                        <table cellpadding="0" cellspacing="0" border="0" class="dataTable" id="projects_table">
+                            <thead>
+                                <tr role="row">
+                                    
+                                    <th align="left">CLIENT
+                                    </th>
+                                    <th align="left">PROJECT
+                                    </th>
+                                    <th align="left">BUDGET
+                                    </th>
+                                    <th align="left">RATE
+                                    </th>
+                                    <th align="left">CURRENCY
+                                    </th>
+                                    <th align="left">START-DATE
+                                    </th>
+                                    <th align="left">STATUS
+                                    </th>
+                                </tr>
+                            </thead>
+                           <tfoot>
+                            <tr>
+                                <th align="left">CLIENT</th>
+                                <th align="left">PROJECT</th>
+                                <th align="left">BUDGET</th>
+                                <th align="left">RATE</th>
+                                <th align="left">CURRENCY</th>
+                                <th align="left">START-DATE</th>
+                                <th align="left">STATUS</th>
+                            </tr>
+                        </tfoot>
+
+                        <tbody id="projects_table_body">
+
+                        </tbody>
+                        </table>
+						<div id="img_loading_div" style="text-align:center">
+							<img src="../loading.gif"  style="padding:20px;" width="34" >
+						</div>
+
+                    </div>
+                </div>
+            </div>
+       </form>
+        </div>
+    </div>
+	<div class="example-container">
+	<pre class="code" style="display:none;" id="no_rec_prompt">
+									var statesdemo = {
+										state0: {
+											title: 'No more records found',
+											html:'',
+											buttons: { OK: 1 },																		
+											submit:function(e,v,m,f){ 
+												//console.log(f);
+												if(v==1) {
+													$.prompt.close();
+												}
+												
+											}
+										},
+										
+									};
+									if(!($(".jqibox").length))
+									$.prompt(statesdemo);
+								</pre>
+							</div>
+    <!-- end main container -->
+
+	<!-- scripts -->
+    <script src="js/jquery-latest.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.dataTables.js"></script>
+	<script type="text/javascript" src="js/jquery-impromptu.js"></script>
+    <script src="js/theme.js"></script>
+   
+<script>
+var JSONdata;
+var start=0, end=25;
+var old_srch='',keyword='', jsonRow='', tab='', set='';
+var tablname='Projects';
+var process=false;
+// Hide the first cell for JavaScript enabled browsers.
+$('#projects_table td:first-child').hide();
+
+
+// Assign a click handler that grabs the URL from the first cell and redirects the user.
+$('#projects_table tbody tr').click(function ()
+{					
+	//location.href = 'project.shtml?uuid='+$(this).find(':input').val()+'&token='+Math.random();
+});
+ 
+function getMonthName(m) {
+	if(m==1){ monthName= "Jan";}
+	else if(m==2){ monthName= "Feb";}
+	else if(m==3){ monthName= "Mar"; }
+	else if(m==4){ monthName= "Apr"; }
+	else if(m==5){ monthName= "May"; }
+	else if(m==6){ monthName= "Jun"; }
+	else if(m==7){ monthName= "Jul"; }
+	else if(m==8){ monthName= "Aug"; }
+	else if(m==9){ monthName= "Sep"; }
+	else if(m==10){ monthName= "Oct"; }
+	else if(m==11){ monthName= "Nov"; }
+	else if(m==12){ monthName= "Dec"; }
+	else{ monthName= m; }
+	return monthName;
+ }
+ 
+
+function __showActiveprojects()
+{
+	start=0;
+	end=25;
+	tab='active';
+	keyword= $("#keyword_type").val();
+	jsonRow = 'loadprojects.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab;
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}
+	$('#projects_table_body').html('');
+	$('#img_loading_div').show();		
+	load_data(jsonRow);
+}
+
+function __showCompletedProjects()
+{
+	start=0;
+	end=25;
+	tab='completed';
+	jsonRow = 'loadprojects.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab;
+	keyword= $("#keyword_type").val();
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}
+	$('#projects_table_body').html('');
+	$('#img_loading_div').show();		
+	load_data(jsonRow);
+}
+
+
+function __showAllProjects()
+{
+	start=0;
+	end=25;
+	tab='';
+	jsonRow = 'loadprojects.cgi?start='+start+'&end='+end+'&tablname='+tablname;
+	$('#projects_table_body').html('');
+	$('#img_loading_div').show();	
+	load_data(jsonRow);
+}
+
+
+
+$(document).ready(function() {
+
+	$('#keyword_type').focus();
+	keyword= $("#keyword_type").val();
+	jsonRow = 'loadprojects.cgi?start='+start+'&end='+end+'&tablname='+tablname;
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}		
+	load_data(jsonRow);	
+	
+	$(window).scroll(function(){
+		if ($(window).scrollTop() == $(document).height() - $(window).height()){
+		$('#img_loading_div').show();	
+		//alert("scrolling...");
+		start=end+1;
+		end=start+25;
+		jsonRow = 'loadprojects.cgi?start='+start+'&end='+end+'&tablname='+tablname;
+		if(keyword!=''){
+			jsonRow +='&keyword='+keyword;
+		}
+		if(tab!=''){
+			jsonRow +='&tab='+tab;
+		}		
+		load_data(jsonRow);
+		
+		}
+	});
+	
+	//setup before functions
+	var typingTimer;                //timer identifier
+	var doneTypingInterval = 1000;  //time in ms, 5 second for example
+
+	//on keyup, start the countdown
+	$('#keyword_type').keyup(function(){
+		clearTimeout(typingTimer);
+		if ($('#keyword_type').val) {
+			typingTimer = setTimeout(function(){
+				//do stuff here e.g ajax call etc....
+				$('#projects_table_body').html('');
+				$('#img_loading_div').show();
+				start=0;
+				end=start+25;
+				tab='';
+				keyword= $("#keyword_type").val();
+				jsonRow = 'loadprojects.cgi?start='+start+'&end='+end+'&tablname='+tablname;
+				if(keyword!=''){
+					jsonRow +='&keyword='+keyword;
+				}
+				if(tab!=''){
+					jsonRow +='&tab='+tab;
+				}	
+				load_data(jsonRow);
+			}, doneTypingInterval);
+		}
+	});
+
+});
+    
+function load_data(jsonRow){
+	JSONdata=new Array();
+	$.getJSON(jsonRow,function(result){
+			if(result.Alert){
+				code = $('#no_rec_prompt').text();
+				(new Function(code))();
+			}
+			else{
+				$.each(result.ClientName, function(i,item)
+				{
+					JSONdata[i]=new Array();
+					JSONdata[i][0]=item;
+					
+				}); 
+				$.each(result.uuid, function(i,item)
+				{
+					JSONdata[i][0]+='<input type="hidden" value="'+item+'">';					
+				});
+				$.each(result.projName, function(i,item)
+				{
+					JSONdata[i][1]=item;
+				});
+				
+				$.each(result.budget, function(i,item)
+				{	
+					JSONdata[i][2]=item;
+				});
+				$.each(result.Rate, function(i,item)
+				{	
+					JSONdata[i][3]=item;
+				});
+				$.each(result.currency, function(i,item)
+				{					
+					JSONdata[i][4]=item;
+				});
+				$.each(result.StartDate, function(i,item)
+				{					
+					JSONdata[i][5]=item;
+				}); 
+				
+				$.each(result.Active, function(i,item)
+				{					
+				    if(item==true){
+						JSONdata[i][6]='<span class="label label-success"> Active </span>';
+					}
+					else{
+						JSONdata[i][6]='<span class="label label-info"> Completed </span>';
+					}
+				});
+				
+				
+				var table_html='';
+				var trClassStr='odd';
+				$.each(JSONdata, function(i,row)
+				{
+					table_html+='<tr class="'+trClassStr+'">';
+					if(trClassStr=='odd') { trClassStr='even'; } else { trClassStr='odd' };
+					$.each(row, function(i,col){
+						table_html+='<td>'+col+'</td>';
+					});
+					table_html+='</tr>';
+				});
+				if(old_srch!=keyword){
+					$('#projects_table_body').html('');
+					old_srch=keyword;
+				}
+				//alert(table_html);
+				
+				$('#projects_table_body').append(table_html);
+				
+				// Apply a class on mouse over and remove it on mouse out.
+				$('#projects_table tbody tr').unbind();
+				$('#projects_table tbody tr').hover(function ()
+				{
+					$(this).toggleClass('Highlight');
+				});
+
+				// Assign a click handler that grabs the URL from the first cell and redirects the user.
+				$('#projects_table tbody tr').click(function ()
+				{					
+					location.href = 'project.shtml?uuid='+$(this).find(':input').val()+'&token='+Math.random();
+				});
+				
+		}
+		$('#img_loading_div').hide();
+		});
+}
+
+</script>
+
+
+</body>
+</html>

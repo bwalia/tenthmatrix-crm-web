@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Detail Admin - Home</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	
+    <!-- bootstrap -->
+    <link href="css/bootstrap/bootstrap.css" rel="stylesheet" />
+    <link href="css/bootstrap/bootstrap-responsive.css" rel="stylesheet" />
+    <link href="css/bootstrap/bootstrap-overrides.css" type="text/css" rel="stylesheet" />
+
+    <!-- libraries -->
+    <link href="css/lib/jquery-ui-1.10.2.custom.css" rel="stylesheet" type="text/css" />
+    <link href="css/lib/font-awesome.css" type="text/css" rel="stylesheet" />
+
+    <!-- global styles -->
+    <link rel="stylesheet" type="text/css" href="css/layout.css">
+    <link rel="stylesheet" type="text/css" href="css/elements.css">
+    <link rel="stylesheet" type="text/css" href="css/icons.css">
+
+    <!-- this page specific styles -->
+    <link rel="stylesheet" href="css/compiled/index.css" type="text/css" media="screen" />    
+
+
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+</head>
+<body>
+
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
+
+
+
+	<!-- main container -->
+    <div class="content">
+
+        <!-- settings changer 
+        <div class="skins-nav">
+            <a href="#" class="skin first_nav selected">
+                <span class="icon"></span><span class="text">Default skin</span>
+            </a>
+            <a href="#" class="skin second_nav" data-file="css/skins/dark.css">
+                <span class="icon"></span><span class="text">Dark skin</span>
+            </a>
+        </div>
+-->
+        <div class="container-fluid">
+
+            <!-- upper main stats -->
+            <div id="main-stats">
+                <div class="row-fluid stats-row">
+                    <div class="span3 stat">
+                        <div class="data">
+                            <span class="number"><!--HIT_EXECUTE
+Web_LoadProjects 
+_HIT_HTMLTXT:=String(Records in selection([Projects]))
+
+--> </span>
+                            projects
+                        </div>
+                        <span class="date">Today</span>
+                    </div>
+                    <div class="span3 stat">
+                        <div class="data">
+                            <span class="number"><!--HIT_EXECUTE
+QUERY([Tasks];[Tasks]task_active=True)
+_HIT_HTMLTXT:=String(Records in selection([Tasks]))
+-->
+</span>
+                            active tasks
+                        </div>
+                        <span class="date"><!--HIT_EXECUTE _HIT_HTMLTXT:=timestamp_unix_toGMT([Tasks]Timestamp_modified)--></span>
+                    </div>
+                    <div class="span3 stat">
+                        <div class="data">
+                            <span class="number"><!--HIT_EXECUTE 
+                            QUERY([Tasks];[Tasks]task_active=True)
+RELATE MANY SELECTION([Timeslips]task_id)
+_HIT_HTMLTXT:=String(Records in selection([Timeslips]))
+
+                            --></span>
+                            time slips
+                        </div>
+                        <span class="date"><!--HIT_EXECUTE _HIT_HTMLTXT:=timestamp_unix_toGMT([Tasks]Timestamp_modified)--></span>
+                    </div>
+                    <div class="span3 stat last">
+                        <div class="data">
+                            <span class="number">$2,340</span>
+                            budget spent
+                        </div>
+                        <span class="date">last 30 days</span>
+                    </div>
+                </div>
+            </div>
+            <!-- end upper main stats -->
+
+            <div id="pad-wrapper">
+
+                <!-- statistics chart built with jQuery Flot -->
+                <div class="row-fluid chart">
+					<div class="btn-group pull-right">
+						<button class="glow left" id="display_Yearly">YEAR</button>
+						<button class="glow middle" id="display_Month">MONTH</button>
+						<button class="glow right" id="display_Weekly">WEEKLY</button>
+					</div>
+					<div class="ui-select pull-left" id="months">
+						<select name="month" id="month">
+							<option value="1">Jan</option>
+							<option value="2">Feb</option>
+							<option value="3">Mar</option>
+							<option value="4">Apr</option>
+							<option value="5">May</option>
+							<option value="6">Jun</option>
+							<option value="7">Jul</option>
+							<option value="8">Aug</option>
+							<option value="9">Sep</option>
+							<option value="10">Oct</option>
+							<option value="11">Nov</option>
+							<option value="12">Dec</option>
+						</select> 
+					</div>
+					<div class="btn-group pull-left" id="weeks">
+						<button class="glow left" id="previous_week_tasks">Previous</button>
+						<button class="glow right active" id="next_week_tasks">Next</button>
+					</div>
+                    <div class="span12">
+					   <div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+                    </div>
+                </div>
+                <!-- end statistics chart -->
+            </div>
+        </div>
+    </div>
+
+
+	<!-- scripts -->
+    <script src="js/jquery-latest.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery-ui-1.10.2.custom.min.js"></script>
+	<!-- charts -->
+	<script src="https://code.highcharts.com/highcharts.js"></script>
+	<script src="https://code.highcharts.com/modules/exporting.js"></script>
+
+	
+	<script type="text/javascript">
+	
+	var s_date, e_date, start_date, end_date;
+	start_date= new Date();
+	end_date= new Date();
+	var one_day=1000*60*60*24;
+	function getMonthName(m) {
+		if(m==1){ monthName= "Jan";}
+		else if(m==2){ monthName= "Feb";}
+		else if(m==3){ monthName= "Mar"; }
+		else if(m==4){ monthName= "Apr"; }
+		else if(m==5){ monthName= "May"; }
+		else if(m==6){ monthName= "Jun"; }
+		else if(m==7){ monthName= "Jul"; }
+		else if(m==8){ monthName= "Aug"; }
+		else if(m==9){ monthName= "Sep"; }
+		else if(m==10){ monthName= "Oct"; }
+		else if(m==11){ monthName= "Nov"; }
+		else if(m==12){ monthName= "Dec"; }
+		else{ monthName= "Null"; }
+		return monthName;
+     }
+    $(document).ready(function() {
+		$("#month").change(function(){
+			 if($(this).val()!=''){
+			 var m=$(this).val();
+		   }
+		   get_Monthly_Tasks(m);
+		});
+		
+		get_Yearly_Tasks();
+		$("#months").hide();
+		$("#weeks").hide();
+		
+		$( "#display_Month").click(function() {
+			$("#display_Month").addClass('active');
+			$("#display_Yearly").removeClass('active');
+			$("#months").show();
+			var d = new Date();
+			var m = d.getMonth(); 
+			$("#month").val(m+1);
+			get_Monthly_Tasks(m+1);
+			$("#weeks").hide();
+		});
+		$( "#display_Yearly").click(function() {
+			$("#display_Month").removeClass('active');
+			$("#months").hide();
+			$("#weeks").hide();
+			get_Yearly_Tasks();
+		});
+		$( "#display_Weekly").click(function() {
+			$("#display_Month").removeClass('active');
+			$("#display_Yearly").removeClass('active');
+			$("#display_Weekly").addClass('active');
+			$("#months").hide();
+			$("#weeks").show();
+			
+			var d = new Date();
+			var w = d.getDay(); 
+			var n = d.getDate(); 
+			var m = d.getMonth(); 
+			var y = d.getFullYear(); 
+			//var s_date= n+'/'+(m+1)+'/'+y;
+			
+			var week_start=new Date();
+			if(w==0){
+				week_start.setTime(d.getTime()-(6*one_day));
+			}
+			else {
+				week_start.setTime(d.getTime()-((w-1)*one_day));
+			}
+			var week_end=new Date();
+			week_end.setTime(week_start.getTime()+(6*one_day));
+
+			s_date = week_start.getDate()+'/'+String(week_start.getMonth()+1)+'/'+week_start.getFullYear();
+			var	e_date = week_end.getDate()+'/'+String(week_end.getMonth()+1)+'/'+week_end.getFullYear();
+			start_date=week_start;
+			end_date=week_end;	
+			//alert(s_date+', '+e_date);
+			var title= s_date+' - '+e_date;
+			get_Weekly_Tasks(s_date,title);
+		});
+		
+		$('#previous_week_tasks').click(function(){
+			$('#next_week_tasks').removeClass('active');
+			var week_start=new Date();
+			week_start.setTime(start_date.getTime()-(7*one_day));
+			var week_end=new Date();
+			week_end.setTime(end_date.getTime()-(7*one_day));
+				
+			s_date = week_start.getDate()+'/'+String(week_start.getMonth()+1)+'/'+week_start.getFullYear();
+			e_date = week_end.getDate()+'/'+String(week_end.getMonth()+1)+'/'+week_end.getFullYear();
+			start_date=week_start;
+			end_date=week_end;
+			
+			//alert(s_date+', '+e_date);
+			var title= s_date+' - '+e_date;
+			get_Weekly_Tasks(s_date,title);
+		});
+		
+		$('#next_week_tasks').click(function(){
+			var curr_time=new Date();
+			if(end_date<curr_time) {
+				var week_start=new Date();
+				week_start.setTime(start_date.getTime()+(7*one_day));
+				var week_end=new Date();
+				week_end.setTime(end_date.getTime()+(7*one_day));
+					
+				s_date = week_start.getDate()+'/'+String(week_start.getMonth()+1)+'/'+week_start.getFullYear();
+				e_date = week_end.getDate()+'/'+String(week_end.getMonth()+1)+'/'+week_end.getFullYear();
+				start_date=week_start;
+				end_date=week_end;
+				
+				//alert(s_date+', '+e_date);
+				if(end_date>=curr_time){
+					$('#next_week_tasks').addClass('active');
+				}
+			}
+			var title= s_date+' - '+e_date;
+			get_Weekly_Tasks(s_date,title);
+		});
+		
+	});
+	
+	function get_Weekly_Tasks(startDate,title){
+		var s_date=	startDate;
+		var title=	title;
+
+		var loop=7;
+		var diff=1;
+		var dataString = 's_date='+s_date+'&loop='+loop+'&diff='+diff;
+		jsonRow = 'returnNumberOfTasks.cgi?'+dataString;
+		$.getJSON(jsonRow,function(result){
+			var active_tasks_arr=new Array();
+			var done_tasks_arr=new Array();
+			$.each(result, function(i,item)
+			{
+				active_tasks=item.Active;
+				active_tasks_arr.push(active_tasks);
+				
+				done_tasks=item.Done;	
+				done_tasks_arr.push(done_tasks);
+			})
+			var active = active_tasks_arr
+			var done = done_tasks_arr
+			var categories_dates =  ['Mon', 'Tues', 'Wed', 'Thur', 'Fri', 'Sat','Sun']
+			load_chart(categories_dates,active,done,title);
+		});
+	}
+		function get_Yearly_Tasks() {
+			$("#display_Yearly").addClass('active');
+			jsonRow = 'returnTasks.cgi';
+			$.getJSON(jsonRow,function(result){
+				var active_tasks_arr=new Array();
+				var done_tasks_arr=new Array();
+				$.each(result, function(i,item)
+				{
+					active_tasks=item.Active;
+					active_tasks_arr.push(active_tasks);
+					
+					done_tasks=item.Done;	
+					done_tasks_arr.push(done_tasks);
+					
+				})
+				
+				var active = active_tasks_arr
+				var done = done_tasks_arr
+				var categories = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+							'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+				var d = new Date();
+				var y = d.getFullYear(); 
+				var title=y;
+				load_chart(categories,active,done,title);
+			});
+				 
+		}
+		function get_Monthly_Tasks(month) {
+			var m= parseInt(month);
+			var d = new Date();
+			var y = d.getFullYear(); 
+			//var mon = $("#month").val(m+1);
+			
+			var s_date='01/'+m+'/'+y;
+			if(m==12){
+				end_month=1;
+				var year=y+1;
+			}else{
+				end_month=m+1;
+				var year=y;
+			}
+			var e_date='01/'+end_month+'/'+year;
+			var loop=6;
+			var diff=5;
+			var title=getMonthName(m)+' '+y;
+			var dataString = 's_date='+s_date+'&e_date='+e_date+'&loop='+loop+'&diff='+diff;
+			jsonRow = 'returnNumberOfTasks.cgi?'+dataString;
+			$.getJSON(jsonRow,function(result){
+				var active_tasks_arr=new Array();
+				var done_tasks_arr=new Array();
+				var tasks_arr=new Array();
+				$.each(result, function(i,item)
+				{
+					active_tasks=item.Active;
+					active_tasks_arr.push(active_tasks);
+					
+					done_tasks=item.Done;	
+					done_tasks_arr.push(done_tasks);
+					
+					tasks_date=item.End_Date;
+					var date=tasks_date.split("/");
+					var d= date[0];
+					var m= date[1];
+					var month_Name = getMonthName(m);
+					tasks_date= d+' '+month_Name;
+					tasks_arr.push(tasks_date);
+					
+				})
+				var active = active_tasks_arr
+				var done = done_tasks_arr
+				var categories_dates = tasks_arr
+				load_chart(categories_dates,active,done,title);
+			});
+		}
+		function load_chart(categories,data1,data2,title){
+			$('#container').highcharts({
+				title: {
+					text: 'Tasks<br/>('+title+')',
+					x: -20 //center
+				},
+				xAxis: {
+					categories: categories
+				},
+				yAxis: {
+					title: {
+						text: 'Number Of Tasks'
+					},
+					plotLines: [{
+						value: 0,
+						width: 1,
+						color: '#808080'
+					}]
+				},
+				
+				legend: {
+					layout: 'vertical',
+					align: 'right',
+					verticalAlign: 'middle',
+					borderWidth: 0
+				},
+				series: [{
+					name: 'Active',
+					data: data1
+				}, {
+					name: 'Done',
+					data: data2
+				}]
+			});
+		}
+    </script>
+</body>
+</html>

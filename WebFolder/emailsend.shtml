@@ -1,0 +1,458 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+QUERY([_emailc_queue];[_emailc_queue]_uuid=_HIT_WebApp_GetField ("uuid"))
+C_BOOLEAN(mReadEmail)
+mReadEmail:=(Records in selection([_emailc_queue])=1)
+
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+-->
+<!DOCTYPE html>
+<html>
+<head>
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+	<link href="css/lib/select2.css" type="text/css" rel="stylesheet">
+	<link rel='stylesheet' type='text/css' href='css/style.css' />
+	<link rel='stylesheet' type='text/css' href='css/print.css' media="print" />
+	<link rel="stylesheet" href="css/base/jquery-ui.css" />
+	<link href="css/lib/bootstrap-wysihtml5.css" type="text/css" rel="stylesheet">
+	
+	<style>
+  .custom-combobox {
+    position: relative;
+    display: inline-block;
+  }
+  .custom-combobox-toggle {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    margin-left: -1px;
+    padding: 0;
+    /* support: IE7 */
+    *height: 1.7em;
+    *top: 0.1em;
+  }
+  .custom-combobox-input {
+    margin: 0;
+    padding: 0.3em;
+  }
+  .ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {
+  	width:auto;
+	height:auto;
+  }
+  .ui-autocomplete{
+  	max-height:300px;
+	overflow:scroll;
+  }
+  </style>
+
+</head>
+<body>
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
+
+	<!-- main container -->
+    <div class="content">
+        
+        <div class="container-fluid">
+            <div id="pad-wrapper" class="form-page">
+				 <div class="row-fluid header">
+					<h3><!--#4DIF (Records in selection([_emailc_queue])=1)-->Resend Mail<!--#4DELSE-->New mail<!--#4DENDIF--></h3>             
+                </div>
+                <div class="row-fluid form-wrapper">
+					<!-- left column -->
+                    <div class="span9 with-sidebar">
+						<form name="MailSendForm" action="sendmailQueue.cgi" class="form-comment" method="post" enctype="multipart/form-data" id="MailSendForm">
+							<!-- <input name="company_uuid" class="span9" type="hidden" value="<!~~#4DVAR [Companies]uuid~~>" id="company_uuid"> -->
+							<div class="field-box">
+								<label>From </label>
+								<input name="From_name" class="span9" type="text" value="<!--#4DVAR [_emailc_queue]_from_name-->" id="From_name">
+							</div>
+							<input name="email_uuid" class="span9" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="email_uuid">
+							<div class="field-box">
+							<label>Recipient </label>
+							<div class="ui-widget">
+									<select id="ToEmailAddress" name="ToEmailAddress">
+									<!--#4DIF (mReadEmail)-->
+									     <option value="<!--4DVAR [_emailc_queue]_recipient-->" selected><!--4DVAR [_emailc_queue]_recipient--></option>	
+									<!--#4DELSE--> 
+									 	 <option value="<!--4DVAR [_emailc_queue]_recipient-->"><!--4DVAR [_emailc_queue]_recipient--></option>									 
+									 <!--#4DENDIF-->	
+									</select>
+									 									 
+ 								 										
+								</select>
+						 	</div>
+						 	</div>
+						 	<div class="field-box">
+								<label>Cc  </label>
+								<div class="ui-widget">
+									<select id="CCToEmailAddress" name="CCToEmailAddress">
+									<!--#4DIF (mReadEmail)-->
+									<option value="<!--4DVAR [_emailc_queue]_cc-->"><!--4DVAR [_emailc_queue]_cc--></option>
+									<!--#4DENDIF-->
+									</select>
+						 	</div>
+						 	</div>
+						 	<div class="field-box">
+								<label>BCc  </label>
+								<div class="ui-widget">
+									<select id="BCCToEmailAddress" name="BCCToEmailAddress">
+									<option value=""></option>
+									<!--#4DIF (mReadEmail)-->
+									 <option value="<!--4DVAR [_emailc_queue]_bcc-->"><!--4DVAR [_emailc_queue]_bcc--></option>
+									 <!--#4DENDIF-->
+									</select>
+						 	</div>
+						 	</div>
+						 	<div class="field-box">
+								<label>Send By </label>
+								<div class="ui-select span5">
+									<select id="HostName" name="HostName">
+								      <option value="Balinder">Balinder Walia</option>
+								      <option value="Pat">Pat Bensky</option>
+								      <option value="Sandeep" selected>Sandeep Shah</option>
+									</select>
+						 	    </div>
+							</div>
+							<div class="span12 field-box">
+								<label>Subject </label>
+								<input name="Subject" id="Subject" class="span9" type="text"  value="<!--#4DHTMLVAR [_emailc_queue]_subject-->" >                               
+							</div>
+							<div class="field-box">
+								<label>File Content </label>
+								<input id="file_content" name="file_content" style="width : 78px;"  type="file" class="multi" maxlength="15" />
+								<input id="num_files" name="num_files" type="hidden"  />
+							</div>						
+							 <div class="field-box">		
+							<label></label>
+								<label class="checkbox" style="width:auto">							
+								<input name="send_html_mail" class="span9" type="checkbox" value="true" id="send_html_mail" checked  >Send HTML mail
+							</label>  
+							</div>
+							<div class="field-box">
+								<label>Send Message </label>
+								<div class="wysi-column" id="div_wysiwyg">
+                                    <textarea id="html_Message_Body" class="span8 wysihtml5" rows="20" columns="40" name="Message_Body"><!--#4DHTMLVAR [_emailc_queue]_email_body_html--></textarea>
+                                </div>
+						       <textarea id="Message_Body" class="span8" rows="20" columns="40" name="disable_Message_Body" ><!--#4DHTMLVAR [_emailc_queue]_email_body--></textarea>
+								<input type="hidden" name="mail_content" id="mail_content" >
+							</div> 
+							<div class="span11 field-box" style="text-align: center;">
+								<input type="button" name="Submit" class="btn-glow primary" value="Send Mail" onClick="send_mail()">        
+								<input type="button" name="Submit" class="btn-glow primary" value="Save Mail" onClick="Save_Mail()">
+								<span>OR</span>		
+								 <a href="emailqueue.shtml">Cancel</a>
+							</div>               					
+							</form>
+						</div>
+                  </div>
+             </div>
+    	</div>
+    </div>
+    <!-- end main container -->
+
+	<!-- scripts -->
+	 <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+     
+     <script src="js/wysihtml5-0.3.0.js"></script>
+	<script src="js/bootstrap-wysihtml5-0.0.2.js"></script>
+	<script src="js/bootstrap.datepicker.js"></script>
+	<script src="js/jquery.uniform.min.js"></script>
+	<script src="js/ui/jquery-ui.js"></script>
+	<script src="js/bootstrap.datepicker.js"></script>
+	<script src="js/jquery.uniform.min.js"></script>
+	<!--<script src="http://code.jquery.com/jquery-1.9.1min.js" type="text/javascript" language="javascript"></script>-->	
+	<script src="js/jquery.MultiFile.js" type="text/javascript" language="javascript"></script>
+	 
+	<!-- call this page plugins -->
+	
+<script language="javascript">
+
+function ValidateForm () {
+
+
+if (document.MailSendForm.EmailName.value=="")
+{ 
+	alert('Please Specify Email Name'); 
+	document.MailSendForm.EmailName.focus();
+	return false;
+}
+if (document.MailSendForm.Subject.value=="")
+{ 
+	alert('Please Specify Subject'); 
+	document.MailSendForm.Subject.focus();
+	return false;
+}
+
+}
+ 
+ 
+function Save_Mail()
+{
+	
+	$('#num_files').val($('.multi').length);
+ 	$('.multi').each(function(){
+  	$(this).attr('name',$(this).attr('id'));
+	 });
+ 	$('#file_content').attr('name',$('#file_content').attr('id')+'_F0');
+	$('#MailSendForm').attr('action', 'savemailQueue.cgi');
+	$('#MailSendForm').submit();
+}
+
+ function send_mail()
+{
+	$('#num_files').val($('.multi').length);
+	$('.multi').each(function(){
+		$(this).attr('name',$(this).attr('id'));
+	});
+	$('#file_content').attr('name',$('#file_content').attr('id')+'_F0');
+	//ValidateForm ();
+		document.MailSendForm.submit();
+}
+
+</script>
+<script type="text/javascript">
+	$(function () {
+		 
+		$('.datepicker').datepicker().on('changeDate', function(){
+          $(this).blur();
+        });
+		
+		// add uniform plugin styles to html elements
+            $("input:checkbox, input:radio").uniform();
+		
+		 $(".wysihtml5").wysihtml5({
+                "font-styles": false
+            });
+			
+		$('#Message_Body').hide();
+			
+		$('#send_html_mail').change(function(){
+			
+			if($(this).is(':checked')){
+				
+				$('#html_Message_Body').attr('name', 'Message_Body');
+				$('#Message_Body').attr('name', 'disable_Message_Body');
+				$('#div_wysiwyg').show();
+				$('#Message_Body').hide();
+			}
+			else{
+				
+				$('#html_Message_Body').attr('name', 'disable_Message_Body');
+				$('#Message_Body').attr('name', 'Message_Body');
+				$('#div_wysiwyg').hide();
+				$('#Message_Body').show();
+			}
+		});
+		
+		$('.phone').keypress(function(e){
+						var k = e.which;
+    					/* numeric inputs can come from the keypad or the numeric row at the top */
+   						 if ((k<48 || k>57) && (k!=45) && (k!=43) && (k!=40) && (k!=41) && (k!=32) && (k!=44) && (k!=46) && (k!=8) && (k!=0)) {
+        					e.preventDefault();
+							//alert("Allowed characters are 0-9, +, -, (, )");
+        					return false;
+    					}
+					
+					}); 
+	});
+</script>
+<script>
+	 var xhr;
+  (function( $ ) {
+    $.widget( "custom.combobox", {
+      _create: function() {
+        this.wrapper = $( "<span>" )
+          .addClass( "custom-combobox" )
+          .insertAfter( this.element );
+ 
+        this.element.hide();
+        this._createAutocomplete();
+        this._createShowAllButton();
+      },
+ 
+      _createAutocomplete: function() {
+        var selected = this.element.children( ":selected" ),
+          value = selected.val() ? selected.text() : "";
+ 
+        this.input = $( "<input>" )
+          .appendTo( this.wrapper )
+          .val( value )
+          .attr( "title", "" )
+          .addClass( "custom-combobox-input ui-widget ui-widget-content ui-state-default ui-corner-left" )
+          .autocomplete({
+            delay: 0,
+            minLength: 0,
+            source: $.proxy( this, "_source" )
+          })
+          .tooltip({
+            tooltipClass: "ui-state-highlight"
+          });
+ 
+        this._on( this.input, {
+          autocompleteselect: function( event, ui ) {
+		  	//alert("show all");
+            ui.item.option.selected = true;
+			
+            this._trigger( "select", event, {
+              item: ui.item.option
+            });
+          },
+ 
+          autocompletechange: "_removeIfInvalid"
+        });
+      },
+ 
+      _createShowAllButton: function() {
+        var input = this.input,
+          wasOpen = false;
+ 
+        $( "<a>" )
+          .attr( "tabIndex", -1 )
+          .attr( "title", "Show All Items" )
+          .tooltip()
+          .appendTo( this.wrapper )
+          .button({
+            icons: {
+              primary: "ui-icon-triangle-1-s"
+            },
+            text: false
+          })
+          .removeClass( "ui-corner-all" )
+          .addClass( "custom-combobox-toggle ui-corner-right" )
+          .mousedown(function() {
+            wasOpen = input.autocomplete( "widget" ).is( ":visible" );
+          })
+          .click(function() {
+            input.focus();
+ 
+            // Close if already visible
+            if ( wasOpen ) {
+              return;
+            }
+ 
+            // Pass last search string as value to search for, displaying last results
+            input.autocomplete( "search", 'SHOWALL' );
+          });
+      },
+ 
+      _source: function( request, response ) {
+        //var matcher = new RegExp( $.ui.autocomplete.escapeRegex(request.term), "i" );
+		var ele_select= this.element;
+		if(request.term=='SHOWALL'){
+			response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+		
+		}
+		else
+		{
+		var jsonRow = 'getemailonsearch.cgi?srch='+request.term;
+		
+
+		//alert(jsonRowURLStr);
+		if(xhr) xhr.abort();
+		xhr=$.getJSON(jsonRow,function(result){
+			
+			if(result){
+				var html='<option value=""></option>';
+
+				$.each(result, function(i,item)
+				{
+					html += '<option value="'+item.id+'">'+item.value+'</option>';
+				});
+				ele_select.html(html);
+				
+				
+				response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+				
+				
+			}
+		});
+       
+	  } 
+		
+      },
+ 
+      _removeIfInvalid: function( event, ui ) {
+ 
+        // Selected an item, nothing to do
+        if ( ui.item ) {
+
+          return;
+        }
+
+        // Search for a match (case-insensitive)
+        var value = this.input.val(),
+          valueLowerCase = value.toLowerCase(),
+          valid = false;
+        this.element.children( "option" ).each(function() {
+          if ( $( this ).text().toLowerCase() === valueLowerCase ) {
+            this.selected = valid = true;	
+			
+            return false;
+          }
+        });
+ 
+        // Found a match, nothing to do
+        if ( valid ) {
+          return;
+        }
+ 
+        // Remove invalid value
+        /*this.input
+          .val( "" )
+          .attr( "title", value + " didn't match any item" )
+          .tooltip( "open" );*/
+		  this.element.html( "<option value='"+value+"'>"+value+"</option>" );
+        this.element.val( value );
+        /*this._delay(function() {
+          this.input.tooltip( "close" ).attr( "title", "" );
+        }, 2500 );*/
+        this.input.data( "ui-autocomplete" ).term = "";
+      },
+ 
+      _destroy: function() {
+        this.wrapper.remove();
+        this.element.show();
+      }
+    });
+  })( jQuery );
+ 
+  $(function() {
+    $( "#ToEmailAddress" ).combobox();
+    $( "#CCToEmailAddress" ).combobox();
+    $( "#BCCToEmailAddress" ).combobox();
+   $( "#Client_ID" ).combobox();
+	
+  });
+
+  </script>
+</body>
+</html>

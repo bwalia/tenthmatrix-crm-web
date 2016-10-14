@@ -1,0 +1,438 @@
+
+<!--HIT_EXECUTE
+
+C_LONGINT(_HIT_COUNTER)
+C_TEXT(_HIT_HTMLTXT;_HTMLTITLETXT;pSelectedCatStr)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+QUERY([categories];[categories]uuid=_HIT_WebApp_GetField ("uuid"))
+pSelectedCatStr:=[categories]uuid
+QUERY([Projects];[Projects]uuid=[categories]project_uuid)
+
+IF (Records in selection([categories])=0)
+_HTMLTITLETXT:="New Category"
+ELSE
+_HTMLTITLETXT:= "Edit: "+[categories]name
+END IF
+
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+
+-->
+<!DOCTYPE html>
+<html>
+<head>
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+<link rel="stylesheet" href="css/autocomplete.css" />
+<style>
+#TaskForm em.error {
+	margin-left: 10px;
+	width: auto;
+	display: inline;
+}
+#TaskForm em.error {
+	color: red;
+	font-style: italic;
+}
+#TaskForm input.error, textarea.error, select.error{
+	border: 1px solid red;
+}
+</style>
+
+</head>
+<body>
+
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
+
+	<!-- main container -->
+    <div class="content">
+    
+        <div class="container-fluid">
+            <div id="pad-wrapper" class="form-page">
+				 <div class="row-fluid header">
+					<h3><!--#4DIF (Records in selection([categories])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> category</h3>
+                </div>
+                <div class="row-fluid form-wrapper">
+					<!-- left column -->
+                    <div class="span9 with-sidebar">
+                           <form name="TaskForm" action="savecategory.cgi" id="TaskForm" method="post" class="form-comment" >
+								<input name="uuid" class="span9" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="uuid">               
+                               	<div class="field-box">
+									<label>Project Name <span style="color:#6E829B">*</span></label>
+									<div class="ui-widget projectClass">
+										<input readonly type="hidden" value="<!--#4DVAR [categories]project_uuid-->">
+										<select name="project_uuid" id="project_uuid" class="span6">
+										<!--#4DIF (Records in selection([categories])=0)-->
+											<option value=""></option>
+											<!--#4DSCRIPT/Web_LoadProjects/-->
+											<!--4DLOOP [Projects]-->
+												<option value="<!--#4DVAR [Projects]uuid-->" ><!--4DVAR [Projects]proj_name--></option>
+											<!--4DENDLOOP-->
+										<!--#4DELSE-->
+										 	<option value="<!--4DVAR [Projects]uuid-->" selected><!--4DVAR [Projects]proj_name--></option>									 
+										<!--#4DENDIF-->
+										</select>                                     
+									</div>
+								</div>
+                                <div class="span12 field-box">
+                                    <label>Category Name <span style="color:#6E829B">*</span></label>
+                                    <input type="hidden" name="actualName" id="actualName" value="<!--#4DVAR [categories]name-->">
+                                	<em class="error" id="errorEM" generated="true" style="display: none;">This name already exists!</em>
+                                    <input onKeyUp="generate_code()" onBlur="generate_code()" class="span5 errorNameClass" type="text" name="cat_name" id="cat_name" value="<!--#4DVAR [categories]name-->">
+                                	<em class="error" id="errorEM" generated="true" style="display: none;">This name already exists!</em>
+                                </div>
+                                <div class="span12 field-box">
+                                    <label>Code <span style="color:#6E829B">*</span></label>
+									<input class="span5" readonly type="text" id="code" value="<!--#4DVAR [categories]code-->" name="code">
+                                </div>
+                                <div class="span12 field-box">
+                                    <label>Top Level Category</label>
+                                    <div class="ui-widget">
+                                    	<input readonly type="hidden" value="<!--#4DVAR [categories]uuid_top_level_category-->">
+										<select name="uuid_top_level_category" id="uuid_top_level_category" class="span6">
+										
+										</select>                                     
+									</div>
+                                </div>
+                                <div class="span12 field-box">
+                                    <label>Description <span style="color:#6E829B">*</span></label>
+									<textarea class="span5" id="description" name="description"><!--#4DVAR [categories]description--></textarea>
+                                </div>
+                                <div class="span12 field-box">
+									<label></label>
+									<label class="checkbox" style="width:auto;">							
+										<input name="is_active" class="span9" type="checkbox" value="true" id="is_active" <!--#4DIF ([categories]is_active)-->checked<!--4DELSE--><!--4DENDIF--> > <strong>Active</strong>
+									</label>
+								</div>
+                                <div class="span11 field-box" style="margin-left:138px;">
+								<input type="submit" class="btn-glow primary" value="Submit" id="savebtn">
+								
+								<a href="categories.shtml" CLASS="cancelbtn">Cancel</a>
+							</div>
+                        </form>
+                    </div>
+				</div>
+            </div>
+        </div>
+    </div>
+    <!-- end main container -->
+
+	<!-- scripts -->
+	<script src="js/wysihtml5-0.3.0.js"></script>
+   <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml-->
+	<script src="js/jquery.uniform.min.js"></script>
+	<script src="js/jquery.validate.js"></script>
+	<!-- call this page plugins -->
+
+    <script type="text/javascript">
+    var selectedCatStr='<!--#4DVAR [categories]uuid-->';
+  	var selectedTopCatStr="<!--#4DVAR [categories]uuid_top_level_category-->";
+    function fetchCategories(){
+    	var jsonRequest= "getcategoryonsearch.cgi?project_uuid="+$("#project_uuid").val();
+    	var htmlStr='<option value=""></option>';
+		$.getJSON(jsonRequest,function(result){
+			$("#uuid_top_level_category").html("");
+			if(result.error){
+				//
+			}else{
+				$.each(result, function(i,item){
+					if(selectedCatStr!=item.uuid){
+						htmlStr += '<option value="'+item.uuid+'"';
+						if(selectedTopCatStr!="" && item.uuid==selectedTopCatStr){
+							htmlStr += ' selected ';
+						}
+						htmlStr += '>'+item.value+'</option>';
+					}
+				});
+			}
+			if(htmlStr!=""){
+				$("#uuid_top_level_category").html(htmlStr);
+				$( "#uuid_top_level_category" ).combobox("destroy");
+				$( "#uuid_top_level_category" ).combobox();
+			}
+		});
+	 }
+    
+    
+    function generate_code(){
+		var val=document.getElementById("cat_name").value;
+		var patt=/[^A-Za-z0-9_-]/g;
+		var result=val.replace(patt,' ');
+		result=result.replace(/-/g, ' ');
+		result=result.replace(/\s+/g, ' ');
+		result = result.replace(/^\s+|\s+$/g,'');
+		result=result.replace(/\s/g, '-');
+		result=result.toLowerCase();
+		document.getElementById("code").value=result;
+	}
+	
+	function checkExistence(form,e, nameStr){
+		var jsonRow = 'checkalready.cgi?field_value='+e+'&table_name=categories&field_name='+nameStr;
+		$.getJSON(jsonRow,function(html){
+			if(html.result=="yes" ){
+				$('#errorEM').show();
+				$('.errorNameClass').removeClass("valid");
+				$('.errorNameClass').addClass("error");
+				//$("#savebtn").attr("disabled", "disabled");
+				return false;
+			}else{
+				$('#errorEM').hide();
+				//$('#savebtn').removeAttr("disabled");
+				$('.errorNameClass').removeClass("error");
+				$('.errorNameClass').addClass("valid");
+				form.submit();
+			}
+		});
+		
+	}
+    $(function () {
+    	<!--#4DIF (_HIT_WebApp_GetField ("msg")="success")-->
+			$.prompt("Category saved successfully");
+		<!--#4DENDIF-->
+		<!--#4DIF (_HIT_WebApp_GetField ("msg")="error")-->
+			$.prompt("Sorry, some error occurred while saving category. Please try after some time!");
+		<!--#4DENDIF-->
+		
+    		fetchCategories();
+        	
+            // add uniform plugin styles to html elements
+            $("input:checkbox").uniform();
+			
+			// validate form on keyup and submit
+			
+			$("#TaskForm").validate({
+				ignore: "",
+				onkeyup: false,
+				errorClass: 'error',
+				validClass: 'valid',
+				errorElement: "em",
+				errorPlacement: function(error, element) {
+					$(element).closest('div').append(error);
+				},
+				onfocusout: false,
+				invalidHandler: function(form, validator) {
+					var errors = validator.numberOfInvalids();
+					if (errors) {                    
+						validator.errorList[0].element.focus();
+					}
+				},
+				rules: {
+					cat_name: { required: true },
+					code: { required: true  },
+					project_uuid: { required: true  },
+					description: { required: true  }
+				},submitHandler: function (form) {
+					//var actualCatNameStr= '<!--#4DVAR [categories]name-->';
+					var actualCatNameStr=$("#actualName").val();
+					var catNameStr=$("#cat_name").val();
+       				<!--#4DIF (Records in selection([categories])=1)-->	
+						if(actualCatNameStr!=catNameStr){
+							checkExistence(form,catNameStr,'name');
+						}else{
+							form.submit();
+						}
+					<!--#4DELSE-->
+						checkExistence(form,catNameStr,'name');
+					<!--#4DENDIF-->
+				}
+			});	
+        });
+        var xhr;
+  (function( $ ) {
+    $.widget( "custom.combobox", {
+      _create: function() {
+        this.wrapper = $( "<span>" )
+          .addClass( "custom-combobox" )
+          .insertAfter( this.element );
+ 
+        this.element.hide();
+        this._createAutocomplete();
+        this._createShowAllButton();
+      },
+ 
+      _createAutocomplete: function() {
+      	var ele_select= this.element;
+        var selected = this.element.children( ":selected" ),
+          value = selected.val() ? selected.text() : "";
+ 
+        this.input = $( "<input>" )
+          .appendTo( this.wrapper )
+          .val( value )
+          .attr( "title", "" )
+          .addClass( "custom-combobox-input ui-widget ui-widget-content ui-state-default ui-corner-left" )
+          .autocomplete({
+            delay: 0,
+            minLength: 0,
+            source: $.proxy( this, "_source" )
+          })
+          .tooltip({
+            tooltipClass: "ui-state-highlight"
+          });
+ 
+        this._on( this.input, {
+          autocompleteselect: function( event, ui ) {
+		  	//alert("show all");
+            ui.item.option.selected = true;
+			
+            this._trigger( "select", event, {
+              item: ui.item.option
+            });
+            if(ele_select.attr('id')=='project_uuid'){
+				fetchCategories();
+			}
+          },
+ 
+          autocompletechange: "_removeIfInvalid"
+        });
+      },
+ 
+      _createShowAllButton: function() {
+        var input = this.input,
+          wasOpen = false;
+ 
+        $( "<a>" )
+          .attr( "tabIndex", -1 )
+          .attr( "title", "Show All Items" )
+          .tooltip()
+          .appendTo( this.wrapper )
+          .button({
+            icons: {
+              primary: "ui-icon-triangle-1-s"
+            },
+            text: false
+          })
+          .removeClass( "ui-corner-all" )
+          .addClass( "custom-combobox-toggle ui-corner-right" )
+          .mousedown(function() {
+            wasOpen = input.autocomplete( "widget" ).is( ":visible" );
+          })
+          .click(function() {
+            input.focus();
+ 
+            // Close if already visible
+            if ( wasOpen ) {
+              return;
+            }
+ 
+            // Pass last search string as value to search for, displaying last results
+            input.autocomplete( "search", 'SHOWALL' );
+          });
+      },
+ 
+      _source: function( request, response ) {
+        //var matcher = new RegExp( $.ui.autocomplete.escapeRegex(request.term), "i" );
+		var ele_select= this.element;
+		if(request.term=='SHOWALL'){
+			response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+		
+		}
+		else
+		{
+			if(ele_select.attr('id')=='project_uuid'){
+				var jsonRow = 'getprojectsonsearch.cgi?srch='+request.term;
+			}else if(ele_select.attr('id')=='uuid_top_level_category'){
+				var jsonRow = 'getcategoryonsearch.cgi?name='+request.term+'&project_uuid='+$("#project_uuid").val();
+			}
+		if(xhr) xhr.abort();
+		xhr=$.getJSON(jsonRow,function(result){
+			if(result.error){
+				//
+			}else{
+				var html='<option value=""></option>';
+				$.each(result, function(i,item){
+					if(ele_select.attr('id')=='project_uuid'){
+						html += '<option value="'+item.ProjectUUID+'">'+item.value+'</option>';
+					}else if(ele_select.attr('id')=='uuid_top_level_category'){
+						if(selectedCatStr!=item.uuid){
+							html += '<option value="'+item.uuid+'">'+item.value+'</option>';
+						}
+					}	
+				});
+				ele_select.html(html);
+				
+				
+				response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+				
+				
+			}
+		});
+       
+	  } 
+		
+      },
+ 
+      _removeIfInvalid: function( event, ui ) {
+ 
+        // Selected an item, nothing to do
+        if ( ui.item ) {
+
+          return;
+        }
+ 
+        // Search for a match (case-insensitive)
+        var value = this.input.val(),
+          valueLowerCase = value.toLowerCase(),
+          valid = false;
+           var ele_select= this.element;
+        this.element.children( "option" ).each(function() {
+          if ( $( this ).text().toLowerCase() === valueLowerCase ) {
+            this.selected = valid = true;	
+			 if(ele_select.attr('id')=='project_uuid'){
+				fetchCategories();
+			}
+            return false;
+          }
+        });
+ 
+        // Found a match, nothing to do
+        if ( valid ) {
+          return;
+        }
+ 
+        // Remove invalid value
+        this.input
+          .val( "" )
+          .attr( "title", value + " didn't match any item" )
+          .tooltip( "open" );
+        this.element.val( "" );
+        this._delay(function() {
+          this.input.tooltip( "close" ).attr( "title", "" );
+        }, 2500 );
+        this.input.data( "ui-autocomplete" ).term = "";
+      },
+ 
+      _destroy: function() {
+        this.wrapper.remove();
+        this.element.show();
+      }
+    });
+  })( jQuery );
+	
+	$(function() {
+		$( "#project_uuid" ).combobox();
+		$( "#uuid_top_level_category" ).combobox();
+	});
+</script>
+</body>
+</html>

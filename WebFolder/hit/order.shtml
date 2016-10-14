@@ -1,0 +1,951 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+C_TEXT(_HTMLTITLETXT)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+ALL RECORDS([Tax_Codes])
+QUERY([orders];[orders]uuid=_HIT_WebApp_GetField ("uuid"))
+QUERY([Companies];[Companies]account_Number=num([orders]client_id))
+QUERY([Projects];[Projects]proj_name=[orders]project_code)
+//$nrecords:=Records in selection([orders])
+
+IF (Records in selection([orders])=0)
+_HTMLTITLETXT:="New order"
+ELSE
+_HTMLTITLETXT:= "Order Details"
+END IF
+
+
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+
+C_BOOLEAN(mUserIsCurrentBool)
+mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
+//_HIT_HTMLTXT:=_HIT_SessionStr
+-->
+<!DOCTYPE html>
+<html>
+<head>
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+	<!-- <link rel="stylesheet" href="css/base/jquery-ui.css" /> -->
+	<link rel='stylesheet' type='text/css' href='css/style.css' />
+	<link rel='stylesheet' type='text/css' href='css/print.css' media="print" />
+	<link href="css/img-tabs.css" type="text/css" rel="stylesheet">
+	<link rel="stylesheet" media="all" type="text/css" href="css/jquery-impromptu.css" />
+	<link rel="stylesheet" href="css/autocomplete.css" />
+	<style>
+	#items textarea {
+	width:300px;
+	}
+	.rate{
+	width:50px;
+	}
+	.hours{
+	width:50px;
+	}
+	
+	
+  
+  .custom-combobox a.ui-button, 
+  .custom-combobox a.ui-widget, 
+  .custom-combobox a.ui-state-default, 
+  .custom-combobox a.ui-button-icon-only, 
+  .custom-combobox a.custom-combobox-toggle, 
+  .custom-combobox a.ui-corner-right {
+	top:0px;
+  }
+  
+  #items{clear: both;
+width: 100%;
+margin: 2px 0 0 0;
+		
+	}
+	
+  
+  #message, #tax_message{
+	color:#FF0000;
+}
+		#OrderForm em.error {
+			margin-left: 10px;
+			width: auto;
+			display: inline;
+		}
+		#OrderForm em.error {
+			color: red;
+			font-style: italic;
+		}
+		#OrderForm input.error, textarea.error, select.error{
+			border: 1px solid red;
+		}
+	</style>
+</head>
+<body>
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
+
+	<!-- main container -->
+    <div class="content">
+        
+        <div class="container-fluid">
+            <div id="pad-wrapper" class="form-page">
+				<div class="row-fluid" style="margin-bottom: 40px;">
+					<!--#4DIF (mUserIsCurrentBool)--><h3>Work Order</h3><!--#4DELSE-->
+					<h3><!--#4DIF (Records in selection([orders])=1)--><span style="font-style: italic;">Order Details: <!--#4DVAR [orders]order_id --></span><!--#4DELSE-->New Work Order<!--#4DENDIF--></h3>
+					<!--#4DENDIF-->
+				</div>
+		
+				<form name="OrderForm" id="OrderForm" action="saveorder.cgi" class="form-comment" method="post" >
+					<div id="tabs">
+						<ul >
+							<li ><a style="color:#000000" href="#tabs-1">Order Details</a></li>
+							<li ><a style="color:#000000" href="#tabs-2">Other Details</a></li>
+							<!--#4DIF (_HIT_WebSession_GetVar ("auth_user_type")#"CLIENTS")-->
+							<!--#4DIF (Records in selection([orders])=1)-->
+							<li ><a style="color:#000000" href="#tabs-3"> Notes</a></li>
+							<!--#4DENDIF--><!--#4DENDIF-->
+						</ul>
+						<div id="tabs-1" class="var_tabs">  
+					<div class="row-fluid form-wrapper" style="margin-bottom:5px;">
+						<!-- left column -->
+						<div class="span7 column">
+							<div class="field-box">
+								<label>Order Number <span style="color:#6E829B">*</span></label>
+								<input readonly type="text" class="span5" id="order_id" value="<!--#4DVAR [orders]order_id -->" name="order_id">
+							</div>
+							<!--#4DIF (Records in selection([orders])=1)-->
+							<input name="order_uuid" class="span5" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="order_uuid"> 
+							<!--#4DELSE-->
+							<input name="order_uuid" class="span5" type="hidden" value="<!--#4DVAR Generate UUID-->" id="order_uuid"> 
+							<!--#4DENDIF-->
+							
+							<div class="field-box">
+								<label>Client <span style="color:#6E829B">*</span></label><!--#4DIF (mUserIsCurrentBool)--><!--#4DVAR [Companies]company_Name--><!--#4DELSE-->
+								<div class="ui-widget">
+									<select id="Client_ID" name="Client_ID">
+									<!--#4DIF (Records in selection([orders])=0)-->
+										<option value=""></option>
+									<!--#4DSCRIPT/Web_LoadCustomers/-->
+									 <!--4DLOOP  [Companies]-->
+										<option value="<!--4DVAR [Companies]account_Number-->"  ><!--4DVAR [Companies]company_Name--></option>		
+									 <!--4DENDLOOP-->
+									 <!--#4DELSE-->
+										 <option value="<!--4DVAR [Companies]account_Number-->" selected><!--4DVAR [Companies]company_Name--></option>									 
+									 <!--#4DENDIF-->
+									</select>
+								</div><!--#4DENDIF-->
+							</div>
+							<div class="span5 field-box">
+								<label>Bill To</label>
+								<textarea <!--#4DIF (mUserIsCurrentBool)-->readonly<!--#4DELSE--><!--#4DENDIF--> name="order_bill_to" class="span5" rows="3" id="order_bill_to"><!--#4DVAR [orders]bill_to --></textarea>
+							</div>
+							<div class="span12 field-box">
+								<label>Order By</label>
+								<input <!--#4DIF (mUserIsCurrentBool)-->readonly<!--#4DELSE--><!--#4DENDIF--> name="ordered_by" class="span5" type="text" value="<!--#4DVAR [orders]ordered_by -->" id="ordered_by">
+							</div>
+							<div class="span5 field-box">
+								<label>Comments</label>
+								<textarea <!--#4DIF (mUserIsCurrentBool)-->readonly<!--#4DELSE--><!--#4DENDIF--> name="comments" class="span5" rows="4" id="comments"><!--#4DVAR [orders]comments --></textarea>
+							</div>
+							
+							<div class="span5 field-box">
+								<label>Project Code</label>
+								<!--#4DIF (mUserIsCurrentBool)-->
+									<input name="project_code" class="span5" type="text" value="<!--#4DVAR [orders]project_code-->" id="project_code"  readonly>
+								<!--#4DELSE-->
+								<div class="ui-select span5">
+									<Select name="project_code" id="project_code">
+										<!--HIT_EXECUTE _HIT_HTMLTXT:=Order_ProjectCodeHTMLPopUP-->
+									</select>                                     
+								</div>
+								<!--#4DENDIF-->
+							</div>
+							
+							<div class="span5 field-box">
+								<label>Template</label>
+								<!--#4DIF (mUserIsCurrentBool)-->
+									<input name="order_template" class="span5" type="text" value="<!--#4DVAR [orders]order_template-->" id="order_template"  readonly>
+								<!--#4DELSE-->
+								<div class="ui-select span5">
+									<Select name="order_template" id="order_template">
+										<!--HIT_EXECUTE _HIT_HTMLTXT:=Order_templateCodeHTMLPopUP-->
+									</select>
+								</div>
+								<!--#4DENDIF-->
+							</div>
+							
+							
+                            </div>
+                            <div class="span4 column pull-right">
+							<!--#4DIF (Records in selection([orders])=1)-->
+							<div class="span12 field-box">
+								<a title="Generate Invoice" href="javascript:void(0)" onClick="generate_invoice()"><input type="button" class="btn-glow primary" id="generate_inv" value="Generate Invoice"></a>
+								<br><br>
+								<a title="Download Order <!--#4DHTMLVAR String([orders]order_id;"000000")-->" target="_blank" href="order_preview.shtml?uuid=<!--#4DVAR [orders]uuid-->&token=<!--#4DVAR _HIT_TokenGetAny-->&preview=pdf">
+                                	<img width="20" height="18" src="images/dowload-invoice.png">&nbsp;Download
+                                </a>
+                                
+							</div>
+							<!--#4DELSE--><!--#4DENDIF-->
+							<div class="span12 field-box">
+								<label>Date <span style="color:#6E829B">*</span></label><!--#4DIF (mUserIsCurrentBool)--><!--#4DVAR [orders]order_date--><!--#4DELSE-->
+								<input name="ordered_date" class="input-large datepicker span8" data-date-format="dd/mm/yyyy" type="text" <!--#4DIF ([orders]order_date=!00/00/00!)-->value=""<!--4DELSE-->value="<!--#4DVAR [orders]order_date-->"<!--4DENDIF--> id="ordered_date" readonly ><!--#4DENDIF-->
+							</div>
+                            <div class="span12 field-box">
+								<label>Balance Outstanding</label>
+								<input name="balance_due" class="span8 due" type="text" value="<!--#4DVAR [orders]balance_due -->" id="balance_due" readonly>
+							</div>
+                             <div class="span12 field-box">
+								<label>Order Status</label>
+								<div class="ui-select span5">
+									<select name="status" id="status" <!--#4DIF (mUserIsCurrentBool)-->disabled<!--#4DELSE--><!--#4DENDIF--> >
+										<option value="0" <!--#4DIF ([orders]status=0)-->selected<!--4DELSE--><!--4DENDIF-->>Estimate</option>
+										<option value="1" <!--#4DIF ([orders]status=1)-->selected<!--4DELSE--><!--4DENDIF-->>Quote</option>
+										<option value="2" <!--#4DIF ([orders]status=2)-->selected<!--4DELSE--><!--4DENDIF-->>Ordered</option>
+										<option value="3" <!--#4DIF ([orders]status=3)-->selected<!--4DELSE--><!--4DENDIF-->>Acknowledged</option>
+										<option value="4" <!--#4DIF ([orders]status=4)-->selected<!--4DELSE--><!--4DENDIF-->>Authorised</option>
+										<option value="5" <!--#4DIF ([orders]status=5)-->selected<!--4DELSE--><!--4DENDIF-->>Delivered</option>
+										<option value="6" <!--#4DIF ([orders]status=6)-->selected<!--4DELSE--><!--4DENDIF-->>Completed </option>
+										<option value="7" <!--#4DIF ([orders]status=7)-->selected<!--4DELSE--><!--4DENDIF-->>Proforma Invoice </option>
+									</select>                                    
+                                </div> 
+							</div>
+							<div class="span12 field-box">
+								<label>Grand Total</label>
+								<input name="total" class="span8" type="text" value="" id="total" readonly>
+							</div>
+							<div class="span12 field-box">
+								<label>Order Paid Date</label>
+								<input name="order_date_paid" class="input-large datepicker span8" type="text" data-date-format="dd/mm/yyyy" <!--#4DIF ([orders]approved_date=!00/00/00!)-->value=""<!--4DELSE-->value="<!--#4DVAR [orders]approved_date -->"<!--4DENDIF--> id="order_date_paid"  <!--#4DIF (mUserIsCurrentBool)-->disabled<!--#4DELSE-->readonly<!--#4DENDIF-->>
+							</div>
+							
+							<div class="example-container">
+								<pre class="code" style="display:none;" id="div_order_id">
+									var statesdemo = {
+										state0: {
+											title: 'Enter new Order ID manually?',
+											html:'&lt;div id="message"&gt;&lt;/div&gt;&lt;input type="text" name="order_numbr" id="order_numbr" value=""&gt;&lt;br /&gt;',
+											buttons: { Cancel : 0, Ok: 1 },
+											focus: "#order_numbr",
+											submit:function(e,v,m,f){ 
+												//console.log(f);
+												if(v==1) {
+													if(f.order_numbr!=null && f.order_numbr!=""){
+														e.preventDefault();
+														var jsonRowURLStr = 'checkordernum.cgi?order_no='+f.order_numbr;
+		
+														$.getJSON(jsonRowURLStr,function(result){
+															if(result.exist=='false'){
+																
+																$('#order_id').val(f.order_numbr);
+																$.prompt.close()
+															}
+															else{
+																e.preventDefault();
+																document.getElementById("message").innerHTML = "* Order number "+f.order_numbr+" already exists." ;
+																$('#order_numbr').val('');
+																$('#order_numbr').focus();
+															}
+															
+														});
+													}else {
+														e.preventDefault();
+														document.getElementById("message").innerHTML = "* Please enter Order number." ;
+														$('#order_numbr').focus();
+													}
+												}
+												if(v==0) {
+													$.prompt.close();
+													var new_ord='<!--#4DVAR SequenceNumber (->[orders]order_id)-->';
+													$('#order_numbr').val(new_ord);
+													$('#order_id').val(new_ord);
+												}
+											}
+										},
+										
+									};
+
+									$.prompt(statesdemo);
+								</pre>
+								<!--<a class="run">Run It!</a>-->
+							</div>
+							
+							<div class="example-container">
+								<pre class="code" style="display:none;" id="tax_rate_code">
+									var statesdemo = {
+										state0: {
+											title: 'Enter tax rate',
+											html:'&lt;div id="tax_message"&gt;&lt;/div&gt;&lt;input type="text" class="num" name="dlg_tax_rate" id="dlg_tax_rate" value=""&gt;&lt;br /&gt;',
+											buttons: { Cancel : 0, Ok: 1 },
+											focus: "#dlg_tax_rate",
+											submit:function(e,v,m,f){ 
+												//console.log(f);
+												if(v==1) {
+													if(f.dlg_tax_rate!=null && f.dlg_tax_rate!=""){
+														$('#tax_rate').val(f.dlg_tax_rate);
+														update_total();
+													}
+													else {
+														e.preventDefault();
+														$('#tax_message').html('* Please enter Tax Rate.');
+														$('#dlg_tax_rate').focus();
+													}
+												}
+												if(v==0) {
+													$.prompt.close();
+													$('#tax_rate').val("20");
+													$('#tax_code').val("UK");
+													//$('#invoice_tax_rate').val('');
+												}
+											}
+										},
+										
+									};
+
+									$.prompt(statesdemo);
+									$(".num").unbind();
+									$('.num').keypress(function(e){
+										checknumber(e);	
+									}); 
+								</pre>
+								<!--<a class="run">Run It!</a>-->
+							</div>
+							
+						</div>
+                        </div>
+                            	
+											
+							<table id="items">
+		
+		  <tr class="item">
+		    <th>Item</th>
+			<th>Description</th>
+			<th>Rate</th>
+			<th>Qty</th>
+			<th>Discount(%)</th>
+			<th>Amount</th>
+			<!--#4DIF (mUserIsCurrentBool)--><!--#4DELSE-->
+			  <th class="td_edit">Save</th>
+			  <th class="td_remove">Cancel</th>
+			<!--#4DENDIF--> 
+		  </tr>
+		  <!--#4DIF (Records in selection([orders])=1)-->
+		  <!--#4DSCRIPT/Web_LoadOrderItems/-->
+	
+		  <!--#4DLOOP [order_items]-->
+		  
+			<tr class="item-row" id="<!--#4DHTMLVAR [order_items]item_id-->">
+			<td class="item-id"><div class="delete-wpr"><span class="item_id"><!--#4DHTMLVAR [order_items]item_id--></span>
+			<input class="item_uuid" type="hidden" value="<!--#4DHTMLVAR [order_items]uuid-->" />
+			</div></td>
+			<td >
+			<span class="s_description" ><!--#4DHTMLVAR [order_items]item_description--></span><input class="description" type="hidden" value="<!--#4DHTMLVAR [order_items]item_description-->" />
+			<div class="ui-widget div_i_description" style="display:none"><select name="product" id="get_products" class="i_description" ><option selected="selected" value="<!--#4DHTMLVAR [order_items]uuid_product-->"><!--#4DHTMLVAR [order_items]item_description--></option></select></div>
+			</td>
+			<td>
+			<span class="s_rate" ><!--#4DHTMLVAR [order_items]item_rate--></span>
+			<input type="text" class="rate num1" style="display:none;" value="<!--#4DHTMLVAR [order_items]item_rate-->" >
+			</td>
+			<td>
+			<span class="s_hours" ><!--#4DHTMLVAR [order_items]item_hours--></span>
+			<input type="text" class="hours num1" style="display:none;" value="<!--#4DHTMLVAR [order_items]item_hours-->">
+			</td>
+			<td>
+				<span class="s_discount" ><!--#4DHTMLVAR [order_items]item_discount--></span>
+				<input type="text" class="i_discount num1" name="i_discount" style="display:none;width:50px;" value="<!--#4DHTMLVAR [order_items]item_discount-->">
+			</td>
+			<td>
+			<span class="price" ><!--#4DHTMLVAR [order_items]item_amount--></span>
+				
+			</td>
+			<!--#4DIF (mUserIsCurrentBool)--><!--#4DELSE-->
+			<td class="td_edit">
+				<a href="javascript:void(0)" class="editlink">Edit</a>
+				<a href="javascript:void(0)" class="savelink" style="display:none">Save</a>
+			</td>	
+			<td class="td_remove">
+				<a href="javascript:void(0)" class="removelink" >Remove</a>
+				<a href="javascript:void(0)" class="cancellink" style="display:none">Cancel</a>
+			</td>
+			<!--#4DENDIF--> 							
+			</tr>
+		  
+		  <!--#4DENDLOOP-->
+		  <!--#4DENDIF-->
+<!--#4DIF (mUserIsCurrentBool)--><!--#4DELSE-->		  <tr id="hiderow">
+		    <td colspan="8"><a id="addrow" href="javascript:;" title="Add a row">Add a row</a></td>
+		  </tr><!--#4DENDIF--> 
+		  
+		</table>	<br/>	
+        <div class="row-fluid form-wrapper" style="margin-bottom:5px;">
+						<!-- left column -->
+						<div class="span7 column">
+							<div class="span12 field-box">
+								<label>Total Quantity</label>
+								<input name="total_hours" class="span5" type="text" value="" id="total_hours" readonly>
+							</div>
+							<div class="span12 field-box">
+								<label>Order Subtotal</label>
+								<input class="span5" type="text" value="<!--#4DVAR [orders]order_subtotal -->" name="order_subtotal" id="order_subtotal" readonly>
+							</div>
+							<div class="span12 field-box">
+								<label>Discount (%)</label>
+								<input class="span5" type="text" value="<!--#4DVAR [orders]discount_applied -->" name="discount_applied" id="discount_applied" <!--#4DIF (mUserIsCurrentBool)-->readonly<!--#4DELSE--><!--#4DENDIF-->>
+							</div>
+							<div class="span12 field-box">
+								<label>Total Due</label>
+								<input class="span5" type="text" value="<!--#4DVAR [orders]total_due_without_tax -->" name="total_due_without_tax" id="total_due_without_tax" readonly>
+							</div>
+							<div class="field-box">
+								<label>Tax Code</label>
+								<div class="ui-select span5">
+									<select id="tax_code" name="tax_code" <!--#4DIF (mUserIsCurrentBool)-->disabled<!--#4DELSE--><!--#4DENDIF-->>
+									<!--#4DIF (Records in selection([orders])=0)-->
+									<!--#4DSCRIPT/Web_LoadTax_Codes/-->
+									<!--4DLOOP [Tax_Codes]-->
+										<option value="<!--#4DVAR [Tax_Codes]Tax_Code-->"><!--4DVAR [Tax_Codes]Tax_Code--></option>									 								
+									<!--4DENDLOOP-->
+									<!--#4DELSE-->	
+										<!--#4DIF ([orders]tax_code="")-->
+											<!--4DLOOP [Tax_Codes]-->
+												<option value="<!--#4DVAR [Tax_Codes]Tax_Code-->"><!--4DVAR [Tax_Codes]Tax_Code--></option>									 								
+											<!--4DENDLOOP-->
+										<!--#4DELSE-->	
+											<option value="<!--#4DVAR [orders]tax_code-->" selected><!--#4DVAR [orders]tax_code--></option>
+										<!--4DENDIF-->
+									<!--4DENDIF-->
+									</select>  
+									
+									                                
+								</div>
+							</div>
+							<div class="span12 field-box">
+								<label>Total Tax</label>
+								<input name="total_tax" class="span5" type="text" value="<!--#4DVAR [orders]total_tax -->" id="total_tax" readonly>
+							</div>
+							<div class="span12 field-box">
+								<label>Total Due With Tax</label>
+								<input name="total_due_with_tax" class="span5" type="text" value="<!--#4DVAR [orders]total_due_with_tax -->" id="total_due_with_tax" readonly>
+							</div>
+							
+							
+							
+							                            
+						</div>
+					
+						<!-- right column -->
+						
+						
+						</div>
+					</div>
+					<div id="tabs-2" class="var_tabs">  
+						<div class="row-fluid form-wrapper" style="margin-bottom:5px;">
+							<!-- left column -->
+							<div class="span8 column">
+								<div class="span5 field-box">
+									<label>Customer ref or PO</label>
+									<input <!--#4DIF (mUserIsCurrentBool)-->readonly<!--#4DELSE--><!--#4DENDIF--> name="customer_ref_po" class="span5" type="text" value="<!--#4DVAR [orders]customer_ref_po -->" id="customer_ref_po">
+								</div>
+								<div class="span12 field-box">
+									<label>Tax Rate</label>
+									<input name="tax_rate" class="span5 num" type="text" value="<!--#4DVAR [orders]tax_rate -->" id="tax_rate" readonly>
+								</div>
+								<div class="span5 field-box">
+								<label>Currency Code</label>
+									<!--#4DIF (mUserIsCurrentBool)-->
+									<input name="currency_code" class="span5" type="text" value="<!--#4DVAR [orders]currency_code-->" id="currency_code"  readonly>
+									<!--#4DELSE-->
+									<div class="ui-select span5">
+										<Select name="currency_code" id="currency_code">
+											<!--HIT_EXECUTE _HIT_HTMLTXT:=Order_CurrencyCodeHTMLPopUP-->
+										</select>                                     
+									</div>
+									<!--#4DENDIF--> 
+								</div>
+							</div>
+							<!-- right column -->
+							<div class="span4 column pull-right">
+								
+								<div class="span12 field-box">
+									<label>Base Currency Code</label>
+									<input <!--#4DIF (mUserIsCurrentBool)-->readonly<!--#4DELSE--><!--#4DENDIF--> name="base_currency_code" class="span8" type="text" value="<!--#4DVAR [orders]base_currency_code-->" id="base_currency_code">
+								</div>
+								<div class="span12 field-box">
+									<label>Exchange Customer Currency to Base Currency</label>
+									<input <!--#4DIF (mUserIsCurrentBool)-->readonly<!--#4DELSE--><!--#4DENDIF--> name="currency_exchange_rate" class="span8 num" type="text" value="<!--#4DVAR [orders]currency_exchange_rate -->" id="currency_exchange_rate">
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- start 3rd tab -->
+					<!--#4DIF (_HIT_WebSession_GetVar ("auth_user_type")#"CLIENTS")-->
+					<!--#4DIF (Records in selection([orders])=1)-->
+					<div id="tabs-3" class="var_tabs">  
+						<div class="row-fluid form-wrapper" style="margin-bottom:5px;">
+							<!-- left column -->
+							<div class="span8 column">
+								<div class="span12 field-box">
+									<!--#4DSCRIPT/Web_LoadOrdersNotes/-->	
+									<!--#4DLOOP [Notes]--><!-- row -->
+									<div class="notes">
+										<label id="user_details"><!--#4DHTMLVAR [Notes]note_user_name--> (<!--4DHTMLVAR timestamp_unix_toGMT ([Notes]Timestamp_modified)-->) (Note: <!--#4DHTMLVAR [Notes]note_ID-->)</label>
+										<input class="note_uuid" type="hidden" value="<!--#4DHTMLVAR [Notes]uuid-->" />
+										<textarea name="note" class="span6 note" rows="3" id="note" readonly> <!--#4DHTMLVAR [Notes]Note--></textarea>
+										<button type="button" id="edit" class="btn-glow" onClick="editCustomerNote($(this))">Edit Note</button>&nbsp;
+										<button type="button" id="delete" class="btn-glow" onClick="deleteCustomerNote($(this))">Delete</button>
+										<button type="button" id="save" class="btn-glow" onClick="saveCustomerNote($(this))" style="display:none">Save Note</button>
+										<button type="button" id="cancel" class="btn-glow" onClick="cancelCustomerNote($(this))" style="display:none">Cancel</button>
+									</div>
+									<!--#4DENDLOOP-->
+									<div class='notes_end'></div>
+								</div>
+								<div class="span12 field-box">
+									<label>Add Note</label>
+									<textarea name="add_new_note" class="span7" rows="4" id="add_new_note"></textarea>
+									<button type="button" id="add" class="btn-glow" onClick="addCustomerNote()">Add Note</button>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!--#4DENDIF-->
+					<!--#4DENDIF-->
+					<!-- end 3rd tab -->
+					
+					
+					<div style="text-align:center; margin-top: 11px;">
+							
+							<!--#4DIF (mUserIsCurrentBool)--><!--#4DELSE--><input type="submit" class="btn-glow primary" value="Save Order">
+							<!--#4DENDIF-->
+							<a href="orders.shtml" CLASS="cancelbtn">Cancel</a>
+							<!--<input type="reset" value="Cancel" class="reset">-->
+					</div>
+					
+					</div><!-- tabs div-->
+				</form>
+            </div>
+        </div>
+    </div>
+    <!-- end main container -->
+
+	<!-- scripts -->
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml-->
+	
+	<!-- <script src="js/ui/jquery-ui.js"></script> -->
+	<script src="js/bootstrap.datepicker.js"></script>
+	<script src="js/jquery.uniform.min.js"></script>
+	
+	<script type="text/javascript" src="js/jquery-impromptu.js"></script>
+	<script src="js/jquery.validate.js"></script>
+	 <script type='text/javascript' src='js/order_items.js'></script>
+	<script>
+	var tableUUIDStr= '<!--#4DVAR [orders]uuid -->';
+	var tableNameStr='orders';
+	
+	$(function(){
+			<!--#4DIF (Records in selection([orders])=0)-->
+				code = $('#div_order_id').text();
+				(new Function(code))();
+			<!--#4DELSE--><!--#4DENDIF-->
+	});
+	
+	function checknumber(e)
+	{
+		var k = e.which;
+    					/* numeric inputs can come from the keypad or the numeric row at the top */
+   						 if ((k<48 || k>57) && (k!=46) && (k!=8) && (k!=0)) {
+        					e.preventDefault();
+							//alert("Allowed characters are 0-9, +, -, (, )");
+        					return false;
+    					}
+	
+	}
+	function generate_invoice(){
+		var statesdemo = {
+			state0: {
+				title: "Do you want to generate Invoice?",
+				html:'',
+				buttons: { No : 0, Yes: 1 },																
+				submit:function(e,v,m,f){ 
+					//console.log(f);
+					if(v==1) {
+						var order_id= $("#order_id").val();
+						var uuid= $("#order_uuid").val();
+						var jsonRow = 'OrderGenerateInvoice.cgi?order_uuid='+uuid+'&order_id='+order_id;
+						$.getJSON(jsonRow,function(result){	
+							if(result.Success){
+								var statesdemo = {
+									state0: {
+										title: "Invoice successfully generated. Do you want to go to invoice?",
+										html:'',
+										buttons: { Cancel : 0, Ok: 1 },																
+										submit:function(e,v,m,f){ 
+											//console.log(f);
+											if(v==1) {
+												if(result.InvoiceUUID!=''){
+												window.location.href='invoice.shtml?uuid='+result.InvoiceUUID;
+												}else{
+													$.prompt.close();
+												}
+											}
+											if(v==0) {
+												$.prompt.close();
+											}
+											
+										}
+									},
+									
+								};
+								if(!($(".jqibox").length))
+								$.prompt(statesdemo);
+							}else if(result.Error){
+								var statesdemo = {
+									state0: {
+										title: result.Error,
+										html:'',
+										buttons: { Ok: 1 },																
+										submit:function(e,v,m,f){ 
+											if(v==1) {
+												$.prompt.close();
+											}
+											
+										}
+									},
+									
+								};
+								if(!($(".jqibox").length))
+								$.prompt(statesdemo);
+							}
+						});
+						document.getElementById("generate_inv").disabled=true;
+					}
+					if(v==0) {
+						$.prompt.close();
+					}
+					
+				}
+			},
+			
+		};
+		if(!($(".jqibox").length))
+		$.prompt(statesdemo);
+		
+		
+		
+	}
+	function get_client_info(){
+		var Client_ID=	$("#Client_ID").val();
+		var dataString = 'Client_ID='+Client_ID;
+		//alert(dataString);
+
+		
+		$.ajax({
+			type: "GET",
+			url: "Returnvalues.cgi",
+			data: dataString,
+			cache: false,
+			success: function(html)
+			{
+				$("#order_bill_to").val(html);
+			}
+		});
+	}
+	
+	function get_projects(){
+		$('#div_proj').find('.ui-autocomplete-input').val('');
+		var jsonRow = 'getprojectsonsearch.cgi?srch=&client='+$('#Client_ID').val();
+		$.getJSON(jsonRow,function(result){	
+			if(result){
+				var html='<option value=""></option>';
+
+				$.each(result, function(i,item)
+				{
+					html += '<option value="'+item.value+'">'+item.value+'</option>';
+				});
+				//if(html=='<option value=""></option>'){
+				//	html +='<!--HIT_EXECUTE _HIT_HTMLTXT:=Invoice_ProjectCode_HTMLPopup-->';
+				//}
+				$('#Project_ID').html(html);
+			}
+		});
+	}
+	
+	$(function() {
+	
+		<!--#4DIF ([orders]status=6)-->
+		$('#OrderForm :input').attr('disabled', true);
+		$('#status').attr('disabled', false);
+		$('#hiderow').hide();
+		$('.td_edit').hide();
+		$('.td_remove').hide();
+		
+		$('#status').change(function(){
+			if($(this).val()!='Paid'){
+				$('#OrderForm :input').attr('disabled', false);
+				$('#hiderow').show();
+				$('.td_edit').show();
+				$('.td_remove').show();
+			}	
+		});
+		<!--#4DENDIF-->
+	
+		//End date
+		$('#ordered_date').datepicker({"autoclose": true}).on('changeDate', function (ev) {
+			var arrStartDate= $('#ordered_date').val().split('/');
+			var dateText = new Date(arrStartDate[1]+'/'+arrStartDate[0]+'/'+arrStartDate[2]);
+			$('#order_date_paid').datepicker('setStartDate', dateText);
+		});
+		
+		
+		$('#order_date_paid').datepicker().on('changeDate', function (ev) {
+			$(this).datepicker('hide');
+		});
+				
+		$('.num').keypress(function(e){
+			checknumber(e);	
+		}); 
+					
+		$( "#tabs" ).tabs();
+		
+		// validate form on keyup and submit
+		$("#OrderForm").validate({
+			ignore: "",
+			onkeyup: false,
+			errorClass: 'error',
+			validClass: 'valid',
+			errorElement: "em",
+			errorPlacement: function(error, element) {
+				$(element).closest('div').append(error);
+			},
+			rules: {
+				order_id : { required: true },
+				ordered_date : { required: true },
+				Client_ID : { required: true },
+				// Project_ID : { required: true },
+				project_code : { required: true },
+			},
+		});	
+	});
+</script>
+ 
+ <script>
+	 var xhr;
+  (function( $ ) {
+    $.widget( "custom.combobox", {
+      _create: function() {
+        this.wrapper = $( "<span>" )
+          .addClass( "custom-combobox" )
+          .insertAfter( this.element );
+ 
+        this.element.hide();
+        this._createAutocomplete();
+        this._createShowAllButton();
+      },
+ 
+      _createAutocomplete: function() {
+		  var ele_select= this.element;
+        var selected = this.element.children( ":selected" ),
+          value = selected.val() ? selected.text() : "";
+ 
+        this.input = $( "<input>" )
+          .appendTo( this.wrapper )
+          .val( value )
+          .attr( "title", "" )
+          .addClass( "custom-combobox-input ui-widget ui-widget-content ui-state-default ui-corner-left" )
+          .autocomplete({
+            delay: 0,
+            minLength: 0,
+            source: $.proxy( this, "_source" )
+          })
+          .tooltip({
+            tooltipClass: "ui-state-highlight"
+          });
+ 
+        this._on( this.input, {
+          autocompleteselect: function( event, ui ) {
+		  	//alert("show all");
+            ui.item.option.selected = true;
+			
+            this._trigger( "select", event, {
+              item: ui.item.option
+            });
+			
+			if(ele_select.attr('id')=='Client_ID'){
+				get_client_info();
+				get_projects();
+			}else if(ele_select.hasClass('i_description')){
+				get_details(ele_select);
+			}
+			
+          },
+ 
+          autocompletechange: "_removeIfInvalid"
+        });
+      },
+ 
+      _createShowAllButton: function() {
+        var input = this.input,
+          wasOpen = false;
+ 
+        $( "<a>" )
+          .attr( "tabIndex", -1 )
+          .attr( "title", "Show All Items" )
+          .tooltip()
+          .appendTo( this.wrapper )
+          .button({
+            icons: {
+              primary: "ui-icon-triangle-1-s"
+            },
+            text: false
+          })
+          .removeClass( "ui-corner-all" )
+          .addClass( "custom-combobox-toggle ui-corner-right" )
+          .mousedown(function() {
+            wasOpen = input.autocomplete( "widget" ).is( ":visible" );
+          })
+          .click(function() {
+            input.focus();
+ 
+            // Close if already visible
+            if ( wasOpen ) {
+              return;
+            }
+ 
+            // Pass last search string as value to search for, displaying last results
+            input.autocomplete( "search", 'SHOWALL' );
+          });
+      },
+ 
+      _source: function( request, response ) {
+        //var matcher = new RegExp( $.ui.autocomplete.escapeRegex(request.term), "i" );
+		var ele_select= this.element;
+		if(request.term=='SHOWALL'){
+			response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+		
+		}
+		else
+		{
+		if(ele_select.attr('id')=='Client_ID'){
+		var jsonRow = 'getcompaniesonsearch.cgi?srch='+request.term;
+		}
+		else if(ele_select.attr('id')=='Project_ID'){
+			var jsonRow = 'getprojectsonsearch.cgi?srch='+request.term+'&client='+$('#Client_ID').val();
+		}else if(ele_select.hasClass('i_description')){
+			var jsonRow = 'getproductsDropdown.cgi?srch='+request.term;
+		}
+		
+
+		//alert(jsonRowURLStr);
+		if(xhr) xhr.abort();
+		xhr=$.getJSON(jsonRow,function(result){
+			
+			if(result){
+				var html='<option value=""></option>';
+
+				$.each(result, function(i,item)
+				{
+					if(ele_select.attr('id')=='Client_ID'){
+						html += '<option value="'+item.id+'">'+item.value+'</option>';
+					}
+					else if(ele_select.attr('id')=='Project_ID'){
+						html += '<option value="'+item.value+'">'+item.value+'</option>';
+					}else if(ele_select.hasClass('i_description')){
+						html += '<option value="'+item.uuid+'">'+item.value+'</option>';
+					}
+				});
+				//if(ele_select.attr('id')=='Project_ID' && html=='<option value=""></option>'){
+				//	html +='<!--HIT_EXECUTE _HIT_HTMLTXT:=Invoice_ProjectCode_HTMLPopup-->';
+				//}
+				ele_select.html(html);
+				
+				
+				response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+				
+				
+			}
+		});
+       
+	  } 
+		
+      },
+ 
+      _removeIfInvalid: function( event, ui ) {
+ 
+        // Selected an item, nothing to do
+        if ( ui.item ) {
+
+          return;
+        }
+ 
+        // Search for a match (case-insensitive)
+        var value = this.input.val(),
+          valueLowerCase = value.toLowerCase(),
+          valid = false;
+		  var ele_select= this.element;
+        this.element.children( "option" ).each(function() {
+          if ( $( this ).text().toLowerCase() === valueLowerCase ) {
+            this.selected = valid = true;	
+		if(ele_select.attr('id')=='Client_ID'){
+			get_client_info();
+			get_projects();
+			}	else if(ele_select.hasClass('i_description')){
+				get_details(ele_select);
+			}
+            return false;
+          }
+        });
+ 
+        // Found a match, nothing to do
+        if ( valid ) {
+          return;
+        }
+ 
+        // Remove invalid value
+        this.input
+          .val( "" )
+          .attr( "title", value + " didn't match any item" )
+          .tooltip( "open" );
+        this.element.val( "" );
+        this._delay(function() {
+          this.input.tooltip( "close" ).attr( "title", "" );
+        }, 2500 );
+        //this.input.data( "ui-autocomplete" ).term = "";
+      },
+ 
+      _destroy: function() {
+        this.wrapper.remove();
+        this.element.show();
+      }
+    });
+  })( jQuery );
+ 
+  $(function() {
+    $( "#Client_ID" ).combobox();
+	$( "#Project_ID" ).combobox();
+	$('.i_description').combobox();
+  });
+
+  </script>
+  <script type='text/javascript' src='js/customerNotes.js'></script>
+</body>
+</html>

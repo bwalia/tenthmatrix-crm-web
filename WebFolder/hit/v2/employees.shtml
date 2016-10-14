@@ -1,0 +1,644 @@
+<!--HIT_EXECUTE
+_HIT_HTTPD_SetHTTPHeader ("Content-type";"text/html; charset=utf-8")
+
+C_TEXT(_HIT_HTMLTXT)
+C_BOOLEAN(IsBookKeeper;IsHitUser)
+
+If(_HIT_AuthenticateSession="Session-Authenticated-OK")
+Else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml?url="+HTTPD_DocumentURI)
+End if
+
+IsBookKeeper:=IsUserBookKeeper
+IsHitUser:=IsUserPower
+   
+--> 
+<!DOCTYPE html>
+<html lang="en">
+<!-- BEGIN HEAD -->
+<head>
+	<title>Employees</title>
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/v2/includes/InitCss.shtml-->
+ 	<link href="assets/plugins/datepicker/css/bootstrap.datepicker.css" rel="stylesheet" />
+	<style>
+		#message{
+			color:#FF0000;
+		}
+
+		/*.jqibox {
+			z-index:9999!important;
+		}*/
+	   
+	</style>
+	
+</head>
+
+<!-- END HEAD -->
+<!-- BEGIN BODY -->
+<body class="fixed-leftside fixed-header">
+	<!-- BEGIN HEADER -->	
+		<!--#4DSCRIPT/_HIT_LoadInclude/hit/v2/includes/header.shtml-->
+	<!-- END HEADER -->
+			 
+	<div class="wrapper"> 
+ 		<!-- BEGIN LEFTSIDE -->
+ 		 <!--#4DSCRIPT/_HIT_LoadInclude/hit/v2/includes/left-navigation.shtml-->
+		<!-- END LEFTSIDE -->
+  
+  <!-- BEGIN RIGHTSIDE -->
+  <div class="rightside bg-grey-100"> 
+    <!-- BEGIN PAGE HEADING -->
+    <div class="page-head">
+    <div class="row">
+     	<div class="col-sm-6">
+      		<h1 class="page-title">Employees</h1>
+            </div>
+      <!-- BEGIN BREADCRUMB -->
+       
+     	<div class="col-sm-6 ">
+      <ol class="breadcrumb sm-pullright">
+        <li><a href="javascript:void(0)" onclick="funURLHandler('index.shtml','open-index-window')"><i class="ion-home margin-right-5"></i> Dashboard</a></li>
+        <li>Employees</li>
+      </ol> 
+      </div>
+      </div>
+      <!-- END BREADCRUMB --> 
+   
+    </div>
+    <!-- END PAGE HEADING -->
+    	<div class="container-fluid">
+    		<div class="margin-bottom-15">
+     			<div class="pull-left hideComponentsClass">
+					<!--#4DIF (_HIT_WebApp_GetField ("keyword")="load_@")--> <input name="manageruuid" id="manageruuid" type="hidden" value="<!--#4DHTMLVAR _HIT_WebApp_GetField ("uuid")-->"><input type="button" name="button" id="button" class="btn-glow primary" value="Delete Selected" onClick="deletemanageremployee('<!--#4DHTMLVAR _HIT_WebApp_GetField ("uuid")-->')"><!--#4DELSE--><!--#4DENDIF-->
+                    
+					<!--#4DIF (_HIT_WebApp_GetField ("keyword")#"load_@")-->
+					<input type="hidden" name="selected" id="selected" value="" >
+					<select name="sets" onChange="__showemployeeForm_Selectmanager(this.value)" id="add_sets" class="form-control xs-margin-btm10">
+						<option value="">--Select Manager--</option>
+						<!--#4DSCRIPT/Web_LoadManager/-->
+							<!--4DLOOP  [Employees]-->									
+							<option value="<!--#4DHTMLVAR [Employees]uuid-->" ><!--#4DHTMLVAR [Employees]emp_first_name-->  <!--#4DHTMLVAR [Employees]emp_last_name--></option>
+							<!--4DENDLOOP-->
+						<!-- <option value="new_set">Add New Manager</option> -->
+					</select>
+					<!--#4DELSE--><!--#4DENDIF-->
+         		</div>
+         		<div class="pull-right">
+                 	<Div class="form-inline">
+               			<div class="input-group ">
+							<input type="text" class="form-control  no-border-right " placeholder="Search employee, position, email..." id="keyword" name="keyword">
+								<div class="input-group-btn">
+									<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Action <span class="caret"></span></button>
+										<ul class="dropdown-menu pull-right">
+											<li><a href="javascript:void(0)" onClick="__showEmployees(''); return false;">All</a></li>
+											<li><a href="javascript:void(0)" onClick="__showEmployees('active'); return false;">Active</a></li>
+											<li><a href="javascript:void(0)" onClick="__showEmployees('inactive'); return false;">In Active</a></li>
+										</ul>
+									</div><!-- /btn-group -->
+                                 </div><!-- /input-group -->
+                            <!--#4DIF ((IsUserBookKeeper) | (IsUserPower))-->
+                            <a href="javascript:void(0)" onclick="funURLHandler('employee.shtml','open-employee-window')" class="btn palette-carrot btn-color btn-icon-left  btn-sm"> <i class="fa fa-user"></i> Add New</a>
+                        	<!--#4DENDIF-->
+                        </div>                                           
+       				</div>
+      				<div class="clearfix"></div>
+     			</div>
+      			<div class="row">
+        			<div class="col-md-12">
+       					<div class="panel" style="padding-top:20px;"> 
+                			<div class="panel-body no-padding-top bg-white"> 
+              					<div class="table-responsive">
+                					<input id="employee_uuid" type="hidden" value="">
+									<input id="token" type="hidden" value="">
+                					<table class="table table-striped no-border table-hover no-margin" id="Table">
+					
+									</table>
+									<div class="text-center margin-top-10  margin-bottom-10"><button style="width: 50%;display:none;" class="btn palette-belize-hole btn-color" href="javascript:void(0);" onclick="show_more()" title="Show more" id="display_more_btn" >Show more</button></div>
+              						<div class="text-center margin-bottom-10" id="img_loading_div"><img width="32" src="assets/img/loader.gif"></div>
+              					</div>
+            				</div>
+          				</div>
+        			</div>
+        			<!-- /.col --> 
+      			</div>
+      			<!-- /.row --> 
+      
+      <!-- BEGIN FOOTER -->
+      <!--#4DSCRIPT/_HIT_LoadInclude/hit/v2/includes/footer.shtml-->
+      <!-- END FOOTER --> 
+    </div>
+    <!-- /.container-fluid --> 
+  </div>
+  <!-- /.rightside --> 
+</div>
+<!-- /.wrapper --> 
+<!-- END CONTENT --> 
+<div class="example-container">
+<pre class="code" style="display:none;" id="load_prompt">
+									var statesdemo = {
+										state0: {
+											title: message+' Do you want to load the records of '+$('#add_sets option:selected').text()+'?',
+											html:'',
+											buttons: { No : 0, Yes: 1 },																		
+											submit:function(e,v,m,f){ 
+												//console.log(f);
+												if(v==1) {
+													location.href='employees.shtml?manager='+$('#add_sets option:selected').text()+'&manageruuid='+$('#add_sets').val();
+												}
+												if(v==0) {
+													$.prompt.close();
+													$('#add_sets').val('');
+													$('.check').prop('checked', false);
+												}
+											}
+										},
+										
+									};
+
+									$.prompt(statesdemo);
+								</pre>
+							
+		<pre class="code" style="display:none;" id="del_prompt">
+		var html='';
+		if(managerUUID!=''){
+			html= '&lt;div id="message"&gt;&lt;/div&gt;&lt;label style="width:auto; display:inline" &gt&lt;input type="radio" class="radio" name="opt_emp_del" id="opt1" value="permanentely" &gt; Permanentely &lt;/label&gt;'+
+									'&lt;label style="width:auto; display:inline" &gt;&lt;input type="radio" class="radio" name="opt_emp_del" id="opt2" value="from_manager"&gt; From Manager &lt;/label&gt;';
+		}
+		else{
+			html= '';
+		}
+									var statesdemo = {
+										state0: {
+											title: 'Delete Employee',
+											html:html,
+											buttons: { Cancel : 0, OK: 1 },																		
+											submit:function(e,v,m,f){ 
+												//console.log(f);
+												if(v==1) {
+												if(managerUUID!='' && f.opt_emp_del == null){
+													e.preventDefault();
+													document.getElementById("message").innerHTML = "* Please select an option." ;
+												}
+												else {
+												
+												var url= "delmanageremp.cgi";
+												var dataString = 'selected='+selected+'&manager='+managerUUID;
+
+												if(f.opt_emp_del=='from_manager'){
+													dataString+='&del_type=from_manager';
+												}
+												else{
+													dataString+='&del_type=permanent';
+												}
+
+	
+														$.ajax({
+															type: "GET",
+															dataType: "json",
+															url: url,
+															data: dataString,
+															cache: false,
+															success: function(html)
+															{
+																if(html.Succ){		
+																	//alert(html.Result);
+																	$.prompt.close();				
+																	start=0;
+																	end=50;
+																	jsonRow = 'loademployees.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&manager='+manager+'&manageruuid='+managerUUID+'&tab='+tab;
+																	if(keyword!=''){
+																		jsonRow +='&keyword='+keyword;
+																	}
+																	if(tab!=''){
+																		jsonRow +='&tab='+tab;
+																	}
+																	$('#TableContent').html('');
+																	$('#display_more_btn').hide();
+																	$('#img_loading_div').show();		
+																	load_data(jsonRow);
+																}
+															}
+														});
+													}
+												}
+												if(v==0) {
+													$.prompt.close();
+												}
+												
+											}
+										},
+										
+									};
+									
+									$.prompt(statesdemo);
+								</pre>	
+					<pre class="code" style="display:none;" id="download">
+						var statesdemo = {
+							state0: {
+								title: 'Download',
+								html:'&lt;div  style="margin-bottom:10px;" id="message"&gt;&lt;/div&gt;Timeslip :&lt;label style="padding-left:12px;"&gt; &lt;input type="radio" class="radio_time" name="timesheet" id="week" value="week" &gt; Last Week &lt;/label&gt;'+
+									'&lt;label style="padding-left:72px;"&gt;&lt;input type="radio" class="radio_time" name="timesheet" id="month" value="month"&gt; Last Month &lt;/label&gt;'+
+									'&lt;label style="padding-left:78px;"&gt;&lt;input type="radio" class="radio_time" name="timesheet" id="other" value="other"&gt; Select Duration &lt;/label&gt;&lt;br /&gt;'+
+									'&lt;div id="dates" style="display:none;"&gt;&lt;label &gt;Start Date : &lt;/label&gt; &lt;input type="text" data-date-format="dd/mm/yyyy" name="dur_start" id="dur_start" &gt; &lt;br /&gt;'+
+									'&lt;label style="padding-right:7px;" &gt;End Date : &lt;/label&gt; &lt;input type="text" data-date-format="dd/mm/yyyy" name="dur_end" id="dur_end" &gt; &lt;/div&gt;'+
+									'&lt;label style="padding-right:11px; font-weight:700;" &gt;Format &nbsp; : &lt;/label&gt; &lt;label&gt;&lt;input type="radio" name="preview" id="preview" value="pdf"&gt; Pdf  &lt;/label&gt; '+
+									'&lt;label style="padding-left:76px;"&gt;&lt;input type="radio" name="preview" id="preview" value="excel"&gt; Excel &lt;/label&gt;&lt;br /&gt;',
+								buttons: { Cancel : 0, Ok: 1 },
+								submit:function(e,v,m,f){ 
+									if(v==1) {
+										if(f.timesheet != null && f.preview != null){
+											e.preventDefault();
+											if(f.timesheet=='other'){
+												if(f.dur_start != '' && f.dur_end != ''){
+													pUrlStr='timeslips_preview.shtml?timesheet='+f.timesheet+'&state_date='+f.dur_start+'&end_date='+f.dur_end+'&preview='+f.preview+'&uuid='+$("#employee_uuid").val()+'&token='+$("#token").val();
+												}else{
+													e.preventDefault();
+													document.getElementById("message").innerHTML = "* Please select start and end date." ;
+												}
+											}else if(f.timesheet=='month'){
+												pUrlStr='timeslips_preview.shtml?timesheet='+f.timesheet+'&state_date='+month_s_date+'&end_date='+e_date+'&preview='+f.preview+'&uuid='+$("#employee_uuid").val()+'&token='+$("#token").val();
+											}
+											else if(f.timesheet=='week'){
+												pUrlStr='timeslips_preview.shtml?timesheet='+f.timesheet+'&state_date='+week_s_date+'&end_date='+e_date+'&preview='+f.preview+'&uuid='+$("#employee_uuid").val()+'&token='+$("#token").val();
+											}
+											//console.log(pUrlStr);
+											window.open(pUrlStr,'_blank');
+											$.prompt.close()
+										}else {
+											e.preventDefault();
+											document.getElementById("message").innerHTML = "* Please select both timeslip and format." ;
+										}
+									}
+									if(v==0) {
+										$.prompt.close();
+									}
+								}
+							},
+							
+							
+						};
+
+						var myPrompt = $.prompt(statesdemo);
+						myPrompt.on('impromptu:loaded', function(e){
+							
+							$('#dur_start').datepicker({"autoclose": true}).on('changeDate', function (ev) {
+								var arrStartDate= $('#dur_start').val().split('/');
+								var dateText = new Date(arrStartDate[1]+'/'+arrStartDate[0]+'/'+arrStartDate[2]);
+								
+								$('#dur_end').datepicker('setStartDate', dateText);
+							});
+							
+							$('#dur_end').datepicker({"autoclose": true}).on('changeDate', function (ev) {
+								var arrEndDate= $('#dur_end').val().split('/');
+								var dateText = new Date(arrEndDate[1]+'/'+arrEndDate[0]+'/'+arrEndDate[2]);
+								
+								$('#dur_start').datepicker('setEndDate', dateText);
+							});
+							
+							$('.radio_time').click(function(){
+								if($(this).val()=='other'){
+									$('#dates').show();
+								}
+								else{
+									$('#dates').hide();
+								}
+							});
+						});
+					</pre>
+</div>
+<!-- BEGIN JAVASCRIPTS -->  
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/v2/includes/InitJs.shtml-->
+<!-- datepicker --> 
+<script src="assets/plugins/datepicker/js/bootstrap.datepicker.js" type="text/javascript"></script>
+<script type="text/javascript">
+
+var JSONdata;
+var nPageSize=25;
+var selected='';
+var start=0, end=25;
+var old_srch='',keyword='', jsonRow='', tab='', set='', message='',keyword='';
+var tablname='Employees';
+var deleteuuid='';
+var complete=false;
+var completeScroll=false;
+var checkAllFlag=false;
+ 
+var manager='<!--#4DVAR _HIT_WebApp_GetField ("manager") -->';
+var managerUUID='<!--#4DVAR _HIT_WebApp_GetField ("manageruuid") -->';
+
+function __showEmployees(sel){
+	if(checkAllFlag==true){
+		$("#chk_all").trigger('click');
+	}
+	start=0;
+	end=25;
+	tab=sel;
+	jsonRow = 'loademployees.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&manager='+manager+'&manageruuid='+managerUUID+'&tab='+tab;
+	keyword= $("#keyword").val();
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}
+	$('#TableContent').html('');
+	$('#display_more_btn').hide();
+	$('#img_loading_div').show();		
+	load_data(jsonRow);
+}
+function __showemployeeForm_Selectmanager(manageruuid){
+	if(manageruuid!=''){
+		var selected='';
+		$('.check').each(function(){
+			if($(this).is(":checked")){
+				if(selected==''){
+					selected=$(this).val();
+				}else{
+					selected+=","+$(this).val();
+				}
+			}
+		});
+		
+		var dataString = 'selected='+selected+"&manager="+manageruuid;
+
+		if(selected!=""){
+			$.ajax({
+				type: "GET",
+				dataType: "json",
+				url: "add_manager_employee.cgi",
+				data: dataString,
+				cache: false,
+				success: function(html){
+					if(html.MessageAlert){		
+						message= html.MessageAlert;
+						code = $('#load_prompt').text();
+						(new Function(code))();
+  					}
+				}
+			});
+		}else{
+			__alertMessage("Please select atleast one employee!");
+		}
+	}
+}
+
+function __deleteSelected(del_uuid){
+	selected= del_uuid;
+	 code = $('#del_prompt').text();
+	(new Function(code))();
+}
+
+
+$(document).ready(function() {
+	var TableHtml='<thead><tr>';
+	if(isMobile.any()) {
+		$('.hideComponentsClass').hide();
+   		TableHtml+='<th class="vertical-middle">NAME</th>';
+		TableHtml+='<th class="vertical-middle">Action</th>';
+	}else{
+		$('.hideComponentsClass').show();
+		TableHtml+='<th class="vertical-middle"><div class="checkbox checkbox-theme no-margin"><input type="checkbox" id="chk_all"><label for="chk_all" class="no-padding"></label></div></th>';
+		TableHtml+='<th class="vertical-middle">NAME</th>';
+		TableHtml+='<th class="vertical-middle">POSITION</th>';
+		TableHtml+='<th class="vertical-middle">EMAIL</th>';
+		TableHtml+='<th class="vertical-middle">TYPE</th>';
+		TableHtml+='<th class="vertical-middle">HOLIDYAS TAKEN</th>';
+		TableHtml+='<th class="vertical-middle">WEB ACCESS</th>';
+		TableHtml+='<th class="vertical-middle">STATUS</th>';
+		TableHtml+='<th class="vertical-middle">ACTION</th>';
+	}
+	TableHtml+='</tr></thead>';
+	TableHtml+='<tbody id="TableContent">';
+	TableHtml+='</tbody>';
+	$('#Table').append(TableHtml);
+	
+	$('#keyword').focus();
+	keyword=$('#keyword').val();
+	jsonRow = 'loademployees.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&manager='+manager+'&manageruuid='+managerUUID;
+	
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}	
+	 
+	load_data(jsonRow);	
+		 
+	
+	$(window).scroll(function(){
+		if ($(window).scrollTop() == $(document).height() - $(window).height()){
+		if(complete==false && completeScroll==false) {
+			$('#img_loading_div').show();
+			$('#display_more_btn').hide();
+			start=end+1;
+			end=parseInt(start)+parseInt(nPageSize);
+			jsonRow = 'loademployees.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&manager='+manager+'&manageruuid='+managerUUID;
+			if(keyword!=''){
+				jsonRow +='&keyword='+keyword;
+			}
+			if(tab!=''){
+				jsonRow +='&tab='+tab;
+			}	
+			 
+			load_data(jsonRow);	
+		}
+		}
+	});	
+	
+	//setup before functions
+	var typingTimer;                //timer identifier
+	var doneTypingInterval = 1000;  //time in ms, 5 second for example
+	
+	//on keyup, start the countdown
+	$('#keyword').keyup(function(){
+		clearTimeout(typingTimer);
+		if ($('#keyword').val) {
+			typingTimer = setTimeout(function(){
+				$('#display_more_btn').hide();
+				$('#Table tbody').html('');
+				$('#img_loading_div').show();
+				start=0;
+				end=parseInt(start)+parseInt(nPageSize);
+				tab='';
+				keyword= $("#keyword").val();
+				jsonRow = 'loademployees.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&manager='+manager+'&manageruuid='+managerUUID;
+	
+				if(keyword!=''){
+					jsonRow +='&keyword='+keyword;
+				}
+				if(tab!=''){
+					jsonRow +='&tab='+tab;
+				}	
+				
+				load_data(jsonRow);
+			}, doneTypingInterval);
+		}
+	}).keydown(function( event ) {
+		if ( event.which == 13 ) {
+			event.preventDefault();
+	  	}
+	});		
+	
+	$('#Table').on("click","#chk_all", function(){
+		if($(this).is(":checked")){
+			checkAllFlag=true;
+			$('.check').prop('checked', true);
+		}else{
+			checkAllFlag=false;
+			$('.check').prop('checked', false);
+		}
+	});	
+    
+});
+
+function show_more(){
+	$('#display_more_btn').hide();
+	$('#img_loading_div').show();
+	start=end+1;
+	end=parseInt(start)+parseInt(nPageSize);
+	jsonRow = 'loademployees.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&manager='+manager+'&manageruuid='+managerUUID;
+	
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}
+	if(tab!=''){
+		jsonRow +='&tab='+tab;
+	}	
+		
+	load_data(jsonRow);	
+}
+var loggedInUser= '<!--#4DHTMLVAR _HIT_WebSession_GetVar ("auth_user_uuid") -->';
+var pIsBookKeeper='<!--#4DHTMLVAR IsUserBookKeeper-->'; 
+var pIsHitUser='<!--#4DHTMLVAR IsUserPower-->'; 
+
+var emp_uuid=new Array();  
+function load_data(jsonRow){
+	completeScroll=true;
+	
+	JSONdata=new Array();
+	$.getJSON(jsonRow,function(result){
+		
+			if(result.Alert){
+				__alertMessage("No more records found!");
+				complete=true;
+				$('#display_more_btn').hide();
+			}else{
+			 	if(isMobile.any()) {
+			 	$.each(result.uuid, function(i,item){
+				 	JSONdata[i]=new Array();
+				 
+					JSONdata[i][1]='<a href="task.shtml?uuid='+item+'"><i class="fa fa-pencil"></i></a>';
+				}); 
+				$.each(result.EmpName, function(i,item)
+				{
+					JSONdata[i][0]=item;
+				});
+				
+			 	}else{
+				$.each(result.uuid, function(i,item){
+				 JSONdata[i]=new Array();
+				 if(checkAllFlag==true){
+				 JSONdata[i][0]='<div class="checkbox checkbox-theme no-margin"><input class="check" checked type="checkbox" value="'+item+'" id="'+item+'"><label for="'+item+'" class="no-padding"></label></div>';
+				 }else{
+					 JSONdata[i][0]='<div class="checkbox checkbox-theme no-margin"><input class="check" type="checkbox" value="'+item+'" id="'+item+'"><label for="'+item+'" class="no-padding"></label></div>';
+				 }
+				 
+				if(loggedInUser==item || pIsBookKeeper==true || pIsHitUser==true){
+					JSONdata[i][8]='<a href="javascript:void(0)" onclick="funURLHandler(\'employee.shtml?uuid='+item+'\',\'open-employee-window\')" title="Edit"><i class="fa fa-pencil"></i></a>&nbsp;<a href="javascript:void(0)" onClick="__showDownloadPrompt(\''+item+'\',\'<!--#4DVAR _HIT_TokenGetAny-->\')" title="Download Timeslips details"><i class="fa fa-download"></i></a>&nbsp;<a href="javascript:void(0)" onClick="__deleteSelected(\''+item+'\')" title="Delete"><i class="fa fa-remove"></i></a>';
+				}else{
+					JSONdata[i][8]='<a href="javascript:void(0)" onClick="__showDownloadPrompt(\''+item+'\',\'<!--#4DVAR _HIT_TokenGetAny-->\')" title="Download Timeslips details"><i class="fa fa-download"></i></a>';
+				}
+				});
+				
+				$.each(result.EmpName, function(i,item)
+				{
+					JSONdata[i][1]=item;
+				});
+				$.each(result.Position, function(i,item)
+				{
+					JSONdata[i][2]=item;
+				});
+				
+				$.each(result.Email, function(i,item)
+				{					
+					JSONdata[i][3]=item;
+				});
+				
+				$.each(result.Type, function(i,item)
+				{	
+					JSONdata[i][4]='<a href="projects.shtml?keyword='+item+'" target="_blank">'+item+'</a>';
+				});
+				
+				$.each(result.TotalHolidays, function(i,item)
+				{				
+					JSONdata[i][5]=item;
+				});
+				
+				$.each(result.Access, function(i,item)
+				{					
+					if(item==true){
+					JSONdata[i][6]='<span class="label bg-green-500 padding-5"> ALLOW </span>';
+					}else{
+					JSONdata[i][6]='<span class="label bg-red-800 padding-5"> DENY </span>';
+					}
+				}); 
+				
+				$.each(result.Active, function(i,item)
+				{					
+					if(item==true){
+					JSONdata[i][7]='<span class="label bg-green-500 padding-5"> ACTIVE </span>';
+					}else{
+					JSONdata[i][7]='<span class="label bg-red-800 padding-5"> INACTIVE </span>';
+					} 
+				});
+			
+			
+				}
+  				
+				var table_html='';
+				$.each(JSONdata, function(i,row){
+					table_html+='<tr>';
+					$.each(row, function(i,col){
+						table_html+='<td class="vertical-middle">'+col+'</td>';
+					});
+					table_html+='</tr>';
+				});
+				
+				if(old_srch!=keyword){
+					$('#TableContent').html('');
+					old_srch=keyword;
+				}
+				
+				$('#TableContent').append(table_html);
+				complete=false;
+				$('#display_more_btn').show();
+		}
+		$('#img_loading_div').hide();
+		completeScroll=false;
+	});
+}
+
+var end_date=new Date();
+	var one_day=1000*60*60*24;
+	
+	var day=end_date.getDate();
+	var month=end_date.getMonth()+1;
+	var year=end_date.getFullYear();
+	var last_month=month-1;
+	var last_year=year;
+	if(last_month==0){
+		last_month=12;
+		last_year=year-1;
+	}
+	var month_s_date=String(day)+'/'+String(last_month)+'/'+String(last_year);
+	
+	var week_start=new Date();
+	week_start.setTime(end_date.getTime()-(7*one_day));										
+	var week_s_date = week_start.getDate()+'/'+String(week_start.getMonth()+1)+'/'+week_start.getFullYear();
+	
+	var e_date=String(day)+'/'+String(month)+'/'+String(year);
+
+function __showDownloadPrompt(emp_uuid, token){
+	$("#employee_uuid").val(emp_uuid);
+	$("#token").val(token);
+	code = $('#download').text();
+	(new Function(code))();
+}
+</script>
+</body>
+<!-- END BODY -->

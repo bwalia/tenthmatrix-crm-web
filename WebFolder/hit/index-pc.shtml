@@ -1,0 +1,181 @@
+<!--HIT_EXECUTE
+
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+else
+_HIT_HTTPD_RedirectToURL ("/hit/sign-in.shtml")
+end if 
+
+-->
+
+<!--#4DIF (_HIT_AuthenticateSession="Session-Authenticated-OK")-->
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Tenthmatrix CRM</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	
+    <!-- bootstrap -->
+    <link href="css/bootstrap/bootstrap.css" rel="stylesheet" />
+    <link href="css/bootstrap/bootstrap-responsive.css" rel="stylesheet" />
+    <link href="css/bootstrap/bootstrap-overrides.css" type="text/css" rel="stylesheet" />
+
+    <!-- libraries -->
+    <link href="css/lib/jquery-ui-1.10.2.custom.css" rel="stylesheet" type="text/css" />
+    <link href="css/lib/font-awesome.css" type="text/css" rel="stylesheet" />
+
+    <!-- global styles -->
+    <link rel="stylesheet" type="text/css" href="css/layout.css">
+    <link rel="stylesheet" type="text/css" href="css/elements.css">
+    <link rel="stylesheet" type="text/css" href="css/icons.css">
+
+    <!-- this page specific styles -->
+    <link rel="stylesheet" href="css/compiled/index.css" type="text/css" media="screen" />    
+
+    <!-- open sans font -->
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!-- lato font -->
+    <link href='https://fonts.googleapis.com/css?family=Lato:300,400,700,900,300italic,400italic,700italic,900italic' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" href="css/colorbox.css" />
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+	
+	<style>
+		.smallChart{
+			border:10px solid #6E829B; width:410px;
+		}
+		.btn-flat.primary {
+    background: #41a3d4;
+    border: 1px solid rgb(53, 150, 231);
+}
+
+
+/*layout.css*/
+#sidebar-nav {
+    position: absolute;
+    width: 220px;
+}
+.content {
+    margin-left: 217px;
+
+}
+
+/*index.css*/
+.main-stats .stat .data .number {
+    color: #e6582c;
+}
+	</style>
+</head>
+<body>
+
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
+
+	<!-- main container -->
+    <div class="content">
+
+        <div class="container-fluid">
+
+            <!-- upper main stats -->
+            <div id="main-stats">
+                <div class="row-fluid stats-row">
+                    <div class="span3 stat">
+                        <div class="data">
+                            <span class="number"><!--HIT_EXECUTE
+Web_LoadProjects 
+_HIT_HTMLTXT:=String(Records in selection([Projects]))
+
+--> </span>
+                            projects
+                        </div>
+                        <span class="date">Today</span>
+                    </div>
+                    <div class="span3 stat">
+                        <div class="data">
+                            <span class="number"><!--HIT_EXECUTE
+QUERY([Tasks];[Tasks]task_active=True)
+_HIT_HTMLTXT:=String(Records in selection([Tasks]))
+-->
+</span>
+                            active tasks
+                        </div>
+                        <span class="date"><!--HIT_EXECUTE _HIT_HTMLTXT:=timestamp_unix_toGMT([Tasks]Timestamp_modified)--></span>
+                    </div>
+                    <div class="span3 stat">
+                        <div class="data">
+                            <span class="number"><!--HIT_EXECUTE 
+                           QUERY([Tasks];[Tasks]task_active=True)
+RELATE MANY SELECTION([Timeslips]task_id)
+_HIT_HTMLTXT:=String(Round(Sum([Timeslips]slip_hours);2))
+                            --></span>
+                            total hour spent
+                        </div>
+                        <span class="date"><!--HIT_EXECUTE _HIT_HTMLTXT:=timestamp_unix_toGMT([Tasks]Timestamp_modified)--></span>
+                    </div>
+                    <div class="span3 stat last">
+                        <div class="data">
+                            <span class="number">
+                            $ <!--HIT_EXECUTE 
+                           ALL RECORDS([Projects])
+_HIT_HTMLTXT:=String(Sum([Projects]budget))
+                            -->
+                             </span>
+                            budget spent
+                        </div>
+                         
+                    </div>
+                </div>
+            </div>
+            <!-- end upper main stats -->
+			<h3 style="padding-top:30px;">Charts (to drag chart click on the border)</h3>
+            <div id="pad-wrapper">
+				
+				
+				<table>
+					<tr><td style="padding:20px;">
+					<div class="smallChart" ><iframe src="hours_chart.shtml?view=small" style="border:#000000; width:400px; height:300px"></iframe>
+					<div style="text-align:right; padding-right:10px;padding-bottom:10px;"><a class='iframe' href="hours_chart.shtml"><button class="btn-flat primary" >View Full Chart</button></a></div></div>
+					</td><td style="padding:20px;">
+					<div class="smallChart"><iframe src="payments_chart.shtml?view=small" style="border:#000000; width:400px; height:300px;"></iframe>
+					<div style="text-align:right; padding-right:10px;padding-bottom:10px;"><a class='iframe' href="payments_chart.shtml"><button class="btn-flat primary" >View Full Chart</button></a></div></div>
+					</td></tr>
+					<tr><td style="padding:20px;">
+					<div class="smallChart" ><iframe src="expenses_chart.shtml?view=small" style="border:#000000; width:400px; height:300px"></iframe>
+					<div style="text-align:right; padding-right:10px;padding-bottom:10px;"><a class='iframe' href="expenses_chart.shtml"><button class="btn-flat primary" >View Full Chart</button></a></div></div>
+					</td><td style="padding:20px;">
+					<div class="smallChart"><iframe src="invoice_chart.shtml?view=small" style="border:#000000; width:400px; height:300px"></iframe>
+					<div style="text-align:right; padding-right:10px;padding-bottom:10px;"><a class='iframe' href="invoice_chart.shtml"><button class="btn-flat primary" >View Full Chart</button></a></div></div>
+					</td></tr>
+					<tr><td style="padding:20px;">
+					<div class="smallChart" ><iframe src="tasks_status_column_drilldown.shtml?view=small" style="border:#000000; width:400px; height:300px"></iframe>
+					<div style="text-align:right; padding-right:10px;padding-bottom:10px;"><a class='iframe' href="tasks_status_column_drilldown.shtml"><button class="btn-flat primary" >View Full Chart</button></a></div></div>
+					</td>
+					<td style="padding:20px;">
+					<div class="smallChart" ><iframe src="invoice_column_chart.shtml?view=small" style="border:#000000; width:400px; height:300px"></iframe>
+					<div style="text-align:right; padding-right:10px;padding-bottom:10px;"><a class='iframe' href="invoice_column_chart.shtml"><button class="btn-flat primary" >View Full Chart</button></a></div></div>
+					</td></tr>
+				</table>
+            </div>
+        </div>
+    </div>
+
+
+	<!-- scripts -->
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+	<script src="js/jquery-ui-1.10.2.custom.min.js"></script>
+	<script src="js/jquery.colorbox.js"></script>
+
+    <script type="text/javascript">
+        $(function () {
+			$(".iframe").colorbox({iframe:true, width:"80%", height:"85%"});
+            $( ".smallChart" ).draggable();
+        });
+    </script>
+</body>
+</html><!--#4DELSE--><!--#4DENDIF-->

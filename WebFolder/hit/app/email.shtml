@@ -1,0 +1,507 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+
+//if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+QUERY([Email];[Email]uuid=_HIT_WebApp_GetField ("uuid"))
+C_BOOLEAN(mReadEmail)
+mReadEmail:=(Records in selection([Leads])=1)
+
+LeadUUID:=_HIT_WebApp_GetField ("Lead_uuid")
+QUERY([Leads];[Leads]uuid=LeadUUID)
+C_BOOLEAN(mReadLead)
+mReadLead:=(Records in selection([Leads])=1)
+
+CompanyUUID:=_HIT_WebApp_GetField ("company_uuid")
+QUERY([Companies];[Companies]uuid=CompanyUUID)
+C_BOOLEAN(mReadCompany)
+mReadCompany:=(Records in selection([Companies])=1)
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+//else
+//_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+//end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+
+-->
+<!DOC html>
+<html>
+<head>
+	<title>Tenthmatrix CRM App : Mail</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- bootstrap -->
+	<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="bootstrap/css/bootstrap-responsive.min.css" />
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/app/includes/header.shtml-->
+	<link href="css/lib/bootstrap-wysihtml5.css" type="text/css" rel="stylesheet">
+	<style type="text/css">
+		
+	.custom-combobox {
+    position: relative;
+    display: inline-block;
+  }
+  .custom-combobox-toggle {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    margin-left: -1px;
+    padding: 0;
+    /* support: IE7 */
+    *height: 1.7em;
+    *top: 0.1em;
+  }
+  .custom-combobox-input {
+    margin: 0;
+    padding: 0.3em;
+  }
+  .ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {
+  	width:auto;
+	height:auto;
+	 background: none repeat scroll 0% 0% #FFF;
+	 border: 1px solid #B6B6B6;
+  }
+  .ui-autocomplete{
+  	max-height:300px;
+	overflow:scroll;
+  }
+  
+  .ui-autocomplete li a{
+  	color: #737f8d;
+	text-shadow: 1px 1px 1px #fff;
+  }
+  .ui-widget-content {
+    border: 1px solid #B6B6B6;
+	width: 275px;
+	}
+	
+  #message, #tax_message{
+	color:#FF0000;
+}
+	</style>
+</head>
+<body>
+
+	<!-- main container -->
+    <div class="content wide-content">
+        <div class="container-fluid">
+            <div id="pad-wrapper" class="form-page">
+				<div class="row-fluid">
+					<div class="span12">
+						<form name="SenMailForm" action="sendmail.cgi" id="SenMailForm" class="form-comment form_validation_reg" method="post" enctype="multipart/form-data"> 
+							<input name="email_uuid" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="email_uuid">
+							<div class="formSep">
+								<div class="row-fluid">
+									<div class="span6">
+										<label>Recipient Name <span class="f_req">*</span></label>
+										
+											<input name="EmailName" class="span6" type="text" value="<!--#4DVAR [Email]EmailName-->" id="EmailName">
+										
+									</div>
+									</div>
+							</div>
+							        
+							<div class="formSep">
+								<div class="row-fluid">
+									
+									<div class="span6">
+										<label>Recipient Email Address</label>
+										<div class="ui-widget">
+									<select id="ToEmailAddress" name="ToEmailAddress">
+									 
+									 <!--#4DIF (mReadLead)-->
+									 	<option value="<!--#4DHTMLVAR [Leads]Email-->"><!--#4DHTMLVAR [Leads]Email--></option>
+									 <!--#4DENDIF-->
+									  <!--#4DIF (mReadCompany)-->
+									 	 <option value="<!--4DVAR [Companies]email_address-->"><!--4DVAR [Companies]email_address--></option>									 
+									 <!--#4DENDIF-->									 										
+									</select>
+						 	</div>				
+										</div>
+
+								</div>
+							</div>
+							        
+							<div class="formSep">
+								<div class="row-fluid">
+								
+								<div class="span6">
+										<label>Cc </label>
+										<div class="ui-widget">
+									<select id="CCToEmailAddress" name="CCToEmailAddress">
+									<option value=""></option>
+									  	
+									</select>
+						 	</div>
+									</div>
+									</div>
+							</div>
+							        
+							<div class="formSep">
+								<div class="row-fluid">
+								
+									<div class="span6">
+										<label>BCc </label>
+										<div class="ui-widget">
+									<select id="BCCToEmailAddress" name="BCCToEmailAddress">
+									<option value=""></option>	
+									 	
+									</select>
+						 	</div>
+									</div>
+
+								</div>
+							</div>
+							
+							<div class="formSep">
+								<div class="row-fluid">
+									<div class="span6">
+										<label>Send By </label>
+										<select id="HostName" name="HostName">
+								      <option value="Balinder">Balinder Walia</option>
+								      <option value="Pat">Pat Bensky</option>
+								      <option value="Sandeep" selected>Sandeep Shah</option>
+									</select>
+									</div>
+									</div>
+							</div>
+							        
+							<div class="formSep">
+								<div class="row-fluid">
+									
+									<div class="span6">
+										<label>Subject <span class="f_req">*</span></label>
+										<input name="Subject" id="Subject" class="span6" type="text"  value="<!--#4DHTMLVAR [Email]Subject-->" >  
+										</div>
+
+								</div>
+							</div>
+							        
+							<div class="formSep">
+								<div class="row-fluid">
+								
+								<div class="span6">
+										<label>Attach File(s) </label>
+										<input id="file_content" name="file_content" style="width : 78px;"  type="file" class="multi" maxlength="15" />
+								<input id="num_files" name="num_files" type="hidden"  />
+									</div>
+									</div>
+							</div>
+							        
+							<div class="formSep">
+								<div class="row-fluid">
+								
+									<div class="span6">
+										<label></label>
+										<label class="checkbox inline">							
+								<input name="send_html_mail" type="checkbox" value="true" id="send_html_mail" checked  >Send HTML mail
+							</label> 
+									</div>
+
+								</div>
+							</div>
+							<div class="formSep">
+								<div class="row-fluid">
+								
+									<div class="span6">
+										<label>Message</label>
+										<div class="wysi-column" id="div_wysiwyg">
+                                    <textarea id="html_Message_Body" class="span10 wysihtml5" rows="25" columns="40" name="Message_Body"><!--#4DHTMLVAR [Email]EmailText--></textarea>
+                                </div>
+						       <textarea id="Message_Body" class="span10" rows="25" columns="40" name="disable_Message_Body" ><!--#4DHTMLVAR [Email]EmailText--></textarea>
+								<input type="hidden" name="mail_content" id="mail_content" >
+									</div>
+
+								</div>
+							</div>
+							
+
+							<div style="text-align: center;" class="span9 field-box">
+								<input type="button" id="btn_submit" value="Send Mail" class="btn-glow primary" onClick="send_mail()">
+								<span>OR</span>
+								<a href="emails.shtml">Cancel</a>							</div>
+						</form>
+					</div>
+				</div>
+            </div>
+		</div>
+    </div>
+	
+    <!-- end main container -->
+
+	
+	<script src="js/jquery.min.js"></script>
+	<script src="bootstrap/js/bootstrap.min.js"></script>
+	<!-- validation -->
+	 <script src="js/wysihtml5-0.3.0.js"></script>
+	<script src="js/bootstrap-wysihtml5-0.0.2.js"></script>
+    <script src="lib/validation/jquery.validate.min.js"></script>
+	<script type="text/javascript" src="js/jquery-impromptu.js"></script>
+	<script src="js/jquery-ui-1.9.1.custom.js"></script>
+	<script src="js/jquery.MultiFile.js" type="text/javascript" language="javascript"></script>
+	
+	
+<script type="text/javascript">
+
+	$(document).ready(function() {
+	
+		$.validator.setDefaults({
+			ignore: "",
+				onkeyup: false,
+				errorClass: 'error',
+				validClass: 'valid',
+				highlight: function(element) {
+					$(element).closest('div').addClass("f_error");
+				},
+				unhighlight: function(element) {
+					$(element).closest('div').removeClass("f_error");
+				},
+				errorPlacement: function(error, element) {
+					$(element).closest('div').append(error);
+				},
+		});
+		
+		
+			
+			 $('textarea.wysihtml5').wysihtml5({
+                "font-styles": false
+            });
+			
+			
+			
+			$('#Message_Body').hide();
+			
+		$('#send_html_mail').change(function(){
+			
+			if($(this).is(':checked')){
+				
+				$('#html_Message_Body').attr('name', 'Message_Body');
+				$('#Message_Body').attr('name', 'disable_Message_Body');
+				$('#div_wysiwyg').show();
+				$('#Message_Body').hide();
+			}
+			else{
+				
+				$('#html_Message_Body').attr('name', 'disable_Message_Body');
+				$('#Message_Body').attr('name', 'Message_Body');
+				$('#div_wysiwyg').hide();
+				$('#Message_Body').show();
+			}
+		});
+			 
+});
+
+function send_mail()
+{
+	$('#num_files').val($('.multi').length);
+	$('.multi').each(function(){
+		$(this).attr('name',$(this).attr('id'));
+	});
+	$('#file_content').attr('name',$('#file_content').attr('id')+'_F0');
+	$('.form_validation_reg').validate({				
+				rules: {
+					EmailName: { required: true },
+					Subject: { required: true },
+					ToEmailAddress: { required: true },
+				},
+			});	
+	if($('.form_validation_reg').valid()){
+		$('.form_validation_reg').submit();
+	}		
+			
+}
+
+</script>
+
+<script>
+	 var xhr;
+  (function( $ ) {
+    $.widget( "custom.combobox", {
+      _create: function() {
+        this.wrapper = $( "<span>" )
+          .addClass( "custom-combobox" )
+          .insertAfter( this.element );
+ 
+        this.element.hide();
+        this._createAutocomplete();
+        this._createShowAllButton();
+      },
+ 
+      _createAutocomplete: function() {
+        var selected = this.element.children( ":selected" ),
+          value = selected.val() ? selected.text() : "";
+ 
+        this.input = $( "<input>" )
+          .appendTo( this.wrapper )
+          .val( value )
+          .attr( "title", "" )
+          .addClass( "custom-combobox-input ui-widget ui-widget-content ui-state-default ui-corner-left" )
+          .autocomplete({
+            delay: 0,
+            minLength: 0,
+            source: $.proxy( this, "_source" )
+          })
+          .tooltip({
+            tooltipClass: "ui-state-highlight"
+          });
+ 
+        this._on( this.input, {
+          autocompleteselect: function( event, ui ) {
+		  	//alert("show all");
+            ui.item.option.selected = true;
+			
+            this._trigger( "select", event, {
+              item: ui.item.option
+            });
+          },
+ 
+          autocompletechange: "_removeIfInvalid"
+        });
+      },
+ 
+      _createShowAllButton: function() {
+        var input = this.input,
+          wasOpen = false;
+ 
+        $( "<a>" )
+          .attr( "tabIndex", -1 )
+          .attr( "title", "Show All Items" )
+          .tooltip()
+          .appendTo( this.wrapper )
+          .button({
+            icons: {
+              primary: "ui-icon-triangle-1-s"
+            },
+            text: false
+          })
+          .removeClass( "ui-corner-all" )
+          .addClass( "custom-combobox-toggle ui-corner-right" )
+          .mousedown(function() {
+            wasOpen = input.autocomplete( "widget" ).is( ":visible" );
+          })
+          .click(function() {
+            input.focus();
+ 
+            // Close if already visible
+            if ( wasOpen ) {
+              return;
+            }
+ 
+            // Pass last search string as value to search for, displaying last results
+            input.autocomplete( "search", 'SHOWALL' );
+          });
+      },
+ 
+      _source: function( request, response ) {
+        //var matcher = new RegExp( $.ui.autocomplete.escapeRegex(request.term), "i" );
+		var ele_select= this.element;
+		if(request.term=='SHOWALL'){
+			response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+		
+		}
+		else
+		{
+		var jsonRow = 'getmailonsearch.cgi?srch='+request.term;
+		
+
+		//alert(jsonRowURLStr);
+		if(xhr) xhr.abort();
+		xhr=$.getJSON(jsonRow,function(result){
+			
+			if(result){
+				var html='<option value=""></option>';
+
+				$.each(result, function(i,item)
+				{
+					html += '<option value="'+item.id+'">'+item.value+'</option>';
+				});
+				ele_select.html(html);
+				
+				
+				response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+				
+				
+			}
+		});
+       
+	  } 
+		
+      },
+ 
+      _removeIfInvalid: function( event, ui ) {
+ 
+        // Selected an item, nothing to do
+        if ( ui.item ) {
+
+          return;
+        }
+ 
+        // Search for a match (case-insensitive)
+        var value = this.input.val(),
+          valueLowerCase = value.toLowerCase(),
+          valid = false;
+        this.element.children( "option" ).each(function() {
+          if ( $( this ).text().toLowerCase() === valueLowerCase ) {
+            this.selected = valid = true;	
+			
+            return false;
+          }
+        });
+ 
+        // Found a match, nothing to do
+        if ( valid ) {
+          return;
+        }
+ 
+        // Remove invalid value
+        /*this.input
+          .val( "" )
+          .attr( "title", value + " didn't match any item" )
+          .tooltip( "open" );*/
+		  this.element.html( "<option value='"+value+"'>"+value+"</option>" );
+        this.element.val( value );
+        /*this._delay(function() {
+          this.input.tooltip( "close" ).attr( "title", "" );
+        }, 2500 );*/
+        this.input.data( "ui-autocomplete" ).term = "";
+      },
+ 
+      _destroy: function() {
+        this.wrapper.remove();
+        this.element.show();
+      }
+    });
+  })( jQuery );
+ 
+  $(function() {
+    $( "#ToEmailAddress" ).combobox();
+    $( "#CCToEmailAddress" ).combobox();
+    $( "#BCCToEmailAddress" ).combobox();
+   $( "#Client_ID" ).combobox();
+	
+  });
+
+  </script>
+
+
+</body>
+</html>

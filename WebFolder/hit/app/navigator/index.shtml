@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- BEGIN HEAD -->
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Tenthmatrix</title>
+<link href="css/font-awesome.css" rel="stylesheet">
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/icon.css" rel="stylesheet">
+<style>
+.ui-helper-hidden-accessible {
+	display: none!important;
+}
+
+</style>
+</head>
+<body >
+<div class="wrapper">
+<div class="container-fluid" ><BR>
+		<div CLASS="row">
+				<div CLASS=" col-lg-3 col-md-6 col-sm-12">
+						<div class="page-head bg-grey-100">
+								<h1 class="page-title">Tenthmatrix CRM Navigator<small>Version: <!--HIT_EXECUTE _HIT_HTMLTXT:=Sys_VersionGet--></small></h1>
+						</div>
+				</div>
+				<div CLASS=" col-lg-2 col-md-6 col-sm-9 pull-right" STYLE="margin-right:20px; margin-left:20px;" >
+						<div class="input-group stylish-input-group">
+								<input class="form-control" placeholder="Search" type="text" id="menu">
+								<span class="input-group-addon">
+								<button type="button" STYLE="border: 0px none; background: transparent none repeat scroll 0% 0%; padding:0px;" onClick="searchResults()"> <i class="fa fa-search" ></i> </button>
+								</span> </div>
+				</div>
+		</div>
+		<div class="row" style="padding:20px;" id="dashboard_menu">
+				<!--<div class="col-lg-2 col-md-3 col-sm-3 col-xs-6"><a class="panel panel-tile padding-md btn-dark bg-blue-grey-500 color-white display-block text-center" href="javascript:void(0)" onclick="$4d.WEBAREA_PROCESS_CALL('customers',function(result,error){ 	});">
+						<div class="font-size-46"><i class="fa fa-users"></i></div>
+						<div class="bold">Customers</div>
+						</a></div>
+				<div class="col-lg-2 col-md-3 col-sm-3 col-xs-6"><a class="panel panel-tile padding-md btn-dark bg-light-green-600 color-white display-block text-center" href="javascript:void(0)" onclick="$4d.WEBAREA_PROCESS_CALL('contacts',function(result,error){ 	});">
+						<div class="font-size-46"><i class="fa fa-envelope"></i></div>
+						<div class="bold">Contacts</div>
+						</a></div>
+				<div class="col-lg-2 col-md-3 col-sm-3 col-xs-6"><a class="panel panel-tile padding-md btn-dark bg-light-blue-300 color-white display-block text-center" href="javascript:void(0)" onclick="$4d.WEBAREA_PROCESS_CALL('projects',function(result,error){ 	});">
+						<div class="font-size-46"><i class="fa fa-list-alt"></i></div>
+						<div class="bold">Projects</div>
+						</a></div>
+				<div class="col-lg-2 col-md-3 col-sm-3 col-xs-6"><a class="panel panel-tile padding-md btn-dark bg-red-300 color-white display-block text-center" href="javascript:void(0)" onclick="$4d.WEBAREA_PROCESS_CALL('tasks',function(result,error){ 	});">
+						<div class="font-size-46"><i class="fa fa-tasks"></i></div>
+						<div class="bold">Tasks</div>
+						</a></div>
+				<div class="col-lg-2 col-md-3 col-sm-3 col-xs-6"><a class="panel panel-tile padding-md btn-dark bg-purple-300 color-white display-block text-center" href="javascript:void(0)" onclick="$4d.WEBAREA_PROCESS_CALL('timeslips',function(result,error){ 	});">
+						<div class="font-size-46"><i class="fa fa-calendar"></i></div>
+						<div class="bold">Timeslips</div>
+						</a></div>
+				<div class="col-lg-2 col-md-3 col-sm-3 col-xs-6"><a class="panel panel-tile padding-md btn-dark bg-light-green-500  color-white display-block text-center" href="javascript:void(0)" onclick="$4d.WEBAREA_PROCESS_CALL('invoices',function(result,error){ 	});">
+						<div class="font-size-46"><i class="fa fa-book"></i></div>
+						<div class="bold">Invoices</div>
+						</a></div>
+				<div class="col-lg-2 col-md-3 col-sm-3 col-xs-6"><a class="panel panel-tile padding-md btn-dark bg-red-500 color-white display-block text-center" href="javascript:void(0)" onclick="$4d.WEBAREA_PROCESS_CALL('receipts',function(result,error){ 	});">
+						<div class="font-size-46"><i class="fa fa-file-text"></i></div>
+						<div class="bold">Receipts</div>
+						</a></div>
+				<div class="col-lg-2 col-md-3 col-sm-3 col-xs-6"><a class="panel panel-tile padding-md btn-dark bg-blue-grey-500 color-white display-block text-center" href="javascript:void(0)" onclick="$4d.WEBAREA_PROCESS_CALL('documents',function(result,error){ 	});">
+						<div class="font-size-46"><i class="fa fa-file-o"></i></div>
+						<div class="bold">Documents</div>
+						</a></div>
+				<div class="col-lg-2 col-md-3 col-sm-3 col-xs-6"><a class="panel panel-tile padding-md btn-dark bg-light-green-600 color-white display-block text-center" href="javascript:void(0)" onclick="$4d.WEBAREA_PROCESS_CALL('work_orders',function(result,error){ 	});">
+						<div class="font-size-46"><i class="fa fa-file-text-o"></i></div>
+						<div class="bold">Work Orders</div>
+						</a></div>
+				<div class="col-lg-2 col-md-3 col-sm-3 col-xs-6"><a class="panel panel-tile padding-md btn-dark bg-light-blue-300 color-white display-block text-center" href="javascript:void(0)" onclick="$4d.WEBAREA_PROCESS_CALL('purchase_invoices',function(result,error){ 	});">
+						<div class="font-size-46"><i class="fa fa-table"></i></div>
+						<div class="bold">Purchase Invoices</div>
+						</a></div>
+				<div class="col-lg-2 col-md-3 col-sm-3 col-xs-6"><a class="panel panel-tile padding-md btn-dark bg-red-300 color-white display-block text-center" href="javascript:void(0)" onclick="$4d.WEBAREA_PROCESS_CALL('purchase_orders',function(result,error){ 	});">
+						<div class="font-size-46"><i class="fa fa-tasks"></i></div>
+						<div class="bold">Purchase Orders</div>
+						</a></div>
+				<div class="col-lg-2 col-md-3 col-sm-3 col-xs-6"><a class="panel panel-tile padding-md btn-dark bg-purple-300 color-white display-block text-center" href="javascript:void(0)" onclick="$4d.WEBAREA_PROCESS_CALL('bank_statement_entries',function(result,error){ 	});">
+						<div class="font-size-46"><img src="images/documents7.svg" class="svgicon" alt=""></div>
+						<div class="bold">Bank Statement Entries</div>
+						</a></div>
+				<div class="col-lg-2 col-md-3 col-sm-3 col-xs-6"><a class="panel panel-tile padding-md btn-dark bg-light-green-500  color-white display-block text-center" href="javascript:void(0)" onclick="$4d.WEBAREA_PROCESS_CALL('payments',function(result,error){ 	});">
+						<div class="font-size-46"><i class="fa fa-credit-card-alt"></i></div>
+						<div class="bold">Payments</div>
+						</a></div>
+				<div class="col-lg-2 col-md-3 col-sm-3 col-xs-6"><a class="panel panel-tile padding-md btn-dark bg-blue-grey-500 color-white display-block text-center" href="javascript:void(0)" onclick="$4d.WEBAREA_PROCESS_CALL('employees',function(result,error){ 	});">
+						<div class="font-size-46"><img src="images/worker.svg" class="svgicon" alt=""></div>
+						<div class="bold">Employees</div>
+						</a></div>
+				<div class="col-lg-2 col-md-3 col-sm-3 col-xs-6"><a class="panel panel-tile padding-md btn-dark bg-light-green-600 color-white display-block text-center" href="javascript:void(0)" onclick="$4d.WEBAREA_PROCESS_CALL('domains',function(result,error){ 	});">
+						<div class="font-size-46"><img src="images/domain.svg" class="svgicon" alt=""></div>
+						<div class="bold">Domains</div>
+						</a></div>
+				<div class="col-lg-2 col-md-3 col-sm-3 col-xs-6"><a class="panel panel-tile padding-md btn-dark bg-light-blue-300 color-white display-block text-center" href="javascript:void(0)" onclick="$4d.WEBAREA_PROCESS_CALL('outstanding_invoice',function(result,error){ 	});">
+						<div class="font-size-46"><img src="images/Invoice.svg" class="svgicon" alt=""></div>
+						<div class="bold">Outstanding Invoice</div>
+						</a></div>
+				<div class="col-lg-2 col-md-3 col-sm-3 col-xs-6"><a class="panel panel-tile padding-md btn-dark bg-red-300 color-white display-block text-center" href="javascript:void(0)" onclick="$4d.WEBAREA_PROCESS_CALL('add_mileage_expenses',function(result,error){ 	});">
+						<div class="font-size-46"><i class="fa fa-tasks"></i></div>
+						<div class="bold">Add Mileage Expenses</div>
+						</a></div>
+				<div class="col-lg-2 col-md-3 col-sm-3 col-xs-6"><a class="panel panel-tile padding-md btn-dark bg-purple-300 color-white display-block text-center" href="javascript:void(0)" onclick="$4d.WEBAREA_PROCESS_CALL('add_other_expenses',function(result,error){ 	});">
+						<div class="font-size-46"><img src="images/add-other.svg" class="svgicon" alt=""></div>
+						<div class="bold">Add Other Expenses</div>
+						</a></div>
+				<div class="col-lg-2 col-md-3 col-sm-3 col-xs-6"><a class="panel panel-tile padding-md btn-dark bg-light-green-500  color-white display-block text-center" href="javascript:void(0)" onclick="$4d.WEBAREA_PROCESS_CALL('mailing',function(result,error){ 	});">
+						<div class="font-size-46"><i class="fa fa-envelope-o"></i></div>
+						<div class="bold">Mailing</div>
+						</a></div>
+				<div class="col-lg-2 col-md-3 col-sm-3 col-xs-6"><a class="panel panel-tile padding-md btn-dark bg-red-500 color-white display-block text-center" href="javascript:void(0)" onclick="$4d.WEBAREA_PROCESS_CALL('mailing_templates',function(result,error){ 	});">
+						<div class="font-size-46"><i class="fa fa-list-alt"></i></div>
+						<div class="bold">Mailing Templates</div>
+						</a></div>
+				<div class="col-lg-2 col-md-3 col-sm-3 col-xs-6"><a class="panel panel-tile padding-md btn-dark bg-blue-grey-500 color-white display-block text-center" href="javascript:void(0)" onclick="$4d.WEBAREA_PROCESS_CALL('print_account_statements',function(result,error){ 	});">
+						<div class="font-size-46"><i class="fa fa-print"></i></div>
+						<div class="bold">Print Account Statements</div>
+						</a></div>
+				<div class="col-lg-2 col-md-3 col-sm-3 col-xs-6"><a class="panel panel-tile padding-md btn-dark bg-light-green-600 color-white display-block text-center" href="javascript:void(0)" onclick="$4d.WEBAREA_PROCESS_CALL('submit_vat_return',function(result,error){ 	});">
+						<div class="font-size-46"><i class="fa fa-book"></i></div>
+						<div class="bold">Submit VAT Return</div>
+						</a></div>
+				<div class="col-lg-2 col-md-3 col-sm-3 col-xs-6"><a class="panel panel-tile padding-md btn-dark bg-light-blue-300 color-white display-block text-center" href="javascript:void(0)" onclick="$4d.WEBAREA_PROCESS_CALL('vat_calculator',function(result,error){ 	});">
+						<div class="font-size-46"><i class="fa fa-calculator"></i></div>
+						<div class="bold">VAT Calculator</div>
+						</a></div>
+				<div class="col-lg-2 col-md-3 col-sm-3 col-xs-6"><a class="panel panel-tile padding-md btn-dark bg-red-300 color-white display-block text-center" href="javascript:void(0)" onclick="$4d.WEBAREA_PROCESS_CALL('transactions',function(result,error){ 	});">
+						<div class="font-size-46"><IMG SRC="images/transactions.svg" CLASS="svgicon" ALT=""/></div>
+						<div class="bold">Transactions</div>
+						</a></div>
+				<div class="col-lg-2 col-md-3 col-sm-3 col-xs-6"><a class="panel panel-tile padding-md btn-dark bg-purple-300 color-white display-block text-center" href="javascript:void(0)" onclick="$4d.WEBAREA_PROCESS_CALL('job_applications',function(result,error){ 	});">
+						<div class="font-size-46"><IMG SRC="images/job-application.svg" CLASS="svgicon" ALT=""/></div>
+						<div class="bold">Job Applications</div>
+						</a></div>
+				<div class="col-lg-2 col-md-3 col-sm-3 col-xs-6"><a class="panel panel-tile padding-md btn-dark bg-light-green-500  color-white display-block text-center" href="javascript:void(0)" onclick="$4d.WEBAREA_PROCESS_CALL('cash_management',function(result,error){ 	});">
+						<div class="font-size-46"><IMG SRC="images/cash-management.svg" CLASS="svgicon" ALT=""/></div>
+						<div class="bold">Cash Management</div>
+						</a></div>
+				<div class="col-lg-2 col-md-3 col-sm-3 col-xs-6"><a class="panel panel-tile padding-md btn-dark bg-red-500 color-white display-block text-center" href="javascript:void(0)" onclick="$4d.WEBAREA_PROCESS_CALL('account_statements',function(result,error){ 	});">
+						<div class="font-size-46"><img src="images/documents7.svg" class="svgicon" alt=""></div>
+						<div class="bold">Account Statements</div>
+						</a></div>
+				<div class="col-lg-2 col-md-3 col-sm-3 col-xs-6"><a class="panel panel-tile padding-md btn-dark bg-blue-grey-500 color-white display-block text-center" href="javascript:void(0)" onclick="$4d.WEBAREA_PROCESS_CALL('business_brands',function(result,error){ 	});">
+						<div class="font-size-46"><i class="fa fa-cubes"></i></div>
+						<div class="bold">Business Brands</div>
+						</a></div>
+				<div class="col-lg-2 col-md-3 col-sm-3 col-xs-6"><a class="panel panel-tile padding-md btn-dark bg-light-green-600 color-white display-block text-center" href="javascript:void(0)" onclick="$4d.WEBAREA_PROCESS_CALL('leads',function(result,error){ 	});">
+						<div class="font-size-46"><IMG SRC="images/lead.svg" CLASS="svgicon" ALT=""/></div>
+						<div class="bold">Leads</div>
+						</a></div>
+				<div class="col-lg-2 col-md-3 col-sm-3 col-xs-6"><a class="panel panel-tile padding-md btn-dark bg-light-blue-300 color-white display-block text-center" href="javascript:void(0)" onclick="$4d.WEBAREA_PROCESS_CALL('holidays',function(result,error){ 	});">
+						<div class="font-size-46"><IMG SRC="images/holidays.svg" CLASS="svgicon" ALT=""/></div>
+						<div class="bold">Holidays</div>
+						</a></div>
+				<div class="col-lg-2 col-md-3 col-sm-3 col-xs-6"><a class="panel panel-tile padding-md btn-dark bg-red-300 color-white display-block text-center" href="javascript:void(0)" onclick="$4d.WEBAREA_PROCESS_CALL('login_to_online_banking',function(result,error){ 	});">
+						<div class="font-size-46"><IMG SRC="images/login.svg" CLASS="svgicon" ALT=""/></div>
+						<div class="bold">Login to Online Banking</div>
+						</a></div>
+				<div class="col-lg-2 col-md-3 col-sm-3 col-xs-6"><a class="panel panel-tile padding-md btn-dark bg-purple-300 color-white display-block text-center" href="javascript:void(0)" onclick="$4d.WEBAREA_PROCESS_CALL('bank_accounts',function(result,error){ 	});">
+						<div class="font-size-46"><i class="fa fa-bank"></i></div>
+						<div class="bold">Bank Accounts</div>
+						</a></div>
+				<div class="col-lg-2 col-md-3 col-sm-3 col-xs-6"><a class="panel panel-tile padding-md btn-dark bg-light-green-500  color-white display-block text-center" href="javascript:void(0)" onclick="$4d.WEBAREA_PROCESS_CALL('bank_entry_types',function(result,error){ 	});">
+						<div class="font-size-46"><img src="images/documents7.svg" class="svgicon" alt=""></div>
+						<div class="bold">Bank Entry Types</div>
+						</a></div>
+				<div class="col-lg-2 col-md-3 col-sm-3 col-xs-6"><a class="panel panel-tile padding-md btn-dark bg-blue-grey-500 color-white display-block text-center" href="javascript:void(0)" onclick="$4d.WEBAREA_PROCESS_CALL('script_runner',function(result,error){ 	});">
+						<div class="font-size-46"><IMG SRC="images/script-runner.svg" CLASS="svgicon" ALT=""/></div>
+						<div class="bold">Script Runner</div>
+						</a></div>
+				<div class="col-lg-2 col-md-3 col-sm-3 col-xs-6"><a class="panel panel-tile padding-md btn-dark bg-light-green-600 color-white display-block text-center" href="javascript:void(0)" onclick="$4d.WEBAREA_PROCESS_CALL('ftp_accounts',function(result,error){ 	});">
+						<div class="font-size-46"><i class="fa fa-book"></i></div>
+						<div class="bold">FTP Accounts</div>
+						</a></div>
+				<div class="col-lg-2 col-md-3 col-sm-3 col-xs-6"><a class="panel panel-tile padding-md btn-dark bg-light-blue-300 color-white display-block text-center" href="javascript:void(0)" onclick="$4d.WEBAREA_PROCESS_CALL('emails_direct',function(result,error){ 	});">
+						<div class="font-size-46"><i class="fa fa-envelope"></i></div>
+						<div class="bold">Emails Direct</div>
+						</a></div>
+				<div class="col-lg-2 col-md-3 col-sm-3 col-xs-6"><a class="panel panel-tile padding-md btn-dark bg-red-300 color-white display-block text-center" href="javascript:void(0)" onclick="$4d.WEBAREA_PROCESS_CALL('emails_queue',function(result,error){ 	});">
+						<div class="font-size-46"><i class="fa fa-envelope-o"></i></div>
+						<div class="bold">Emails Queue</div>
+						</a></div>
+				<div class="col-lg-2 col-md-3 col-sm-3 col-xs-6"><a class="panel panel-tile padding-md btn-dark bg-purple-300 color-white display-block text-center" href="javascript:void(0)" onclick="$4d.WEBAREA_PROCESS_CALL('templates',function(result,error){ 	});">
+						<div class="font-size-46"><i class="fa fa-list-alt"></i></div>
+						<div class="bold">Templates</div>
+						</a></div>-->
+		</div>
+		<div id="img_loading_div" style="text-align:center">
+			<img src="loading.gif"  style="padding:20px; width:195px;"  >
+		</div>
+		<!-- BEGIN FOOTER -->
+		<footer class="bg-white">
+				<div class="pull-left"> <span class="pull-left margin-right-15">&copy;&nbsp;2015&nbsp;&nbsp;<a target="_blank" href="javascript:void(0)" onclick='$4d.WEBAREA_OPEN_WEB_URL("https://www.tenthmatrix.co.uk",function(result,error){ 	});'">Tenthmatrix.co.uk</a>&nbsp;&nbsp;</span>
+						<ul class="list-inline pull-left">
+								<li><a href="javascript:void(0)" onclick='$4d.WEBAREA_OPEN_WEB_URL("https://www.tenthmatrix.co.uk/privacy-policy.html",function(result,error){ 	});'>Privacy Policy</a></li>
+								<li><a href="javascript:void(0)" onclick='$4d.WEBAREA_OPEN_WEB_URL("https://www.tenthmatrix.co.uk/terms-of-business.html",function(result,error){ 	});'>Terms of Use</a></li>
+						</ul>
+				</div>
+		</footer>
+		<!-- END FOOTER --> 
+</div>
+<script src="js/jquery-latest.js"></script>
+<script type="text/javascript">
+var start=1, end=1000;
+function bodyHtml(uuid,name,icon,style){
+	icon = typeof icon !== 'undefined' ? icon : '';
+	var code=name.replace(/ /g, '_');
+	code=code.toLowerCase();
+	var imagesPathStr=icon.indexOf("images/");
+	var imgPathStr=icon.indexOf("img/");
+	var pathStr=icon.indexOf("/");
+	
+	var htmlStr='<div class="col-lg-2 col-md-3 col-sm-3 col-xs-6"><a class="panel panel-tile padding-md btn-dark '+style+' color-white display-block text-center" href="javascript:void(0)" onclick="$4d.WEBAREA_PROCESS_CALL(\''+code+'\',\''+uuid+'\',function(result,error){ 	});"><div class="font-size-46">';
+	if(pathStr>=0 || imgPathStr>=0 || imagesPathStr>=0){
+		//htmlStr+='<img class="svgicon" alt="" src="'+icon+'">';
+		htmlStr+='<object style=" display:inline-block; max-width: 49px; max-height:50px;" data="'+icon+'" type="image/svg+xml"></object>';
+	}else{
+		htmlStr+='<i class="'+icon+'"></i>';
+	}
+	htmlStr+='</div><div class="bold">'+name+'</div></a></div>';
+	return htmlStr;
+}
+
+function searchResults(){
+	$('#dashboard_menu').html('');
+	$('#img_loading_div').show();
+	load_data();
+}
+
+function load_data(){
+	var jsonRow = 'loadmodules.cgi?start='+start+'&end='+end+'&auth=disabled&session_uuid=<!--#4DHTMLVAR _HIT_SessionGet-->';
+	var keyword= $("#menu").val();
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}
+	JSONdata=new Array();
+	$.getJSON(jsonRow,function(result){
+		if(result.Alert){
+			//alert(result.Alert);
+		}else{
+			//alert(result.name);
+			$.each(result.name, function(i,item){
+				JSONdata[i]=new Array();
+				JSONdata[i][0]=item;
+			}); 
+			$.each(result.icon_path, function(i,item){
+				JSONdata[i][1]=item;
+			});
+			$.each(result.active, function(i,item){
+				JSONdata[i][2]=item;
+			});
+			$.each(result.uuid, function(i,item){
+				JSONdata[i][3]=item;
+			});
+			
+			var menu_html='', count=1;
+			$.each(JSONdata, function(i,row){
+				var imageStr="fa fa-tasks";
+				if(row[1]!=""){
+					imageStr=row[1];
+				}
+					if(row[2]==true || row[2]=="true"){
+						var styleClassStr="bg-blue-grey-500";
+						switch (count) {
+   							case 1:
+        						styleClassStr="bg-blue-grey-500";
+        						break;
+    						case 2:
+      				 			styleClassStr = "bg-light-green-600";
+       				 			break;
+    						case 3:
+       							styleClassStr = "bg-light-blue-300";
+        						break;
+    						case 4:
+        						styleClassStr = "bg-red-300";
+        						break;
+    						case 5:
+       							styleClassStr = "bg-purple-300";
+        						break;
+    						case 6:
+       							styleClassStr = "bg-light-green-500";
+        						break;
+    						case 7:
+        						styleClassStr = "bg-red-500";
+        						break;
+						} 
+						menu_html+=bodyHtml(row[3],row[0],imageStr,styleClassStr);
+						count++;
+						if(count==8){
+							count=1;
+						}
+					}
+				
+			});
+			//alert(menu_html);
+			$('#dashboard_menu').html(menu_html);
+		}
+		$('#img_loading_div').hide();
+	});
+}
+
+$(document).ready(function() {
+	load_data();
+	
+	var typingTimer;                //timer identifier
+	var doneTypingInterval = 1000;  //time in ms, 5 second for example
+	
+	$('#menu').keyup(function(){
+		clearTimeout(typingTimer);
+		if ($('#menu').val) {
+			typingTimer = setTimeout(function(){
+				$('#dashboard_menu').html('');
+				$('#img_loading_div').show();
+				load_data();
+			}, doneTypingInterval);
+		}
+	});			
+});
+
+</script>
+</body>
+</html>

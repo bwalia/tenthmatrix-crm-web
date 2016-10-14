@@ -1,0 +1,553 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT;tSubject;tEmailText;tEmailTextHTML;mInvoiceCurrencyStr)
+C_LONGINT(_HIT_COUNTER)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+
+C_TEXT(_HTMLTITLETXT)
+
+_HTMLTITLETXT:="Email"
+
+QUERY([Invoices];[Invoices]uuid=_HIT_WebApp_GetField ("inv_uuid"))
+ 
+ C_TEXT(<>CurrentMonthNameStr)
+If (<>CurrentMonthNameStr="")
+<>CurrentMonthNameStr:=Month_getName 
+End if 
+
+mProjectCodeStr:=[Invoices]project_code
+mInvoiceCurrencyStr:="GBP"
+
+ Case of 
+: ([Invoices]inv_Template="Domain Name Renewal")
+QUERY([Templates];[Templates]code="email_template_invoice_Domains_"+mInvoiceCurrencyStr)
+tSubject:="Domain Name Renewal Invoice"
+
+: ([Invoices]inv_Template="Annual Maintenance Contract")
+QUERY([Templates];[Templates]code="email_template_invoice_AMC_"+mInvoiceCurrencyStr)
+tSubject:=mProjectCodeStr+" Annual Maintenance Renewal Invoice"
+Else 
+QUERY([Templates];[Templates]code="email_template_invoice_"+mInvoiceCurrencyStr)
+tSubject:=mProjectCodeStr+" Monthly Maintenance Charges for "+<>CurrentMonthNameStr+" "+String(Year of(Current date))
+End case 
+
+CompanyUUID:=_HIT_WebApp_GetField ("company_uuid")
+QUERY([Companies];[Companies]uuid=CompanyUUID)
+
+C_BOOLEAN(mReadCompany)
+mReadCompany:=(Records in selection([Companies])=1)
+
+C_TEXT(_HIT_HTMLTXT;s80EmailAddressTo)
+QUERY([TB4D_CLIENT];[TB4D_CLIENT]client_id=[Companies]account_Number)
+If ([Companies]invoice_contact_email="")
+s80EmailAddressTo:=[TB4D_CLIENT]client_invoice_contact_email
+Else 
+s80EmailAddressTo:=[Companies]invoice_contact_email
+End if 
+
+If ((Validate_EmailAddress (s80EmailAddressTo)) | (s80EmailAddressTo="@,@"))
+  //s80EmailAddressTo:="balinder.walia@jobshout.com"
+Else 
+s80EmailAddressTo:="billing@tenthmatrix.co.uk"
+End if    
+
+Case of 
+: ([Companies]invoice_contact_name#"")
+s80EmailName:=[Companies]invoice_contact_name
+: ([TB4D_CLIENT]client_invoice_contact_name="")
+s80EmailName:=[TB4D_CLIENT]client_name
+Else 
+s80EmailName:=[TB4D_CLIENT]client_invoice_contact_name
+End case 
+
+ 
+pCarbonCopyTxt:="billing@tenthmatrix.co.uk"
+
+
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+-->
+<!DOCTYPE html>
+<html>
+<head>
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+	<link href="css/lib/select2.css" type="text/css" rel="stylesheet">
+	<link rel='stylesheet' type='text/css' href='css/style.css' />
+	<link rel='stylesheet' type='text/css' href='css/print.css' media="print" />
+	<link rel="stylesheet" href="css/base/jquery-ui.css" />
+	<link href="css/lib/bootstrap-wysihtml5.css" type="text/css" rel="stylesheet">
+	<link rel="stylesheet" media="all" type="text/css" href="css/jquery-impromptu.css" />
+	<link rel="stylesheet" href="css/autocomplete.css" />
+	<style>
+		#SenMailForm em.error {
+			margin-left: 10px;
+			width: auto;
+			display: inline;
+		}
+		#SenMailForm em.error {
+			color: red;
+			font-style: italic;
+		}
+		#SenMailForm input.error, textarea.error, select.error{
+			border: 1px solid red;
+		}
+	</style>
+</head>
+<body>
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
+
+	<!-- main container -->
+    <div class="content">
+        
+        <div class="container-fluid">
+            <div id="pad-wrapper" class="form-page">
+				 <div class="row-fluid header">
+					<h3><!--#4DIF (Records in selection([Email])=1)-->Resend Mail<!--#4DELSE-->Send New mail<!--#4DENDIF--></h3>             
+                </div>
+                <div class="row-fluid form-wrapper">
+					<!-- left column -->
+                    <div class="span9 with-sidebar">
+						<form name="SenMailForm" id="SenMailForm" action="" class="form-comment" method="post" enctype="multipart/form-data">
+						<input name="inv_uuid" class="span9" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("inv_uuid")-->" id="inv_uuid">
+							<!-- <input name="company_uuid" class="span9" type="hidden" value="<!~~#4DVAR [Companies]uuid~~>" id="company_uuid"> -->
+							<div class="field-box">
+								<label>Recipient Name </label>
+								<input name="EmailName" class="span5" type="text" value="<!--#4DVAR s80EmailName-->" id="EmailName">
+							</div>
+							<input name="email_uuid" class="span4" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="email_uuid">
+						 
+							<div class="field-box">
+								<label>Recipient Email Address</label>
+								<input name="EmailAddress" class="span5" type="text" value="<!--#4DVAR s80EmailAddressTo-->" id="EmailAddress">
+							</div>
+						 	
+							<div class="span12 field-box">
+								<label>Subject </label>
+								<input name="Subject" id="Subject" class="span5" type="text"  value="<!--#4DVAR tSubject-->" >                               
+							</div> 	
+							
+							<div class="field-box">
+								<label>Send Via </label>
+								<div class="ui-select span5">
+									<select id="HostName" name="HostName">
+								      <option value="Tenthmatrix">Tenthmatrix Billing</option>
+									</select>
+						 	    </div>
+							</div>
+							
+							<div class="field-box">
+								<label>Select Template </label>
+								<div class="ui-select span5">
+									<select id="template" name="template" onChange="set_text_template($(this).val())">
+									  <option value="">-Select Template--</option>
+									  <!-- <option value="Ad Hoc">Ad Hoc</option> -->
+									  <option value="Annual Maintenance Contract">Annual Maintenance Contract</option>
+									  <!-- <option value="Day Rate">Day Rate</option> -->
+									  <option value="Domain Name Renewal">Domain Name Renewal</option>
+									  <option value="Monthly Maintenance Contract">Monthly Maintenance Contract</option>
+									  <!-- <option value="Time Billing">Time Billing</option> -->
+									  
+									
+									</select>
+						 	    </div>
+							</div>
+											
+							<div class="field-box">		
+								<label></label>
+								<label class="checkbox" style="width:auto">					
+									<input name="send_html_mail" class="span9" type="checkbox" value="false" id="send_html_mail" checked  >Send HTML mail
+								</label>
+							</div>
+							<div class="field-box">
+								<label>Message </label>
+								<div class="wysi-column" id="div_wysiwyg">
+                                    <textarea id="html_Message_Body" class="span10 wysihtml5" rows="25" columns="40" name="Message_Body"></textarea>
+                                </div>
+						       	<textarea id="Message_Body" class="span10" rows="25" columns="40" name="disable_Message_Body" ></textarea>
+								<input type="hidden" name="mail_content" id="mail_content" >
+							</div>
+							<div class="span11 field-box" style="text-align: center;">
+								<input type="submit" name="Submit" class="btn-glow primary" value="Send Mail" >
+								<span>OR</span>		
+								 <a href="emails.shtml">Cancel</a>
+							</div>               					
+							</form>
+						</div>
+                  </div>
+             </div>
+    	</div>
+    </div>
+    <!-- end main container -->
+
+	<!-- scripts -->
+	 <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+     
+    <script src="js/wysihtml5-0.3.0.js"></script>
+	<script src="js/bootstrap-wysihtml5-0.0.2.js"></script>
+	<script src="js/bootstrap.datepicker.js"></script>
+	<script src="js/jquery.uniform.min.js"></script>
+	<script src="js/ui/jquery-ui.js"></script>
+	<script src="js/bootstrap.datepicker.js"></script>
+	<script src="js/jquery.uniform.min.js"></script>
+	<script src="http://code.jquery.com/jquery-1.9.1min.js" type="text/javascript" language="javascript"></script>
+	<script src="js/jquery.MultiFile.js" type="text/javascript" language="javascript"></script>
+	<script src="js/jquery-loader.js" type="text/javascript"></script>
+	<script src="js/jquery.validate.js"></script>
+	<script type="text/javascript" src="js/jquery-impromptu.js"></script>
+	<!-- call this page plugins -->
+	
+<script language="javascript">
+var editorInstance;
+ 
+ function send_mail()
+{
+	$('#num_files').val($('.multi').length);
+	$('.multi').each(function(){
+		$(this).attr('name',$(this).attr('id'));
+	});
+	$('#file_content').attr('name',$('#file_content').attr('id')+'_F0');
+	//ValidateForm ();
+	if (document.SenMailForm.EmailName.value=="")
+	{ 
+		alert('Please Specify Recipient Name'); 
+		document.SenMailForm.EmailName.focus();
+		return false;
+	}else if (document.SenMailForm.Subject.value==""){
+		alert('Please Specify Subject'); 
+		document.SenMailForm.Subject.focus();
+		return false;
+	}else{
+		document.SenMailForm.submit();
+	}
+}
+
+function set_text_template(val){
+	var inv_uuid= '<!--#4DHTMLVAR _HIT_WebApp_GetField ("inv_uuid")-->';
+	if(val!=''){
+		var jsonUrl= 'getemailcontent.cgi?template='+val+'&inv_uuid='+inv_uuid;
+		$.getJSON(jsonUrl,function(result){
+			//$('#Message_Body').val(result.text);
+			
+			if($('#send_html_mail').prop('checked')) {
+   				
+			} else {
+				
+				$('#send_html_mail').prop('checked', true).uniform(); 
+   		 		$('#send_html_mail').trigger('change');
+   				$('#send_html_mail').attr('disabled', true);
+			}
+			
+			$('#html_Message_Body').data("wysihtml5").editor.setValue(result.text);
+			
+		});
+	}else{
+		$('#Message_Body').val('');
+		$('#send_html_mail').attr('disabled', false);
+		$('#html_Message_Body').data("wysihtml5").editor.setValue('');
+	}
+}
+
+</script>
+<script type="text/javascript">
+	$(function () {
+		 
+		$('.datepicker').datepicker().on('changeDate', function(){
+          $(this).blur();
+        });
+		
+		// add uniform plugin styles to html elements
+     	 $("input:checkbox, input:radio").uniform();
+		
+		$(".wysihtml5").wysihtml5({
+			"font-styles": false
+        });
+				
+		$('#Message_Body').hide();
+			
+		$('#send_html_mail').change(function(){
+			if($(this).is(':checked')){
+				$('#html_Message_Body').attr('name', 'Message_Body');
+				$('#Message_Body').attr('name', 'disable_Message_Body');
+				$('#div_wysiwyg').show();
+				$('#Message_Body').hide();
+			}else{
+				$('#html_Message_Body').attr('name', 'disable_Message_Body');
+				$('#Message_Body').attr('name', 'Message_Body');
+				$('#div_wysiwyg').hide();
+				$('#Message_Body').show();
+			}
+		});
+		
+		$('.phone').keypress(function(e){
+			var k = e.which;
+    		/* numeric inputs can come from the keypad or the numeric row at the top */
+   			if ((k<48 || k>57) && (k!=45) && (k!=43) && (k!=40) && (k!=41) && (k!=32) && (k!=44) && (k!=46) && (k!=8) && (k!=0)) {
+        		e.preventDefault();
+				//alert("Allowed characters are 0-9, +, -, (, )");
+        		return false;
+    		}
+		}); 
+		$data = {
+                autoCheck: 32,
+                size: 32,  
+                bgColor: '#000',
+                bgOpacity: 0.5, 
+                fontColor: false, 
+                title: '',
+                isOnly: true
+        };
+            
+		$("#SenMailForm").validate({
+			ignore: "",
+			errorClass: 'error',
+			validClass: 'valid',
+			errorElement: "em",
+			errorPlacement: function(error, element) {
+				$(element).closest('div').append(error);
+			},
+			onfocusout: false,
+			invalidHandler: function(form, validator) {
+				var errors = validator.numberOfInvalids();
+				if (errors) {                    
+					validator.errorList[0].element.focus();
+				}
+			},
+			rules: {
+				EmailName: { required: true },
+				EmailAddress: { required: true },
+				Subject: { required: true },
+				template: { required: true },
+				
+			},submitHandler: function (form) {
+				 $.loader.open($data);
+				 
+				var EmailName= $('#EmailName').val(); 
+				var inv_uuid= $('#inv_uuid').val();  
+				var email_uuid= $('#email_uuid').val();  
+				var EmailAddress= $('#EmailAddress').val();  
+				var Subject= $('#Subject').val();  
+				var HostName= $('#HostName').val();  
+				var template= $('#template').val();  
+				var send_html_mail= $('#send_html_mail').val();  
+				var html_Message_Body= $('#html_Message_Body').val();  
+				var Message_Body= $('#Message_Body').val();
+				var mail_content= $('#mail_content').val();
+				if(Message_Body==""){
+					Message_Body=html_Message_Body;
+				}
+					$.ajax({
+						type: "POST",
+						url: "sendoutmail.cgi",
+						data: {'EmailName' : EmailName, 'inv_uuid' : inv_uuid, "email_uuid" : email_uuid, "EmailAddress": EmailAddress, "Subject": Subject, "HostName": HostName, "template": template, "send_html_mail": send_html_mail, "mail_content": mail_content, "Message_Body": Message_Body},
+						dataType: "json",
+						cache: false,
+						enctype: 'multipart/form-data',
+						success: function(response){
+							$.loader.close(true);
+							if(response.result){
+								__alertMessage(response.result); 
+							}/*else if(response.error){
+								__alertMessage(response.error); 
+							}*/
+						}
+					});
+			}
+		});	
+	});
+</script>
+<script>
+	 var xhr;
+  (function( $ ) {
+    $.widget( "custom.combobox", {
+      _create: function() {
+        this.wrapper = $( "<span>" )
+          .addClass( "custom-combobox" )
+          .insertAfter( this.element );
+ 
+        this.element.hide();
+        this._createAutocomplete();
+        this._createShowAllButton();
+      },
+ 
+      _createAutocomplete: function() {
+        var selected = this.element.children( ":selected" ),
+          value = selected.val() ? selected.text() : "";
+ 
+        this.input = $( "<input>" )
+          .appendTo( this.wrapper )
+          .val( value )
+          .attr( "title", "" )
+          .addClass( "custom-combobox-input ui-widget ui-widget-content ui-state-default ui-corner-left" )
+          .autocomplete({
+            delay: 0,
+            minLength: 0,
+            source: $.proxy( this, "_source" )
+          })
+          .tooltip({
+            tooltipClass: "ui-state-highlight"
+          });
+ 
+        this._on( this.input, {
+          autocompleteselect: function( event, ui ) {
+		  	//alert("show all");
+            ui.item.option.selected = true;
+			
+            this._trigger( "select", event, {
+              item: ui.item.option
+            });
+          },
+ 
+          autocompletechange: "_removeIfInvalid"
+        });
+      },
+ 
+      _createShowAllButton: function() {
+        var input = this.input,
+          wasOpen = false;
+ 
+        $( "<a>" )
+          .attr( "tabIndex", -1 )
+          .attr( "title", "Show All Items" )
+          .tooltip()
+          .appendTo( this.wrapper )
+          .button({
+            icons: {
+              primary: "ui-icon-triangle-1-s"
+            },
+            text: false
+          })
+          .removeClass( "ui-corner-all" )
+          .addClass( "custom-combobox-toggle ui-corner-right" )
+          .mousedown(function() {
+            wasOpen = input.autocomplete( "widget" ).is( ":visible" );
+          })
+          .click(function() {
+            input.focus();
+ 
+            // Close if already visible
+            if ( wasOpen ) {
+              return;
+            }
+ 
+            // Pass last search string as value to search for, displaying last results
+            input.autocomplete( "search", 'SHOWALL' );
+          });
+      },
+ 
+      _source: function( request, response ) {
+        //var matcher = new RegExp( $.ui.autocomplete.escapeRegex(request.term), "i" );
+		var ele_select= this.element;
+		if(request.term=='SHOWALL'){
+			response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+		
+		}
+		else
+		{
+		var jsonRow = 'getmailonsearch.cgi?srch='+request.term;
+		
+
+		//alert(jsonRowURLStr);
+		if(xhr) xhr.abort();
+		xhr=$.getJSON(jsonRow,function(result){
+			
+			if(result){
+				var html='<option value=""></option>';
+
+				$.each(result, function(i,item)
+				{
+					html += '<option value="'+item.id+'">'+item.value+'</option>';
+				});
+				ele_select.html(html);
+				
+				
+				response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+				
+				
+			}
+		});
+       
+	  } 
+		
+      },
+ 
+      _removeIfInvalid: function( event, ui ) {
+ 
+        // Selected an item, nothing to do
+        if ( ui.item ) {
+
+          return;
+        }
+ 
+        // Search for a match (case-insensitive)
+        var value = this.input.val(),
+          valueLowerCase = value.toLowerCase(),
+          valid = false;
+        this.element.children( "option" ).each(function() {
+          if ( $( this ).text().toLowerCase() === valueLowerCase ) {
+            this.selected = valid = true;	
+			
+            return false;
+          }
+        });
+ 
+        // Found a match, nothing to do
+        if ( valid ) {
+          return;
+        }
+ 
+        // Remove invalid value
+        /*this.input
+          .val( "" )
+          .attr( "title", value + " didn't match any item" )
+          .tooltip( "open" );*/
+		  this.element.html( "<option value='"+value+"'>"+value+"</option>" );
+        this.element.val( value );
+        /*this._delay(function() {
+          this.input.tooltip( "close" ).attr( "title", "" );
+        }, 2500 );*/
+        this.input.data( "ui-autocomplete" ).term = "";
+      },
+ 
+      _destroy: function() {
+        this.wrapper.remove();
+        this.element.show();
+      }
+    });
+  })( jQuery );
+ 
+  $(function() {
+    $( "#ToEmailAddress" ).combobox();
+    $( "#CCToEmailAddress" ).combobox();
+    $( "#BCCToEmailAddress" ).combobox();
+   $( "#Client_ID" ).combobox();
+	
+  });
+
+  </script>
+</body>
+</html>

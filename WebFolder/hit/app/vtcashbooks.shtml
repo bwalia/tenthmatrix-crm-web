@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Tenthmatrix CRM App : VT Cashbook Activities</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- bootstrap -->
+	<link href="css/bootstrap/bootstrap.css" rel="stylesheet">
+    <link href="css/bootstrap/bootstrap-responsive.css" rel="stylesheet">
+    <link href="css/bootstrap/bootstrap-overrides.css" type="text/css" rel="stylesheet">
+    <!-- jQuery UI theme-->
+     <link rel="stylesheet" href="lib/jquery-ui/css/Aristo/Aristo.css" />
+
+    <!-- global styles -->
+    <link rel="stylesheet" type="text/css" href="css/compiled/layout.css">
+    <link rel="stylesheet" type="text/css" href="css/compiled/elements.css">
+    <link rel="stylesheet" type="text/css" href="css/compiled/icons.css">
+	<!-- splashy icons -->
+    <link rel="stylesheet" href="img/splashy/splashy.css" />
+    <!-- datepicker -->
+    <link rel="stylesheet" href="lib/datepicker/datepicker.css" />
+	<link rel="stylesheet" href="css/style.css" />
+	<link rel="stylesheet" href="css/colorbox.css" />
+    <!-- open sans font -->
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" media="all" type="text/css" href="css/jquery-impromptu.css" />
+
+    <!-- libraries -->
+    <link href="css/lib/font-awesome.css" type="text/css" rel="stylesheet" />
+    <link href="css/lib/jquery.dataTables.css" type="text/css" rel="stylesheet" />
+    
+    <!-- this page specific styles -->
+    <link rel="stylesheet" href="css/compiled/datatables.css" type="text/css" media="screen" />
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    
+    	<style type="text/css">
+		table.items, table.table-condensed {
+			font-size:12px;
+		}
+		.Highlight
+		{
+			background-color: #dcfac9!important;
+			cursor: pointer;
+		}
+		
+		.pull-right
+		{
+		
+		margin: 0 4px 4px 4px;
+		padding:0 4px 4px 4px;
+		
+		}
+		
+		ul.actions{
+			list-style:none;
+		}
+		#message{
+			color:#FF0000;
+		}
+	</style>
+</head>
+<body>
+
+	<!-- main container -->
+    <div class="content wide-content">
+       
+
+        
+        <div class="container-fluid">
+		<form id="frm_set" name="frm_set"  method="post" action="">
+        <div class="" style=" padding:15px 0 0 0;">
+         	<div class="pull-left">
+				<button style="margin-left:15px;" class="btn-flat success new-product margn-lft35" onclick="__deleteEntries(); return false;">Delete</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			</div>
+			<div class="pull-left">
+				<b>Date</b> From :
+				<div class="input-append date" id="dp1">
+				<input name="start_date" class="span2" type="text" data-date-format="dd/mm/yyyy" value="" id="start_date" readonly ><span class="add-on"><i class="splashy-calendar_day"></i></span>
+				</div>&nbsp;&nbsp;
+				Till :
+				<div class="input-append date" id="dp2">
+				<input name="end_date" class="span2" type="text" data-date-format="dd/mm/yyyy" value="" id="end_date" readonly ><span class="add-on"><i class="splashy-calendar_day"></i></span>
+				</div>
+				<a href="javascript:void(0)" onclick="reset_dates()" class="btn-flat success new-product margn-lft35" style="margin-bottom:10px;margin-left:5px;">Reset Dates</a>
+			</div>
+			<div class="pull-right">
+				<div class="btn-group pull-right">
+					<button class="glow large" onClick="__showAllvt_cashbook_activity(); return false;">All</button>
+					<a href="vtcashbook.shtml" class="btn-flat success new-product margn-lft35" style="margin-left:15px;">+ Add New VT Cash Book Activity</a>
+				</div>
+				<input name="keyword" id="keyword" type="text" class="search order-search" placeholder="" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" style="margin-top:3px;" />
+			</div>
+        </div>
+            <div id="pad-wrapper1" class="datatables-page">
+                <div class="row-fluid">
+                    <div class="span12">
+
+                        <table cellpadding="0" cellspacing="0" border="0" class="dataTable" id="json_table">
+                            <thead>
+                                <tr role="row">
+                                    <th  align="left"><input name="chk_all" type="checkbox" id="chk_all" value=""></th>
+									 
+                                    <th  align="left">ENTRY DATE </th>
+                                     
+                                    <th  align="left">AMOUNT </th>
+                                    
+                                    <th  align="left">REFRENCE </th>
+                                    
+                                    <th  align="left">PRIMARY ACCOUNT </th>
+                                     
+                                    <th  align="left">ANALYSIS </th>
+
+                                    <th  align="left">ENTRY DESCRIPTION </th>
+                                     
+                                    <th  align="left">NEED SYNC </th>
+                                    
+                                </tr>
+                            </thead>
+                            <tfoot>
+								<tr>
+                                	<th>&nbsp;</th>
+                                	 
+                                    <th  align="left">ENTRY DATE </th>
+                                     
+                                    <th  align="left">AMOUNT </th>
+                                    
+                                    <th  align="left">REFRENCE </th>
+                                    
+                                    <th  align="left">PRIMARY ACCOUNT </th>
+                                     
+                                    <th  align="left">ANALYSIS </th>
+
+                                    <th  align="left">ENTRY DESCRIPTION </th>
+                                     
+                                    <th  align="left">NEED SYNC  </th>
+                                    
+								</tr>
+							</tfoot>
+                            <tbody id="json_table_body">
+
+							</tbody>
+                        </table>
+						<div id="img_loading_div" style="text-align:center">
+							<img src="../loading.gif"  style="padding:20px;" width="34" >
+						</div>
+                    </div>
+                </div>
+            </div>
+			</form>
+        </div>
+    </div>
+	<div class="example-container">
+								<pre class="code" style="display:none;" id="new_set_prompt">
+									var statesdemo = {
+										state0: {
+											title: 'Please enter name of new set',
+											html:'&lt;div id="message"&gt;&lt;/div&gt;&lt;input type="text" name="new_set" id="new_set" value="userset_1"&gt;&lt;br /&gt;',
+											buttons: { Cancel : 0, Ok: 1 },
+											focus: "#new_set",																		
+											submit:function(e,v,m,f){ 
+												//console.log(f);
+												if(v==1) {
+													e.preventDefault();
+													var new_set=$('#new_set').val().trim();
+													if(new_set!=''){
+														var exist=false;
+														$('#add_sets option').each(function() {
+															if(new_set.toLowerCase()==$(this).val().toLowerCase()){
+																exist=true;
+															}
+														});
+														if(exist==false){
+															start=0;
+															end=25;
+															tab='';
+															jsonRow = 'loadvtcbactivity.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab+'&selected='+selected+'&set=add_to_'+new_set;
+															$.getJSON(jsonRow,function(result){
+																if(result.Alert){
+																	$('#opt_new_set').before('&lt;option value="'+new_set+'"&gt;'+new_set+'&lt;/option&gt;');
+																	$('#add_sets').val(new_set);
+																	$(".jqibox").remove();
+																	show_load_prompt();
+																}
+															});				
+														}
+														else{
+															$('#message').html('* '+new_set+' already exists. Please enter another name of set');
+														}
+													}
+													else{
+														$('#message').html('* Please enter name of new set');
+														$('#new_set').focus();
+													}
+												}
+												if(v==0) {
+													$.prompt.close();
+													$('#add_sets').val('');
+												}
+											}
+										},
+										
+									};
+
+									$.prompt(statesdemo);
+								</pre>
+								
+								<pre class="code" style="display:none;" id="load_prompt">
+									var statesdemo = {
+										state0: {
+											title: 'Do you want to load the records of '+$('#add_sets').val()+'?',
+											html:'',
+											buttons: { No : 0, Yes: 1 },																		
+											submit:function(e,v,m,f){ 
+												//console.log(f);
+												if(v==1) {
+													location.href='contacts.shtml?load_set='+$('#add_sets').val();
+												}
+												if(v==0) {
+													$.prompt.close();
+													$('#add_sets').val('');
+													$('.check').prop('checked', false);
+												}
+											}
+										},
+										
+									};
+
+									$.prompt(statesdemo);
+								</pre>
+								<pre class="code" style="display:none;" id="no_rec_prompt">
+									var statesdemo = {
+										state0: {
+											title: 'No more records found',
+											html:'',
+											buttons: { OK: 1 },																		
+											submit:function(e,v,m,f){ 
+												//console.log(f);
+												if(v==1) {
+													$.prompt.close();
+												}
+												
+											}
+										},
+										
+									};
+									if(!($(".jqibox").length))
+									$.prompt(statesdemo);
+								</pre>
+								<pre class="code" style="display:none;" id="no_selection_prompt">
+									var statesdemo = {
+										state0: {
+											title: 'Please select entries to delete',
+											html:'',
+											buttons: { OK: 1 },																		
+											submit:function(e,v,m,f){ 
+												//console.log(f);
+												if(v==1) {
+													$.prompt.close();
+												}
+												
+											}
+										},
+										
+									};
+									if(!($(".jqibox").length))
+									$.prompt(statesdemo);
+								</pre>
+								<!--<a class="run">Run It!</a>-->
+							</div>
+	
+    <!-- end main container -->
+
+	<!-- scripts -->
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.dataTables.js"></script>
+	<script type="text/javascript" src="js/jquery-impromptu.js"></script>
+    <script src="js/theme.js"></script>
+	<script src="lib/datepicker/bootstrap-datepicker.min.js"></script>
+<script type="text/javascript">
+var JSONdata;
+var selected='';
+ var start=0, end=50;
+ var old_srch='',keyword='', jsonRow='', tab='', set='', start_date='', end_date='', date_selected='no';
+ var tablname="vt_cashbook_activity";
+ var process=false;
+ 
+// Hide the first cell for JavaScript enabled browsers.
+$('#json_table td:first-child').hide();
+
+// Assign a click handler that grabs the URL from the first cell and redirects the user.
+$('#json_table tr td').click(function ()
+{
+	if(!($(this).find(':checkbox').length)){
+	location.href = 'vtbookactivity.shtml?uuid='+$(this).parents('tr').find(':checkbox').val()+'&token='+Math.random();
+	}
+});
+
+function __showAllvt_cashbook_activity()
+{
+	start=0;
+	end=25;
+	$('#keyword').val('');
+	jsonRow = 'loadvtcbactivity.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&start_date='+start_date+'&end_date='+end_date;
+	if(keyword!=''){
+		jsonRow +='&keyword='+"";
+	}	
+	if(start_date!='' || end_date!=''){
+		jsonRow +='&date_selected=yes';
+	}else{
+		jsonRow +='&date_selected=no';
+	}
+	$('#json_table_body').html('');
+	$('#img_loading_div').show();	
+	load_data(jsonRow);
+}
+
+function __deleteEntries()
+{
+	selected='';
+	$('.check').each(function(){
+		if($(this).is(":checked")){
+			if(selected==''){
+				selected=$(this).val();
+			}
+			else{
+				selected+=","+$(this).val();
+			}
+		}
+	
+	});
+	if(selected!=''){
+		var statesdemo1 = {
+			state0: {
+				title: 'Are you sure to delete the entries?',
+				html:'',
+				buttons: { Yes: 1, No : 0 },																		
+				submit:function(e,v,m,f){ 
+					if(v==1) {
+						console.log(selected);
+						var jsonRowURLStr = 'managevtactivity.cgi?selected_uuids='+selected+'&action=delete';
+						$.getJSON(jsonRowURLStr,function(result){
+							if(result.Success){
+								keyword= $("#keyword").val();
+								jsonRow = 'loadvtcbactivity.cgi?start='+start+'&end='+end+'&tablname='+tablname;	
+								if(keyword!=''){
+									jsonRow +='&keyword='+keyword;
+								}	
+								$('#json_table_body').html('');
+								$('#img_loading_div').show();
+								load_data(jsonRow);	
+							}else if(result.Error){
+								var statesdemo = {
+									state0: {
+										title: result.Error,
+										html:'',
+										buttons: { OK: 1 },																		
+										submit:function(e,v,m,f){ 
+											if(v==1) {
+												$.prompt.close();
+											}
+											
+										}
+									},
+									
+								};
+								if(!($(".jqibox").length))
+								$.prompt(statesdemo);
+							}
+						});
+					}else {
+						$.prompt.close();
+					}
+				}
+			},
+		};
+		$.prompt(statesdemo1);
+	}
+	else{
+		code = $('#no_selection_prompt').text();
+		(new Function(code))();
+		complete=true;
+		//alert("Please select invoices");
+	}
+}
+
+function reset_dates(){	
+	start=0;
+	end=25;
+	$('#start_date').val('');
+	$('#end_date').val('');
+	start_date=$('#start_date').val();
+	end_date=$('#end_date').val();
+	keyword= $("#keyword").val();
+	jsonRow = 'loadvtcbactivity.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&start_date='+start_date+'&end_date='+end_date+'date_selected=no';	
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}	
+	
+	load_data(jsonRow);	
+}
+$(document).ready(function() {
+
+	$('#keyword').focus();
+	keyword= $("#keyword").val();
+	jsonRow = 'loadvtcbactivity.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&start_date='+start_date+'&end_date='+end_date;	
+	if(start_date!='' || end_date!=''){
+		jsonRow +='&date_selected=yes';
+	}else{
+		jsonRow +='&date_selected=no';
+	}
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}	
+	load_data(jsonRow);			 
+	
+	$(window).scroll(function(){
+		if ($(window).scrollTop() == $(document).height() - $(window).height()){
+		
+		//alert("scrolling...");
+		start=end+1;
+		end=start+25;
+		jsonRow = 'loadvtcbactivity.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&start_date='+start_date+'&end_date='+end_date;
+		if(keyword!=''){
+			jsonRow +='&keyword='+keyword;
+		}
+		if(start_date!='' || end_date!=''){
+			jsonRow +='&date_selected=yes';
+		}else{
+			jsonRow +='&date_selected=no';
+		}
+		load_data(jsonRow);
+		
+		}
+	});	
+	
+	//setup before functions
+	var typingTimer;                //timer identifier
+	var doneTypingInterval = 1000;  //time in ms, 5 second for example
+	
+	//on keyup, start the countdown
+	$('#keyword').keyup(function(){
+		clearTimeout(typingTimer);
+		if ($('#keyword').val) {
+			typingTimer = setTimeout(function(){
+				//do stuff here e.g ajax call etc....
+				$('#json_table_body').html('');
+				$('#img_loading_div').show();
+				start=0;
+				end=start+25;
+				tab='';
+				keyword= $("#keyword").val();
+				jsonRow = 'loadvtcbactivity.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&start_date='+start_date+'&end_date='+end_date;
+				if(keyword!=''){
+					jsonRow +='&keyword='+keyword;
+				}
+				if(start_date!='' || end_date!=''){
+					jsonRow +='&date_selected=yes';
+				}else{
+					jsonRow +='&date_selected=no';
+				}
+				load_data(jsonRow);
+			}, doneTypingInterval);
+		}
+	});	
+	
+	$('#json_table').on("click","#chk_all", function(){
+		if($(this).is(":checked")){
+				$('.check').prop('checked', true);
+			}
+			else{
+				$('.check').prop('checked', false);
+			}
+	});	
+	
+	$('#start_date').datepicker({"autoclose": true}).on('changeDate', function (ev) {
+		start_date=$('#start_date').val();
+		var arrStartDate= $('#start_date').val().split('/');
+		var dateText = new Date(arrStartDate[1]+'/'+arrStartDate[0]+'/'+arrStartDate[2]);
+		$('#end_date').datepicker('setStartDate', dateText);
+		
+		$('#json_table_body').html('');
+		$('#img_loading_div').show();
+		start=0;
+		end=25;
+		keyword= $("#keyword").val();
+		jsonRow = 'loadvtcbactivity.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&start_date='+start_date+'&end_date='+end_date;
+		if(keyword!=''){
+			jsonRow +='&keyword='+keyword;
+		}
+		if(start_date!='' || end_date!=''){
+			jsonRow +='&date_selected=yes';
+		}else{
+			jsonRow +='&date_selected=no';
+		}
+		load_data(jsonRow);
+	});
+	$('#end_date').datepicker({"autoclose": true}).on('changeDate', function (ev) {
+		end_date=$('#end_date').val();
+		var arrEndDate= $('#end_date').val().split('/');
+		var dateText = new Date(arrEndDate[1]+'/'+arrEndDate[0]+'/'+arrEndDate[2]);
+		
+		$('#start_date').datepicker('setEndDate', dateText);
+		
+		$('#json_table_body').html('');
+		$('#img_loading_div').show();
+		start=0;
+		end=25;
+		keyword= $("#keyword").val();
+		jsonRow = 'loadvtcbactivity.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&start_date='+start_date+'&end_date='+end_date;
+		if(keyword!=''){
+			jsonRow +='&keyword='+keyword;
+		}
+		if(start_date!='' || end_date!=''){
+			jsonRow +='&date_selected=yes';
+		}else{
+			jsonRow +='&date_selected=no';
+		}
+		load_data(jsonRow);
+	});
+	
+	$('#dp1 i.splashy-calendar_day').click(function(){
+		$('#start_date').datepicker( "show" );
+	});
+	$('#dp2 i.splashy-calendar_day').click(function(){
+		$('#end_date').datepicker( "show" );
+	});
+	
+	$(document).click(function(event){
+		//console.log($(event.target).closest('div').attr('id'));
+		if($(event.target).closest('div').attr('id')!='dp1') {
+			$('#start_date').datepicker( "hide" );
+		}
+		if($(event.target).closest('div').attr('id')!='dp2') {
+			$('#end_date').datepicker( "hide" );
+		}			
+	});
+});
+var entry_uuid=new Array();
+function load_data(jsonRow){
+	JSONdata=new Array();
+	$.getJSON(jsonRow,function(result){
+			if(result.Alert){
+				code = $('#no_rec_prompt').text();
+				(new Function(code))();
+			}
+			else{
+				
+				$.each(result.uuid, function(i,item)
+				{
+					JSONdata[i]=new Array();
+					JSONdata[i][0]='<input class="check" type="checkbox" value="'+item+'">';
+					entry_uuid[i]=item;
+						
+				});
+				 
+				$.each(result.entry_date, function(i,item)
+				{
+					JSONdata[i][1]=item;
+						
+				});
+				
+				$.each(result.entry_amount, function(i,item)
+				{
+					JSONdata[i][2]=item;
+						
+				});
+				
+				$.each(result.entry_ref, function(i,item)
+				{
+					JSONdata[i][3]=item;
+						
+				});
+				
+				$.each(result.primary_account, function(i,item)
+				{
+					JSONdata[i][4]=item;
+						
+				});
+				
+				$.each(result.analysis_code, function(i,item)
+				{
+					JSONdata[i][5]=item;
+						
+				});
+				
+				$.each(result.entry_description, function(i,item)
+				{
+					JSONdata[i][6]=item;
+						
+				});
+   
+				$.each(result.push_to_vt_cashbook, function(i,item)
+				{
+					if(item==true){
+						//JSONdata[i][7]='<span class="label label-success"> Active </span>';
+						JSONdata[i][7]='<label><input name="push_to_vt_cashbook" class="span1" onchange="change_status(this,\''+entry_uuid[i]+'\')" type="checkbox" value="true" id="push_to_vt_cashbook"  checked > push to vt cashbook </label>'
+					}
+					else{
+						JSONdata[i][7]='<label><input name="push_to_vt_cashbook" class="span1" onchange="change_status(this,\''+entry_uuid[i]+'\')" type="checkbox" value="true" id="push_to_vt_cashbook" > push to vt cashbook </label>'
+					}
+						
+				});
+				 
+				var table_html='';
+				var trClassStr='odd';
+				$.each(JSONdata, function(i,row)
+				{
+				
+					table_html+='<tr class="'+trClassStr+'">';
+					if(trClassStr=='odd') { trClassStr='even'; } else { trClassStr='odd' };
+					$.each(row, function(i,col){
+						table_html+='<td>'+col+'</td>';
+					});
+					table_html+='</tr>';
+				});
+				if(old_srch!=keyword){
+					$('#json_table_body').html('');
+					old_srch=keyword;
+				}
+				//alert(table_html);
+				
+				$('#json_table_body').append(table_html);
+
+			// Apply a class on mouse over and remove it on mouse out.
+			
+			$('#json_table tbody tr').unbind();
+			$('#json_table tbody tr').hover(function ()
+			{
+				$(this).toggleClass('Highlight');
+			});
+
+			// Assign a click handler that grabs the URL from the first cell and redirects the user.
+			$('#json_table tr td').click(function ()
+			{
+				if(!($(this).find(':checkbox').length)){
+				location.href = 'vtbookactivity.shtml?uuid='+$(this).parents('tr').find(':checkbox').val()+'&token='+Math.random();
+				}
+			});
+			
+		}
+		$('#img_loading_div').hide();
+		});
+		
+}
+function change_status(id,uuid){
+	var entry_enabled='';
+	if($(id).is(":checked")){
+		var selected= $(id).val();
+		if(selected){
+			entry_enabled= true;
+		}
+	}
+	
+	var jsonRowURLStr = 'managevtactivity.cgi?selected_uuids='+uuid+'&push_to_vt_cashbook='+entry_enabled+'&action=edit';
+	console.log(jsonRowURLStr);
+	$.getJSON(jsonRowURLStr,function(result){
+		console.log(result);
+	});
+}
+</script>
+
+
+</body>
+</html>

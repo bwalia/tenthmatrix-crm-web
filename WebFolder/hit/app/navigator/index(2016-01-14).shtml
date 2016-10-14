@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en"><!-- BEGIN HEAD --><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+
+	<title>Tenthmatrix</title>
+	
+	<link href="css/font-awesome.css" rel="stylesheet">
+	<link href="css/bootstrap.css" rel="stylesheet">
+	
+	<link href="css/icon.css" rel="stylesheet">
+
+</head>
+<body >
+
+
+
+	<div class="wrapper">
+	
+           		<div class="container-fluid" ><BR>
+				<div CLASS="row">
+				<div CLASS=" col-lg-3 col-md-6 col-sm-12">
+				
+				<div class="page-head bg-grey-100">
+				<h1 class="page-title">CRM Navigator<small>Tenthmatrix CRM</small></h1>
+			    </div>
+				</div>
+				<div CLASS=" col-lg-2 col-md-6 col-sm-9 pull-right" STYLE="margin-right:20px; margin-left:20px;" >
+				
+				<div class="input-group stylish-input-group">
+                    <input class="form-control" placeholder="Search" type="text">
+                    <span class="input-group-addon">
+                        <button type="submit" STYLE="border: 0px none; background: transparent none repeat scroll 0% 0%; padding:0px;">
+                          <i class="fa fa-search" ></i>
+                        </button>  
+                    </span>
+                </div>
+				
+				</div>
+				
+				</div>
+				
+				<div class="row" style="padding:20px;">
+
+				<div class="col-lg-2 col-md-3 col-sm-3 col-xs-6">
+						<a class="panel panel-tile padding-md btn-dark bg-blue-grey-500 color-white display-block text-center" href="javascript:void(0)" onclick='$4d.WEBAREA_PROCESS_CALL("customers",function(result,error){ 	});' >
+							<div class="font-size-46"><i class="fa fa-industry"></i></div>
+							<div class="bold">Companies</div>
+						</a>
+					</div>
+					<div class="col-lg-2 col-md-3 col-sm-3 col-xs-6 col-xs-6">
+						<a class="panel panel-tile padding-md btn-dark bg-light-green-600 color-white display-block text-center" href="javascript:void(0)" onclick='$4d.WEBAREA_PROCESS_CALL("contacts",function(result,error){ 	});' >
+							<div class="font-size-46"><i class="fa fa-envelope"></i></div>
+							<div class="bold">Contacts</div>
+						</a>
+					</div>
+					<div class="col-lg-2 col-md-3 col-sm-3 col-xs-6">
+						<a class="panel panel-tile padding-md btn-dark bg-light-blue-300 color-white display-block text-center" href="javascript:void(0)" onclick='$4d.WEBAREA_PROCESS_CALL("projects",function(result,error){ 	});' >
+							<div class="font-size-46"><i class="fa fa-list-alt"></i></div>
+							<div class="bold">Projects</div>
+						</a>
+					</div>
+					<div class="col-lg-2 col-md-3 col-sm-3 col-xs-6">
+						<a class="panel panel-tile padding-md btn-dark bg-red-300 color-white display-block text-center" href="javascript:void(0)" onclick='$4d.WEBAREA_PROCESS_CALL("tasks",function(result,error){ 	});' >
+							<div class="font-size-46"><i class="fa fa-tasks"></i></div>
+							<div class="bold">Tasks</div>
+						</a>
+					</div>
+					<div class="col-lg-2 col-md-3  col-sm-3 col-xs-6">
+						<a class="panel panel-tile padding-md btn-dark bg-purple-300 color-white display-block text-center" href="javascript:void(0)" onclick='$4d.WEBAREA_PROCESS_CALL("timeslips",function(result,error){ 	});'>
+							<div class="font-size-46"><i class="fa fa-calendar"></i></div>
+							<div class="bold">Timeslips</div>
+						</a>
+					</div>
+					<div class="col-lg-2  col-md-3 col-sm-3 col-xs-6">
+						<a class="panel panel-tile padding-md btn-dark bg-red-500 color-white display-block text-center" href="javascript:void(0)" onclick='$4d.WEBAREA_PROCESS_CALL("invoices",function(result,error){ 	});' >
+							<div class="font-size-46"><i class="fa fa-book"></i></div>
+							<div class="bold">Invoices</div>
+						</a>
+					</div>
+					<div class="col-lg-2 col-md-3 col-sm-3  col-xs-6">
+						<a class="panel panel-tile padding-md btn-dark bg-light-blue-300 color-white display-block text-center" href="javascript:void(0)" onclick='$4d.WEBAREA_PROCESS_CALL("receipts",function(result,error){ 	});' >
+							<div class="font-size-46"><i class="fa fa-file-text"></i></div>
+							<div class="bold">Receipts</div>
+						</a>
+					</div>
+					<div class="col-lg-2 col-md-3 col-sm-3  col-xs-6">
+						<a class="panel panel-tile padding-md btn-dark bg-light-green-500 color-white display-block text-center" href="javascript:void(0)" onclick='$4d.WEBAREA_PROCESS_CALL("documents",function(result,error){ 	});'>
+							<div class="font-size-46"><i class="fa fa-file-o"></i></div>
+							<div class="bold">Documents</div>
+						</a>
+					</div>
+					
+				</div>
+				
+			
+             
+				<!-- BEGIN FOOTER -->
+				<footer class="bg-white">
+					<div class="pull-left">
+						<span class="pull-left margin-right-15">&copy;&nbsp;2015&nbsp;&nbsp;<a target="_blank" href="javascript:void(0)" onclick='$4d.WEBAREA_OPEN_WEB_URL("https://www.tenthmatrix.co.uk",function(result,error){ 	});'">Tenthmatrix.co.uk</a>&nbsp;&nbsp;</span>
+						<ul class="list-inline pull-left">
+							<li><a href="javascript:void(0)" onclick='$4d.WEBAREA_OPEN_WEB_URL("https://www.tenthmatrix.co.uk/privacy-policy.html",function(result,error){ 	});'>Privacy Policy</a></li>
+							<li><a href="javascript:void(0)" onclick='$4d.WEBAREA_OPEN_WEB_URL("https://www.tenthmatrix.co.uk/terms-of-business.html",function(result,error){ 	});'>Terms of Use</a></li>
+						</ul>
+					</div>
+				</footer>
+				<!-- END FOOTER -->
+            </div>
+	
+	
+
+
+
+	</body></html>

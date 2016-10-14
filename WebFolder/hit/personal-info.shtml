@@ -1,0 +1,224 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+C_TEXT(_HTMLTITLETXT)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+	QUERY([Contacts];[Contacts]uuid=_HIT_WebApp_GetField ("uuid"))
+	C_BOOLEAN(mContactBoolen)
+	mContactBoolen:=Records in selection([Contacts])=1
+	if(mContactBoolen=false)
+	QUERY([Employees];[Employees]uuid=_HIT_WebApp_GetField ("uuid"))
+	end if
+	QUERY([Companies];[Companies]account_Number=num([Contacts]client_id))
+	
+	_HTMLTITLETXT:="Update your personal info"
+	
+else
+	_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if
+
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+	
+	<!-- this page specific styles -->
+    <link rel="stylesheet" href="css/compiled/personal-info.css" type="text/css" media="screen" />
+	
+</head>
+<body>
+
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
+	
+	<!-- main container .wide-content is used for this layout without sidebar -->
+    <div class="content">
+        <div class="container-fluid">
+            <div class="settings-wrapper" id="pad-wrapper">
+				<form name="PersonalForm" action="savecontactemployee.cgi" class="form-comment" method="post" onSubmit="return ValidateForm();">
+                <!-- avatar column -->
+                <div class="span3 avatar-box">
+                    <div class="personal-image">
+                        <img src="" class="avatar img-circle" id="usr_img" name="usr_img" width="107" height="98">
+                        <p>Upload a different photo...</p>
+						<input name="fileinput" type="file" id="fileinput" />
+                    </div>
+                </div>
+
+                <!-- edit form column -->
+                <div class="span7 personal-info">
+                    <!--<div class="alert alert-info">
+                        <i class="icon-lightbulb"></i>
+                        This page shows an example of an alternative layout with the main navbar on the top
+                        <br> using <strong>.content.wide-content</strong> for this main container
+                    </div>-->
+                    <h5 class="personal-title">Update your personal info</h5>
+
+                    <div style="margin-left:50px;">
+                        <div class="field-box">
+                            <label>First name:</label>
+                            <!--#4DIF (mContactBoolen)-->
+                            <input class="span5 inline-input" type="text" name="First_Name" id="First_Name" value="<!--#4DVAR [Contacts]First name-->" />
+                            <!--#4DELSE-->
+                             <input class="span5 inline-input" type="text" name="First_Name" id="First_Name" value="<!--#4DVAR [Employees]emp_first_name-->" />
+                            <!--#4DENDIF-->
+                        </div>
+						<input name="uuid" class="span9" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="uuid">        
+						<input name="form_name" class="span9" type="hidden" value="PersonalForm" id="form_name">        
+                        <div class="field-box">
+                            <label>Last name:</label>
+                            <!--#4DIF (mContactBoolen)-->
+                            <input class="span5 inline-input" type="text" name="Surname" id="Surname" value="<!--#4DVAR [Contacts]Surname-->" />
+                            <!--#4DELSE-->
+                            <input class="span5 inline-input" type="text" name="Surname" id="Surname" value="<!--#4DVAR [Employees]emp_last_name-->" />
+                            <!--#4DENDIF-->
+                        </div>
+						<div class="field-box">
+                            <!--#4DIF (mContactBoolen)-->
+                            <label>Title:</label>
+                            <input class="span5 inline-input" type="text" name="Title" id="Title" value="<!--#4DVAR [Contacts]Title-->" />
+                            <!--#4DELSE-->
+                            <label>Position:</label>
+                             <input class="span5 inline-input" type="text" name="Position" id="Position" value="<!--#4DVAR [Employees]emp_position-->" />
+                            <!--#4DENDIF-->
+                        </div>
+                        <div class="field-box">
+                            <!--#4DIF (mContactBoolen)-->
+                            <label>Company:</label>
+                            <input class="span5 inline-input" type="text" id="Client_ID" name="Client_ID" value="<!--4DVAR [Companies]company_Name-->" readonly/>
+                            <!--#4DELSE-->
+                            <!--#4DENDIF-->
+                        </div>
+                        <div class="field-box">
+                            <label>Email:</label>
+                             <!--#4DIF (mContactBoolen)-->
+                            <input class="span5 inline-input" type="text" name="Email" id="Email" onKeyUp="generateUsername()" onBlur="generateUsername()" value="<!--#4DVAR [Contacts]Email-->" />
+                            <!--#4DELSE-->
+                            <input class="span5 inline-input" type="text" name="Email" id="Email" onKeyUp="generateUsername()" onBlur="generateUsername()" value="<!--#4DVAR [Employees]email-->" />
+                            <!--#4DENDIF-->
+                        </div>
+                        <!-- <div class="field-box">
+                            <label>Time Zone:</label>
+                            <div class="ui-select">
+                                <select id="user_time_zone" name="user[time_zone]">
+                                    <option value="Hawaii">(GMT-10:00) Hawaii</option>
+                                    <option value="Alaska">(GMT-09:00) Alaska</option>
+                                    <option value="Pacific Time (US &amp; Canada)">(GMT-08:00) Pacific Time (US &amp; Canada)</option>
+                                    <option value="Arizona">(GMT-07:00) Arizona</option>
+                                    <option value="Mountain Time (US &amp; Canada)">(GMT-07:00) Mountain Time (US &amp; Canada)</option>
+                                    <option value="Central Time (US &amp; Canada)" selected="selected">(GMT-06:00) Central Time (US &amp; Canada)</option>
+                                    <option value="Eastern Time (US &amp; Canada)">(GMT-05:00) Eastern Time (US &amp; Canada)</option>
+                                    <option value="Indiana (East)">(GMT-05:00) Indiana (East)</option>                                    
+                                </select>
+                            </div>
+                        </div> -->
+                        <div class="field-box">
+                        <label>Username:</label>
+                           <!--#4DIF (mContactBoolen)-->
+                            <input class="span5 inline-input" type="text" id="Username" value="<!--#4DVAR [Contacts]Email-->" readonly/>
+                            <!--#4DELSE-->
+                            <input class="span5 inline-input" type="text" id="Username" value="<!--#4DVAR [Employees]email-->" readonly/>
+                            <!--#4DENDIF-->
+                        </div>
+                        <div class="field-box">
+                            <label>Password:</label>
+                            <!--#4DIF (mContactBoolen)-->
+                            <input class="span5 inline-input" type="password" name="zWebPassword" id="zWebPassword" value="<!--#4DVAR [Contacts]zWebPassword-->" />
+                            <!--#4DELSE-->
+                            <input class="span5 inline-input" type="password" name="zWebPassword" id="zWebPassword" value="<!--#4DVAR [Employees]zWebPassword-->" />
+                            <!--#4DENDIF-->
+                        </div>
+						<div class="field-box">
+						<!--#4DIF (mContactBoolen)-->
+                            <label>Direct phone:</label>
+                            <input class="span5 inline-input" type="text" name="Direct_Phone" id="Direct_Phone" value="<!--#4DVAR [Contacts]Direct Phone-->" />
+                            <!--#4DELSE-->
+                            <!--#4DENDIF-->
+                        </div>
+						<div class="field-box">
+						<!--#4DIF (mContactBoolen)-->
+                            <label>Mobile:</label>
+                            <input class="span5 inline-input" type="text" name="Mobile" id="Mobile" value="<!--#4DVAR [Contacts]Mobile-->" />
+                            <!--#4DELSE-->
+                            <!--#4DENDIF-->
+                        </div>
+						<div class="field-box">
+						<!--#4DIF (mContactBoolen)-->
+                            <label>Direct fax:</label>
+                            <input class="span5 inline-input" type="text" name="Direct_fax" id="Direct_fax" value="<!--#4DVAR [Contacts]Direct fax-->" />
+                            <!--#4DELSE-->
+                            <!--#4DENDIF-->
+                        </div>
+						
+                        <!--<div class="field-box">
+                            <label>Confirm password:</label>
+                            <input class="span5 inline-input" type="password" value="" />
+                        </div>-->
+						
+                        <div class="span5 field-box actions">
+                            <input type="submit" class="btn-glow primary" value="Save Changes">
+                            <span>OR</span>
+                            <a href="index.shtml">Cancel</a>
+                        </div>
+                    </div>
+                </div>
+				</form>
+            </div>
+        </div>
+    </div>
+    <!-- end main container -->
+
+
+	<!-- scripts -->
+	 <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+    <script type="text/javascript">
+	function ValidateForm () {
+		var msg = '';
+
+		if (document.PersonalForm.First_Name.value=="")
+		{ 
+			alert('Please specify your first name'); 
+			document.PersonalForm.First_Name.focus();
+			return false;
+		}
+		if (document.PersonalForm.Email.value=="")
+		{
+			alert('Please specify your email address'); 
+			document.PersonalForm.Email.focus();
+			return false;
+		}
+
+		var regex = /^([a-zA-Z0-9_\.\-\+])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+		if(document.PersonalForm.Email.value!="" && !regex.test(document.PersonalForm.Email.value))
+		{ 
+			alert('Please Specify valid Email'); 
+			document.PersonalForm.Email.focus();
+			return false;
+		}
+
+	}
+		function generateUsername()
+		{
+			var val=document.getElementById('Email').value;
+			document.getElementById('Username').value=val;
+		}
+        $(function () {
+			$("#fileinput").change(function(){
+				if (this.files && this.files[0]) {
+					var reader = new FileReader();
+
+					reader.onload = function (e) {
+					$('#usr_img').attr('src', e.target.result);
+					 };
+
+					 reader.readAsDataURL(this.files[0]);
+				 }
+			});
+        });
+    </script>
+</body>
+</html>

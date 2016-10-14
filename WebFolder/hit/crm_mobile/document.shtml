@@ -1,0 +1,167 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+C_TEXT(_HTMLTITLETXT)
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+
+QUERY([Documents];[Documents]uuid=_HIT_WebApp_GetField ("uuid"))
+QUERY([Companies];[Companies]uuid=[Documents]uuid_customer)
+
+IF (Records in selection([Documents])=0)
+_HTMLTITLETXT:="New Document"
+ELSE
+_HTMLTITLETXT:= "Edit Document"
+END IF
+
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+
+-->
+
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/main-header.shtml-->
+<link rel="stylesheet" href="css/jquery.mobile.datepicker.css">
+<script src="js/jquery.ui.datepicker.js"></script>
+<script id="mobile-datepicker" src="js/jquery.mobile.datepicker.js"></script>
+<script src="js/jquery.validate.js"></script>
+<script type="text/javascript">
+var tableUUIDStr= '<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->';
+var tableNameStr='Projects';
+var taskNameStr='',xhrAbortLoad, xhrAbortSearch;
+var loadmoreNum=10, start=0, end=loadmoreNum;
+
+$(document).ready(function() {
+	<!--#4DIF (_HIT_WebApp_GetField ("uuid")="")-->
+		$(':input','#ContactForm')
+ 		.not(':button, :submit, :reset, :hidden')
+ 		.val('')
+ 		.removeAttr('checked')
+ 		.removeAttr('selected');
+	<!--#4DELSE--><!--#4DENDIF-->
+		
+	$(".ui-table-columntoggle-btn").hide();
+	$("#DetailForm").validate({
+		ignore: "",
+        rules: {
+            projectNameStr: { required: true },
+			file_name: { required: true }
+        }
+    });
+    
+    //on keyup, start the countdown
+	$('.projectNameStr').keyup(function(){
+    	if ($('.projectNameStr').val()) {
+      		var jsonRow="getcompaniesonsearch.cgi?srch="+$('.projectNameStr').val()+"&"+Math.random();
+			if(xhrAbortSearch) xhrAbortSearch.abort();
+			xhrAbortLoxhrAbortSearchad=$.getJSON(jsonRow,function(result){
+				if(result){
+					var html='';
+					$.each(result, function(i,item){
+						html += '<li><a class="ui-btn ui-btn-icon-right ui-icon-carat-r" href="javascript:void(0)" onClick="selectValue(\''+item.CustoemrUUID+'\',\''+item.value+'\')">'+item.value+'</a></li>';
+					});
+					$( ".projectListView").html("");
+					$( ".projectListView").html(html);
+				}
+			});
+          
+    	}
+    });
+    $('.ui-input-clear').click(function(){
+    	$("#Project_ID").val("");
+    });
+    
+});
+function selectValue(val, name){
+	$(".projectNameStr").val(name);
+	$("#Client_ID").val(val);
+	$( ".projectListView" ).listview( "refresh" );
+	$( ".projectListView li" ).addClass("ui-screen-hidden");
+}
+</script>
+<script type='text/javascript' src='js/customerNotes.js'></script>
+<style>
+label.error { 
+	float: left; 
+	color: red; 
+	padding-top: 1.5em; 
+	vertical-align: top; 
+}
+</style>
+</head>
+<body>
+<div data-role="page" class="jqm-demos" data-quicklinks="true">
+	<!-- header -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/top-header.shtml-->
+	<!-- /header -->
+	
+	<div role="main" class="ui-content jqm-content">
+		<h3><!--#4DIF (Records in selection([Documents])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Document</h3>
+		<div data-demo-html="true">
+			<form name="DetailForm" action="savedocument.cgi" id="DetailForm" data-ajax="false" method="post" enctype="multipart/form-data">
+					<input name="doc_uuid" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="doc_uuid">
+							
+					<div class="ui-field-contain">
+						<label for="uuid_reported_by" class="select">Client Name:</label>
+						<input name="Client_ID" id="Client_ID" type="hidden" value="<!--#4DVAR [Companies]uuid-->">
+						<input name="company_uuid" id="company_uuid" type="hidden" value="<!--#4DVAR [Companies]uuid-->">
+						<span class="ui-filterable">
+   							<input id="inset-autocomplete-input" data-type="search" placeholder="Search client..." class="projectNameStr" value="<!--4DVAR [Companies]company_Name-->" name="projectNameStr">
+						</span>
+						
+					
+						<ul data-role="listview" data-inset="true" data-filter="true" data-filter-reveal="true" data-input="#inset-autocomplete-input" class="projectListView">
+   							<!--#4DIF (Records in selection([Documents)=0)-->
+								<!--#4DIF (pUserClient="")-->
+									<!--#4DSCRIPT/Web_LoadCustomers/-->
+                                    <!--4DLOOP  [Companies]-->
+										<li><a href="javascript:void(0)" onClick="selectValue('[Companies]uuid','<!--4DVAR [Companies]company_Name-->')"><!--4DVAR [Companies]company_Name--></a></li>
+									<!--4DENDLOOP-->
+								<!--#4DENDIF-->								 
+							<!--#4DENDIF-->
+						</ul>
+					</div>      
+                    <input name="Contact_uuid" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="Contact_uuid">               
+                              	
+					<div class="ui-field-contain">
+   						<label for="file_name">Filename:</label>
+   						<input name="file_name" type="text" value="<!--#4DVAR [Documents]filename-->" id="file_name">
+   					</div>
+   					<!--#4DIF (Records in selection([Documents])#0)-->
+   					<div class="ui-field-contain">
+   						<label for="file_name">Size:</label>
+   						<!--#4DVAR _HIT_FileSizeHumanReadable (BLOB size([Documents]filecontent))-->
+					</div>
+   					<!--#4DENDIF-->
+					<div class="ui-field-contain">
+   						<label for="Surname">File Content:</label>
+   						<input name="file_content" type="file" id="file_content">
+					</div>
+					
+					<div class="ui-field-contain">
+   						<label for="type">Type :</label>
+						<!--#4DVAR [Documents]doctype-->
+						<input class="span6" name="customer" type="hidden" value="<!--#4DVAR [Companies]company_Name-->" id="customer">	
+					</div>
+					
+   					<div class="ui-field-contain">
+   						<label for="metadata">Metadata:</label>
+   						<textarea cols="40" rows="8" name="metadata" id="metadata" placeholder="Metadata"><!--#4DVAR [Documents]metadata--></textarea>
+					</div>
+					
+					<button type="submit" class="ui-shadow ui-btn ui-corner-all ui-mini">Submit</button>
+				</form>	
+		    	
+		    </div>
+	</div><!-- /content -->
+	<!-- panel -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/sidebar.shtml-->
+	<!-- /panel -->
+
+	<!-- footer -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/footer.shtml-->
+	<!-- /footer -->
+</div><!-- /page -->
+
+</body>
+</html>

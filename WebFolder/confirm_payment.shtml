@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Tenthmatrix Billing Secure Site - Pay Invoice Online</title>
+
+<!--#4DSCRIPT/_HIT_LoadInclude/includes/static_files.shtml-->
+
+</head>
+
+<body>
+<!--#4DSCRIPT/_HIT_LoadInclude/includes/topmenu.shtml-->
+
+<div class="container">
+	<div class="row client">
+		<div id="content">
+			<div class="container">
+				<div class="row " style="margin-top:20px;">
+					<div class="col-lg-8 col-md-9 col-sm-12 col-xs-12 content ">
+            			<h1 style="margin-top: 10px; " ><span>Pay Invoice online - Enter card holder details</span></h1>
+				
+						<!-- Classic Heading -->
+				
+               			<p><em> Note: We do not store your personal data or credit card information.</em></p>
+						<div id="response_msg"></div>
+						<!-- Start Contact Form -->
+						<form action="https://secure.worldpay.com/wcc/purchase"  class="form-horizontal" method="POST" name="invoice" onSubmit="return ValidateForm();">
+
+      						<div class="form-group">
+        						<label  class="col-sm-2 control-label">Your Name</label>
+        						<div class="col-sm-10">
+          							<input class="form-control" id="name" placeholder="Your Name" type="Your Name" name="name" value="">
+        						</div>
+      						</div>
+      						<div class="form-group">
+        						<label  class="col-sm-2 control-label">Address</label>
+        						<div class="col-sm-10">
+       								<textarea class="form-control" rows="6" name="address" id="address"></textarea>
+      							</div>
+     					 	</div>
+      						<div class="form-group">
+        						<label  class="col-sm-2 control-label">Country</label>
+        						<div class="col-sm-10">
+          							<select name=country class="form-control" >
+										<option SELECTED VALUE="">
+
+							<option value=AF>Afghanistan
+
+							<option value=AL>Albania
+
+							<option value=DZ>Algeria
+
+							<option value=AS>American Samoa
+
+							<option value=AD>Andorra
+
+							<option value=AO>Angola
+
+							<option value=AI>Anguilla
+
+							<option value=AQ>Antarctica
+
+							<option value=AG>Antigua and Barbuda
+
+							<option value=AR>Argentina
+
+							<option value=AM>Armenia
+
+							<option value=AW>Aruba
+
+							<option value=AU>Australia
+
+							<option value=AT>Austria
+
+							<option value=AZ>Azerbaijan
+
+							<option value=BS>Bahamas
+
+							<option value=BH>Bahrain
+
+							<option value=BD>Bangladesh
+
+							<option value=BB>Barbados
+
+							<option value=BY>Belarus
+
+							<option value=BE>Belgium
+							<option value=BZ>Belize
+
+							<option value=BJ>Benin
+
+							<option value=BM>Bermuda
+
+							<option value=BT>Bhutan
+							<option value=BO>Bolivia
+
+							<option value=BA>Bosnia and Herzegovina
+
+							<option value=BW>Botswana
+
+							<option value=BV>Bouvet Island
+							<option value=BR>Brazil
+
+							<option value=IO>British Indian Ocean Territory
+
+							<option value=BN>Brunei Darussalam
+
+							<option value=BG>Bulgaria
+
+							<option value=BF>Burkina Faso
+
+							<option value=BI>Burundi
+
+							<option value=KH>Cambodia
+
+							<option value=CM>Cameroon
+
+							<option value=CA>Canada
+
+							<option value=CV>Cape Verde
+
+							<option value=KY>Cayman Islands
+
+							<option value=CF>Central African Republic
+
+							<option value=TD>Chad
+
+							<option value=CL>Chile
+
+							<option value=CN>China
+
+							<option value=CX>Christmas Island
+
+							<option value=CC>Cocos (Keeling) Islands
+
+							<option value=CO>Colombia
+
+							<option value=KM>Comoros
+
+							<option value=CG>Congo
+							<option value=CK>Cook Islands
+
+							<option value=CR>Costa Rica
+
+							<option value=HR>Croatia
+
+							<option value=CU>Cuba
+
+							<option value=CY>Cyprus
+
+							<option value=CZ>Czech Republic
+
+							<option value=CI>Côte d'Ivoire
+
+							<option value=DK>Denmark
+
+							<option value=DJ>Djibouti
+
+							<option value=DM>Dominica
+
+							<option value=DO>Dominican Republic
+
+							<option value=TP>East Timor
+
+							<option value=EC>Ecuador
+
+							<option value=EG>Egypt
+
+							<option value=SV>El salvador
+
+							<option value=GQ>Equatorial Guinea
+
+							<option value=ER>Eritrea
+
+							<option value=EE>Estonia
+
+							<option value=ET>Ethiopia
+
+							<option value=FK>Falkland Islands
+
+							<option value=FO>Faroe Islands
+
+							<option value=FJ>Fiji
+
+							<option value=FI>Finland
+
+							<option value=FR>France
+
+							<option value=GF>French Guiana
+
+							<option value=PF>French Polynesia
+
+							<option value=TF>French Southern Territories
+
+							<option value=GA>Gabon
+
+							<option value=GM>Gambia
+
+							<option value=GE>Georgia
+
+							<option value=DE>Germany
+
+							<option value=GH>Ghana
+
+							<option value=GI>Gibraltar
+
+							<option value=GR>Greece
+
+							<option value=GL>Greenland
+
+							<option value=GD>Grenada
+
+							<option value=GP>Guadeloupe
+
+							<option value=GU>Guam
+
+							<option value=GT>Guatemala
+
+							<option value=GN>Guinea
+
+							<option value=GW>Guinea-Bissau
+
+							<option value=GY>Guyana
+
+							<option value=HT>Haiti
+
+							<option value=HM>Heard Island and McDonald Islands
+
+							<option value=VA>Holy See (Vatican City State)
+
+							<option value=HN>Honduras
+
+							<option value=HK>Hong Kong
+
+							<option value=HU>Hungary
+
+							<option value=IS>Iceland
+
+							<option value=IN>India
+
+							<option value=ID>Indonesia
+
+							<option value=IR>Iran
+
+							<option value=IQ>Iraq
+
+							<option value=IE>Ireland
+
+							<option value=IL>Israel
+
+							<option value=IT>Italy
+
+							<option value=JM>Jamaica
+
+							<option value=JP>Japan
+
+							<option value=JO>Jordan
+
+							<option value=KZ>Kazakstan
+
+							<option value=KE>Kenya
+
+							<option value=KI>Kiribati
+
+							<option value=KW>Kuwait
+
+							<option value=KG>Kyrgystan
+
+							<option value=LA>Lao
+
+							<option value=LV>Latvia
+
+							<option value=LB>Lebanon
+
+							<option value=LS>Lesotho
+
+							<option value=LR>Liberia
+
+							<option value=LY>Libyan Arab Jamahiriya
+
+							<option value=LI>Liechtenstein
+
+							<option value=LT>Lithuania
+
+							<option value=LU>Luxembourg
+
+							<option value=MO>Macau
+
+							<option value=MK>Macedonia (FYR)
+
+							<option value=MG>Madagascar
+
+							<option value=MW>Malawi
+
+							<option value=MY>Malaysia
+
+							<option value=MV>Maldives
+
+							<option value=ML>Mali
+
+							<option value=MT>Malta
+
+							<option value=MH>Marshall Islands
+
+							<option value=MQ>Martinique
+
+							<option value=MR>Mauritania
+
+							<option value=MU>Mauritius
+
+							<option value=YT>Mayotte
+
+							<option value=MX>Mexico
+
+							<option value=FM>Micronesia
+
+							<option value=MD>Moldova
+
+							<option value=MC>Monaco
+
+							<option value=MN>Mongolia
+
+							<option value=MS>Montserrat
+
+							<option value=MA>Morocco
+
+							<option value=MZ>Mozambique
+
+							<option value=MM>Myanmar
+
+							<option value=NA>Namibia
+
+							<option value=NR>Nauru
+
+							<option value=NP>Nepal
+
+							<option value=NL>Netherlands
+
+							<option value=AN>Netherlands Antilles
+
+							<option value=NT>Neutral Zone
+
+							<option value=NC>New Caledonia
+
+							<option value=NZ>New Zealand
+
+							<option value=NI>Nicaragua
+
+							<option value=NE>Niger
+
+							<option value=NG>Nigeria
+
+							<option value=NU>Niue
+
+							<option value=NF>Norfolk Island
+
+							<option value=KP>North Korea
+
+							<option value=MP>Northern Mariana Islands
+
+							<option value=NO>Norway
+
+							<option value=OM>Oman
+
+							<option value=PK>Pakistan
+
+							<option value=PW>Palau
+
+							<option value=PA>Panama
+
+							<option value=PG>Papua New Guinea
+
+							<option value=PY>Paraguay
+
+							<option value=PE>Peru
+
+							<option value=PH>Philippines
+
+							<option value=PN>Pitcairn
+
+							<option value=PL>Poland
+
+							<option value=PT>Portugal
+
+							<option value=PR>Puerto Rico
+
+							<option value=QA>Qatar
+
+							<option value=RE>Reunion
+
+							<option value=RO>Romania
+
+							<option value=RU>Russian Federation
+
+							<option value=RW>Rwanda
+
+							<option value=SH>Saint Helena
+
+							<option value=KN>Saint Kitts and Nevis
+
+							<option value=LC>Saint Lucia
+
+							<option value=PM>Saint Pierre and Miquelon
+
+							<option value=VC>Saint Vincent and the Grenadines
+
+							<option value=WS>Samoa
+
+							<option value=SM>San Marino
+
+							<option value=ST>Sao Tome and Principe
+
+							<option value=SA>Saudi Arabia
+
+							<option value=SN>Senegal
+
+							<option value=SC>Seychelles
+
+							<option value=SL>Sierra Leone
+
+							<option value=SG>Singapore
+
+							<option value=SK>Slovakia
+
+							<option value=SI>Slovenia
+
+							<option value=SB>Solomon Islands
+
+							<option value=SO>Somalia
+
+							<option value=ZA>South Africa
+
+							<option value=GS>South Georgia
+
+							<option value=KR>South Korea
+
+							<option value=ES>Spain
+
+							<option value=LK>Sri Lanka
+
+							<option value=SD>Sudan
+
+							<option value=SR>Suriname
+
+							<option value=SJ>Svalbard and Jan Mayen Islands
+
+							<option value=SZ>Swaziland
+
+							<option value=SE>Sweden
+
+							<option value=CH>Switzerland
+
+							<option value=SY>Syria
+
+							<option value=TW>Taiwan
+
+							<option value=TJ>Tajikistan
+
+							<option value=TZ>Tanzania
+
+							<option value=TH>Thailand
+
+							<option value=TG>Togo
+
+							<option value=TK>Tokelau
+
+							<option value=TO>Tonga
+
+							<option value=TT>Trinidad and Tobago
+
+							<option value=TN>Tunisia
+
+							<option value=TR>Turkey
+
+							<option value=TM>Turkmenistan
+
+							<option value=TC>Turks and Caicos Islands
+
+							<option value=TV>Tuvalu
+
+							<option value=UG>Uganda
+
+							<option value=UA>Ukraine
+
+							<option value=AE>United Arab Emirates
+
+							<option value=GB selected>United Kingdom
+
+							<option value=UM>United States Minor Outlying Islands
+
+							<option value=US>United States of America
+
+							<option value=UY>Uruguay
+
+							<option value=UZ>Uzbekistan
+
+							<option value=VU>Vanuatu
+
+							<option value=VE>Venezuela
+
+							<option value=VN>Viet Nam
+
+							<option value=VG>Virgin Islands (British)
+
+							<option value=VI>Virgin Islands (U.S.)
+
+							<option value=WF>Wallis and Futuna Islands
+
+							<option value=EH>Western Sahara
+
+							<option value=YE>Yemen
+
+							<option value=YU>Yugoslavia
+
+							<option value=ZR>Zaire
+
+							<option value=ZM>Zambia
+
+							<option value=ZW>Zimbabwe
+
+		</select>
+		<p style="font-size:13px;"> <em>* Please select country.</em></p>
+        						
+        						</div>
+      						</div>
+      
+      						<div class="form-group">
+        						<label  class="col-sm-2 control-label">Post Code</label>
+       							<div class="col-sm-10">
+          							<input class="form-control" placeholder="Post code" type="Your Name" value="" name="postcode" id="postcode">
+         						</div>
+      						</div>
+      						<div class="form-group">
+        						<label  class="col-sm-2 control-label">Method</label>
+       							<div class="col-sm-10">
+          							<select name="paymentType" class="form-control" >
+										<option value="">Payment type</option>
+										<option value="MSCD">Master Card</option>
+										<option value="VISA">Visa</option>
+										<option value="VIED">Visa Electron</option>
+										<option value="VISD">Visa Delta</option>
+										<option value="VISP">Visa purchasing</option>
+										<option value="JCB">JCB</option>
+										<option value="SOLO">Solo</option>
+										<option value="AMEX">American Express (Amex)</option>
+									</select>
+         						</div>
+      						</div>
+      
+     						
+      						                                
+<input type="hidden" name="accid1" value="TENTHMATRIXIM1">
+<input type="hidden" name="instId" value="303468">
+<input type="hidden" name="cartId" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebSession_GetVar("payment_project_code")-->">
+<input type="hidden" name="currency" value="GBP">
+<input type="hidden" name="amount" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebSession_GetVar("payment_amount")-->" />
+<input type="hidden" name="email" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebSession_GetVar("payment_email")-->">
+<input type="hidden" name="desc" VALUE="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebSession_GetVar("payment_message")-->">
+<input type="hidden" name="testMode" value="0"><!--100 for test mode-->
+<input type="hidden" name="fixContact">
+
+      						<div class="text-right" style="margin-top:10px; float:right;">
+
+      							<a href="index.shtml" class="btn btn-primary" id="previousLink"><span style="margin-right: 2px; font-size: 12px;" class="glyphicon glyphicon-menu-left"></span>Go to previous page</a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button type="submit" name="submit" class="btn btn-danger" id="submit_next">Pay Securely Now</button>
+  							</div>
+   						</form>    
+							
+							
+   						<div class="col-md-12 text-right" style="margin-top:15px; float:right;">
+   							<table cellspacing="0" border="0" align="center" style="border:none" >
+							<tr><td style="border:none">
+								<script language="JavaScript" src="https://secure.worldpay.com/wcc/logo?instId=303468"></script>
+								</td>
+
+								<td  valign="top">
+									<a target="_blank" href="https://www.americanexpress.com"> <img src="images/amex.jpg" alt=""/></a>
+								</td>
+							</tr>
+							</table>
+ 						</div>
+					<!-- End Contact Form -->
+				
+				</div>
+        			<div class=" col-lg-4 col-md-3 col-sm-12 col-xs-12 ">
+						<!--#4DSCRIPT/_HIT_LoadInclude/includes/company_info_sidebar.shtml-->
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!---------------clientsays---section-------end------->
+
+<!--#4DSCRIPT/_HIT_LoadInclude/includes/footer.shtml-->
+
+<script language="javascript">
+
+$(document).ready(function() {
+	var referer= document.referrer;
+	if(referer){
+		$('#previousLink').attr('href',referer);
+	}
+	
+	$("#response_msg").hide();
+	if($('#amount').val()=='0'){//when encrypted link auto loads we have amount otherwise system displays zero; kill pointless zero
+		$('#amount').val('');
+	}
+
+	$.__customAlert = function(pMsgTxt){
+		var errorMsgStr= '<div class="alert alert-danger" role="alert"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span><span class="sr-only">Error:</span> '+pMsgTxt+'</div>';
+		$("#response_msg").html(errorMsgStr);
+		
+		$("#response_msg").show();
+	}
+
+	$('#name').focus();
+
+
+});
+
+function validateEmail(){
+ 
+   var emailID = document.invoice.email.value;
+   var filter=/^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i
+   if (!filter.test(emailID))
+   {
+		$.__customAlert('Please enter a valid email');
+       document.invoice.email.focus() ;
+       return false;
+   }
+   return( true );
+}
+
+function ValidateForm () {
+	var msg = '';
+	if (document.invoice.name.value==""){
+		$.__customAlert('Please enter your name');
+		document.invoice.name.focus() ;
+		return false; 
+	}
+
+	if (document.invoice.address.value==""){ 
+		$.__customAlert('Please enter your address');
+		document.invoice.address.focus() ;
+		return false; 
+	}
+
+	if (document.invoice.country.value==""){
+		$.__customAlert('Please enter your Country');
+		document.invoice.country.focus() ;
+		return false; 
+	}
+	if (document.invoice.postcode.value==""){
+		$.__customAlert('Please enter your postcode');
+		document.invoice.postcode.focus() ;
+		return false; 
+	}
+	if (document.invoice.paymentType.value==""){
+		$.__customAlert('Please choose one Payment Method');
+		document.invoice.paymentType.focus() ;
+		return false; 
+	}
+}
+</script>
+</body>
+</html>

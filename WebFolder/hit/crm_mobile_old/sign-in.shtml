@@ -1,0 +1,91 @@
+<!--HIT_EXECUTE
+C_TEXT(_HIT_HTMLTXT)
+_HIT_HTMLTXT:=_HIT_HTTP_GetReferer
+//_HIT_HTMLTXT:=_HIT_SessionStr
+-->
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/main-header.shtml-->
+
+<style>
+label.error {
+	float: left;
+	color: red;
+	padding-top: .5em;
+	vertical-align: top;
+	font-weight:bold
+}
+</style>
+<link rel="stylesheet" type="text/css" href="css/jqm-datebox.min.css" /> 
+<script type="text/javascript" src="js/jqm-datebox.core.min.js"></script>
+<script type="text/javascript" src="js/jqm-datebox.mode.calbox.min.js"></script>
+<script type="text/javascript" src="js/jquery.mobile.datebox.i18n.en_US.utf8.js"></script>
+<script src="js/jquery.validate.js"></script>
+<script src="js/additional-methods.js"></script>
+<script type="text/javascript">
+
+$(document).on('pageinit', function(){
+
+	$("#frm").validate({
+        rules: {
+            auth_user: "required",
+            auth_password : "required",
+         
+        },
+		messages: {
+			auth_user: "Please Specify Username",
+			auth_password: "Please Specify Password",
+			
+		}
+    });
+});
+</script>
+
+
+
+</head>
+<body>
+<div data-role="page" id="home" data-add-back-btn="false">
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/top-header.shtml-->
+	<div data-role="content" style="padding: 15px;">
+		<ul data-role="listview" data-inset="true">
+			<li data-role="list-divider"><span style=" color:#2B89D0; font-stretch:narrower;">Log in</span></li>
+		</ul>
+		<!--HIT_EXECUTE
+                C_TEXT(_HIT_HTMLTXT)
+                _HIT_HTMLTXT:=_HIT_WebSession_GetVar ("auth_user_type")-->
+		<form data-ajax="false" action="authenticate.cgi" method="post"  id="frm" >
+		<input name="url_to_redirect" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("url")-->">
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput1">E-mail address<font color="#FF0000">*</font></label>
+					<input type="text" placeholder="E-mail address" name="auth_user">
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput12">Your password<font color="#FF0000">*</font></label>
+					<input type="password" placeholder="Your password" name="auth_password">
+				</fieldset>
+			</div>
+			
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<input name="remember-me" id="checkbox-1" type="checkbox" style="margin-left:10px;" >
+		<label for="checkbox-1">Remember me</label>
+					
+				</fieldset>
+			</div>
+			
+			
+			<input type="submit" value="Log in" id="submit" name="submit" >
+			
+			
+			
+		</form>
+	</div><!-- END DATA ROLE CONTENT-->
+
+   <!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/footer.shtml-->
+    
+ </div>
+ 
+</body>
+</html>

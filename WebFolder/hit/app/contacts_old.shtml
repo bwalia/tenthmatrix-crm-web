@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Tenthmatrix CRM App : Contacts</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	
+    <!-- bootstrap -->
+    <link href="css/bootstrap/bootstrap.css" rel="stylesheet">
+    <link href="css/bootstrap/bootstrap-responsive.css" rel="stylesheet">
+    <link href="css/bootstrap/bootstrap-overrides.css" type="text/css" rel="stylesheet">
+
+    <!-- global styles -->
+    <link rel="stylesheet" type="text/css" href="css/compiled/layout.css">
+    <link rel="stylesheet" type="text/css" href="css/compiled/elements.css">
+    <link rel="stylesheet" type="text/css" href="css/compiled/icons.css">
+
+    <!-- libraries -->
+    <link href="css/lib/font-awesome.css" type="text/css" rel="stylesheet" />
+    <link href="css/lib/jquery.dataTables.css" type="text/css" rel="stylesheet" />
+    
+    <!-- this page specific styles -->
+    <link rel="stylesheet" href="css/compiled/datatables.css" type="text/css" media="screen" />
+
+    <!-- open sans font -->
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    
+    	<style type="text/css">
+		.Highlight
+		{
+			background-color: #dcfac9;
+			cursor: pointer;
+		}
+		
+		.pull-right
+		{
+		
+		margin: 4px;
+		padding: 4px;
+		
+		}
+		
+	</style>
+
+
+</head>
+<body>
+
+	<!-- main container -->
+    <div class="content wide-content">
+        
+                                <div class="pull-right">
+                            <div class="btn-group pull-right">
+                                <button class="glow left large" onClick="__showAllContacts(); return false;">All</button>
+                                <button class="glow middle large" onClick="__showAllowed(); return false;">Allowed</button>
+                                <button class="glow right large" onClick="__showNotAllowed(); return false;">Not Allowed</button>
+                                <a href="contact.shtml" class="btn-flat success new-product margn-lft35" style="margin-left:35px;">+ Add New Contact</a>
+                            </div>
+                            <input name="keyword" style="margin-top:12px;" id="keyword" type="text" class="search order-search" placeholder="Enter customer, contact name.." value="" />
+                        </div>
+
+        
+        <div class="container-fluid">
+            <div id="pad-wrapper" class="datatables-page">
+                <div class="row-fluid">
+                    <div class="span12">
+
+                        <table cellpadding="0" cellspacing="0" border="0" class="dataTable" id="contact_table">
+                            <thead>
+                                <tr role="row">
+                                    <th rowspan="1" colspan="1"><input name="Select" class="check" type="checkbox" id="Select" value=""></label>
+                                    </th>
+                                    <th rowspan="1" colspan="1">CLIENT 
+                                    </th>
+                                    <th rowspan="1" colspan="1">CONTACT NAME
+                                    </th>
+                                    <th rowspan="1" colspan="1">E-MAIL
+                                    </th>
+                                    <th rowspan="1" colspan="1">DATE-ADDED
+                                    </th>
+                                    <th rowspan="1" colspan="1">MOBILE
+                                    </th>
+                                    <th rowspan="1" colspan="1">STATUS
+                                    </th>
+                                      <th rowspan="1" colspan="1">ACTION
+                                    </th>
+                                </tr>
+                            </thead>
+                                                    <tfoot>
+                            <tr>
+                                	<th rowspan="1" colspan="1">&nbsp;</th>
+                                	<th rowspan="1" colspan="1">CLIENT 
+                                    </th>
+                                    <th rowspan="1" colspan="1">CONTACT NAME
+                                    </th>
+                                    <th rowspan="1" colspan="1">E-MAIL
+                                    </th>
+                                    <th rowspan="1" colspan="1">DATE-ADDED
+                                    </th>
+                                    <th rowspan="1" colspan="1">MOBILE
+                                    </th>
+                                    <th rowspan="1" colspan="1">STATUS</th>
+                                    <th rowspan="1" colspan="1">ACTION</th>
+                            </tr>
+                        </tfoot>
+
+                            <tbody id="contacts_table_body">
+
+                        </tbody>
+                        </table>
+						<div id="img_loading_div" style="text-align:center">
+		<img src="../loading.gif"  style="padding:20px;" width="34" >
+		</div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end main container -->
+
+	<!-- scripts -->
+    <script src="js/jquery-latest.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.dataTables.js"></script>
+    <script src="js/theme.js"></script>
+
+<script type="text/javascript">
+var JSONdata;
+ var start=0, end=50;
+ var old_srch='',new_srch='', jsonRow='', tab='', set='';
+ var tablname='Invoices';
+ var process=false;
+			// Hide the first cell for JavaScript enabled browsers.
+			$('#contact_table td:first-child').hide();
+
+			// Apply a class on mouse over and remove it on mouse out.
+			$('#contact_table tr').hover(function ()
+			{
+				$(this).toggleClass('Highlight');
+			});
+
+			// Assign a click handler that grabs the URL from the first cell and redirects the user.
+			$('#contact_table tr').click(function ()
+			{
+				location.href = $(this).find('td a').attr('href');
+			});
+
+function __showAllowed()
+{
+	start=0;
+	end=25;
+	tab='Allowed';
+	jsonRow = 'loadcontacts.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab;
+	if(new_srch!=''){
+		jsonRow +='&new_srch='+new_srch;
+	}
+	$('#contacts_table_body').html('');
+	$('#img_loading_div').show();		
+	load_data(jsonRow);
+}
+
+
+function __showNotAllowed()
+{
+	start=0;
+	end=25;
+	tab='Not_Allowed';
+	jsonRow = 'loadcontacts.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab;
+	if(new_srch!=''){
+		jsonRow +='&new_srch='+new_srch;
+	}	
+	$('#contacts_table_body').html('');
+	$('#img_loading_div').show();	
+	load_data(jsonRow);
+}
+
+ 
+
+function __showContact()
+{
+	start=0;
+	end=25;
+	tab='';
+	jsonRow = 'loadcontacts.cgi?start='+start+'&end='+end+'&tablname='+tablname;
+	if(new_srch!=''){
+		jsonRow +='&new_srch='+new_srch;
+	}	
+	$('#contacts_table_body').html('');
+	$('#img_loading_div').show();	
+	load_data(jsonRow);
+}
+
+function __showinvoicesForm_AddSet(name)
+{
+	var selected='';
+	$('.check').each(function(){
+		if($(this).is(":checked")){
+			if(selected==''){
+				selected=$(this).val();
+			}
+			else{
+				selected+=","+$(this).val();
+			}
+		}
+	
+	});
+	if(selected!=''){
+		if(name=='new_set'){
+			var new_set=prompt("Please enter name of new set:","userset_1");
+			$('#new_name').val(new_set);
+			if(new_set!=null){
+				$('#selected').val(selected);
+				$('#set').val("add_to_"+name);
+				$('#frm_set').submit();
+			
+			}
+		}
+		else
+		{
+			$('#selected').val(selected);
+			$('#set').val("add_to_"+name);
+			$('#frm_set').submit();
+		}
+	}
+	//pUrlStr='leads.shtml?set=add_to_'+name;
+	//window.location.href=pUrlStr;
+}
+
+ 
+$(document).ready(function() {
+
+	$('#keyword').focus();
+	
+	jsonRow = 'loadcontacts.cgi?start='+start+'&end='+end+'&tablname='+tablname;		
+	load_data(jsonRow);			 
+	
+	$(window).scroll(function(){
+		if ($(window).scrollTop() == $(document).height() - $(window).height()){
+		
+		//alert("scrolling...");
+		start=end+1;
+		end=start+25;
+		jsonRow = 'loadcontacts.cgi?start='+start+'&end='+end+'&tablname='+tablname;
+		if(new_srch!=''){
+			jsonRow +='&new_srch='+new_srch;
+		}
+		if(tab!=''){
+			jsonRow +='&tab='+tab;
+		}		
+		load_data(jsonRow);
+		
+		}
+	});	
+	
+	//setup before functions
+	var typingTimer;                //timer identifier
+	var doneTypingInterval = 1000;  //time in ms, 5 second for example
+	
+	//on keyup, start the countdown
+	$('#keyword').keyup(function(){
+		clearTimeout(typingTimer);
+		if ($('#keyword').val) {
+			typingTimer = setTimeout(function(){
+				//do stuff here e.g ajax call etc....
+				$('#contacts_table_body').html('');
+				$('#img_loading_div').show();
+				start=0;
+				end=start+25;
+				tab='';
+				new_srch= $("#keyword").val();
+				jsonRow = 'loadcontacts.cgi?start='+start+'&end='+end+'&tablname='+tablname;
+				if(new_srch!=''){
+					jsonRow +='&new_srch='+new_srch;
+				}
+				if(tab!=''){
+					jsonRow +='&tab='+tab;
+				}	
+				load_data(jsonRow);
+			}, doneTypingInterval);
+		}
+	});		
+	
+});
+
+ 
+function load_data(jsonRow){
+	JSONdata=new Array();
+	$.getJSON(jsonRow,function(result){
+			if(result.Alert){
+				alert("No more records found");
+			}
+			else{
+			 
+			
+				$.each(result.uuid, function(i,item)
+				{
+					JSONdata[i]=new Array();
+					JSONdata[i][0]='<input name="Select" class="check" type="checkbox" id="Select" value="'+item+'">';
+						
+				}); 
+				$.each(result.clientName, function(i,item)
+				{
+					JSONdata[i][1]=item;
+					
+				});
+				$.each(result.ContactName, function(i,item)
+				{
+					JSONdata[i][2]=item;
+				});
+				$.each(result.Email, function(i,item)
+				{
+					JSONdata[i][3]=item;
+				});
+				$.each(result.DateAdded, function(i,item)
+				{					
+					JSONdata[i][4]=item;
+				});
+				$.each(result.Mobile, function(i,item)
+				{					
+					JSONdata[i][5]=item;
+				});
+				$.each(result.AllowWeb, function(i,item)
+				{		
+				if(item==true){
+						JSONdata[i][6]='<span class="label label-success"> Access Allowed </span>';
+					}
+					else{
+						JSONdata[i][6]='<span class="label label-info"> Access not Allowed </span>';
+					}
+				});
+				$.each(result.uuid, function(i,item)
+				{	
+			  	 
+			  		JSONdata[i][7]='<ul class="actions"><li><a href="contact.shtml?uuid='+item+'" title="Edit" ><i class="table-edit"></i><a></li>';
+				
+				});
+				
+				var table_html='';
+				var trClassStr='odd';
+				$.each(JSONdata, function(i,row)
+				{
+				
+					table_html+='<tr class="'+trClassStr+'">';
+					if(trClassStr=='odd') { trClassStr='even'; } else { trClassStr='odd' };
+					$.each(row, function(i,col){
+						table_html+='<td>'+col+'</td>';
+					});
+					table_html+='</tr>';
+				});
+				if(old_srch!=new_srch){
+					$('#contacts_table_body').html('');
+					old_srch=new_srch;
+				}
+				//alert(table_html);
+				
+				$('#contacts_table_body').append(table_html);
+
+			// Apply a class on mouse over and remove it on mouse out.
+			$('#contact_table tr').hover(function ()
+			{
+				$(this).toggleClass('Highlight');
+			});
+
+			// Assign a click handler that grabs the URL from the first cell and redirects the user.
+			$('#contact_table tr').click(function ()
+			{
+				location.href = $(this).find('td a').attr('href');
+			});
+
+		}
+		$('#img_loading_div').hide();
+		});
+}
+
+</script>
+
+
+</body>
+</html>

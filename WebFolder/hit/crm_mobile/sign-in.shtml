@@ -1,0 +1,73 @@
+<!--HIT_EXECUTE
+C_TEXT(_HTMLTITLETXT)
+_HTMLTITLETXT:="Tenthmatrix Billing"
+-->
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/main-header.shtml-->
+<script src="js/jquery.validate.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+	$("#signin").validate({
+        rules: {
+            auth_user: {
+      			required: true,
+     			// email: true
+    		},
+			auth_password: { required: true },
+        },  invalidHandler: function(event, validator) {
+    		var errors = validator.numberOfInvalids();
+    		if (errors) {
+     		 var message = errors == 1
+       		 ? 'You missed 1 field. It has been highlighted'
+        		: 'You missed ' + errors + ' fields. They have been highlighted';
+      		$("div.error span").html(message);
+      		$("div.error").show();
+   			 } else {
+     			 $("div.error").hide();
+    		}
+ 	 	}
+	});
+});
+</script>
+<style>
+label.error { 
+	float: left; 
+	color: white; 
+	padding-top: 1.5em; 
+	vertical-align: top; 
+}
+</style>
+</head>
+<body>
+<div data-role="page" class="jqm-demos" data-quicklinks="true">
+	<!-- header -->
+	<div data-role="header" class="jqm-header">
+		<h2><a href="javascript:void(0)" title="Tenthmatrix CRM"><img src="./_assets/img/logo.png" alt="jQuery Mobile"></a></h2>
+		<a href="#" class="jqm-navmenu-link ui-btn ui-btn-icon-notext ui-corner-all ui-icon-bars ui-nodisc-icon ui-alt-icon ui-btn-left">Menu</a>
+	</div>
+	<!-- /header -->
+	<div role="main" class="ui-content" style="background:#38C; width: 80%; border-radius:8px; text-align: center; margin: 20px auto; ">
+		<form novalidate="novalidate" data-ajax="false" action="authenticate.cgi" method="post" id="signin">
+			<input name="url_to_redirect" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("url")-->">
+			<div class="ui-field-contain" data-role="fieldcontain">
+					<fieldset class="ui-controlgroup ui-controlgroup-vertical ui-corner-all" data-role="controlgroup"><div class="ui-controlgroup-controls ">
+						<label for="textinput1">E-mail address<font color="#FF0000">*</font></label>
+						<div class="ui-input-text ui-body-inherit ui-corner-all ui-shadow-inset"><input placeholder="E-mail address" name="auth_user" id="username" type="text"></div>
+					</div></fieldset>
+				</div>
+				<div class="ui-field-contain" data-role="fieldcontain">
+					<fieldset class="ui-controlgroup ui-controlgroup-vertical ui-corner-all" data-role="controlgroup"><div class="ui-controlgroup-controls ">
+						<label for="textinput12">Your password<font color="#FF0000">*</font></label>
+						<div class="ui-input-text ui-body-inherit ui-corner-all ui-shadow-inset"><input placeholder="Your password" name="auth_password" id="password" type="password"></div>
+					</div></fieldset>
+				</div>	
+			<button type="submit" class="ui-btn ui-input-btn ui-corner-all ui-shadow">Submit</button>	
+			<div style="color:white;font-size:14px;">Version: <!--HIT_EXECUTE _HIT_HTMLTXT:=Sys_VersionGet--></div>
+		</form>
+	</div>
+	<!-- footer -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/footer.shtml-->
+	<!-- /footer -->
+</div><!-- /page -->
+
+</body>
+</html>

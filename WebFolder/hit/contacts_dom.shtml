@@ -1,0 +1,343 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+ 
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml?url="+HTTPD_DocumentURI)
+end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+
+C_BOOLEAN(mUserIsCurrentBool)
+mUserIsCurrentBool:=userHasAccessToDelete
+//mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="Admin")
+
+_HIT_HTMLTXT:=_HIT_HTTP_GetReferer
+-->
+<!DOCTYPE html>
+<html>
+<head>
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+<link rel="stylesheet" media="all" type="text/css" href="css/jquery-impromptu.css" />
+</head>
+<body>
+
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
+
+	<!-- main container -->
+    <div class="content">
+        
+        <div class="container-fluid">
+            <div id="pad-wrapper">
+
+                <!-- projects table -->
+                <div class="table-wrapper orders-table section">
+                    <div class="row-fluid head">
+                        <div class="span12">
+                            <h4>Contacts</h4>
+                        </div>
+                    </div>
+                    <div class="row-fluid filter-block">
+                    <form id="frm_set" name="frm_set" method="post" action="contacts.shtml">
+					<!-- <input type="button" class="btn-glow primary" value="Delete Selected" onclick="deleteSelection()"><br><br> -->
+					<!--<input type="button" class="btn-glow primary" value="Add to Set">-->
+					Add to Set :
+					<input type="hidden" name="selected" id="selected" value="">
+					<input type="hidden" name="set" id="set" value="">
+					<input type="hidden" name="new_name" id="new_name" value="">
+					
+					<div class="ui-select">
+					<select name="sets" onChange="__showContactForm_AddSet(this.value)">
+						<option value="">--Select Set--</option>
+						<!--#4DSCRIPT/Web_LoadContactSets/-->
+							<!--4DLOOP  [saved_sets]-->									
+							<option value="<!--#4DHTMLVAR [saved_sets]name-->" ><!--#4DHTMLVAR [saved_sets]name--></option>
+							<!--4DENDLOOP-->
+						<option value="new_set">Create New Set</option>
+					</select>
+					</div>
+                        <div class="pull-right">
+                            <div class="btn-group pull-right">
+                                <button class="glow left large" onClick="__showAllContacts(); return false;" id="tab">All</button>
+                                <button class="glow middle large" onClick="__showSubscribers(); return false;" id="tab">Subscribers</button>
+                                <button class="glow right large" onClick="__showNonSubscribers(); return false;" id="tab">Non Subscribers</button>
+                                <a href="contact.shtml" class="btn-flat success new-product margn-lft35">+ Add New Contact</a>
+                            </div>
+                            <input name="keyword" id="keyword" type="text" class="search order-search" placeholder="Search for Name or Client" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" />
+                        </div>
+                    </div>
+					</form>
+					
+                    <div class="row-fluid">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                	<th width="6%">
+                                        <!-- Select For Sets -->
+                                        <input name="Select" class="span3 check" type="checkbox" id="Select" value="<!--#4DHTMLVAR [Contacts]uuid-->">
+                                    </th>
+                                    <th class="span2">
+                                    	<span class="line"></span>Client
+                                    </th>
+                                    <th  class="span2">
+                                    	<span class="line"></span>CONTACT NAME
+                                    </th>
+									<th  class="span2">
+                                        <span class="line"></span>E-mail
+                                    </th>
+									<th class="span1">
+                                        <span class="line"></span>Date Added
+                                    </th>
+									<th class="span2">
+                                        <span class="line"></span>Mobile
+                                    </th>
+                                    <th class="span3">
+                                        <span class="line"></span>Status
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody><!--#4DSCRIPT/Web_LoadContacts/-->
+                            <!--#4DLOOP [Contacts]--><!--#4DSCRIPT/Web_LoadContactRelated/--><!-- row -->
+                                <tr class="first">
+                                  	<td>
+                                		<input name="Select" class="span3 check" type="checkbox" id="Select" value="<!--#4DHTMLVAR [Contacts]uuid-->"></label>
+                                	</td>
+                                    <td>
+										 <a href="customers.shtml?keyword=<!--#4DVAR [Companies]company_Name-->"><!--#4DHTMLVAR [Companies]company_Name--></a>
+                                    </td>
+                                    <td>
+                                        <a href="javascript:void(0)" onClick="__showContactForm('<!--#4DHTMLVAR [Contacts]uuid-->')"><!--#4DHTMLVAR [Contacts]First name-->  <!--#4DHTMLVAR [Contacts]Surname--></a>
+                                    </td>
+                                    <td>
+                                        <!--#4DHTMLVAR [Contacts]Email-->
+                                    </td>
+									<td>
+                                        <!--#4DHTMLVAR [Contacts]DateAdded-->
+                                    </td>
+									<td>
+                                        <!--#4DHTMLVAR [Contacts]Mobile-->
+                                    </td>
+                                    <td>
+                                    	<!--#4DIF ([Contacts]GetsNewsletter=True)--><span class="label label-success">Subscriber</span><!--#4DELSE--><span class="label label-info">Non-Subscriber</span><!--#4DENDIF-->
+                                    	<ul class="actions">
+                                    		<li><a href="javascript:void(0)" onClick="__showContactForm('<!--#4DHTMLVAR [Contacts]uuid-->')"><i class="table-edit"></i></a></li>
+                                        	<li><i class="table-settings"></i></li> 
+                				<!--#4DIF (mUserIsCurrentBool)--><li class="last"><a href="javascript:void(0)" onClick="__deleteSelected('<!--#4DHTMLVAR [Contacts]uuid-->')"><i class="table-delete"></i></li><!--#4DELSE--><!--#4DENDIF-->
+                                   	 </ul>
+                                    </td>
+                                </tr>
+							<!--#4DENDLOOP-->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- end Contacts table -->
+
+            </div>
+        </div>
+    </div>
+	
+	
+	<div class="example-container">
+								<pre class="code" style="display:none;" id="del_prompt">
+								var statesdemo = {
+									state0: {
+										title: 'Are you sure you want to delete this?',
+										html:'',
+										buttons: { Cancel : 0, Ok: 1 },
+										submit:function(e,v,m,f){ 
+											console.log(f);
+											if(v==1) {
+												var dataString = 'deleteuuid='+del_id;
+
+													$.ajax({
+													type: "GET",
+													dataType: "json",
+													url: "deletecontact.cgi",
+													data: dataString,
+													cache: false,
+													success: function(html)
+													{
+														var keyword=getUrlVars()["keyword"];
+														var tab=getUrlVars()["tab"];
+														if(html.Result){		
+															alert(html.Result);
+															}
+														//alert("Deleted successfully");
+														pUrlStr='contacts.shtml?keyword='+$('#keyword').val();
+														window.location.href=pUrlStr;
+													
+													}
+													});
+											}
+											if(v==0) {
+												$.prompt.close();
+
+											}
+										}
+									},
+									
+								};
+
+								$.prompt(statesdemo);
+								</pre>
+								<!--<a class="run">Run It!</a>-->
+							</div>
+    <!-- end main container -->
+
+	<!-- scripts -->
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+	<script type="text/javascript" src="js/jquery-impromptu.js"></script>
+<script>
+var del_id;
+    
+function __showSubscribers()
+{
+pUrlStr='contacts.shtml?keyword='+$('#keyword').val()+'&tab=newsletter_subscribers';
+window.location.href=pUrlStr;
+}
+
+function __showNonSubscribers()
+{
+pUrlStr='contacts.shtml?keyword='+$('#keyword').val()+'&tab=newsletter_non_subscribers';
+window.location.href=pUrlStr;
+}
+
+function __showAllContacts()
+{
+pUrlStr='contacts.shtml';
+window.location.href=pUrlStr;
+}
+
+function __showContacts()
+{
+pUrlStr='contacts.shtml?keyword='+$('#keyword').val();
+window.location.href=pUrlStr;
+}
+
+function __showContactForm(uuid)
+{
+pUrlStr='contact.shtml?uuid='+uuid;
+window.location.href=pUrlStr;
+}
+
+$(document).ready(function() {
+
+$('#keyword').focus();
+
+//setup before functions
+var typingTimer;                //timer identifier
+var doneTypingInterval = 1000;  //time in ms, 5 second for example
+
+//on keyup, start the countdown
+$('#keyword').keyup(function(){
+    clearTimeout(typingTimer);
+    if ($('#keyword').val) {
+        typingTimer = setTimeout(function(){
+            //do stuff here e.g ajax call etc....
+             var v = $("#keyword").val();
+__showContacts();
+        }, doneTypingInterval);
+    }
+});
+
+    });
+
+</script>
+    
+<script>
+
+
+function __showCustomerForm(uuid)
+{
+pUrlStr='customer.shtml?uuid='+uuid;
+window.location.href=pUrlStr;
+}
+    
+function __showContactForm_AddSet(name)
+{
+	var selected='';
+	$('.check').each(function(){
+		if($(this).is(":checked")){
+			if(selected==''){
+				selected=$(this).val();
+			}
+			else{
+				selected+=","+$(this).val();
+			}
+		}
+	
+	});
+	if(selected!=''){
+		if(name=='new_set'){
+			var new_set=prompt("Please enter name of new set:","userset_1");
+			$('#new_name').val(new_set);
+			if(new_set!=null){
+				$('#selected').val(selected);
+				$('#set').val("add_to_"+name);
+				$('#frm_set').submit();
+			
+			}
+		}
+		else
+		{
+			$('#selected').val(selected);
+			$('#set').val("add_to_"+name);
+			$('#frm_set').submit();
+		}
+	}
+	//pUrlStr='leads.shtml?set=add_to_'+name;
+	//window.location.href=pUrlStr;
+}
+function getUrlVars() {
+    var vars = {};
+    var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+        vars[key] = value;
+    });
+    return vars;
+}
+
+function deleteSelection()
+{
+	
+	var chk=confirm("Are you sure to delete?");
+	if(chk){
+	
+var dataString = 'selected='+selected;
+
+$.ajax({
+type: "GET",
+dataType: "json",
+url: "deletecontacts.cgi",
+data: dataString,
+cache: false,
+success: function(html)
+{
+	var keyword=getUrlVars()["keyword"];
+	var tab=getUrlVars()["tab"];
+	alert("Deleted successfully");
+	pUrlStr='contacts.shtml?keyword='+$('#keyword').val();
+	window.location.href=pUrlStr;
+
+}
+});
+} 
+}
+
+function __deleteSelected(deleteuuid)
+{
+del_id=deleteuuid;
+code = $('#del_prompt').text();
+(new Function(code))();
+
+}
+ 
+</script>
+</body>
+</html>

@@ -1,0 +1,133 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+
+QUERY([Companies];[Companies]uuid=client_uuid)
+
+C_BOOLEAN(mReadOnly)
+mReadOnly:=(Records in selection([Companies])=1)
+
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+-->
+
+
+
+	<!-- main container -->
+            <div id="pad-wrapper" class="form-page">
+				 <div class="row-fluid header">
+					<h3>Licence Manager</h3>
+					
+                </div>
+				
+                <div class="row-fluid form-wrapper">
+				
+					<!-- left column -->
+                    <div class="span10">
+					
+						<form name="LicenceManager" action="" class="form-comment" method="post" >
+						<div id="validation" align="center"></div>
+						<input type="hidden" name="client_uuid" id="client_uuid" value="">
+						
+							<div class="field-box">
+								<label>Version</label>
+								<div class="ui-select span5">
+									<Select name="Version" id="Version">
+										<option value="7.0">7.0</option>
+										<option value="6.7">6.7</option>
+									</select>                                     
+								</div>
+							</div>
+							<div class="field-box">
+								<label>Vertical</label>
+								<div class="ui-select span5">
+									<Select name="Vertical" id="Vertical">
+										<option value="Generic">Generic</option>
+										<option value="Catalog">Catalog</option>
+										<option value="Directory">Directory</option>
+										<option value="Classifieds">Classifieds</option>
+										<option value="Price_list">Price List</option>
+										<option value="Course_Guide">Course Guide</option>
+										<option value="Yearbook">Yearbook</option>
+									</select>                                     
+								</div>
+							</div>
+							<div class="field-box">
+							<label>Platform</label>
+								<label class="radio" style="width:20%">
+                                    <span><input  type="radio" value="Mac" name="platform" id="platform1" onClick="set_platform_check(this.value)" class="rdo"></span> Mac
+                                </label>
+								<label class="radio" style="width:20%">
+                                    <span><input type="radio" value="Windows" name="platform" id="platform2" onClick="set_platform_check(this.value)" class="rdo"></span> Windows
+                            	</label>
+								<label class="radio" style="width:20%">
+                                    <span><input type="radio" value="Multi-user" name="platform" id="platform3" onClick="set_platform_check(this.value)" class="rdo"></span> Multi-user
+                                </label>
+                                <input id="platform_check" type="hidden" >
+							</div>
+							<div class="field-box">
+								<label>Type Of Licence</label>
+								<label class="radio" style="width:20%">
+                                    <span><input  type="radio" value="Enterprise" name="type_of_licence" id="type_of_licence1" onClick="set_type_check(this.value)" class="rdo"></span> Enterprise
+                                </label>
+								<label class="radio" style="width:20%">
+                                    <span><input type="radio" value="Standard" name="type_of_licence" id="type_of_licence2" onClick="set_type_check(this.value)" class="rdo"></span> Standard
+                                </label>
+								<label class="radio" style="width:20%"> 
+                                    <span><input type="radio" value="Chameleon" name="type_of_licence" id="type_of_licence3" onClick="set_type_check(this.value)" class="rdo"></span> Chameleon
+                                </label>
+                                <input id="type_of_licence_check" type="hidden" >
+							</div>
+							
+							<div class="field-box">
+								<label>Number Of Users</label>
+								<input type="text" class="span9" name="noOfUsers" id="noOfUsers" value="">
+							</div>
+							<div class="field-box">
+							<label>License Number</label>
+								<input type="text" class="span9" name="licenceNo" id="licenceNo" value="">
+							</div><br>
+							<span id="err_msg" style="color:#FF0000"></span>
+						
+							<div class="span11 field-box" style="text-align: center;">
+							 
+								<input type="button" name="new" class="btn-glow primary" value="Generate New License" onClick="get_license()">
+								<input type="button" name="activate" class="btn-glow primary" value="Activate" onClick="activate_license()">
+								<input type="button" name="send_mail" class="btn-glow primary" value="Email" onClick="email_license()">
+								<input type="button" name="done" id="done" class="btn-glow primary" value="Done">
+							</div>
+                   					
+						</form>
+					</div>
+				</div>
+            </div>
+            
+            
+    <!-- end main container -->
+
+	<!-- scripts -->
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+	<script src="js/jquery.uniform.min.js"></script>
+	<!-- call this page plugins -->
+		
+    <script type="text/javascript">
+        $(function () {
+			// add uniform plugin styles to html elements
+            $("input:radio").uniform();
+			
+			$("#done").click(function(){
+				$('#cboxClose').click();
+			});
+			
+			
+        });
+    </script>
+	
+	

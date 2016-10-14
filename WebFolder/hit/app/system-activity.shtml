@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Tenthmatrix CRM App : Projects</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- bootstrap -->
+	<link href="css/bootstrap/bootstrap.css" rel="stylesheet">
+    <link href="css/bootstrap/bootstrap-responsive.css" rel="stylesheet">
+    <link href="css/bootstrap/bootstrap-overrides.css" type="text/css" rel="stylesheet">
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/app/includes/header.shtml-->
+
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    
+    	<style type="text/css">
+		.Highlight
+		{
+			background-color: #dcfac9!important;
+			cursor: pointer;
+		}
+		
+		.pull-right
+		{
+		
+		margin: 0 4px 4px 4px;
+		padding:0 4px 4px 4px;
+		
+		}
+		
+	</style>
+
+
+</head>
+<body>
+
+	<!-- main container -->
+    <div class="content wide-content">
+	<div class="container-fluid">
+		<form id="frm_set" name="frm_set"  method="post" action="">
+		
+         <div class="" style=" padding:15px 0 0 0;">
+         <div class="pull-right">
+			<div class="btn-group pull-right">
+				<button class="glow left large" onClick="__showActivities(); return false;">All</button>
+                <button class="glow middle large" onClick="__showActivitiesNotDone(); return false;">Active</button>
+                <button class="glow middle large" onClick="__showActivitiesEmail(); return false;">Email</button>
+                <button class="glow middle large" onClick="__showActivitiesPayment(); return false;">Payments</button>
+                <button class="glow middle large" onClick="__showActivitiesInvoices(); return false;">Invoices</button>
+                <button class="glow middle large" onClick="__showActivitiesPO(); return false;">PO</button>
+                <button class="glow right large" onClick="__showActivitiesDone(); return false;">Done</button>
+			</div>
+			<input style="margin-top:3px;" name="keyword_type" id="keyword_type" type="text" class="search order-search" placeholder="Enter Client, Project name.." value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" />
+		</div>
+        </div>
+        <div class="container-fluid">
+            <div id="pad-wrapper" class="datatables-page">
+                <div class="row-fluid">
+                    <div class="span12">
+
+                        <table cellpadding="0" cellspacing="0" border="0" class="dataTable" id="projects_table">
+                            <thead>
+                                <tr role="row">
+                                    
+                                    <th align="left">DATE
+                                    </th>
+                                    <th align="left">TYPE
+                                    </th>
+                                    <th align="left">TITLE
+                                    </th>
+                                    <th align="left">NOTES
+                                    </th>
+                                    <th align="left">STATUS
+                                    </th>
+                                    <th align="left">DESCRIPTION
+                                    </th>
+                                </tr>
+                            </thead>
+                           <tfoot>
+                            <tr>
+                                <th align="left">DATE</th>
+                                <th align="left">TYPE</th>
+                                <th align="left">TITLE</th>
+                                <th align="left">NOTES</th>
+                                <th align="left">STATUS</th>
+                                <th align="left">DESCRIPTION</th>
+                            </tr>
+                        </tfoot>
+
+                        <tbody id="systemactivity_table">
+
+                        </tbody>
+                        </table>
+						<div id="img_loading_div" style="text-align:center">
+							<img src="../loading.gif"  style="padding:20px;" width="34" >
+						</div>
+
+                    </div>
+                </div>
+            </div>
+       </form>
+        </div>
+    </div>
+	<div class="example-container">
+	<pre class="code" style="display:none;" id="no_rec_prompt">
+									var statesdemo = {
+										state0: {
+											title: 'No more records found',
+											html:'',
+											buttons: { OK: 1 },																		
+											submit:function(e,v,m,f){ 
+												//console.log(f);
+												if(v==1) {
+													$.prompt.close();
+												}
+												
+											}
+										},
+										
+									};
+									if(!($(".jqibox").length))
+									$.prompt(statesdemo);
+								</pre>
+							</div>
+    <!-- end main container -->
+
+	<!-- scripts -->
+    <script src="js/jquery-latest.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.dataTables.js"></script>
+	<script type="text/javascript" src="js/jquery-impromptu.js"></script>
+    <script src="js/theme.js"></script>
+   
+<script>
+var JSONdata;
+var start=0, end=25;
+var old_srch='',keyword='', jsonRow='', tab='', set='';
+var tablname='Activity_Log';
+var process=false;
+// Hide the first cell for JavaScript enabled browsers.
+$('#projects_table td:first-child').hide();
+
+
+// Assign a click handler that grabs the URL from the first cell and redirects the user.
+$('#projects_table tbody tr').click(function ()
+{					
+	//location.href = 'project.shtml?uuid='+$(this).find(':input').val()+'&token='+Math.random();
+});
+ 
+function getMonthName(m) {
+	if(m==1){ monthName= "Jan";}
+	else if(m==2){ monthName= "Feb";}
+	else if(m==3){ monthName= "Mar"; }
+	else if(m==4){ monthName= "Apr"; }
+	else if(m==5){ monthName= "May"; }
+	else if(m==6){ monthName= "Jun"; }
+	else if(m==7){ monthName= "Jul"; }
+	else if(m==8){ monthName= "Aug"; }
+	else if(m==9){ monthName= "Sep"; }
+	else if(m==10){ monthName= "Oct"; }
+	else if(m==11){ monthName= "Nov"; }
+	else if(m==12){ monthName= "Dec"; }
+	else{ monthName= m; }
+	return monthName;
+ }
+ 
+
+function __showActivitiesNotDone()
+{
+	start=0;
+	end=25;
+	tab='active';
+	keyword= $("#keyword_type").val();
+	jsonRow = 'loadactivity.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab;
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}
+	$('#systemactivity_table').html('');
+	$('#img_loading_div').show();		
+	load_data(jsonRow);
+}
+
+
+function __showActivitiesPayment()
+{
+	start=0;
+	end=25;
+	tab='payment';
+	keyword= $("#keyword_type").val();
+	jsonRow = 'loadactivity.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab;
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}
+	$('#systemactivity_table').html('');
+	$('#img_loading_div').show();		
+	load_data(jsonRow);
+}
+
+
+function __showActivitiesInvoices()
+{
+	start=0;
+	end=25;
+	tab='invoice';
+	keyword= $("#keyword_type").val();
+	jsonRow = 'loadactivity.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab;
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}
+	$('#systemactivity_table').html('');
+	$('#img_loading_div').show();		
+	load_data(jsonRow);
+	
+}
+
+function __showActivitiesPO()
+{
+ 	start=0;
+	end=25;
+	tab='po';
+	keyword= $("#keyword_type").val();
+	jsonRow = 'loadactivity.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab;
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}
+	$('#systemactivity_table').html('');
+	$('#img_loading_div').show();		
+	load_data(jsonRow);
+	
+}
+
+function __showActivitiesEmail()
+{
+
+	start=0;
+	end=25;
+	tab='email';
+	keyword= $("#keyword_type").val();
+	jsonRow = 'loadactivity.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab;
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}
+	$('#systemactivity_table').html('');
+	$('#img_loading_div').show();		
+	load_data(jsonRow);
+}
+
+
+
+
+
+function __showActivitiesDone()
+{
+	start=0;
+	end=25;
+	tab='done';
+	keyword= $("#keyword_type").val();
+	jsonRow = 'loadactivity.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab;
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}
+	$('#systemactivity_table').html('');
+	$('#img_loading_div').show();		
+	load_data(jsonRow);
+}
+
+function __showActivities()
+{
+	start=0;
+	end=25;
+	tab='';
+	keyword= $("#keyword_type").val();
+	jsonRow = 'loadactivity.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab;
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}
+	$('#systemactivity_table').html('');
+	$('#img_loading_div').show();		
+	load_data(jsonRow);
+}
+
+
+$(document).ready(function() {
+
+	$('#keyword_type').focus();
+	keyword= $("#keyword_type").val();
+	jsonRow = 'loadactivity.cgi?start='+start+'&end='+end+'&tablname='+tablname;
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}		
+	load_data(jsonRow);	
+	
+	$(window).scroll(function(){
+		if ($(window).scrollTop() == $(document).height() - $(window).height()){
+		
+		//alert("scrolling...");
+		start=end+1;
+		end=start+25;
+		jsonRow = 'loadactivity.cgi?start='+start+'&end='+end+'&tablname='+tablname;
+		if(keyword!=''){
+			jsonRow +='&keyword='+keyword;
+		}
+		if(tab!=''){
+			jsonRow +='&tab='+tab;
+		}		
+		load_data(jsonRow);
+		
+		}
+	});
+	
+	//setup before functions
+	var typingTimer;                //timer identifier
+	var doneTypingInterval = 1000;  //time in ms, 5 second for example
+
+	//on keyup, start the countdown
+	$('#keyword_type').keyup(function(){
+		clearTimeout(typingTimer);
+		if ($('#keyword_type').val) {
+			typingTimer = setTimeout(function(){
+				//do stuff here e.g ajax call etc....
+				$('#systemactivity_table').html('');
+				$('#img_loading_div').show();
+				start=0;
+				end=start+25;
+				tab='';
+				keyword= $("#keyword_type").val();
+				jsonRow = 'loadactivity.cgi?start='+start+'&end='+end+'&tablname='+tablname;
+				if(keyword!=''){
+					jsonRow +='&keyword='+keyword;
+				}
+				if(tab!=''){
+					jsonRow +='&tab='+tab;
+				}	
+				load_data(jsonRow);
+			}, doneTypingInterval);
+		}
+	});
+
+});
+    
+function load_data(jsonRow){
+	JSONdata=new Array();
+	$.getJSON(jsonRow,function(result){
+			if(result.Alert){
+				code = $('#no_rec_prompt').text();
+				(new Function(code))();
+			}
+			else{
+				 $.each(result.date, function(i,item)
+				{
+					JSONdata[i]=new Array();
+					JSONdata[i][0]= item;
+				});
+				
+				$.each(result.type, function(i,item)
+				{	
+					JSONdata[i][1]=item;
+				});
+				$.each(result.title, function(i,item)
+				{	
+					JSONdata[i][2]=item;
+				});
+				$.each(result.notes, function(i,item)
+				{					
+					JSONdata[i][3]=item;
+				});
+				$.each(result.status, function(i,item)
+				{					
+					switch(item)
+					{
+					case 0:
+					  JSONdata[i][4]='<span class="label label-important">Assigned</span>';
+					  break;
+					case 1:
+					  JSONdata[i][4]='<span class="label label-success">Done</span>';
+					  break;
+					case 2:
+					  JSONdata[i][4]='<span class="label label-warning">System</span>';
+					  break;
+					  }
+				});
+				$.each(result.Desc, function(i,item)
+				{					
+					JSONdata[i][5]=item;
+				});
+				
+				
+				var table_html='';
+				var trClassStr='odd';
+				$.each(JSONdata, function(i,row)
+				{
+					table_html+='<tr class="'+trClassStr+'">';
+					if(trClassStr=='odd') { trClassStr='even'; } else { trClassStr='odd' };
+					$.each(row, function(i,col){
+						table_html+='<td>'+col+'</td>';
+					});
+					table_html+='</tr>';
+				});
+				if(old_srch!=keyword){
+					$('#systemactivity_table').html('');
+					old_srch=keyword;
+				}
+				//alert(table_html);
+				
+				$('#systemactivity_table').append(table_html);
+				
+				// Apply a class on mouse over and remove it on mouse out.
+				$('#projects_table tbody tr').unbind();
+				$('#projects_table tbody tr').hover(function ()
+				{
+					$(this).toggleClass('Highlight');
+				});
+
+				// Assign a click handler that grabs the URL from the first cell and redirects the user.
+				/*$('#projects_table tbody tr').click(function ()
+				{					
+					location.href = 'project.shtml?uuid='+$(this).find(':input').val()+'&token='+Math.random();
+				});*/
+				
+		}
+		$('#img_loading_div').hide();
+		});
+}
+
+</script>
+
+
+</body>
+</html>

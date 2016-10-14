@@ -1,0 +1,627 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+QUERY([employee_holidays];[employee_holidays]uuid=_HIT_WebApp_GetField ("uuid"))
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml?url="+HTTPD_DocumentURI)
+end if 
+
+C_BOOLEAN(mReadOnly)
+mReadOnly:=(Records in selection([employee_holidays])=1)
+
+-->
+<!DOCTYPE html>
+<html>
+<head>
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+<link rel="stylesheet" type="text/css" href="lib/base.css" />
+
+	<link rel="stylesheet" href="css/base/jquery-ui.css" />
+<link rel="stylesheet" type="text/css" href="css/jquery.timepicker.css" />
+</head>
+<body>
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
+
+	<!-- main container -->
+    <div class="content">
+    
+        <div class="container-fluid">
+            <div id="pad-wrapper" class="form-page">
+				 <div class="row-fluid header">
+                    <h3>New Request</h3>
+                </div>
+				
+                <div class="row-fluid form-wrapper">
+					<!-- left column -->
+					<div class="span12 column">
+					   <form name="HolidayForm" action="saveholiday.cgi" id="HolidayForm" method="post" class="form-comment" >
+							<div class="span12 field-box">
+								<label>Employee Name:</label>
+								<div class="ui-select span4">
+									<select name="Employee_UUID" id="Employee_UUID">
+										<!--#4DSCRIPT/Web_LoadEmployees/-->
+										<!--4DLOOP  [Employees]-->
+											<option value="<!--4DVAR [Employees]uuid-->" <!--#4DIF ([employee_holidays]uuid_employee=[Employees]uuid)-->selected<!--4DELSE--><!--4DENDIF-->><!--4DVAR [Employees]emp_first_name--> <!--4DVAR [Employees]emp_last_name--></option>
+										<!--4DENDLOOP-->	
+									</select>
+								</div>
+							</div>
+							<input name="holiday_uuid" class="span4" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="holiday_uuid">        
+							
+							<div class="span12 field-box">
+								<label>Start Date :</label>
+								<input type="text" class="input-large datepicker" data-date-format="dd/mm/yyyy" <!--#4DIF (timestamp_unix_toDate([employee_holidays]timestamp_start)=!01/01/1970!)-->value=""<!--4DELSE-->value="<!--#4DVAR timestamp_unix_toDate ([employee_holidays]timestamp_start)-->"<!--4DENDIF--> name="Start_Date" id="Start_Date" readonly>
+								
+								<span style="font-size: 12px;font-weight: 600; margin-left: 40px;margin-right: 60px;text-align: left;">Start Time :</span>
+								<input class="time" type="text"   value="<!--#4DVAR timestamp_unix_toTime([employee_holidays]timestamp_start)-->" name="setStartTime" id="setStartTime" style="width:60px;"> 
+								<input type="hidden" readonly value="07:00 PM" id="startDay_endTime" style="width:60px;">
+								
+							</div>
+							<div class="span12 field-box">
+								<label>End Date :</label>
+								<input type="text" class="input-large datepicker" data-date-format="dd/mm/yyyy" <!--#4DIF (timestamp_unix_toDate([employee_holidays]timestamp_end)=!01/01/1970!)-->value=""<!--4DELSE-->value="<!--#4DVAR timestamp_unix_toDate ([employee_holidays]timestamp_end)-->"<!--4DENDIF--> name="End_Date" id="End_Date" readonly>
+								
+								<span style="font-size: 12px;font-weight: 600; margin-left: 40px;margin-right: 60px;text-align: left;">End Time :</span>
+								<input type="hidden" readonly value="09:00 AM" id="endDay_startTime" style="width:60px;">
+								<input class="time" type="text" value="<!--#4DVAR timestamp_unix_toTime([employee_holidays]timestamp_end)-->" name="setEndTime" id="setEndTime" style="width:60px;" >
+								<span id="err_msg" style="color:#FF0000"></span>
+							</div>
+							<div class="span12 field-box">
+								<label>Duration</label>
+									<input name="days_used" class="span4" type="text" value="<!--#4DVAR [employee_holidays]Duration-->" id="days_used"   readonly>
+								        
+							</div>
+							<div class="field-box">
+								<label>Type Of Holiday</label>
+								<div class="ui-select span4">
+									<Select name="type_of_holiday" id="type_of_holiday">
+										<option value="0">Select an option</option>
+										<option value="Paid Leave" <!--#4DIF ([employee_holidays]type_of_holiday="Paid Leave")-->selected<!--4DELSE--><!--4DENDIF-->>Paid Leave</option>
+										<option value="Unpaid Leave" <!--#4DIF ([employee_holidays]type_of_holiday="Unpaid Leave")-->selected<!--4DELSE--><!--4DENDIF-->>Unpaid Leave</option>
+									</select>                                     
+								</div>
+							</div>
+							<div class="span12 field-box">
+								<label>Reason For Leave :</label>
+								<!--#4DIF (mReadOnly)--><textarea class="span7" rows="4" name="Subject" id="Subject"><!--#4DVAR [employee_holidays]subject--></textarea><!--#4DELSE-->
+								<textarea  class="span7" rows="4" name="Subject" id="Subject"><!--#4DVAR [employee_holidays]subject--></textarea><!--#4DENDIF-->
+							
+							</div>
+							<div class="span12 field-box">
+								<label>Manager Notes :</label>
+								<!--#4DIF (mReadOnly)--><textarea   class="span7" rows="4" name="Comments" id="Comments"><!--#4DVAR [employee_holidays]comments--></textarea><!--#4DELSE-->
+								<textarea   class="span7" rows="4" name="Comments" id="Comments"><!--#4DVAR [employee_holidays]comments--></textarea><!--#4DENDIF-->
+							</div>
+							<div class="field-box">
+								<label>Status</label>
+								<div class="ui-select span4">
+									<Select name="status" id="status">
+										<option value="0">Select an option</option>
+										<option value="Requested" <!--#4DIF ([employee_holidays]status="Requested")-->selected<!--4DELSE--><!--4DENDIF-->>Requested</option>
+										<option value="Approved" <!--#4DIF ([employee_holidays]status="Approved")-->selected<!--4DELSE--><!--4DENDIF-->>Approved</option>
+										<option value="Revoked" <!--#4DIF ([employee_holidays]status="Revoked")-->selected<!--4DELSE--><!--4DENDIF-->>Revoked</option>
+									</select>                                     
+								</div>
+							</div>
+							<div class="span11 field-box" style="padding-left:300px;">
+								<input type="submit" class="btn-glow primary" value="Submit">
+								<span>OR</span>
+								<a href="holidays.shtml">Cancel</a>
+							</div>
+						</form>
+                    </div>
+					<!--<div class="span4 column pull-right">
+						<h4>* You have X annual holidays left</h4>
+					</div>-->
+				</div>
+            </div>
+        </div>
+    </div>
+    <!-- end main container -->
+
+	<!-- scripts -->
+	<script src="js/wysihtml5-0.3.0.js"></script>
+   <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+	<script src="js/bootstrap.datepicker.js"></script>
+	<script src="js/jquery.uniform.min.js"></script>
+	<script src="js/jquery.validate.js"></script>
+	<!-- call this page plugins -->
+	<script type="text/javascript" src="js/jquery.timepicker.js"></script>
+<script language="javascript">
+function ValidateForm () {
+	var msg = '';
+	if (document.HolidayForm.Employee_UUID.value=="")
+	{ msg = msg + 'Please Select Employee Name\n'; }
+	if (document.HolidayForm.Start_Date.value=="")
+	{ msg = msg + 'Please Specify Start Date\n'; }
+	if (document.HolidayForm.End_Date.value=="")
+	{ msg = msg + 'Please Specify End_Date\n'; }
+	if (document.HolidayForm.Subject.value=="")
+	{ msg = msg + 'Please Enter Reason For Leave\n'; }
+	if (document.HolidayForm.status.value=="")
+	{ msg = msg + 'Please Select the Status\n'; }
+	if (msg=="") {
+		return true;
+	} else {
+		alert (msg);
+		return false;
+	}
+}
+
+function check_ondates(check_date,ele){
+	var current_date=new Date();
+	var d = current_date.getDate();
+	var m = current_date.getMonth();
+	var y = current_date.getFullYear();
+	current_date = new Date(y, m, d);
+	current_date = current_date.getTime();
+					
+	var check_date_arr= check_date.split("/");
+	var check_date= new Date(check_date_arr[2],check_date_arr[1]-1,check_date_arr[0]);
+	var check_date = check_date.getTime();
+	var ONE_DAY = 1000 * 60 * 60 * 24;
+	
+	var today = check_date - current_date;
+	if(check_date<current_date){
+		alert('Please Select appropriate Date');
+		$(ele).val('');
+	}
+	else if((Math.round(today/ONE_DAY))<1){
+		alert('Please add request only if there is an emergency');
+	}else if((Math.round(today/ONE_DAY))<=6){
+		alert('Please add request a week before or only if there is an emergency');
+	}
+}
+
+function days_between(date1, date2) {
+	var end_date_arr= date1.split("/");
+	
+	var start_date_arr= date2.split("/");
+	
+	var end_date= new Date(end_date_arr[2],end_date_arr[1]-1,end_date_arr[0]);
+	var start_date= new Date(start_date_arr[2],start_date_arr[1]-1,start_date_arr[0]);
+	
+	var start_day=start_date.getDay();
+	var end_day=end_date.getDay();
+	if((end_date>=start_date) && start_day!=0 && end_day!=0){	
+		
+		// The number of milliseconds in one day
+		var ONE_DAY = 1000 * 60 * 60 * 24
+
+		// Convert both dates to milliseconds
+		var date1_ms = end_date.getTime()
+		//alert(date1_ms);
+		var date2_ms = start_date.getTime()
+
+		// Calculate the difference in milliseconds
+		var difference_ms = Math.abs(date1_ms - date2_ms)
+
+		// Convert back to days and return
+		var days=(Math.round(difference_ms/ONE_DAY)+1);
+		
+		//calculate no of sundays and cut them off from no of holidays
+		var sundayCount = 0;
+		while(start_date < end_date){
+			start_date.setDate(start_date.getDate() + 1);
+			if(start_date.getDay() === 0){
+				++sundayCount ;
+			}
+		}
+		days= days-sundayCount;
+		
+		var time_evaluated='';
+		if(days==1){
+			time_evaluated=days+' day';
+		}else{
+			time_evaluated=days+' days';
+		}
+		$("#days_used").val(time_evaluated);
+		$('#err_msg').html("");
+	}
+	else if(end_date<start_date && start_day!=0 && end_day!=0){
+		$('#err_msg').html("End date must be greater than start date");
+		$("#days_used").val('');
+	}else if(start_day==0 || end_day==0){
+		$('#err_msg').html("Sunday is already a holiday");
+		$("#days_used").val('');
+		if(start_day==0){
+			$('#Start_Date').val('');
+		}else if(end_day==0){
+			$('#End_Date').val('');
+		}
+	}
+}
+function getTimeFromDate(s_date,s_time){
+	var s_date_arr=s_date.split("/");
+	var s_time_arr=s_time.split(":");
+	var s_hour= Number(s_time_arr[0]);
+	var s_min= Number(s_time_arr[1].substr(0,2));
+	var s_ampm= s_time_arr[1].substr(s_time_arr[1].length - 2);
+	if(s_hour==12){
+		s_hour= 0;
+	}
+	if(s_ampm == 'PM'){
+		s_hour= s_hour+12;
+	}
+	var datetime= new Date(s_date_arr[2],s_date_arr[1]-1,s_date_arr[0],s_hour,s_min,'0');
+	return(datetime);
+}
+function evaluate_minutes_with_one_time(s_date,e_date,s_time,e_time){
+	var start_datetime= getTimeFromDate(s_date,s_time);
+	var end_datetime= getTimeFromDate(e_date,e_time);
+	var start_time= start_datetime.getTime();
+	var end_time= end_datetime.getTime();
+
+	var start_day=start_datetime.getDay();
+	var end_day=end_datetime.getDay();
+
+	if(end_time>=start_time  && start_day!=0 && end_day!=0){
+		var diff_time= end_time-start_time;
+		var minutes = Math.floor(diff_time / (1000*60));
+		var time_in_hours= (minutes/60).toFixed(2);
+
+		var days_used=0;
+		var hours_used=0;
+		var minutes_used=0;
+		if(time_in_hours>9){
+			days_used= parseInt(time_in_hours/24);
+			var h_used=time_in_hours-(days_used*24);
+			var min=h_used*60;
+			//console.log(min);
+			hours_used=Math.floor( min/ 60);
+			minutes_used=min % 60;
+			//console.log("hours_used:"+hours_used);
+			//console.log("minutes_used:"+minutes_used);
+			
+			if(hours_used>=9){
+				days_used=days_used+1;
+				hours_used=0;
+				minutes_used=0;
+			}else{
+				hours_used=hours_used;
+				minutes_used=minutes_used;
+			}
+		}else{
+			hours_used=Math.floor( minutes/ 60);
+			minutes_used=minutes % 60;
+		}
+		
+		//calculate no of sundays and cut them off from no of holidays
+		var sundayCount = 0;
+		while(start_datetime < end_datetime){
+			start_datetime.setDate(start_datetime.getDate() + 1);
+			if(start_datetime.getDay() === 0){
+				++sundayCount ;
+			}
+		}
+		days_used= days_used-sundayCount;
+		
+		var time_evaluated='';
+		
+		if(days_used!=0){
+			if(days_used==1){
+				time_evaluated=days_used+' day';
+			}else{
+				time_evaluated=days_used+' days';
+			}
+		}
+		if(hours_used!=0 && minutes_used==0){
+			if(time_evaluated!=''){
+				if(hours_used==1){
+					time_evaluated =time_evaluated+' '+hours_used+' hour';
+				}else{
+					time_evaluated =time_evaluated+' '+hours_used+' hours';
+				}
+			}else{
+				if(hours_used==1){
+					time_evaluated =hours_used+' hour';
+				}else{
+					time_evaluated =hours_used+' hours';
+				}
+			}
+		}else if(hours_used==0 && minutes_used!=0){
+			if(time_evaluated!=''){
+				if(minutes_used==1){
+					time_evaluated =time_evaluated+' '+minutes_used+' min';
+				}else{
+					time_evaluated =time_evaluated+' '+minutes_used+' mins';
+				}
+			}else{
+				if(minutes_used==1){
+					time_evaluated =minutes_used+' min';
+				}else{
+					time_evaluated =minutes_used+' mins';
+				}
+			}	
+		}else if(hours_used!=0 && minutes_used!=0){
+			if(time_evaluated!=''){
+				time_evaluated =time_evaluated+' '+hours_used+' hours'+' '+minutes_used+' mins';
+			}else{
+				time_evaluated =hours_used+' hours'+' '+minutes_used+' mins';
+			}	
+		
+		}
+		
+		$('#err_msg').html('');
+		//console.log(time_evaluated)
+		$("#days_used").val(time_evaluated);
+	}else if(end_time<start_time  && start_day!=0 && end_day!=0){
+		alert("End date time must be greater than start date time");
+		$('#End_Date').val('');
+		$('#setEndTime').val('');
+		$("#days_used").val('');
+		//$('#Slip_Hours').val('');
+	}else if(start_day==0 || end_day==0){
+		$('#err_msg').html("Sunday is already a holiday");
+		if(start_day==0){
+			$('#Start_Date').val('');
+		}else if(end_day==0){
+			$('#End_Date').val('');
+		}
+		$("#days_used").val('');
+	}
+}
+function number_of_minutes(s_date,s_time,e_time){
+	var start_datetime= getTimeFromDate(s_date,s_time);
+	var end_datetime= getTimeFromDate(s_date,e_time);
+	var start_time= start_datetime.getTime();
+	var end_time= end_datetime.getTime();
+
+	var diff_time= end_time-start_time;
+	var minutes = Math.floor(diff_time / (1000*60));
+	return minutes;
+}
+function evaluate_minutes_with_start_end_time(s_date,e_date,s_time,e_time){
+	var s1_time= s_time;
+	var s2_time= $("#startDay_endTime").val();
+	var e1_time= $("#endDay_startTime").val();
+	var e2_time= e_time;
+
+	var start_datetime= getTimeFromDate(s_date,s1_time);
+	var end_datetime= getTimeFromDate(e_date,e2_time);
+	var start_time= start_datetime.getTime();
+	var end_time= end_datetime.getTime();
+	
+	var start_day=start_datetime.getDay();
+	var end_day=end_datetime.getDay();
+
+	if(end_time>=start_time  && start_day!=0 && end_day!=0){
+		var minutes=0;
+		var end_date_arr= e_date.split("/");
+		var start_date_arr= s_date.split("/");
+		
+		var end_date= new Date(end_date_arr[2],end_date_arr[1]-1,end_date_arr[0]);
+		var start_date= new Date(start_date_arr[2],start_date_arr[1]-1,start_date_arr[0]);
+			
+		var ONE_DAY = 1000 * 60 * 60 * 24
+		var date1_ms = end_date.getTime()
+		var date2_ms = start_date.getTime()
+		var difference_ms = Math.abs(date1_ms - date2_ms)
+		var days=(Math.round(difference_ms/ONE_DAY));
+		if(days>1){
+			minutes=(days-1)*24*60;
+		}
+		var min1= number_of_minutes(s_date,s1_time,s2_time);
+		var min2= number_of_minutes(e_date,e1_time,e2_time);
+		
+		minutes= minutes+min1+min2;
+		var time_in_hours= (minutes/60).toFixed(2);
+		
+		var days_used=0;
+		var hours_used=0;
+		var minutes_used=0;
+		if(time_in_hours>9){
+			days_used= parseInt(time_in_hours/24);
+			var h_used=time_in_hours-(days_used*24);
+			var min=h_used*60;
+			hours_used=Math.floor( min/ 60);
+			minutes_used=min % 60;
+			if(hours_used>=9){
+				days_used=days_used+1;
+				hours_used=hours_used-9;
+				minutes_used=minutes_used;
+			}else{
+				hours_used=hours_used;
+				minutes_used=minutes_used;
+			}
+		}else{
+			hours_used=Math.floor( minutes/ 60);
+			minutes_used=minutes % 60;
+		}
+		
+		//calculate no of sundays and cut them off from no of holidays
+		var sundayCount = 0;
+		while(start_datetime < end_datetime){
+			start_datetime.setDate(start_datetime.getDate() + 1);
+			if(start_datetime.getDay() === 0){
+				++sundayCount ;
+			}
+		}
+		days_used= days_used-sundayCount;
+		
+		var time_evaluated='';
+		
+		if(days_used!=0){
+			if(days_used==1){
+				time_evaluated=days_used+' day';
+			}else{
+				time_evaluated=days_used+' days';
+			}
+		}
+		if(hours_used!=0 && minutes_used==0){
+			if(time_evaluated!=''){
+				if(hours_used==1){
+					time_evaluated =time_evaluated+' '+hours_used+' hour';
+				}else{
+					time_evaluated =time_evaluated+' '+hours_used+' hours';
+				}
+			}else{
+				if(hours_used==1){
+					time_evaluated =hours_used+' hour';
+				}else{
+					time_evaluated =hours_used+' hours';
+				}
+			}
+		}else if(hours_used==0 && minutes_used!=0){
+			if(time_evaluated!=''){
+				if(minutes_used==1){
+					time_evaluated =time_evaluated+' '+minutes_used+' min';
+				}else{
+					time_evaluated =time_evaluated+' '+minutes_used+' mins';
+				}
+			}else{
+				if(minutes_used==1){
+					time_evaluated =minutes_used+' min';
+				}else{
+					time_evaluated =minutes_used+' mins';
+				}
+			}	
+		}else if(hours_used!=0 && minutes_used!=0){
+			if(time_evaluated!=''){
+				time_evaluated =time_evaluated+' '+hours_used+' hours'+' '+minutes_used+' mins';
+			}else{
+				time_evaluated =hours_used+' hours'+' '+minutes_used+' mins';
+			}	
+		}
+		$('#err_msg').html('');
+		$("#days_used").val(time_evaluated);
+	}else if(end_time<start_time  && start_day!=0 && end_day!=0){
+		alert("End date time must be greater than start date time");
+		$('#End_Date').val('');
+		$('#setEndTime').val('');
+		$("#days_used").val('');
+	}else if(start_day==0 || end_day==0){
+		$('#err_msg').html("Sunday is already a holiday");
+		if(start_day==0){
+			$('#Start_Date').val('');
+		}else if(end_day==0){
+			$('#End_Date').val('');
+		}
+		$("#days_used").val('');
+	}
+}
+
+function evlauate_total_duration(){
+	$("#days_used").val('');
+	var s_date= $("#Start_Date").val();
+	var e_date= $("#End_Date").val();
+	var sday_startTime= $("#setStartTime").val();
+	var sday_endTime= $("#startDay_endTime").val();
+	var eday_endTime= $("#setEndTime").val();
+	var eday_startTime= $("#endDay_startTime").val();
+	
+	if(e_date==''){
+		e_date=s_date;
+	}
+	
+	if(s_date!='' && e_date!='' && sday_startTime!='' && eday_endTime=='') {
+		evaluate_minutes_with_one_time(s_date,e_date,sday_startTime,sday_endTime);
+	}else if(s_date!='' && e_date!='' && sday_startTime=='' && eday_endTime!=''){
+		evaluate_minutes_with_one_time(s_date,e_date,eday_startTime,eday_endTime);
+	}else if(s_date!='' && e_date!='' && s_date==e_date && sday_startTime!='' && eday_endTime!=''){
+		evaluate_minutes_with_one_time(s_date,e_date,sday_startTime,eday_endTime);
+	}else if(s_date!='' && e_date!='' && sday_startTime!='' && eday_endTime!=''){
+		evaluate_minutes_with_start_end_time(s_date,e_date,sday_startTime,eday_endTime);
+	}else if(s_date!='' && e_date!=''){
+		days_between(e_date, s_date)
+	}
+}
+
+$(document).ready(function(){
+	var s_date= $("#Start_Date").val();
+	var e_date= $("#End_Date").val();
+	
+	// add uniform plugin styles to html elements
+	$("input:checkbox").uniform();
+
+	// datepicker plugin
+	 $('#Start_Date').datepicker({"autoclose": true}).on('changeDate', function (ev) {
+		var arrStartDate= $('#Start_Date').val().split('/');
+		var dateText = new Date(arrStartDate[1]+'/'+arrStartDate[0]+'/'+arrStartDate[2]);				
+		$('#End_Date').datepicker('setStartDate', dateText);
+	});
+	//End date
+	$('#End_Date').datepicker({"autoclose": true}).on('changeDate', function (ev) {
+		var arrEndDate= $('#End_Date').val().split('/');
+		var dateText = new Date(arrEndDate[1]+'/'+arrEndDate[0]+'/'+arrEndDate[2]);
+		$('#Start_Date').datepicker('setEndDate', dateText);
+	});
+	var arrStartDate= $('#Start_Date').val().split('/');
+	var dateText = new Date(arrStartDate[1]+'/'+arrStartDate[0]+'/'+arrStartDate[2]);				
+	$('#End_Date').datepicker('setStartDate', dateText);
+	var arrEndDate= $('#End_Date').val().split('/');
+	var dateText = new Date(arrEndDate[1]+'/'+arrEndDate[0]+'/'+arrEndDate[2]);
+	$('#Start_Date').datepicker('setEndDate', dateText);
+	//chng_time_format();
+	//evlauate_total_duration();
+	//--------------dates------------------
+	$("#End_Date").change(function() {
+		var s_date= $("#Start_Date").val();
+		var e_date= $("#End_Date").val();
+		if(s_date!='' && e_date !=""){
+			//days_between(e_date, s_date);
+			evlauate_total_duration();
+		}
+		check_ondates(e_date,'#End_Date');
+	});
+	$("#Start_Date").change(function() {
+		var s_date= $("#Start_Date").val();
+		var e_date= $("#End_Date").val();
+		if(s_date!='' && e_date !=""){
+			//days_between(e_date, s_date);
+			evlauate_total_duration();
+		}
+		check_ondates(s_date,'#Start_Date');
+		
+	});
+	
+	
+	<!--#4DIF (Records in selection([employee_holidays])=0)-->
+	$("#setStartTime").val('');
+	$("#setEndTime").val('');
+	<!--#4DELSE--><!--#4DENDIF-->
+	$('#setStartTime').timepicker({
+		'minTime': '9:00am',
+		'maxTime': '7:00pm',
+		'timeFormat': 'h:i A',
+		onClose: function(input, widget){
+			$('#setStartTime').trigger('change');
+		}
+	});
+	
+	$('#setEndTime').timepicker({
+		'minTime': '9:00am',
+		'maxTime': '7:00pm',
+		'timeFormat': 'h:i A',
+		onClose: function(input, widget){
+			$('#setEndTime').trigger('change');
+		}
+	});
+	
+			
+	$('#setStartTime').change(function(){
+		evlauate_total_duration();
+	});
+	
+	$('#setEndTime').change(function(){
+		evlauate_total_duration();
+	});
+	
+	// validate signup form on keyup and submit
+		$("#HolidayForm").validate({
+			rules: {
+				Employee_UUID: "required",
+			},
+			messages: {
+				Employee_UUID: "Please enter your firstname",
+				
+			}
+		});
+}); 
+</script>
+</body>
+</html>

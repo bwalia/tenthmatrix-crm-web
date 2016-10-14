@@ -1,0 +1,390 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+QUERY([Tasks];[Tasks]uuid=_HIT_WebApp_GetField ("uuid"))
+QUERY([Projects];[Projects]proj_id=num([Tasks]proj_id))
+QUERY([Task_Notes];[Task_Notes]uuid_task=_HIT_WebApp_GetField ("uuid"))
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+//_HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")
+_HIT_WebSession_SetVar ("last-clicked-uuid";_HIT_WebApp_GetField ("uuid"))
+-->
+
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/main-header.shtml-->
+<link rel="stylesheet" href="css/jquery.ui.button.css" />
+	<link rel="stylesheet" href="css/jquery.ui.tooltip.css" />
+<link rel="stylesheet" href="css/combobox.css" />
+
+<style>
+label.error {
+	float: left;
+	color: red;
+	padding-top: .5em;
+	vertical-align: top;
+	font-weight:bold
+}
+</style>
+<link rel="stylesheet" type="text/css" href="css/jqm-datebox.min.css" /> 
+<script type="text/javascript" src="js/jqm-datebox.core.min.js"></script>
+<script type="text/javascript" src="js/jqm-datebox.mode.calbox.min.js"></script>
+<script type="text/javascript" src="js/jquery.mobile.datebox.i18n.en_US.utf8.js"></script>
+<script src="js/jquery.validate.js"></script>
+<script src="js/additional-methods.js"></script>
+<script src="js/ui/jquery-ui.js"></script>
+<script type="text/javascript">
+function __showTasks()
+{
+pUrlStr='tasks.shtml';
+window.location.href=pUrlStr;
+}
+
+$( '#home' ).live( 'pagebeforecreate',function(event){
+	
+	 $( "#Project_ID" ).combobox();
+	 	 
+});
+
+$(document).on('pageinit', function(){
+
+$( "#Project_ID" ).parents('div.ui-btn').hide();
+
+	$("#taskForm").validate({
+        rules: {
+            Task_Name: "required",
+            Project_ID : "required",
+            /*task_start_date : "required",
+            task_end_date : "required",*/
+            Task_Estimated_Hour : { /*required: true,*/ number: true },
+            Task_Rate : { /*required: true,*/ number: true },
+        },
+		messages: {
+			Task_Name: "Please enter task name",
+			Project_ID: "Please select Project",
+			/*task_start_date: "Please select Start Date",
+			task_end_date: "Please select End Date",*/
+			Task_Estimated_Hour: { /*required: "Please enter Hours",*/ number: "Please Specify a numeric value" },
+			Task_Rate: { /*required: "Please Specify Task Rate",*/ number: "Please Specify a numeric value" },
+			
+		}
+    });
+});
+</script>
+<script>
+	 var xhr;
+  (function( $ ) {
+    $.widget( "custom.combobox", {
+      _create: function() {
+        this.wrapper = $( "<span>" )
+          .addClass( "custom-combobox" )
+          .insertAfter( this.element );
+ 
+        this.element.hide();
+        this._createAutocomplete();
+        this._createShowAllButton();
+      },
+ 
+      _createAutocomplete: function() {
+        var selected = this.element.children( ":selected" ),
+          value = selected.val() ? selected.text() : "";
+ 
+        this.input = $( "<input>" )
+          .appendTo( this.wrapper )
+          .val( value )
+          .attr( "title", "" )
+          .addClass( "custom-combobox-input ui-widget ui-widget-content ui-state-default ui-corner-left" )
+          .autocomplete({
+            delay: 0,
+            minLength: 0,
+            source: $.proxy( this, "_source" )
+          })
+          .tooltip({
+            tooltipClass: "ui-state-highlight"
+          });
+ 
+        this._on( this.input, {
+          autocompleteselect: function( event, ui ) {
+		  	//alert("show all");
+            ui.item.option.selected = true;
+			
+            this._trigger( "select", event, {
+              item: ui.item.option
+            });
+          },
+ 
+          autocompletechange: "_removeIfInvalid"
+        });
+      },
+ 
+      _createShowAllButton: function() {
+        var input = this.input,
+          wasOpen = false;
+ 
+        $( "<a>" )
+          .attr( "tabIndex", -1 )
+          .attr( "title", "Show All Items" )
+          .tooltip()
+          .appendTo( this.wrapper )
+          .button1({
+            icons: {
+              primary: "ui-icon-triangle-1-s"
+            },
+            text: false
+          })
+          .removeClass( "ui-corner-all" )
+          .addClass( "custom-combobox-toggle ui-corner-right" )
+          .mousedown(function() {
+            wasOpen = input.autocomplete( "widget" ).is( ":visible" );
+          })
+          .click(function() {
+            input.focus();
+ 
+            // Close if already visible
+            if ( wasOpen ) {
+              return;
+            }
+ 
+            // Pass last search string as value to search for, displaying last results
+            input.autocomplete( "search", 'SHOWALL' );
+          });
+      },
+ 
+      _source: function( request, response ) {
+        //var matcher = new RegExp( $.ui.autocomplete.escapeRegex(request.term), "i" );
+		var ele_select= this.element;
+		if(request.term=='SHOWALL'){
+			response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+		
+		}
+		else
+		{
+		var jsonRow = 'getprojectsonsearch.cgi?srch='+request.term;
+		
+
+		//alert(jsonRowURLStr);
+		if(xhr) xhr.abort();
+		xhr=$.getJSON(jsonRow,function(result){
+			
+			if(result){
+				var html='<option value=""></option>';
+
+				$.each(result, function(i,item)
+				{
+					html += '<option value="'+item.id+'">'+item.value+'</option>';
+				});
+				ele_select.html(html);
+				
+				
+				response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+				
+				
+			}
+		});
+       
+	  } 
+		
+      },
+ 
+      _removeIfInvalid: function( event, ui ) {
+ 
+        // Selected an item, nothing to do
+        if ( ui.item ) {
+
+          return;
+        }
+ 
+        // Search for a match (case-insensitive)
+        var value = this.input.val(),
+          valueLowerCase = value.toLowerCase(),
+          valid = false;
+        this.element.children( "option" ).each(function() {
+          if ( $( this ).text().toLowerCase() === valueLowerCase ) {
+            this.selected = valid = true;	
+			
+            return false;
+          }
+        });
+ 
+        // Found a match, nothing to do
+        if ( valid ) {
+          return;
+        }
+ 
+        // Remove invalid value
+        this.input
+          .val( "" )
+          .attr( "title", value + " didn't match any item" )
+          .tooltip( "open" );
+        this.element.val( "" );
+        this._delay(function() {
+          this.input.tooltip( "close" ).attr( "title", "" );
+        }, 2500 );
+        this.input.data( "ui-autocomplete" ).term = "";
+      },
+ 
+      _destroy: function() {
+        this.wrapper.remove();
+        this.element.show();
+      }
+    });
+  })( jQuery );
+
+
+  </script>
+</head>
+<body>
+<div data-role="page" id="home" data-add-back-btn="false">
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/top-header.shtml-->
+	<div data-role="content" style="padding: 15px;">
+		<ul data-role="listview" data-inset="true">
+			<li data-role="list-divider"><span style=" color:#2B89D0; font-stretch:narrower;"><!--#4DIF (Records in selection([Tasks])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Task</span></li>
+		</ul>
+		<form data-ajax="false" action="savetask.cgi" method="post" name="form" id="taskForm" >
+		
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput1">Task Name<font color="#FF0000">*</font></label>
+					<input type="text" name="Task_Name" id="Task_Name" placeholder="Task Name" value="<!--#4DVAR [Tasks]task_name-->">
+					<input name="Task_uuid" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="Task_uuid">
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput12">Reported By</label>
+					<select name="uuid_reported_by" id="uuid_reported_by" >
+						<!--HIT_EXECUTE
+						_HIT_HTMLTXT:=""
+						QUERY([Employees];[Employees]emp_active=True)
+						ORDER BY([Employees];[Employees]emp_last_name;>)
+
+						For (_HIT_COUNTER;1;Records in selection([Employees]))
+						_HIT_HTMLTXT:=_HIT_HTMLTXT+"<option value=\""+[Employees]uuid+"\""
+						If ([Tasks]uuid_reported_by=[Employees]uuid)
+						_HIT_HTMLTXT:=_HIT_HTMLTXT+" selected"
+						Else 
+						End if 
+						_HIT_HTMLTXT:=_HIT_HTMLTXT+">"+[Employees]emp_first_name+" "+[Employees]emp_last_name+"</option>"
+						NEXT RECORD([Employees])
+						End for 
+						-->
+					</select>
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput12">Project Name<font color="#FF0000">*</font></label>
+					<div class="ui-widget">
+						<Select name="Project_ID" id="Project_ID">
+						<!--#4DIF (Records in selection([Tasks])=0)-->
+							<option value=""></option>
+						<!--#4DSCRIPT/Web_LoadProjects/-->
+						<!--4DLOOP [Projects]-->
+							<option value="<!--#4DVAR [Projects]proj_id-->" ><!--4DVAR [Projects]proj_name--></option>
+						<!--4DENDLOOP-->
+						<!--#4DELSE-->
+							 <option value="<!--4DVAR [Projects]proj_id-->" selected><!--4DVAR [Projects]proj_name--></option>									 
+							 <!--#4DENDIF-->
+						</select>  
+					</div>                                   
+				</fieldset>
+			</div>
+			
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput13">Task Start Date </label>
+					<input name="task_start_date" id="task_start_date" type="date" data-role="datebox" data-options='{"mode": "calbox"}' placeholder="Slip Date" <!--#4DIF (timestamp_unix_toDate([Tasks]Timestamp_start)=!01/01/1970!)-->value=""<!--4DELSE-->value="<!--#4DVAR timestamp_unix_toDate([Tasks]Timestamp_start)-->"<!--4DENDIF-->>
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput14">Task End Date</label>
+					<input name="task_end_date" id="task_end_date" type="date" <!--#4DIF (timestamp_unix_toDate ([Tasks]Timestamp_end)=!01/01/1970!)-->value=""<!--4DELSE-->value="<!--#4DVAR timestamp_unix_toDate ([Tasks]Timestamp_end)-->"<!--4DENDIF--> data-role="datebox" data-options='{"mode": "calbox"}' placeholder="Slip Date">
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput15">Task Estimated Hour</label>
+					<input type="text" name="Task_Estimated_Hour" id="Task_Estimated_Hour" placeholder="Task Estimated Hour" value="<!--#4DVAR [Tasks]task_estimated_hours-->">
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput15">Task Rate</label>
+					<input type="text" name="Task_Rate" id="Task_Rate" placeholder="Task Rate" value="<!--#4DVAR [Tasks]task_rate-->">
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput15">Status</label>
+					<select name="Task_Status" id="Task_Status">
+						<!--HIT_EXECUTE _HIT_HTMLTXT:=Task_Status_HTMLPopup-->
+					</select>
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput15">Assigned to</label>
+						<select name="uuid_assigned_to" id="uuid_assigned_to">
+						<!--HIT_EXECUTE
+						_HIT_HTMLTXT:=""
+						QUERY([Employees];[Employees]emp_active=True)
+						ORDER BY([Employees];[Employees]emp_last_name;>)
+
+						For (_HIT_COUNTER;1;Records in selection([Employees]))
+						_HIT_HTMLTXT:=_HIT_HTMLTXT+"<option value=\""+[Employees]uuid+"\""
+						If ([Tasks]uuid_assigned_to=[Employees]uuid)
+						_HIT_HTMLTXT:=_HIT_HTMLTXT+" selected"
+						Else 
+						End if 
+						_HIT_HTMLTXT:=_HIT_HTMLTXT+">"+[Employees]emp_first_name+" "+[Employees]emp_last_name+"</option>"
+						NEXT RECORD([Employees])
+						End for 
+						-->
+					</select>
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput15">Task Active</label>
+					<select name="Task_Active" id="Task_Active" name="Task_Active">
+						<option value="Active" <!--#4DIF ([Tasks]task_active=True)-->selected<!--4DELSE--><!--4DENDIF-->>Active</option>
+						<option value="Done" <!--#4DIF ([Tasks]task_active=false)-->selected<!--4DELSE--><!--4DENDIF-->>Done</option>
+					</select>  
+				</fieldset>
+			</div>
+			
+			<a data-ajax="false" href="tasks_checklist.shtml?uuid=<!--#4DHTMLVAR [Tasks]uuid-->"><input type="button" value="Checklist"></a>
+			<input type="submit" value="Submit" id="submit" name="submit">
+			<input type="submit" value="Cancel" onClick="__showTasks(); return false;">
+		</form>
+	</div><!-- END DATA ROLE CONTENT-->
+
+   <!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/footer.shtml-->
+    
+</div>
+</body>
+</html>

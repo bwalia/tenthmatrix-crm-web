@@ -1,0 +1,350 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml?url="+HTTPD_DocumentURI)
+end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+_HIT_HTMLTXT:=_HIT_HTTP_GetReferer
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+<link rel="stylesheet" media="all" type="text/css" href="css/jquery-impromptu.css" />
+<style>
+#message{
+	color:#FF0000;
+}
+.table-wrapper .table ul.actions{
+	float:left;
+}
+</style>
+</head>
+<body>
+
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
+
+	<!-- main container -->
+    <div class="content">
+        
+        <div class="container-fluid">
+            <div id="pad-wrapper">
+
+                <!-- projects table -->
+                <div class="table-wrapper orders-table section">
+                    <div class="row-fluid head">
+                        <div class="span12">
+                            <h4>Employees</h4>
+                        </div>
+                    </div>
+
+                    <div class="row-fluid filter-block">
+                    <form id="frm_set" name="frm_set" method="post" action="employees.shtml">
+
+                        <div class="pull-right">
+                            Date <!--4DVAR current date-->
+                        </div>
+                        </form>
+                    </div>
+
+                    <div class="row-fluid">
+					
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                	
+                                    <th class="span3">
+                                        EMPLOYEE NAME
+                                    </th>
+                                    
+                                    <th class="span2">
+                                        <span class="line"></span>
+                                        STATUS 
+                                    </th>
+									<th class="span2">
+                                        <span class="line"></span>
+                                        TIMER
+                                    </th>
+                                    <th class="span2">
+                                        <span class="line"></span>
+                                        ACTION
+                                    </th>                        
+                                </tr>
+                            </thead>
+                            <tfoot>
+                            <tr> 
+                            	
+                               
+                                <th align="left">EMPLOYEE NAME</th>
+                                
+                                <th align="left">STATUS</th>
+								<th align="left">TIMER</th>
+								<th align="left">ACTION</th>
+                            </tr>
+                        	</tfoot>
+                            <tbody id="employee_table_body">
+							
+                            </tbody>
+                        </table>
+						<div id="img_loading_div" style="text-align:center">
+							<img src="loading.gif"  style="padding:20px;" width="34" >
+						</div>
+                    </div>
+                </div>
+                <!-- end projects table -->
+
+            </div>
+        </div>
+    </div>
+    <!-- end main container -->
+	
+			
+
+	<!-- scripts -->
+   <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+	<script type="text/javascript" src="js/jquery-impromptu.js"></script>
+	<script src="js/bootstrap.datepicker.js"></script>
+	 <script>
+var interval=1000;
+var arr_emp_timers=new Array();
+
+$(document).ready(function() {
+	jsonRow = 'load_employees_schedule.cgi';
+	load_data(jsonRow);	
+	//setInterval(function(){restart_timer("05:23:22","D58E4CED-0559-4A4C-AB3B-F7C15736CB04");}, interval);
+});
+
+function load_data(jsonRow){
+	$.getJSON(jsonRow,function(result){
+		if(result.nError){
+			code = $('#no_rec_prompt').text();
+			(new Function(code))();
+			complete=true;
+		}else{
+			var table_html='';
+			var arr_timers=new Array();
+			$.each(result, function(i,item){
+				table_html+="<tr>";
+				table_html+="<td>"+item.EmpName+"</td>";
+				
+				var display_start=true;
+				var display_pause=true;
+				var display_end=true;
+				if(item.action=="start" ){
+					table_html+="<td class='status'>Started</td>";
+					//start_timer(item.uuid, $(this));
+					display_pause=false;
+					display_end=false;
+				}else if(item.action=="pause" ){
+					table_html+="<td class='status'>Paused</td>";
+					display_start=false;
+					display_end=false;
+				}else if(item.action=="end" ){
+					table_html+="<td class='status'>Finished</td>";
+				}else{
+					table_html+="<td class='status'>"+item.action+"</td>";
+					display_start=false;
+				}
+				if(item.total_timestamp!="" && item.total_timestamp!=0){
+					time_str = secondsToHms(item.total_timestamp);
+					table_html+="<td class='timer' id='timer_"+item.uuid+"'>"+time_str+"</td>";
+					if(item.action=="start" ){
+					arr_timers.push({uuid:item.uuid,time:time_str,ref:$(this)});
+					}
+				}else{
+					table_html+="<td class='timer'>00:00:00</td>";
+				}
+				table_html+="<td><ul class='actions'>";
+				table_html+="<li class='start'";
+				if(display_start==true){
+				table_html+= "style='display:none'";
+				}
+				table_html+="><a href=\"javascript:void(0)\" style='text-decoration:none;' onClick=\"start_timer('"+item.uuid+"', $(this))\"><i class='icon-play'></i></a></li>";
+				table_html+="<li class='pause'";
+				if(display_pause==true){
+				table_html+= "style='display:none'";
+				}
+				table_html+="><a href=\"javascript:void(0)\" style='text-decoration:none;' onClick=\"pause_timer('"+item.uuid+"', $(this))\"><i class='icon-pause'></i></a></li>";
+				table_html+="<li class='end'";
+				if(display_end==true){
+				table_html+="style='display:none'";
+				}
+				table_html+="><a href=\"javascript:void(0)\" style='text-decoration:none;' onClick=\"end_timer('"+item.uuid+"', $(this))\"><i class='icon-stop'></i></a></li>";
+				table_html+="</ul></td>";
+				table_html+="<tr>";
+				
+			});
+			
+			$('#employee_table_body').append(table_html);
+			$.each(arr_timers, function(i,row){
+				arr_emp_timers[row.uuid]=setInterval(function(){restart_timer(row.time,row.uuid);}, interval);
+			});
+		}
+		$('#img_loading_div').hide();
+	});
+}
+function secondsToHms(d) {
+	d = Number(d);
+	var h = Math.floor(d / 3600);
+	var m = Math.floor(d % 3600 / 60);
+	var s = Math.floor(d % 3600 % 60);
+	return ((h > 0 ? h + ":" : "00:") + (m > 0 ? (h > 0 && m < 10 ? "0" : "") + m + ":" : "0:") + (s < 10 ? "0" : "") + s); 
+}
+
+function restart_timer(start_time,uuid){
+	var id='timer_'+uuid;
+	var s_time=$('#'+id).html();
+	var arr_time= s_time.split(':');
+	var h=Number(arr_time[0]);
+	var m=Number(arr_time[1]);
+	var s=Number(arr_time[2]);
+	if(s<59){ s=s+1; }
+	else if(m<59){ m=m+1; s=0; }
+	else { h=h+1; m=0; s=0; }
+	if(s<10){ s='0'+String(s); }
+	if(m<10){ m='0'+String(m); }
+	if(h<10){ h='0'+String(h); }
+	var time=h+':'+m+':'+s;
+	$('#'+id).html(time);
+}
+
+
+function start_timer(emp_uuid,ref){
+	var curr_date=new Date();
+	var date= String(curr_date.getDate())+'/'+String(Number(curr_date.getMonth())+1)+'/'+String(curr_date.getFullYear());
+	//var time= String(curr_date.getHours())+':'+String(curr_date.getMinutes())+':'+String(curr_date.getSeconds());
+	var datetime=Math.round(Number(curr_date.getTime())/1000);
+	var activity='start';
+	/*if(ref.parents('tr').find('.timer').html()=='00:00:00'){
+		activity='start';
+	}
+	else{
+		activity='resume';
+	}*/
+	//var dataString= 'date='+date+'&time='+time+'&emp_uuid='+emp_uuid+'&activity='+activity;
+	var dataString= 'datetime='+datetime+'&date_added='+date+'&emp_uuid='+emp_uuid+'&action='+activity;
+	var jsonRow= 'savetimeremployee.cgi?'+dataString;
+	/*$.ajax({
+		type: "GET",
+		dataType: "json",
+		url: "savetimeremployee.cgi",
+		data: dataString,
+		cache: false,
+		success: function(html)
+		{
+			arr_emp_timers[emp_uuid]=setInterval(function(){increment_time(ref);}, interval);
+			ref.parents('tr').find('.status').html('Started');
+			ref.parents('tr').find('.start').hide();
+			ref.parents('tr').find('.pause').show();
+			ref.parents('tr').find('.end').show();
+		}
+	});*/
+	$.getJSON(jsonRow,function(result){
+		arr_emp_timers[emp_uuid]=setInterval(function(){increment_time(ref);}, interval);
+		ref.parents('tr').find('.status').html('Started');
+		ref.parents('tr').find('.start').hide();
+		ref.parents('tr').find('.pause').show();
+		ref.parents('tr').find('.end').show();
+	});
+}
+function pause_timer(emp_uuid,ref){
+	var curr_date=new Date();
+	var date= String(curr_date.getDate())+'/'+String(Number(curr_date.getMonth())+1)+'/'+String(curr_date.getFullYear());
+	var datetime=Math.round(Number(curr_date.getTime())/1000);
+	var activity='pause';
+
+	var dataString= 'datetime='+datetime+'&date_added='+date+'&emp_uuid='+emp_uuid+'&action='+activity;
+
+	$.ajax({
+		type: "GET",
+		dataType: "json",
+		url: "savetimeremployee.cgi",
+		data: dataString,
+		cache: false,
+		success: function(html)
+		{
+			clearInterval(arr_emp_timers[emp_uuid]);
+			ref.parents('tr').find('.status').html('Paused');
+			ref.parents('tr').find('.start').show();
+			ref.parents('tr').find('.pause').hide();
+		}
+	});
+}
+function end_timer(emp_uuid,ref){
+	var statesdemo = {
+		state0: {
+			title: 'Are you sure you want to end timer? You will not be able to resume again',
+			html:'',
+			buttons: { No : 0, Yes: 1 },																		
+			submit:function(e,v,m,f){ 
+				//console.log(f);
+				if(v==1) {
+					var curr_date=new Date();
+					var date= String(curr_date.getDate())+'/'+String(Number(curr_date.getMonth())+1)+'/'+String(curr_date.getFullYear());
+					var datetime=Math.round(Number(curr_date.getTime())/1000);
+					var activity='end';
+				
+					var dataString= 'datetime='+datetime+'&date_added='+date+'&emp_uuid='+emp_uuid+'&action='+activity;
+				
+					$.ajax({
+						type: "GET",
+						dataType: "json",
+						url: "savetimeremployee.cgi",
+						data: dataString,
+						cache: false,
+						success: function(html)
+						{
+							clearInterval(arr_emp_timers[emp_uuid]);
+							ref.parents('tr').find('.status').html('Finished');
+							ref.parents('tr').find('.start').hide();
+							ref.parents('tr').find('.pause').hide();
+							ref.parents('tr').find('.end').hide();
+						}
+					});
+				}
+				if(v==0) {
+					$.prompt.close();
+					
+				}
+			}
+		},
+		
+	};
+
+	$.prompt(statesdemo);
+
+}
+
+function increment_time(ref){
+	//console.log('hello');
+	var time_str=ref.parents('tr').find('.timer').html();
+	var arr_time= time_str.split(':');
+	var h=Number(arr_time[0]);
+	var m=Number(arr_time[1]);
+	var s=Number(arr_time[2]);
+	
+	if(s<59){ s=s+1; }
+	else if(m<59){ m=m+1; s=0; }
+	else { h=h+1; m=0; s=0; }
+	if(s<10){ s='0'+String(s); }
+	if(m<10){ m='0'+String(m); }
+	if(h<10){ h='0'+String(h); }
+	time_str=h+':'+m+':'+s;
+	ref.parents('tr').find('.timer').html(time_str);
+	
+}
+
+ 
+    </script>
+	
+</body>
+</html>

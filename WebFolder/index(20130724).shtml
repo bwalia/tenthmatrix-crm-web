@@ -1,0 +1,169 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Tenthmatrix Billing Secure Site - Pay Invoice Online</title>
+
+<!--#4DSCRIPT/_HIT_LoadInclude/includes/static_files.shtml-->
+
+<script type="text/javascript">
+//<![CDATA[
+var $j = jQuery.noConflict();
+$j(document).ready(function(){
+
+
+
+});
+//]]>
+</script>  
+
+</head>
+
+<body>
+
+<a id="top"></a>
+
+<!--Begin main wrapper -->
+<div class="wrap_wide background_white">
+<div class="wrap">
+<!--Begin header --> 
+<div class="header">
+   <!--Begin logo -->
+
+                <div class="logo">
+
+                    <a href="index.php" class="logo" title="Tenthmatrix Information Systems">
+
+                        <img src="images/tenthmatrix.png" alt="Tenthmatrix Information Systems" />
+
+                    </a>
+
+                    
+
+                </div>
+
+                <!--End logo -->
+        
+<!--#4DSCRIPT/_HIT_LoadInclude/includes/search.shtml-->
+                
+                </div>
+<!--End header -->
+</div>
+</div>
+
+<div class="wrap_wide menu_single">
+<!--#4DSCRIPT/_HIT_LoadInclude/includes/topmenu.shtml-->
+</div>
+                    
+<div class="wide_wrap content">
+<div class="wrap">
+
+<!--Extra holder for the sidebar background line-->
+<div class="sidebar_back_holder">
+
+<!--Begin sidebar-->
+<div class="sidebar">
+
+<!--Begin widget 1-->
+<div class="box widget_text">
+<div class="heading_holder"> <h3>Invoice Address</h3></div>
+<div class="info">
+    <div class="textwidget"><p>The Coach House, 77A Marlowes,<br>
+    Hemel Hempstead, Herts,<br>
+    HP1 2DB</p>
+    </div>
+</div>
+</div>
+<!--End widget 1-->
+
+<!--Begin widget 2-->
+<div class="box widget_text">
+<div class="heading_holder"> <h3>Billing Contact</h3></div>
+<div class="info">
+    <div class="textwidget"><p>Phone: 0207 118 7889 <br>
+    Name: Laura New<br>
+    Email: <script>document.write('bill'+'ing'+'@'+'tenth'+'matrix'+'.'+'co'+'.'+'uk');</script></p>
+    </div>
+</div>
+</div>
+<!--End widget 2-->
+
+<!--Begin widget 3-->
+<div class="box com_widget_subscribe">
+<div class="heading_holder"><h3>Follow us</h3></div>
+<div class="info">
+<ul class="social">
+    <li><a title="Subscribe to RSS feed" href="#" class="rss">RSS feed</a></li>
+    <li class="no-border"><a title="Follow us on Twitter" href="#" class="twitter">Twitter</a></li>
+</ul>
+</div>
+</div>
+<!--End widget 3-->
+</div> 
+<!--End sidebar-->
+
+<!--Left content area-->
+<div class="content_area">
+<div class="post_entry contact no-border">
+
+<h1>Pay Invoice online</h1>
+
+<div id="note"><i>We do not store your personal data or credit card information.</i></div>
+
+<form action="confirm_payment.cgi" id="ajax-contact-form" class="form-comment" method="POST">
+<div class="holder">
+    <label>Invoice No</label>
+    <input type="text" value="" name="name" class="textbox">
+</div>
+
+<div class="holder">
+    <label>Invoice Pin</label>
+    <input type="text" value="" name="name" class="textbox"><i>Payment Pin can be found on the Invoice itself.</i>
+</div>
+
+<div class="holder">
+    <label>Name</label>
+    <input type="text" value="" name="name" class="textbox">
+</div>
+                                
+<div class="holder">
+    <label>E-Mail</label>
+    <input type="text" value="" name="email" class="textbox">
+</div>
+                                
+<div class="holder">
+    <label>Amount</label>
+    <input type="text" value="" name="amount" class="textbox">
+</div>
+                                
+<div class="holder">
+    <label>Message</label>
+    <textarea cols="25" rows="5" name="message" class="textbox"></textarea>
+</div>
+        
+        <input type="hidden" name="testMode" value="100">
+<input type="hidden" name="instId" value="303468">
+<input type="hidden" name="cartId" value="CATBASE">
+<input type="hidden" name="currency" value="GBP">
+                        
+<div class="holder">
+	<input type="submit" value="Enter Card Details Next" name="submit" class="submit">
+</div>
+            
+</form>
+<script language="JavaScript" src="https://secure.worldpay.com/wcc/logo?instId=303468"></script>
+
+</div>
+</div>
+<!--End left content area-->
+</div>
+
+</div>
+</div>
+
+<!--#4DSCRIPT/_HIT_LoadInclude/includes/footer.shtml-->
+
+<!--End content -->
+<!--End main wrapper -->
+</body>
+</html>

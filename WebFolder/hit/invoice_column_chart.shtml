@@ -1,0 +1,546 @@
+<!--HIT_EXECUTE
+C_TEXT(_HTMLTITLETXT)
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+_HTMLTITLETXT:="Invoices Status"
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+-->
+<!DOCTYPE html>
+<html>
+<head>
+		
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+    
+
+	<!-- <link rel="stylesheet" href="css/base/jquery-ui.css" /> -->
+
+    <!-- this page specific styles -->
+    <link rel="stylesheet" href="css/compiled/index.css" type="text/css" media="screen" />   
+	
+	<link rel="stylesheet" href="css/autocomplete.css" />
+		<!--[if lt IE 9]>
+		  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+		<![endif]-->
+	</head>
+	<body style="background-color:#FFFFFF">
+
+	<!--#4DIF (_HIT_WebApp_GetField ("view")="small")-->
+
+					   <div id="container" style="margin: 0 auto; height:280px"></div>
+			
+			<!--#4DELSE-->
+			
+			<div style="background:#fff;">
+
+				<div id="pad-wrapper" style="margin-top:0px; margin-bottom:0px;">
+					<div class="row-fluid form-wrapper">
+						<form  action="" class="form-comment" method="post" >
+							<div class="ui-widget"  style="display:inline;padding-right:20px;">Customer &nbsp;
+								<select id="Client_ID" name="Client_ID" >
+									<option value=""></option>
+									<!--#4DSCRIPT/Web_LoadCustomers/-->
+									<!--4DLOOP  [Companies]-->
+									<option value="<!--4DVAR [Companies]account_Number-->" <!--#4DIF ([Projects]client_id=[Companies]account_Number)-->selected<!--4DELSE--><!--4DENDIF-->><!--4DVAR [Companies]company_Name--></option>			
+									<!--4DENDLOOP-->  
+								</select>
+							</div>
+							
+					Project &nbsp;
+					<div class="ui-widget" style="display:inline;padding-right:20px;" id="div_project">
+									<Select name="Project_ID" id="Project_ID">
+									
+										<option value=""></option>
+									<!--#4DSCRIPT/Web_LoadProjects/-->
+									<!--4DLOOP [Projects]-->
+										<option value="<!--#4DVAR [Projects]proj_id-->" ><!--4DVAR [Projects]proj_name--></option>
+									<!--4DENDLOOP--> 
+									
+									</select>
+								</div>
+						<input type="button" class="btn-glow primary" value="Submit" id="btn_redraw">		
+					</form>
+					</div>
+					<!-- statistics chart built with jQuery Flot -->
+					<div class="row-fluid chart">
+						<div class="btn-group pull-right">
+							<button class="glow left" onClick="set_defaults(); draw_year_chart()" id="yearly">Year</button>
+							<button class="glow middle" onClick="set_defaults(); draw_month_chart()" id="monthly">Month</button>
+							<button class="glow middle" onClick="set_defaults(); draw_week_chart()" id="weekly">Week</button>
+							<button class="glow right" onClick="set_defaults(); draw_day_chart()" id="daily">Day</button>
+						</div>
+						
+						<div class="btn-group pull-left" id="weeks">
+							<button class="glow left" onClick="draw_prev_chart()" id="prev">Previous</button>
+							<button class="glow right active" onClick="draw_next_chart()" id="next" disabled="disabled">Next</button><br/>
+
+						</div>
+						<div class="span12">
+						   <div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+						</div>			
+					</div>
+					<!-- end statistics chart -->
+				</div>
+				<!--#4DENDIF-->
+            </div>
+
+
+		<!-- scripts -->
+		<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+		<!-- <script src="js/ui/jquery-ui.js"></script> -->
+		<script src="js/bootstrap.datepicker.js"></script>
+		<script src="js/jquery.uniform.min.js"></script>
+		<!-- charts -->
+		<script src="https://code.highcharts.com/highcharts.js"></script>
+		<script src="js/charts.js"></script>
+		<script src="js/no-data-to-display.src.js"></script>
+		<script type="text/javascript">
+			var client_id='', project_id='';
+			
+			function get_data(s_date, e_date){
+								var s_date_arr=s_date.split('/');
+				var sdate=s_date_arr[1]+'/'+s_date_arr[0]+'/'+s_date_arr[2];
+				var e_date_arr=e_date.split('/');
+				var edate=e_date_arr[1]+'/'+e_date_arr[0]+'/'+e_date_arr[2];
+				var dataString = 's_date='+sdate+'&e_date='+edate+'&loop='+loop+'&client_id='+client_id+'&project_id='+project_id+'&mode='+mode;
+				
+				jsonRow = 'returnInvoicesColumn.cgi?'+dataString;
+				$.getJSON(jsonRow,function(result){
+					var invoiced_arr=new Array();
+					var paid_arr=new Array();
+					var partial_arr=new Array();
+					var baddebt_arr=new Array();
+					var needchasing_arr=new Array();
+					var hours_arr=new Array();
+					var tot_inv=0;
+					$.each(result, function(i,item)
+					{
+						invoiced_status=item.Invoiced;
+						invoiced_arr.push(invoiced_status);
+						
+						paid_status=item.Paid;
+						paid_arr.push(paid_status);
+						
+						baddebt_status=item.Bad_Debt;
+						baddebt_arr.push(baddebt_status);
+						
+						Partially_Paid=item.Partially_Paid;
+						partial_arr.push(Partially_Paid);
+						
+						needchasing_status=item.Needs_Chasing;
+						needchasing_arr.push(needchasing_status);
+						
+						tot_inv+= invoiced_status+paid_status+baddebt_status+Partially_Paid+needchasing_status;
+						
+						var hour_date_arr=item.Date_Time.split('/');
+						var hour_date=new Date(Number(hour_date_arr[2]), Number(hour_date_arr[1])-1, Number(hour_date_arr[0]));
+						if(mode=='month' || mode=='week') {
+							hours_arr.push(hour_date.getDate()+' '+getMonthName(hour_date.getMonth()+1));
+						}
+						else{
+							hours_arr.push(hour_date.getDate()+' '+getMonthName(hour_date.getMonth()+1));
+						}
+					})
+					/*console.log(hours_arr);
+					console.log(invoiced_arr);
+					console.log(paid_arr);
+					console.log(baddebt_arr);
+					console.log(partial_arr);
+					console.log(needchasing_arr);*/
+					if(tot_inv==0){
+						hours_arr=new Array();
+						invoiced_arr=new Array();
+						paid_arr=new Array();
+						baddebt_arr=new Array();
+						partial_arr=new Array();
+						needchasing_arr=new Array();
+					}
+					load_chart(hours_arr, invoiced_arr, paid_arr, baddebt_arr,partial_arr, needchasing_arr);
+					
+				});
+			
+			
+						
+			}
+			function get_day_data(s_date, e_date){
+			
+				//var categories=['Invoiced', 'Paid', 'Bad Debt', 'Needs Chasing'];
+				//var data=[ { y: 76, color: '#68A3D5' }, { y: 20, color: '#81BD82' }, { y: 5, color: '#F89406' }, { y: 3, color: '#D4E1EF' } ];
+				//load_day_chart(categories, data);
+				var s_date_arr=s_date.split('/');
+				var sdate=s_date_arr[1]+'/'+s_date_arr[0]+'/'+s_date_arr[2];
+				var e_date_arr=e_date.split('/');
+				var edate=e_date_arr[1]+'/'+e_date_arr[0]+'/'+e_date_arr[2];
+				var dataString = 's_date='+sdate+'&e_date='+edate+'&client_id='+client_id+'&project_id='+project_id;
+				jsonRow = 'returnDayInvoicesColumn.cgi?'+dataString;
+				
+				$.getJSON(jsonRow,function(result){
+					var categories=['Invoiced', 'Paid', 'Bad Debt', 'Partial Paid', 'Needs Chasing'];
+					var data=new Array();
+					
+					var tot_inv=0;
+					$.each(result, function(i,item)
+					{
+						var invoiced_status=Math.round(item.Invoiced * 100)/100;						
+						var paid_status=Math.round(item.Paid * 100)/100;							
+						var baddebt_status=Math.round(item.Bad_Debt * 100)/100;	
+						var Partially_Paid=Math.round(item.Partially_Paid * 100)/100;
+						var needchasing_status=Math.round(item.Needs_Chasing * 100)/100;
+						data.push({ y: invoiced_status, color: '#68A3D5' });
+						data.push({ y: paid_status, color: '#81BD82' });
+						data.push({ y: baddebt_status, color: '#F89406' });
+						data.push({ y: Partially_Paid, color: '#D4E1EF' });
+						data.push({ y: needchasing_status, color: '#22C967' });
+						
+						tot_inv= invoiced_status+paid_status+baddebt_status+Partially_Paid+needchasing_status;
+	
+					})
+					
+					if(tot_inv==0){
+						data=new Array();
+						categories=new Array();
+					}					
+					load_day_chart(categories,data);
+				});
+			}
+			
+			function load_chart(categories, invoiced, paid, bad_debt,partial_paid, needs_chasing){
+				$('#container').highcharts({
+						chart: {
+							type: 'column'
+						},
+						title: {
+							text: 'Invoices Status'
+						},
+						subtitle: {
+                text: title
+            },
+						colors: ["#68A3D5", "#81BD82", "#F89406", "#D4E1EF", "#22C967"],
+						xAxis: {
+							categories: categories
+						},
+						yAxis: {
+							min: 0,
+							title: {
+								text: 'Number of invoices'
+							}
+						},
+						tooltip: {
+							headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+							pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+								'<td style="padding:0"><b>{point.y}</b></td></tr>',
+							footerFormat: '</table>',
+							shared: true,
+							useHTML: true
+						},
+						plotOptions: {
+							column: {
+								pointPadding: 0.2,
+								borderWidth: 0
+							}
+						},
+						credits: {
+							enabled: false
+						},
+						series: [{
+							name: 'Invoiced',
+							data: invoiced
+				
+						}, {
+							name: 'Paid',
+							data: paid
+				
+						}, {
+							name: 'Bad Debt',
+							data: bad_debt
+				
+						}, {
+							name: 'Partial Paid',
+							data: partial_paid
+				
+						}, {
+							name: 'Needs Chasing',
+							data: needs_chasing
+				
+						}]
+					});
+			
+			
+			}
+			
+			function load_day_chart(categories, data){
+				$('#container').highcharts({
+						chart: {
+							type: 'column'
+						},
+						title: {
+							text: 'Invoices Status'
+						},
+						subtitle: {
+                text: title
+            },
+						//colors: ["#68A3D5", "#81BD82", "#F89406","#D4E1EF"],
+						xAxis: {
+							categories: categories
+						},
+						yAxis: {
+							min: 0,
+							title: {
+								text: 'Number of invoices'
+							}
+						},
+						tooltip: {
+							headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+							pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+								'<td style="padding:0"><b>{point.y}</b></td></tr>',
+							footerFormat: '</table>',
+							shared: true,
+							useHTML: true
+						},
+						credits: {
+							enabled: false
+						},
+						plotOptions: {
+							column: {
+								pointPadding: 0.2,
+								borderWidth: 0
+							}
+						},
+						series: [{
+							name: 'Invoices',
+							data: data,
+							color:'transparent'				
+						}]
+					});
+				
+			
+			}
+			$(function () {
+				draw_week_chart();
+				$( "#Client_ID" ).combobox();
+				$( "#Project_ID" ).combobox();
+				
+				$('#Client_ID').change(function(){
+					client_id=$(this).val();
+						$('#div_project').find('.ui-autocomplete-input').val('');
+						var jsonRow = 'getprojectsonsearch.cgi?srch=&client='+$('#Client_ID').val();
+						$.getJSON(jsonRow,function(result){	
+							if(result){
+								var html='<option value=""></option>';
+				
+								$.each(result, function(i,item)
+								{
+									html += '<option value="'+item.id+'">'+item.value+'</option>';
+								});
+								$('#Project_ID').html(html);
+							}
+						});	
+				});
+				
+				$("#Project_ID").change(function(){
+					project_id=$(this).val();
+				});
+				$('#btn_redraw').click(function(){
+					if(mode=='day') {
+						get_day_data(date_to_str(start_date),date_to_str(end_date));
+					}
+					else {
+						get_data(date_to_str(start_date),date_to_str(end_date));
+					}
+				});
+			});
+			
+		</script>
+		
+<script>
+	 var xhr;
+  (function( $ ) {
+    $.widget( "custom.combobox", {
+      _create: function() {
+        this.wrapper = $( "<span>" )
+          .addClass( "custom-combobox" )
+          .insertAfter( this.element );
+ 
+        this.element.hide();
+        this._createAutocomplete();
+        this._createShowAllButton();
+      },
+ 
+      _createAutocomplete: function() {
+	  var ele_select= this.element;
+        var selected = this.element.children( ":selected" ),
+          value = selected.val() ? selected.text() : "";
+ 
+        this.input = $( "<input>" )
+          .appendTo( this.wrapper )
+          .val( value )
+          .attr( "title", "" )
+          .addClass( "custom-combobox-input ui-widget ui-widget-content ui-state-default ui-corner-left" )
+          .autocomplete({
+            delay: 0,
+            minLength: 0,
+            source: $.proxy( this, "_source" )
+          })
+          .tooltip({
+            tooltipClass: "ui-state-highlight"
+          });
+ 
+        this._on( this.input, {
+          autocompleteselect: function( event, ui ) {
+		  	//alert("show all");
+            ui.item.option.selected = true;
+			
+            this._trigger( "select", event, {
+              item: ui.item.option
+            });
+			ele_select.trigger('change');
+          },
+ 
+          autocompletechange: "_removeIfInvalid"
+        });
+      },
+ 
+      _createShowAllButton: function() {
+        var input = this.input,
+          wasOpen = false;
+ 
+        $( "<a>" )
+          .attr( "tabIndex", -1 )
+          .attr( "title", "Show All Items" )
+          .tooltip()
+          .appendTo( this.wrapper )
+          .button({
+            icons: {
+              primary: "ui-icon-triangle-1-s"
+            },
+            text: false
+          })
+          .removeClass( "ui-corner-all" )
+          .addClass( "custom-combobox-toggle ui-corner-right" )
+          .mousedown(function() {
+            wasOpen = input.autocomplete( "widget" ).is( ":visible" );
+          })
+          .click(function() {
+            input.focus();
+ 
+            // Close if already visible
+            if ( wasOpen ) {
+              return;
+            }
+ 
+            // Pass last search string as value to search for, displaying last results
+            input.autocomplete( "search", 'SHOWALL' );
+          });
+      },
+ 
+      _source: function( request, response ) {
+        //var matcher = new RegExp( $.ui.autocomplete.escapeRegex(request.term), "i" );
+		var ele_select= this.element;
+		if(request.term=='SHOWALL'){
+			response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+		
+		}
+		else
+		{
+		if(ele_select.attr('id')=='Client_ID'){
+		var jsonRow = 'getcompaniesonsearch.cgi?srch='+request.term;
+		}
+		else if(ele_select.attr('id')=='Project_ID'){
+		var jsonRow = 'getprojectsonsearch.cgi?srch='+request.term+'&client='+$('#Client_ID').val();
+		}
+		
+		
+
+		//alert(jsonRowURLStr);
+		if(xhr) xhr.abort();
+		xhr=$.getJSON(jsonRow,function(result){
+			
+			if(result){
+				var html='<option value=""></option>';
+
+				$.each(result, function(i,item)
+				{
+					html += '<option value="'+item.id+'">'+item.value+'</option>';
+				});
+				ele_select.html(html);
+				ele_select.trigger('change');
+				
+				response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+				
+				
+			}
+		});
+       
+	  } 
+		
+      },
+ 
+      _removeIfInvalid: function( event, ui ) {
+ 
+        // Selected an item, nothing to do
+        if ( ui.item ) {
+
+          return;
+        }
+ 
+        // Search for a match (case-insensitive)
+        var value = this.input.val(),
+          valueLowerCase = value.toLowerCase(),
+          valid = false;
+		  var ele_select= this.element;
+        this.element.children( "option" ).each(function() {
+          if ( $( this ).text().toLowerCase() === valueLowerCase ) {
+            this.selected = valid = true;	
+			ele_select.trigger('change');
+            return false;
+          }
+        });
+ 
+        // Found a match, nothing to do
+        if ( valid ) {
+          return;
+        }
+ 
+        // Remove invalid value
+        this.input
+          .val( "" )
+          .attr( "title", value + " didn't match any item" )
+          .tooltip( "open" );
+        this.element.val( "" );
+        this._delay(function() {
+          this.input.tooltip( "close" ).attr( "title", "" );
+        }, 2500 );
+        this.input.data( "ui-autocomplete" ).term = "";
+      },
+ 
+      _destroy: function() {
+        this.wrapper.remove();
+        this.element.show();
+      }
+    });
+  })( jQuery );
+ 
+
+
+  </script>	
+	</body>
+</html>

@@ -1,0 +1,294 @@
+<!--HIT_EXECUTE
+_HIT_HTTPD_SetHTTPHeader ("Content-type";"text/html; charset=utf-8")
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+C_TEXT(_HTMLTITLETXT)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+
+_HTMLTITLETXT:="Product Options"
+
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml?url="+HTTPD_DocumentURI)
+end if 
+
+-->
+<!DOCTYPE html>
+<html>
+<head>
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+<!-- <link rel="stylesheet" href="css/base/jquery-ui.css" /> -->
+<link rel="stylesheet" href="css/autocomplete.css" />
+<link rel="stylesheet" media="all" type="text/css" href="css/jquery-impromptu.css" />
+<style>
+#message{
+	color:#FF0000;
+}
+.table-wrapper .table ul.actions{
+	float:left;
+}
+</style>
+</head>
+<body>
+
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
+
+	<!-- main container -->
+    <div class="content">
+        
+        <div class="container-fluid">
+            <div id="pad-wrapper">
+
+                <!-- Task table -->
+                <div class="table-wrapper orders-table section">
+                    <div class="row-fluid head">
+                        <div class="span12">
+                            <h4>Product Options</h4>
+                        </div>
+                    </div>
+					<div class="row-fluid filter-block">
+						<a class="btn-flat success new-product" onclick="delete_multiple()" href="javascript:void(0)">Delete</a>
+						
+							<div class="pull-right">
+								<div class="btn-group pull-right">
+									<a href="product_option.shtml" class="btn-flat success new-product margn-lft35">+ Add New Option</a>
+								</div>
+								<input name="keyword_type" id="keyword_type" type="text" class="search order-search" placeholder="Search for module.." value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" />
+							</div>						
+                    	</div>
+                    <div class="row-fluid">
+					<input id="task_uuid" type="hidden" value="">
+					<input id="token" type="hidden" value="">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                	<th width="6%">
+                                        <input name="Select" class="chk_all" type="checkbox" id="Select" >
+                                    </th>
+                                	<th class="span4">
+										<span class="line"></span>
+                                       Option Name
+                                    </th>
+                                    <th class="span2">
+										<span class="line"></span>
+                                       Status
+                                    </th>
+                                    <th class="span2">
+                                        <span class="line"></span>
+                                        ACTION
+                                    </th> 
+                                </tr>
+                            </thead>
+                            <tfoot>
+                            <tr>  
+                            	<th align="left"><input name="chk_all" class="chk_all" type="checkbox" id="chk_all" value=""></th>
+                                <th align="left">Option Name</th>
+                                <th align="left">Status</th>
+                               	<th align="left">ACTION</th>
+                            </tr>
+                        	</tfoot>
+                            <tbody id="tasks_table_body">
+
+                            </tbody>
+                        </table>
+						<div id="img_loading_div" style="text-align:center">
+							<img src="loading.gif"  style="padding:20px;" width="34" >
+						</div>
+                    </div>
+                </div>
+                <!-- end Tasks table -->
+
+            </div>
+        </div>
+    </div>
+    <!-- end main container -->
+	<!-- scripts -->
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+	<script type="text/javascript" src="js/jquery-impromptu.js"></script>
+<script>
+var JSONdata;
+ var start=0, end=50;
+ var old_srch='',keyword='', jsonRow='';
+ var tablname='Module';
+ var process=false;
+var complete=false,checkAllFlag=false;
+var completeScroll=false;
+
+$(document).ready(function() {
+	$('#keyword_type').focus();
+	keyword= $("#keyword_type").val();
+	jsonRow = 'loadproductoptions.cgi?start='+start+'&end='+end+'&tablname='+tablname;
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}		
+	load_data(jsonRow);			 
+	
+	$(window).scroll(function(){
+		if ($(window).scrollTop() == $(document).height() - $(window).height()){
+		if(complete==false && completeScroll==false) {
+			$('#img_loading_div').show();
+			//alert("scrolling...");
+			start=end+1;
+			end=start+25;
+			jsonRow = 'loadproductoptions.cgi?start='+start+'&end='+end+'&tablname='+tablname;
+			if(keyword!=''){
+				jsonRow +='&keyword='+keyword;
+			}
+					
+			load_data(jsonRow);
+		}
+		
+		}
+	});	
+	
+	//setup before functions
+	var typingTimer;                //timer identifier
+	var doneTypingInterval = 1000;  //time in ms, 5 second for example
+	
+	//on keyup, start the countdown
+	$('#keyword_type').keyup(function(){
+		clearTimeout(typingTimer);
+		if ($('#keyword_type').val) {
+			typingTimer = setTimeout(function(){
+				//do stuff here e.g ajax call etc....
+				$('#tasks_table_body').html('');
+				$('#img_loading_div').show();
+				start=0;
+				end=start+50;
+				tab='';
+				keyword= $("#keyword_type").val();
+				jsonRow = 'loadproductoptions.cgi?start='+start+'&end='+end+'&tablname='+tablname;
+				if(keyword!=''){
+					jsonRow +='&keyword='+keyword;
+				}
+					
+				load_data(jsonRow);
+			}, doneTypingInterval);
+		}
+	});		
+	// toggle all checkboxes from a table when header checkbox is clicked
+  	$(".table th input:checkbox").click(function () {
+  		$checks = $(this).closest(".table").find("tbody input:checkbox");
+  		if ($(this).is(":checked")) {
+			checkAllFlag=true;
+  			$('.chk_all').prop("checked", true);
+  			$checks.prop("checked", true);
+  		} else {
+			checkAllFlag=false;
+			$('.chk_all').prop("checked", false);
+  			$checks.prop("checked", false);
+  		}  		
+  	});
+});
+function delete_multiple(){
+	var selected='';
+	$('.check').each(function(){
+		if($(this).is(":checked")){
+			if(selected==''){
+				selected=$(this).val();
+			}else{
+				selected+=","+$(this).val();
+			}
+		}
+	});
+	if(selected!=""){
+		delete_option(selected);
+	}else{
+		$.prompt("Please select option(s) to delete!");
+	}
+}
+function delete_option(e){
+	$.ajax({
+		type: "POST",
+		dataType: "json",
+		url: "deleteproductoptions.cgi",
+		data: { "selected_uuids" : e},
+		cache: false,
+		success: function(html){
+			if(html.success){		
+				$.prompt(html.success);
+				$('#tasks_table_body').html('');
+				$('#img_loading_div').show();
+				start=0;
+				end=start+50;
+				tab='';
+				keyword= $("#keyword_type").val();
+				jsonRow = 'loadproductoptions.cgi?start='+start+'&end='+end+'&tablname='+tablname;
+				if(keyword!=''){
+					jsonRow +='&keyword='+keyword;
+				}
+					
+				load_data(jsonRow);
+			}else if(html.error){
+				$.prompt(html.error);
+			}
+		}
+	});
+}
+
+function load_data(jsonRow){
+	completeScroll=true;
+	JSONdata=new Array();
+	$.getJSON(jsonRow+"&"+Math.random(),function(result){
+			if(result.Alert){
+				$.prompt("No more records found!");
+				complete=true;
+			}else{
+				 
+				$.each(result.uuid, function(i,item)
+				{
+					JSONdata[i]=new Array();
+					if(checkAllFlag==true){
+					JSONdata[i][0]='<input class="check" type="checkbox" checked value="'+item+'">';
+					}else{
+					JSONdata[i][0]='<input class="check" type="checkbox" value="'+item+'">';
+					}
+					JSONdata[i][3]='<ul class="actions"><li><a href="product_option.shtml?uuid='+item+'" title="Edit"><i class="table-edit"></i></a></li><li><a href="javascript:void(0)" onClick="delete_option(\''+item+'\')" title="Delete"><i class="table-delete"></i></a></li></ul>';	
+					task_uuid[i]=item;				
+				}); 
+				$.each(result.name, function(i,item){
+					JSONdata[i][1]=item;
+				});
+				$.each(result.active, function(i,item){
+					var status="";
+					if(item==true || item=="true"){
+						status='<span class="label label-success"> Active </span>';
+					}else{
+						status='<span class="label label-info"> Inactive </span>';
+					}
+					JSONdata[i][2]=status;
+					
+				});
+				
+				var table_html='';
+				
+				$.each(JSONdata, function(i,row){
+					table_html+='<tr >';
+					$.each(row, function(i,col){
+						table_html+='<td>'+col+'</td>';
+					});
+					table_html+='</tr>';
+				});
+				if(old_srch!=keyword){
+					$('#tasks_table_body').html('');
+					old_srch=keyword;
+				}
+				//alert(table_html);
+				
+				$('#tasks_table_body').append(table_html);
+
+				complete=false;
+
+		}
+		$('#img_loading_div').hide();
+		completeScroll=false;
+	});
+}
+
+
+    </script>
+</body>
+</html>

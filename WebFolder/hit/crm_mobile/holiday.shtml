@@ -1,0 +1,170 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+C_TEXT(_HTMLTITLETXT)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+QUERY([employee_holidays];[employee_holidays]uuid=_HIT_WebApp_GetField ("uuid"))
+
+IF (Records in selection([employee_holidays])=0)
+_HTMLTITLETXT:="New Request"
+ELSE
+_HTMLTITLETXT:= "Holiday Request"
+END IF
+
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml?url="+HTTPD_DocumentURI)
+end if 
+
+C_BOOLEAN(mReadOnly)
+mReadOnly:=(Records in selection([employee_holidays])=1)
+
+-->
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/main-header.shtml-->
+<link rel="stylesheet" href="css/jquery-ui.css">
+<script src="js/datepicker.js"></script>
+<script src="js/jquery.validate.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+	$('#Start_Date').datepicker({
+    		autoclose: true,
+    		changeMonth: true,
+      		changeYear: true,
+      		dateFormat: 'dd/mm/yy',
+      		onClose: function( selectedDate ) {
+        		$( "#End_Date" ).datepicker( "option", "minDate", selectedDate );
+      		}
+    	});
+		
+		$('#End_Date').datepicker({
+			autoclose: true,
+    		changeMonth: true,
+      		changeYear: true,
+      		dateFormat: 'dd/mm/yy',
+      		onClose: function( selectedDate ) {
+      			//console.log(selectedDate);
+        		$( "#Start_Date" ).datepicker( "option", "maxDate", selectedDate );
+      		}
+		});
+		var startDateTxt= $('#Start_Date').val();
+		$('#End_Date').datepicker("option", "minDate", startDateTxt);
+		
+		var endDateTxt= $('#End_Date').val();	
+		$('#Start_Date').datepicker("option", "maxDate", endDateTxt);
+   
+	// validate signup form on keyup and submit
+	$("#DetailForm").validate({
+		rules: {
+			Employee_UUID: "required",
+			Subject: "required",
+			Start_Date: "required",
+			End_Date: "required",
+			status: "required",
+		}
+	});
+});
+
+</script>
+<style>
+label.error { 
+	float: left; 
+	color: red; 
+	padding-top: 1.5em; 
+	vertical-align: top; 
+}
+</style>
+</head>
+<body>
+<div data-role="page" class="jqm-demos" data-quicklinks="true">
+	<!-- header -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/top-header.shtml-->
+	<!-- /header -->
+	
+	<div role="main" class="ui-content jqm-content">
+		<h3><!--#4DIF (Records in selection([employee_holidays])=1)-->Edit <!--#4DELSE-->New <!--#4DENDIF-->Request</h3>
+		<div data-demo-html="true">
+			<form name="DetailForm" action="saveholiday.cgi" id="DetailForm" data-ajax="false" method="post">
+					     
+                   	<input name="holiday_uuid" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="holiday_uuid">        
+									          	
+					<div class="ui-field-contain">
+						<label for="employee_uuid" class="select">Employee:</label>
+						<select name="employee_uuid" id="employee_uuid" data-native-menu="false">
+							<option value="">--Select Employee--</option>
+										<!--HIT_EXECUTE
+											_HIT_HTMLTXT:=""
+											QUERY([Employees];[Employees]emp_active=True)
+											ORDER BY([Employees];[Employees]emp_last_name;>)
+											
+											For (_HIT_COUNTER;1;Records in selection([Employees]))
+												_HIT_HTMLTXT:=_HIT_HTMLTXT+"<option value=\""+[Employees]uuid+"\""
+												If ([employee_holidays]uuid_employee=[Employees]uuid)
+													_HIT_HTMLTXT:=_HIT_HTMLTXT+" selected"
+												End if 
+												_HIT_HTMLTXT:=_HIT_HTMLTXT+">"+[Employees]emp_first_name+" "+[Employees]emp_last_name+"</option>"
+												NEXT RECORD([Employees])
+											End for 
+									-->
+						</select>
+					</div>
+					<div class="ui-field-contain">
+   						<label for="Start_Date">Start Date:</label>
+   						<input data-date-format="dd/mm/yyyy" data-role="date" type="text" <!--#4DIF (timestamp_unix_toDate([employee_holidays]timestamp_start)=!01/01/1970!)-->value=""<!--4DELSE-->value="<!--#4DVAR timestamp_unix_toDate ([employee_holidays]timestamp_start)-->"<!--4DENDIF--> name="Start_Date" id="Start_Date" readonly placeholder="Start Date">
+					</div>
+					<div class="ui-field-contain">
+   						<label for="End_Date">End Date:</label>
+   						<input data-date-format="dd/mm/yyyy" data-role="date" type="text" <!--#4DIF (timestamp_unix_toDate([employee_holidays]timestamp_end)=!01/01/1970!)-->value=""<!--4DELSE-->value="<!--#4DVAR timestamp_unix_toDate ([employee_holidays]timestamp_end)-->"<!--4DENDIF--> name="End_Date" id="End_Date" placeholder="End Date">
+					</div>
+					<!--#4DIF (Records in selection([employee_holidays])=1)-->
+					<div class="ui-field-contain">
+   						<label for="days_used">Duration:</label>
+						<input name="days_used" type="text" value="<!--#4DVAR [employee_holidays]Duration-->" id="days_used"  readonly placeholder="Duration">
+   					</div>
+   					<!--#4DENDIF-->
+   					<div class="ui-field-contain">
+						<label for="type_of_holiday" class="select">Type Of Holiday:</label>
+						<select name="type_of_holiday" id="type_of_holiday" data-native-menu="false">
+							<option value="0">Select an option</option>
+							<option value="Paid Leave" <!--#4DIF ([employee_holidays]type_of_holiday="Paid Leave")-->selected<!--4DELSE--><!--4DENDIF-->>Paid Leave</option>
+							<option value="Unpaid Leave" <!--#4DIF ([employee_holidays]type_of_holiday="Unpaid Leave")-->selected<!--4DELSE--><!--4DENDIF-->>Unpaid Leave</option>
+						</select>  
+					</div> 
+					
+   					<div class="ui-field-contain">
+   						<label for="Subject">Reason For Leave:</label>
+						<!--#4DIF (mReadOnly)--><textarea cols="40" rows="8" name="Subject" id="Subject"><!--#4DVAR [employee_holidays]subject--></textarea><!--#4DELSE-->
+								<textarea cols="40" rows="8" name="Subject" id="Subject"><!--#4DVAR [employee_holidays]subject--></textarea><!--#4DENDIF-->
+							
+					</div>
+					<div class="ui-field-contain">
+   						<label for="Comments">Manager Notes:</label>
+   						<!--#4DIF (mReadOnly)--><textarea  cols="40" rows="8" name="Comments" id="Comments"><!--#4DVAR [employee_holidays]comments--></textarea><!--#4DELSE-->
+						<textarea  cols="40" rows="8" name="Comments" id="Comments"><!--#4DVAR [employee_holidays]comments--></textarea><!--#4DENDIF-->
+					</div>
+					<div class="ui-field-contain">
+						<label for="type_of_holiday" class="select">Status:</label>
+						<select data-native-menu="false" name="status" id="status">
+							<option value="">Select an option</option>
+							<option value="Requested" <!--#4DIF ([employee_holidays]status="Requested")-->selected<!--4DELSE--><!--4DENDIF-->>Requested</option>
+							<option value="Approved" <!--#4DIF ([employee_holidays]status="Approved")-->selected<!--4DELSE--><!--4DENDIF-->>Approved</option>
+							<option value="Revoked" <!--#4DIF ([employee_holidays]status="Revoked")-->selected<!--4DELSE--><!--4DENDIF-->>Revoked</option>
+						</select>   
+					</div> 
+					<button type="submit" class="ui-shadow ui-btn ui-corner-all ui-mini">Submit</button>
+					<a href="holidays.shtml" data-ajax="false" class="ui-shadow ui-btn ui-corner-all ui-mini">Cancel</a>
+				</form>	
+		    	
+		    </div>
+	</div><!-- /content -->
+	<!-- panel -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/sidebar.shtml-->
+	<!-- /panel -->
+
+	<!-- footer -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/footer.shtml-->
+	<!-- /footer -->
+</div><!-- /page -->
+
+</body>
+</html>

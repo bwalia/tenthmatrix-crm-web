@@ -1,0 +1,97 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+C_TEXT(_HTMLTITLETXT)
+If(_HIT_AuthenticateSession="Session-Authenticated-OK")
+ QUERY([analysis_ledger];[analysis_ledger]uuid=_HIT_WebApp_GetField ("uuid"))
+ 
+IF (Records in selection([analysis_account])=1)
+_HTMLTITLETXT:="New Analysis Ledger"
+ELSE
+_HTMLTITLETXT:= "Edit: "+[analysis_ledger]ledger_name
+END IF
+
+Else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+End If
+
+C_BOOLEAN(mUserIsCurrentBool)
+mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
+ 
+-->
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/main-header.shtml-->
+<script src="js/jquery.validate.js"></script>
+<script type="text/javascript">
+var xhrAbortSearch;
+$(document).ready(function() {
+	$(".ui-table-columntoggle-btn").hide();
+	$("#DetailForm").validate({
+		ignore: "",
+        rules: {
+           ledger_name: { required: true  },
+			type_of_accounts: { required: true  }
+        }
+    });
+    
+});
+
+</script>
+<style>
+label.error { 
+	float: left; 
+	color: red; 
+	padding-top: 1.5em; 
+	vertical-align: top; 
+}
+</style>
+</head>
+<body>
+<div data-role="page" class="jqm-demos" data-quicklinks="true">
+	<!-- header -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/top-header.shtml-->
+	<!-- /header -->
+	
+	<div role="main" class="ui-content jqm-content">
+		<h3><!--#4DIF (Records in selection([analysis_ledger])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Analysis Ledger</h3>
+		<div data-demo-html="true">
+		     <form name="DetailForm" action="saveanalegder.cgi" id="DetailForm" data-ajax="false" method="post">
+					
+					<div class="ui-field-contain">
+						<label for="ledger_name" class="select">Legder Name</label>
+						<input name="ledger_name" type="text" value="<!--4DVAR [analysis_ledger]ledger_name-->" id="ledger_name">
+						<input name="ledger_uuid" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="ledger_uuid">
+					</div>
+                   
+					<div class="ui-field-contain">
+						<label for="type_of_accounts">Type of Accounts</label>
+   						<select data-native-menu="false" id="type_of_accounts" name="type_of_accounts">
+   							<option value="">--Select--</option>
+							<option value="Profit and loss" <!--#4DIF ([analysis_ledger]type_of_accounts="Profit and loss")-->selected<!--4DELSE--><!--4DENDIF-->>Profit and loss</option>
+							<option value="Balance sheet" <!--#4DIF ([analysis_ledger]type_of_accounts="Balance sheet")-->selected<!--4DELSE--><!--4DENDIF-->>Balance sheet</option>
+						</select>
+   					</div>
+   									   
+					<div class="ui-field-contain">
+						<label>Notes</label>
+						<textarea name="notes" rows="4" id="notes"><!--#4DVAR [analysis_ledger]notes--></textarea>			
+					</div>
+					
+					<button type="submit" class="ui-shadow ui-btn ui-corner-all ui-mini">Submit</button>
+					<a href="analysisaccounts.shtml" class="ui-shadow ui-btn ui-corner-all ui-mini" data-ajax="false">Cancel</a>
+					</form>	
+		    	
+		</div>
+
+	</div><!-- /content -->
+	<!-- panel -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/sidebar.shtml-->
+	<!-- /panel -->
+
+	<!-- footer -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/footer.shtml-->
+	<!-- /footer -->
+</div><!-- /page -->
+
+</body>
+</html>

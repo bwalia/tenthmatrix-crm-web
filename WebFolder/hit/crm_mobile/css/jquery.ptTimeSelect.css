@@ -1,0 +1,106 @@
+/**
+ * FILE: jquery.ptTileSelect.css
+ * 	Default style for the timeselect container.
+ * 
+ *  LAST UPDATED:
+ * 
+ * 		- $Date: 2009/04/12 20:23:02 $
+ * 		- $Author: paulinho4u $
+ * 		- $Revision: 1.1 $
+ */
+#ptTimeSelectCntr {
+	width: 250px; 
+	font-size: .9em;
+	position: absolute;
+	z-index: 10;
+	display: none;
+}
+#ptTimeSelectCntr .ui-widget{
+	padding: .2em;
+}
+#ptTimeSelectCntr .ui-widget-header {
+	padding: .2em;
+}
+#ptTimeSelectCntr #ptTimeSelectUserTime {
+	font-size: larger;
+	padding: .2em;
+	padding-left: 1em;
+	text-align: center;
+}
+#ptTimeSelectCntr #ptTimeSelectCloseCntr {
+	display: block;
+	padding: .2em;
+}
+#ptTimeSelectCntr #ptTimeSelectCloseCntr a {
+	display: block;
+	padding: 0px 8px;
+}
+#ptTimeSelectCntr .ui-widget-content {
+	 margin-top: .1em;
+	 margin-bottom: .1em; 
+	 padding: .2em;	
+}
+#ptTimeSelectCntr .ui-widget.ui-widget-content {
+	margin-top: 0;
+}
+#ptTimeSelectCntr .ptTimeSelectLeftPane.ui-widget-content {
+	border-top:none;
+	border-bottom:none;
+	border-left:none;
+	border-right-width: 2px;
+}
+#ptTimeSelectCntr .ptTimeSelectRightPane.ui-widget-content {
+	border: none;
+}
+#ptTimeSelectCntr .ptTimeSelectHrCntr a,
+#ptTimeSelectCntr .ptTimeSelectMinCntr a {
+	display: block;
+	float: left;
+	padding: 1px 4px;
+width: 33px;
+	margin: 1px;
+	text-align: center;
+	text-decoration: none;
+}
+#ptTimeSelectCntr .ptTimeSelectHrAmPmCntr a {
+	text-align: center;
+	margin: 1px;
+}
+#ptTimeSelectCntr .ptTimeSelectTimeLabelsCntr {
+	font-weight: bold;
+	font-size: .9em;
+}
+#ptTimeSelectCntr #ptTimeSelectSetButton {
+	padding-top: .2em;
+	padding-bottom: .2em;
+}
+#ptTimeSelectCntr #ptTimeSelectSetButton a {
+ 	display: block;
+	padding: .2em;
+	width: 30%;
+	text-align: center;
+	float: right;
+}
+
+
+
+
+/* Component containers
+----------------------------------*/
+
+.ui-widget .ui-widget { font-size: 1em; }
+.ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button { font-family: Lucida Grande, Lucida Sans, Arial, sans-serif; font-size: 1em; }
+.ui-widget-content { border: 1px solid #a6c9e2; background: #fcfdfd url(images/ui-bg_inset-hard_100_fcfdfd_1x100.png) 50% bottom repeat-x; color: #222222; z-index:100; }
+.ui-widget-content a { color: #222222; }
+.ui-widget-header { border: 1px solid #4297d7; background: #5c9ccc url(images/ui-bg_gloss-wave_55_5c9ccc_500x100.png) 50% 50% repeat-x; color: #ffffff; font-weight: bold; }
+.ui-widget-header a { color: #ffffff; }
+
+/* Interaction states
+----------------------------------*/
+.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default { border: 1px solid #c5dbec; background: #dfeffc url(images/ui-bg_glass_85_dfeffc_1x400.png) 50% 50% repeat-x; font-weight: bold; color: #2e6e9e; }
+.ui-state-default a, .ui-state-default a:link, .ui-state-default a:visited { color: #2e6e9e; text-decoration: none; }
+.ui-state-hover, .ui-widget-content .ui-state-hover, .ui-widget-header .ui-state-hover, .ui-state-focus, .ui-widget-content .ui-state-focus, .ui-widget-header .ui-state-focus { border: 1px solid #79b7e7; background: #d0e5f5 url(images/ui-bg_glass_75_d0e5f5_1x400.png) 50% 50% repeat-x; font-weight: bold; color: #1d5987; }
+.ui-state-hover a, .ui-state-hover a:hover { color: #1d5987; text-decoration: none; }
+.ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active { border: 1px solid #79b7e7; background: #f5f8f9 url(images/ui-bg_inset-hard_100_f5f8f9_1x100.png) 50% 50% repeat-x; font-weight: bold; color: #e17009; }
+.ui-state-active a, .ui-state-active a:link, .ui-state-active a:visited { color: #e17009; text-decoration: none; }
+.ui-widget :active { outline: none; }

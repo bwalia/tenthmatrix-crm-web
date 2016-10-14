@@ -1,0 +1,316 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+
+QUERY([Leads];[Leads]uuid=_HIT_WebApp_GetField ("uuid"))
+QUERY([Lead_Contacts];[Lead_Contacts]CompanyNumber=[Leads]RecordNumber)
+QUERY([Activity];[Activity]CompanyNumber=[Leads]RecordNumber)
+_HIT_WebSession_SetVar ("last-clicked-uuid";_HIT_WebApp_GetField ("uuid"))
+
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+
+-->
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/main-header.shtml-->
+
+<style>
+label.error {
+	float: left;
+	color: red;
+	padding-top: .5em;
+	vertical-align: top;
+	font-weight:bold
+}
+</style>
+<link rel="stylesheet" type="text/css" href="css/jqm-datebox.min.css" /> 
+<script type="text/javascript" src="js/jqm-datebox.core.min.js"></script>
+<script type="text/javascript" src="js/jqm-datebox.mode.calbox.min.js"></script>
+<script type="text/javascript" src="js/jquery.mobile.datebox.i18n.en_US.utf8.js"></script>
+<script src="js/jquery.validate.js"></script>
+<script src="js/additional-methods.js"></script>
+<script type="text/javascript">
+
+function __showLeads()
+{
+pUrlStr='leads.shtml';
+window.location.href=pUrlStr;
+}
+
+$(document).on('pageinit', function(){
+
+	$("#leadform").validate({
+        rules: {
+            Lead_name: "required",
+            Product: "required",
+            MaincontactFirstName : "required",
+            MainContactLastName : "required",
+            Email : { required: true, email: true },
+            Address1 : "required",
+            City : "required",
+			Country : "required",
+			PostCode: "required",
+            Phone : "required",
+            
+
+        },
+		messages: {
+			Lead_name: "Please Specify Company Name",
+			Product: "Please Specify Product Name",
+			MaincontactFirstName: "Please Specify Contact First Name",
+			MainContactLastName: "Please Specify Contact Last Name",
+			Email: { required: "Please Specify Email", email: "Please Specify valid Email" },
+			Address1: "Please Specify Address 1",
+			City: "Please Specify City",
+			Country : "Please Specify Country",
+			PostCode: "Please Specify Post Code",
+			Phone: "Please Specify Phone Number",
+			 
+			
+		}
+    });
+});
+</script>
+
+<script type="text/javascript">
+	
+	function checkphone(e)
+	{
+		var k = e.which;
+    					/* numeric inputs can come from the keypad or the numeric row at the top */
+   						 if ((k<48 || k>57) && (k!=45) && (k!=43) && (k!=40) && (k!=41) && (k!=32) && (k!=44) && (k!=46) && (k!=8) && (k!=0)) {
+        					e.preventDefault();
+							//alert("Allowed characters are 0-9, +, -, (, ), , ,, .");
+        					return false;
+    					}
+	}
+
+        $(function () {
+		
+		<!--#4DIF (Records in selection([Companies])=0)-->
+		
+		var new_acc_no='<!--#4DVAR Sequence number([Companies])-->';	
+		$('#acc_no').val(new_acc_no);
+		<!--#4DELSE--><!--#4DENDIF-->
+
+			
+			$('.phone').keypress(function(e){
+						checkphone(e);
+					
+					}); 
+			
+        });
+    </script>
+
+
+</head>
+<body>
+<div data-role="page" id="home" data-add-back-btn="false">
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/top-header.shtml-->
+	<div data-role="content" style="padding: 15px;">
+		<ul data-role="listview" data-inset="true">
+			<li data-role="list-divider"><span style=" color:#2B89D0; font-stretch:narrower;"><!--#4DIF (Records in selection([Leads])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Customer</span></li>
+		</ul>
+		<form data-ajax="false" action="savelead.cgi" method="post" name="leadform" id="leadform" >
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput1">Lead Name<font color="#FF0000">*</font></label>
+					<input class="span9" name="Lead_name" type="text" value="<!--#4DVAR [Leads]CompanyName-->" id="Lead_name" placeholder="Lead Name">
+					<input name="lead_id" type="hidden" value="<!--#4DVAR [Leads]RecordNumber-->" id="lead_id">
+					<input name="lead_uuid" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="lead_uuid">
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput12">Product<font color="#FF0000">*</font></label>
+					<input type="text" id="Product" name="Product" value="<!--#4DVAR [Leads]Product-->" placeholder="Product">
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput12">Main Contact First Name<font color="#FF0000">*</font></label>
+						<input type="text" id="MaincontactFirstName" name="MaincontactFirstName" value="<!--#4DVAR [Leads]MaincontactFirstName-->" placeholder="Main contact First Name">                         
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput12">Main Contact Last Name<font color="#FF0000">*</font></label>
+						<input type="text" id="MainContactLastName" name="MainContactLastName" value="<!--#4DVAR [Leads]MainContactLastName-->" placeholder="Main Contact Last Name">                         
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput14">Address 1<font color="#FF0000">*</font></label>
+					<textarea name="Address1" id="Address1" rows="4" placeholder="Address 1"><!--#4DVAR [Leads]Address1--></textarea>
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput15">Address 2</label>
+					<textarea name="Address2" id="Address2" rows="4" placeholder="Address 2"><!--#4DVAR [Leads]Address2--></textarea>
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput13">Town <font color="#FF0000"></font></label>
+					<input type="text" name="Town" id="Town" value="<!--#4DVAR [Leads]Town-->" placeholder="Town ">
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput13">County <font color="#FF0000"></font></label>
+					<input type="text" name="County" id="County" value="<!--#4DVAR [Leads]County-->" placeholder="County ">
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput13">PostCode <font color="#FF0000">*</font></label>
+					<input type="text" name="PostCode" id="PostCode" value="<!--#4DVAR [Leads]PostCode-->" placeholder="PostCode ">
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput13">Country <font color="#FF0000"></font></label>
+					<input type="text" name="Country" id="Country" value="<!--#4DVAR [Leads]Country-->" placeholder="Country ">
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput13">Phone <font color="#FF0000">*</font></label>
+					<input type="text" name="Phone" id="Phone" value="<!--#4DVAR [Leads]Phone-->" placeholder="Phone ">
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput13">Mobile <font color="#FF0000"></font></label>
+					<input type="text" name="Mobile" id="Mobile" value="<!--#4DVAR [Leads]Mobile-->" placeholder="Mobile ">
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput13">Fax <font color="#FF0000"></font></label>
+					<input type="text" name="Fax" id="Fax" value="<!--#4DVAR [Leads]Fax-->" placeholder="Fax ">
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput13">Email<font color="#FF0000">*</font></label>
+					<input type="text" name="Email" id="Email" value="<!--#4DVAR [Leads]Email-->" placeholder="Email ">
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput13">WebSite <font color="#FF0000"></font></label>
+					<input type="text" name="WebSite" id="WebSite" value="<!--#4DVAR [Leads]WebSite-->" placeholder="WebSite ">
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput13">Company Size <font color="#FF0000"></font></label>
+					<input type="Company_Size" name="Company_Size" id="Fax" value="<!--#4DVAR [Leads]CompanySize-->" placeholder="Company Size ">
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput13">Source Type <font color="#FF0000"></font></label>
+					<input type="text" name="Source_type" id="Source_type" value="<!--#4DVAR [Leads]SourceType-->" placeholder="Source Type ">
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput13">Source <font color="#FF0000"></font></label>
+					<input type="text" name="Source" id="Source" value="<!--#4DVAR [Leads]Source-->" placeholder="Source ">
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput13">Business Type <font color="#FF0000"></font></label>
+					<input type="text" name="Business_type" id="Business_type" value="<!--#4DVAR [Leads]BusinessType-->" placeholder="Business Type ">
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput13">Requests <font color="#FF0000"></font></label>
+					<input type="text" name="Requests" id="Requests" value="<!--#4DVAR [Leads]Requests-->" placeholder="Requests ">
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput15">Interested in </label>
+					<textarea name="Interested_in" id="Interested_in" rows="4" placeholder="Address 2"><!--#4DVAR [Leads]InterestedKeywords--></textarea>
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput13">Job title <font color="#FF0000"></font></label>
+					<input type="text" name="Jobtitle" id="Jobtitle" value="<!--#4DVAR [Leads]Job title-->" placeholder="Job title ">
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<input name="QuarkUser"  id="checkbox-1" type="checkbox" value="true" <!--#4DIF ([Leads]QuarkUser)-->checked<!--4DELSE--><!--4DENDIF--> style="margin-left:10px;" >
+					<label for="checkbox-1">Quark user</label>
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<input name="InDesign_user"  id="checkbox-1" type="checkbox" value="true" <!--#4DIF ([Leads]InDesign user)-->checked<!--4DELSE--><!--4DENDIF--> style="margin-left:10px;" >
+					<label for="checkbox-1">InDesign user</label>
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<input name="Responded"  id="checkbox-1" type="checkbox" value="true" <!--#4DIF ([Leads]Responded)-->checked<!--4DELSE--><!--4DENDIF--> style="margin-left:10px;" >
+					<label for="checkbox-1">Responded to Mailing</label>
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<input name="Affiliate"  id="checkbox-1" type="checkbox" value="true" <!--#4DIF ([Leads]Affiliate)-->checked<!--4DELSE--><!--4DENDIF--> style="margin-left:10px;" >
+					<label for="checkbox-1">Affiliate</label>
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<input name="Send_Info"  id="checkbox-1" type="checkbox" value="true" <!--#4DIF ([Leads]Send Info)-->checked<!--4DELSE--><!--4DENDIF--> style="margin-left:10px;" >
+					<label for="checkbox-1">Send Info</label>
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<input name="Keep_Us_Posted"  id="checkbox-1" type="checkbox" value="true" <!--#4DIF ([Leads]KeepUsPosted)-->checked<!--4DELSE--><!--4DENDIF--> style="margin-left:10px;" >
+					<label for="checkbox-1">Keep Us Posted</label>
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<input name="Inactive"  id="checkbox-1" type="checkbox" value="true" <!--#4DIF ([Leads]Inactive)-->checked<!--4DELSE--><!--4DENDIF--> style="margin-left:10px;" >
+					<label for="checkbox-1">Inactive</label>
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput15">InActive Date<font color="#FF0000">*</font></label>
+					<input name="Inactive_Date" id="Inactive_Date" type="date" <!--#4DIF ([Leads]InactiveDate=!00/00/00!)-->value=""<!--4DELSE-->value="<!--#4DHTMLVAR ([Leads]InactiveDate)-->"<!--4DENDIF--> data-role="datebox" data-options='{"mode": "calbox"}' placeholder="Enter Date">
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput15">Comments </label>
+					<textarea name="Comments" id="Comments" rows="4" placeholder="Comments "><!--#4DVAR [Leads]Comments--></textarea>
+				</fieldset>
+			</div>
+			<input type="submit" value="Submit" id="submit" name="submit" >
+			<input type="submit" value="Cancel" onClick="__showLeads(); return false;">
+		</form>
+	</div><!-- END DATA ROLE CONTENT-->
+
+   <!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/footer.shtml-->
+    
+ </div>
+ 
+</body>
+</html>

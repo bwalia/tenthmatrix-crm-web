@@ -1,0 +1,159 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+
+//if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+QUERY([Products];[Products]uuid=_HIT_WebApp_GetField ("uuid"))
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+//else
+//_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+//end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+
+-->
+<!DOC html>
+<html>
+<head>
+	<title>Tenthmatrix CRM App : Product</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- bootstrap -->
+	<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="bootstrap/css/bootstrap-responsive.min.css" />
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/app/includes/header.shtml-->
+	<style type="text/css">
+
+  #message, #tax_message{
+	color:#FF0000;
+}
+	</style>
+</head>
+<body>
+
+	<!-- main container -->
+    <div class="content wide-content">
+        <div class="container-fluid">
+            <div id="pad-wrapper" class="form-page">
+				<div class="row-fluid">
+					<div class="span12">
+						<form name="ProductForm" action="saveproduct.cgi" id="ProductForm" class="form-comment form_validation_reg" method="post"> 
+						<input name="Product_uuid" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="Product_uuid">
+							<div class="formSep">
+								<div class="row-fluid">
+									<div class="span3">
+										<label>Product Name <span class="f_req">*</span></label>
+										
+											<input class="span9" type="text" name="ProductName" id="ProductName" value="<!--#4DVAR [Products]ProductName-->">
+										
+									</div>
+									
+									<div class="span3">
+										<label>Unit Price <span class="f_req">*</span></label>
+										<input class="span9" type="text" id="Unit_Price" value="<!--#4DVAR [Products]Unit_Price-->" name="Unit_Price">						
+										</div>
+
+								</div>
+							</div>
+							        
+							<div class="formSep">
+								<div class="row-fluid">
+								
+								<div class="span3">
+										<label>Product Type <span class="f_req">*</span></label>
+										<input class="span9" type="text" id="Product_Type" value="<!--#4DVAR [Products]Product_Type-->" name="Product_Type">
+									</div>
+								
+									<div class="span3">
+										<label>Serial Number </label>
+										<Select name="SerialNumberRequired" id="SerialNumberRequired" class="span9">
+											<option value="Required" <!--#4DIF ([Products]SerialNumberRequired=True)-->selected<!--4DELSE--><!--4DENDIF-->>Required</option>
+											<option value="Not Required" <!--#4DIF ([Products]SerialNumberRequired=False)-->selected<!--4DELSE--><!--4DENDIF-->>Not Required</option>
+										</select> 
+									</div>
+
+								</div>
+							</div>
+							<div class="formSep">
+								<div class="row-fluid">
+									<div class="span3">
+										<label>Number Of Users </label>
+										<input class="span9" type="text" id="NumberOfUsers" value="<!--#4DVAR [Products]NumberOfUsers-->" name="NumberOfUsers" >
+									</div>
+									
+									
+								
+									<div class="span3">
+										<label>Current Version </label>
+										<input class="span9" type="text" id="CurrentVersion" value="<!--#4DVAR [Products]CurrentVersion-->" name="CurrentVersion">							
+										</div>
+									
+									</div>
+							</div>
+							<div class="formSep">
+								<div class="row-fluid">
+									<div class="span3">
+										<label>Platform  </label>
+										<input class="span9" type="text" id="Platform" value="<!--#4DVAR [Products]Platform-->" name="Platform">
+									</div>
+									
+								</div>
+							</div>
+
+							<div style="text-align: center;" class="span9 field-box">
+								<input type="submit" id="btn_submit" value="Submit" class="btn-glow primary">
+								<span>OR</span>
+								<a href="products.shtml">Cancel</a>							</div>
+						</form>
+					</div>
+				</div>
+            </div>
+		</div>
+    </div>
+	
+    <!-- end main container -->
+
+	
+	<script src="js/jquery.min.js"></script>
+	<script src="bootstrap/js/bootstrap.min.js"></script>
+	<!-- validation -->
+    <script src="lib/validation/jquery.validate.min.js"></script>
+	<script type="text/javascript" src="js/jquery-impromptu.js"></script>
+	<script src="js/jquery-ui-1.9.1.custom.js"></script>
+	<script src="lib/datepicker/bootstrap-datepicker.min.js"></script>
+	
+<script type="text/javascript">
+
+	$(document).ready(function() {
+		
+		$('.form_validation_reg').validate({
+				ignore: "",
+				onkeyup: false,
+				errorClass: 'error',
+				validClass: 'valid',
+				highlight: function(element) {
+					$(element).closest('div').addClass("f_error");
+				},
+				unhighlight: function(element) {
+					$(element).closest('div').removeClass("f_error");
+				},
+				errorPlacement: function(error, element) {
+					$(element).closest('div').append(error);
+				},
+				rules: {
+					ProductName: { required: true },
+					Unit_Price: { required: true, number: true },
+					Product_Type: { required: true  },
+					NumberOfUsers: { digits: true },
+				},
+			});	
+			 
+});
+
+</script>
+
+
+
+</body>
+</html>

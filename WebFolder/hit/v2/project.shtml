@@ -1,0 +1,534 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+C_TEXT(_HTMLTITLETXT)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+ALL RECORDS([Tax_Codes])
+QUERY([Projects];[Projects]uuid=_HIT_WebApp_GetField ("uuid"))
+
+IF (Records in selection([Projects])=0)
+_HTMLTITLETXT:="New Project"
+
+//select default client
+C_TEXT(pUserUUIDStr;pUserClient)
+pUserUUIDStr:=_HIT_WebSession_GetVar ("auth_user_uuid")
+pUserClient:=User_GetPreferences (pUserUUIDStr;"client_id")
+QUERY([Companies];[Companies]account_Number=num(pUserClient))
+
+ELSE
+_HTMLTITLETXT:= "Edit Project: "+[Projects]proj_name
+
+//selected client
+QUERY([Companies];[Companies]account_Number=num([Projects]client_id))
+
+END IF
+
+C_BOOLEAN(mUserIsCurrentBool)
+mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
+
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+
+
+-->
+<!DOCTYPE html>
+<html lang="en">
+<!-- BEGIN HEAD -->
+<head>
+	<!--#4DIF (Records in selection([Projects])=1)-->
+		<title>Project: <!--#4DVAR [Projects]proj_name--></title>
+	<!--#4DELSE-->
+		<title>New Project</title>
+	<!--#4DENDIF-->
+	
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/v2/includes/InitCss.shtml-->
+	<link href="assets/css/autocomplete.css" rel="stylesheet">
+		<link rel="stylesheet" href="assets/css/chosen.css">
+	<!-- BEGIN PLUGIN STYLES -->
+	<link href="assets/plugins/jquery-jvectormap/jquery-jvectormap-1.2.2.css" rel="stylesheet" />
+ 	<link href="assets/plugins/datepicker/css/datepicker.css" rel="stylesheet" />
+	<link href="assets/plugins/bootstrap-daterangepicker/daterangepicker-bs3.css" rel="stylesheet" />
+	<!-- END PLUGIN STYLES -->
+
+</head>
+
+<!-- END HEAD -->
+<!-- BEGIN BODY -->
+<body class="fixed-leftside fixed-header">
+	<!-- BEGIN HEADER -->
+		<!--#4DSCRIPT/_HIT_LoadInclude/hit/v2/includes/header.shtml-->
+	<!-- END HEADER -->
+
+	<div class="wrapper"> 
+ 		 <!-- BEGIN LEFTSIDE -->
+      		<!--#4DSCRIPT/_HIT_LoadInclude/hit/v2/includes/left-navigation.shtml-->
+		<!-- END LEFTSIDE -->
+  
+  <!-- BEGIN RIGHTSIDE -->
+  <div class="rightside bg-grey-100"> 
+    <!-- BEGIN PAGE HEADING -->
+    <div class="page-head">
+    <div class="row">
+     	<div class="col-sm-6">
+      		<h1 class="page-title"><!--#4DIF (Records in selection([Projects])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Project</h1>
+        </div>
+      <!-- BEGIN BREADCRUMB -->
+      	<div class="col-sm-6">
+      <ol class="breadcrumb sm-pullright">
+        <li><a href="javascript:void(0)" onclick="funURLHandler('index.shtml','open-index-window')" title="Dashboard"><i class="ion-home margin-right-5"></i> Dashboard</a></li>
+        <li><a href="javascript:void(0)" onclick="funURLHandler('projects.shtml','open-project-window')" title="Projects">Projects</a></li>
+        <li><!--#4DIF (Records in selection([Projects])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Project</li>
+      </ol>
+      </div>
+      <!-- END BREADCRUMB --> 
+      </div>
+    </div>
+    <!-- END PAGE HEADING -->
+    
+    <div class="container-fluid">
+      
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel" style="padding-top:20px;"> 
+   
+      <div class="panel-body no-padding-top bg-white">
+      	<form name="ProjectForm" action="saveproject.cgi" id="ProjectForm" method="post" class="form-horizontal" >
+     		<div data-example-id="togglable-tabs">
+    			<ul id="new-customer-tab" class="nav nav-tabs" role="tablist">
+      				<li role="presentation" class="active"><a href="#customerinfo" id="basicInfo-tab" role="tab" data-toggle="tab" aria-controls="customer-info" aria-expanded="true"><strong>Project Details</strong></a></li>
+      				<!--#4DIF (Records in selection([Projects])=1)-->
+      				<li role="presentation"><a href="#more-info" role="tab" id="licenceno-tab" data-toggle="tab" aria-controls="moreinfo"><strong>Additional notes and documents</strong></a></li>  
+      				<!--#4DENDIF-->
+    			</ul>
+    			<div id="myTabContent" class="tab-content" style="padding-top:25px; border-left: 1px solid #ddd; border-right: 1px solid #ddd;  border-bottom: 1px solid #ddd; padding-bottom:25px; padding-left:15px; padding-right:15px;">
+     				<div role="tabpanel" class="tab-pane fade in active cust-info" id="customerinfo" aria-labelledby="basicInfo-tab">
+       		 			<div class="row">
+           		  		<div class=" col-sm-12">
+             	 <input name="Project_uuid" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="Project_uuid">               
+             	<div class="form-group">
+   				<label for="" class="col-sm-2 control-label">Client Name<sup class="req">*</sup></label>
+                    <div class="col-sm-4 ui-widget">
+                    <!--#4DIF (mUserIsCurrentBool)-->
+							<input name="company_Name" class="form-control" type="hidden" value="<!--4DVAR [Companies]company_Name--> [<!--4DVAR [Companies]account_Number-->]" id="company_Name">                
+					<!--#4DELSE--> 
+                        <select  class="form-control width300" id="Client_ID" name="Client_ID">
+							<!--#4DIF (Records in selection([Projects])=0)-->
+								<!--#4DIF (pUserClient="")-->
+									<option value=""></option>
+                                <!--#4DSCRIPT/Web_LoadCustomers/-->
+                                <!--4DLOOP  [Companies]-->
+									<option value="<!--4DVAR [Companies]account_Number-->" <!--#4DIF ([Projects]client_id=[Companies]account_Number)-->selected<!--4DELSE--><!--4DENDIF-->><!--4DVAR [Companies]company_Name--></option>			
+								<!--4DENDLOOP-->  
+								<!--#4DELSE-->
+									<option value="<!--4DVAR [Companies]account_Number-->" selected><!--4DVAR [Companies]company_Name--></option>									 
+								<!--#4DENDIF-->
+							<!--#4DELSE-->
+								 <option value="<!--4DVAR [Companies]account_Number-->" selected><!--4DVAR [Companies]company_Name--></option>									 
+							<!--#4DENDIF-->
+                        </select>
+                    <!--#4DENDIF-->
+                    </div>
+     			</div>
+
+  				<div class="form-group">
+    				<label for="" class="col-sm-2 control-label">Project Name<sup class="req">*</sup></label>
+    				<div class="col-sm-3">
+      					<input type="text" class="form-control" name="Project_Name" id="Project_Name" value="<!--#4DVAR [Projects]proj_name-->">
+    				</div>
+    			</div>
+    			<div class="form-group">
+    				<label for="" class="col-sm-2 control-label">Start Date</label>
+    				
+    				<div class="col-sm-2">
+      					<input type="text" class="form-control datepicker" data-date-format="dd/mm/yyyy" <!--#4DIF ([Projects]start_date=!00/00/00!)-->value=""<!--4DELSE-->value="<!--#4DVAR [Projects]start_date-->"<!--4DENDIF--> name="Start_Date" id="Start_Date" readonly>
+    				</div>
+  				</div>
+  				 				
+  				<div class="form-group">
+    			<label for="" class="col-sm-2 control-label">Budget</label>
+    				<div class="col-sm-2  ">
+      					<input type="text" class="form-control num" id="Budget" value="<!--#4DVAR [Projects]budget-->" name="Budget">
+    				</div>
+  				</div>
+  				
+  				<div class="form-group">
+    			<label for="" class="col-sm-2 control-label">Rate</label>
+    				<div class="col-sm-2  ">
+      					<input type="text" class="form-control num" iid="Rate" value="<!--#4DVAR [Projects]proj_rate-->" name="Rate">
+    				</div>
+  				</div>
+  				
+  				<div class="form-group">
+    				<label for="" class="col-sm-2 control-label">Currency</label>
+    				<div class="col-sm-2  ">
+      					<select class="form-control" id="Currency" name="Currency">
+							<option value=""></option>
+							<!--4DLOOP [Tax_Codes]-->
+								<option value="<!--#4DVAR [Tax_Codes]Currency_Code-->" <!--#4DIF ([Tax_Codes]Currency_Code=[Projects]currency_code)-->selected<!--4DELSE--><!--4DENDIF-->><!--4DVAR [Tax_Codes]Currency_Code--></option>	
+							<!--4DENDLOOP-->
+						</select>   
+					</div>
+  				</div>
+  				
+  				<div class="form-group">
+    			<label for="" class="col-sm-2 control-label">Deadline Date</label>
+    				<div class="col-sm-2  ">
+      					<input type="password" class="form-control datepicker" data-date-format="dd/mm/yyyy" name="deadline_date" id="deadline_date" readonly <!--#4DIF ([Projects]project_end_date=!00/00/00!)-->value=""<!--4DELSE-->value="<!--#4DVAR [Projects]project_end_date-->"<!--4DENDIF-->>
+    				</div>
+  				</div>
+  				
+  				<div class="form-group">
+    				<label for="" class="col-sm-2 control-label">Project Incharge</label>
+    				<div class="col-sm-4  ">
+      					<input class="" type="hidden" id="project_incharge" value="" name="project_incharge">
+										<!--HIT_EXECUTE
+										 _HIT_HTMLTXT:=Web_ProjectInchargePopup([Projects]uuid)
+										-->
+					</div>
+  				</div>
+  				
+  				<div class="form-group">
+    			<label for="" class="col-sm-2 control-label">Status</label>
+    				<div class="col-sm-2  ">
+      					<select class="form-control" id="Project_Active" name="Project_Active">
+											<option value="Active" <!--#4DIF ([Projects]proj_active=True)-->selected<!--4DELSE--><!--4DENDIF-->>Active</option>
+											<option value="Completed" <!--#4DIF ([Projects]proj_active=false)-->selected<!--4DELSE--><!--4DENDIF-->>Completed</option>
+										</select>                    
+					</div>
+  				</div>
+  				
+      		</div>
+ 	 		</div>
+     		<div class="row">
+             	<div class="col-sm-12 text-center">
+                <input type="submit" class="btn palette-carrot btn-color margin-right-5 btn-sm">
+                <!--#4DIF (Records in selection([Projects])=0)-->
+                <input type="reset" class="btn btn-primary btn-sm">
+                <!--4DENDIF-->
+                </div>
+       		 </div>
+             
+      </div>
+
+	<!--#4DIF (Records in selection([Projects])=1)-->
+			<div role="tabpanel" class="tab-pane fade" id="more-info" aria-labelledby="moreinfo">
+				<div class="table-responsive padding-left-5">
+                	<table class="table table-bordered width-auto">
+                    	<thead>
+                        	<tr style="background:#fafafa;">
+                        		<th class="vertical-middle "> Time stamp</th>
+                            	<th class="vertical-middle "> Added by</th>
+                            	<th class="vertical-middle ">Description</th>
+                            	<th class="vertical-middle ">Action</th>
+                          	</tr>
+                        </thead>
+                        <tbody>
+                        	<!--#4DSCRIPT/Web_LoadProjectNotes/-->	
+
+								<!--#4DLOOP [Notes]--><!-- row -->
+                        	<tr class="notes">
+                        		<td class="vertical-middle "><!--4DHTMLVAR timestamp_unix_toGMT ([Notes]Timestamp_modified)--></td>
+                               	<td class="vertical-middle "><!--#4DHTMLVAR [Notes]note_user_name--></td>
+                            	<td class="vertical-middle "><textarea readonly class="form-control width-300 no-padding no-border disabled note" id="note" name="note"><!--#4DHTMLVAR [Notes]Note--></textarea></td>
+                            	<td class="vertical-middle">
+                            		<input class="note_uuid" type="hidden" value="<!--#4DHTMLVAR [Notes]uuid-->" />
+                            		<a title="Save note" href="javascript:void(0)" onClick="saveCustomerNote($(this))" style="display:none" id="save"><i class="fa fa-save big-size color-carrot"></i></a>
+                            		<a title="Edit note" href="javascript:void(0)" onClick="editCustomerNote($(this))" id="edit"><i class="ion-edit big-size color-carrot"></i></a>
+                            		<a title="Delete note" href="javascript:void(0)" onClick="deleteCustomerNote($(this))" id="delete"><i class="ion-trash-b big-size color-carrot ion-android-deletes"></i></a>
+                            		<a title="Cancel" href="javascript:void(0)"  onClick="cancelCustomerNote($(this))" style="display:none" id="cancel"><i class="ion-android-cancel big-size color-carrot"></i></a>
+                            	</td>
+                          	</tr>
+                          	<!--#4DENDLOOP-->
+                          	<tr class='notes_end'></tr>
+                         </tbody>
+                      </table>
+                </div>
+                <div class="row margin-bottom-15">
+                	<div class="col-sm-10 col-lg-9">
+                    	<div class="form-group">
+                        	<label class="col-sm-1 control-label display-block" for="">Add note</label>
+                            <div class="col-sm-4 ">
+                            	<textarea name="add_new_note" id="add_new_note" class="form-control"> </textarea>
+                            </div>
+                            <button type="button" class="btn btn-primary btn-sm margin-top-10" id="add" onClick="addCustomerNote()">Add Note</button>
+                        </div>
+                    </div>
+                </div>
+    		</div>
+		<!--#4DENDIF-->
+	
+    </div>
+     
+  </div>
+       	</form>
+      </div>
+    </div>
+   
+  </div>
+  <!-- /.col --> 
+</div>
+<!-- /.row --> 
+
+ 		<!-- BEGIN FOOTER -->
+      	<!--#4DSCRIPT/_HIT_LoadInclude/hit/v2/includes/footer.shtml-->
+     	 <!-- END FOOTER --> 
+</div>
+<!-- /.container-fluid -->
+</div>
+<!-- /.rightside -->
+</div>
+<!-- /.wrapper --> 
+
+<!-- END CONTENT --> 
+
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/v2/includes/InitJs.shtml-->
+<!-- BEGIN JAVASCRIPTS --> 
+
+<script src="assets/plugins/bootstrap/js/bootstrap-tabcollapse.js"></script>
+<!-- bootstrap validator -->
+<script src="assets/plugins/bootstrapValidator/bootstrapValidator.min.js" type="text/javascript"></script>
+	
+<!-- maniac -->
+<script src="assets/js/maniac.js" type="text/javascript"></script>
+<!-- datepicker --> 
+<script src="assets/plugins/datepicker/js/bootstrap-datepicker.js" type="text/javascript"></script>
+<script src="assets/plugins/bootstrap-daterangepicker/moment.min.js" type="text/javascript"></script> 
+<script src="assets/plugins/bootstrap-daterangepicker/daterangepicker.js" type="text/javascript"></script> 
+
+<script type="text/javascript" src="assets/js/autocomplete.js"></script>
+<script src="assets/js/chosen.jquery.js" type="text/javascript"></script>
+<script type="text/javascript">
+var tableUUIDStr= '<!--#4DVAR [Projects]uuid -->';
+var tableNameStr='Projects';
+
+maniac.loadvalidator();
+
+	$(document).ready(function () {
+				
+		$('#new-customer-tab').tabCollapse();
+		
+        $('.datepicker').datepicker({
+           format: "dd/mm/yyyy"
+       	});  
+       	
+       	$('.num').keypress(function(e){
+			var k = e.which;
+    		/* numeric inputs can come from the keypad or the numeric row at the top */
+    			
+   			if ((k<48 || k>57) && (k!=46) && (k!=8) && (k!=0)) {
+        		e.preventDefault();
+				return false;
+    		}
+		}); 
+       	$('#new-customer-tab').on('click', function(e){
+			$('#new-customer-tab').toggleClass('glyphicon glyphicon-chevron-down , glyphicon glyphicon-chevron-up', 200);
+		});
+    });
+
+	//chosen
+	var config = {
+      '.chosen-select'           : {},
+      '.chosen-select-deselect'  : {allow_single_deselect:true},
+      '.chosen-select-no-single' : {disable_search_threshold:10},
+      '.chosen-select-no-results': {no_results_text:'Oops, nothing found!'},
+      '.chosen-select-width'     : {width:"95%"}
+    }
+    for (var selector in config) {
+      $(selector).chosen(config[selector]);
+    }
+
+//autocomplete
+	var xhr;
+  (function( $ ) {
+    $.widget( "custom.combobox", {
+      _create: function() {
+        this.wrapper = $( "<span>" )
+          .addClass( "custom-combobox" )
+          .insertAfter( this.element );
+ 
+        this.element.hide();
+        this._createAutocomplete();
+        this._createShowAllButton();
+      },
+ 
+      _createAutocomplete: function() {
+      	 var ele_select= this.element;	
+       	 
+        var selected = this.element.children( ":selected" ),
+          value = selected.val() ? selected.text() : "";
+ 
+        this.input = $( "<input>" )
+          .appendTo( this.wrapper )
+          .val( value )
+          .attr( "title", "" )
+          .addClass( "custom-combobox-input ui-widget ui-widget-content ui-state-default ui-corner-left" )
+          .autocomplete({
+            delay: 0,
+            minLength: 0,
+            source: $.proxy( this, "_source" )
+          })
+          .tooltip({
+            tooltipClass: "ui-state-highlight"
+          });
+ 
+        this._on( this.input, {
+          autocompleteselect: function( event, ui ) {
+		  	//alert("show all");
+            ui.item.option.selected = true;
+			
+            this._trigger( "select", event, {
+              item: ui.item.option
+            });
+            ele_select.trigger('change');
+          },
+ 
+          autocompletechange: "_removeIfInvalid"
+        });
+      },
+ 
+      _createShowAllButton: function() {
+        var input = this.input,
+          wasOpen = false;
+ 
+        $( "<a>" )
+          .attr( "tabIndex", -1 )
+          .attr( "title", "Show All Items" )
+          .tooltip()
+          .appendTo( this.wrapper )
+          .button({
+            icons: {
+              primary: "ui-icon-triangle-1-s"
+            },
+            text: false
+          })
+          .removeClass( "ui-corner-all" )
+          .addClass( "custom-combobox-toggle ui-corner-right" )
+          .mousedown(function() {
+            wasOpen = input.autocomplete( "widget" ).is( ":visible" );
+          })
+          .click(function() {
+            input.focus();
+ 
+            // Close if already visible
+            if ( wasOpen ) {
+              return;
+            }
+ 
+            // Pass last search string as value to search for, displaying last results
+            input.autocomplete( "search", 'SHOWALL' );
+          });
+      },
+ 
+      _source: function( request, response ) {
+        //var matcher = new RegExp( $.ui.autocomplete.escapeRegex(request.term), "i" );
+		var ele_select= this.element;
+		if(request.term=='SHOWALL'){
+			response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+		
+		}
+		else
+		{
+		var jsonRow = 'getcompaniesonsearch.cgi?srch='+request.term;
+		
+
+		//alert(jsonRowURLStr);
+		if(xhr) xhr.abort();
+		xhr=$.getJSON(jsonRow,function(result){
+			
+			if(result){
+				var html='<option value=""></option>';
+
+				$.each(result, function(i,item)
+				{
+					html += '<option value="'+item.id+'">'+item.value+'</option>';
+				});
+				ele_select.html(html);
+				
+				
+				response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+				
+				
+			}
+		});
+       
+	  } 
+		
+      },
+ 
+      _removeIfInvalid: function( event, ui ) {
+ 
+        // Selected an item, nothing to do
+        if ( ui.item ) {
+
+          return;
+        }
+ 
+        // Search for a match (case-insensitive)
+        var value = this.input.val(),
+          valueLowerCase = value.toLowerCase(),
+          valid = false;
+          var ele_select= this.element;
+        this.element.children( "option" ).each(function() {
+          if ( $( this ).text().toLowerCase() === valueLowerCase ) {
+            this.selected = valid = true;	
+			ele_select.trigger('change');
+            return false;
+          }
+        });
+ 
+        // Found a match, nothing to do
+        if ( valid ) {
+          return;
+        }
+ 
+        // Remove invalid value
+        this.input
+          .val( "" )
+          .attr( "title", value + " didn't match any item" )
+          .tooltip( "open" );
+        this.element.val( "" );
+        this._delay(function() {
+          this.input.tooltip( "close" ).attr( "title", "" );
+        }, 2500 );
+        this.input.data( "ui-autocomplete" ).term = "";
+      },
+ 
+      _destroy: function() {
+        this.wrapper.remove();
+        this.element.show();
+      }
+    });
+  })( jQuery ); 
+ 
+  $(function() {
+    $( "#Client_ID" ).combobox();
+   
+	
+  });
+</script>
+<!-- END JAVASCRIPTS -->
+<script type='text/javascript' src='assets/js/customerNotes.js'></script>
+</body>
+<!-- END BODY -->
+</html>

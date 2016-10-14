@@ -1,0 +1,38 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_SHOWNAVIGATORFLAG)
+_HIT_SHOWNAVIGATORFLAG:="Yes"
+
+-->
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+	<meta content="" name="description"/>
+	<meta content="" name="author"/>
+	
+	
+	<!-- BEGIN CORE FRAMEWORK -->
+	<link href="assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+	<link href="assets/plugins/ionicons/css/ionicons.min.css" rel="stylesheet" />
+	<link href="assets/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+	<!-- END CORE FRAMEWORK -->
+	
+	<!-- BEGIN PLUGIN STYLES -->
+	<link href="assets/plugins/animate/animate.css" rel="stylesheet" />
+	<!-- END PLUGIN STYLES -->
+	
+	<!-- BEGIN THEME STYLES -->
+	<link href="assets/css/material.css" rel="stylesheet" />
+	<link href="assets/css/style.css" rel="stylesheet" />
+	<link href="assets/css/plugins.css" rel="stylesheet" />
+	<link href="assets/css/helpers.css" rel="stylesheet" />
+	<link href="assets/css/responsive.css" rel="stylesheet" />
+	<!-- END THEME STYLES -->
+	
+	
+	<link rel="stylesheet" media="all" type="text/css" href="assets/css/jquery-impromptu.css" />
+	<!--#4DIF (_HIT_AuthenticateSession ="Session-Authenticated-OK")-->
+  		<!--#4DIF (mPlatform="web")-->
+			<link href="assets/css/show-leftbar-web.css" rel="stylesheet" />
+		<!--#4DENDIF-->
+	<!--#4DENDIF-->

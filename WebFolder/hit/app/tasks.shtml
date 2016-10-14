@@ -1,0 +1,805 @@
+<!--HIT_EXECUTE
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+else
+_HIT_HTTPD_RedirectToURL ("/hit/sign-in.shtml?url="+HTTPD_DocumentURI)
+end if 
+
+-->
+
+<!--#4DIF (_HIT_AuthenticateSession="Session-Authenticated-OK")-->
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Tenthmatrix CRM App : Tasks</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- bootstrap -->
+	<link href="css/bootstrap/bootstrap.css" rel="stylesheet">
+    <link href="css/bootstrap/bootstrap-responsive.css" rel="stylesheet">
+    <link href="css/bootstrap/bootstrap-overrides.css" type="text/css" rel="stylesheet">
+	<link rel="stylesheet" href="css/colorbox.css" />
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/app/includes/header.shtml-->
+
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    
+    	<style type="text/css">
+		.Highlight
+		{
+			background-color: #dcfac9!important;
+			cursor: pointer;
+		}
+		
+		.pull-right
+		{
+		
+		margin: 0 4px 4px 4px;
+		padding:0 4px 4px 4px;
+		
+		}
+		.custom-combobox {
+    position: relative;
+    display: inline-block;
+  }
+  .custom-combobox-toggle {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    margin-left: -1px;
+    padding: 0;
+    /* support: IE7 */
+    *height: 1.7em;
+    *top: 0.1em;
+  }
+  .custom-combobox-input {
+    margin: 0;
+    padding: 0.3em;
+  }
+  .ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {
+  	width:auto;
+	height:auto;
+	 background: none repeat scroll 0% 0% #FFF;
+	 border: 1px solid #B6B6B6;
+  }
+  .ui-autocomplete{
+  	max-height:300px;
+	overflow:scroll;
+  }
+  
+  .ui-autocomplete li a{
+  	color: #737f8d;
+	text-shadow: 1px 1px 1px #fff;
+  }
+  .ui-widget-content {
+    border: 1px solid #B6B6B6;
+	width: 275px;
+	}
+	ul.actions{
+		list-style:none;
+	}
+	ul.actions li {
+		display: inline;
+		padding: 5px 6px 0 3px;
+	}
+</style>
+
+
+</head>
+<body>
+
+	<!-- main container -->
+    <div class="content wide-content">
+        <div class="container-fluid">
+		<form id="frm_set" name="frm_set"  method="post" action="">
+		
+         <div class="" style=" padding:15px 0 0 0;">
+			
+			
+			<div class="ui-widget" style="margin-bottom: -26px;">
+				<strong>Projects:</strong>
+				<select name="proj" id="proj" onChange="__showProjectTask(this.value)" >
+				<option value="">--Select Project--</option>
+				<!--#4DSCRIPT/Web_LoadProjects/-->
+				<!--4DLOOP [Projects]-->
+					<option value="<!--#4DVAR [Projects]proj_id-->" ><!--4DVAR [Projects]proj_name--></option>
+				<!--4DENDLOOP-->
+				</select>
+			</div>
+                                <div class="pull-right">
+                            <div class="btn-group pull-right">
+                                <button class="glow left large" onClick="__showAllTasks(); return false;">All</button>
+                                <button class="glow middle large" onClick="__showActive(); return false;">Active</button>
+                                <button class="glow right large" onClick="__showDone(); return false;">Done</button>
+                                <a href="task.shtml" class="btn-flat success new-product margn-lft35" style="margin-left:15px;">+ Add New Task</a>
+                            </div>
+                            <input name="keyword_type" style="margin-top:2px;" id="keyword_type" type="text" class="search order-search" placeholder="Enter Task, Project name.." value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" />
+                        </div>
+					</div>
+        
+        <div class="container-fluid">
+            <div id="pad-wrapper1" class="datatables-page">
+                <div class="row-fluid">
+                    <div class="span12">
+
+                        <table cellpadding="0" cellspacing="0" border="0" class="dataTable" id="task_table">
+                            <thead>
+                                <tr role="row">
+                                    <th align="left">TASK ID 
+                                    </th>
+                                    <th align="left" width="25%">TASK NAME
+                                    </th>
+                                    <th align="left">PROJECT
+                                    </th>
+                                    <th align="left">START DATE
+                                    </th>
+                                    <th align="left">END DATE
+                                    </th>
+                                    <th align="left">EST. HOURS
+                                    </th>
+                                    <th align="left">ACTIVE
+                                    </th>
+                                    <th align="left">RATE
+                                    </th>
+                                    <th align="left">STATUS
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tfoot>
+                            <tr>
+                                	<th align="left">TASK ID 
+                                    </th>
+                                    <th align="left">TASK NAME
+                                    </th>
+                                    <th align="left">PROJECT
+                                    </th>
+                                    <th align="left">START DATE
+                                    </th>
+                                    <th align="left">END DATE
+                                    </th>
+                                    <th align="left">EST. HOURS
+                                    </th>
+                                    <th align="left">ACTIVE
+                                    </th>
+                                    <th align="left">RATE
+                                    </th>
+                                    <th align="left">STATUS
+                                    </th>
+                            </tr>
+                        </tfoot>
+                        <tbody id="tasks_table_body">
+
+                        </tbody>
+                        </table>
+						<div id="img_loading_div" style="text-align:center">
+		<img src="../loading.gif"  style="padding:20px;" width="34" >
+		</div>
+
+                    </div>
+                </div>
+            </div>
+        </form>
+        </div>
+    </div>
+	<div class="example-container">
+	<pre class="code" style="display:none;" id="no_rec_prompt">
+									var statesdemo = {
+										state0: {
+											title: 'No more records found',
+											html:'',
+											buttons: { OK: 1 },																		
+											submit:function(e,v,m,f){ 
+												//console.log(f);
+												if(v==1) {
+													$.prompt.close();
+												}
+												
+											}
+										},
+										
+									};
+									if(!($(".jqibox").length))
+									$.prompt(statesdemo);
+								</pre>
+							</div>
+    <!-- end main container -->
+
+	<!-- scripts -->
+    <script src="js/jquery-latest.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.dataTables.js"></script>
+
+	<script type="text/javascript" src="js/jquery-impromptu.js"></script>
+    <script src="js/theme.js"></script>
+	<script src="js/jquery-ui-1.9.1.custom.js"></script>
+<script>
+	 var xhr;
+  (function( $ ) {
+    $.widget( "custom.combobox", {
+      _create: function() {
+        this.wrapper = $( "<span>" )
+          .addClass( "custom-combobox" )
+          .insertAfter( this.element );
+ 
+        this.element.hide();
+        this._createAutocomplete();
+        this._createShowAllButton();
+      },
+ 
+      _createAutocomplete: function() {
+	  var ele_select= this.element;
+        var selected = this.element.children( ":selected" ),
+          value = selected.val() ? selected.text() : "";
+ 
+        this.input = $( "<input>" )
+          .appendTo( this.wrapper )
+          .val( value )
+          .attr( "title", "" )
+          .addClass( "custom-combobox-input ui-widget ui-widget-content ui-state-default ui-corner-left" )
+          .autocomplete({
+            delay: 0,
+            minLength: 0,
+            source: $.proxy( this, "_source" )
+          })
+          .tooltip({
+            tooltipClass: "ui-state-highlight"
+          });
+ 
+        this._on( this.input, {
+          autocompleteselect: function( event, ui ) {
+		  	//alert("show all");
+            ui.item.option.selected = true;
+			
+            this._trigger( "select", event, {
+              item: ui.item.option
+            });
+			ele_select.trigger('change');
+          },
+ 
+          autocompletechange: "_removeIfInvalid"
+        });
+      },
+ 
+      _createShowAllButton: function() {
+        var input = this.input,
+          wasOpen = false;
+ 
+        $( "<a>" )
+          .attr( "tabIndex", -1 )
+          .attr( "title", "Show All Items" )
+          .tooltip()
+          .appendTo( this.wrapper )
+          .button({
+            icons: {
+              primary: "ui-icon-triangle-1-s"
+            },
+            text: false
+          })
+          .removeClass( "ui-corner-all" )
+          .addClass( "custom-combobox-toggle ui-corner-right" )
+          .mousedown(function() {
+            wasOpen = input.autocomplete( "widget" ).is( ":visible" );
+          })
+          .click(function() {
+            input.focus();
+ 
+            // Close if already visible
+            if ( wasOpen ) {
+              return;
+            }
+ 
+            // Pass last search string as value to search for, displaying last results
+            input.autocomplete( "search", 'SHOWALL' );
+          });
+      },
+ 
+      _source: function( request, response ) {
+        //var matcher = new RegExp( $.ui.autocomplete.escapeRegex(request.term), "i" );
+		var ele_select= this.element;
+		if(request.term=='SHOWALL'){
+			response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+		
+		}
+		else
+		{
+		var jsonRow = 'getprojectsonsearch.cgi?srch='+request.term;
+		
+
+		//alert(jsonRowURLStr);
+		if(xhr) xhr.abort();
+		xhr=$.getJSON(jsonRow,function(result){
+			
+			if(result){
+				var html='<option value=""></option>';
+
+				$.each(result, function(i,item)
+				{
+					html += '<option value="'+item.id+'">'+item.value+'</option>';
+				});
+				ele_select.html(html);
+				
+				
+				response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+				
+				
+			}
+		});
+       
+	  } 
+		
+      },
+ 
+      _removeIfInvalid: function( event, ui ) {
+ 
+        // Selected an item, nothing to do
+        if ( ui.item ) {
+
+          return;
+        }
+ 
+        // Search for a match (case-insensitive)
+        var value = this.input.val(),
+          valueLowerCase = value.toLowerCase(),
+          valid = false;
+		  var ele_select= this.element;
+        this.element.children( "option" ).each(function() {
+          if ( $( this ).text().toLowerCase() === valueLowerCase ) {
+            this.selected = valid = true;	
+
+			ele_select.trigger('change');
+            return false;
+          }
+        });
+ 
+        // Found a match, nothing to do
+        if ( valid ) {
+          return;
+        }
+ 
+        // Remove invalid value
+        this.input
+          .val( "" )
+          .attr( "title", value + " didn't match any item" )
+          .tooltip( "open" );
+        this.element.val( "" );
+        this._delay(function() {
+          this.input.tooltip( "close" ).attr( "title", "" );
+        }, 2500 );
+        this.input.data( "ui-autocomplete" ).term = "";
+      },
+ 
+      _destroy: function() {
+        this.wrapper.remove();
+        this.element.show();
+      }
+    });
+  })( jQuery );
+ 
+  $(function() {
+    $( "#proj" ).combobox();
+   
+	
+  });
+
+  </script>
+<script type="text/javascript">
+var JSONdata;
+ var start=0, end=50;
+ var old_srch='',keyword='', jsonRow='', tab='', set='',project;
+ var tablname='Tasks';
+ var process=false;
+			// Hide the first cell for JavaScript enabled browsers.
+			$('#task_table td:first-child').hide();
+
+			
+
+			// Assign a click handler that grabs the URL from the first cell and redirects the user.
+			$('#task_table tr').click(function ()
+			{
+				//location.href = $(this).find('td a').attr('href');
+			});
+function __showProjectTask(name)
+{			
+	//$('#frm_set').submit();
+	project=name;
+	start=0;
+	end=25;
+	tab='';
+	keyword='';
+	$("#keyword_type").val('');
+	jsonRow = 'loadtasks.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab+'&project='+project;
+	$('#tasks_table_body').html('');
+	$('#img_loading_div').show();		
+	load_data(jsonRow);
+}
+
+function __showActive()
+{
+	start=0;
+	end=25;
+	tab='Active';
+	jsonRow = 'loadtasks.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab+'&project='+project;
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}
+	$('#tasks_table_body').html('');
+	$('#img_loading_div').show();		
+	load_data(jsonRow);
+}
+
+
+function __showDone()
+{
+	start=0;
+	end=25;
+	tab='Done';
+	jsonRow = 'loadtasks.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab+'&project='+project;
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}	
+	$('#tasks_table_body').html('');
+	$('#img_loading_div').show();	
+	load_data(jsonRow);
+}
+
+ 
+
+function __showAllTasks()
+{
+	start=0;
+	end=25;
+	tab='';
+	jsonRow = 'loadtasks.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&project='+project;
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}	
+	$('#tasks_table_body').html('');
+	$('#img_loading_div').show();	
+	load_data(jsonRow);
+}
+
+function __deleteSelected(del_uuid){
+	var statesdemo = {
+		state0: {
+			title: 'Are you sure to delete this task, this will delete related Timeslips too ?',
+			buttons: { Cancel : 0, "Sure! Go ahead": 1 },																	
+			submit:function(e,v,m,f){ 
+				if(v==1) {
+					var url= "deletetaskandtimeslip.cgi";
+					var dataString = 'selected='+del_uuid+'&action=task';
+					$.ajax({
+						type: "GET",
+						dataType: "json",
+						url: url,
+						data: dataString,
+						cache: false,
+						success: function(html)
+						{
+							if(html.Success){		
+								$.prompt.close();				
+								start=0;
+								end=50;
+								jsonRow = 'loadtasks.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab+'&project='+project;
+								if(keyword!=''){
+									jsonRow +='&keyword='+keyword;
+								}
+								$('#tasks_table_body').html('');
+								$('#img_loading_div').show();		
+								load_data(jsonRow);
+							}else if(html.Error){
+								$.prompt.close();
+								$.prompt(" ", {
+									title: html.Error,
+									buttons: { "Close": false }
+								});
+							}
+						}
+					});
+				}
+				if(v==0) {
+					$.prompt.close();
+				}
+				
+			}
+		},
+		
+	};
+	$.prompt(statesdemo);
+}
+
+
+function __showDownloadPrompt(task_uuid, token){
+	var jsonRow='returntaskemp.cgi?task_uuid='+task_uuid;
+	$.getJSON(jsonRow,function(result){
+		if(result.Error){
+				var statesdemo = {
+				state0: {
+					title: result.Error,
+					buttons: { Cancel : 0},
+					submit:function(e,v,m,f){ 
+						if(v==0) {
+							$.prompt.close();
+						}
+					}
+				},
+			};
+			$.prompt(statesdemo);
+		}else{
+			JSONEmployeeData=new Array();
+			$.each(result.emp_uuid, function(i,item){
+				JSONEmployeeData[i]=new Array();
+				JSONEmployeeData[i][0]=item;
+			});
+			$.each(result.emp_name, function(i,item){
+				JSONEmployeeData[i][1]=item;
+			});
+			
+			var dropdownHtml='<select id="employee_uuid" name="employee_uuid[]" multiple="multiple" style="width:150px;" ><option value="All">All</option>';
+			$.each(JSONEmployeeData, function(i,item){
+				dropdownHtml+='<option value="'+item[0]+'">'+item[1]+'</option>';
+			});
+			
+			dropdownHtml+='</select>';
+			var statesdemo = {
+				state0: {
+					title: 'Select Employee',
+					html:'<div id="message" style="color:#FF0000;"></div>'+dropdownHtml+'<br />',
+					buttons: { Cancel : 0, Download: 1 },
+					submit:function(e,v,m,f){ 
+						if(v==1) {
+							var hexvalues = '';
+							$('#employee_uuid :selected').each(function(i, selectedElement) {
+								if(hexvalues!=''){
+									hexvalues += ','+$(selectedElement).val();
+								}else{
+									hexvalues += $(selectedElement).val();
+								}
+							});
+							
+							if(hexvalues != ''){
+								e.preventDefault();
+								var pUrlStr='tasks_preview.shtml?uuid='+task_uuid+'&employee_uuid='+hexvalues+'&token='+token;
+								if($.__4D_IsIn4D__()) {
+									location.href = 'http://__4DURLHandler__/'+pUrlStr;
+								} else {
+									window.open(pUrlStr,'_blank');
+								}
+								$.prompt.close()
+							}else {
+								e.preventDefault();
+								document.getElementById("message").innerHTML = "* Please select some option." ;
+							}
+						}
+						if(v==0) {
+							$.prompt.close();
+						}
+					}
+				},
+			};
+			var myPrompt = $.prompt(statesdemo);
+			myPrompt.on('impromptu:loaded', function(e){
+				 $('#employee_uuid').change(function() {
+					$('#employee_uuid :selected').each(function() {
+						var str = $( this ).val();
+						if(str=="All"){
+							$("#employee_uuid option:selected").removeAttr("selected");
+							$('#employee_uuid option[value="All"]').prop("selected", true);
+						}
+					});
+				 })
+				  .trigger( "change" );
+			
+			});
+		} 
+	});
+}
+
+$(document).ready(function() {
+	$('#keyword_type').focus();
+	keyword= $("#keyword_type").val();
+	jsonRow = 'loadtasks.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&project='+project;
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}		
+	load_data(jsonRow);			 
+	
+	$(window).scroll(function(){
+		if ($(window).scrollTop() == $(document).height() - $(window).height()){
+		$('#img_loading_div').show();	
+		//alert("scrolling...");
+		start=end+1;
+		end=start+25;
+		jsonRow = 'loadtasks.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&project='+project;
+		if(keyword!=''){
+			jsonRow +='&keyword='+keyword;
+		}
+		if(tab!=''){
+			jsonRow +='&tab='+tab;
+		}		
+		load_data(jsonRow);
+		
+		}
+	});	
+	
+	//setup before functions
+	var typingTimer;                //timer identifier
+	var doneTypingInterval = 1000;  //time in ms, 5 second for example
+	
+	//on keyup, start the countdown
+	$('#keyword_type').keyup(function(){
+		clearTimeout(typingTimer);
+		if ($('#keyword_type').val) {
+			typingTimer = setTimeout(function(){
+				//do stuff here e.g ajax call etc....
+				$('#tasks_table_body').html('');
+				$('#img_loading_div').show();
+				start=0;
+				end=start+25;
+				tab='';
+				keyword= $("#keyword_type").val();
+				jsonRow = 'loadtasks.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&project='+project;
+				if(keyword!=''){
+					jsonRow +='&keyword='+keyword;
+				}
+				if(tab!=''){
+					jsonRow +='&tab='+tab;
+				}	
+				load_data(jsonRow);
+			}, doneTypingInterval);
+		}
+	});		
+	
+});
+
+ 
+function load_data(jsonRow){
+	JSONdata=new Array();
+	$.getJSON(jsonRow,function(result){
+			if(result.Alert){
+				code = $('#no_rec_prompt').text();
+				(new Function(code))();
+			}
+			else{
+				$.each(result.TaskID, function(i,item)
+				{
+					JSONdata[i]=new Array();
+					JSONdata[i][0]=item;
+						
+				}); 
+				$.each(result.uuid, function(i,item)
+				{
+					JSONdata[i][0]+='<input type="hidden" value="'+item+'">';	
+					JSONdata[i][9]='<ul class="actions"><li><a href="javascript:void(0)" title="Download" onClick="__showDownloadPrompt(\''+item+'\',\'<!--#4DVAR _HIT_TokenGetAny-->\')"><img src="img/download.png" alt="download"></a></li><li><a href="javascript:void(0)" title="Delete" onClick="__deleteSelected(\''+item+'\')"><i class="icon-remove"></i></a></li></ul>';					
+				}); 
+				$.each(result.TaskName, function(i,item)
+				{
+					JSONdata[i][1]=item;
+					
+				});
+				$.each(result.ProjName, function(i,item)
+				{
+					JSONdata[i][2]=item;
+				});
+				$.each(result.TaskStart, function(i,item)
+				{
+					JSONdata[i][3]=item;
+				});
+				$.each(result.TaskEnd, function(i,item)
+				{					
+					JSONdata[i][4]=item;
+				});
+				$.each(result.TaskEsthour, function(i,item)
+				{					
+					JSONdata[i][5]=item;
+				});
+				$.each(result.TaskActive, function(i,item)
+				{		
+					if(item==true){
+						JSONdata[i][6]='<span class="label label-success"> Active </span>';
+					}
+					else{
+						JSONdata[i][6]='<span class="label label-info"> Done </span>';
+					}
+				});
+				$.each(result.TaskRate, function(i,item)
+				{					
+					JSONdata[i][7]=item;
+				});
+				$.each(result.TaskStatus, function(i,item)
+				{			
+				
+				switch(item)
+					{
+					case 'resolved':
+					  JSONdata[i][8]='<span class="label label-success">'+item+'</span>';
+					  break;
+					case 'assigned':
+					  JSONdata[i][8]='<span class="label label-important">'+item+'</span>';
+					  break;
+					case 'new':
+					  JSONdata[i][8]='<span class="label label-warning">'+item+'</span>';
+					  break;
+					default :
+					   JSONdata[i][8]='<span class="label label-info">'+item+'</span>';
+					  }
+				});
+				
+				//$.each(result.uuid, function(i,item)
+				//{					
+				//	JSONdata[i][9]='<ul class="actions"><li><a href="task.shtml?uuid='+item+'" title="Edit" ><i class="table-edit"></i><a></li>';
+				//});
+				
+				var table_html='';
+				var trClassStr='odd';
+				$.each(JSONdata, function(i,row)
+				{
+				
+					table_html+='<tr class="'+trClassStr+'">';
+					if(trClassStr=='odd') { trClassStr='even'; } else { trClassStr='odd' };
+					$.each(row, function(i,col){
+						table_html+='<td>'+col+'</td>';
+					});
+					table_html+='</tr>';
+				});
+				if(old_srch!=keyword){
+					$('#tasks_table_body').html('');
+					old_srch=keyword;
+				}
+				//alert(table_html);
+				
+				$('#tasks_table_body').append(table_html);
+
+				// Apply a class on mouse over and remove it on mouse out.
+			$('#task_table tbody tr').unbind();
+			$('#task_table tbody tr').hover(function ()
+			{
+				$(this).toggleClass('Highlight');
+			});
+
+			// Assign a click handler that grabs the URL from the first cell and redirects the user.
+				$('#task_table tbody tr td').click(function ()
+				{
+					if(!($(this).find(':checkbox').length || $(this).find('a').length)){
+						if($.__4D_IsIn4D__()) {
+							location.href = 'http://__4DURLHandler__/Edit-Task-'+$(this).parents('tr').find(':checkbox').val()+'&token='+Math.random();
+						} else {
+							pTasksURLStr = 'task.shtml?uuid='+$(this).parents('tr').find(':checkbox').val()+'&token='+Math.random();
+							window.open(pTasksURLStr, '_blank');
+						}
+					}
+				});
+
+		}
+		$('#img_loading_div').hide();
+		});
+}
+
+</script>
+
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/app/includes/InitJS4DCallBacks.shtml-->
+
+</body>
+</html>
+<!--#4DELSE--><h1>Authentication Required!<br>
+<!--HIT_EXECUTE _HIT_HTMLTXT:="_HIT_AuthenticateSession: "+_HIT_AuthenticateSession-->
+</h1><!--#4DENDIF-->

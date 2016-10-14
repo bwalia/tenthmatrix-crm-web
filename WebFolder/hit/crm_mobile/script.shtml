@@ -1,0 +1,89 @@
+ <!--HIT_EXECUTE
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+C_TEXT(_HTMLTITLETXT)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+QUERY([Scripts];[Scripts]uuid=_HIT_WebApp_GetField ("uuid"))
+ 
+IF (Records in selection([Scripts])=0)
+_HTMLTITLETXT:="New Script"
+ELSE
+_HTMLTITLETXT:= "Edit Script"
+END IF
+
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+_HIT_WebSession_SetVar ("last-payment-uuid";_HIT_WebApp_GetField ("uuid"))
+-->
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/main-header.shtml-->
+<script src="js/jquery.validate.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+	$("#DetailForm").validate({
+		ignore: "",
+        rules: {
+          script_name: { required: true },
+				script_code: { required: true }
+        }
+    });
+    
+    
+});
+</script>
+<style>
+label.error { 
+	float: left; 
+	color: red; 
+	padding-top: 1.5em; 
+	vertical-align: top; 
+}
+</style>
+</head>
+<body>
+<div data-role="page" class="jqm-demos" data-quicklinks="true">
+	<!-- header -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/top-header.shtml-->
+	<!-- /header -->
+	
+	<div role="main" class="ui-content jqm-content">
+		<h3><!--#4DIF (Records in selection([Scripts])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Script</h3>
+		<div data-demo-html="true">
+			<form novalidate="novalidate" name="DetailForm" action="savescript.cgi" id="DetailForm" data-ajax="false" method="post">
+					<input name="uuid" class="span9" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="uuid">
+							
+					<div class="ui-field-contain">
+								<label>Script Name</label>
+								<input class="span5" name="script_name" id="script_name" type="text" value="<!--#4DVAR [Scripts]script_name-->" onChange="$('#run_script').hide();" onKeyup="$('#run_script').hide();">
+							</div>            
+							 
+							<div class="ui-field-contain">
+                                <label>Run Level</label>
+                               		<select id="RunLevel" name="RunLevel" data-native-menu="false">
+										<option value="" <!--#4DIF ([Scripts]RunLevel="")-->selected<!--4DELSE--><!--4DENDIF-->></option>
+										<option value="On the server" <!--#4DIF ([Scripts]RunLevel="On the server")-->selected<!--4DELSE--><!--4DENDIF-->>On the server</option>
+									</select>                                     
+                           	</div>
+                            
+                           <div class="ui-field-contain">
+								<label>Script Name</label>
+								<textarea name="script_code" class="span5" rows="8" id="script_code"><!--#4DVAR [Scripts]script_code--></textarea>
+							</div>    
+                   	<button type="submit" class="ui-shadow ui-btn ui-corner-all ui-mini">Submit</button>
+					<a href="scripts.shtml" class="ui-shadow ui-btn ui-corner-all ui-mini" data-ajax="false">Cancel</a>
+				</form>	
+		    	
+		    </div>
+	</div><!-- /content -->
+	<!-- panel -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/sidebar.shtml-->
+	<!-- /panel -->
+
+	<!-- footer -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/footer.shtml-->
+	<!-- /footer -->
+</div><!-- /page -->
+
+</body>
+</html>

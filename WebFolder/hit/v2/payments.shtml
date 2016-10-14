@@ -1,0 +1,403 @@
+<!--HIT_EXECUTE
+_HIT_HTTPD_SetHTTPHeader ("Content-type";"text/html; charset=utf-8")
+
+C_TEXT(_HIT_HTMLTXT;mPlatform)
+C_BOOLEAN(IsBookKeeper;IsHitUser)
+
+If(_HIT_AuthenticateSession="Session-Authenticated-OK")
+
+mPlatform:=_HIT_WebSession_GetVar ("platform")
+
+Else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml?url="+HTTPD_DocumentURI)
+End if
+
+IsBookKeeper:=IsUserBookKeeper
+IsHitUser:=IsUserPower
+ 
+-->
+<!DOCTYPE html>
+<html lang="en">
+<!-- BEGIN HEAD -->
+<head>
+	<title>Payments</title>
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/v2/includes/InitCss.shtml-->
+	<style>
+		#message{
+			color:#FF0000;
+		}
+
+		.jqibox {
+			z-index:9999!important;
+		}
+	   
+	</style>
+	
+</head>
+
+<!-- END HEAD -->
+<!-- BEGIN BODY -->
+<body class="fixed-leftside fixed-header">
+	<!-- BEGIN HEADER -->	
+		<!--#4DSCRIPT/_HIT_LoadInclude/hit/v2/includes/header.shtml-->
+	<!-- END HEADER -->
+			 
+	<div class="wrapper"> 
+ 		<!-- BEGIN LEFTSIDE -->
+       	<!--#4DIF (mPlatform="web")-->
+ 		<!--#4DSCRIPT/_HIT_LoadInclude/hit/v2/includes/left-navigation.shtml-->
+ 		<!--#4DENDIF-->
+		<!-- END LEFTSIDE -->
+  
+  <!-- BEGIN RIGHTSIDE -->
+  <div class="rightside bg-grey-100"> 
+    <!-- BEGIN PAGE HEADING -->
+    <div class="page-head">
+    <div class="row">
+     	<div class="col-sm-6">
+      		<h1 class="page-title">Payments</h1>
+            </div>
+      <!-- BEGIN BREADCRUMB -->
+       
+     	<div class="col-sm-6 ">
+      <ol class="breadcrumb sm-pullright">
+        <li><a href="javascript:void(0)" onclick="funURLHandler('index.shtml','open-index-window')"><i class="ion-home margin-right-5"></i> Dashboard</a></li>
+        <li>Payments</li>
+      </ol> 
+      </div>
+      </div>
+      <!-- END BREADCRUMB --> 
+   
+    </div>
+    <!-- END PAGE HEADING -->
+    	<div class="container-fluid">
+    		<div class="margin-bottom-15">
+     			<div class="pull-left hideComponentsClass" style="display:none;">
+					<button class="btn palette-carrot btn-color btn-icon-left  btn-sm" onClick="__deletemultientries(); return false;">Delete</button>
+         		</div>
+         		<div class="pull-right">
+                 	<div class="form-inline">
+               			<input type="text" class="form-control no-border-right" placeholder="Search..." id="keyword" name="keyword">
+						<a href="javascript:void(0)" onclick="funURLHandler('payment.shtml','open-payment-window')" class="btn palette-carrot btn-color btn-icon-left  btn-sm"> <i class="fa fa-plus-circle"></i> Add New</a>
+                    </div>                                           
+       			</div>
+      			<div class="clearfix"></div>
+     		</div>
+      			<div class="row">
+        			<div class="col-md-12">
+       					<div class="panel" style="padding-top:20px;"> 
+                			<div class="panel-body no-padding-top bg-white"> 
+              					<div class="table-responsive">
+                
+                					<table class="table table-striped no-border table-hover no-margin" id="Table">
+					
+									</table>
+									<div class="text-center margin-top-10  margin-bottom-10"><button style="width: 50%;display:none;" class="btn palette-belize-hole btn-color" href="javascript:void(0);" onclick="show_more()" title="Show more" id="display_more_btn" >Show more</button></div>
+              						<div class="text-center margin-bottom-10" id="img_loading_div"><img width="32" src="assets/img/loader.gif"></div>
+              					
+              					</div>
+            				</div>
+          				</div>
+        			</div>
+        			<!-- /.col --> 
+      			</div>
+      			<!-- /.row --> 
+      
+      <!-- BEGIN FOOTER -->
+      <!--#4DSCRIPT/_HIT_LoadInclude/hit/v2/includes/footer.shtml-->
+      <!-- END FOOTER --> 
+    </div>
+    <!-- /.container-fluid --> 
+  </div>
+  <!-- /.rightside --> 
+</div>
+<!-- /.wrapper --> 
+<!-- END CONTENT --> 
+							<div class="example-container">
+								 <pre class="code" style="display:none;" id="del_prompt">
+									var html='';
+								
+									var statesdemo = {
+										state0: {
+											title: 'Are you sure to delete?',
+											html:html,
+											buttons: { No : 0, Yes: 1 },																		
+											submit:function(e,v,m,f){ 
+												if(v==1) {
+													var dataString = 'delete_uuid='+deleteuuid+'&action=payment';
+													$.ajax({
+														type: "GET",
+														dataType: "json",
+														url: "deletepinpayment.cgi",
+														data: dataString,
+														cache: false,
+														success: function(html)	{
+															if(html.success){		
+																$.prompt.close();				
+																start=0;
+																end=50;
+																jsonRow = 'loadpayments.cgi?start='+start+'&end='+end+'&tablname='+tablname;
+																if(keyword!=''){
+																	jsonRow +='&keyword='+keyword;
+																}
+																if(tab!=''){
+																	jsonRow +='&tab='+tab;
+																}
+																$('#payment_table_body').html('');
+																$('#img_loading_div').show();	
+																load_data(jsonRow);
+															}else{
+																$.prompt.close();
+															}
+														}
+													});
+												}
+												if(v==0) {
+													$.prompt.close();
+												}
+											}
+										},
+										
+									};
+									
+									$.prompt(statesdemo);
+								</pre>
+							</div>
+<!-- BEGIN JAVASCRIPTS -->  
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/v2/includes/InitJs.shtml-->
+
+<script type="text/javascript">
+
+var JSONdata;
+var nPageSize=25;
+var selected='';
+var start=0, end=25;
+var old_srch='',keyword='', jsonRow='', message='';
+var tablname='Receipts';
+var deleteuuid='';
+var complete=false;
+var completeScroll=false;
+var checkAllFlag=false;
+
+function __deleteMultipleEntries(){
+	var selected='';
+	$('.check').each(function(){
+		if($(this).is(":checked")){
+			if(selected==''){
+				selected=$(this).val();
+			}else{
+				selected+=","+$(this).val();
+			}
+		}
+	});
+	if(selected!=""){
+		deleteuuid=selected;
+		code = $('#del_prompt').text();
+		(new Function(code))();
+	}else{
+		__alertMessage("Please select one or more purchase invoices for deletion!");
+	}
+}  
+
+$(document).ready(function() {
+	var TableHtml='<thead><tr>';
+	if(isMobile.any()) {
+		$('.hideComponentsClass').hide();
+   		TableHtml+='<th class="vertical-middle">PURCHASE INVOICE NO</th>';
+   		TableHtml+='<th class="vertical-middle">PAID</th>';
+		TableHtml+='<th class="vertical-middle">Action</th>';
+	}else{
+		$('.hideComponentsClass').show();
+		TableHtml+='<th class="vertical-middle"><div class="checkbox checkbox-theme no-margin"><input type="checkbox" id="chk_all"><label for="chk_all" class="no-padding"></label></div></th>';
+		TableHtml+='<th class="vertical-middle">PURCHASE INVOICE NO</th>';
+		TableHtml+='<th class="vertical-middle">DATE</th>';
+		TableHtml+='<th class="vertical-middle">CLIENT</th>';
+		TableHtml+='<th class="vertical-middle">PAID AMOUNT</th>';
+		TableHtml+='<th class="vertical-middle">MODE OF PAYMENT</th>';
+		TableHtml+='<th class="vertical-middle">VAT CLAIMED</th>';
+		TableHtml+='<th class="vertical-middle">ACTION</th>';
+	}
+	TableHtml+='</tr></thead>';
+	TableHtml+='<tbody id="TableContent">';
+	TableHtml+='</tbody>';
+	$('#Table').append(TableHtml);
+	
+	$('#keyword').focus();
+	keyword=$('#keyword').val();
+	jsonRow = 'loadpayments.cgi?start='+start+'&end='+end+'&tablname='+tablname;
+	
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}	
+	 
+	load_data(jsonRow);	
+		 
+	
+	$(window).scroll(function(){
+		if ($(window).scrollTop() == $(document).height() - $(window).height()){
+		if(complete==false && completeScroll==false) {
+			$('#img_loading_div').show();
+			$('#display_more_btn').hide();
+			start=end+1;
+			end=parseInt(start)+parseInt(nPageSize);
+			jsonRow = 'loadpayments.cgi?start='+start+'&end='+end+'&tablname='+tablname;
+			if(keyword!=''){
+				jsonRow +='&keyword='+keyword;
+			}
+			
+			load_data(jsonRow);	
+		}
+		}
+	});	
+	
+	//setup before functions
+	var typingTimer;                //timer identifier
+	var doneTypingInterval = 1000;  //time in ms, 5 second for example
+	
+	//on keyup, start the countdown
+	$('#keyword').keyup(function(){
+		clearTimeout(typingTimer);
+		if ($('#keyword').val) {
+			typingTimer = setTimeout(function(){
+				$('#display_more_btn').hide();
+				$('#Table tbody').html('');
+				$('#img_loading_div').show();
+				start=0;
+				end=parseInt(start)+parseInt(nPageSize);
+				tab='';
+				keyword= $("#keyword").val();
+				jsonRow = 'loadpayments.cgi?start='+start+'&end='+end+'&tablname='+tablname;
+				if(keyword!=''){
+					jsonRow +='&keyword='+keyword;
+				}
+				
+				load_data(jsonRow);
+			}, doneTypingInterval);
+		}
+	}).keydown(function( event ) {
+		if ( event.which == 13 ) {
+			event.preventDefault();
+	  	}
+	});		
+	
+	$('#Table').on("click","#chk_all", function(){
+		if($(this).is(":checked")){
+			checkAllFlag=true;
+			$('.check').prop('checked', true);
+		}else{
+			checkAllFlag=false;
+			$('.check').prop('checked', false);
+		}
+	});	
+    
+});
+
+
+ 
+function show_more(){
+	$('#display_more_btn').hide();
+	$('#img_loading_div').show();
+	start=end+1;
+	end=parseInt(start)+parseInt(nPageSize);
+	jsonRow = 'loadpayments.cgi?start='+start+'&end='+end+'&tablname='+tablname;
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}	
+	load_data(jsonRow);	
+}
+
+var JSONdata=new Array();  
+function load_data(jsonRow){
+	completeScroll=true;
+	
+	$.getJSON(jsonRow,function(result){
+		
+			if(result.Alert){
+				__alertMessage('No more records found');
+				complete=true;
+				$('#display_more_btn').hide();
+			}else{
+			 	if(isMobile.any()) {
+			 	$.each(result.uuid, function(i,item){
+				 	JSONdata[i]=new Array();
+				 
+					JSONdata[i][2]='<a href="javascript:void(0)" onclick="funURLHandler(\'receipt.shtml?uuid='+item+'\',\'open-receipt-window\')" title="Edit"><i class="fa fa-pencil"></i></a>';
+				}); 
+				$.each(result.PurchaseInvNo, function(i,item)
+				{
+					JSONdata[i][0]=item;
+				});
+				$.each(result.PaidAmout, function(i,item)
+				{	
+					JSONdata[i][1]=item;
+				});
+			 	}else{
+				$.each(result.uuid, function(i,item){
+				 JSONdata[i]=new Array();
+				 if(checkAllFlag==true){
+				 JSONdata[i][0]='<div class="checkbox checkbox-theme no-margin"><input class="check" checked type="checkbox" value="'+item+'" id="'+item+'"><label for="'+item+'" class="no-padding"></label></div>';
+				 }else{
+				 JSONdata[i][0]='<div class="checkbox checkbox-theme no-margin"><input class="check" type="checkbox" value="'+item+'" id="'+item+'"><label for="'+item+'" class="no-padding"></label></div>';
+				 }
+				 JSONdata[i][7]='<a href="javascript:void(0)" onclick="funURLHandler(\'receipt.shtml?uuid='+item+'\',\'open-receipt-window\')" title="Edit"><i class="fa fa-pencil"></i></a>';
+				 
+				});
+				
+				$.each(result.PurchaseInvNo, function(i,item)
+				{
+					JSONdata[i][1]=item;
+				});
+				$.each(result.DateAdded, function(i,item)
+				{
+					JSONdata[i][2]=item;
+				});
+				
+				$.each(result.ClientName, function(i,item)
+				{					
+					JSONdata[i][3]=item;
+				});
+				
+				$.each(result.PaidAmout, function(i,item)
+				{	
+					JSONdata[i][4]=item;
+				});
+				
+				$.each(result.PayMode, function(i,item)
+				{				
+					JSONdata[i][5]=item;
+				});
+				$.each(result.VatClaimed, function(i,item){
+			  		if(item==true){
+						JSONdata[i][6]='<span class="label label-success"> Yes </span>';
+					}
+					else{
+						JSONdata[i][6]='<span class="label label-warning"> No </span>';
+					}
+				});		
+				}
+  				
+				var table_html='';
+				$.each(JSONdata, function(i,row){
+					table_html+='<tr>';
+					$.each(row, function(i,col){
+						table_html+='<td class="vertical-middle">'+col+'</td>';
+					});
+					table_html+='</tr>';
+				});
+				
+				if(old_srch!=keyword){
+					$('#TableContent').html('');
+					old_srch=keyword;
+				}
+				
+				$('#TableContent').append(table_html);
+				complete=false;
+				$('#display_more_btn').show();
+		}
+		$('#img_loading_div').hide();
+		completeScroll=false;
+	});
+}
+</script>
+</body>
+<!-- END BODY -->

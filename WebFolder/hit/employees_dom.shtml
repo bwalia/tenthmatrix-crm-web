@@ -1,0 +1,467 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+QUERY([Employees];[Employees]uuid=_HIT_WebApp_GetField ("uuid"))
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml?url="+HTTPD_DocumentURI)
+end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+
+_HIT_HTMLTXT:=_HIT_HTTP_GetReferer
+-->
+<!DOCTYPE html>
+<html>
+<head>
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+<link rel="stylesheet" media="all" type="text/css" href="css/jquery-impromptu.css" />
+<style>
+#message, #tax_message{
+	color:#FF0000;
+}
+</style>
+</head>
+<body>
+
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
+
+	<!-- main container -->
+    <div class="content">
+        
+        <div class="container-fluid">
+            <div id="pad-wrapper">
+
+                <!-- projects table -->
+                <div class="table-wrapper orders-table section">
+                    <div class="row-fluid head">
+                        <div class="span12">
+                            <h4>Employees</h4>
+                        </div>
+                    </div>
+
+                    <div class="row-fluid filter-block">
+                    <form id="frm_set" name="frm_set" method="post" action="employees.shtml">
+                    <!--#4DIF (_HIT_WebApp_GetField ("keyword")="load_@")--> <input name="manageruuid" id="manageruuid" type="hidden" value="<!--#4DHTMLVAR _HIT_WebApp_GetField ("uuid")-->"><input type="button" name="button" id="button" class="btn-glow primary" value="Delete Selected" onClick="deletemanageremployee('<!--#4DHTMLVAR _HIT_WebApp_GetField ("uuid")-->')"><!--#4DELSE--><!--#4DENDIF-->
+                    
+					<!--#4DIF (_HIT_WebApp_GetField ("keyword")#"load_@")-->Select Manager : 
+					<input type="hidden" name="selected" id="selected" value="">
+					<div class="ui-select">
+					<select name="sets" onChange="__showemployeeForm_Selectmanager(this.value)">
+						<option value="">--Select Manager--</option>
+						<!--#4DSCRIPT/Web_LoadManager/-->
+							<!--4DLOOP  [Employees]-->									
+							<option value="<!--#4DHTMLVAR [Employees]uuid-->" ><!--#4DHTMLVAR [Employees]emp_first_name-->  <!--#4DHTMLVAR [Employees]emp_last_name--></option>
+							<!--4DENDLOOP-->
+						<!-- <option value="new_set">Add New Manager</option> -->
+					</select>
+					</div>
+					<!--#4DELSE--><!--#4DENDIF-->
+                    
+                        <div class="pull-right">
+                            <div class="btn-group pull-right">
+                                <button class="glow left large" onClick="__showAllEmployees(); return false;">All</button>
+                                <button class="glow middle large" onClick="__showActive(); return false;">Active</button>
+                                <button class="glow right large" onClick="__showInActive(); return false;">Inactive</button>
+                                <a href="employee.shtml" class="btn-flat success new-product margn-lft35">+ Add New Employee</a>
+                            </div>
+                            <input name="keyword" id="keyword" type="text" class="search order-search" placeholder="Search for Employee" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" />
+                        </div>
+						</form>
+                    </div>
+					 
+                    <div class="row-fluid">
+					<input id="employee_uuid" type="hidden" value="">
+					<input id="token" type="hidden" value="">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                	<th width="6%">
+                                        <!-- Select For delete Selection -->
+                                        <input name="Select" class="span3 check" type="checkbox" id="Select" value="<!--#4DHTMLVAR [Employees]uuid-->">
+                                    </th>
+                                    <th class="span2">
+                                        EMPLOYEE NAME
+                                    </th>
+                                    <th class="span2">
+                                        POSITION
+                                    </th>
+									<th class="span2">
+                                        E-mail
+                                    </th>
+									<th class="span1">
+                                        TYPE
+                                    </th>
+                                    <th class="span2">
+                                        Web Access
+                                    </th>
+                                    <th class="span3">
+                                        Status
+                                    </th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                            <!--#4DSCRIPT/Web_LoadEmployees/-->
+                            <!--#4DLOOP [Employees]-->
+                                <tr class="first">
+                                	<td>
+                                		<input name="Select" class="span3 check" type="checkbox" id="Select" value="<!--#4DHTMLVAR [Employees]uuid-->">
+                                	</td>
+                                    <td>
+                                        <a href="javascript:void(0)" onClick="__showEmployeeForm('<!--#4DHTMLVAR [Employees]uuid-->')"><!--#4DHTMLVAR [Employees]emp_first_name--> <!--#4DHTMLVAR [Employees]emp_last_name--></a>
+                                    </td>
+                                    <td>
+                                        <!--#4DHTMLVAR [Employees]emp_position-->
+                                    </td>
+									<td>
+                                        <!--#4DHTMLVAR [Employees]email-->
+                                    </td>
+									<td>
+                                        <!--#4DHTMLVAR [Employees]emp_type-->
+                                    </td>
+                                    <td>
+                                    	<!--#4DIF ([Employees]AllowWebAccess=True)--><span class="label label-success">Allow</span><!--#4DELSE--><span class="label label-important">Deny</span><!--#4DENDIF-->
+                                    </td>
+                                    <td>
+                                    	<!--#4DIF ([Employees]emp_active=True)--><span class="label label-success">Active</span><!--#4DELSE--><span class="label label-important">Inactive</span><!--#4DENDIF-->
+                                     
+                                        <ul class="actions">
+											<li><a href="javascript:void(0)" onClick="__showEmployeeForm('<!--#4DHTMLVAR [Employees]uuid-->')"><i class="table-edit"></i></a></li>
+											<li><a href="javascript:void(0)" onClick="__showDownloadPrompt('<!--#4DHTMLVAR [Employees]uuid-->','<!--#4DVAR _HIT_TokenGetAny-->')"><i class="table-settings"></i></a></li>
+											<li class="last"><a href="javascript:void(0)" onClick="__deleteSelected('<!--#4DHTMLVAR [Employees]uuid-->')"><i class="table-delete"></i></a></li>
+										</ul>
+                                    </td>
+                                </tr>
+							<!--#4DENDLOOP-->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- end Employees table -->
+				<div class="example-container">
+					<pre class="code" style="display:none;" id="download">
+						var statesdemo = {
+							state0: {
+								title: 'Download',
+								html:'&lt;div id="message"&gt;&lt;/div&gt;&lt;label&gt;Timeslip : &lt;input type="radio" class="radio_time" name="timesheet" id="week" value="week" &gt; Weekly &lt;/label&gt;'+
+									'&lt;label style="padding-left:72px;"&gt;&lt;input type="radio" class="radio_time" name="timesheet" id="month" value="month"&gt; Monthly &lt;/label&gt;'+
+									'&lt;label style="padding-left:72px;"&gt;&lt;input type="radio" class="radio_time" name="timesheet" id="other" value="other"&gt; Select Duration &lt;/label&gt;&lt;br /&gt;'+
+									'&lt;div id="dates" style="display:none;"&gt;&lt;label &gt;Start Date : &lt;input type="text" data-date-format="dd/mm/yyyy" name="dur_start" id="dur_start" &gt;  &lt;/label&gt;&lt;br /&gt;'+
+									'&lt;label &gt;End Date : &lt;input type="text" data-date-format="dd/mm/yyyy" name="dur_end" id="dur_end" &gt;  &lt;/label&gt;&lt;/div&gt;&lt;br /&gt;'+
+									'&lt;label&gt;Format &nbsp; : &lt;input type="radio" name="preview" id="preview" value="pdf"&gt; Pdf  &lt;/label&gt; '+
+									'&lt;label style="padding-left:76px;"&gt;&lt;input type="radio" name="preview" id="preview" value="excel"&gt; Excel &lt;/label&gt;&lt;br /&gt;',
+								buttons: { Cancel : 0, Ok: 1 },
+								submit:function(e,v,m,f){ 
+									if(v==1) {
+										if(f.timesheet != null && f.preview != null){
+											e.preventDefault();
+											if(f.timesheet=='other'){
+												if(f.dur_start != '' && f.dur_end != ''){
+													pUrlStr='timeslips_preview.shtml?timesheet='+f.timesheet+'&state_date='+f.dur_start+'&end_date='+f.dur_end+'&preview='+f.preview+'&uuid='+$("#employee_uuid").val()+'&token='+$("#token").val();
+												}else{
+													e.preventDefault();
+													document.getElementById("message").innerHTML = "* Please select start and end date." ;
+												}
+											}else if(f.timesheet=='month'){
+												pUrlStr='timeslips_preview.shtml?timesheet='+f.timesheet+'&state_date='+month_s_date+'&end_date='+e_date+'&preview='+f.preview+'&uuid='+$("#employee_uuid").val()+'&token='+$("#token").val();
+											}
+											else if(f.timesheet=='week'){
+												pUrlStr='timeslips_preview.shtml?timesheet='+f.timesheet+'&state_date='+week_s_date+'&end_date='+e_date+'&preview='+f.preview+'&uuid='+$("#employee_uuid").val()+'&token='+$("#token").val();
+											}
+											//console.log(pUrlStr);
+											window.open(pUrlStr,'_blank');
+											$.prompt.close()
+										}else {
+											e.preventDefault();
+											document.getElementById("message").innerHTML = "* Please select both timeslip and format." ;
+										}
+									}
+									if(v==0) {
+										$.prompt.close();
+									}
+								}
+							},
+							
+							
+						};
+
+						var myPrompt = $.prompt(statesdemo);
+						myPrompt.on('impromptu:loaded', function(e){
+							
+							$('#dur_start').datepicker({"autoclose": true}).on('changeDate', function (ev) {
+								var arrStartDate= $('#dur_start').val().split('/');
+								var dateText = new Date(arrStartDate[1]+'/'+arrStartDate[0]+'/'+arrStartDate[2]);
+								
+								$('#dur_end').datepicker('setStartDate', dateText);
+							});
+							
+							$('#dur_end').datepicker({"autoclose": true}).on('changeDate', function (ev) {
+								var arrEndDate= $('#dur_end').val().split('/');
+								var dateText = new Date(arrEndDate[1]+'/'+arrEndDate[0]+'/'+arrEndDate[2]);
+								
+								$('#dur_start').datepicker('setEndDate', dateText);
+							});
+							
+							$('.radio_time').click(function(){
+								if($(this).val()=='other'){
+									$('#dates').show();
+								}
+								else{
+									$('#dates').hide();
+								}
+							});
+						});
+					</pre>
+					<!--<a class="run">Run It!</a>-->
+				</div>
+            </div>
+        </div>
+    </div>
+    <!-- end main container -->
+
+	<!-- scripts -->
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+	
+    <script src="js/bootstrap.datepicker.js"></script>
+    <script src="js/jquery.uniform.min.js"></script>
+	<script type="text/javascript" src="js/jquery-impromptu.js"></script>
+	<script type="text/javascript">
+	var end_date=new Date();
+	var one_day=1000*60*60*24;
+	
+	var day=end_date.getDate();
+	var month=end_date.getMonth()+1;
+	var year=end_date.getFullYear();
+	var last_month=month-1;
+	var last_year=year;
+	if(last_month==0){
+		last_month=12;
+		last_year=year-1;
+	}
+	var month_s_date=String(day)+'/'+String(last_month)+'/'+String(last_year);
+	
+	var week_start=new Date();
+	week_start.setTime(end_date.getTime()-(7*one_day));										
+	var week_s_date = week_start.getDate()+'/'+String(week_start.getMonth()+1)+'/'+week_start.getFullYear();
+	
+	var e_date=String(day)+'/'+String(month)+'/'+String(year);
+	
+	
+		function __showDownloadPrompt(emp_uuid, token){
+			$("#employee_uuid").val(emp_uuid);
+			$("#token").val(token);
+			code = $('#download').text();
+			(new Function(code))();
+			
+		
+		}
+	</script>
+<script>
+    
+function __showActive()
+{
+pUrlStr='employees.shtml?keyword='+$('#keyword').val()+'&tab=active';
+window.location.href=pUrlStr;
+}
+
+function __showInActive()
+{
+pUrlStr='employees.shtml?keyword='+$('#keyword').val()+'&tab=inactive';
+window.location.href=pUrlStr;
+}
+
+function __showAllEmployees()
+{
+pUrlStr='employees.shtml';
+window.location.href=pUrlStr;
+}
+
+function __showEmployees()
+{
+pUrlStr='employees.shtml?keyword='+$('#keyword').val();
+window.location.href=pUrlStr;
+}
+
+function __showEmployeeForm(uuid)
+{
+pUrlStr='employee.shtml?uuid='+uuid;
+window.location.href=pUrlStr;
+}
+
+$(document).ready(function() {
+
+$('#keyword').focus();
+
+//setup before functions
+var typingTimer;                //timer identifier
+var doneTypingInterval = 1000;  //time in ms, 5 second for example
+
+//on keyup, start the countdown
+$('#keyword').keyup(function(){
+    clearTimeout(typingTimer);
+    if ($('#keyword').val) {
+        typingTimer = setTimeout(function(){
+            //do stuff here e.g ajax call etc....
+             var v = $("#keyword").val();
+__showEmployees();
+        }, doneTypingInterval);
+    }
+});
+
+    });
+</script>
+<script>
+function __deleteSelected(deleteuuid)
+{
+var chk=confirm("Are you sure to delete?");
+	if(chk){
+			
+		var dataString = 'selected='+deleteuuid;
+
+		$.ajax({
+			type: "GET",
+			dataType: "json",
+			url: "deleteemployee.cgi",
+			data: dataString,
+			cache: false,
+			success: function(html)
+			{
+				if(html.Result){		
+					alert(html.Result);
+				}
+				pUrlStr='employees.shtml?keyword='+$('#keyword').val();
+				window.location.href=pUrlStr;
+			}
+		});
+	}
+}
+
+function deleteSelection()
+{
+	
+	var chk=confirm("Are you sure to delete?");
+	if(chk){
+	var selected='';
+	$('.check').each(function(){
+		if($(this).is(":checked")){
+			if(selected==''){
+				selected=$(this).val();
+			}
+			else{
+				selected+=","+$(this).val();
+			}
+		}
+	
+	});
+	
+var dataString = 'selected='+selected;
+
+$.ajax({
+type: "GET",
+dataType: "json",
+url: "deleteemployee.cgi",
+data: dataString,
+cache: false,
+success: function(html)
+{
+	alert("Deleted successfully");
+	pUrlStr='employees.shtml?keyword='+$('#keyword').val();
+	window.location.href=pUrlStr;
+
+}
+});
+} 
+}
+
+function deletemanageremployee(manageruuid)
+{
+ 
+	var chk=confirm("Are you sure to delete?");
+	if(chk){
+	var selected='';
+	$('.check').each(function(){
+		if($(this).is(":checked")){
+			if(selected==''){
+				selected=$(this).val();
+			}
+			else{
+				selected+=","+$(this).val();
+			}
+		}
+	
+	});
+	
+var dataString = 'selected='+selected+"&manageruuid="+manageruuid;
+
+$.ajax({
+type: "GET",
+dataType: "json",
+url: "delmanageremp.cgi",
+data: dataString,
+cache: false,
+success: function(html)
+{
+	alert("Deleted successfully Form Manager list Only.");
+	//pUrlStr='employees.shtml?uuid='+$('#uuid').val();
+	pUrlStr='employees.shtml?keyword=<!--#4DHTMLVAR _HIT_WebApp_GetField ("keyword")-->&uuid=<!--#4DHTMLVAR _HIT_WebApp_GetField ("uuid")-->';
+	window.location.href=pUrlStr;
+}
+});
+}
+}
+ 
+function __showemployeeForm_Selectmanager(manageruuid)
+{
+if(manageruuid!=''){
+	var selected='';
+	$('.check').each(function(){
+		if($(this).is(":checked")){
+			if(selected==''){
+				selected=$(this).val();
+			}
+			else{
+				selected+=","+$(this).val();
+			}
+		}
+	
+	});
+	
+var dataString = 'selected='+selected+"&manager="+manageruuid;
+
+if(selected!=""){
+$.ajax({
+type: "GET",
+dataType: "json",
+url: "add_manager_employee.cgi",
+data: dataString,
+cache: false,
+success: function(html)
+{
+ if(html.MessageAlert){		
+	alert(html.MessageAlert);
+	
+	 
+  }
+	
+	if(html.nManagerName){
+	var ManagerName = html.nManagerName;
+	var ManagerUUID = html.nManagerUUID;
+	pUrlStr='employees.shtml?keyword=load_'+ManagerName+'&uuid='+ManagerUUID;
+	window.location.href=pUrlStr;
+  }
+}
+});}
+else{
+alert("Please Select atleast one Employee");
+}
+}
+}
+</script>
+</body>
+</html>

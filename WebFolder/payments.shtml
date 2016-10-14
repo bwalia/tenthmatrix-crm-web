@@ -1,0 +1,177 @@
+<!--HIT_EXECUTE
+_HIT_HTTPD_SetHTTPHeader ("Content-type";"text/html; charset=utf-8")
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+</head>
+<body>
+
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+	
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
+
+	<!-- main container -->
+    <div class="content">
+        
+        <div class="container-fluid">
+<div id="pad-wrapper">
+
+                <!-- timeslips table -->
+                <div class="table-wrapper orders-table section">
+                    <div class="row-fluid head">
+                        <div class="span12">
+                            <h4>Payments</h4>
+                        </div>
+                    </div>
+                            <form method="get" onSubmit="__showInvoices(); return false;">
+
+                    <div class="row-fluid filter-block">
+                        <div class="pull-right">
+                            <div class="btn-group pull-right">
+                            </div>
+                            <input name="keyword" id="keyword" type="text" class="search order-search" placeholder="Enter customer name.." value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" />
+                        </div>
+                    </div>
+
+                            </form>
+
+                    <div class="row-fluid">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                   <th class="span2">
+                                    </th>
+
+                                    <th class="span2">
+                                       Invoice No
+                                    </th>
+                                    <th class="span3">
+                                        Payment Date
+                                    </th>
+                                    <th class="span3">
+                                        <span class="line"></span>
+                                        Client
+                                    </th>
+                                    <th class="span3">
+                                        <span class="line"></span>
+                                        Paid Amount
+                                    </th>
+                                    <th class="span3">
+                                        <span class="line"></span>
+                                        Mode
+                                    </th>
+                                    <th class="span3">
+                                        <span class="line"></span>
+                                        Notes
+                                    </th>
+
+                                </tr>
+                            </thead>
+                            <tbody><!--#4DSCRIPT/Web_LoadPayments/-->
+                                <!--#4DLOOP [Payments]--><!--#4DSCRIPT/Web_LoadPaymentRelated/--><!-- row -->
+                                <tr class="first">
+                                    <td class="invoice_number"><span><a href="payment.shtml?uuid=<!--#4DVAR [Payments]uuid-->"><!--#4DVAR Selected record number([Payments])--></a></td>
+                                    <td class="invoice_number"><span><a target="_blank" href="invoices.shtml?keyword=<!--#4DVAR [Payments]invoice_number-->"><!--#4DHTMLVAR String([Payments]invoice_number;"000000")--></a></td>
+                                    <td class="invoice_number"><span class="label label-info"><!--#4DHTMLVAR [Payments]date_received--></td>
+                                    <td class="invoice_number"><a target="_blank" href="customers.shtml?keyword=<!--#4DVAR [Companies]company_Name-->"><span><!--#4DHTMLVAR [Companies]company_Name--></span></a></td>
+                                    <td class="invoice_number"><span class="label label-info"><!--#4DHTMLVAR Invoice_AmtReturnAsText([Payments]amount_received)--></td>
+                                    <td class="invoice_number"><span class="label label-info"><!--#4DHTMLVAR [Payments]mode_of_payment--></td>
+                                    <td class="invoice_number"><span class="label label-info"><!--#4DHTMLVAR [Payments]notes--></td>
+
+                                </tr>
+
+<!--#4DENDLOOP-->
+
+<tr>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td><span class="label label-warning">&#163;&nbsp;<!--#4DVAR Sum([Payments]amount_received)--></span></td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+</tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- end timeslips table -->
+
+            </div>
+        </div>
+    </div>
+    <!-- end main container -->
+
+	<!-- scripts -->
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+    
+    
+<script>
+
+function __showPayments()
+{
+pUrlStr='payments.shtml?keyword='+$("#keyword").val()+'&tab=overdue';
+window.location.href=pUrlStr;
+}
+
+
+function __showDueInvoices()
+{
+pUrlStr='payments.shtml?keyword='+$("#keyword").val()+'&tab=due';
+window.location.href=pUrlStr;
+}
+
+function __showPaidInvoices()
+{
+pUrlStr='payments.shtml?keyword='+$("#keyword").val()+'&tab=paid';
+window.location.href=pUrlStr;
+}
+
+function __showInvoices()
+{
+pUrlStr='payments.shtml?keyword='+$("#keyword").val();
+window.location.href=pUrlStr;
+}
+    
+$(document).ready(function() {
+
+$('#keyword').focus();
+
+//setup before functions
+var typingTimer;                //timer identifier
+var doneTypingInterval = 1000;  //time in ms, 5 second for example
+
+//on keyup, start the countdown
+$('#keyword').keyup(function(){
+    clearTimeout(typingTimer);
+    if ($('#keyword').val) {
+        typingTimer = setTimeout(function(){
+            //do stuff here e.g ajax call etc....
+             var v = $("#keyword").val();
+__showInvoices();
+        }, doneTypingInterval);
+    }
+});
+
+    });
+
+    </script>
+
+    
+</body>
+</html>

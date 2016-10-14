@@ -1,0 +1,218 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+else
+//_HIT_HTTPD_RedirectToURL ("sign-in.shtml?url="+HTTPD_DocumentURI)
+end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+
+_HIT_HTMLTXT:=_HIT_HTTP_GetReferer
+-->
+<!DOCTYPE html>
+<html>
+<head>
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+</head>
+<body>
+
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
+
+	<!-- main container -->
+    <div class="content">
+        
+        <div class="container-fluid">
+            <div id="pad-wrapper">
+
+                <!-- projects table -->
+                <div class="table-wrapper orders-table section">
+                    <div class="row-fluid head">
+                        <div class="span12">
+                            <h4>Emails</h4>
+                        </div>
+                    </div>
+
+                    <div class="row-fluid filter-block">
+                    <input type="button" class="btn-glow primary" value="Delete Selected" onclick="deleteSelection()">
+                        <div class="pull-right">
+                            <div class="btn-group pull-right">
+                                <button class="glow left large" onClick="__showAllEmails(); return false;">All</button>
+                                <button class="glow middle large" onClick="__showSent(); return false;">Sent</button>
+                                <button class="glow right large" onClick="__showNotSent(); return false;">Not-Sent</button>
+                            </div>
+                            <input name="keyword" id="keyword" type="text" class="search order-search" placeholder="Search for Recipient " value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" />
+                        </div>
+                    </div>
+
+                    <div class="row-fluid">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th width="6%">
+                                        <!-- Select For delete Selection -->
+                                        <input name="Select" class="span3 check" type="checkbox" id="Select" value="<!--#4DHTMLVAR [_emailc_queue]_uuid-->">
+                                    </th>
+                                    <th class="span3">
+                                        Recipient
+                                    </th>
+									<th class="span4">
+                                        SUBJECT
+                                    </th>
+                                     <th class="span2">
+                                        Email Status
+                                    </th>
+                                    <th class="span1">
+                                        Email Type
+                                    </th>
+                                    <th class="span4">
+                                        Sender 
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody><!--#4DSCRIPT/Web_Load_cEmails/-->
+                            <!--#4DLOOP [_emailc_queue]--><!-- row -->
+                                <tr class="first">
+                                	<td>
+                                		<input name="Select" class="span3 check" type="checkbox" id="Select" value="<!--#4DHTMLVAR [_emailc_queue]_uuid-->">
+                                	</td>
+                                    <td>
+                                        <a href="javascript:void(0)" onClick="__showEmailForm('<!--#4DHTMLVAR [_emailc_queue]_uuid-->')"><!--#4DHTMLVAR [_emailc_queue]_recipient--></a>
+                                    </td>
+                                    <td>
+                                        <a href="javascript:void(0)" onClick="__showEmailForm('<!--#4DHTMLVAR [_emailc_queue]_uuid-->')"><!--#4DHTMLVAR [_emailc_queue]_subject-->
+                                    </td>
+                                    <td>
+                                   		<!--#4DIF ([_emailc_queue]_email_state=-1)--><span class="label label-success">Once Mail Sent<!--#4DENDIF--></span>
+                                    	<!--#4DIF ([_emailc_queue]_email_state=0)--><span class="label label-success">Mail is to be Sent<!--#4DENDIF--></span>
+                                    	<!--#4DIF ([_emailc_queue]_email_state=1)--><span class="label label-success">Mail Sent<!--#4DENDIF--></span>
+                                       <!--#4DIF ([_emailc_queue]_email_state>1)--><span class="label label-success">Try To Send  <!--#4DHTMLVAR [_emailc_queue]_email_state-->  Times<!--#4DENDIF--></span>
+                                    </td>
+                                    <td>
+                                    	 
+                                        <!--#4DHTMLVAR [_emailc_queue]_email_type-->
+                                    </td>
+                                    <td>
+                                        <!--#4DHTMLVAR [_emailc_queue]_sender-->
+                                        <ul class="actions">
+											<li><a href="javascript:void(0)" onClick="__showEmailForm('<!--#4DHTMLVAR [_emailc_queue]_uuid-->')""><i class="table-edit"></i></a></li>
+											<li><i class="table-settings"></i></li>
+											<li class="last"><i class="table-delete"></i></li>
+										</ul>
+                                    </td>
+                                </tr>
+							<!--#4DENDLOOP-->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- end Email table -->
+
+            </div>
+        </div>
+    </div>
+    <!-- end main container -->
+
+	<!-- scripts -->
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+<script>
+    
+function __showSent()
+{
+pUrlStr='emailqueue.shtml?keyword='+$('#keyword').val()+'&tab=Sent';
+window.location.href=pUrlStr;
+}
+
+function __showNotSent()
+{
+pUrlStr='emailqueue.shtml?keyword='+$('#keyword').val()+'&tab=NotSent';
+window.location.href=pUrlStr;
+}
+
+function __showAllEmails()
+{
+pUrlStr='emailqueue.shtml';
+window.location.href=pUrlStr;
+}
+
+function __showEmails()
+{
+pUrlStr='emailqueue.shtml?keyword='+$('#keyword').val();
+window.location.href=pUrlStr;
+}
+
+function __showEmailForm(uuid)
+{
+pUrlStr='emailsend.shtml?uuid='+uuid;
+window.location.href=pUrlStr;
+}
+
+$(document).ready(function() {
+
+$('#keyword').focus();
+
+//setup before functions
+var typingTimer;                //timer identifier
+var doneTypingInterval = 1000;  //time in ms, 5 second for example
+
+//on keyup, start the countdown
+$('#keyword').keyup(function(){
+    clearTimeout(typingTimer);
+    if ($('#keyword').val) {
+        typingTimer = setTimeout(function(){
+            //do stuff here e.g ajax call etc....
+             var v = $("#keyword").val();
+__showEmails();
+        }, doneTypingInterval);
+    }
+});
+
+    });
+
+</script>
+<script>
+
+function deleteSelection()
+{
+	
+	var chk=confirm("Are you sure to delete?");
+	if(chk){
+	var selected='';
+	$('.check').each(function(){
+		if($(this).is(":checked")){
+			if(selected==''){
+				selected=$(this).val();
+			}
+			else{
+				selected+=","+$(this).val();
+			}
+		}
+	
+	});
+	
+var dataString = 'selected='+selected;
+
+$.ajax({
+type: "GET",
+dataType: "json",
+url: "deletemail.cgi",
+data: dataString,
+cache: false,
+success: function(html)
+{
+	alert("Deleted successfully");
+	pUrlStr='emailqueue.shtml?keyword='+$('#keyword').val();
+	window.location.href=pUrlStr;
+
+}
+});
+} 
+}
+</script>    
+</body>
+</html>

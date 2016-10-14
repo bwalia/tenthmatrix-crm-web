@@ -1,0 +1,149 @@
+<!--HIT_EXECUTE
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+
+ALL RECORDS([Tax_Codes])
+QUERY([Purchase_Orders];[Purchase_Orders]uuid=_HIT_WebApp_GetField ("uuid"))
+QUERY([Companies];[Companies]uuid=[Purchase_Orders]uuid_client)
+QUERY([Employees];[Employees]uuid=[Purchase_Orders]uuid_Approved_By)
+
+C_BOOLEAN(mUserIsCurrentBool)
+mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
+ 
+-->
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Tenthmatrix CRM App : Purchase Order</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- bootstrap -->
+	<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="bootstrap/css/bootstrap-responsive.min.css" />
+	<!-- enhanced select -->
+        <link rel="stylesheet" href="lib/chosen/chosen.css" />
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/app/includes/header.shtml-->
+	
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    
+    <style type="text/css">
+		
+	.custom-combobox {
+    position: relative;
+    display: inline-block;
+  }
+  .custom-combobox-toggle {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    margin-left: -1px;
+    padding: 0;
+    /* support: IE7 */
+    *height: 1.7em;
+    *top: 0.1em;
+  }
+  .custom-combobox-input {
+    margin: 0;
+    padding: 0.3em;
+  }
+  .ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {
+  	width:auto;
+	height:auto;
+	 background: none repeat scroll 0% 0% #FFF;
+	 border: 1px solid #B6B6B6;
+  }
+  .ui-autocomplete{
+  	max-height:300px;
+	overflow:scroll;
+  }
+  
+  .ui-autocomplete li a{
+  	color: #737f8d;
+	text-shadow: 1px 1px 1px #fff;
+  }
+  .ui-widget-content {
+    border: 1px solid #B6B6B6;
+	width: 275px;
+	}
+
+	#items textarea {
+	width:300px;
+	height: 20px;
+	}
+	.rate{
+	width:50px;
+	}
+	.hours{
+	width:50px;
+	}
+	
+  #message, #tax_message{
+	color:#FF0000;
+}
+input[type="text"] + label.error, textarea + label.error{
+	margin-top:0px;
+	}
+	
+	
+label, input, button, select, textarea {font-size: 13px;
+font-weight: normal;
+line-height: 18px;
+width: 100%;
+}
+	
+	</style>
+	
+</head>
+<body>
+
+	<!-- main container -->
+    <div class="content wide-content">
+        <div class="container-fluid">
+            <div id="pad-wrapper" class="form-page">
+				<div class="row-fluid">
+					<div class="">
+						<form name="OrderForm" id="OrderForm" action="savepurchaseorder.cgi" class="form_validation_reg" method="post" >
+							<div class="tab-content">
+								<div class="tab-pane active" id="tab1">
+									<div class="row-fluid">
+										<div class="span12">
+											<div class="row-fluid">
+												<div class="span9">
+													<div class="form-horizontal well">
+														<fieldset>
+															<div class="control-group">
+																<label class="control-label">Purchase Order Number </label>
+																<div class="controls">
+																	<input readonly type="hidden" class="span5" name="full_order_number" id="full_order_number" value="" />
+																	<input readonly type="text" class="span5" name="purchase_id_number" id="purchase_id_number" value="<!--#4DVAR [Purchase_Orders]Purchase_ID_Number -->" />
+																</div>
+															</div>
+															<!--#4DIF (Records in selection([Purchase_Orders])=1)-->
+															<input name="purchase_order_uuid" class="span5" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="purchase_order_uuid"> 
+															<!--#4DELSE-->
+															<input name="purchase_order_uuid" class="span5" type="hidden" value="<!--#4DVAR Generate UUID-->" id="purchase_order_uuid"> 
+															<!--#4DENDIF-->
+															
+															<div class="control-group">
+																<label class="control-label">Client <span class="f_req">*</span></label><!--#4DIF (mUserIsCurrentBool)--><!--#4DVAR [Companies]company_Name--><!--#4DELSE-->
+																<div class="ui-widget" style="margin-left: 160px;">
+																	<select id="Client_ID" name="Client_ID">
+																	<!--#4DIF (Records in selection([Purchase_Orders])=0)-->
+																		<option value=""></option>
+																	<!--#4DSCRIPT/Web_LoadCustomers/-->
+																	 <!--4DLOOP  [Companies]-->
+																		<option value="<!--4DVAR [Companies]account_Number-->"  ><!--4DVAR [Companies]company_Name--></option>		
+																	 <!--4DENDLOOP-->
+																	 <!--#4DELSE-->
+																		 <option value="<!--4DVAR [Companies]account_Number-->" selected><!--4DVAR [Companies]company_Name--></option>									 
+																	 <!--#4DENDIF-->
+																	</select>
+																</div><!--#4DENDIF-->
+															</div>
+															<div class="control-group">
+																<label class="control-label">Start Date<span class="f_req">*</span></label>
+																<div class="controls">
+																	<div class="input-append date" id="dp1">
+																		<input class="span10" placeholder="Purchase Start Date" type="text" readonly  name="purchase_start_date" id="purchase_start_date" <!--#4DIF (timestamp_unix_toDate([Purchase_Orders]Purchase_Start_Date)=!01/01/1970!)-->value=""<!--4DELSE-->value="<!--#4DVAR timestamp_unix_toDate([Purchase_Orders]Purchase_Start_Date)-->"<!--4DENDIF--> data-date-format="dd/mm/yyyy" /><span class="add-on"><i class="

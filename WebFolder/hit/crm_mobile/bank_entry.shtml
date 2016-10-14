@@ -1,0 +1,128 @@
+<!--HIT_EXECUTE
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+C_TEXT(_HTMLTITLETXT)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+QUERY([bank_statement_entries];[bank_statement_entries]uuid=_HIT_WebApp_GetField ("uuid"))
+
+IF (Records in selection([bank_statement_entries])=0)
+_HTMLTITLETXT:="New Bank statement entry"
+ELSE
+_HTMLTITLETXT:= "Edit Bank statement entry"
+END IF
+
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+-->
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/main-header.shtml-->
+<link rel="stylesheet" href="css/jquery-ui.css">
+<script src="js/datepicker.js"></script>
+<script src="js/jquery.validate.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+	$("#DetailForm").validate({
+		ignore: "",
+        rules: {
+        	entry_description: { required: true ,checkinteger : true  },
+			entry_date: { required: true  },
+			entry_type: { required: true  },
+        }
+    });
+    
+   		$('#entry_date').datepicker({
+    		autoclose: true,
+    		changeMonth: true,
+      		changeYear: true,
+      		dateFormat: 'dd/mm/yy'
+      	});
+});
+
+</script>
+<script type='text/javascript' src='js/customerNotes.js'></script>
+<style>
+label.error { 
+	float: left; 
+	color: red; 
+	padding-top: 1.5em; 
+	vertical-align: top; 
+}
+</style>
+</head>
+<body>
+<div data-role="page" class="jqm-demos" data-quicklinks="true">
+	<!-- header -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/top-header.shtml-->
+	<!-- /header -->
+	
+	<div role="main" class="ui-content jqm-content">
+		<h3><!--#4DIF (Records in selection([bank_statement_entries])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Bank statement entry</h3>
+		<div data-demo-html="true">
+			<form name="DetailForm" action="savebankstatement.cgi" id="DetailForm" data-ajax="false" method="post">
+					<input name="uuid" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="uuid">
+					<input type="hidden" value="<!--#4DVAR [bank_statement_entries]outstanding_balance-->" class="amount_due_<!--#4DVAR [bank_statement_entries]uuid-->">
+									          	
+					<div class="ui-field-contain">
+   						<label for="entry_description">Description:</label>
+   						<textarea name="entry_description" cols="40" rows="8" id="entry_description"><!--#4DVAR [bank_statement_entries]entry_description--></textarea>
+   					</div>
+					<div class="ui-field-contain">
+   						<label for="entry_date">Date:</label>
+   						<input data-role="date" type="text" <!--#4DIF ([bank_statement_entries]entry_date=!00/00/00!)-->value=""<!--4DELSE-->value="<!--#4DVAR [bank_statement_entries]entry_date-->"<!--4DENDIF--> id="entry_date" name="entry_date" readonly placeholder="Entry Date">
+					</div>
+					
+					<div class="ui-field-contain">
+   						<label for="entry_type">Type :</label>
+						<input name="entry_type" type="text" value="<!--#4DVAR [bank_statement_entries]entry_type-->" id="entry_type" placeholder="Entry Type">
+					</div>
+					<div class="ui-field-contain">
+   						<label for="balance">Balance:</label>
+						<input name="balance" type="text" value="<!--#4DVAR [bank_statement_entries]balance-->" id="balance" placeholder="balance">
+   					</div>
+   					<div class="ui-field-contain">
+   						<label for="paid_out">Paid Out:</label>
+						<input name="paid_out" type="text" value="<!--#4DVAR [bank_statement_entries]paid_out-->" id="paid_out" placeholder="Paid Out">
+   					</div>
+   					<div class="ui-field-contain">
+   						<label for="paid_in">Paid In:</label>
+						<input name="paid_in" type="text" value="<!--#4DVAR [bank_statement_entries]paid_in-->" id="paid_in" placeholder="Paid In">
+   					</div>
+   					<!--#4DIF (Records in selection([bank_statement_entries])=1)-->               
+   					<div class="ui-field-contain">
+						<label for="type_of_holiday" class="select">Status:</label>
+						<select data-native-menu="false" id="status_<!--#4DVAR [bank_statement_entries]uuid-->" name="status">
+						<!--#4DIF ([bank_statement_entries]entry_stage="reconciled")-->
+							<option value="reconciled" selected>Reconciled</option>
+						<!--#4DELSE-->
+							<!--#4DIF (Records in selection([bank_statement_entries])=1)-->
+								<option value="pending" selected <!--#4DIF ([bank_statement_entries]entry_stage="pending")-->selected<!--4DENDIF-->>Pending</option>
+								<option value="reconciled" <!--#4DIF ([bank_statement_entries]entry_stage="reconciled")-->selected<!--4DENDIF-->><!--#4DIF ([bank_statement_entries]entry_stage="reconciled")-->Reconciled<!--4DELSE-->Reconcile it<!--4DENDIF--></option>
+							<!--#4DELSE-->
+								<option value="pending" selected >Pending</option>
+							<!--#4DENDIF-->
+						<!--4DENDIF-->
+						</select>
+					</div> 
+					<!--4DENDIF-->
+   					<div class="ui-field-contain">
+   						<label for="comment">Comment:</label>
+   						<textarea name="comment" cols="40" rows="8" id="comment"><!--#4DVAR [bank_statement_entries]comment--></textarea>
+   					</div>
+					<button type="submit" class="ui-shadow ui-btn ui-corner-all ui-mini">Submit</button>
+					<a href="bank_enteries.shtml" data-ajax="false" class="ui-shadow ui-btn ui-corner-all ui-mini">Cancel</a>
+				</form>	
+		    	
+		    </div>
+	</div><!-- /content -->
+	<!-- panel -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/sidebar.shtml-->
+	<!-- /panel -->
+
+	<!-- footer -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/footer.shtml-->
+	<!-- /footer -->
+</div><!-- /page -->
+
+</body>
+</html>

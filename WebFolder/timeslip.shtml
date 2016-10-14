@@ -1,0 +1,526 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+C_BOOLEAN(mUserIsCurrentBool)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+QUERY([Timeslips];[Timeslips]uuid=_HIT_WebApp_GetField ("uuid"))
+QUERY([Tasks];[Tasks]task_id=num([Timeslips]task_id))
+mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+-->
+<!DOCTYPE html>
+<html>
+<head>
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+    <link rel="stylesheet" type="text/css" href="lib/base.css" />
+	<link rel="stylesheet" type="text/css" href="css/jquery.timepicker.css" />
+	<link rel="stylesheet" href="css/base/jquery-ui.css" />
+<style>
+  .custom-combobox {
+    position: relative;
+    display: inline-block;
+  }
+  .custom-combobox-toggle {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    margin-left: -1px;
+    padding: 0;
+    /* support: IE7 */
+    *height: 1.7em;
+    *top: 0.1em;
+  }
+  .custom-combobox-input {
+    margin: 0;
+    padding: 0.3em;
+  }
+  .ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {
+  	width:auto;
+	height:auto;
+  }
+  .ui-autocomplete{
+  	max-height:300px;
+	overflow:scroll;
+  }
+  
+  </style>
+</head>
+<body>
+
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+
+     <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
+
+	<!-- main container -->
+    <div class="content">
+        
+        <div class="container-fluid">
+            <div id="pad-wrapper" class="form-page">
+				 <div class="row-fluid header">
+                    <h3><!--#4DIF (Records in selection([Timeslips])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> TimeSlip</h3>
+                </div>
+                <div class="row-fluid form-wrapper">
+					<!-- left column -->
+                    <div class="span9 with-sidebar">
+						<form name="Timeslip" action="savetimeSlip.cgi" class="form-comment" method="post" onSubmit="return ValidateForm();">                
+							<div class="field-box">
+                                <label>Task Name <span style="color:#6E829B">*</span></label>
+								<div class="ui-widget">
+									<select name="Task_ID" id="Task_ID">
+									<!--#4DIF (Records in selection([Timeslips])=0)-->
+										<option value=""></option>
+									<!--#4DSCRIPT/Web_LoadTasks/-->
+									<!--4DLOOP  [Tasks]-->
+											<option value="<!--4DVAR [Tasks]task_id-->" ><!--4DVAR [Tasks]task_name--></option>
+									<!--4DENDLOOP-->
+									<!--#4DELSE-->
+										 <option value="<!--4DVAR [Tasks]task_id-->" selected><!--4DVAR [Tasks]task_name--></option>									 
+										 <!--#4DENDIF-->
+									</select>
+								</div>
+							</div>
+							 <div class="field-box">
+                                <label>Employee Name</label>
+								<div class="ui-select span5">
+									<select name="Employee_ID">
+									<!--#4DSCRIPT/Web_LoadEmployees/-->
+									<!--4DLOOP  [Employees]-->
+										<option value="<!--4DVAR [Employees]emp_id-->" <!--#4DIF ([Timeslips]emp_id=[Employees]emp_id)-->selected<!--4DELSE--><!--4DENDIF-->><!--4DVAR [Employees]emp_first_name--> <!--4DVAR [Employees]emp_last_name--></option>
+									<!--4DENDLOOP-->	
+									</select>
+								</div>
+                            </div>
+                            <input name="Timeslip_uuid" class="span9" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="Timeslip_uuid">                      
+                            <div class="field-box">
+                                <label>Slip Start Date <span style="color:#6E829B">*</span></label>	
+													
+                                <input <!--#4DIF (mUserIsCurrentBool)-->readonly readonly="readonly" <!--#4DELSE--><!--#4DENDIF--> type="text" class="input-large datepicker time" data-date-format="dd/mm/yyyy" <!--#4DIF (timestamp_unix_toDate([Timeslips]Timestamp_start)=!01/01/1970!)-->value=""<!--4DELSE-->value="<!--#4DHTMLVAR timestamp_unix_toDate([Timeslips]Timestamp_start)-->"<!--4DENDIF--> name="Slip_Date" id="Slip_Date"  readonly>
+                            </div>
+							
+							 <div class="field-box">
+                                <label>Slip Timer Started <span style="color:#6E829B">*</span></label>
+								<input <!--#4DIF (mUserIsCurrentBool)-->readonly readonly="readonly" <!--#4DELSE--><!--#4DENDIF-->class="time" type="text" value="<!--#4DVAR timestamp_unix_toTime ([Timeslips]Timestamp_start)-->" name="Slip_TimerStarted" id="setStartTime" >
+									<table align="right" style="padding-right: 125pt;">
+										<tr>
+											<td>
+												<button id="StartTimeButton" type="button">Set current time</button>
+											</td>
+										</tr>
+									</table>                              
+                            </div>
+                           
+							
+							<div class="field-box">
+                                <label>Slip End Date <span style="color:#6E829B">*</span></label>
+                                <input <!--#4DIF (mUserIsCurrentBool)-->readonly readonly="readonly" <!--#4DELSE--><!--#4DENDIF--> type="text" class="input-large datepicker time" data-date-format="dd/mm/yyyy" <!--#4DIF (timestamp_unix_toDate([Timeslips]Timestamp_end)=!01/01/1970!)-->value=""<!--4DELSE-->value="<!--#4DHTMLVAR timestamp_unix_toDate([Timeslips]Timestamp_end)-->"<!--4DENDIF--> name="Slip_EndDate" id="Slip_EndDate"  readonly>
+                            </div>
+							 <div class="field-box">
+                                <label>Slip Timer End <span style="color:#6E829B">*</span></label>
+									<input <!--#4DIF (mUserIsCurrentBool)-->readonly readonly="readonly" <!--#4DELSE--><!--#4DENDIF-->class="time" type="text" value="<!--#4DVAR timestamp_unix_toTime ([Timeslips]Timestamp_end)-->" name="Slip_Timer_End" id="setEndTIme">
+									<table align="right" style="padding-right: 125pt;">
+										<tr>
+											<td>
+												<button id="EndTimeButton" type="button">Set current time</button>
+											</td>
+										</tr>
+									</table>
+                            </div>
+                            <div class="field-box">
+                                <label>Slip Hours <span style="color:#6E829B">*</span></label>
+								<span id="err_msg" style="color:#FF0000"></span>
+								<input class="span8 num" name="Slip_Hours" id="Slip_Hours" type="text" value="<!--#4DVAR [Timeslips]slip_hours-->" readonly>
+                            </div>
+							
+							<div class="field-box">
+                                <label>Slip Description <span style="color:#6E829B">*</span></label>
+                                <textarea <!--#4DIF (mUserIsCurrentBool)-->readonly readonly="readonly" <!--#4DELSE--><!--#4DENDIF-->class="span9" rows="4" name="Slip_Description" id="Slip_Description"><!--#4DVAR [Timeslips]slip_description--></textarea>
+                            </div>                            
+                           
+                            <div class="field-box">
+                                <label>Slip Rate</label>
+								<input <!--#4DIF (mUserIsCurrentBool)-->readonly readonly="readonly" <!--#4DELSE--><!--#4DENDIF-->class="span8 num" name="Slip_Rate" id="Slip_Rate" type="text" value="<!--#4DVAR [Timeslips]slip_rate-->">
+                            </div>
+                            <div class="field-box">
+                                <label>Slip timer accumulated seconds</label>
+								<input <!--#4DIF (mUserIsCurrentBool)-->readonly readonly="readonly" <!--#4DELSE--><!--#4DENDIF-->type="text" name="slip_timer_accumulated_seconds" class="span8 num" value="<!--#4DVAR [Timeslips]slip_timer_accumulated_seconds-->">                                                           
+                            </div>
+                            <div class="field-box">
+                                    <label>Billing Status</label>
+                                    <div class="ui-select span5">
+										<Select <!--#4DIF (mUserIsCurrentBool)-->readonly readonly="readonly" <!--#4DELSE--><!--#4DENDIF-->name="Billing_Status" id="Billing_Status" name="Billing_Status">
+											<option value="0" <!--#4DIF ([Timeslips]billing_status=0)-->selected<!--4DELSE--><!--4DENDIF-->>unknown</option>
+											<option value="1"  <!--#4DIF ([Timeslips]billing_status=1)-->selected<!--4DELSE--><!--4DENDIF-->>chargeable</option>
+											<option value="2"  <!--#4DIF ([Timeslips]billing_status=2)-->selected<!--4DELSE--><!--4DENDIF-->>billed</option>
+										</select>                                     
+                                    </div>                                    
+                                </div>
+							<div class="span11 field-box" style="text-align: center;">
+                                    <!--#4DIF (mUserIsCurrentBool)-->
+<a href="timeslips.shtml">Go Back</a><!--#4DELSE-->
+<input type="submit" class="btn-glow primary" value="Submit">
+                                    <span>OR</span>
+                                    <a href="timeslips.shtml">Cancel</a>
+                                    <!--#4DENDIF--> 
+                            </div>							
+                        </form>
+                    </div>
+				</div>
+            </div>
+        </div>
+    </div>
+    <!-- end main container -->
+
+	<!-- scripts for this page -->
+   <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+   <script src="js/ui/jquery-ui.js"></script>
+    <script src="js/bootstrap.datepicker.js"></script>
+    <script src="js/jquery.uniform.min.js"></script>
+   
+	<script type="text/javascript" src="js/jquery.timepicker.js"></script>
+	
+    <!-- call this page plugins -->
+<script language="javascript">
+function ValidateForm () {
+
+if (document.Timeslip.Task_ID.value=="")
+{ 
+	alert('Please Specify Task Name'); 
+	document.Timeslip.Task_ID.focus();
+	return false;
+}
+if (document.Timeslip.Slip_Date.value=="")
+{ 
+	alert('Please Specify Slip Start Date'); 
+	document.Timeslip.Slip_Date.focus();
+	return false;
+}
+if (document.Timeslip.Slip_TimerStarted.value=="")
+{ 
+	alert('Please Specify Slip Start Time'); 
+	document.Timeslip.Slip_TimerStarted.focus();
+	return false;
+}
+if (document.Timeslip.Slip_EndDate.value=="")
+{ 
+	alert('Please Specify Slip End Date'); 
+	document.Timeslip.Slip_EndDate.focus();
+	return false;
+}
+if (document.Timeslip.Slip_Timer_End.value=="")
+{ 
+	alert('Please Specify Slip End Time'); 
+	document.Timeslip.Slip_Timer_End.focus();
+	return false;
+}
+if (document.Timeslip.Slip_Hours.value=="")
+{ 
+	alert('Please Specify valid date time'); 
+	document.Timeslip.Slip_Date.focus();
+	return false;
+}
+
+if (document.Timeslip.Slip_Description.value=="")
+{ 
+	alert('Please Specify Slip Description'); 
+	document.Timeslip.Slip_Description.focus();
+	return false;
+}
+
+}
+</script>
+<script type="text/javascript">
+	$(function () {
+		// datepicker plugin
+		$('.datepicker').datepicker().on('changeDate', function (ev) {
+			$(this).datepicker('hide');
+		});
+
+	});
+</script>
+<script>
+var Start=0;
+var End=0;
+
+	  $(function() {
+		$('#setStartTime').timepicker({ 'step': 15 });
+		$('#StartTimeButton').on('click', function (){
+		  $('#setStartTime').timepicker('setTime', new Date());
+		  $("#setStartTime").change();
+		});
+	  });
+
+	  $(function() {
+		$('#setEndTIme').timepicker({ 'step': 15 });
+		$('#EndTimeButton').on('click', function (){
+		  $('#setEndTIme').timepicker('setTime', new Date());
+		  $("#setEndTIme").change();
+		});
+	  });
+	  
+	$(document).ready(function(){
+	
+		<!--#4DIF (Records in selection([Timeslips])=0)-->
+		$("#setStartTime").val('');
+		$("#setEndTIme").val('');
+		<!--#4DELSE--><!--#4DENDIF-->
+		
+		$(".time").change(function() {
+			var s_date=$('#Slip_Date').val();
+			var e_date=$('#Slip_EndDate').val();
+			var s_time=$('#setStartTime').val();
+			var e_time=$('#setEndTIme').val();
+			if(s_date!='' && e_date!='' && s_time!='' && e_time!='') {
+				var s_date_arr=s_date.split("/");
+				var e_date_arr=e_date.split("/");
+				var s_time_arr=s_time.split(":");
+				var e_time_arr=e_time.split(":");
+				var s_hour= s_time_arr[0];
+				var e_hour= e_time_arr[0];
+				var s_min= s_time_arr[1].substr(0,2);
+				var e_min= e_time_arr[1].substr(0,2);
+				var s_ampm= s_time_arr[1].substr(s_time_arr[1].length - 2);
+				var e_ampm= e_time_arr[1].substr(e_time_arr[1].length - 2);
+				if(s_ampm == 'pm'){
+					s_hour= Number(s_hour)+12;
+				}
+				if(e_ampm == 'pm'){
+					e_hour= Number(e_hour)+12;
+				}
+				//alert(s_date_arr[2]+','+s_date_arr[1]+','+s_date_arr[0]+','+s_hour+','+s_min);
+				//alert(e_date_arr[2]+','+e_date_arr[1]+','+e_date_arr[0]+','+e_hour+','+e_min);
+				
+				var start_datetime= new Date(s_date_arr[2],s_date_arr[1]-1,s_date_arr[0],s_hour,s_min,'0');
+				var end_datetime= new Date(e_date_arr[2],e_date_arr[1]-1,e_date_arr[0],e_hour,e_min,'0');
+				var start_time= start_datetime.getTime();
+				var end_time= end_datetime.getTime();
+				//alert(start_datetime+', '+end_datetime);
+				if(end_time>=start_time){
+					var diff_time= end_time-start_time;
+					
+					//alert(diff_time);
+					var hours = Math.floor(diff_time / (1000*60*60));
+					var minutes = Math.floor((diff_time % (1000*60*60)) / (1000*60));
+					//var seconds = ((diff_time % (1000*60*60)) % (1000*60)) / 1000;
+					var time_diff= hours+':'+minutes;
+					$('#err_msg').html('');
+					$('#Slip_Hours').val(time_diff);					
+				}
+				else if(end_time<start_time){
+					
+					$('#err_msg').html("End date time must be greater than start date time");
+					$('#Slip_Hours').val('');
+				}
+			}
+		
+			
+		});
+		
+		
+		$('.num').keypress(function(e){
+						var k = e.which;
+    					/* numeric inputs can come from the keypad or the numeric row at the top */
+   						 if ((k<48 || k>57) && (k!=46) && (k!=8) && (k!=0)) {
+        					e.preventDefault();
+							//alert("Allowed characters are 0-9, +, -, (, )");
+        					return false;
+    					}
+					
+					}); 
+		
+	}); 
+</script>
+
+<script>
+	 var xhr;
+  (function( $ ) {
+    $.widget( "custom.combobox", {
+      _create: function() {
+        this.wrapper = $( "<span>" )
+          .addClass( "custom-combobox" )
+          .insertAfter( this.element );
+ 
+        this.element.hide();
+        this._createAutocomplete();
+        this._createShowAllButton();
+      },
+ 
+      _createAutocomplete: function() {
+        var selected = this.element.children( ":selected" ),
+          value = selected.val() ? selected.text() : "";
+ 
+        this.input = $( "<input>" )
+          .appendTo( this.wrapper )
+          .val( value )
+          .attr( "title", "" )
+          .addClass( "custom-combobox-input ui-widget ui-widget-content ui-state-default ui-corner-left" )
+          .autocomplete({
+            delay: 0,
+            minLength: 0,
+            source: $.proxy( this, "_source" )
+          })
+          .tooltip({
+            tooltipClass: "ui-state-highlight"
+          });
+ 
+        this._on( this.input, {
+          autocompleteselect: function( event, ui ) {
+		  	//alert("show all");
+            ui.item.option.selected = true;
+			
+            this._trigger( "select", event, {
+              item: ui.item.option
+            });
+          },
+ 
+          autocompletechange: "_removeIfInvalid"
+        });
+      },
+ 
+      _createShowAllButton: function() {
+        var input = this.input,
+          wasOpen = false;
+ 
+        $( "<a>" )
+          .attr( "tabIndex", -1 )
+          .attr( "title", "Show All Items" )
+          .tooltip()
+          .appendTo( this.wrapper )
+          .button({
+            icons: {
+              primary: "ui-icon-triangle-1-s"
+            },
+            text: false
+          })
+          .removeClass( "ui-corner-all" )
+          .addClass( "custom-combobox-toggle ui-corner-right" )
+          .mousedown(function() {
+            wasOpen = input.autocomplete( "widget" ).is( ":visible" );
+          })
+          .click(function() {
+            input.focus();
+ 
+            // Close if already visible
+            if ( wasOpen ) {
+              return;
+            }
+ 
+            // Pass last search string as value to search for, displaying last results
+            input.autocomplete( "search", 'SHOWALL' );
+          });
+      },
+ 
+      _source: function( request, response ) {
+        //var matcher = new RegExp( $.ui.autocomplete.escapeRegex(request.term), "i" );
+		var ele_select= this.element;
+		if(request.term=='SHOWALL'){
+			response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+		
+		}
+		else
+		{
+		var jsonRow = 'gettaskonsearch.cgi?srch='+request.term;
+		
+
+		//alert(jsonRowURLStr);
+		if(xhr) xhr.abort();
+		xhr=$.getJSON(jsonRow,function(result){
+			
+			if(result){
+				var html='<option value=""></option>';
+
+				$.each(result, function(i,item)
+				{
+					html += '<option value="'+item.id+'">'+item.value+'</option>';
+				});
+				ele_select.html(html);
+				
+				
+				response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+				
+				
+			}
+		});
+       
+	  } 
+		
+      },
+ 
+      _removeIfInvalid: function( event, ui ) {
+ 
+        // Selected an item, nothing to do
+        if ( ui.item ) {
+
+          return;
+        }
+ 
+        // Search for a match (case-insensitive)
+        var value = this.input.val(),
+          valueLowerCase = value.toLowerCase(),
+          valid = false;
+        this.element.children( "option" ).each(function() {
+          if ( $( this ).text().toLowerCase() === valueLowerCase ) {
+            this.selected = valid = true;	
+			
+            return false;
+          }
+        });
+ 
+        // Found a match, nothing to do
+        if ( valid ) {
+          return;
+        }
+ 
+        // Remove invalid value
+        this.input
+          .val( "" )
+          .attr( "title", value + " didn't match any item" )
+          .tooltip( "open" );
+        this.element.val( "" );
+        this._delay(function() {
+          this.input.tooltip( "close" ).attr( "title", "" );
+        }, 2500 );
+        this.input.data( "ui-autocomplete" ).term = "";
+      },
+ 
+      _destroy: function() {
+        this.wrapper.remove();
+        this.element.show();
+      }
+    });
+  })( jQuery );
+ 
+  $(function() {
+    $( "#Task_ID" ).combobox();
+   
+	
+  });
+
+  </script>
+
+</body>
+</html>

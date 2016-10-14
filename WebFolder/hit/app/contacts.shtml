@@ -1,0 +1,759 @@
+<!--HIT_EXECUTE
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+Web_LoadInvoicesSets
+else
+_HIT_HTTPD_RedirectToURL ("/hit/sign-in.shtml?url="+HTTPD_DocumentURI)
+end if 
+
+-->
+<!--#4DIF (_HIT_AuthenticateSession="Session-Authenticated-OK")-->
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Tenthmatrix CRM App : Contacts</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- bootstrap -->
+	<link href="css/bootstrap/bootstrap.css" rel="stylesheet">
+    <link href="css/bootstrap/bootstrap-responsive.css" rel="stylesheet">
+    <link href="css/bootstrap/bootstrap-overrides.css" type="text/css" rel="stylesheet">
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/app/includes/header.shtml-->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    
+    	<style type="text/css">
+		.Highlight
+		{
+			background-color: #dcfac9!important;
+			cursor: pointer;
+		}
+		
+		.pull-right
+		{
+		
+		margin: 0 4px 4px 4px;
+		padding:0 4px 4px 4px;
+		
+		}
+		
+		ul.actions{
+			list-style:none;
+		}
+		#message{
+	color:#FF0000;
+}
+.jqibox {
+	z-index:9999!important;	
+}
+		
+	</style>
+
+
+</head>
+<body>
+
+	<!-- main container -->
+    <div class="content wide-content">
+       
+
+        
+        <div class="container-fluid">
+		<form id="frm_set" name="frm_set"  method="post" action="">
+		
+         <div class="" style=" padding:15px 0 0 0;">
+          
+				
+                  <strong>Add to Set:</strong>
+					
+					<div class="ui-select" style="margin-right:15px;"> 
+					<select name="add_sets" id="add_sets" onChange="__showContactForm_AddSet(this.value, $('#add_sets option:selected').text())" >
+						<option value="">--Select Set--</option>
+						<!--#4DSCRIPT/Web_LoadContactSets/-->
+						<!--4DLOOP  [saved_sets]-->		
+							<option value="<!--#4DHTMLVAR [saved_sets]uuid-->" ><!--#4DHTMLVAR [saved_sets]name--></option>
+						<!--4DENDLOOP-->
+						<option id="opt_new_set" value="new_set">Create New Set</option>
+					</select>
+					</div>
+                            
+                            
+					<strong>Load Set:</strong>
+					<div class="ui-select" >
+                    
+					<select name="load_sets" id="load_sets" onChange="__showContactForm_LoadSet(this.value, $('#load_sets option:selected').text())" >
+						<option value=""> All Records</option>
+						<!--#4DSCRIPT/Web_LoadContactSets/-->
+						<!--4DLOOP  [saved_sets]-->		
+						<option value="<!--#4DHTMLVAR [saved_sets]uuid-->" ><!--#4DHTMLVAR [saved_sets]name--></option>
+						<!--4DENDLOOP-->
+					</select>
+					</div>  
+					
+					&nbsp;&nbsp;<a href="#myModal" data-toggle="modal" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html('');" class="btn-flat success new-product margn-lft35">Set Manager</a>
+					
+					  <div class="pull-right">
+                            <div class="btn-group pull-right">
+                                <button class="glow left large" onClick="__showAllContacts(); return false;">All</button>
+                                <button class="glow middle large" onClick="__showAllowed(); return false;">Allowed</button>
+                                <button class="glow right large" onClick="__showNotAllowed(); return false;">Not Allowed</button>
+                                <a href="contact.shtml" class="btn-flat success new-product margn-lft35" style="margin-left:15px;">+ Add New Contact</a>
+                            </div>
+                            <input name="keyword" id="keyword" type="text" class="search order-search" placeholder="Enter customer, contact, email.." value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" style="margin-top:3px;" />
+                        </div>
+                        
+                       
+                        </div>
+            <div id="pad-wrapper1" class="datatables-page">
+                <div class="row-fluid">
+                    <div class="span12">
+
+                        <table cellpadding="0" cellspacing="0" border="0" class="dataTable" id="contact_table">
+                            <thead>
+                                <tr role="row">
+                                    <th  align="left"><input name="chk_all" type="checkbox" id="chk_all" value=""></th>
+                                    <th  align="left">CLIENT </th>
+                                    <th  align="left">CONTACT NAME </th>
+                                    <th align="left">E-MAIL</th>
+                                    <th  align="left">DATE-ADDED </th>
+                                    <th align="left">MOBILE  </th>
+                                    <th align="left">STATUS  </th>
+                                    
+                                </tr>
+                            </thead>
+                                                    <tfoot>
+                            <tr>
+                                	<th>&nbsp;</th>
+                                	 <th  align="left">CLIENT </th>
+                                    <th  align="left">CONTACT NAME </th>
+                                    <th align="left">E-MAIL</th>
+                                    <th  align="left">DATE-ADDED </th>
+                                    <th align="left">MOBILE  </th>
+                                    <th align="left">STATUS  </th>
+                                    
+                            </tr>
+                        </tfoot>
+
+                            <tbody id="contacts_table_body">
+
+                        </tbody>
+                        </table>
+						<div id="img_loading_div" style="text-align:center">
+		<img src="../loading.gif"  style="padding:20px;" width="34" >
+		</div>
+
+                    </div>
+                </div>
+            </div>
+			</form>
+        </div>
+    </div>
+	<div class="example-container">
+								<pre class="code" style="display:none;" id="new_set_prompt">
+									var statesdemo = {
+										state0: {
+											title: 'Please enter name of new set',
+											html:'&lt;div id="message"&gt;&lt;/div&gt;&lt;input type="text" name="new_set" id="new_set" value="userset_1"&gt;&lt;br /&gt;',
+											buttons: { Cancel : 0, Ok: 1 },
+											focus: "#new_set",																		
+											submit:function(e,v,m,f){ 
+												//console.log(f);
+												if(v==1) {
+													e.preventDefault();
+													var new_set=$('#new_set').val().trim();
+													if(new_set!=''){
+														var exist=false;
+														$('#add_sets option').each(function() {
+															if(new_set.toLowerCase()==$(this).text().toLowerCase()){
+																exist=true;
+															}
+														});
+														if(exist==false){
+															if(add_from_manager==true){
+																jsonRow = 'addDelContactsSets.cgi?tablname='+tablname+'&set='+new_set;
+															}
+															else{
+																jsonRow = 'loadcontacts.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab+'&selected='+selected+'&set=add_to_'+new_set;
+															}
+															$.getJSON(jsonRow,function(result){
+																if(result.setUUID){
+																	$('#opt_new_set').before('&lt;option value="'+result.setUUID+'"&gt;'+new_set+'&lt;/option&gt;');
+																	$('#load_sets').append('&lt;option value="'+result.setUUID+'" &gt;'+ new_set+'&lt;/option&gt;');
+																	$('#add_sets').val(result.setUUID);
+																	$(".jqibox").remove();
+																	show_load_prompt();
+																}
+																else if(result.Succ){
+																	$('#opt_new_set').before('&lt;option value="'+result.UUID+'"&gt;'+new_set+'&lt;/option&gt;');
+																	
+																	$('#load_sets').append('&lt;option value="'+result.UUID+'" &gt;'+ new_set+'&lt;/option&gt;');
+																	$('#sets_list').prepend('&lt;option value="'+result.UUID+'" &gt;'+ new_set+'&lt;/option&gt;');
+																	set_add_to=new_set;
+																	
+																	$(".jqibox").remove();
+																	
+																	$("#set_mgr_msg").html('* Set added successfully');
+																	
+																	add_from_manager=false;
+																}else if(result.Err){
+																	$('#message').html('* '+result.Err);
+																}
+															});				
+														}
+														else{
+															$('#message').html('* '+new_set+' already exists. Please enter another name of set');
+														}
+													}
+													else{
+														$('#message').html('* Please enter name of new set');
+														$('#new_set').focus();
+													}
+												}
+												if(v==0) {
+													$.prompt.close();
+													$('#add_sets').val('');
+													add_from_manager=false;
+												}
+											}
+										},
+										
+									};
+
+									$.prompt(statesdemo);
+								</pre>
+								
+								<pre class="code" style="display:none;" id="load_prompt">
+									var statesdemo = {
+										state0: {
+											title: 'Do you want to load the records of '+$('#add_sets option:selected').text()+'?',
+											html:'',
+											buttons: { No : 0, Yes: 1 },																		
+											submit:function(e,v,m,f){ 
+												//console.log(f);
+												if(v==1) {
+													location.href='contacts.shtml?set='+$('#add_sets option:selected').text()+'&set_uuid='+$('#add_sets').val();
+												}
+												if(v==0) {
+													$.prompt.close();
+													$('#add_sets').val('');
+													$('.check').prop('checked', false);
+												}
+											}
+										},
+										
+									};
+
+									$.prompt(statesdemo);
+								</pre>
+								<pre class="code" style="display:none;" id="no_rec_prompt">
+									var statesdemo = {
+										state0: {
+											title: 'No more records found',
+											html:'',
+											buttons: { OK: 1 },																		
+											submit:function(e,v,m,f){ 
+												//console.log(f);
+												if(v==1) {
+													$.prompt.close();
+												}
+												
+											}
+										},
+										
+									};
+									if(!($(".jqibox").length))
+									$.prompt(statesdemo);
+								</pre>
+								<pre class="code" style="display:none;" id="no_selection_prompt">
+									var statesdemo = {
+										state0: {
+											title: 'Please select clients to add to set',
+											html:'',
+											buttons: { OK: 1 },																		
+											submit:function(e,v,m,f){ 
+												//console.log(f);
+												if(v==1) {
+													$.prompt.close();
+												}
+												
+											}
+										},
+										
+									};
+									if(!($(".jqibox").length))
+									$.prompt(statesdemo);
+								</pre>
+								<!--<a class="run">Run It!</a>-->
+							</div>
+
+<div id="myModal" class="modal hide fade" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<!--<div class="modal-dialog">
+		<div class="modal-content">-->
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h3 class="modal-title">Set Manager</h3>
+			</div>
+			<div class="modal-body">
+				<form action="">
+					<!--<p class="sepH_c"><span class="label label-default">Form elemets in modal window</span></p>-->
+					<p ><span class="label-default" id="set_mgr_msg" style="color:#006600"></span><span class="label-default" id="set_mgr_err" style="color:#FF0000"></span></p>
+					
+					<div >
+						<select name="sets_list" id="sets_list" class="form-control" size="10" style="width:100%" >
+						 <!--#4DSCRIPT/Web_LoadContactSets/-->
+						<!--4DLOOP  [saved_sets]-->						
+						<option value="<!--#4DHTMLVAR [saved_sets]uuid-->"><!--#4DHTMLVAR [saved_sets]name--></option>
+						<!--4DENDLOOP-->
+						</select>
+					</div>
+					
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-primary sm-btn" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); add_new_set()">Add new Set</button>
+				
+				
+				<button type="button" class="btn btn-primary sm-btn" style="margin-left:0px;" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); load_from_set($('#sets_list').val(), $('#sets_list option:selected').text())">Load</button>
+				<div class="btn-group">
+				<button type="button" class="btn btn-primary sm-btn" >Delete</button>
+				<button type="button" class="btn btn-primary sm-btn  dropdown-toggle" data-toggle="dropdown" >
+        <span class="caret"></span>
+          </button>
+      <ul class="dropdown-menu" role="menu" style="text-align:left">
+        <li><a href="javascript:void(0)" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); del_set($('#sets_list').val(),$('#sets_list option:selected').text(),1)">Delete Selected Set</a></li>
+         <li><a href="javascript:void(0)" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); del_set($('#sets_list').val(),$('#sets_list option:selected').text(),2)">Delete Contacts in selected set</a></li>
+		 
+		 </ul>
+		 </div>
+				<button type="button" class="btn btn-default sm-btn" data-dismiss="modal">OK</button>
+			</div>
+		<!--</div>
+	</div>-->
+</div>
+
+<div style="text-align:center" id="dialog" ></div>
+	
+    <!-- end main container -->
+
+	<!-- scripts -->
+    <script src="js/jquery-latest.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.dataTables.js"></script>
+	<script type="text/javascript" src="js/jquery-impromptu.js"></script>
+    <script src="js/theme.js"></script>
+	<script src="lib/jquery-ui/jquery-ui-1.10.0.custom.min.js"></script>
+
+<script type="text/javascript">
+var JSONdata;
+var selected='';
+ var start=0, end=50;
+ var old_srch='',keyword='', jsonRow='', tab='', set='';
+ var tablname='Contacts';
+ var complete=false;
+ var process=false;
+ var selected_set='<!--#4DVAR _HIT_WebApp_GetField ("set") -->';
+var setUUID='<!--#4DVAR _HIT_WebApp_GetField ("set_uuid") -->';
+var add_from_manager=false;
+			// Hide the first cell for JavaScript enabled browsers.
+			
+			$('#contact_table td:first-child').hide();
+			
+
+			// Assign a click handler that grabs the URL from the first cell and redirects the user.
+			$('#contact_table tr td').click(function ()
+			{
+				if(!($(this).find(':checkbox').length)){
+				location.href = 'contact.shtml?uuid='+$(this).parents('tr').find(':checkbox').val()+'&token='+Math.random();
+				}
+			});
+
+		
+			
+function __showContactForm_AddSet(val,name)
+{
+	if(name!=''){
+		selected='';
+		$('.check').each(function(){
+			if($(this).is(":checked")){
+				if(selected==''){
+					selected=$(this).val();
+				}
+				else{
+					selected+=","+$(this).val();
+				}
+			}
+		
+		});
+		if(selected!='' || add_from_manager==true){
+			if(val=='new_set'){
+				//var new_set=prompt("Please enter name of new set:","userset_1");				
+				code = $('#new_set_prompt').text();
+				(new Function(code))();	
+			}
+			else
+			{
+				start=0;
+				end=25;
+				tab='';
+				jsonRow = 'loadcontacts.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab+'&selected='+selected+'&set=add_to_'+name+'&setUUID='+setUUID;
+				$.getJSON(jsonRow,function(result){
+					if(result.Alert){
+						code = $('#load_prompt').text();
+						(new Function(code))();
+					}
+				});
+			}
+		}
+		else{
+			code = $('#no_selection_prompt').text();
+			(new Function(code))();
+			$('#add_sets').val('');
+		}
+	}
+}
+
+function __showContactForm_LoadSet(val, name)
+{
+	if(val!=''){
+		location.href='contacts.shtml?set='+name+'&set_uuid='+val;
+	}
+	else{
+		location.href='contacts.shtml';
+	}
+}
+
+function show_load_prompt(){
+	code = $('#load_prompt').text();
+	(new Function(code))();
+}
+
+function __showAllowed()
+{
+	start=0;
+	end=25;
+	tab='Allowed';
+	jsonRow = 'loadcontacts.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab+'&set='+selected_set+'&setUUID='+setUUID;
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}
+	$('#contacts_table_body').html('');
+	$('#img_loading_div').show();		
+	load_data(jsonRow);
+}
+
+
+function __showNotAllowed()
+{
+	start=0;
+	end=25;
+	tab='Not_Allowed';
+	jsonRow = 'loadcontacts.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab+'&set='+selected_set+'&setUUID='+setUUID;
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}	
+	$('#contacts_table_body').html('');
+	$('#img_loading_div').show();	
+	load_data(jsonRow);
+}
+
+ 
+
+function __showAllContacts()
+{
+	start=0;
+	end=25;
+	tab='';
+	jsonRow = 'loadcontacts.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&set='+selected_set+'&setUUID='+setUUID;
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}	
+	$('#contacts_table_body').html('');
+	$('#img_loading_div').show();	
+	load_data(jsonRow);
+}
+
+
+function add_new_set(){
+	add_from_manager=true;
+	__showContactForm_AddSet('new_set','new_set');
+}
+
+function load_from_set(val, name){
+	if(val!='' && val!=null){
+		location.href='contacts.shtml?set='+name+'&set_uuid='+val;
+	}
+	else{
+		$("#set_mgr_err").html('* Please select a Set');
+		$('#sets_list').focus();
+	}
+}
+
+function del_set(set_uuid, set_name, del_type){
+	if(set_uuid!='' && set_uuid!=null){
+		if(del_type==1){
+			var state_title='About to delete selected set. Are you sure you want to go ahead?';
+			var prompt_title='Deleting selected set';
+			show_del_prompt(state_title, prompt_title, set_uuid, set_name, del_type);						
+		}
+		else {
+			var state_title='About to delete Contacts in selected set. Are you sure you want to go ahead?';
+			var prompt_title='Deleting Contacts in selected set';
+			show_del_prompt(state_title, prompt_title, set_uuid, set_name, del_type);
+		}
+	}
+	else{
+		$("#set_mgr_err").html('* Please select a Set');
+		$('#sets_list').focus();
+	}
+}
+
+function show_del_prompt(state_title, prompt_title, set_uuid, set_name, del_type){
+	var statesdemo = {
+		state0: {
+			title: state_title,
+			html:'',
+			buttons: { 'Argh! No stop' : 0, 'Sure, go ahead': 1 },																		
+			submit:function(e,v,m,f){ 
+				//console.log(f);
+				if(v==1) {
+					var prompt_html='<img src="../loading.gif"  style="padding:20px;" width="32" >';
+					processPrompt(prompt_title,prompt_html,true,false);	
+					delete_set(set_uuid, set_name, del_type);
+				}
+				if(v==0) {
+					$.prompt.close();								
+				}
+			}
+		},					
+	};			
+	$.prompt(statesdemo);
+}
+
+function delete_set(set_uuid, set_name, del_type) {
+	jsonRow = 'addDelContactsSets.cgi?tablname='+tablname+'&set_uuid='+set_uuid+'&del_type='+del_type;			
+	$.getJSON(jsonRow,function(result){
+		if(result.Succ){
+			if(del_type==1 || del_type==2) {
+				/*$('#sets_list option:selected').remove();
+				$('#add_sets option[value="'+set_uuid+'"]').hide();
+				$('#load_sets option[value="'+set_uuid+'"]').hide();*/
+				location.href="contacts.shtml";
+			}
+			$("#set_mgr_msg").html('* Deleted successfully');
+		}
+		if($('#dialog').html().length>0){
+			processPrompt('','',false,true);
+		}
+	});
+}
+
+function processPrompt(title,msg,start_prmt,stop_prmt){
+	if(start_prmt){
+		$( "#dialog" ).attr('title', title);
+		$( "#dialog" ).html(msg);
+		$( "#dialog" ).dialog({ modal: true, resizable: false, draggable: false, closeOnEscape: false });
+		$('.ui-dialog-titlebar-close').remove();
+		$('.ui-dialog').css('z-index', 99999);
+		$('.ui-widget-overlay').css('z-index', 99998);
+	}
+	else if(stop_prmt){
+		$( "#dialog" ).dialog( "destroy" );
+		$( "#dialog" ).html('');
+	}
+}
+
+
+
+ 
+$(document).ready(function() {
+
+	$('#keyword').focus();
+	$('#load_sets').val(setUUID);
+	$('#add_sets option[value="'+setUUID+'"]').hide();
+	keyword= $("#keyword").val();
+	jsonRow = 'loadcontacts.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&set='+selected_set+'&setUUID='+setUUID;	
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}	
+	load_data(jsonRow);			 
+	
+	$(window).scroll(function(){
+		if ($(window).scrollTop() == $(document).height() - $(window).height()){
+		if(complete==false) {
+		//alert("scrolling...");
+		$('#img_loading_div').show();	
+		start=end+1;
+		end=start+25;
+		jsonRow = 'loadcontacts.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&set='+selected_set+'&setUUID='+setUUID;
+		if(keyword!=''){
+			jsonRow +='&keyword='+keyword;
+		}
+		if(tab!=''){
+			jsonRow +='&tab='+tab;
+		}		
+		load_data(jsonRow);
+		}
+		}
+	});	
+	
+	//setup before functions
+	var typingTimer;                //timer identifier
+	var doneTypingInterval = 1000;  //time in ms, 5 second for example
+	
+	//on keyup, start the countdown
+	$('#keyword').keyup(function(){
+		clearTimeout(typingTimer);
+		if ($('#keyword').val) {
+			typingTimer = setTimeout(function(){
+				//do stuff here e.g ajax call etc....
+				$('#contacts_table_body').html('');
+				$('#img_loading_div').show();
+				start=0;
+				end=start+25;
+				tab='';
+				keyword= $("#keyword").val();
+				jsonRow = 'loadcontacts.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&set='+selected_set+'&setUUID='+setUUID;
+				if(keyword!=''){
+					jsonRow +='&keyword='+keyword;
+				}
+				if(tab!=''){
+					jsonRow +='&tab='+tab;
+				}	
+				load_data(jsonRow);
+			}, doneTypingInterval);
+		}
+	});	
+	
+	$('#contact_table').on("click","#chk_all", function(){
+			if($(this).is(":checked")){
+					$('.check').prop('checked', true);
+				}
+				else{
+					$('.check').prop('checked', false);
+				}
+		});		
+	
+});
+
+
+
+ 
+function load_data(jsonRow){
+	JSONdata=new Array();
+	$.getJSON(jsonRow,function(result){
+			if(result.Alert){
+				code = $('#no_rec_prompt').text();
+				(new Function(code))();
+				complete=true;
+			}
+			else{
+			 
+			
+				$.each(result.uuid, function(i,item)
+				{
+					JSONdata[i]=new Array();
+					JSONdata[i][0]='<input class="check" type="checkbox" value="'+item+'">';
+						
+				}); 
+				$.each(result.clientName, function(i,item)
+				{
+					JSONdata[i][1]=item;
+					
+				});
+				$.each(result.ContactName, function(i,item)
+				{
+					JSONdata[i][2]=item;
+				});
+				$.each(result.Email, function(i,item)
+				{
+					JSONdata[i][3]=item;
+				});
+				$.each(result.DateAdded, function(i,item)
+				{					
+					JSONdata[i][4]=item;
+				});
+				$.each(result.Mobile, function(i,item)
+				{					
+					JSONdata[i][5]=item;
+				});
+				$.each(result.AllowWeb, function(i,item)
+				{		
+				if(item==true){
+						JSONdata[i][6]='<span class="label label-success"> Subscriber </span>';
+					}
+					else{
+						JSONdata[i][6]='<span class="label label-info"> Non-Subscriber </span>';
+					}
+				});
+				$.each(result.uuid, function(i,item)
+				{	
+			  	 
+			  		//JSONdata[i][7]='<ul class="actions"><li><a href="contact.shtml?uuid='+item+'" title="Edit" ><i class="table-edit"></i></a></li></ul>';
+				
+				});
+				
+				
+				var table_html='';
+				var trClassStr='odd';
+				$.each(JSONdata, function(i,row)
+				{
+				
+					table_html+='<tr class="'+trClassStr+'">';
+					if(trClassStr=='odd') { trClassStr='even'; } else { trClassStr='odd' };
+					$.each(row, function(i,col){
+						table_html+='<td>'+col+'</td>';
+					});
+					table_html+='</tr>';
+				});
+				if(old_srch!=keyword){
+					$('#contacts_table_body').html('');
+					old_srch=keyword;
+				}
+				//alert(table_html);
+				
+				$('#contacts_table_body').append(table_html);
+				complete=false;
+
+			// Apply a class on mouse over and remove it on mouse out.
+			
+			$('#contact_table tbody tr').unbind();
+			$('#contact_table tbody tr').hover(function ()
+			{
+				$(this).toggleClass('Highlight');
+			});
+
+			// Assign a click handler that grabs the URL from the first cell and redirects the user.
+			$('#contact_table tr td').click(function ()
+			{
+				if(!($(this).find(':checkbox').length)){
+
+			if($.__4D_IsIn4D__()) {
+location.href = 'http://__4DURLHandler__/Edit-Contact-'+$(this).parents('tr').find(':checkbox').val()+'&token='+Math.random();
+} else {
+				pContactURLStr = 'contact.shtml?uuid='+$(this).parents('tr').find(':checkbox').val()+'&token='+Math.random();
+pContactURLStr = 'contact.shtml?uuid='+$(this).parents('tr').find(':checkbox').val()+'&token='+Math.random();
+window.open(pContactURLStr, '_blank');	}	
+				}
+			});
+			
+			//$('#chk_all').click(function(){
+//				
+//			});
+
+		}
+		$('#img_loading_div').hide();
+		});
+		
+}
+
+</script>
+
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/app/includes/InitJS4DCallBacks.shtml-->
+
+</body>
+</html>
+<!--#4DELSE--><h1>Authentication Required!<br>
+<!--HIT_EXECUTE _HIT_HTMLTXT:="_HIT_AuthenticateSession: "+_HIT_AuthenticateSession-->
+</h1><!--#4DENDIF-->

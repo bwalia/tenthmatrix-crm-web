@@ -1,0 +1,100 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HTMLTITLETXT)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+
+_HTMLTITLETXT:="Home"
+
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+-->
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/main-header.shtml-->
+
+<body>
+
+<style>
+.jqm-block-content {
+    border: none;
+    background: none;
+    padding: 1em;
+    background: #fff;
+    border: 1px solid #eee;
+}
+
+</style>
+<div data-role="page" class="jqm-demos" data-quicklinks="true">
+	<!-- header -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/top-header.shtml-->
+	<!-- /header -->
+	
+	<div role="main" class="ui-content jqm-content">
+	<div class="ui-grid-a ui-responsive">
+        	<div class="ui-block-a">
+        		<div class="jqm-block-content">
+        			<h3>Projects </h3>
+					<div STYLE="text-align:center;">
+						<div><IMG SRC="images/projects.svg"  STYLE="max-width:150px; min-width:150px;"  ALT=""/></div>
+						<p ><a HREF="projects.shtml" data-ajax="false"  STYLE="font-size:30px;">Total <!--HIT_EXECUTE
+							Web_LoadProjects 
+							_HIT_HTMLTXT:=String(Records in selection([Projects]))
+						--></a></p>
+					</div>
+				</div>
+        	</div>
+        	<div class="ui-block-b">
+        		<div class="jqm-block-content">
+        			<h3>Active Tasks</h3>
+					<div STYLE="text-align:center;">
+					<div ><IMG SRC="images/active-task.svg" STYLE="max-width:150px; min-width:150px;"   ALT=""/></div>
+					<p ><a HREF="tasks.shtml"  data-ajax="false"  STYLE="font-size:30px;">Total <!--HIT_EXECUTE
+QUERY([Tasks];[Tasks]task_active=True)
+_HIT_HTMLTXT:=String(Records in selection([Tasks]))
+--> </a></p>
+					</div>
+        		
+				</div>
+        	</div>        	
+        	<div class="ui-block-a">
+        		<div class="jqm-block-content">
+        			<h3> Total Hour Spent </h3>
+					<div STYLE="text-align:center;">
+					<div ><IMG SRC="images/total-hour.svg" STYLE="max-width:150px; min-width:150px;"   ALT=""/></div>
+					<p ><a HREF="javascript:void(0)" STYLE="font-size:30px;">Total <!--HIT_EXECUTE 
+                           QUERY([Tasks];[Tasks]task_active=True)
+RELATE MANY SELECTION([Timeslips]task_id)
+_HIT_HTMLTXT:=String(Round(Sum([Timeslips]slip_hours);2))
+                            --> </a></p>
+					</div>
+
+        			
+        		</div>
+        	</div>
+        	<div class="ui-block-b">
+        		<div class="jqm-block-content">
+        			<h3>Budget Spent </h3>
+					<div STYLE="text-align:center;">
+					<div ><IMG SRC="images/budget.svg" STYLE="max-width:150px; min-width:150px;"   ALT=""/></div>
+					<p ><a HREF="javascript:void(0)" STYLE="font-size:30px;">Total $ <!--HIT_EXECUTE 
+                           ALL RECORDS([Projects])
+_HIT_HTMLTXT:=String(Sum([Projects]budget))
+                            --> </a></p>
+					</div>
+
+        			 </div>
+        	</div>
+        </div>
+
+	</div><!-- /content -->
+	<!-- panel -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/sidebar.shtml-->
+	<!-- /panel -->
+
+	<!-- footer -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/footer.shtml-->
+	<!-- /footer -->
+</div><!-- /page -->
+
+</body>
+</html>

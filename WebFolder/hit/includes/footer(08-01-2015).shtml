@@ -1,0 +1,41 @@
+<script src="js/jquery-latest.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/theme.js"></script>
+
+<script>
+var url = window.location.pathname;
+ var filename = url.substring(url.lastIndexOf('/')+1);
+ var filelink = $("a[href='"+filename+"']");
+ var ulparent = filelink.parents('.submenu');
+ var liparent = ulparent.parent('li');
+ filelink.addClass('active');
+ ulparent.addClass('active');
+ liparent.addClass('active');
+ var mainlink = liparent.children('.dropdown-toggle');
+ mainlink.after('<div class="pointer"><div class="arrow"></div><div class="arrow_border"></div></div>');
+ 
+ function chng_activity_status(act_uuid, location){
+ <!--#4DIF (Web_isUserStaff | Web_isUserClient)-->
+		var dataString = 'act_uuid='+act_uuid+'&redirect=false';
+		$.ajax({
+		type: "GET",
+		dataType: "json",
+		url: "chng_noti_status.cgi",
+		data: dataString,
+		cache: false,
+		success: function(html)
+		{
+			if(html.succ){
+				//alert("status changed");
+				window.location.href=location;
+			}
+		}
+		});
+<!--#4DELSE-->
+	window.location.href=location;
+<!--#4DENDIF-->	
+	}
+
+
+	
+	</script>

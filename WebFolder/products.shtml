@@ -1,0 +1,142 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+
+If (_HIT_AuthenticateSession ="Session-Authenticated-OK")
+
+Web_LoadProducts
+  //ALL RECORDS([Products])
+  //_HIT_HTMLTXT:="<h1>AUTH</h1>"
+Else 
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml?url="+HTTPD_DocumentURI)
+End if 
+
+  //_HIT_HTMLTXT:=_HIT_SessionStr
+_HIT_HTMLTXT:=_HIT_HTTP_GetReferer 
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+</head>
+<body>
+
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
+
+	<!-- main container -->
+    <div class="content">
+        
+        <div class="container-fluid">
+            <div id="pad-wrapper">
+
+                <!-- products table -->
+                <div class="table-wrapper orders-table section">
+                    <div class="row-fluid head">
+                        <div class="span12">
+                            <h4>Products</h4>
+                        </div>
+                    </div>
+					<form method="get" onSubmit="__showProducts(); return false;">
+						<div class="row-fluid filter-block">
+							<div class="pull-right">
+								<input name="keyword" id="keyword" type="text" class="search order-search" placeholder="Search for an order.." value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->">
+							</div>
+						</div>
+					</form>
+
+                    <div class="row-fluid">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th class="span2">
+                                        Product ID
+                                    </th>
+                                    <th class="span3">
+                                        Product Name
+                                    </th>
+                                    <th class="span3">
+                                        <span class="line"></span>
+                                        Unit Price
+                                    </th>
+                                    <th class="span3">
+                                        <span class="line"></span>
+                                        Product Type
+                                    </th>
+                                </tr>
+                            </thead>
+                                <!--#4DLOOP [Products]--><!-- row -->
+								<tr class="first">
+                                    <td>
+                                         <a href="javascript:void(0)" onClick="__showProductForm('<!--#4DHTMLVAR [Products]uuid-->')"><!--#4DHTMLVAR [Products]ProductID--></a>
+                                    </td>
+                                    <td>
+                                        <a href="javascript:void(0)" onClick="__showProductForm('<!--#4DHTMLVAR [Products]uuid-->')"><!--#4DHTMLVAR [Products]ProductName--></a>
+                                    </td>
+									<td>
+                                        <!--#4DHTMLVAR [Products]Unit_Price-->
+                                    </td>
+									<td>
+                                        <!--#4DHTMLVAR [Products]Product_Type-->
+                                    </td>
+								</tr>
+								<!--#4DENDLOOP-->
+                            <tbody>
+							
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- end products table -->
+
+            </div>
+        </div>
+    </div>
+    <!-- end main container -->
+
+	<!-- scripts -->
+   <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+	
+	 <script>
+ 
+function __showProducts()
+{
+pUrlStr='products.shtml?keyword='+$('#keyword').val();
+window.location.href=pUrlStr;
+}
+function __showProductForm(uuid)
+{
+pUrlStr='product.shtml?uuid='+uuid;
+window.location.href=pUrlStr;
+}
+
+$(document).ready(function() {
+
+$('#keyword').focus();
+
+//setup before functions
+var typingTimer;                //timer identifier
+var doneTypingInterval = 1000;  //time in ms, 5 second for example
+
+//on keyup, start the countdown
+$('#keyword').keyup(function(){
+    clearTimeout(typingTimer);
+    if ($('#keyword').val) {
+        typingTimer = setTimeout(function(){
+            //do stuff here e.g ajax call etc....
+             var v = $("#keyword").val();
+__showProducts();
+        }, doneTypingInterval);
+    }
+});
+
+    });
+
+
+    </script>
+	
+</body>
+</html>

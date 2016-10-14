@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+<!-- main container -->
+    <div class="content">
+        
+        <div class="container-fluid">
+            <div id="pad-wrapper">
+
+                <!-- timeslips table -->
+                <div class="table-wrapper orders-table section">
+                    <div class="row-fluid head">
+                        <div class="span12">
+                            <h4>Timeslips</h4>
+                        </div>
+                    </div>
+					
+
+                    <div class="row-fluid">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th class="span4">
+                                        TASK
+                                    </th>
+									
+                                </tr>
+                            </thead>
+                            
+                            <tbody id="estamount">
+                            
+                            </tbody>
+                        </table>
+					
+                    </div>
+                </div>
+                <!-- end timeslips table -->
+
+            </div>
+        </div>
+    </div>
+	
+	
+	
+	<div class="content">
+        
+        <div class="container-fluid">
+            <div id="pad-wrapper">
+
+                <!-- timeslips table -->
+                <div class="table-wrapper orders-table section">
+                    <div class="row-fluid head">
+                        <div class="span12">
+                            <h4>Timeslips</h4>
+                        </div>
+                    </div>
+					
+
+                    <div class="row-fluid">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th class="span4">
+                                        TASK
+                                    </th>
+									
+                                </tr>
+                            </thead>
+                            
+                            <tbody id="datademo">
+                            
+                            </tbody>
+                        </table>
+					
+                    </div>
+                </div>
+                <!-- end timeslips table -->
+
+            </div>
+        </div>
+    </div>
+	
+	
+   
+	<!-- scripts -->
+<script src="js/jquery-latest.js"></script>
+<script>
+
+$(document).ready(function() {
+	$.getJSON("loadtimeslips.cgi?start=1&end=40", function(repsonse){
+		//var tableContent="";
+		$.each(repsonse.Status, function(i,item){
+			var tableContent="<tr><td>"+item+"</td></tr>";
+			$("#timeslip_table_body").append(tableContent);
+		});
+		
+	});	
+	
+});
+
+
+
+
+$(document).ready(function() {
+$.getJSON("loadtimeslips.cgi?start=1&end=20", function(testdemodata){
+ $.each(testdemodata.EstAmount, function(i,item){
+	 var datadone="<tr><td>"+item+"</td></tr>";
+	 $("#datademo").append(datadone);	
+	
+	});
+	
+});
+
+});
+
+
+$(document).ready(function(){
+	$.getJSON("loadtimeslips.cgi?start=1&end=30", function(addata){
+		$.each(addata.ProjName, function(i,item){
+			var tableestamount="<tr><td>"+item+"</td></tr>";
+			$("#estamount").append(tableestamount);	
+		
+		
+		});
+				
+	});	
+	
+});
+
+
+</script>    
+</body>
+</html>

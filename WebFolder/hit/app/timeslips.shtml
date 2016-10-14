@@ -1,0 +1,540 @@
+<!--HIT_EXECUTE
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+else
+_HIT_HTTPD_RedirectToURL ("/hit/sign-in.shtml?url="+HTTPD_DocumentURI)
+end if 
+
+-->
+
+<!--#4DIF (_HIT_AuthenticateSession="Session-Authenticated-OK")-->
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Tenthmatrix CRM App : TimeSlips</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- bootstrap -->
+	<link href="css/bootstrap/bootstrap.css" rel="stylesheet">
+    <link href="css/bootstrap/bootstrap-responsive.css" rel="stylesheet">
+    <link href="css/bootstrap/bootstrap-overrides.css" type="text/css" rel="stylesheet">
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/app/includes/header.shtml-->
+
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    
+    	<style type="text/css">
+		.Highlight
+		{
+			background-color: #dcfac9!important;
+			cursor: pointer;
+		}
+		
+		.pull-right
+		{
+		
+		margin: 0 4px 4px 4px;
+		padding:0 4px 4px 4px;
+		
+		}
+		ul.actions{
+			list-style:none;
+		}
+	</style>
+
+
+</head>
+<body>
+
+	<!-- main container -->
+    <div class="content wide-content">
+        <div class="container-fluid">
+		<form id="frm_set" name="frm_set"  method="post" action="">
+		
+         <div class="" style=" padding:15px 0 0 0;">
+					
+					<strong>View Timeslips of:</strong>
+					<div class="ui-select"> 
+					<select name="add_sets" id="add_sets" onChange="__showTimesheets(this.value)" >
+						<option value="">All</option>
+						<option value="today">Today</option>
+						<option value="week">This week</option>
+						<option value="month">This month</option>
+					</select>
+					</div>
+                                <div class="pull-right">
+                            <div class="btn-group pull-right">
+                                <button class="glow left large" onClick="__showAllTimeSlips(); return false;">All</button>
+                                <button class="glow middle large" onClick="__showChargeable(); return false;">Chargeable</button>
+                                <button class="glow middle large" onClick="__showNotChargeable(); return false;">Not-Chargeable</button>
+                                <button class="glow right large" onClick="__showBilled(); return false;">Billed</button>
+                                
+                                <a href="timeslip.shtml" class="btn-flat success new-product margn-lft35" style="margin-left:15px;">+ Add New TimeSlip</a>
+                            </div>
+                            <input name="keyword_type" style="margin-top:3px;" id="keyword_type" type="text" class="search order-search" placeholder="Enter Task, Project name.." value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" />
+                        </div>
+
+        </div>
+            <div id="pad-wrapper1" class="datatables-page">
+                <div class="row-fluid">
+                    <div class="span12">
+
+                        <table cellpadding="0" cellspacing="0" border="0" class="dataTable" id="timeslip_table">
+                            <thead>
+                                <tr role="row">
+                                    <th align="left" width="25%">TASK NAME 
+                                    </th>
+                                    <th align="left">PROJECT
+                                    </th>
+                                    <th align="left">EMPLOYEE
+                                    </th>
+                                    <th align="left">START
+                                    </th>
+                                    <th align="left">END
+                                    </th>
+                                    <th align="left">EST. HOURS
+                                    </th>
+                                    <th align="left">RATE
+                                    </th>
+                                    <th align="left">EST. AMOUNT
+                                    </th>
+                                    <th align="left">TIMESLIP STATUS
+                                    </th>
+                                   
+                                    
+                                </tr>
+                            </thead>
+                            <tfoot>
+                            <tr>
+                                	<th align="left">TASK NAME 
+                                    </th>
+                                    <th align="left">PROJECT
+                                    </th>
+                                    <th align="left">EMPLOYEE
+                                    </th>
+                                    <th align="left">START
+                                    </th>
+                                    <th align="left">END
+                                    </th>
+                                    <th align="left">ESt. HOURS
+                                    </th>
+                                    <th align="left">RATE
+                                    </th>
+                                    <th align="left">ESt. AMOUNT
+                                    </th>
+                                    <th align="left">TIMESLIP STATUS
+                                    </th>
+                                     
+                            </tr>
+                        </tfoot>
+
+                            <tbody id="timeslip_table_body">
+
+                        </tbody>
+                        </table>
+						<div id="img_loading_div" style="text-align:center">
+		<img src="../loading.gif"  style="padding:20px;" width="34" >
+		</div>
+
+                    </div>
+                </div>
+            </div>
+        </form>
+        </div>
+    </div>
+	<div class="example-container">
+	<pre class="code" style="display:none;" id="no_rec_prompt">
+									var statesdemo = {
+										state0: {
+											title: 'No more records found',
+											html:'',
+											buttons: { OK: 1 },																		
+											submit:function(e,v,m,f){ 
+												//console.log(f);
+												if(v==1) {
+													$.prompt.close();
+												}
+												
+											}
+										},
+										
+									};
+									//$(".jqibox").remove();
+									if(!($(".jqibox").length))
+									$.prompt(statesdemo);
+								</pre>
+							</div>
+    <!-- end main container -->
+
+	<!-- scripts -->
+    <script src="js/jquery-latest.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.dataTables.js"></script>
+	<script type="text/javascript" src="js/jquery-impromptu.js"></script>
+    <script src="js/theme.js"></script>
+
+<script type="text/javascript">
+var JSONdata;
+ var start=0, end=50;
+ var old_srch='',keyword='', jsonRow='', tab='', set='',duration='';
+ var tablname='Timeslips';
+ var process=false;
+			// Hide the first cell for JavaScript enabled browsers.
+			$('#timeslip_table td:first-child').hide();
+
+
+			// Assign a click handler that grabs the URL from the first cell and redirects the user.
+			$('#timeslip_table tr td').click(function ()
+			{
+				//location.href = $(this).find('td a').attr('href');
+			});
+
+function __showChargeable()
+{
+	start=0;
+	end=25;
+	tab='on';
+	jsonRow = 'loadtimeslips.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&chargeable='+tab;
+	if(duration!=''){
+		jsonRow +='&duration='+duration;
+	}
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}
+	$('#timeslip_table_body').html('');
+	$('#img_loading_div').show();		
+	load_data(jsonRow);
+}
+function __showTimesheets(name)
+{
+start=0;
+end=25;
+duration=name;
+jsonRow = 'loadtimeslips.cgi?start='+start+'&end='+end+'&tablname='+tablname;
+	if(duration!=''){
+		jsonRow +='&duration='+duration;
+	}
+	if(tab!=''){
+		jsonRow +='&chargeable='+tab;
+	}
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}
+	
+	$('#timeslip_table_body').html('');
+	$('#img_loading_div').show();		
+	load_data(jsonRow);
+//pUrlStr='timeslips.shtml?duration='+name;
+//window.location.href=pUrlStr;
+}
+function __showNotChargeable()
+{
+	start=0;
+	end=25;
+	tab='off';
+	jsonRow = 'loadtimeslips.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&chargeable='+tab;
+	if(duration!=''){
+		jsonRow +='&duration='+duration;
+	}
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}
+	$('#timeslip_table_body').html('');
+	$('#img_loading_div').show();		
+	load_data(jsonRow);
+}
+
+
+function __showBilled()
+{
+	start=0;
+	end=25;
+	tab='billed';
+	jsonRow = 'loadtimeslips.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&chargeable='+tab;
+	if(duration!=''){
+		jsonRow +='&duration='+duration;
+	}
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}	
+	$('#timeslip_table_body').html('');
+	$('#img_loading_div').show();	
+	load_data(jsonRow);
+}
+
+ 
+
+function __showAllTimeSlips()
+{
+	start=0;
+	end=25;
+	tab='';
+	jsonRow = 'loadtimeslips.cgi?start='+start+'&end='+end+'&tablname='+tablname;
+	if(duration!=''){
+		jsonRow +='&duration='+duration;
+	}
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}	
+	$('#timeslip_table_body').html('');
+	$('#img_loading_div').show();	
+	load_data(jsonRow);
+}
+
+function __deleteSelected(del_uuid){
+	var statesdemo = {
+		state0: {
+			title: 'Are you sure to delete this timeslip?',
+			buttons: { Cancel : 0, Delete: 1 },																		
+			submit:function(e,v,m,f){ 
+				if(v==1) {
+					var url= "deletetaskandtimeslip.cgi";
+					var dataString = 'selected='+del_uuid+'&action=timeslip';
+					$.ajax({
+						type: "GET",
+						dataType: "json",
+						url: url,
+						data: dataString,
+						cache: false,
+						success: function(html)
+						{
+							if(html.Success){		
+								$.prompt.close();				
+								start=0;
+								end=50;
+								jsonRow = 'loadtimeslips.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&chargeable='+tab+'&task='+task+'&duration='+duration;
+								if(keyword!=''){
+									jsonRow +='&keyword='+keyword;
+								}
+								if(tab!=''){
+									jsonRow +='&tab='+tab;
+								}
+								$('#timeslip_table_body').html('');
+								$('#img_loading_div').show();		
+								load_data(jsonRow);
+							}else if(html.Error){
+								$.prompt.close();
+								$.prompt(" ", {
+									title: html.Error,
+									buttons: { "Close": false }
+								});
+							}
+						}
+					});
+				}
+				if(v==0) {
+					$.prompt.close();
+				}
+				
+			}
+		},
+		
+	};
+	$.prompt(statesdemo);
+}
+
+ 
+$(document).ready(function() {
+
+	$('#keyword_type').focus();
+	keyword= $("#keyword_type").val();
+	jsonRow = 'loadtimeslips.cgi?start='+start+'&end='+end+'&tablname='+tablname;
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}		
+	load_data(jsonRow);			 
+	$(window).scroll(function(){
+		if ($(window).scrollTop() == $(document).height() - $(window).height()){
+		$('#img_loading_div').show();	
+		//alert("scrolling...");
+		start=end+1;
+		end=start+25;
+		jsonRow = 'loadtimeslips.cgi?start='+start+'&end='+end+'&tablname='+tablname;
+		if(keyword!=''){
+			jsonRow +='&keyword='+keyword;
+		}
+		if(tab!=''){
+			jsonRow +='&chargeable='+tab;
+		}
+		if(duration!=''){
+			jsonRow +='&duration='+duration;
+		}		
+		load_data(jsonRow);
+		
+		}
+	});	
+		
+	//setup before functions
+	var typingTimer;                //timer identifier
+	var doneTypingInterval = 1000;  //time in ms, 5 second for example
+	
+	//on keyup, start the countdown
+	$('#keyword_type').keyup(function(){
+		clearTimeout(typingTimer);
+		if ($('#keyword_type').val) {
+			typingTimer = setTimeout(function(){
+				//do stuff here e.g ajax call etc....
+				$('#timeslip_table_body').html('');
+				$('#img_loading_div').show();
+				start=0;
+				end=start+25;
+				tab='';
+				keyword= $("#keyword_type").val();
+				jsonRow = 'loadtimeslips.cgi?start='+start+'&end='+end+'&tablname='+tablname;
+				if(keyword!=''){
+					jsonRow +='&keyword='+keyword;
+				}
+				if(tab!=''){
+					jsonRow +='&tab='+tab;
+				}	
+				load_data(jsonRow);
+			}, doneTypingInterval);
+		}
+	});		
+	
+});
+
+ 
+function load_data(jsonRow){
+	JSONdata=new Array();
+	$.getJSON(jsonRow,function(result){
+			if(result.Alert){
+				code = $('#no_rec_prompt').text();
+				(new Function(code))();
+			}
+			else{
+			 
+			
+				$.each(result.TaskName, function(i,item)
+				{
+					JSONdata[i]=new Array();
+					JSONdata[i][0]= item;						
+				});
+				$.each(result.uuid, function(i,item)
+				{
+					JSONdata[i][0]+='<input type="hidden" value="'+item+'">';			
+					JSONdata[i][9]='<ul class="actions"><li><a href="javascript:void(0)" onClick="__deleteSelected(\''+item+'\')"><i class="icon-remove"></i></a></li></ul>';					
+				}); 
+				$.each(result.ProjName, function(i,item)
+				{
+					JSONdata[i][1]=item;
+					
+				});
+				$.each(result.EmpName, function(i,item)
+				{
+					JSONdata[i][2]=item;
+				});
+				$.each(result.Start, function(i,item)
+				{
+					JSONdata[i][3]=chng_time_format(item);
+				});
+				$.each(result.End, function(i,item)
+				{					
+					JSONdata[i][4]=chng_time_format(item);
+				});
+				$.each(result.EstHour, function(i,item)
+				{					
+					JSONdata[i][5]=item;
+				});
+				$.each(result.EstAmount, function(i,item)
+				{					
+					JSONdata[i][6]=item;
+				});
+				$.each(result.Slipvalue, function(i,item)
+				{					
+					JSONdata[i][7]=item;
+				});
+				
+				$.each(result.Status, function(i,item)
+				{
+				
+				switch(item)
+					{
+					case 1:
+					  JSONdata[i][8]='<span class="label label-success"> Chargeale </span>';
+					  break;
+					case 2:
+					  JSONdata[i][8]='<span class="label label-warning"> Billed </span>';
+					  break;
+					default :
+					   JSONdata[i][8]='<span class="label label-info"> Not-Chargeale </span>';
+					  }
+
+				});
+				// $.each(result.uuid, function(i,item)
+                //{	
+ 			  	 
+ 			  	//JSONdata[i][9]='<ul class="actions"><a href="timeslip.shtml?uuid='+item+'" title="Edit" ><i class="table-edit"></i><a>';
+ 				
+ 				//});
+				
+				var table_html='';
+				var trClassStr='odd';
+				$.each(JSONdata, function(i,row)
+				{
+				
+					table_html+='<tr class="'+trClassStr+'">';
+					if(trClassStr=='odd') { trClassStr='even'; } else { trClassStr='odd' };
+					$.each(row, function(i,col){
+						table_html+='<td>'+col+'</td>';
+					});
+					table_html+='</tr>';
+				});
+				if(old_srch!=keyword){
+					$('#timeslip_table_body').html('');
+					old_srch=keyword;
+				}
+				//alert(table_html);
+				
+				$('#timeslip_table_body').append(table_html);
+
+			// Apply a class on mouse over and remove it on mouse out.
+			$('#timeslip_table tbody tr').unbind();
+			$('#timeslip_table tbody tr').hover(function ()
+			{
+				$(this).toggleClass('Highlight');
+			});
+
+			// Assign a click handler that grabs the URL from the first cell and redirects the user.
+			$('#timeslip_table tbody tr td').click(function (){
+				if(!($(this).find(':checkbox').length || $(this).find('a').length)){
+				location.href = 'timeslip.shtml?uuid='+$(this).find(':input').val()+'&token='+Math.random();
+				}
+			});
+			
+		}
+		$('#img_loading_div').hide();
+		});
+}
+
+function chng_time_format(date_time){
+		var s_date_time=date_time.split(' ');
+		var s_time=s_date_time[1];
+		var s_time_arr=s_time.split(":");
+		var s_hour= Number(s_time_arr[0]);
+		var s_min= Number(s_time_arr[1]);
+		var s_ampm='AM';
+		if(s_hour>=12){
+			s_ampm='PM';
+		}
+		if(s_hour>12){
+			s_hour= s_hour-12;
+		}	
+		if(s_min<10){
+			s_min= '0'+String(s_min);
+		}
+		s_time=s_hour+':'+s_min+' '+s_ampm;
+		return (s_date_time[0]+'<br/>'+s_time);
+}
+
+</script>
+
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/app/includes/InitJS4DCallBacks.shtml-->
+
+</body>
+</html>
+<!--#4DELSE--><h1>Authentication Required!<br>
+<!--HIT_EXECUTE _HIT_HTMLTXT:="_HIT_AuthenticateSession: "+_HIT_AuthenticateSession-->
+</h1><!--#4DENDIF-->

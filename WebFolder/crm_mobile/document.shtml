@@ -1,0 +1,114 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+C_BOOLEAN(mUserIsCurrentBool)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+QUERY([Documents];[Documents]uuid=_HIT_WebApp_GetField ("uuid"))
+QUERY([Companies];[Companies]uuid=[Documents]uuid_customer)
+
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+-->
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/main-header.shtml-->
+
+
+<style>
+label.error {
+	float: left;
+	color: red;
+	padding-top: .5em;
+	vertical-align: top;
+	font-weight:bold
+}
+</style>
+<link rel="stylesheet" type="text/css" href="css/jqm-datebox.min.css" /> 
+<script type="text/javascript" src="js/jqm-datebox.core.min.js"></script>
+<script type="text/javascript" src="js/jqm-datebox.mode.calbox.min.js"></script>
+<script type="text/javascript" src="js/jquery.mobile.datebox.i18n.en_US.utf8.js"></script>
+<script src="js/jquery.validate.js"></script>
+<script src="js/additional-methods.js"></script>
+
+
+<script type="text/javascript">
+
+$(document).on('pageinit', function(){
+
+	$("#frm").validate({
+        rules: {
+            file_name: "required",
+            
+        },
+		messages: {
+			file_name: "Please Specify File Name",
+
+		}
+    });
+});
+</script>
+
+
+	
+
+
+</head>
+<body>
+<div data-role="page" id="home" data-add-back-btn="false">
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/top-header.shtml-->
+	<div data-role="content" style="padding: 15px;">
+		<ul data-role="listview" data-inset="true">
+			<li data-role="list-divider"><span style=" color:#2B89D0; font-stretch:narrower;"><!--#4DIF (Records in selection([Documents])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Document</span></li>
+		</ul>
+		<form data-ajax="false" name="DocumentForm" action="savedocument.cgi" method="post" id="frm" enctype="multipart/form-data" >
+		
+		<input name="company_uuid" type="hidden" value="<!--#4DVAR [Companies]uuid-->" id="company_uuid">
+		<input name="doc_uuid" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="doc_uuid">
+		
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput1">Filename<font color="#FF0000">*</font></label>
+					<input name="file_name" type="text" value="<!--#4DVAR [Documents]filename-->" id="file_name">&nbsp;Size:&nbsp;<!--#4DVAR _HIT_FileSizeHumanReadable (BLOB size([Documents]filecontent))-->
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput12">File Content<font color="#FF0000">*</font></label>
+					<input name="file_content" type="file" id="file_content">
+								 <span class="label label-success"><a title="Download Document <!--#4DHTMLVAR String([Documents]filename)-->" target="_blank" href="javascript:alert('Coming...soon...')">
+                                        <i class="icon-download-alt"></i>&nbsp;</a>
+                                    </span>Download
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput12">Relationship Type</label>
+						<input name="type" type="text" value="<!--#4DVAR [Documents]doctype-->" id="type"><br/>
+						<input name="customer" type="text" value="<!--#4DVAR [Companies]company_Name-->" id="customer">	 
+				</fieldset>
+			</div>
+			
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput13">Metadata</label>
+					<textarea name="metadata" id="metadata" ><!--#4DVAR [Documents]metadata--></textarea>
+					
+				</fieldset>
+			</div>
+			
+			
+			
+			<input type="submit" value="Submit" id="submit" name="submit" >
+		</form>
+	</div><!-- END DATA ROLE CONTENT-->
+
+   <!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/footer.shtml-->
+    
+ </div>
+ 
+</body>
+</html>

@@ -1,0 +1,692 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+C_TEXT(_HTMLTITLETXT)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+QUERY([Tasks];[Tasks]task_id=num(_HIT_WebApp_GetField ("task")))
+_HTMLTITLETXT:="Timeslips"
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+
+_HIT_HTMLTXT:=_HIT_HTTP_GetReferer
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+<link rel="stylesheet" href="css/autocomplete.css" />
+<link rel="stylesheet" media="all" type="text/css" href="css/jquery-impromptu.css" />
+<style>
+#message{
+	color:#FF0000;
+}
+.table-wrapper .table ul.actions{
+	float:left;
+}
+</style>
+</head>
+<body>
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
+
+	<!-- main container -->
+    <div class="content">
+        
+        <div class="container-fluid">
+            <div id="pad-wrapper">
+
+                <!-- timeslips table -->
+                <div class="table-wrapper orders-table section">
+                    <div class="row-fluid head">
+                        <div class="span12">
+                            <h4>Timeslips</h4>
+                        </div>
+                    </div>
+					<form id="frm_set" name="frm_set" method="get" action="">
+						<div class="row-fluid filter-block">
+							<div class="ui-widget" style="margin-bottom: -50px">
+								<span style="padding-bottom: 26px; vertical-align: middle; padding-right: 5px;">Tasks:</span>
+								<select name="task" id="task" onChange="__showTaskTimeslips(this.value)" >
+								<!--#4DIF (_HIT_WebApp_GetField ("task")#"")-->
+								<option value="<!--4DVAR [Tasks]task_id-->"  ><!--4DVAR [Tasks]task_name--></option>
+								<!--#4DELSE-->
+								<option value=""></option>
+								<!--#4DSCRIPT/Web_LoadTasks/-->
+								<!--4DLOOP [Tasks]-->
+									<option value="<!--4DVAR [Tasks]task_id-->"  ><!--4DVAR [Tasks]task_name--></option>
+								<!--4DENDLOOP-->
+								<!--#4DENDIF-->
+								</select>
+							</div>
+							<div class="pull-right">
+								<div class="btn-group pull-right">
+									<button class="glow left large" onClick="__showAllTimeSlips(); return false;">All</button>
+									<button class="glow middle large" onClick="__showChargeable(); return false;">Chargeable</button>
+									<button class="glow middle large" onClick="__showNotChargeable(); return false;">Not Chargeable</button>
+									<button class="glow right large" onClick="__showBilled(); return false;">Billed</button>
+									<!--#4DIF (_HIT_WebSession_GetVar ("auth_user_type")#"CLIENTS")-->
+									<a href="timeslip.shtml" class="btn-flat success new-product margn-lft35">+ Add New TimeSheet</a>
+									<!--#4DENDIF-->
+								</div>
+								<input name="keyword_type" id="keyword_type" type="text" class="search order-search" placeholder="Enter client or staff name.." value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" />
+							</div>
+						</div>
+                    </form>
+
+                    <div class="row-fluid">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th class="span4">
+                                        TASK
+                                    </th>
+									<th class="span3">
+									<span class="line"></span>
+                                        PROJECT
+                                    </th>
+                                    <th class="span2">
+                                        <span class="line"></span>
+                                        EMPLOYEE
+                                    </th>
+                                    <th>
+									<span class="line"></span>
+                                       START
+                                    </th>
+									<th>
+									<span class="line"></span>
+                                       END
+                                    </th>                                  
+                                    <th>
+                                        <span class="line"></span>
+                                       EST. HOURS
+                                    </th>
+									<th>
+                                        <span class="line"></span>
+                                        RATE
+                                    </th>
+									<th>
+                                        <span class="span1"></span>
+                                        EST. AMOUNT
+                                    </th>
+                                    <th>
+                                        <span class="line"></span>
+                                        TIME SLIP STATUS
+                                    </th>
+                                        <th>
+                                        <span class="line"></span>
+                                        ACTION
+                                    </th> 
+                                </tr>
+                            </thead>
+                            <tfoot>
+                            <tr> 
+                                <th align="left">TASK</th>
+                                <th align="left">PROJECT</th>
+                                <th align="left">EMPLOYEE</th>
+                                <th align="left">START</th>
+                                <th align="left">END</th>
+                                <th align="left">EST. HOURS</th>
+								<th align="left">RATE</th>
+								<th align="left">EST. AMOUNT</th>
+								<th align="left">TIME SLIP STATUS</th>
+								<th align="left">ACTION</th>
+                            </tr>
+                        	</tfoot>
+                            <tbody id="timeslip_table_body">
+                            </tbody>
+                        </table>
+						<div id="img_loading_div" style="text-align:center">
+		<img src="loading.gif"  style="padding:20px;" width="34" >
+		</div>
+                    </div>
+                </div>
+                <!-- end timeslips table -->
+
+            </div>
+        </div>
+    </div>
+    <!-- end main container -->
+	<div class="example-container">
+	<pre class="code" style="display:none;" id="no_rec_prompt">
+									var statesdemo = {
+										state0: {
+											title: 'No more records found',
+											html:'',
+											buttons: { OK: 1 },																		
+											submit:function(e,v,m,f){ 
+												//console.log(f);
+												if(v==1) {
+													$.prompt.close();
+												}
+												
+											}
+										},
+										
+									};
+									//$(".jqibox").remove();
+									if(!($(".jqibox").length))
+									$.prompt(statesdemo);
+								</pre>
+							</div>
+
+	<!-- scripts -->
+   <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+	<script type="text/javascript" src="js/jquery-impromptu.js"></script>
+    <script>
+var JSONdata;
+var start=0, end=50;
+var old_srch='',keyword='', jsonRow='', tab='', set='', task='';
+var tablname='Timeslips';
+var duration='<!--#4DVAR _HIT_WebApp_GetField ("duration") -->';
+var complete=false;
+var completeScroll=false;
+var pathname = window.location.href;
+var queryNum = pathname.indexOf("?"); 
+if(queryNum>-1){
+	duration=pathname.substring(queryNum+1);
+}
+function __showTaskTimeslips(name)
+{	
+	task=name;		
+	start=0;
+	end=25;
+	tab='';
+	keyword='';
+	$("#keyword_type").val('');
+	jsonRow = 'loadtimeslips.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&chargeable='+tab+'&task='+task+'&duration='+duration;
+	$('#timeslip_table_body').html('');
+	$('#img_loading_div').show();		
+	load_data(jsonRow);
+}
+function __showChargeable()
+{
+	start=0;
+	end=25;
+	tab='on';
+	jsonRow = 'loadtimeslips.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&chargeable='+tab+'&task='+task+'&duration='+duration;
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}
+	$('#timeslip_table_body').html('');
+	$('#img_loading_div').show();		
+	load_data(jsonRow);
+}
+
+function __showNotChargeable()
+{
+	start=0;
+	end=25;
+	tab='off';
+	jsonRow = 'loadtimeslips.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&chargeable='+tab+'&task='+task+'&duration='+duration;
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}
+	$('#timeslip_table_body').html('');
+	$('#img_loading_div').show();		
+	load_data(jsonRow);
+}
+
+
+function __showBilled()
+{
+	start=0;
+	end=25;
+	tab='billed';
+	jsonRow = 'loadtimeslips.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&chargeable='+tab+'&task='+task+'&duration='+duration;
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}	
+	$('#timeslip_table_body').html('');
+	$('#img_loading_div').show();	
+	load_data(jsonRow);
+}
+
+
+
+function __showAllTimeSlips()
+{
+	start=0;
+	end=25;
+	tab='';
+	jsonRow = 'loadtimeslips.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&task='+task+'&duration='+duration;
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}	
+	$('#timeslip_table_body').html('');
+	$('#img_loading_div').show();	
+	load_data(jsonRow);
+}
+
+function __showTimeslipForm(uuid)
+{
+pUrlStr='timeslip.shtml?uuid='+uuid;
+window.location.href=pUrlStr;
+}
+function __deleteSelected(del_uuid){
+	var statesdemo = {
+		state0: {
+			title: 'Are you sure to delete this timeslip?',
+			buttons: { Cancel : 0, Delete: 1 },																		
+			submit:function(e,v,m,f){ 
+				if(v==1) {
+					var url= "deletetaskandtimeslip.cgi";
+					var dataString = 'selected='+del_uuid+'&action=timeslip';
+					$.ajax({
+						type: "GET",
+						dataType: "json",
+						url: url,
+						data: dataString,
+						cache: false,
+						success: function(html)
+						{
+							if(html.Success){		
+								$.prompt.close();				
+								start=0;
+								end=50;
+								jsonRow = 'loadtimeslips.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&chargeable='+tab+'&task='+task+'&duration='+duration;
+								if(keyword!=''){
+									jsonRow +='&keyword='+keyword;
+								}
+								if(tab!=''){
+									jsonRow +='&tab='+tab;
+								}
+								$('#timeslip_table_body').html('');
+								$('#img_loading_div').show();		
+								load_data(jsonRow);
+							}else if(html.Error){
+								$.prompt.close();
+								$.prompt(" ", {
+									title: html.Error,
+									buttons: { "Close": false }
+								});
+							}
+						}
+					});
+				}
+				if(v==0) {
+					$.prompt.close();
+				}
+				
+			}
+		},
+		
+	};
+	$.prompt(statesdemo);
+}
+
+
+$(document).ready(function() {
+
+$('#task').val('<!--#4DVAR _HIT_WebApp_GetField ("task") -->');
+$('#keyword_type').focus();
+	keyword= $("#keyword_type").val();
+	jsonRow = 'loadtimeslips.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&duration='+duration;
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}		
+	load_data(jsonRow);			 
+	$(window).scroll(function(){
+
+		if ($(window).scrollTop() == $(document).height() - $(window).height()){
+		if(complete==false && completeScroll==false) {
+			$('#img_loading_div').show();
+			//alert("scrolling...");
+			start=end+1;
+			end=start+25;
+			jsonRow = 'loadtimeslips.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&task='+task+'&duration='+duration;
+			if(keyword!=''){
+				jsonRow +='&keyword='+keyword;
+			}
+			if(tab!=''){
+				jsonRow +='&chargeable='+tab;
+			}		
+			load_data(jsonRow);
+		}
+		
+		}
+	});	
+		
+	//setup before functions
+	var typingTimer;                //timer identifier
+	var doneTypingInterval = 1000;  //time in ms, 5 second for example
+	
+	//on keyup, start the countdown
+	$('#keyword_type').keyup(function(){
+		clearTimeout(typingTimer);
+		if ($('#keyword_type').val) {
+			typingTimer = setTimeout(function(){
+				//do stuff here e.g ajax call etc....
+				$('#timeslip_table_body').html('');
+				$('#img_loading_div').show();
+				start=0;
+				end=start+25;
+				tab='';
+				keyword= $("#keyword_type").val();
+				jsonRow = 'loadtimeslips.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&task='+task+'&duration='+duration;
+				if(keyword!=''){
+					jsonRow +='&keyword='+keyword;
+				}
+				if(tab!=''){
+					jsonRow +='&tab='+tab;
+				}	
+				load_data(jsonRow);
+			}, doneTypingInterval);
+		}
+	});	
+	
+	$( "#task" ).combobox();	
+
+    });
+	
+function load_data(jsonRow){
+	completeScroll=true;
+	JSONdata=new Array();
+	$.getJSON(jsonRow,function(result){
+		//console.log(result)
+		if(result.Alert){
+			code = $('#no_rec_prompt').text();
+			(new Function(code))();
+			complete=true;
+		}else{
+		 	$.each(result.TaskName, function(i,item)
+			{
+				JSONdata[i]=new Array();
+				JSONdata[i][0]= '<a href="tasks.shtml?keyword='+item+'" target="_blank">'+item+'</a>';						
+			}); 
+			$.each(result.ProjName, function(i,item)
+			{
+				JSONdata[i][1]='<a href="projects.shtml?keyword='+item+'" target="_blank">'+item+'</a>';	
+				
+			});
+			$.each(result.EmpName, function(i,item)
+			{
+				var empname = item.substr(0,item.indexOf(' ')); 
+				JSONdata[i][2]='<a href="employees.shtml?keyword='+empname+'" target="_blank">'+item+'</a>';
+			});
+			$.each(result.Start, function(i,item)
+			{
+				JSONdata[i][3]=chng_time_format(item);
+			});
+			$.each(result.End, function(i,item)
+			{					
+				JSONdata[i][4]=chng_time_format(item);
+			});
+			$.each(result.EstHour, function(i,item)
+			{					
+				JSONdata[i][5]=item;
+			});
+			$.each(result.EstAmount, function(i,item)
+			{					
+				JSONdata[i][6]=item;
+			});
+			$.each(result.Slipvalue, function(i,item)
+			{					
+				JSONdata[i][7]=item;
+			});
+			
+			$.each(result.Status, function(i,item)
+			{
+			
+			switch(item)
+				{
+				case 1:
+				  JSONdata[i][8]='<span class="label label-success"> Chargeale </span>';
+				  break;
+				case 2:
+				  JSONdata[i][8]='<span class="label label-warning"> Billed </span>';
+				  break;
+				default :
+				   JSONdata[i][8]='<span class="label label-info"> Not-Chargeale </span>';
+				  }
+
+			});
+			$.each(result.uuid, function(i,item)
+			{
+				JSONdata[i][9]='<ul class="actions"><li><a href="javascript:void(0)" onClick="__showTimeslipForm(\''+item+'\')"><i class="table-edit"></i></a></li><li><i class="table-settings"></i></li><li class="last"><a href="javascript:void(0)" onClick="__deleteSelected(\''+item+'\')"><i class="table-delete"></i></a></li></ul>';					
+			});
+			
+			var table_html='';
+			var trClassStr='odd';
+			$.each(JSONdata, function(i,row)
+			{
+			
+				table_html+='<tr >';
+				$.each(row, function(i,col){
+					table_html+='<td>'+col+'</td>';
+				});
+				table_html+='</tr>';
+			});
+			if(old_srch!=keyword){
+				$('#timeslip_table_body').html('');
+				old_srch=keyword;
+			}
+			//alert(table_html);
+			
+			$('#timeslip_table_body').append(table_html);
+			complete=false;
+			
+
+		}
+		$('#img_loading_div').hide();
+		completeScroll=false;
+	});
+}
+
+function chng_time_format(date_time){
+		var s_date_time=date_time.split(' ');
+		var s_time=s_date_time[1];
+		var s_time_arr=s_time.split(":");
+		var s_hour= Number(s_time_arr[0]);
+		var s_min= Number(s_time_arr[1]);
+		var s_ampm='AM';
+		if(s_hour>=12){
+			s_ampm='PM';
+		}
+		if(s_hour>12){
+			s_hour= s_hour-12;
+		}	
+		if(s_min<10){
+			s_min= '0'+String(s_min);
+		}
+		s_time=s_hour+':'+s_min+' '+s_ampm;
+		return (s_date_time[0]+'<br/>'+s_time);
+}
+
+
+    </script>
+<script>
+	 var xhr;
+  (function( $ ) {
+    $.widget( "custom.combobox", {
+      _create: function() {
+        this.wrapper = $( "<span>" )
+          .addClass( "custom-combobox" )
+          .insertAfter( this.element );
+ 
+        this.element.hide();
+        this._createAutocomplete();
+        this._createShowAllButton();
+      },
+ 
+      _createAutocomplete: function() {
+	  var ele_select= this.element;
+        var selected = this.element.children( ":selected" ),
+          value = selected.val() ? selected.text() : "";
+ 
+        this.input = $( "<input>" )
+          .appendTo( this.wrapper )
+          .val( value )
+          .attr( "title", "" )
+          .addClass( "custom-combobox-input ui-widget ui-widget-content ui-state-default ui-corner-left" )
+          .autocomplete({
+            delay: 0,
+            minLength: 0,
+            source: $.proxy( this, "_source" )
+          })
+          .tooltip({
+            tooltipClass: "ui-state-highlight"
+          });
+ 
+        this._on( this.input, {
+          autocompleteselect: function( event, ui ) {
+		  	//alert("show all");
+            ui.item.option.selected = true;
+			
+            this._trigger( "select", event, {
+              item: ui.item.option
+            });
+			ele_select.trigger('change');
+          },
+ 
+          autocompletechange: "_removeIfInvalid"
+        });
+      },
+ 
+      _createShowAllButton: function() {
+        var input = this.input,
+          wasOpen = false;
+ 
+        $( "<a>" )
+          .attr( "tabIndex", -1 )
+          .attr( "title", "Show All Items" )
+          .tooltip()
+          .appendTo( this.wrapper )
+          .button({
+            icons: {
+              primary: "ui-icon-triangle-1-s"
+            },
+            text: false
+          })
+          .removeClass( "ui-corner-all" )
+          .addClass( "custom-combobox-toggle ui-corner-right" )
+          .mousedown(function() {
+            wasOpen = input.autocomplete( "widget" ).is( ":visible" );
+          })
+          .click(function() {
+            input.focus();
+ 
+            // Close if already visible
+            if ( wasOpen ) {
+              return;
+            }
+ 
+            // Pass last search string as value to search for, displaying last results
+            input.autocomplete( "search", 'SHOWALL' );
+          });
+      },
+ 
+      _source: function( request, response ) {
+        //var matcher = new RegExp( $.ui.autocomplete.escapeRegex(request.term), "i" );
+		var ele_select= this.element;
+		if(request.term=='SHOWALL'){
+			response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+		
+		}
+		else
+		{
+		var jsonRow = 'gettaskonsearch.cgi?srch='+request.term;
+		
+
+		//alert(jsonRowURLStr);
+		if(xhr) xhr.abort();
+		xhr=$.getJSON(jsonRow,function(result){
+			
+			if(result){
+				var html='<option value=""></option>';
+
+				$.each(result, function(i,item)
+				{
+					html += '<option value="'+item.id+'">'+item.value+'</option>';
+				});
+				ele_select.html(html);
+				
+				
+				response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+				
+				
+			}
+		});
+       
+	  } 
+		
+      },
+ 
+      _removeIfInvalid: function( event, ui ) {
+ 
+        // Selected an item, nothing to do
+        if ( ui.item ) {
+
+          return;
+        }
+ 
+        // Search for a match (case-insensitive)
+        var value = this.input.val(),
+          valueLowerCase = value.toLowerCase(),
+          valid = false;
+		  var ele_select= this.element;
+        this.element.children( "option" ).each(function() {
+          if ( $( this ).text().toLowerCase() === valueLowerCase ) {
+            this.selected = valid = true;	
+
+			ele_select.trigger('change');
+            return false;
+          }
+        });
+ 
+        // Found a match, nothing to do
+        if ( valid ) {
+          return;
+        }
+ 
+        // Remove invalid value
+        this.input
+          .val( "" )
+          .attr( "title", value + " didn't match any item" )
+          .tooltip( "open" );
+        this.element.val( "" );
+        this._delay(function() {
+          this.input.tooltip( "close" ).attr( "title", "" );
+        }, 2500 );
+        this.input.data( "ui-autocomplete" ).term = "";
+      },
+ 
+      _destroy: function() {
+        this.wrapper.remove();
+        this.element.show();
+      }
+    });
+  })( jQuery );
+ 
+  //$(function() {
+//
+//  });
+
+  </script>    
+</body>
+</html>

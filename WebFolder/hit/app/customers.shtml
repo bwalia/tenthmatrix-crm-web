@@ -1,0 +1,794 @@
+<!--HIT_EXECUTE
+If(_HIT_AuthenticateSession="Session-Authenticated-OK")
+Web_LoadInvoicesSets
+Else
+_HIT_HTTPD_RedirectToURL ("/hit/sign-in.shtml?url="+HTTPD_DocumentURI)
+End if 
+-->
+<!--#4DIF (_HIT_AuthenticateSession="Session-Authenticated-OK")-->
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Tenthmatrix CRM App : Customers</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- bootstrap -->
+	<link href="css/bootstrap/bootstrap.css" rel="stylesheet">
+    <link href="css/bootstrap/bootstrap-responsive.css" rel="stylesheet">
+    <link href="css/bootstrap/bootstrap-overrides.css" type="text/css" rel="stylesheet">
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/app/includes/header.shtml-->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    
+    	<style type="text/css">
+		.Highlight
+		{
+			background-color: #dcfac9!important;
+			cursor: pointer;
+		}
+		
+		.pull-right
+		{
+		
+		margin: 0 4px 4px 4px;
+		padding:0 4px 4px 4px;
+		
+		}
+		ul.actions{
+			list-style:none;
+		}
+		#message{
+	color:#FF0000;
+}
+.jqibox {
+	z-index:9999!important;
+	
+	}
+		
+	</style>
+
+
+</head>
+<body>
+
+	<!-- main container -->
+    <div class="content wide-content">
+	 <div class="container-fluid">
+	<form id="frm_set" name="frm_set"  method="post" action="">
+		
+         <div class="" style=" padding:15px 0 0 0;">
+          
+				
+                  <strong>Add to Set:</strong>
+					
+					<div class="ui-select" style="margin-right:15px;"> 
+					<select name="add_sets" id="add_sets" onChange="__showCustomerForm_AddSet(this.value, $('#add_sets option:selected').text())" >
+						<option value="">--Select Set--</option>
+						<!--#4DSCRIPT/Web_LoadCustomerSets/-->
+							<!--4DLOOP  [saved_sets]-->									
+							<option value="<!--#4DHTMLVAR [saved_sets]uuid-->" ><!--#4DHTMLVAR [saved_sets]name--></option>
+							<!--4DENDLOOP-->
+						<option id="opt_new_set" value="new_set">Create New Set</option>
+					</select>
+					</div>
+                            
+                            
+					<strong>Load Set:</strong>
+					<div class="ui-select" >
+                    
+					<select name="load_sets" id="load_sets" onChange="__showCustomerForm_LoadSet(this.value, $('#load_sets option:selected').text())" >
+						<option value=""> All Records</option>
+						<!--#4DSCRIPT/Web_LoadCustomerSets/-->
+							<!--4DLOOP  [saved_sets]-->									
+							<option value="<!--#4DHTMLVAR [saved_sets]uuid-->" ><!--#4DHTMLVAR [saved_sets]name--></option>
+							<!--4DENDLOOP-->
+					</select>
+					</div>
+					
+					&nbsp;&nbsp;<a href="#myModal" data-toggle="modal" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html('');" class="btn-flat success new-product margn-lft35">Set Manager</a>
+					
+         <div class="pull-right">
+			<div class="btn-group pull-right">
+				<button class="glow left large" onClick="__showAllCustomers(); return false;">All</button>
+				<button class="glow middle large" onClick="__showSuppliers(); return false;">Suppliers</button>
+				<button class="glow right large" onClick="__showActiveCustomers(); return false;">Active</button>
+<a href="http://__4DURLHandler__/New-Customer" onClick="$.__4DURLHandler__('','add-customer')" title="Add New Customer" class="btn-flat success new-product margn-lft35" style="margin-left:15px;">+ Add New Invoice</a>
+
+				<a href="purchase_invoice.shtml" class="btn-flat success new-product margn-lft35"  style="margin-left:15px;">+ Add New Customer</a>
+			</div>
+			<input style="margin-top:3px;" name="keyword_type" id="keyword_type" type="text" class="search order-search" placeholder="search for customer, city, email.." value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" />
+		</div>
+		</div>
+        
+       
+            <div id="pad-wrapper" class="datatables-page">
+                <div class="row-fluid">
+                    <div class="span12">
+
+                        <table cellpadding="0" cellspacing="0" border="0" class="dataTable" id="customers_table">
+                            <thead>
+                                <tr role="row">
+                                    <th align="left"><input name="chk_all" type="checkbox" id="chk_all" value="">
+                                    </th>
+                                    <th align="left">CUSTOMER
+                                    </th>
+                                    <th align="left">TELEPHONE
+                                    </th>
+                                    <th align="left">CITY/TOWN
+                                    </th>
+                                    <th align="left">ADDRESS
+                                    </th>
+                                    <th align="left">E-MAIL
+                                    </th>
+                                    <th align="left">TOTAL SPENT
+                                    </th>
+                                    <th align="left">STATMENT
+                                    </th>
+									<th align="left">ACTIONS
+                                    </th>
+                                   
+                                </tr>
+                            </thead>
+                           <tfoot>
+                            <tr>
+                                <th align="left">&nbsp;</th>
+                                <th align="left">CUSTOMER</th>
+                                <th align="left">TELEPHONE</th>
+                                <th align="left">CITY/TOWN</th>
+                                <th align="left">ADDRESS</th>
+                                <th align="left">E-MAIL</th>
+                                <th align="left">TOTAL SPENT</th>
+                                <th align="left">STATMENT</th>
+								<th align="left">ACTIONS</th>
+                            </tr>
+                        </tfoot>
+
+                        <tbody id="customers_table_body">
+
+                        </tbody>
+                        </table>
+						<div id="img_loading_div" style="text-align:center">
+							<img src="../loading.gif"  style="padding:20px;" width="34" >
+						</div>
+
+                    </div>
+                </div>
+            </div>
+			</form>
+        </div>
+    </div>
+	
+	<div class="example-container">
+								<pre class="code" style="display:none;" id="new_set_prompt">
+									var statesdemo = {
+										state0: {
+											title: 'Please enter name of new set',
+											html:'&lt;div id="message"&gt;&lt;/div&gt;&lt;input type="text" name="new_set" id="new_set" value="userset_1"&gt;&lt;br /&gt;',
+											buttons: { Cancel : 0, Ok: 1 },
+											focus: "#new_set",																		
+											submit:function(e,v,m,f){ 
+												//console.log(f);
+												if(v==1) {
+													e.preventDefault();
+													var new_set=$('#new_set').val().trim();
+													if(new_set!=''){
+														var exist=false;
+														$('#add_sets option').each(function() {
+															if(new_set.toLowerCase()==$(this).text().toLowerCase()){
+																exist=true;
+															}
+														});
+														if(exist==false){
+															if(add_from_manager==true){
+																jsonRow = 'addDelCustSets.cgi?tablname='+tablname+'&set='+new_set;
+															}
+															else{
+																jsonRow = 'loadcustomers.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab+'&selected='+selected+'&set=add_to_'+new_set+'&setUUID='+setUUID;
+															}
+															$.getJSON(jsonRow,function(result){
+																if(result.setUUID){
+																	$('#opt_new_set').before('&lt;option value="'+result.setUUID+'"&gt;'+new_set+'&lt;/option&gt;');
+																	$('#load_sets').append('&lt;option value="'+result.setUUID+'" &gt;'+ new_set+'&lt;/option&gt;');
+																	$('#add_sets').val(result.setUUID);
+																	$('#sets_list').prepend('&lt;option value="'+result.setUUID+'" &gt;'+ new_set+'&lt;/option&gt;');
+																	$(".jqibox").remove();
+																	show_load_prompt();
+																}
+																else if(result.Succ){
+																	$('#opt_new_set').before('&lt;option value="'+result.UUID+'"&gt;'+new_set+'&lt;/option&gt;');
+																	
+																	$('#load_sets').append('&lt;option value="'+result.UUID+'" &gt;'+ new_set+'&lt;/option&gt;');
+																	$('#sets_list').prepend('&lt;option value="'+result.UUID+'" &gt;'+ new_set+'&lt;/option&gt;');
+																	set_add_to=new_set;
+																	
+																	$(".jqibox").remove();
+																	
+																	$("#set_mgr_msg").html('* Set added successfully');
+																	
+																	add_from_manager=false;
+																}else if(result.Err){
+																	$('#message').html('* '+result.Err);
+																}
+															});				
+														}
+														else{
+															$('#message').html('* '+new_set+' already exists. Please enter another name of set');
+														}
+													}
+													else{
+														$('#message').html('* Please enter name of new set');
+														$('#new_set').focus();
+													}
+												}
+												if(v==0) {
+													$.prompt.close();
+													$('#add_sets').val('');
+													add_from_manager=false;
+												}
+											}
+										},
+										
+									};
+
+									$.prompt(statesdemo);
+								</pre>
+								<pre class="code" style="display:none;" id="no_selection_prompt">
+									var statesdemo = {
+										state0: {
+											title: 'Please select some customers to add to set',
+											html:'',
+											buttons: { OK: 1 },																		
+											submit:function(e,v,m,f){ 
+												//console.log(f);
+												if(v==1) {
+													$.prompt.close();
+												}
+												
+											}
+										},
+										
+									};
+									if(!($(".jqibox").length))
+									$.prompt(statesdemo);
+								</pre>
+								<pre class="code" style="display:none;" id="load_prompt">
+									var statesdemo = {
+										state0: {
+											title: 'Do you want to load the records of '+$('#add_sets option:selected').text()+'?',
+											html:'',
+											buttons: { No : 0, Yes: 1 },																		
+											submit:function(e,v,m,f){ 
+												//console.log(f);
+												if(v==1) {
+													location.href='customers.shtml?set='+$('#add_sets option:selected').text()+'&set_uuid='+$('#add_sets').val();
+												}
+												if(v==0) {
+													$.prompt.close();
+													$('#add_sets').val('');
+													$('.check').prop('checked', false);
+												}
+											}
+										},
+										
+									};
+
+									$.prompt(statesdemo);
+								</pre>
+								<pre class="code" style="display:none;" id="no_rec_prompt">
+									var statesdemo = {
+										state0: {
+											title: 'No more records found',
+											html:'',
+											buttons: { OK: 1 },																		
+											submit:function(e,v,m,f){ 
+												//console.log(f);
+												if(v==1) {
+													$.prompt.close();
+												}
+												
+											}
+										},
+										
+									};
+									if(!($(".jqibox").length))
+									$.prompt(statesdemo);
+								</pre>
+								<!--<a class="run">Run It!</a>-->
+							</div>
+    <!-- end main container -->
+
+<div id="myModal" class="modal hide fade" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<!--<div class="modal-dialog">
+		<div class="modal-content">-->
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h3 class="modal-title">Set Manager</h3>
+			</div>
+			<div class="modal-body">
+				<form action="">
+					<!--<p class="sepH_c"><span class="label label-default">Form elemets in modal window</span></p>-->
+					<p ><span class="label-default" id="set_mgr_msg" style="color:#006600"></span><span class="label-default" id="set_mgr_err" style="color:#FF0000"></span></p>
+					
+					<div >
+						<select name="sets_list" id="sets_list" class="form-control" size="10" style="width:100%" >
+						 <!--#4DSCRIPT/Web_LoadCustomerSets/-->
+						<!--4DLOOP  [saved_sets]-->						
+						<option value="<!--#4DHTMLVAR [saved_sets]uuid-->"><!--#4DHTMLVAR [saved_sets]name--></option>
+						<!--4DENDLOOP-->
+						</select>
+					</div>
+					
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-primary sm-btn" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); add_new_set()">Add new Set</button>
+				
+				
+				<button type="button" class="btn btn-primary sm-btn" style="margin-left:0px;" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); load_from_set($('#sets_list').val(), $('#sets_list option:selected').text())">Load</button>
+				<div class="btn-group">
+				<button type="button" class="btn btn-primary sm-btn" >Delete</button>
+				<button type="button" class="btn btn-primary sm-btn  dropdown-toggle" data-toggle="dropdown" >
+        <span class="caret"></span>
+          </button>
+      <ul class="dropdown-menu" role="menu" style="text-align:left">
+        <li><a href="javascript:void(0)" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); del_set($('#sets_list').val(),$('#sets_list option:selected').text(),1)">Delete Selected Set</a></li>
+         <li><a href="javascript:void(0)" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); del_set($('#sets_list').val(),$('#sets_list option:selected').text(),2)">Delete Contacts in selected set</a></li>
+		 <li><a href="javascript:void(0)" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); del_set($('#sets_list').val(),$('#sets_list option:selected').text(),3)">Delete Customers in selected set</a></li>
+		 </ul>
+		 </div>
+				<button type="button" class="btn btn-default sm-btn" data-dismiss="modal">OK</button>
+			</div>
+		<!--</div>
+	</div>-->
+</div>
+
+<div style="text-align:center" id="dialog" ></div>
+
+
+	<!-- scripts -->
+    <script src="js/jquery-latest.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.dataTables.js"></script>
+	<script type="text/javascript" src="js/jquery-impromptu.js"></script>
+    <script src="js/theme.js"></script>
+	<script src="lib/jquery-ui/jquery-ui-1.10.0.custom.min.js"></script>
+   
+<script>
+var JSONdata;
+var selected='';
+var start=0, end=25;
+var old_srch='',keyword='', jsonRow='', tab='', set='';
+var tablname='Companies';
+var complete=false;
+var process=false;
+var selected_set='<!--#4DVAR _HIT_WebApp_GetField ("set") -->';
+var setUUID='<!--#4DVAR _HIT_WebApp_GetField ("set_uuid") -->';
+var add_from_manager=false;
+// Hide the first cell for JavaScript enabled browsers.
+$('#customers_table td:first-child').hide();
+
+// Apply a class on mouse over and remove it on mouse out.
+$('#customers_table tr').hover(function ()
+{
+	$(this).toggleClass('Highlight');
+});
+
+// Assign a click handler that grabs the URL from the first cell and redirects the user.
+$('#customers_table tr').click(function ()
+{
+	if(!($(this).find(':checkbox').length)){
+		location.href = 'customer.shtml?uuid='+$(this).parents('tr').find(':checkbox').val()+'&token='+Math.random();
+	}
+});
+ 
+function getMonthName(m) {
+	if(m==1){ monthName= "Jan";}
+	else if(m==2){ monthName= "Feb";}
+	else if(m==3){ monthName= "Mar"; }
+	else if(m==4){ monthName= "Apr"; }
+	else if(m==5){ monthName= "May"; }
+	else if(m==6){ monthName= "Jun"; }
+	else if(m==7){ monthName= "Jul"; }
+	else if(m==8){ monthName= "Aug"; }
+	else if(m==9){ monthName= "Sep"; }
+	else if(m==10){ monthName= "Oct"; }
+	else if(m==11){ monthName= "Nov"; }
+	else if(m==12){ monthName= "Dec"; }
+	else{ monthName= m; }
+	return monthName;
+ }
+function __showEmailForm(uuid)
+{
+pUrlStr='email.shtml?company_uuid='+uuid;
+window.location.href=pUrlStr;
+}
+
+function __showSuppliers()
+{
+	start=0;
+	end=25;
+	tab='suppliers';
+	keyword= $("#keyword_type").val();
+	jsonRow = 'loadcustomers.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab+'&set='+selected_set+'&setUUID='+setUUID;
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}
+	$('#customers_table_body').html('');
+	$('#img_loading_div').show();		
+	load_data(jsonRow);
+}
+
+function __showActiveCustomers()
+{
+	start=0;
+	end=25;
+	tab='active';
+	jsonRow = 'loadcustomers.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab+'&set='+selected_set+'&setUUID='+setUUID;
+	keyword= $("#keyword_type").val();
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}
+	$('#customers_table_body').html('');
+	$('#img_loading_div').show();		
+	load_data(jsonRow);
+}
+
+
+function __showAllCustomers()
+{
+	start=0;
+	end=25;
+	tab='';
+	jsonRow = 'loadcustomers.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&set='+selected_set+'&setUUID='+setUUID;
+	$('#customers_table_body').html('');
+	$('#img_loading_div').show();	
+	load_data(jsonRow);
+}
+
+function __deleteSelected(deleteuuid) {
+
+	var chk=confirm("Are you sure to delete?");
+	if(chk){
+		
+		var dataString = 'deleteuuid='+deleteuuid;
+
+		$.ajax({
+		type: "GET",
+		dataType: "json",
+		url: "deletecustomer.cgi",
+		data: dataString,
+		cache: false,
+		success: function(html)
+		{
+			//var keyword=getUrlVars()["keyword"];
+			//var tab=getUrlVars()["tab"];
+			if(html.Result){		
+				alert(html.Result);
+			}
+			//alert("Deleted successfully");
+			pUrlStr='customers.shtml?keyword='+$('#keyword').val();
+			window.location.href=pUrlStr;
+		}
+		});
+	}
+}
+
+function __showCustomerForm_AddSet(val,name)
+{
+	if(name!=''){
+		selected='';
+		$('.check').each(function(){
+			if($(this).is(":checked")){
+				if(selected==''){
+					selected=$(this).val();
+				}
+				else{
+					selected+=","+$(this).val();
+				}
+			}
+		
+		});
+		if(selected!='' || add_from_manager==true){
+			if(val=='new_set'){
+				//var new_set=prompt("Please enter name of new set:","userset_1");				
+				code = $('#new_set_prompt').text();
+				(new Function(code))();	
+			}
+			else
+			{
+				start=0;
+				end=25;
+				tab='';
+				jsonRow = 'loadcustomers.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab+'&selected='+selected+'&set=add_to_'+name+'&setUUID='+setUUID;
+				$.getJSON(jsonRow,function(result){
+					if(result.Alert){
+						code = $('#load_prompt').text();
+						(new Function(code))();
+					}
+				});
+			}
+		}
+		else{
+			code = $('#no_selection_prompt').text();
+			(new Function(code))();
+			
+			$('#add_sets').val('');
+		}
+	}
+}
+
+function __showCustomerForm_LoadSet(val,name)
+{
+	if(val!=''){
+		location.href='customers.shtml?set='+name+'&set_uuid='+val;
+	}
+	else{
+		location.href='customers.shtml';
+	}
+}
+function show_load_prompt(){
+	code = $('#load_prompt').text();
+	(new Function(code))();
+}
+
+function add_new_set(){
+	add_from_manager=true;
+	__showCustomerForm_AddSet('new_set','new_set');
+}
+
+function load_from_set(val, name){
+	if(val!='' && val!=null){
+		location.href='customers.shtml?set='+name+'&set_uuid='+val;
+	}
+	else{
+		$("#set_mgr_err").html('* Please select a Set');
+		$('#sets_list').focus();
+	}
+}
+
+function del_set(set_uuid, set_name, del_type){
+	if(set_uuid!='' && set_uuid!=null){
+		if(del_type==1){
+			var state_title='About to delete selected set. Are you sure you want to go ahead?';
+			var prompt_title='Deleting selected set';
+			show_del_prompt(state_title, prompt_title, set_uuid, set_name, del_type);						
+		}
+		else if(del_type==2) {
+			var state_title='About to delete Contacts for Customers in selected set. Are you sure you want to go ahead?';
+			var prompt_title='Deleting Contacts in selected set';
+			show_del_prompt(state_title, prompt_title, set_uuid, set_name, del_type);
+		}
+		else{
+			var state_title='About to delete Customers in selected set. Are you sure you want to go ahead?';
+			var prompt_title='Deleting Customers in selected set';
+			show_del_prompt(state_title, prompt_title, set_uuid, set_name, del_type);
+		}		
+	}
+	else{
+		$("#set_mgr_err").html('* Please select a Set');
+		$('#sets_list').focus();
+	}
+}
+
+function show_del_prompt(state_title, prompt_title, set_uuid, set_name, del_type){
+	var statesdemo = {
+		state0: {
+			title: state_title,
+			html:'',
+			buttons: { 'Argh! No stop' : 0, 'Sure, go ahead': 1 },																		
+			submit:function(e,v,m,f){ 
+				//console.log(f);
+				if(v==1) {
+					var prompt_html='<img src="../loading.gif"  style="padding:20px;" width="32" >';
+					processPrompt(prompt_title,prompt_html,true,false);	
+					delete_set(set_uuid, set_name, del_type);
+				}
+				if(v==0) {
+					$.prompt.close();								
+				}
+			}
+		},					
+	};			
+	$.prompt(statesdemo);
+}
+
+function delete_set(set_uuid, set_name, del_type) {
+	jsonRow = 'addDelCustSets.cgi?tablname='+tablname+'&set_uuid='+set_uuid+'&del_type='+del_type;			
+	$.getJSON(jsonRow,function(result){
+		if(result.Succ){
+			if(del_type==1 || del_type==3) {
+				/*$('#sets_list option:selected').remove();
+				$('#add_sets option[value="'+set_uuid+'"]').hide();
+				$('#load_sets option[value="'+set_uuid+'"]').hide();*/
+				location.href="customers.shtml";
+			}
+			$("#set_mgr_msg").html('* Deleted successfully');
+		}
+		if($('#dialog').html().length>0){
+			processPrompt('','',false,true);
+		}
+	});
+}
+
+function processPrompt(title,msg,start_prmt,stop_prmt){
+	if(start_prmt){
+		$( "#dialog" ).attr('title', title);
+		$( "#dialog" ).html(msg);
+		$( "#dialog" ).dialog({ modal: true, resizable: false, draggable: false, closeOnEscape: false });
+		$('.ui-dialog-titlebar-close').remove();
+		$('.ui-dialog').css('z-index', 99999);
+		$('.ui-widget-overlay').css('z-index', 99998);
+	}
+	else if(stop_prmt){
+		$( "#dialog" ).dialog( "destroy" );
+		$( "#dialog" ).html('');
+	}
+}
+
+
+$(document).ready(function() {
+
+	$('#keyword_type').focus();
+	$('#load_sets').val(setUUID);
+	$('#add_sets option[value="'+setUUID+'"]').hide();
+	keyword= $("#keyword_type").val();
+	jsonRow = 'loadcustomers.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&set='+selected_set+'&setUUID='+setUUID+'&tab=<!--#4DVAR _HIT_WebApp_GetField ("type") -->';
+	
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}	
+	load_data(jsonRow);	
+	
+	$(window).scroll(function(){
+		if ($(window).scrollTop() == $(document).height() - $(window).height()){
+		if(complete==false) {
+		//alert("scrolling...");
+		$('#img_loading_div').show();
+		start=end+1;
+		end=start+25;
+		jsonRow = 'loadcustomers.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&set='+selected_set+'&setUUID='+setUUID;
+		if(keyword!=''){
+			jsonRow +='&keyword='+keyword;
+		}
+		if(tab!=''){
+			jsonRow +='&tab='+tab;
+		}		
+		load_data(jsonRow);
+		}
+		}
+	});
+	
+	//setup before functions
+	var typingTimer;                //timer identifier
+	var doneTypingInterval = 1000;  //time in ms, 5 second for example
+
+	//on keyup, start the countdown
+	$('#keyword_type').keyup(function(){
+		clearTimeout(typingTimer);
+		if ($('#keyword_type').val) {
+			typingTimer = setTimeout(function(){
+				//do stuff here e.g ajax call etc....
+				$('#customers_table_body').html('');
+				$('#img_loading_div').show();
+				start=0;
+				end=start+25;
+				tab='';
+				keyword= $("#keyword_type").val();
+				jsonRow = 'loadcustomers.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&set='+selected_set+'&setUUID='+setUUID;
+				if(keyword!=''){
+					jsonRow +='&keyword='+keyword;
+				}
+				if(tab!=''){
+					jsonRow +='&tab='+tab;
+				}	
+				load_data(jsonRow);
+			}, doneTypingInterval);
+		}
+	});
+	
+	$('#customers_table').on("click","#chk_all", function(){
+			if($(this).is(":checked")){
+					$('.check').prop('checked', true);
+				}
+				else{
+					$('.check').prop('checked', false);
+				}
+		});	
+
+});
+    
+function load_data(jsonRow){
+	JSONdata=new Array();
+	$.getJSON(jsonRow,function(result){
+			if(result.Alert){
+				code = $('#no_rec_prompt').text();
+				(new Function(code))();
+				complete=true;
+			}
+			else{
+				$.each(result.uuid, function(i,item)
+				{
+					JSONdata[i]=new Array();
+					JSONdata[i][0]='<input name="Select" class="check" type="checkbox" id="Select" value="'+item+'">';
+					JSONdata[i][7]='<span><a title="Download Statement" target="_blank" style="text-decoration:none;" href="statement_preview.shtml?uuid='+item+'&token='+Math.random()+'&preview=pdf"><span class="icon-download-alt"></span>&nbsp;</a></span>&nbsp;&nbsp;<a title="Download Full Statement" target="_blank" href="statement_preview.shtml?uuid='+item+'&token='+Math.random()+'&preview=pdf&full=true">Full</a>&nbsp; Statement';
+					JSONdata[i][8]='<ul class="actions"><li><a href="javascript:void(0)" onClick="__showEmailForm(\''+item+'\')"><i class="icon-envelope"></i></a></li></ul>';
+					
+				}); 
+				$.each(result.company_Name, function(i,item)
+				{
+					JSONdata[i][1]=item;
+				});
+				
+				$.each(result.telephone, function(i,item)
+				{	
+					JSONdata[i][2]=item;
+				});
+				$.each(result.city_or_town, function(i,item)
+				{					
+					JSONdata[i][3]=item;
+				});
+				$.each(result.address_line_1, function(i,item)
+				{					
+					JSONdata[i][4]=item;
+				}); 
+				$.each(result.EmailAdd, function(i,item)
+				{					
+					JSONdata[i][5]=item;
+				});
+				$.each(result.TotalSpent, function(i,item)
+				{					
+					JSONdata[i][6]=item;
+				});
+				
+				
+				var table_html='';
+				$.each(JSONdata, function(i,row)
+				{
+					table_html+='<tr>';
+					$.each(row, function(i,col){
+						table_html+='<td>'+col+'</td>';
+					});
+					table_html+='</tr>';
+				});
+				if(old_srch!=keyword){
+					$('#customers_table_body').html('');
+					old_srch=keyword;
+				}
+				//alert(table_html);
+				
+				$('#customers_table_body').append(table_html);
+				complete=false;
+				// Apply a class on mouse over and remove it on mouse out.
+				
+				$('#customers_table tbody tr').unbind();
+			$('#customers_table tbody tr').hover(function ()
+			{
+				$(this).toggleClass('Highlight');
+			});
+
+			// Assign a click handler that grabs the URL from the first cell and redirects the user.
+			$('#customers_table tr td').click(function ()
+			{
+				if(!($(this).find(':checkbox').length || $(this).find('a').length)){
+			if($.__4D_IsIn4D__()) {
+location.href = 'http://__4DURLHandler__/Edit-Customer-'+$(this).parents('tr').find(':checkbox').val()+'&token='+Math.random();
+} else {
+//location.href = 'invoice.shtml?uuid='+$(this).parents('tr').find(':checkbox').val()+'&token='+Math.random();
+pCustURLStr = 'customer.shtml?uuid='+$(this).parents('tr').find(':checkbox').val()+'&token='+Math.random();
+window.open(pCustURLStr, '_blank');	}		
+				}
+			});
+				
+		}
+		$('#img_loading_div').hide();
+		});
+}
+
+</script>
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/app/includes/InitJS4DCallBacks.shtml-->
+</body>
+</html>
+<!--#4DELSE--><h1>Authentication Required!<br>
+<!--HIT_EXECUTE _HIT_HTMLTXT:="_HIT_AuthenticateSession: "+_HIT_AuthenticateSession-->
+</h1><!--#4DENDIF-->

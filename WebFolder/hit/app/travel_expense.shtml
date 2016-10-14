@@ -1,0 +1,441 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+
+//if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+ALL RECORDS([Tax_Codes])
+QUERY([Mileage];[Mileage]uuid=_HIT_WebApp_GetField ("uuid"))
+QUERY([Expense_Items];[Expense_Items]uuid_mileage=[Mileage]uuid)
+QUERY([Companies];[Companies]uuid=[Mileage]uuid_client)
+QUERY([Projects];[Projects]proj_name=[Mileage]Project_Code)
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+//else
+//_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+//end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+
+C_BOOLEAN(mUserIsCurrentBool)
+mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
+-->
+<!DOC html>
+<html>
+<head>
+	<title>Tenthmatrix CRM App : Travel Expense</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- bootstrap -->
+	<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="bootstrap/css/bootstrap-responsive.min.css" />
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/app/includes/header.shtml-->
+	<style type="text/css">
+
+  #message, #tax_message{
+	color:#FF0000;
+}
+
+input[type="text"] + label.error, textarea + label.error{
+	margin-top:0px;
+	}
+	</style>
+</head>
+<body>
+
+	<!-- main container -->
+    <div class="content wide-content">
+        <div class="container-fluid">
+            <div id="pad-wrapper" class="form-page">
+				<div class="row-fluid">
+					<div class="span12">
+						<form name="TravelExpenseForm" action="savemileage.cgi" class="form-comment form_validation_reg" method="post"> 
+						<input name="mileage_uuid" class="span9" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="mileage_uuid">
+							<div class="formSep">
+								<div class="row-fluid">
+									<div class="span9">
+										<label>Invoice Number <span class="f_req">*</span></label>
+										<span id="err_msg" style="color:#FF0000"></span>								
+									<input class="span8" name="inv_no" id="inv_no" type="text" value="<!--#4DVAR [Mileage]Client_Invoice_Number-->">
+										
+									</div>
+									</div>
+							</div>
+							        
+							<div class="formSep">
+								<div class="row-fluid">
+									<div class="span9">
+										<label>Client  </label>
+										<input class="span8" name="client_name" id="client_name" type="text" value="<!--#4DVAR [Companies]company_Name-->" readonly>
+									<input name="client_id" id="client_id" type="hidden" value="<!--#4DVAR [Companies]uuid-->">							
+										</div>
+								</div>
+							</div>
+							        
+							<div class="formSep">
+								<div class="row-fluid">
+								
+								<div class="span9">
+										<label>Project Code </label>
+										<input class="span8" name="project_code" id="project_code" type="text" value="<!--#4DVAR [Mileage]Project_Code-->" readonly>
+									</div>
+									
+									</div>
+							</div>
+							        
+							<div class="formSep">
+								<div class="row-fluid">
+								
+									<div class="span3">
+										<label>Mileage at Start <span class="f_req">*</span></label>
+										<input class="span8 num" name="start_mile" id="start_mile" type="text" value="<!--#4DVAR [Mileage]Vehicle_Start_Reading-->">
+									</div>	
+								
+								
+								<div class="span3">
+										<label>Mileage at End <span class="f_req">*</span></label>
+										<input class="span8 num" name="end_mile" id="end_mile" type="text" value="<!--#4DVAR [Mileage]Vehicle_End_Reading-->">
+									</div>	
+								</div>
+							</div>
+							
+							<div class="formSep">
+								<div class="row-fluid">
+									<div class="span3">
+										<label>Distance Travelled <span class="f_req">*</span></label>
+										<input class="span8 num" name="distance" id="distance" type="text" value="<!--#4DVAR [Mileage]Total_Distance_Travelled-->" readonly>
+									</div>
+									
+								
+									<div class="span3">
+										<label>Price Per Mile/KM <span class="f_req">*</span></label>
+										<input class="span8 num" name="price_per" id="price_per" type="text" <!--#4DIF ([Mileage]PricePerMileKm=0)-->value="0.45"<!--4DELSE-->value="<!--#4DVAR  [Mileage]PricePerMileKm-->"<!--4DENDIF-->>							
+										</div>
+									
+									</div>
+							</div>
+							<div class="formSep">
+								<div class="row-fluid">
+									<div class="span3">
+										<label>Start Date <span class="f_req">*</span></label>
+										<div class="input-append date" id="dp1">
+										<input class="span7" data-date-format="dd/mm/yyyy" type="text" <!--#4DIF (timestamp_unix_toDate([Mileage]Travel_Start_Timestamp)=!01/01/1970!)-->value=""<!--4DELSE-->value="<!--#4DVAR timestamp_unix_toDate([Mileage]Travel_Start_Timestamp)-->"<!--4DENDIF--> name="start_date" id="start_date" readonly ><span class="add-on"><i class="splashy-calendar_day"></i></span>
+																	</div>
+									</div>
+									
+								
+								
+									<div class="span3">
+										<label>End Date <span class="f_req">*</span></label>
+										<div class="input-append date" id="dp2">
+										<input class="span7" data-date-format="dd/mm/yyyy" type="text" <!--#4DIF (timestamp_unix_toDate([Mileage]Travel_End_Timestamp)=!01/01/1970!)-->value=""<!--4DELSE-->value="<!--#4DVAR timestamp_unix_toDate([Mileage]Travel_End_Timestamp)-->"<!--4DENDIF--> name="end_date" id="end_date" readonly ><span class="add-on"><i class="splashy-calendar_day"></i></span>
+																	</div>					
+										</div>
+									
+									</div>
+							</div>
+							<div class="formSep">
+								<div class="row-fluid">
+									<div class="span3">
+										<label>Start Post/Zip Code </label>
+										<input class="span8" name="start_zip" id="start_zip" type="text" value="<!--#4DVAR [Mileage]Start_PostZipCode-->">
+									</div>
+									
+								
+									<div class="span3">
+										<label>End Post/Zip Code </label>
+										<input class="span8" name="end_zip" id="end_zip" type="text" value="<!--#4DVAR [Mileage]End_PostZipCode-->">
+									</div>
+									
+								</div>
+							</div>
+							
+							<div class="formSep">
+								<div class="row-fluid">
+									<div class="span9">
+										<label>Tax Amount <span class="f_req">*</span></label>
+										<input type="text" name="tax_amount" id="tax_amount" class="span8 num" readonly="readonly" value="<!--#4DVAR [Mileage]Tax_Total_Amount-->">
+									</div>
+									
+								</div>
+							</div>
+							
+							<div class="formSep">
+								<div class="row-fluid">
+									<div class="span9">
+									<label class="checkbox inline" style="vertical-align:inherit;">
+										<input name="expenses_claimed" class="span1" type="checkbox" value="true" id="expenses_claimed" <!--#4DIF ([Mileage]Expense_Claimed_by_Employee)-->checked<!--4DELSE--><!--4DENDIF--> >Expenses Claimed By Employee
+										</label>
+									</div>
+									
+								</div>
+							</div>
+							<div class="formSep">
+								<div class="row-fluid">
+									<div class="span9">
+							
+							<table id="items" class="items table table-condensed table-striped" data-provides="rowlink">
+		<thead>
+		  <tr class="item">
+		      <th>Type</th>
+		      <th>Description</th>
+		      <th>Amount</th>
+			  <th>Save</th>
+			  <th>Cancel</th>
+		  </tr>
+		  </thead>
+		  <tbody>
+		  
+	<!--#4DIF(Records in selection([Mileage])=1)-->
+		  <!--#4DLOOP [Expense_Items]-->
+		  
+		  <tr class="item-row" id="<!--#4DHTMLVAR [Expense_Items]item_id-->">
+									<td class="item-id">
+									<span class="s_type" ><!--#4DHTMLVAR [Expense_Items]expense_type--></span>
+									<div class="ui-select div_type" style="display:none;">
+									<select class="type" name="type" style="display:none;">
+									<option value="">--Type--</option>
+									<!--HIT_EXECUTE _HIT_HTMLTXT:=Mileage_ExpenseTypes_HTMLPopup-->
+									</select>
+									</div>
+									<input class="item_uuid" type="hidden" value="<!--#4DHTMLVAR [Expense_Items]uuid-->" />
+									</td>
+									<td >
+									<span class="s_description" ><!--#4DHTMLVAR [Expense_Items]Expense_Desc--></span>
+									<div><textarea class="description" name="description" style="display:none;" ><!--#4DHTMLVAR [Expense_Items]Expense_Desc--></textarea></div>
+									</td>
+									<td>
+									<span class="s_amount" ><!--#4DHTMLVAR [Expense_Items]Expense_Amount--></span>
+									<div>
+									<input type="text" class="amount num1" name="amount" style="display:none;" value="<!--#4DHTMLVAR [Expense_Items]Expense_Amount-->" ></div>
+									</td>
+									
+									<td>
+									<a href="javascript:void(0)" class="editlink">Edit</a>
+									<a href="javascript:void(0)" class="savelink" style="display:none">Save</a>
+									 </td>	
+									 <td><a href="javascript:void(0)" class="removelink" >Remove</a>
+									<a href="javascript:void(0)" class="cancellink" style="display:none">Cancel</a>
+									</td>	 						
+									</tr>
+		  
+		  <!--#4DENDLOOP-->
+		  <!--#4DENDIF-->
+ 		  <tr id="hiderow">
+		    <td colspan="7"><a id="addrow" href="javascript:;" title="Add a row">Add a row</a></td>
+		  </tr>
+		  </tbody>
+		</table>	</div>
+									
+								</div>
+							</div>	
+		
+				<div class="formSep">
+								<div class="row-fluid">
+									<div class="span9">
+										<label>Total Expenses <span class="f_req">*</span></label>
+										<input type="text" name="total_amount" id="total_amount" class="span8" readonly="readonly" value="<!--#4DVAR [Mileage]Total_Amount-->">
+									</div>
+									
+								</div>
+							</div>
+		
+						<div class="formSep">
+								<div class="row-fluid">
+								
+								<div class="span9">
+										<label>Job Description </label>
+										<textarea class="span9" name="job_desc" id="job_desc" rows="5"><!--#4DVAR [Mileage]Job_Description--></textarea>
+										</div>
+									
+								</div>
+							</div>
+							
+							<div class="formSep">
+								<div class="row-fluid">
+								
+									<div class="span9">
+										<label class="checkbox inline" style="vertical-align:inherit;">						
+								<input name="veh_hired" class="span1" type="checkbox" value="true" id="veh_hired" <!--#4DIF ([Mileage]Vechicle_Hired)-->checked<!--4DELSE--><!--4DENDIF--> >Vehicle Hired
+							</label>   
+							<label class="checkbox inline" style="vertical-align:inherit;">							
+								<input name="stay_charged" class="span1" type="checkbox" value="true" id="stay_charged" <!--#4DIF ([Mileage]Accomodation_Charged)-->checked<!--4DELSE--><!--4DENDIF--> >Stay Charged
+							</label>  
+									</div>
+									
+								</div>
+							</div>
+							
+							<div class="formSep">
+								<div class="row-fluid">
+								
+									<div class="span9">
+										<label>Internal Notes </label>
+										<textarea class="span9" name="notes" id="notes" rows="5"><!--#4DVAR [Mileage]Sfaff_Notes--></textarea>
+									</div>	
+								</div>
+							</div>
+							
+							<div class="formSep">
+								<div class="row-fluid">
+								
+								<div class="span3">
+										<label>Currency Code </label>
+										<!--#4DIF (mUserIsCurrentBool)-->
+							<input readonly name="currency_code" class="span8" type="text" value="<!--#4DVAR [Mileage]currency_code -->" id="currency_code">
+							<!--#4DELSE-->
+							
+								<select id="currency_code" name="currency_code">
+								<!--4DLOOP [Tax_Codes]-->
+									<option value="<!--#4DVAR [Tax_Codes]Currency_Code-->" <!--#4DIF ([Tax_Codes]Currency_Code=[Mileage]currency_code)-->selected<!--4DELSE--><!--4DENDIF-->><!--4DVAR [Tax_Codes]Currency_Code--></option>
+								<!--4DENDLOOP-->
+								</select>                                     
+							
+							<!--#4DENDIF-->
+									</div>	
+								
+									<div class="span3">
+										<label>Tax Rate <span class="f_req">*</span></label>
+										<input name="tax_rate" class="span8 num" type="text" value="<!--#4DVAR [Mileage]Tax_Rate -->" id="tax_rate">
+									</div>
+									
+									</div>
+							</div>
+							
+							
+
+							<div style="text-align: center;" class="span9 field-box">
+								<input type="button" id="btn_submit" value="Submit" class="btn-glow primary">
+								<span>OR</span>
+								<a href="travel_expenses.shtml">Cancel</a>							</div>
+						</form>
+					</div>
+				</div>
+            </div>
+		</div>
+    </div>
+	<div class="example-container">
+								<pre class="code" style="display:none;" id="err_msg">
+									var statesdemo = {
+										state0: {
+											title: message,
+											buttons: {  OK: 1 },
+											submit:function(e,v,m,f){ 
+												if(v==1) {
+													$.prompt.close();
+												}
+											}
+										},
+										
+									};
+									$.prompt(statesdemo);
+								</pre>
+</div>
+    <!-- end main container -->
+
+	
+	<script src="js/jquery.min.js"></script>
+	<script src="bootstrap/js/bootstrap.min.js"></script>
+	<!-- validation -->
+    <script src="lib/validation/jquery.validate.min.js"></script>
+	<script type="text/javascript" src="js/jquery-impromptu.js"></script>
+	<script src="js/jquery-ui-1.9.1.custom.js"></script>
+	<script src="lib/datepicker/bootstrap-datepicker.min.js"></script>
+	<script src="js/expense.js"></script>
+	
+<script type="text/javascript">
+var type_options='<!--HIT_EXECUTE _HIT_HTMLTXT:=Mileage_ExpenseTypes_HTMLPopup-->';
+	$(document).ready(function() {
+	
+		<!--#4DIF (Records in selection([Mileage])=0)-->
+	var new_uuid='<!--#4DVAR Generate UUID-->';
+	
+		$('#mileage_uuid').val(new_uuid);
+		$('#tax_rate').val("20");
+		<!--#4DELSE--><!--#4DENDIF-->
+		
+		$('#dp1 i.splashy-calendar_day').click(function(){
+			$('#start_date').datepicker( "show" );
+		});
+		$('#dp2 i.splashy-calendar_day').click(function(){
+			$('#end_date').datepicker( "show" );
+		});
+		
+		$(document).click(function(event){
+			//console.log($(event.target).closest('div').attr('id'));
+			if($(event.target).closest('div').attr('id')!='dp1') {
+				$('#start_date').datepicker( "hide" );
+			}
+			if($(event.target).closest('div').attr('id')!='dp2') {
+				$('#end_date').datepicker( "hide" );
+			}
+		});
+		
+		$('#start_date').datepicker({"autoclose": true}).on('changeDate', function (ev) {
+			var arrStartDate= $('#start_date').val().split('/');
+			var dateText = new Date(arrStartDate[1]+'/'+arrStartDate[0]+'/'+arrStartDate[2]);
+			
+			$('#end_date').datepicker('setStartDate', dateText);
+		});
+		
+		$('#end_date').datepicker({"autoclose": true}).on('changeDate', function (ev) {
+			var arrEndDate= $('#end_date').val().split('/');
+			var dateText = new Date(arrEndDate[1]+'/'+arrEndDate[0]+'/'+arrEndDate[2]);
+			
+			$('#start_date').datepicker('setEndDate', dateText);
+		});
+		var arrStartDate= $('#start_date').val().split('/');
+		var dateText = new Date(arrStartDate[1]+'/'+arrStartDate[0]+'/'+arrStartDate[2]);
+			
+		$('#end_date').datepicker('setStartDate', dateText);
+		var arrEndDate= $('#end_date').val().split('/');
+		var dateText = new Date(arrEndDate[1]+'/'+arrEndDate[0]+'/'+arrEndDate[2]);
+			
+		$('#start_date').datepicker('setEndDate', dateText);
+		
+		$.validator.setDefaults({
+			onkeyup: false,
+				errorClass: 'error',
+				validClass: 'valid',
+				highlight: function(element) {
+					$(element).closest('div').addClass("f_error");
+				},
+				unhighlight: function(element) {
+					$(element).closest('div').removeClass("f_error");
+				},
+				errorPlacement: function(error, element) {
+					$(element).closest('div').append(error);
+				},
+		});
+		
+		$('#btn_submit').click(function(){
+			$('.form_validation_reg').removeData('validator');
+			$('.form_validation_reg').validate({
+
+				ignore: "",				
+				rules: {
+					inv_no: { required: true, digits: true, min: 1 },
+					start_mile: { required: true, number: true },
+					end_mile: { required: true, number: true  },
+					distance: { required: true, number: true },
+					price_per: { required: true, number: true  },
+					start_date: { required: true  },
+					end_date: { required: true },
+					tax_amount: { required: true, number: true  },
+					total_amount: { required: true, number: true  },
+					tax_rate: { required: true, number: true },
+				},
+			});	
+			if($('.form_validation_reg').valid()){
+				$('.form_validation_reg').submit();
+			}
+		});
+			
+			
+});
+
+</script>
+
+
+
+</body>
+</html>

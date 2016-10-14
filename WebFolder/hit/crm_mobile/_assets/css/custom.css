@@ -1,0 +1,161 @@
+.jqm-demos .jqm-header{
+	background:#28303A;
+	border-top:3px solid #08C;
+}
+
+.jqm-demos .jqm-header h2 img{
+
+	width: 78%;
+height: auto;
+padding-top: 7px;
+}
+
+
+.jqm-demos .jqm-header .ui-btn {
+    width: 2em;
+    height: 2em;
+    background: #fff;
+    border: 0px none;
+    top: 50%;
+    margin-top: -1em;
+    border-radius: 0.3125em;
+    opacity: 1.0;
+}
+
+.jqm-demos .jqm-header p{
+	text-shadow:none;
+	font-size:13px;
+	text-transform:none!important;
+}
+
+.jqm-demos .jqm-header p a{
+	color:#fff;
+
+}
+
+
+p{
+	font-size:13px;
+	line-height:20px;
+	color:#1C1C1C;
+}
+
+
+
+.ui-page-theme-a a, html .ui-bar-a a, html .ui-body-a a, html body .ui-group-theme-a a{
+	font-weight:normal;
+	text-decoration:none;
+	font-size:13px;
+}
+.ui-table th, .ui-table td{
+	font-size:13px;
+	padding: 10px 20px;
+	
+}
+
+
+.jqm-demos .jqm-footer{
+	border-top:2px solid #08C;
+	background:#3A3A3A;
+	color:#fff;
+	text-shadow:none;
+}
+
+@media (min-width: 60em) {
+
+.jqm-demos .jqm-navmenu-panel{
+	border-right:1px solid #ddd;
+	border-bottom:1px solid #ddd;
+	width:24%;
+	
+}
+
+}
+
+
+.ui-block-a, .ui-bar-a{
+	background:none;
+	border:none;
+
+}
+
+
+.floatright{
+	float:right;
+	text-align:right;
+}
+
+.ui-input-search{
+	background:none!imoortant;
+	border:none!important;
+}
+
+.success {
+	
+	border:none;
+	
+    background: #08C none repeat scroll 0% 0%;
+    border-radius:5px!important;
+	text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.3);
+	text-align:center;
+  
+    font-weight: 600;
+	color:#fff!important;
+}
+
+.success a{
+	text-align:center;
+	color:#fff!important;
+	text-shadow:none;
+	line-height:32px;
+	padding:6px 10px;
+	
+	
+}
+
+.success:hover{
+	background: #2C2C2C!important;
+	
+}
+
+.ui-btn2 {   
+    display: block;
+position: relative;
+text-align: left;
+text-overflow: ellipsis;
+overflow: hidden;
+white-space: nowrap;
+cursor: pointer;
+-moz-user-select: none;
+font-size: 13px;
+padding: -1px;
+margin: -3px !important;
+}
+
+.jqm-block-content{
+	border:none;
+	background:none;
+}
+
+
+.ui-datepicker-calendar th {
+    background-color: #38C;
+    color: #FFF;
+    text-shadow: none !important;
+    font-size: 13px;
+    padding-bottom: 0.4em;
+    padding-top: 0.4em;
+}
+
+.ui-datepicker-calendar th {
+    color: #FFF;
+    text-shadow: none !important;
+    font-size: 13px;
+}
+
+.ui-datepicker-calendar th span, .ui-datepicker-calendar span.ui-state-default{
+	opacity:0.9;
+}
+
+
+

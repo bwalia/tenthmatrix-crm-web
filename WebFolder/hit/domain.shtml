@@ -1,0 +1,1243 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+C_TEXT(_HTMLTITLETXT)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+QUERY([domains];[domains]uuid=_HIT_WebApp_GetField ("uuid"))
+QUERY([Companies];[Companies]uuid=[domains]uuid_client)
+QUERY([Projects];[Projects]uuid=[domains]uuid_project)
+
+IF (Records in selection([domains])=0)
+_HTMLTITLETXT:="New domain"
+ELSE
+_HTMLTITLETXT:= "Edit domain"
+END IF
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+-->
+<!DOCTYPE html>
+<html>
+<head>
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+	<!-- <link rel="stylesheet" href="css/base/jquery-ui.css" /> -->
+<link rel="stylesheet" href="css/autocomplete.css" />
+<link rel='stylesheet' type='text/css' href='css/style.css' />
+<link rel='stylesheet' type='text/css' href='css/print.css' media="print" />
+<link href="css/img-tabs.css" type="text/css" rel="stylesheet">
+<link rel="stylesheet" media="all" type="text/css" href="css/jquery-impromptu.css" />
+<style>
+#message{
+	color:#FF0000;
+}
+
+
+.table-wrapper{
+	margin-bottom:5px!important;
+}
+.table-wrapper .table ul.actions{
+	float:left;
+}
+#items input{
+	width:50px;
+}
+
+#DomainForm em.error {
+	margin-left: 10px;
+	width: auto;
+	display: inline;
+}
+#DomainForm em.error {
+	color: red;
+	font-style: italic;
+}
+#DomainForm input.error, textarea.error, select.error{
+	border: 1px solid red;
+}
+</style>
+</head>
+<body>
+
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
+
+
+	<!-- main container -->
+    <div class="content">
+        
+        <div class="container-fluid">
+            <div id="pad-wrapper" class="form-page">
+				 <div class="row-fluid header">
+					<h3><!--#4DIF (Records in selection([domains])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Domain</h3>
+                </div>
+                <div class="row-fluid form-wrapper">
+					<!-- left column -->
+                    <div class="span11 with-sidebar">
+						<form name="DomainForm" id="DomainForm" action="savedomain.cgi" class="form-comment" method="post" >	
+						
+						<input name="domain_uuid" class="span9" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="domain_uuid"> 
+						
+						 <div class="field-box">
+								<label>Domain <span style="color:#6E829B">*</span></label>
+								<input name="domain_name" class="span3" type="text" onKeyUp="sub_domains_name()" onkeypress="sub_domains_name()" value="<!--#4DVAR [domains]domain_name-->" id="domain_name">
+							</div>
+												
+							<div class="field-box" style="width:50%">
+								<label>Client Name <span style="color:#6E829B">*</span></label>
+								<div class="ui-widget">
+									<select id="Client_ID" name="Client_ID">
+									<!--#4DIF (Records in selection([domains])=0)-->
+										<option value=""></option>
+									<!--#4DSCRIPT/Web_LoadCustomers/-->
+									 <!--4DLOOP  [Companies]-->
+										<option value="<!--4DVAR [Companies]account_Number-->"  ><!--4DVAR [Companies]company_Name--></option>		
+									 <!--4DENDLOOP-->
+									 <!--#4DELSE-->
+										 <option value="<!--4DVAR [Companies]account_Number-->" selected><!--4DVAR [Companies]company_Name--></option>									 
+										 <!--#4DENDIF-->
+									</select>
+								</div>
+							</div>
+							
+							<div class="field-box" style="width:50%">
+								<label>Project <span style="color:#6E829B">*</span></label>
+								<div class="ui-widget" id="div_proj">
+									<Select name="Project_ID" id="Project_ID">
+									<!--#4DIF (Records in selection([domains])=0)-->
+										<option value=""></option>
+									<!--#4DSCRIPT/Web_LoadProjects/-->
+									<!--4DLOOP [Projects]-->
+										<option value="<!--#4DVAR [Projects]proj_id-->" ><!--4DVAR [Projects]proj_name--></option>
+									<!--4DENDLOOP--> 
+									 <!--#4DELSE-->
+										 <option value="<!--#4DVAR [Projects]proj_id-->" selected><!--4DVAR [Projects]proj_name--></option>									 
+									 <!--#4DENDIF-->
+									</select>
+								</div>
+							</div>
+							
+							       
+							 <div class="field-box" style="width:50%">
+								<label>Domain Expiary Date <span style="color:#6E829B">*</span></label>
+								<input name="domain_expiry_date" class="span6 datepicker " data-date-format="dd/mm/yyyy" type="text" <!--#4DIF ([domains]domain_expiry_date=!00/00/00!)-->value=""<!--4DELSE-->value="<!--#4DVAR [domains]domain_expiry_date-->"<!--4DENDIF--> id="domain_expiry_date" readonly >
+							</div>
+							<div class="field-box" style="width:50%">
+								<label>Domain Renewal Date </label>
+								<input name="domain_renewal_date" class="span6 datepicker" data-date-format="dd/mm/yyyy" type="text" <!--#4DIF ([domains]domain_renewal_date=!00/00/00!)-->value=""<!--4DELSE-->value="<!--#4DVAR [domains]domain_renewal_date-->"<!--4DENDIF--> id="domain_renewal_date" readonly >                                
+							</div>
+							<div class="field-box" style="width:50%">
+								<label>Modified By </label>
+								<div class="ui-select span6">
+								<select name="managed_by_uuid" id="managed_by_uuid">
+										<!--#4DSCRIPT/Web_LoadEmployees/-->
+										<!--4DLOOP  [Employees]-->
+											<option value="<!--4DVAR [Employees]uuid-->" <!--#4DIF ([domains]managed_by_uuid=[Employees]uuid)-->selected<!--4DELSE--><!--4DENDIF-->><!--4DVAR [Employees]emp_first_name--> <!--4DVAR [Employees]emp_last_name--></option>
+										<!--4DENDLOOP-->	
+									</select>	
+								</div>					
+							</div>
+							<div class="field-box" style="width:50%">
+									<label>Currency Code</label>
+									<input name="currency_code" class="span6" type="text" value="<!--#4DVAR [domains]currency_code -->" id="currency_code">
+								</div>
+							<div class="field-box" style="width:50%">
+								<label>Cost Price </label>
+								<input name="cost_price" class="span6" type="text" value="<!--#4DVAR [domains]cost_price-->" id="cost_price">
+							</div>						   
+							<div class="field-box" style="width:50%">
+								<label>Sales Price </label>
+								<input name="sales_price" class="span6" type="text" value="<!--#4DVAR [domains]sales_price-->" id="sales_price">						
+							</div>
+							
+							<div class="field-box" style="width:50%">
+								<label>Domain Age </label>
+								<!--<input name="domain_age" class="span6" type="text" value="" id="domain_age">-->
+								<div class="ui-select span6">
+								<select name="domain_age" id="domain_age" >
+									<option value="">--Select Domain Age--</option>
+									<option value="1" <!--#4DIF ([domains]domain_age="1")-->selected<!--4DELSE--><!--4DENDIF--> >1</option>
+									<option value="2" <!--#4DIF ([domains]domain_age="2")-->selected<!--4DELSE--><!--4DENDIF--> >2</option>
+									<option value="3" <!--#4DIF ([domains]domain_age="3")-->selected<!--4DELSE--><!--4DENDIF--> >3</option>
+									<option value="5" <!--#4DIF ([domains]domain_age="5")-->selected<!--4DELSE--><!--4DENDIF--> >5</option>
+									<option value="10" <!--#4DIF ([domains]domain_age="10")-->selected<!--4DELSE--><!--4DENDIF--> >10</option>
+								</select>
+								</div>
+							</div>
+							<div class="field-box" style="width:50%">
+								<label>Status </label>
+								<div class="ui-select span6">
+								<select name="domain_status" id="domain_status">
+									<option value="">--Select Status--</option>
+									<option value="Nearly Expired" <!--#4DIF ([domains]domain_status="Nearly Expired")-->selected<!--4DELSE--><!--4DENDIF--> >Nearly Expired</option>
+									<option value="Active" <!--#4DIF ([domains]domain_status="Active")-->selected<!--4DELSE--><!--4DENDIF--> >Active</option>
+									<option value="Expired" <!--#4DIF ([domains]domain_status="Expired")-->selected<!--4DELSE--><!--4DENDIF--> >Expired</option>
+								</select>	
+								</div>
+							</div>
+							
+							<!--<div class="span12 field-box">
+								<label>Renew </label>
+								<label class="checkbox">														
+								<input name="renew" class="span9" type="radio" value="true" id="renew_yes" >Yes
+							</label>   
+							<label class="checkbox">							
+								<input name="renew" class="span9" type="radio" value="true" id="renew_no" >No
+							</label>   
+							</div>-->
+							<div class="field-box">
+								<label>Comments </label>
+								<textarea  class="span9" rows="1" name="comments" id="comments"><!--#4DVAR [domains]comments--></textarea>
+							</div>	
+							<div class="field-box">
+								<div class="tabbable">
+									<ul class="nav nav-tabs">
+										<li id="li1" class="active"><a href="#tab1" data-toggle="tab" >Live</a></li>
+										<li id="li2"><a href="#tab2" data-toggle="tab" >Staging</a></li>
+										<li id="li3"><a href="#tab3" data-toggle="tab" >Dev</a></li>
+									</ul>
+								</div>
+								<div class="tab-content">
+									<div class="tab-pane active" id="tab1">
+										<div class="row-fluid">
+											<div class="span12">
+												<div class="row-fluid">
+													<div class="span12">
+														<div class="form-horizontal well">
+															<fieldset>
+																<div class="control-group">
+																	<label class="control-label">Name</label>
+																	<div class="controls">
+																		<input readonly name="live_domain_name" class="span6" type="text" value="" id="live_domain_name" style="background:#FFF;">
+																	</div>
+																</div>
+																<div class="control-group">
+																	<label class="control-label">Server </label>
+																	<div class="ui-widget" style="margin-left: 180px;">
+																		<select name="server_uuid_live" id="server_uuid_live" style="background:#FFF;">
+																		
+																		</select>
+																	</div>
+																</div>
+																<div class="control-group">
+																	<label class="control-label">Root Path</label>
+																	<div class="controls">
+																		<input readonly name="live_root_path" class="span6" type="text" value="" id="live_root_path" style="background:#FFF;">
+																	</div>
+																</div>
+																<div class="control-group">
+																	<label class="control-label">Lan IP Address</label>
+																	<div class="controls">
+																		<input readonly name="live_lan_ip_add" class="span6" type="text" value="" id="live_lan_ip_add" style="background:#FFF;">
+																	</div>
+																</div>
+																<div class="control-group">
+																	<label class="control-label">Wan IP Address</label>
+																	<div class="controls">
+																		<input readonly name="live_wan_ip_add" class="span6" type="text" value="" id="live_wan_ip_add" style="background:#FFF;">
+																	</div>
+																</div>
+															</fieldset>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="tab-pane" id="tab2">
+										<div class="row-fluid">
+											<div class="span12">
+												<div class="row-fluid">
+													<div class="span12">
+														<div class="form-horizontal well">
+															<fieldset>
+																<div class="control-group">
+																	<label class="control-label">Name</label>
+																	<div class="controls">
+																		<input readonly name="staging_domain_name" class="span5" type="text" value="" id="staging_domain_name" style="background:#FFF;">
+																	</div>
+																</div>
+																<div class="control-group">
+																	<label class="control-label">Server </label>
+																	<div class="ui-widget" style="margin-left: 180px;">
+																		<select name="server_uuid_staging" id="server_uuid_staging" >
+
+																		</select>
+																	</div>
+																</div>
+																<div class="control-group">
+																	<label class="control-label">Root Path</label>
+																	<div class="controls">
+																		<input readonly name="staging_root_path" class="span5" type="text" value="" id="staging_root_path" style="background:#FFF;">
+																	</div>
+																</div>
+																<div class="control-group">
+																	<label class="control-label">Lan IP Address</label>
+																	<div class="controls">
+																		<input readonly name="staging_lan_ip_add" class="span5" type="text" value="" id="staging_lan_ip_add" style="background:#FFF;">
+																	</div>
+																</div>
+																<div class="control-group">
+																	<label class="control-label">Wan IP Address</label>
+																	<div class="controls">
+																		<input readonly name="staging_wan_ip_add" class="span5" type="text" value="" id="staging_wan_ip_add" style="background:#FFF;">
+																	</div>
+																</div>
+															</fieldset>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="tab-pane" id="tab3">
+										<div class="row-fluid">
+											<div class="span12">
+												<div class="row-fluid">
+													<div class="span12">
+														<div class="form-horizontal well">
+															<fieldset>
+																<div class="control-group">
+																	<label class="control-label">Name</label>
+																	<div class="controls">
+																		<input readonly name="dev_domain_name" class="span5" type="text" value="" id="dev_domain_name" style="background:#FFF;">
+																	</div>
+																</div>
+																<div class="control-group">
+																	<label class="control-label">Server </label>
+																	<div class="ui-widget" style="margin-left: 180px;">
+																		<select name="server_uuid_dev" id="server_uuid_dev" >
+
+																		</select>
+																	</div>
+																</div>
+																<div class="control-group">
+																	<label class="control-label">Root Path</label>
+																	<div class="controls">
+																		<input readonly name="dev_root_path" class="span5" type="text" value="" id="dev_root_path" style="background:#FFF;">
+																	</div>
+																</div>
+																<div class="control-group">
+																	<label class="control-label">Lan IP Address</label>
+																	<div class="controls">
+																		<input readonly name="dev_lan_ip_add" class="span5" type="text" value="" id="dev_lan_ip_add" style="background:#FFF;">
+																	</div>
+																</div>
+																<div class="control-group">
+																	<label class="control-label">Wan IP Address</label>
+																	<div class="controls">
+																		<input readonly name="dev_wan_ip_add" class="span5" type="text" value="" id="dev_wan_ip_add" style="background:#FFF;">
+																	</div>
+																</div>
+															</fieldset>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>	
+							
+							 <div class="table-wrapper orders-table section">
+							 
+							 <div class="row-fluid head">
+                        <div class="span12">
+                            <h4>Domains(DNS)</h4>
+                        </div>
+                    </div>
+                    <div class="row-fluid filter-block">
+						
+                    
+							
+							<div id="tabs" >
+						<ul >
+							<li ><a style="color:#000000" href="#tabs-1">A, AAAA, CNAME Records</a></li>
+							<li ><a style="color:#000000" href="#tabs-2">MX Records</a></li>
+							<li ><a style="color:#000000" href="#tabs-3">TXT Records</a></li>
+							<li ><a style="color:#000000" href="#tabs-4">SRV Records</a></li>
+							<li ><a style="color:#000000" href="#tabs-5">Zone Settings</a></li>
+						</ul>
+						<div id="tabs-1" class="dns_tab" >
+					
+					
+						<div class="pull-right">
+                            <div class="btn-group pull-right">
+								<a id="a_delrecords" href="javascript:void(0)" onClick="delete_dns('a_chk')" title="Delete Selected Records" class="btn-flat success new-product margn-lft35">Delete Selected Records</a>
+                                <a id="a_addrow" href="javascript:void(0)" title="Add New Domain(DNS)" class="btn-flat success new-product margn-lft35">+ Add New Domain(DNS)</a>
+                            </div>
+							 <input name="keyword" type="text" class="search order-search" placeholder="Search..." value="" />
+                        </div>
+
+						<div class="row-fluid tbl_dns" style="max-height: 300px;overflow-y:scroll; border-bottom:1px solid #DAE3E9; border-top:1px solid #DAE3E9; margin-top:50px;">
+                        <table id="items" style="margin:0px;">
+                            <thead >
+                                <tr>
+									<th ><input type="checkbox" id="a_chk_all"></th>
+                                    <th >Host (Domain)</th>
+                                    <th >TTL (Seconds)</th>
+                                    <th >Type</th>
+									<th >Target(IPv4 Address)</th>
+                                    <th >Comment</th>
+									<th >Actions</th>
+									 
+                                </tr>
+                            </thead>
+							
+                            <tbody id="a_records">
+                           
+                            </tbody>
+                        </table>
+						</div>
+                   
+					
+				</div>
+					<div id="tabs-2" class="dns_tab" > 
+							<div class="pull-right">
+                            <div class="btn-group pull-right">
+							<a id="mx_delrecords" href="javascript:void(0)" onClick="delete_dns('mx_chk')" title="Delete Selected Records" class="btn-flat success new-product margn-lft35">Delete Selected Records</a>
+                                <a id="mx_addrow" href="javascript:void(0)" title="Add New Domain(DNS)" class="btn-flat success new-product margn-lft35">+ Add New Domain(DNS)</a>
+                            </div>
+							<input name="keyword" type="text" class="search order-search" placeholder="Search..." value="" />
+                        </div>
+						<div class="row-fluid tbl_dns" style="max-height: 300px;overflow-y:scroll; border-bottom:1px solid #DAE3E9; border-top:1px solid #DAE3E9; margin-top:50px;">			
+                        <table id="items" style="margin:0px;">
+                            <thead >
+                                <tr class="item">
+									<th ><input type="checkbox" id="mx_chk_all"></th>
+                                    <th >Host (Domain)</th>
+                                    <th >TTL (Seconds)</th>
+                                    <th >Type</th>
+									<th >Priority</th>
+									<th >Target</th>
+                                    <th >Comment</th>
+									<th >Actions</th> 
+                                </tr>
+                            </thead>
+								
+                            <tbody id="mx_records">
+                           
+                            </tbody>
+                        </table>
+						</div>
+
+					</div>
+					<div id="tabs-3" class="dns_tab" > 
+					<div class="pull-right">
+                            <div class="btn-group pull-right">
+							<a id="txt_delrecords" href="javascript:void(0)" onClick="delete_dns('txt_chk')" title="Delete Selected Records" class="btn-flat success new-product margn-lft35">Delete Selected Records</a>
+                                <a id="txt_addrow" href="javascript:void(0)" title="Add New Domain(DNS)" class="btn-flat success new-product margn-lft35">+ Add New Domain(DNS)</a>
+                            </div>
+							<input name="keyword" type="text" class="search order-search" placeholder="Search..." value="" />
+                        </div>
+						<div class="row-fluid tbl_dns" style="max-height: 300px;overflow-y:scroll; border-bottom:1px solid #DAE3E9; border-top:1px solid #DAE3E9; margin-top:50px;">
+					<table id="items" style="margin:0px;">
+                            <thead >
+                                <tr class="item">
+									<th ><input type="checkbox" id="txt_chk_all"></th>
+                                    <th >Host (Domain)</th>
+                                    <th >TTL (Seconds)</th>
+                                    <th >Type </th>
+									<th >Text</th>
+									<th >Comment</th>
+                                    <th >Validate</th>
+									<th >Actions</th> 
+                                </tr>
+                            </thead>
+								
+                            <tbody id="txt_records">
+                           
+                            </tbody>
+                        </table>
+						</div>
+					</div>
+					<div id="tabs-4" class="dns_tab" > 
+					<div class="pull-right">
+                            <div class="btn-group pull-right">
+							<a id="srv_delrecords" href="javascript:void(0)" onClick="delete_dns('srv_chk')" title="Delete Selected Records" class="btn-flat success new-product margn-lft35">Delete Selected Records</a>
+                                <a id="srv_addrow" href="javascript:void(0)" title="Add New Domain(DNS)" class="btn-flat success new-product margn-lft35">+ Add New Domain(DNS)</a>
+                            </div>
+							<input name="keyword" type="text" class="search order-search" placeholder="Search..." value="" />
+                        </div>
+						<div class="row-fluid tbl_dns" style="max-height: 300px;overflow-y:scroll; border-bottom:1px solid #DAE3E9; border-top:1px solid #DAE3E9; margin-top:50px;">
+					<table id="items" style="margin:0px;">
+                            <thead >
+                                <tr class="item">
+									<th ><input type="checkbox" id="srv_chk_all"></th>
+                                    <th >_Service</th>
+                                    <th >_Protocol</th>
+                                    <th >Host (Domain)</th>
+									<th >TTL (Seconds)</th>
+									<th >Type</th>
+                                    <th >Priority</th>
+									<th >Weight</th>
+									<th >Port</th>
+									<th >Target</th>
+									<th >Comment</th>
+									<th >Actions</th>
+                                </tr>
+                            </thead>
+								
+                            <tbody id="srv_records">
+                            
+                            </tbody>
+                        </table>
+						</div>
+					</div>
+					<div id="tabs-5" > 
+					<div class="field-box">
+								<label>Zone Comment </label>
+								<textarea  class="span9" rows="1" name="zone_comment" id="zone_comment" ><!--#4DVAR [domains]zone_comment--></textarea>
+							</div>
+					</div>
+
+			</div>
+			</div>
+			</div>				
+													
+                            
+							<div class="span11 field-box" style="text-align:center; ">
+								<input type="submit" class="btn-glow primary" value="Submit">
+								
+								<a href="domains.shtml" CLASS="cancelbtn">Cancel</a>
+								<!-- <input type="reset" value="Cancel" class="reset"> -->
+							</div>
+						</form>
+                    </div>
+				</div>
+            </div>
+        </div>
+    </div>
+    <!-- end main container -->
+
+
+
+	<!-- scripts -->
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+	<!-- <script src="js/ui/jquery-ui.js"></script> -->
+	<script src="js/bootstrap.datepicker.js"></script>
+	<script src="js/jquery.uniform.min.js"></script>
+	<script type="text/javascript" src="js/jquery-impromptu.js"></script>
+	<script type='text/javascript' src='js/zones.js'></script>
+	<script src="js/jquery.validate.js"></script>
+	<!-- call this page plugins -->
+
+<script type="text/javascript">
+
+ var start=0, end=25;
+ var old_srch='',keyword='', jsonRaw='';
+ var complete=false;	
+var tablname='domain_dns_zones';
+var zonetype='ac_records';
+var domain_uuid=$('#domain_uuid').val();
+var server_data=new Array();
+	
+function get_tab_data(serverType){
+	<!--#4DIF (Records in selection([domains])=1)-->
+		jsonServersDropdown = 'getserverdetails.cgi?server_type='+serverType+'&domain_uuid=<!--#4DVAR [domains]uuid-->';
+	<!--#4DELSE-->	
+		jsonServersDropdown = 'getserversonsearch.cgi?server_type='+serverType;
+	<!--#4DENDIF-->
+	load_servers_dropdown(jsonServersDropdown,serverType);
+}
+
+	$(function () {
+		sub_domains_name();
+		//active tab
+		get_tab_data('live');
+		get_tab_data('staging');
+		get_tab_data('dev');
+		
+		<!--#4DIF (Records in selection([domains])=0)-->		
+		var domain_uuid='<!--#4DVAR Generate UUID-->';	
+		$('#domain_uuid').val(domain_uuid);
+		<!--#4DELSE--><!--#4DENDIF-->
+	
+		// datepicker plugin
+		//$( "#Date_Added" ).datepicker();
+		$('#domain_renewal_date').datepicker({"autoclose": true});
+		$('#domain_expiry_date').datepicker({"autoclose": true}).on('changeDate', function (ev) {
+			set_status();
+		});
+		
+		// add uniform plugin styles to html elements
+        $("input:checkbox, input:radio").uniform();
+		
+		$( "#tabs" ).tabs();
+		
+		$('#tabs').on('click', 'a.ui-tabs-anchor', function(){
+			var curr_tab= $(this).attr('href');
+			var num_rows= $(curr_tab).find('table tbody tr').length;
+			end= num_rows;
+			complete=false;
+			keyword= $(curr_tab).find('.search').val();
+			if(curr_tab=='#tabs-1'){ zonetype='ac_records'; }
+			else if(curr_tab=='#tabs-2'){ zonetype='mx_records'; }
+			else if(curr_tab=='#tabs-3'){ zonetype='txt_records'; }
+			else if(curr_tab=='#tabs-4'){ zonetype='srv_records'; }
+			//$(curr_tab).find('table tbody').html('');
+			//jsonRaw = 'loaddnsrecords.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&type='+zonetype+'&domain_uuid='+domain_uuid;
+//			if(keyword!=''){
+//				jsonRaw +='&keyword='+keyword;
+//			}	
+			//load_data(jsonRaw,zonetype);
+		});
+
+		jsonRaw='loaddnsrecords.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&type=ac_records&domain_uuid='+domain_uuid;		
+		load_data(jsonRaw,'ac_records');
+		jsonRaw='loaddnsrecords.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&type=mx_records&domain_uuid='+domain_uuid;		
+		load_data(jsonRaw,'mx_records');
+		jsonRaw='loaddnsrecords.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&type=txt_records&domain_uuid='+domain_uuid;		
+		load_data(jsonRaw,'txt_records');
+		jsonRaw='loaddnsrecords.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&type=srv_records&domain_uuid='+domain_uuid;		
+		load_data(jsonRaw,'srv_records');
+		
+		$('.tbl_dns').scroll(function(){
+		keyword= $(this).find('.search').val();
+		if ($(this).find('table').height() == $(this).scrollTop() + Math.round($(this).height()) -1){
+		console.log(complete);
+		if(complete==false) {
+			//$('#img_loading_div').show();
+			//alert("scrolling...");
+			start=end+1;
+			end=start+25;
+			jsonRaw = 'loaddnsrecords.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&type='+zonetype+'&domain_uuid='+domain_uuid;
+			if(keyword!=''){
+				jsonRaw +='&keyword='+keyword;
+			}	
+			load_data(jsonRaw,zonetype);
+		}
+		
+		}
+	});	
+		
+		//setup before functions
+	var typingTimer;                //timer identifier
+	var doneTypingInterval = 1000;  //time in ms, 5 second for example
+	
+	//on keyup, start the countdown
+	$('.search').keyup(function(){
+		keyword= $(this).val();
+		var curr_table=$(this).parents('.dns_tab').find('table');
+		
+		clearTimeout(typingTimer);
+		
+			typingTimer = setTimeout(function(){
+				//do stuff here e.g ajax call etc....
+				curr_table.find('tbody').html('');
+				//$('#img_loading_div').show();
+				start=0;
+				end=start+25;
+				jsonRaw = 'loaddnsrecords.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&type='+zonetype+'&domain_uuid='+domain_uuid;
+				if(keyword!=''){
+					jsonRaw +='&keyword='+keyword;
+				}
+	
+				load_data(jsonRaw,zonetype);
+			}, doneTypingInterval);
+		
+	});	
+		// validate form on keyup and submit
+		$("#DomainForm").validate({
+			ignore: "",
+			onkeyup: false,
+			errorClass: 'error',
+			validClass: 'valid',
+			errorElement: "em",
+			errorPlacement: function(error, element) {
+				$(element).closest('div').append(error);
+			},
+			rules: {
+				domain_name : { required: true },
+				Client_ID : { required: true },
+				Project_ID : { required: true },
+				domain_expiry_date : { required: true },
+			},
+		});
+	});
+function toTimestamp(year,month,day,hour,mins,secs){
+	var datum = new Date(Date.UTC(year,month,day,hour,mins,secs));
+	return datum.getTime()/1000;
+}
+function get_unix_timestamp(ndate){
+	var date_arr= ndate.split('/');
+	var date_val = date_arr[1]+'/'+date_arr[0]+'/'+date_arr[2]
+	var full_date=new Date(date_val);
+	unix_timestamp = toTimestamp(full_date.getFullYear(),full_date.getMonth(),full_date.getDate(),0,0,0);
+	return unix_timestamp;
+}
+function set_status(){
+	var domain_expiry_date=$("#domain_expiry_date").val();
+	if(expiry_date!=''){
+		var expiry_date= get_unix_timestamp(domain_expiry_date);
+		
+		var n_date=new Date();
+		var n_curr_date=String(n_date.getDate())+'/'+String(n_date.getMonth()+1)+'/'+String(n_date.getFullYear());
+		var curr_date= get_unix_timestamp(n_curr_date);
+		var checkdate =   Math.floor((expiry_date-curr_date)/86400);
+		
+	switch(true)
+		{
+		case (checkdate == 0):
+			$('#domain_status').val('Expired');
+			break;
+		case (checkdate <= 30) :
+			$('#domain_status').val('Nearly Expired');
+			break;
+		default:
+			$('#domain_status').val('Active');
+		}
+	}
+}
+
+function get_projects(){
+		$('#div_proj').find('.ui-autocomplete-input').val('');
+		var jsonRow = 'getprojectsonsearch.cgi?srch=&client='+$('#Client_ID').val();
+		$.getJSON(jsonRow,function(result){	
+			if(result){
+				var html='<option value=""></option>';
+
+				$.each(result, function(i,item)
+				{
+					html += '<option value="'+item.id+'">'+item.value+'</option>';
+				});
+				$('#Project_ID').html(html);
+			}
+		});
+	}
+function sub_domains_name(){
+	var main_name= $("#domain_name").val();
+	if(main_name!=""){
+		main_name = main_name.replace("www.", "");
+
+		$('#dev_domain_name').val('dev.'+main_name);
+		$('#staging_domain_name').val('staging.'+main_name);
+		$('#live_domain_name').val(main_name);
+	}
+}
+function fill_details(server_type){
+	var server_uuid=$('#server_uuid_'+server_type).val();
+	if(server_uuid!=''){
+		$('#'+server_type+'_lan_ip_add').val(server_data[server_uuid]['lan_ip']);
+		$('#'+server_type+'_root_path').val(server_data[server_uuid]['root_path']);
+		$('#'+server_type+'_wan_ip_add').val(server_data[server_uuid]['wan_ip']);
+	}
+	else{
+		$('#'+server_type+'_lan_ip_add').val('');
+		$('#'+server_type+'_root_path').val('');
+		$('#'+server_type+'_wan_ip_add').val('');
+	}
+}
+function load_servers_dropdown(jsonrow,server_type){
+	$.getJSON(jsonrow,function(result){
+		if(!result.Error){
+			var html='';
+			var new_flag=false;
+			var dropdown='';
+
+			$.each(result, function(i,item)
+			{
+				html += '<option value="'+item.server_uuid+'"';
+				if(item.selected){
+					html += ' selected ';
+				}else{
+					new_flag=true;
+				}
+				html += '>'+item.server_name+'</option>';
+				server_data[item.server_uuid]=new Array();
+				server_data[item.server_uuid]['lan_ip']=item.lan_ip;
+				server_data[item.server_uuid]['wan_ip']=item.wan_ip;
+				server_data[item.server_uuid]['root_path']=item.root_path;
+			});
+			
+			if(new_flag==true){
+			dropdown +='<option value=""></option>';
+			}
+			dropdown +=html;
+			if(server_type=="live"){
+				$('#server_uuid_live').html(dropdown);
+				$( "#server_uuid_live" ).combobox();
+				fill_details('live');
+			}else if(server_type=="staging"){
+				$('#server_uuid_staging').html(dropdown);
+				$( "#server_uuid_staging" ).combobox();
+				fill_details('staging');
+			}else if(server_type=="dev"){
+				$('#server_uuid_dev').html(dropdown);
+				$( "#server_uuid_dev" ).combobox();
+				fill_details('dev');
+			}
+
+		}
+	});
+} 
+function load_data(jsonRaw,ztype){
+	var JSONdata=new Array();
+	$.getJSON(jsonRaw,function(result){
+			if(result.Alert){
+				//code = $('#no_rec_prompt').text();
+				//(new Function(code))();
+				if(ztype=='ac_records' && $('#tabs-1').is(':visible')) {
+					complete=true;
+				}
+				else if(ztype=='mx_records' && $('#tabs-2').is(':visible')) {
+					complete=true;
+				}
+				else if(ztype=='txt_records' && $('#tabs-3').is(':visible')) {
+					complete=true;
+				}
+				else if(ztype=='srv_records' && $('#tabs-4').is(':visible')) {
+					complete=true;
+				}
+				
+			}
+			else{
+				
+				if(ztype=='ac_records') {
+					$.each(result.uuid, function(i,item)
+					{
+						JSONdata[i]=new Array();
+						JSONdata[i][0]='<input class="a_chk" type="checkbox" value="'+item+'"><input type="hidden" class="uuid" value="'+item+'"/>';
+						JSONdata[i][6]='<a href="javascript:void(0)" class="editlink" title="Edit"><i class="table-edit"></i></a><a href="javascript:void(0)" class="savelink" style="display:none;text-decoration: none;" title="Save"><i class="table-save"></i></a>';
+						JSONdata[i][6]+='&nbsp;&nbsp;<a href="javascript:void(0)" class="removelink" title="Delete"><i class="table-delete"></i></a><a href="javascript:void(0)" style="display:none;text-decoration: none;" class="cancellink" title="Cancel"><i class="table-cancel"></i></a>';
+						
+					}); 
+					$.each(result.host, function(i,item)
+					{
+						JSONdata[i][1]='<span class="s_a_host">'+item+'</span><input class="a_host" style="display:none;" type="type" value="'+item+'"/>';
+					});
+					$.each(result.ttl, function(i,item)
+					{
+						JSONdata[i][2]='<span class="s_a_ttl">'+item+'</span><input class="a_ttl" style="display:none;" type="type" value="'+item+'"/>';
+						
+					});
+					$.each(result.zonetype, function(i,item)
+					{
+						JSONdata[i][3]='<span class="s_type">'+item+'</span><div class="ui-select div_type" style="display:none;"><select class="type" ><option value="IN A" ';
+						if(item=='IN A'){ JSONdata[i][3]+='selected' } 
+						JSONdata[i][3]+=' >IN A</option><option value="IN AAAA" ';
+						if(item=='IN AAAA'){ JSONdata[i][3]+='selected' } 
+						JSONdata[i][3]+=' >IN AAAA</option><option value="IN CNAME" ';
+						if(item=='IN CNAME'){ JSONdata[i][3]+='selected' } 
+						JSONdata[i][3]+=' >IN CNAME</option></select></div>';
+					});
+					$.each(result.targetip, function(i,item)
+					{
+						JSONdata[i][4]='<span class="s_a_target">'+item+'</span><input class="a_target" style="display:none;" type="type" value="'+item+'"/>';
+						
+					});
+					$.each(result.comment, function(i,item)
+					{					
+						JSONdata[i][5]='<span class="s_a_cmnt">'+item+'</span><input class="a_cmnt" style="display:none;" type="type" value="'+item+'"/>';
+					});
+				}
+				else if(ztype=='mx_records') {
+					$.each(result.uuid, function(i,item)
+					{
+						JSONdata[i]=new Array();
+						JSONdata[i][0]='<input class="mx_chk" type="checkbox" value="'+item+'"><input type="hidden" class="uuid" value="'+item+'"/>';
+						JSONdata[i][7]='<a href="javascript:void(0)" class="editlink" title="Edit"><i class="table-edit"></i></a><a href="javascript:void(0)" class="savelink" style="display:none;text-decoration: none;" title="Save"><i class="table-save"></i></a>';
+						JSONdata[i][7]+='&nbsp;&nbsp;<a href="javascript:void(0)" class="removelink" title="Delete"><i class="table-delete"></i></a><a href="javascript:void(0)" style="display:none;text-decoration: none;" class="cancellink" title="Cancel"><i class="table-cancel"></i></a></li>';
+						
+					}); 
+					$.each(result.host, function(i,item)
+					{
+						JSONdata[i][1]='<span class="s_mx_host">'+item+'</span><input class="mx_host" style="display:none;" type="type" value="'+item+'"/>';
+					});
+					$.each(result.ttl, function(i,item)
+					{
+						JSONdata[i][2]='<span class="s_mx_ttl">'+item+'</span><input class="mx_ttl" style="display:none;" type="type" value="'+item+'"/>';
+						
+					});
+					$.each(result.zonetype, function(i,item)
+					{
+						JSONdata[i][3]=item+'<input class="type" type="hidden" value="'+item+'"/>';
+					});
+					$.each(result.priority, function(i,item)
+					{
+						JSONdata[i][4]='<span class="s_mx_prty">'+item+'</span><input class="mx_prty" style="display:none;" type="text" value="'+item+'"/>';
+					});
+					$.each(result.targetip, function(i,item)
+					{
+						JSONdata[i][5]='<span class="s_mx_target">'+item+'</span><input class="mx_target" style="display:none;" type="type" value="'+item+'"/>';						
+					});
+					$.each(result.comment, function(i,item)
+					{					
+						JSONdata[i][6]='<span class="s_mx_cmnt">'+item+'</span><input class="mx_cmnt" style="display:none;" type="type" value="'+item+'"/>';
+					});
+				}
+				else if(ztype=='txt_records') {
+					$.each(result.uuid, function(i,item)
+					{
+						JSONdata[i]=new Array();
+						JSONdata[i][0]='<input class="txt_chk" type="checkbox" value="'+item+'"><input type="hidden" class="uuid" value="'+item+'"/>';
+						JSONdata[i][7]='<a href="javascript:void(0)" class="editlink" title="Edit"><i class="table-edit"></i></a><a href="javascript:void(0)" class="savelink" style="display:none;text-decoration: none;" title="Save"><i class="table-save"></i></a>';
+						JSONdata[i][7]+='&nbsp;&nbsp;<a href="javascript:void(0)" class="removelink" title="Delete"><i class="table-delete"></i></a><a href="javascript:void(0)" style="display:none;text-decoration: none;" class="cancellink" title="Cancel"><i class="table-cancel"></i></a>';
+						
+					}); 
+					$.each(result.host, function(i,item)
+					{
+						JSONdata[i][1]='<span class="s_txt_host">'+item+'</span><input class="txt_host" style="display:none;" type="type" value="'+item+'"/>';
+					});
+					$.each(result.ttl, function(i,item)
+					{
+						JSONdata[i][2]='<span class="s_txt_ttl">'+item+'</span><input class="txt_ttl" style="display:none;" type="type" value="'+item+'"/>';
+						
+					});
+					$.each(result.zonetype, function(i,item)
+					{
+						JSONdata[i][3]=item+'<input class="type" type="hidden" value="'+item+'"/>';
+					});
+					$.each(result.text, function(i,item)
+					{
+						JSONdata[i][4]='<span class="s_txt_text">'+item+'</span><input class="txt_text" style="display:none;" type="text" value="'+item+'"/>';
+					});
+					
+					$.each(result.comment, function(i,item)
+					{					
+						JSONdata[i][5]='<span class="s_txt_cmnt">'+item+'</span><input class="txt_cmnt" style="display:none;" type="type" value="'+item+'"/>';
+					});
+					$.each(result.validate, function(i,item)
+					{
+						JSONdata[i][6]='<span class="s_txt_val">'+item+'</span><div class="ui-select div_txt_val" style="display:none;"><select class="txt_val" ><option value="None" ';	
+						if(item=='None'){ JSONdata[i][6]+='selected' } 
+						JSONdata[i][6]+=' >None</option></select></div>';					
+					});
+				}
+				else if(ztype=='srv_records') {
+					$.each(result.uuid, function(i,item)
+					{
+						JSONdata[i]=new Array();
+						JSONdata[i][0]='<input class="srv_chk" type="checkbox" value="'+item+'"><input type="hidden" class="uuid" value="'+item+'"/>';
+						JSONdata[i][11]='<a href="javascript:void(0)" class="editlink" title="Edit"><i class="table-edit"></i></a><a href="javascript:void(0)" class="savelink" style="display:none;text-decoration: none;" title="Save"><i class="table-save"></i></a>';
+						JSONdata[i][11]+='&nbsp;&nbsp;<a href="javascript:void(0)" class="removelink" title="Delete"><i class="table-delete"></i></a><a href="javascript:void(0)" style="display:none;text-decoration: none;" class="cancellink" title="Cancel"><i class="table-cancel"></i></a>';						
+					}); 
+					$.each(result.service, function(i,item)
+					{
+						JSONdata[i][1]='<span class="s_srv_service">'+item+'</span><input class="srv_service" style="display:none;" type="type" value="'+item+'"/>';
+					});
+					$.each(result.protocol, function(i,item)
+					{
+						JSONdata[i][2]='<span class="s_srv_proto">'+item+'</span><input class="srv_proto" style="display:none;" type="type" value="'+item+'"/>';						
+					});
+					$.each(result.host, function(i,item)
+					{
+						JSONdata[i][3]='<span class="s_srv_host">'+item+'</span><input class="srv_host" style="display:none;" type="type" value="'+item+'"/>';
+					});
+					$.each(result.ttl, function(i,item)
+					{
+						JSONdata[i][4]='<span class="s_srv_ttl">'+item+'</span><input class="srv_ttl" style="display:none;" type="type" value="'+item+'"/>';						
+					});
+					$.each(result.zonetype, function(i,item)
+					{
+						JSONdata[i][5]=item+'<input class="type" type="hidden" value="'+item+'"/>';
+					});
+					$.each(result.priority, function(i,item)
+					{
+						JSONdata[i][6]='<span class="s_srv_prty">'+item+'</span><input class="srv_prty" style="display:none;" type="text" value="'+item+'"/>';
+					});
+					$.each(result.weight, function(i,item)
+					{
+						JSONdata[i][7]='<span class="s_srv_wght">'+item+'</span><input class="srv_wght" style="display:none;" type="text" value="'+item+'"/>';
+					});
+					$.each(result.port, function(i,item)
+					{
+						JSONdata[i][8]='<span class="s_srv_port">'+item+'</span><input class="srv_port" style="display:none;" type="text" value="'+item+'"/>';
+					});
+					$.each(result.targetip, function(i,item)
+					{
+						JSONdata[i][9]='<span class="s_srv_target">'+item+'</span><input class="srv_target" style="display:none;" type="text" value="'+item+'"/>';
+					});
+					
+					$.each(result.comment, function(i,item)
+					{					
+						JSONdata[i][10]='<span class="s_srv_cmnt">'+item+'</span><input class="srv_cmnt" style="display:none;" type="type" value="'+item+'"/>';
+					});
+
+				}
+				
+				var table_html='';
+				$.each(JSONdata, function(i,row)
+				{				
+					table_html+='<tr class="item-row" >';
+					$.each(row, function(i,col){
+						table_html+='<td>'+col+'</td>';
+					});
+					table_html+='</tr>';
+				});
+				/*if(old_srch!=keyword){
+					$('#a_records').html('');
+					old_srch=keyword;
+				}*/
+				if(ztype=='ac_records') {
+					$('#a_records').append(table_html);
+				}
+				else if(ztype=='mx_records') {
+					$('#mx_records').append(table_html);
+				}
+				else if(ztype=='txt_records') {
+					$('#txt_records').append(table_html);
+				}
+				else if(ztype=='srv_records') {
+					$('#srv_records').append(table_html);
+				}
+				bind();
+				$("input:checkbox, input:radio").uniform();
+				complete=false;
+		}
+		//$('#img_loading_div').hide();
+		});
+		
+} 
+</script>
+    <script>
+	 var xhr;
+  (function( $ ) {
+    $.widget( "custom.combobox", {
+      _create: function() {
+        this.wrapper = $( "<span>" )
+          .addClass( "custom-combobox" )
+          .insertAfter( this.element );
+ 
+        this.element.hide();
+        this._createAutocomplete();
+        this._createShowAllButton();
+      },
+ 
+      _createAutocomplete: function() {
+		  var ele_select= this.element;
+        var selected = this.element.children( ":selected" ),
+          value = selected.val() ? selected.text() : "";
+ 
+        this.input = $( "<input>" )
+          .appendTo( this.wrapper )
+          .val( value )
+          .attr( "title", "" )
+          .addClass( "custom-combobox-input ui-widget ui-widget-content ui-state-default ui-corner-left" )
+          .autocomplete({
+            delay: 0,
+            minLength: 0,
+            source: $.proxy( this, "_source" )
+          })
+          .tooltip({
+            tooltipClass: "ui-state-highlight"
+          });
+ 
+        this._on( this.input, {
+          autocompleteselect: function( event, ui ) {
+		  	//alert("show all");
+            ui.item.option.selected = true;
+			
+            this._trigger( "select", event, {
+              item: ui.item.option
+            });
+			
+			if(ele_select.attr('id')=='Client_ID'){
+				//get_client_info();
+				get_projects();
+			}
+			if(ele_select.attr('id')=='server_uuid_live'){
+				//get_client_info();
+				fill_details('live');
+			}
+			if(ele_select.attr('id')=='server_uuid_staging'){
+				//get_client_info();
+				fill_details('staging');
+			}
+			if(ele_select.attr('id')=='server_uuid_dev'){
+				//get_client_info();
+				fill_details('dev');
+			}
+          },
+ 
+          autocompletechange: "_removeIfInvalid"
+        });
+      },
+ 
+      _createShowAllButton: function() {
+        var input = this.input,
+          wasOpen = false;
+ 
+        $( "<a>" )
+          .attr( "tabIndex", -1 )
+          .attr( "title", "Show All Items" )
+          .tooltip()
+          .appendTo( this.wrapper )
+          .button({
+            icons: {
+              primary: "ui-icon-triangle-1-s"
+            },
+            text: false
+          })
+          .removeClass( "ui-corner-all" )
+          .addClass( "custom-combobox-toggle ui-corner-right" )
+          .mousedown(function() {
+            wasOpen = input.autocomplete( "widget" ).is( ":visible" );
+          })
+          .click(function() {
+            input.focus();
+ 
+            // Close if already visible
+            if ( wasOpen ) {
+              return;
+            }
+ 
+            // Pass last search string as value to search for, displaying last results
+            input.autocomplete( "search", 'SHOWALL' );
+          });
+      },
+ 
+      _source: function( request, response ) {
+        //var matcher = new RegExp( $.ui.autocomplete.escapeRegex(request.term), "i" );
+		var ele_select= this.element;
+		if(request.term=='SHOWALL'){
+			response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+		
+		}
+		else
+		{
+		if(ele_select.attr('id')=='Client_ID'){
+		var jsonRow = 'getcompaniesonsearch.cgi?srch='+request.term;
+		}
+		else if(ele_select.attr('id')=='Project_ID'){
+		var jsonRow = 'getprojectsonsearch.cgi?srch='+request.term+'&client='+$('#Client_ID').val();
+		}
+		else if(ele_select.attr('id')=='server_uuid_live'){
+		var jsonRow = 'getserversonsearch.cgi?srch='+request.term+'&server_type=live';
+		}else if(ele_select.attr('id')=='server_uuid_staging'){
+		var jsonRow = 'getserversonsearch.cgi?srch='+request.term+'&server_type=staging';
+		}else if(ele_select.attr('id')=='server_uuid_dev'){
+		var jsonRow = 'getserversonsearch.cgi?srch='+request.term+'&server_type=dev';
+		}
+
+		//alert(jsonRowURLStr);
+		if(xhr) xhr.abort();
+		xhr=$.getJSON(jsonRow,function(result){
+			
+			if(result){
+				var html='<option value=""></option>';
+
+				$.each(result, function(i,item)
+				{
+					/*if(ele_select.attr('id')=='Client_ID'){
+						html += '<option value="'+item.id+'">'+item.value+'</option>';
+					}
+					else if(ele_select.attr('id')=='Project_ID'){*/
+					if(item.server_type){
+						html += '<option value="'+item.server_uuid+'">'+item.server_name+'</option>';
+						server_data[item.server_uuid]=new Array();
+						server_data[item.server_uuid]['lan_ip']=item.lan_ip;
+						server_data[item.server_uuid]['wan_ip']=item.wan_ip;
+						server_data[item.server_uuid]['root_path']=item.root_path;
+					}else{
+						html += '<option value="'+item.id+'">'+item.value+'</option>';
+					}
+					/*}*/
+				});
+				ele_select.html(html);
+				
+				
+				response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+				
+				
+			}
+		});
+       
+	  } 
+		
+      },
+ 
+      _removeIfInvalid: function( event, ui ) {
+ 
+        // Selected an item, nothing to do
+        if ( ui.item ) {
+
+          return;
+        }
+ 
+        // Search for a match (case-insensitive)
+        var value = this.input.val(),
+          valueLowerCase = value.toLowerCase(),
+          valid = false;
+		  var ele_select= this.element;
+        this.element.children( "option" ).each(function() {
+          if ( $( this ).text().toLowerCase() === valueLowerCase ) {
+            this.selected = valid = true;	
+			if(ele_select.attr('id')=='Client_ID'){
+			//get_client_info();
+			get_projects();
+			}
+			if(ele_select.attr('id')=='server_uuid_live'){
+				//get_client_info();
+				fill_details('live');
+			}
+			if(ele_select.attr('id')=='server_uuid_staging'){
+				//get_client_info();
+				fill_details('staging');
+			}
+			if(ele_select.attr('id')=='server_uuid_dev'){
+				//get_client_info();
+				fill_details('dev');
+			}			
+            return false;
+          }
+        });
+ 
+        // Found a match, nothing to do
+        if ( valid ) {
+          return;
+        }
+ 
+        // Remove invalid value
+        this.input
+          .val( "" )
+          .attr( "title", value + " didn't match any item" )
+          .tooltip( "open" );
+        this.element.val( "" );
+        this._delay(function() {
+          this.input.tooltip( "close" ).attr( "title", "" );
+        }, 2500 );
+        this.input.data( "ui-autocomplete" ).term = "";
+      },
+ 
+      _destroy: function() {
+        this.wrapper.remove();
+        this.element.show();
+      }
+    });
+  })( jQuery );
+ 
+  $(function() {
+    $( "#Client_ID" ).combobox();
+	$( "#Project_ID" ).combobox();
+	
+  });
+
+  </script>
+	
+	
+</body>
+</html>

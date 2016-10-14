@@ -1,0 +1,752 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+C_TEXT(_HTMLTITLETXT)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+QUERY([web_content];[web_content]uuid=_HIT_WebApp_GetField ("uuid"))
+
+QUERY([Projects];[Projects]uuid=[web_content]uuid_project)
+
+IF (Records in selection([web_content])=0)
+_HTMLTITLETXT:="New document"
+ELSE
+_HTMLTITLETXT:= "Edit document"
+end if
+
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+-->
+<!DOCTYPE html>
+<html>
+<head>
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+	<link href="css/img-tabs.css" type="text/css" rel="stylesheet">
+	<!--<link href="css/lib/bootstrap-wysihtml5.css" type="text/css" rel="stylesheet">-->
+	<link rel="stylesheet" href="css/autocomplete.css" />
+	<link rel="stylesheet" media="all" type="text/css" href="css/jquery-impromptu.css" />
+<style>
+.form-comment em.error {
+	margin-left: 10px;
+	width: auto;
+	display: inline;
+}
+.form-comment em.error {
+	color: red;
+	font-style: italic;
+}
+.form-comment input.error, textarea.error, select.error{
+	border: 1px solid red;
+}
+.fileUpload {
+	position: relative;
+	overflow: hidden;
+	margin: 10px;
+	margin-left:0px;
+	
+}
+.fileUpload input.upload {
+	position: absolute;
+	top: 0;
+	right: 0;
+	margin: 0;
+	padding: 0;
+	font-size: 19px;
+	cursor: pointer;
+	opacity: 0;
+	filter: alpha(opacity=0);
+}
+
+
+.boxbcg{
+	border: 1px solid #cccccc;
+	margin-bottom: 40px;
+padding: 25px;
+border-radius:6px;
+-webkit-box-shadow: 0px 0px 12px 0px rgba(0,0,0,0.18);
+-moz-box-shadow: 0px 0px 12px 0px rgba(0,0,0,0.18);
+box-shadow: 0px 0px 12px 0px rgba(0,0,0,0.18);
+	
+	
+}
+
+</style>
+</head>
+<body>
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
+
+	<!-- main container -->
+<div class="content">
+	<div class="container-fluid">
+		<div id="pad-wrapper" class="form-page">
+	   		<div class="row-fluid header">
+				<h3><!--#4DIF (Records in selection([web_content])=1)-->Edit <!--#4DVAR [web_content]title--><!--#4DELSE-->New document<!--#4DENDIF--></h3>             
+            </div>
+            
+            	<div id="tabs">
+					<ul>
+						<li ><a style="color:#000000" href="#tabs-1">Document Editor</a></li>
+						<li ><a style="color:#000000" href="#tabs-2">Search Optimisation</a></li>
+						<!--#4DIF (Records in selection([web_content])=1)-->
+						<li ><a style="color:#000000" href="#tabs-3">Objects</a></li>
+						<!--#4DENDIF-->
+					</ul>
+					<form name="WebContentForm" action="savewebcontent.cgi" class="form-comment" method="post" id="WebContentForm">
+					<div id="tabs-1" class="var_tabs">  
+						<div class="row-fluid form-wrapper" style="margin-bottom:5px;">
+						<!-- left column -->
+                   		<div class="span8 with-sidebar">
+						
+							<div class="field-box">
+								<label>Project <span style="color:#6E829B">*</span></label>
+								<div class="ui-widget projectClass">
+									<input readonly type="hidden" value="<!--#4DVAR [web_content]uuid_project-->">
+									<select name="project_uuid" id="project_uuid" class="span6">
+									<!--#4DIF (Records in selection([web_content])=0)-->
+										<option value=""></option>
+										<!--#4DSCRIPT/Web_LoadProjects/-->
+										<!--4DLOOP [Projects]-->
+											<option value="<!--#4DVAR [Projects]uuid-->" ><!--4DVAR [Projects]proj_name--></option>
+										<!--4DENDLOOP-->
+									<!--#4DELSE-->
+									 	<option value="<!--4DVAR [Projects]uuid-->" selected><!--4DVAR [Projects]proj_name--></option>									 
+									<!--#4DENDIF-->
+									</select>                                     
+								</div>
+							</div>
+							<div class="field-box">
+								<label>Heading <span style="color:#6E829B">*</span></label>
+								<input type="hidden" value="<!--#4DVAR [web_content]title-->" id="actualName">
+								<input name="title" class="span6 errorNameClass" type="text" value="<!--#4DVAR [web_content]title-->" id="title" onKeyUp="generate_code('title','code')" onBlur="generate_code('title','code')">
+								<em class="error" id="errorEM" generated="true" style="display: none;">This name already exists!</em>
+							</div>
+							<input name="uuid" class="span4" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="uuid">
+							<div class="field-box">
+								<label>Sub Heading</label>
+								<input name="subtitle" class="span6" type="text" value="<!--#4DVAR [web_content]subtitle-->" id="subtitle">
+							</div>
+							<div class="field-box">
+								<label>Body <span style="color:#6E829B">*</span></label>
+								<div class="wysi-column" id="div_wysiwyg">
+                                    <textarea id="body" class="span10 wysihtml5" rows="25" columns="40" name="body"><!--#4DHTMLVAR [web_content]body--></textarea>
+                                </div>
+							</div> 			
+														
+							               					
+							</div>
+							<div class="span4 with-sidebar">
+
+								<div class="span12 field-box">
+									<label>Posted At <span style="color:#6E829B">*</span></label>
+									<input name="posted_timestamp" class="input-large datepicker span8" data-date-format="dd/mm/yyyy" type="text"  <!--#4DIF (timestamp_unix_toDate([web_content]posted_timestamp)=!01/01/1970!)-->value=""<!--4DELSE-->value="<!--#4DHTMLVAR timestamp_unix_toDate([web_content]posted_timestamp)-->"<!--4DENDIF-->  id="posted_timestamp" readonly >
+								</div>
+								<div class="span12 field-box">
+									<label>Posted By</label>
+									<input name="uuid_owner" class="span8" type="text" value="<!--#4DVAR [web_content]uuid_owner-->" id="uuid_owner" >
+								</div>
+								<div class="field-box">
+									<label>Type</label>
+									<div class="ui-select span7">
+										<select id="type" name="type">
+											<option value="blog" <!--#4DIF ([web_content]type="blog")-->selected<!--4DELSE--><!--4DENDIF-->>Blog</option>
+											<option value="news" <!--#4DIF ([web_content]type="news")-->selected<!--4DELSE--><!--4DENDIF-->>News</option>
+											<option value="page" <!--#4DIF ([web_content]type="page")-->selected<!--4DELSE--><!--4DENDIF-->>Page</option>
+										</select>
+						 	    	</div>
+								</div>								
+								<div class="span12 field-box">
+									<label>Order By</label>
+									<input name="sort_order" class="span8 num" type="text" value="<!--#4DVAR [web_content]sort_order-->" id="sort_order" >
+								</div>
+								<div class="field-box">		
+									<label></label>
+									<label class="checkbox" style="width:auto">							
+										<input name="status" class="span9" type="checkbox" value="true" id="status" <!--#4DIF ([web_content]status)-->checked<!--4DELSE--><!--4DENDIF-->>Active
+									</label>  
+								</div>
+								<div class="span12 field-box">
+               						<label>Upload Image</label>
+             					</div>
+            					<div class="span12 field-box">
+        							<img class="set_upload_image" onerror="this.src='img/no_image.gif'" name="set_upload_image" id="set_upload_image" alt="" src="img/no_image.gif" width="250" height="250"> 
+									<div class="fileUpload btn btn-default btn-file btn-xs">
+										<span>Select image</span>
+										<input id="uploadImageBtn" name="uploadImageBtn" type="file" class="upload" accept="image/*"/>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div id="tabs-2" class="var_tabs">
+						<div class="row-fluid form-wrapper" style="margin-bottom:5px;">
+						<!-- left column -->
+                   		<div class="span9 with-sidebar">
+						<div class="field-box">
+							<label>Code <span style="color:#6E829B">*</span></label>
+							<input name="code" readonly class="span8" type="text" value="<!--#4DVAR [web_content]code-->" id="code">
+						</div>
+						<div class="field-box">
+							<label>Window Title </label>
+							<input name="windowtitle" class="span8" type="text" value="<!--#4DVAR [web_content]windowtitle-->" id="windowtitle">
+						</div>
+						<div class="field-box">
+							<label>Meta tag keywords </label>
+							<textarea id="meta_tag_keywords" class="span8" rows="5" columns="40" name="meta_tag_keywords"><!--#4DHTMLVAR [web_content]meta_tag_keywords--></textarea>
+                        </div>
+                        <div class="field-box">
+							<label>Meta tag description </label>
+							<textarea id="meta_tag_description" class="span8" rows="5" columns="30" name="meta_tag_keywords"><!--#4DHTMLVAR [web_content]meta_tag_description--></textarea>
+                        </div> 
+                         
+						</div>  
+						</div>    
+					</div>
+					</form>
+					<!--#4DIF (Records in selection([web_content])=1)-->
+					
+					<div id="tabs-3" class="var_tabs">
+						<div class="row-fluid form-wrapper getObjectsClass" style="margin-bottom:5px;">
+							<!-- left column -->
+							<!--#4DSCRIPT/Web_LoadWebContentObjects-->
+							<!--4DLOOP [objects]-->
+								<div class="span12 boxbcg" STYLE="margin-left:0px;" >
+									<div class="span9 with-sidebar">
+                   						<div class="field-box ObjectMsg_<!--4DVAR [objects]uuid-->" style="margin-bottom: 1px!important;">
+											<label>Object Heading <span style="color:#6E829B">*</span></label>
+											<input class="span8" type="text" value="<!--4DVAR [objects]name-->" id="object_heading_<!--4DVAR [objects]uuid-->" onKeyUp="generate_object_code('<!--4DVAR [objects]uuid-->')" onBlur="generate_object_code('<!--4DVAR [objects]uuid-->')">
+										</div>
+								
+										<div class="field-box" style="margin-bottom: 1px!important;"><label>Code <span style="color:#6E829B">*</span></label><input <!--#4DIF ([objects]auto_format)--><!--4DELSE-->readonly<!--4DENDIF--> class="span8" type="text" value="<!--4DVAR [objects]code-->" id="object_code_<!--4DVAR [objects]uuid-->"></div>
+								
+										<div class="field-box" style="margin-bottom: 1px!important;"><label></label><label class="checkbox" style="width:auto;"><input onclick="en_dis_code(this.checked,'object_code_<!--4DVAR [objects]uuid-->','<!--4DVAR [objects]uuid-->')" class="span9" type="checkbox" value="true" id="auto_format_<!--4DVAR [objects]uuid-->" <!--#4DIF ([objects]auto_format)-->checked<!--4DENDIF--> > <strong>I want to manually enter code </strong></label></div>
+								
+										<div class="field-box" style="margin-bottom: 1px!important;"><label>Object Content</label><textarea id="object_content_<!--4DVAR [objects]uuid-->" class="span8" rows="5" columns="40"><!--4DVAR [objects]object_content--></textarea></div>
+                       			
+                       					<div class="span11 field-box" style="text-align: center;margin-bottom: 1px;"><input type="button" onClick="saveObject('<!--4DVAR [objects]uuid-->');" class="btn-glow primary" value="Save Object"></div>  
+                       				</div>
+                       		
+                       				<div class="span3 with-sidebar">
+                       					<div class="field-box" style="margin-bottom: 1px!important;"><label>Sort Order</label><input class="span3" type="text" value="<!--4DVAR [objects]order_num-->" id="object_sort_order_<!--4DVAR [objects]uuid-->"></div>
+										<div class="field-box" style="margin-bottom: 1px!important;"><label></label><label class="checkbox" style="width:auto;"><input class="span9" type="checkbox" value="true" id="status_<!--4DVAR [objects]uuid-->" <!--#4DIF ([objects]status)-->checked<!--4DENDIF--> > <strong>Active</strong></label></div>
+										<div class="field-box" style="margin-bottom: 1px!important;"><label></label><a class="btn-glow grey" href="javascript:void(0)" onClick="delete_object('<!--4DVAR [objects]uuid-->')">Delete</a></div>
+									</div>	
+							</div>
+							<!--4DENDLOOP-->
+							<div class="span12 boxbcg"  STYLE="margin-left:0px;">
+							<form name="ObjectsForm" action="" class="form-comment" method="post" id="ObjectsForm">
+                   			<div class="span9 with-sidebar displayObjectMsg">
+                   				<div class="field-box" style="margin-bottom: 1px!important;">
+									<label>Object Heading <span style="color:#6E829B">*</span></label>
+									<input name="object_heading" class="span8" type="text" value="" id="object_heading" onKeyUp="generate_code('object_heading','object_code')" onBlur="generate_code('object_heading','object_code','auto_format')">
+								</div>
+								
+								<div class="field-box" style="margin-bottom: 1px!important;"><label>Code <span style="color:#6E829B">*</span></label><input name="object_code" readonly class="span8" type="text" value="" id="object_code"></div>
+								
+								<div class="field-box" style="margin-bottom: 1px!important;"><label></label><label class="checkbox" style="width:auto;"><input onclick="en_dis_code(this.checked,'object_code')" name="auto_format" class="span9" type="checkbox" value="true" id="auto_format"> <strong>I want to manually enter code </strong></label></div>
+								
+								<div class="field-box" style="margin-bottom: 1px!important;"><label>Object Content</label><textarea id="object_content" class="span8" rows="5" columns="40" name="object_content"></textarea></div>
+                       			
+                       			<div class="span11 field-box" style="text-align: center;margin-bottom: 1px;"><input type="submit" name="Submit" class="btn-glow primary" value="Save Object"></div>  
+                       		</div>
+                       		
+                       		<div class="span3 with-sidebar">
+                       			<div class="field-box" style="margin-bottom: 1px!important;"><label>Sort Order</label><input name="object_sort_order" class="span3" type="text" value="" id="object_sort_order"></div>
+								
+								<div class="field-box" style="margin-bottom: 1px!important;"><label></label><label class="checkbox" style="width:auto;">	<input name="status" class="span9" type="checkbox" value="true" id="status"> <strong>Active</strong></label></div>
+							</div>
+							</form>
+							</div>
+						</div>    
+					</div>
+					
+					<!--4DENDIF-->	
+					<div class="span11 field-box" style="text-align: center;">
+								<input type="submit" name="Submit" class="btn-glow primary" value="Save">  
+								
+								<a href="web_pages.shtml" CLASS="cancelbtn">Cancel</a>
+							</div>
+					
+				</div><!-- end tabs -->
+			
+		</div>
+	</div>
+</div>
+<!-- end main container -->
+
+<!-- scripts -->
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+     
+<script src='tinymce/tinymce.min.js'></script>
+<script src="js/jquery.uniform.min.js"></script>
+<script src="js/jquery.validate.js"></script>
+<script src="js/bootstrap.datepicker.js"></script>
+<script type="text/javascript" src="js/jquery-impromptu.js"></script>
+<!-- call this page plugins -->
+	
+<script language="javascript">
+function en_dis_code(status,id,e){
+	auto = typeof auto !== 'undefined' ? auto : '';
+	if(status==true){
+		$('#'+id).attr("readonly",false);
+		$('#'+id).val("");
+	}else{
+		$('#'+id).attr("readonly",true);
+		$('#'+id).val("");
+		generate_object_code(e);
+	}
+}
+function generate_object_code(e){
+	var s="object_heading_"+e;
+	var d="object_code_"+e;
+	var a="auto_format_"+e;
+	generate_code(s,d,a);
+}
+function saveObject(e){
+	$(".msg_"+e).remove();
+	
+	var uuid= e;
+	var object_heading= $("#object_heading_"+e).val();
+	var object_code= $("#object_code_"+e).val();
+	var object_content= $("#object_content_"+e).val();
+	var object_sort_order= $("#object_sort_order_"+e).val();
+	
+	var auto_format=false;
+	if($('#auto_format_'+e).is(':checked')){
+		auto_format= true;
+	}
+	var status=false;
+	if($('#status_'+e).is(':checked')){
+		status= true;
+	}
+	if(object_heading!="" && object_code!="" && object_content!=""){		
+    			$.ajax({
+					url: 'saveobject.cgi',
+					type: 'POST',
+					data: {"uuid" : e, "web_content_uuid" : $("#uuid").val(), "name" : object_heading, "code" : object_code,  "object_content" : object_content, "auto_format" : auto_format, "order_num" : object_sort_order, "status" : status },
+					dataType: 'json',
+					cache: false,
+					success: function(response){
+						if(response.success){
+							$.prompt(response.success);
+							location.reload();
+						}else if(response.error){
+							$(".ObjectMsg_"+e).before('<div class="span9 alert alert-danger msg_'+e+'" role="alert">'+response.error+'</div>');
+						}
+						
+					}
+				});
+	}else{
+		$(".ObjectMsg_"+e).before('<div class="span9 alert alert-info msg_'+e+'" role="alert">Please enter all the required fields!</div>');
+	}
+}
+function delete_object(uid){
+	$.prompt("Are you sure to delete this object?", {
+		buttons: { "Yes": true, "No": false },
+		submit: function(e,v,m,f){
+			if(v){
+				$.ajax({
+					type: "POST",
+					url: "deleteobjects.cgi",
+					data: { "selected_uuids" : uid},
+					cache: false,
+					success: function(response){
+						if(response.success){
+							$.prompt(response.success);
+							location.reload();
+						}else if(response.error){
+							$.prompt(response.error);
+						}	
+					}
+				});
+				$.prompt.close();	
+			}else{
+				$.prompt.close();
+			}
+		}
+	});
+}
+function fetchobjects() {
+	$.getJSON("loadobjects.cgi?uuid="+$('#uuid').val(),function(result){
+		var htmlStr="";
+		if(result.error){
+		
+		}else{
+			var table_html="";
+			$.each(result, function(i,item){
+				table_html+='<div class="span12 boxbcg" >';
+				table_html+='<div class="span9 with-sidebar ObjectMsg_'+item+'">';
+				table_html+='<div class="field-box" style="margin-bottom: 1px!important;"><label>Object Heading <span style="color:#6E829B">*</span></label><input name="object_heading_'+item+'" class="span8" type="text" value="" id="object_heading_'+item+'" onKeyUp="generate_code(\'object_heading_'+item+'\',\'object_code_'+item+'\')" onBlur="generate_code(\'object_heading_'+item+'\',\'object_code_'+item+'\')"></div>';
+				table_html+='<div class="field-box" style="margin-bottom: 1px!important;"><label>Code <span style="color:#6E829B">*</span></label><input name="object_code_'+item+'" readonly class="span8" type="text" value="" id="object_code_'+item+'"></div>';
+				table_html+='<div class="field-box" style="margin-bottom: 1px!important;"><label></label><label class="checkbox" style="width:auto;"><input name="auto_format_'+item+'" class="span9" type="checkbox" value="true" id="auto_format_'+item+'"> <strong>I want to manually enter code </strong></label></div>';
+				table_html+='<div class="field-box" style="margin-bottom: 1px!important;"><label>Object Content</label><textarea id="object_content_'+item+'" class="span8" rows="5" columns="40" name="object_content_'+item+'"></textarea></div>';
+				table_html+='<div class="span11 field-box" style="text-align: center;"><input type="button" onClick="saveObject(\''+item+'\');" name="Submit" class="btn-glow primary" value="Save Object"></div>';
+			    table_html+='</div>';
+               	table_html+='<div class="span3 with-sidebar">';
+             	table_html+='<div class="field-box" style="margin-bottom: 1px!important;"><label>Sort Order</label><input name="object_sort_order_'+item+'" class="span3" type="text" value="" id="object_sort_order_'+item+'"></div>';
+				table_html+='<div class="field-box" style="margin-bottom: 1px!important;"><label></label><label class="checkbox" style="width:auto;">	<input name="status_'+item+'" class="span9" type="checkbox" value="true" id="status_'+item+'"> <strong>Active</strong></label></div>';
+				table_html+='<div class="field-box" style="margin-bottom: 1px!important;"><label></label><a href="javascript:void(0)" onClick="delete_object(\''+item.uuid+'\')">Delete</a></div>';
+				table_html+='</div>';
+				table_html+='</div>';
+			});
+			$(".getObjectsClass").html(table_html);
+			
+		}
+	});
+	
+}
+	function generate_code(source,dest,checked){
+		checked = typeof checked !== 'undefined' ? checked : '';
+		if(checked!=""){
+			var status=document.getElementById(checked).checked;
+			if(status!=true){
+				var val=document.getElementById(source).value;
+				var patt=/[^A-Za-z0-9_-]/g;
+				var result=val.replace(patt,' ');
+				result=result.replace(/-/g, ' ');
+				result=result.replace(/\s+/g, ' ');
+				result = result.replace(/^\s+|\s+$/g,'');
+				result=result.replace(/\s/g, '-');
+				result=result.toLowerCase();
+				document.getElementById(dest).value=result;
+			}
+		}else{
+			var val=document.getElementById(source).value;
+			var patt=/[^A-Za-z0-9_-]/g;
+			var result=val.replace(patt,' ');
+			result=result.replace(/-/g, ' ');
+			result=result.replace(/\s+/g, ' ');
+			result = result.replace(/^\s+|\s+$/g,'');
+			result=result.replace(/\s/g, '-');
+			result=result.toLowerCase();
+			document.getElementById(dest).value=result;
+		}
+	}
+	function checkExistence(form,e,nameStr){
+		var jsonRow = 'checkalready.cgi?field_value='+e+'&table_name=web_content&field_name='+nameStr;
+		$.getJSON(jsonRow,function(html){
+			if(html.result=="yes" ){
+				$('#errorEM').show();
+				$('.errorNameClass').removeClass("valid");
+				$('.errorNameClass').addClass("error");
+				//$("#savebtn").attr("disabled", "disabled");
+				return false;
+			}else{
+				$('#errorEM').hide();
+				//$('#savebtn').removeAttr("disabled");
+				$('.errorNameClass').removeClass("error");
+				$('.errorNameClass').addClass("valid");
+				form.submit();
+			}
+		});
+		
+	}
+	$(function () {
+		<!--#4DIF (_HIT_WebApp_GetField ("msg")="success")-->
+			$.prompt("Content saved successfully");
+		<!--#4DENDIF-->
+		<!--#4DIF (_HIT_WebApp_GetField ("msg")="error")-->
+			$.prompt("Sorry, some error occurred while saving content. Please try after some time!");
+		<!--#4DENDIF-->
+		
+		// add uniform plugin styles to html elements
+    	$("input:checkbox, input:radio").uniform();
+	
+		var tiny_options=new Array();
+		tiny_options['selector']= "textarea#body";
+		tiny_options['plugins']= "advlist autolink link image lists charmap print preview hr anchor pagebreak searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking save table contextmenu directionality emoticons template paste textcolor";
+		tiny_options['imagetools_toolbar']= "rotateleft rotateright | flipv fliph | editimage imageoptions";
+		tinymce.init(tiny_options);
+  
+        //tabs
+        $( "#tabs" ).tabs();
+        
+        $("#uploadImageBtn").change(function(){
+			if (this.files && this.files[0]) {
+				var reader = new FileReader();
+				reader.onload = function (e) {
+					$('.set_upload_image').attr('src', e.target.result);
+				};
+				reader.readAsDataURL(this.files[0]);
+			 }
+		});
+		$('#posted_timestamp').datepicker().on('changeDate', function (ev) {
+			$(this).datepicker('hide');
+		});
+        //validate
+		$("#WebContentForm").validate({
+			ignore: "",
+			onkeyup: false,
+			errorClass: 'error',
+			validClass: 'valid',
+			errorElement: "em",
+			errorPlacement: function(error, element) {
+				$(element).closest('div').append(error);
+			},
+			onfocusout: false,
+			invalidHandler: function(form, validator) {
+				var errors = validator.numberOfInvalids();
+				if (errors) {                    
+					validator.errorList[0].element.focus();
+				}
+			},
+			rules: {
+				project_uuid: { required: true  },
+				title: { required: true  },
+				body: { required: true  },
+				posted_timestamp : { required: true },
+			},submitHandler: function (form) {
+				//var actualNameStr= '<!--#4DVAR [web_content]title-->';
+					var actualNameStr=$("#actualName").val();
+					var prodNameStr=$("#title").val();
+       				<!--#4DIF (Records in selection([web_content])=1)-->	
+						if(actualNameStr!=prodNameStr){
+							checkExistence(form,prodNameStr,'title');
+						}else{
+							form.submit();
+						}
+					<!--#4DELSE-->
+						checkExistence(form,prodNameStr,'title');
+					<!--#4DENDIF-->
+			}
+		});	
+		$("#ObjectsForm").validate({
+			ignore: "",
+			onkeyup: false,
+			errorClass: 'error',
+			validClass: 'valid',
+			errorElement: "em",
+			errorPlacement: function(error, element) {
+				$(element).closest('div').append(error);
+			},
+			onfocusout: false,
+			invalidHandler: function(form, validator) {
+				var errors = validator.numberOfInvalids();
+				if (errors) {                    
+					validator.errorList[0].element.focus();
+				}
+			},
+			rules: {
+				object_heading: { required: true  },
+				object_content: { required: true  },
+				object_code: { required: true  }
+			},
+			submitHandler: function(form) {
+				$(".alert").remove();
+				var auto_format=false;
+				if($('#auto_format').is(':checked')){
+					auto_format= true;
+				}
+				var status=false;
+				if($('#status').is(':checked')){
+					status= true;
+				}
+				
+    			$.ajax({
+					url: 'saveobject.cgi',
+					type: 'POST',
+					data: {"web_content_uuid" : $("#uuid").val(), "name" : $("#object_heading").val(), "code" : $("#object_code").val(), "object_content" : $("#object_content").val(), "auto_format" : auto_format, "order_num" : $("#object_sort_order").val(), "status" : status },
+					dataType: 'json',
+					cache: false,
+					success: function(response){
+						if(response.success){
+							$.prompt(response.success);
+							location.reload();
+						}else if(response.error){
+							$(".displayObjectMsg").before('<div class="alert alert-danger" role="alert">'+response.error+'</div>');
+						}
+						
+					}
+				});
+  			}
+		});	
+		
+	});
+	
+	var xhr;
+	(function( $ ) {
+    $.widget( "custom.combobox", {
+      _create: function() {
+        this.wrapper = $( "<span>" )
+          .addClass( "custom-combobox" )
+          .insertAfter( this.element );
+ 
+        this.element.hide();
+        this._createAutocomplete();
+        this._createShowAllButton();
+      },
+ 
+      _createAutocomplete: function() {
+        var selected = this.element.children( ":selected" ),
+          value = selected.val() ? selected.text() : "";
+ 
+        this.input = $( "<input>" )
+          .appendTo( this.wrapper )
+          .val( value )
+          .attr( "title", "" )
+          .addClass( "custom-combobox-input ui-widget ui-widget-content ui-state-default ui-corner-left" )
+          .autocomplete({
+            delay: 0,
+            minLength: 0,
+            source: $.proxy( this, "_source" )
+          })
+          .tooltip({
+            tooltipClass: "ui-state-highlight"
+          });
+ 
+        this._on( this.input, {
+          autocompleteselect: function( event, ui ) {
+		  	//alert("show all");
+            ui.item.option.selected = true;
+			
+            this._trigger( "select", event, {
+              item: ui.item.option
+            });
+          },
+ 
+          autocompletechange: "_removeIfInvalid"
+        });
+      },
+ 
+      _createShowAllButton: function() {
+        var input = this.input,
+          wasOpen = false;
+ 
+        $( "<a>" )
+          .attr( "tabIndex", -1 )
+          .attr( "title", "Show All Items" )
+          .tooltip()
+          .appendTo( this.wrapper )
+          .button({
+            icons: {
+              primary: "ui-icon-triangle-1-s"
+            },
+            text: false
+          })
+          .removeClass( "ui-corner-all" )
+          .addClass( "custom-combobox-toggle ui-corner-right" )
+          .mousedown(function() {
+            wasOpen = input.autocomplete( "widget" ).is( ":visible" );
+          })
+          .click(function() {
+            input.focus();
+ 
+            // Close if already visible
+            if ( wasOpen ) {
+              return;
+            }
+ 
+            // Pass last search string as value to search for, displaying last results
+            input.autocomplete( "search", 'SHOWALL' );
+          });
+      },
+ 
+      _source: function( request, response ) {
+        //var matcher = new RegExp( $.ui.autocomplete.escapeRegex(request.term), "i" );
+		var ele_select= this.element;
+		if(request.term=='SHOWALL'){
+			response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+		
+		}
+		else
+		{
+		var jsonRow = 'getprojectsonsearch.cgi?srch='+request.term;
+		
+
+		//alert(jsonRowURLStr);
+		if(xhr) xhr.abort();
+		xhr=$.getJSON(jsonRow,function(result){
+			
+			if(result){
+				var html='<option value=""></option>';
+
+				$.each(result, function(i,item)
+				{
+					html += '<option value="'+item.ProjectUUID+'">'+item.value+'</option>';
+				});
+				ele_select.html(html);
+				
+				
+				response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+				
+				
+			}
+		});
+       
+	  } 
+		
+      },
+ 
+      _removeIfInvalid: function( event, ui ) {
+ 
+        // Selected an item, nothing to do
+        if ( ui.item ) {
+
+          return;
+        }
+
+        // Search for a match (case-insensitive)
+        var value = this.input.val(),
+          valueLowerCase = value.toLowerCase(),
+          valid = false;
+        this.element.children( "option" ).each(function() {
+          if ( $( this ).text().toLowerCase() === valueLowerCase ) {
+            this.selected = valid = true;	
+			
+            return false;
+          }
+        });
+ 
+        // Found a match, nothing to do
+        if ( valid ) {
+          return;
+        }
+ 
+        // Remove invalid value
+        /*this.input
+          .val( "" )
+          .attr( "title", value + " didn't match any item" )
+          .tooltip( "open" );*/
+		  this.element.html( "<option value='"+value+"'>"+value+"</option>" );
+        this.element.val( value );
+        /*this._delay(function() {
+          this.input.tooltip( "close" ).attr( "title", "" );
+        }, 2500 );*/
+        this.input.data( "ui-autocomplete" ).term = "";
+      },
+ 
+      _destroy: function() {
+        this.wrapper.remove();
+        this.element.show();
+      }
+    });
+ 	})( jQuery );
+ 
+	$(function() {
+		$( "#project_uuid" ).combobox();
+  	});
+
+  </script>
+</body>
+</html>

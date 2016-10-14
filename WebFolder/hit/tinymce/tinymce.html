@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>TinyMCE</title>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<script src="file:///Users/nehakapoor/Documents/tinymce/tinymce.min.js"></script>
+<script>
+var tiny_options=new Array();
+tiny_options['selector']= "textarea#mytextarea";
+tiny_options['plugins']= "advlist autolink link image lists charmap print preview hr anchor pagebreak searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking save table contextmenu directionality emoticons template paste textcolor";
+tiny_options['imagetools_toolbar']= "rotateleft rotateright | flipv fliph | editimage imageoptions";
+tiny_options['setup'] = function(editor) {  editor.on('init', function(e) {  editor.execCommand('mceFullScreen'); }); editor.on('blur', function (e) {  getContentVal();  }); };
+tinymce.init(tiny_options);
+	
+    var textareaValStr="";
+    function getContentVal(){
+    	textareaValStr= tinymce.get('mytextarea').getContent();
+    	return textareaValStr;
+  	}
+  
+</script>
+</head>
+<body>
+  <textarea id="mytextarea" style="height:100%"></textarea> 
+</body>
+</html>

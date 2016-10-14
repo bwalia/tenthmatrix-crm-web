@@ -1,0 +1,229 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+C_TEXT(_HTMLTITLETXT)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+
+C_BOOLEAN(IsFtpallowed;IsImportallowed)
+QUERY([Sites];[Sites]uuid=_HIT_WebApp_GetField ("uuid"))
+QUERY([site_options];[site_options]site_uuid=[Sites]uuid)
+
+QUERY([Companies];[Companies]uuid=[site_options]uuid_client)
+IsFtpallowed:=CheckAllowedParameter("ftp")
+IsImportallowed:=CheckAllowedParameter("import")
+
+IF (Records in selection([Sites])=0)
+_HTMLTITLETXT:="New Site"
+ELSE
+_HTMLTITLETXT:= "Edit Site"
+END IF
+
+C_BOOLEAN(mUserIsCurrentBool)
+mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
+
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+
+-->
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/main-header.shtml-->
+<script src="js/jquery.validate.js"></script>
+<script type="text/javascript">
+var tableNameStr='Projects';
+var xhrAbortSearch;
+var loadmoreNum=10, start=0, end=loadmoreNum;
+function generate_code(){
+		var val=document.getElementById("site_name").value;
+		var patt=/[^A-Za-z0-9_-]/g;
+		var result=val.replace(patt,' ');
+		result=result.replace(/-/g, ' ');
+		result=result.replace(/\s+/g, ' ');
+		result = result.replace(/^\s+|\s+$/g,'');
+		result=result.replace(/\s/g, '-');
+		result=result.toLowerCase();
+		document.getElementById("site_code").value=result;
+}
+function addNewSiteID(v){
+	$("#errMsgID").remove();
+	if(v==1) {
+		var siteIDNum=$('#siteIDNum').val();
+		if(siteIDNum!=null && siteIDNum!=""){
+			var jsonRowURLStr = 'checkexistingsiteid.cgi?id='+siteIDNum;
+			$.getJSON(jsonRowURLStr,function(result){
+				if(result.exist=='false'){
+					$('#site_id').val(siteIDNum);
+					$('#popupForSite').popup('close')
+				}else{
+					var e_msg  = "<span id='errMsgID' style='color:#CC0000;font-size:14px;font-style:italic;'>* Site ID "+siteIDNum+" already exists.</span>" ;
+					$(".newMsgStr").before(e_msg);
+					$('#siteIDNum').val('');
+					$('#siteIDNum').focus();
+				}
+															
+			});
+		}else {
+			var e_msg = "<span id='errMsgID' style='color:#CC0000; font-size:14px;font-style:italic;'>* Please enter Site ID.</span>" ;
+			$(".newMsgStr").before(e_msg);
+			$('#siteIDNum').focus();
+		}
+	}
+	if(v==0) {
+		$('#popupForSite').popup('close')
+		var new_id='<!--#4DVAR Sequence number([Sites])-->';
+		$('#site_id').val(new_id);
+	}
+}
+
+$(document).ready(function() {
+	<!--#4DIF (_HIT_WebApp_GetField ("uuid")="")-->
+		$(':input','#ContactForm')
+ 		.not(':button, :submit, :reset, :hidden')
+ 		.val('')
+ 		.removeAttr('checked')
+ 		.removeAttr('selected');
+	<!--#4DELSE--><!--#4DENDIF-->
+	
+	<!--#4DIF (Records in selection([Sites])=0)-->
+		//$("#popupForSite").popup("open");
+		var new_id='<!--#4DVAR Sequence number([Sites])-->';
+		$('#site_id').val(new_id);
+	<!--#4DENDIF-->
+			
+	$(".ui-table-columntoggle-btn").hide();
+	$("#DetailForm").validate({
+		ignore: "",
+        rules: {
+            projectNameStr: { required: true },
+			site_id: { required: true },
+			site_name: { required: true },
+			site_code: { required: true },
+        }
+    });
+    
+    //on keyup, start the countdown
+	$('.projectNameStr').keyup(function(){
+    	if ($('.projectNameStr').val()) {
+      		var jsonRow="getcompaniesonsearch.cgi?srch="+$('.projectNameStr').val()+"&"+Math.random();
+			if(xhrAbortSearch) xhrAbortSearch.abort();
+			xhrAbortLoxhrAbortSearchad=$.getJSON(jsonRow,function(result){
+				if(result.error){
+					$( ".projectListView").html("");
+					$("#uuid_client").val("");
+					$(".projectNameStr").val("");
+				}else{
+					var html='';
+					$.each(result, function(i,item){
+						html += '<li><a class="ui-btn ui-btn-icon-right ui-icon-carat-r" href="javascript:void(0)" onClick="selectValue(\''+item.CustoemrUUID+'\',\''+item.value+'\')">'+item.value+'</a></li>';
+					});
+					$( ".projectListView").html("");
+					$( ".projectListView").html(html);
+				}
+			});
+          
+    	}
+    });
+    $('.ui-input-clear').click(function(){
+    	$("#popupForSite").val("");
+    });
+});
+
+function selectValue(val, name){
+	$(".projectNameStr").val(name);
+	$("#uuid_client").val(val);
+	$( ".projectListView" ).listview( "refresh" );
+	$( ".projectListView li" ).addClass("ui-screen-hidden");
+}
+</script>
+<script type='text/javascript' src='js/customerNotes.js'></script>
+<style>
+label.error { 
+	float: left; 
+	color: red; 
+	padding-top: 1.5em; 
+	vertical-align: top; 
+}
+</style>
+</head>
+<body>
+<div data-role="page" class="jqm-demos" data-quicklinks="true">
+	<!-- header -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/top-header.shtml-->
+	<!-- /header -->
+	
+	<div role="main" class="ui-content jqm-content">
+		<h3><!--#4DIF (Records in selection([Sites])=1)-->Edit <!--#4DVAR [Sites]name--><!--#4DELSE-->New Site<!--#4DENDIF--></h3>
+		<div data-demo-html="true">
+			<form name="DetailForm" action="savesite.cgi" id="DetailForm" data-ajax="false" method="post">
+					     
+                   	<input name="site_uuid"  id="site_uuid" class="span9" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->">
+							          	
+					<div class="ui-field-contain">
+   						<label for="site_id">Site ID:</label>
+   						<input name="site_id" type="text" value="<!--#4DVAR [Sites]ID-->" id="site_id" placeholder="Site ID" readonly>
+   					</div>
+					<div class="ui-field-contain">
+   						<label for="site_name">Site Name:</label>
+   						<input name="site_name" type="text" value="<!--#4DVAR [Sites]name-->" id="site_name" placeholder="Site Name"  onKeyUp="generate_code()" onBlur="generate_code()">
+					</div>
+					
+					<div class="ui-field-contain">
+   						<label for="site_code">Site Code :</label>
+						<input name="site_code" type="text" value="<!--#4DVAR [Sites]code-->" id="site_code" placeholder="Site Code">
+					</div>
+					<div class="ui-field-contain">
+   						<label for="root_path">Root Path:</label>
+						<input name="root_path" type="text" value="<!--#4DVAR [Sites]root_path-->" id="root_path" placeholder="Root Path">
+   					</div>
+   					<div class="ui-field-contain">
+						<label for="uuid_reported_by" class="select">Client Name:</label>
+						<input name="uuid_client" id="uuid_client" type="hidden" value="<!--#4DVAR [Companies]uuid-->">
+						<span class="ui-filterable">
+   							<input id="inset-autocomplete-input" data-type="search" placeholder="Search client..." class="projectNameStr" value="<!--4DVAR [Companies]company_Name-->" name="projectNameStr">
+						</span>
+						
+						<ul data-role="listview" data-inset="true" data-filter="true" data-filter-reveal="true" data-input="#inset-autocomplete-input" class="projectListView">
+   							<!--#4DIF (Records in selection([Sites])=0)-->
+								<!--#4DSCRIPT/Web_LoadCustomers/-->
+                                <!--4DLOOP  [Companies]-->
+									<li><a href="javascript:void(0)" onClick="selectValue('[Companies]uuid','<!--4DVAR [Companies]company_Name-->')"><!--4DVAR [Companies]company_Name--></a></li>
+								<!--4DENDLOOP-->							 
+							<!--#4DENDIF-->
+						</ul>
+					</div> 
+   					<div class="ui-field-contain">
+   						<label>
+       						<input  type="checkbox" <!--#4DIF (IsFtpallowed)-->checked<!--#4DENDIF--> id="ftp" value="ftp" name="is_ftpallowed" >FTP Access
+   						</label>
+   					</div>
+   					<div class="ui-field-contain">
+   						<label>
+       						<input  type="checkbox" <!--#4DIF (IsImportallowed)-->checked<!--#4DENDIF--> id="import" value="import" class="span9" name="is_importallowed" >Data Import Manager Access
+   						</label>
+   					</div>
+					<button type="submit" class="ui-shadow ui-btn ui-corner-all ui-mini">Submit</button>
+					<a href="sites.shtml" data-ajax="false" class="ui-shadow ui-btn ui-corner-all ui-mini">Cancel</a>
+				</form>	
+		    	<div data-role="popup" id="popupForSite" data-overlay-theme="a" class="ui-content">
+					<div style="padding:10px 20px;">
+        			  	<h3>Add new Site ID</h3>
+        				<label for="siteIDNum" class="ui-hidden-accessible newMsgStr">Enter new Site ID manually:</label>
+            			<input name="siteIDNum" id="siteIDNum" value="" placeholder="Add Site ID.." type="text">
+            			<button type="button" class="ui-btn ui-corner-all ui-shadow ui-btn-b ui-btn-icon-left ui-icon-check" onClick="addNewSiteID(1)">Ok</button>
+             			<button type="button" class="ui-btn ui-corner-all ui-shadow ui-btn-b ui-btn-icon-left ui-icon-delete" onClick="addNewSiteID(0)">Close</button>
+        			</div>
+				</div>
+		    </div>
+	</div><!-- /content -->
+	<!-- panel -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/sidebar.shtml-->
+	<!-- /panel -->
+
+	<!-- footer -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/footer.shtml-->
+	<!-- /footer -->
+</div><!-- /page -->
+
+</body>
+</html>

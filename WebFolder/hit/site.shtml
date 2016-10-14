@@ -1,0 +1,586 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+C_TEXT(_HTMLTITLETXT)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+
+C_BOOLEAN(IsFtpallowed;IsImportallowed)
+QUERY([Sites];[Sites]uuid=_HIT_WebApp_GetField ("uuid"))
+QUERY([site_options];[site_options]site_uuid=[Sites]uuid)
+
+QUERY([Companies];[Companies]uuid=[site_options]uuid_client)
+IsFtpallowed:=CheckAllowedParameter("ftp")
+IsImportallowed:=CheckAllowedParameter("import")
+
+IF (Records in selection([Sites])=0)
+_HTMLTITLETXT:="New Site"
+ELSE
+_HTMLTITLETXT:= "Edit Site"
+END IF
+
+C_BOOLEAN(mUserIsCurrentBool)
+mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
+
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+	<!-- <link rel="stylesheet" href="css/base/jquery-ui.css" /> -->
+	<link href="css/lib/select2.css" type="text/css" rel="stylesheet">
+	<link rel='stylesheet' type='text/css' href='css/style.css' />
+	<link href="css/img-tabs.css" type="text/css" rel="stylesheet">
+	
+	<link rel='stylesheet' type='text/css' href='css/print.css' media="print" />
+	
+	<link rel="stylesheet" media="all" type="text/css" href="css/jquery-impromptu.css" />
+	<link rel="stylesheet" href="css/autocomplete.css" />
+	<style>
+		#UserSetting em.error {
+			margin-left: 10px;
+			width: auto;
+			display: inline;
+		}
+		#UserSetting em.error {
+			color: red;
+			font-style: italic;
+		}
+		#UserSetting input.error, textarea.error, select.error{
+			border: 1px solid red;
+		}
+		#message{
+		color:#FF0000;
+		}
+	</style>
+</head>
+<body>
+
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
+	
+	<!-- main container -->
+    <div class="content">
+        
+        <div class="container-fluid">
+            <div id="pad-wrapper" class="form-page">
+				 <div class="row-fluid header">
+				 	<h3><!--#4DIF (Records in selection([Sites])=1)-->Edit <!--#4DVAR [Sites]name--><!--#4DELSE-->New Site<!--#4DENDIF--></h3>
+                </div>
+                <!--#4DIF (Records in selection([Sites])=1)-->
+                <div id="tabs">
+					<ul><li ><a style="color:#000000" href="#tabs-1">Site Details</a></li>							
+						<li ><a style="color:#000000" href="#tabs-2">FTP Details</a></li>
+						<li ><a style="color:#000000" href="#tabs-3">Database Connection Details</a></li>
+					</ul>
+					<div id="tabs-1" class="var_tabs">  
+				<!--#4DENDIF-->
+                <div class="row-fluid form-wrapper">
+					<!-- left column -->
+                    <div class="span9 with-sidebar">
+						<form name="SiteForm" id="UserSetting" action="savesite.cgi" class="form-comment" method="post" >
+							<input name="site_uuid"  id="site_uuid" class="span9" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->">
+							<div class="field-box">
+								<label>Site ID<span style="color:#6E829B">*</span>:</label>
+								<input class="span6" name="site_id" type="text" value="<!--#4DVAR [Sites]ID-->" id="site_id">
+							</div>
+							<div class="field-box">
+								<label>Site Name<span style="color:#6E829B">*</span>:</label>
+								<input class="span6" name="site_name" type="text" value="<!--#4DVAR [Sites]name-->" id="site_name">
+							</div>
+							<div class="field-box">
+								<label>Site Code<span style="color:#6E829B">*</span>:</label>
+								<input class="span6" name="site_code" type="text" value="<!--#4DVAR [Sites]code-->" id="site_code">
+							</div>
+							<div class="field-box">
+								<label>Root Path:</label>
+								<input class="span6" name="root_path" type="text" value="<!--#4DVAR [Sites]root_path-->" id="root_path">
+							</div>
+							<h4>Other Options</h4>
+							<div class="field-box">
+								<label>Client<span style="color:#6E829B">*</span>:</label>
+								<div class="ui-widget">
+                                    <select id="uuid_client" name="uuid_client" >
+										<!--#4DIF (Records in selection([Sites])=0)-->
+										<option value=""></option>
+                                        <!--#4DSCRIPT/Web_LoadCustomers/-->
+                                        <!--4DLOOP  [Companies]-->
+											<option value="<!--4DVAR [Companies]uuid-->"><!--4DVAR [Companies]company_Name--></option>			
+										<!--4DENDLOOP-->  
+										<!--#4DELSE-->
+											<option value="<!--4DVAR [Companies]uuid-->" selected><!--4DVAR [Companies]company_Name--></option>									 
+										<!--#4DENDIF-->
+                                    </select>
+                                </div>
+                            </div>
+							<div class="field-box">
+								<label>Allow</label> 
+								<label style="width:auto;" class="checkbox">							
+									<div class="checker"><span><input type="checkbox" <!--#4DIF (IsFtpallowed)-->checked<!--#4DENDIF--> id="ftp" value="ftp" class="span9" name="is_ftpallowed"></span></div> <strong>FTP</strong>
+								</label>
+								<label style="width:auto;" class="checkbox span2">							 
+									<div class="checker"><span><input type="checkbox" <!--#4DIF (IsImportallowed)-->checked<!--#4DENDIF--> id="import" value="import" class="span9" name="is_importallowed"></span></div> <strong>Data Import Manager</strong>
+								</label>
+							</div>
+							
+							<div class="span11 field-box" style="text-align: center;">
+								<input type="submit" name="Submit" class="btn-glow primary" value="Submit">
+								
+								 <a href="sites.shtml" CLASS="cancelbtn">Cancel</a>
+							</div>
+						</form>
+					</div>
+            	</div>
+            	 
+				<!--#4DIF (Records in selection([Sites])=1)-->
+            		</div>
+            		<div id="tabs-2" class="var_tabs">
+            			<div class="row-fluid form-wrapper">
+							<!-- left column -->
+                    		<div class="span12 with-sidebar">
+							<table id="items">
+								<tr class="item ftpdataClass">
+		    						<th>Server</th>
+		      						<th>User name</th>
+		     						<th>Root Path</th>
+		      						<th>Edit</th>
+		      						<th>Remove</th>
+								</tr>
+		 	
+								<tr id="hiderow">
+		   							<td colspan="5"><a href="ftpserver.shtml?site=<!--#4DVAR [Sites]uuid-->" title="Add a row">Add new FTP Details</a></td>
+		 						</tr>
+		  						</table><br/>
+					
+							</div>
+						</div>
+            		</div>
+            		<div id="tabs-3" class="var_tabs">
+            			<div class="row-fluid form-wrapper">
+            				<table id="items">
+								<tr class="db_item dbDataClass">
+		    						<th>Database Type</th>
+		    						<th>Server Name</th>
+		      						<th>Host Name</th>
+		     						<th>User Name</th>
+		      						<th>Password</th>
+		      						<th>Database Name</th>
+		      						<!--#4DIF (mUserIsCurrentBool)--><!--#4DELSE-->
+		      						<th>Save</th>
+		      						<th>Cancel</th>
+		      						<!--#4DENDIF--> 
+								</tr>
+								<!--#4DIF (Records in selection([Sites])=1)-->
+							 	<!--#4DSCRIPT/Web_LoadSiteDBDetail/-->
+						
+							  	<!--#4DLOOP [database_details]-->
+							  
+							  	<tr class="db-item-row" id="<!--#4DHTMLVAR [database_details]uuid-->">
+							  		<td>
+							  			<span class="s_db_selected"><!--#4DHTMLVAR [database_details]type--></span>
+							  			<div class="ui-select i_db_selected" style="display:none">
+							  			<select class="db_selected" name="db_selected">
+							  				<option value="mysql" <!--#4DIF ([database_details]type="mysql")-->selected<!--#4DENDIF--> >Mysql</option>
+							  				<option value="mongodb"  <!--#4DIF ([database_details]type="mongodb")-->selected<!--#4DENDIF-->>Mongo DB</option>
+							  			</select>
+							  			</div>
+							  		</td>
+							  		<td>
+							  			<span class="s_server_type"><!--#4DHTMLVAR [database_details]server_type--></span>
+							  			<div class="ui-select i_server_type" style="display:none">
+							  			<select class="server_type" name="server_type">
+							  				<option value="Dev" <!--#4DIF ([database_details]server_type="Dev")-->selected<!--#4DENDIF--> >Dev</option>
+							  				<option value="Staging"  <!--#4DIF ([database_details]server_type="Staging")-->selected<!--#4DENDIF-->>Staging</option>
+							  				<option value="Live" <!--#4DIF ([database_details]server_type="Live")-->selected<!--#4DENDIF--> >Live</option>
+							  			</select>
+							  			</div>
+							  		</td>
+							  		<td>
+							  			<input class="db_uuid" type="hidden" value="<!--#4DHTMLVAR [database_details]uuid-->"/>
+							  			<span class="s_db_host_name" ><!--#4DHTMLVAR [database_details]host_name--></span>
+							  			<input type="text" style="display:none" class="i_db_host_name" value="<!--#4DHTMLVAR [database_details]host_name-->">
+							  		</td>
+							  		<td>
+							  			<span class="s_db_user_name"><!--#4DHTMLVAR [database_details]user_name--></span>
+							  			<input type="text" style="display:none" class="i_db_user_name" value="<!--#4DHTMLVAR [database_details]user_name-->" >
+							  		</td>
+							  		<td>
+							  			<span class="s_db_password"></span>
+							  			<input type="password" class="i_db_password" value="<!--#4DHTMLVAR [database_details]user_password-->" style="display:none" >
+							  		</td>
+							  		<td>
+							  			<span class="s_db_name"><!--#4DHTMLVAR [database_details]database_name--></span>
+							  			<input type="text" class="i_db_name" value="<!--#4DHTMLVAR [database_details]database_name-->" style="display:none" >
+							  		</td>
+							  		
+									<!--#4DIF (mUserIsCurrentBool)--><!--#4DELSE-->
+									<td class="td_edit">
+										<a href="javascript:void(0)" class="editdblink">Edit</a>
+										<a href="javascript:void(0)" class="savedblink" style="display:none">Save</a>
+									</td>	
+									<td class="td_remove">
+										<a href="javascript:void(0)" class="removedblink" >Remove</a>
+										<a href="javascript:void(0)" class="canceldblink" style="display:none">Cancel</a>
+									</td>
+									<!--#4DENDIF--> 							
+									</tr>
+		  
+						  		<!--#4DENDLOOP-->
+						  		<!--#4DENDIF-->
+						  		<!--#4DIF (mUserIsCurrentBool)--><!--#4DELSE-->
+		 						<tr id="hiderow">
+		   							<td colspan="8"><a href="javascript:void(0)" title="Add a database details" id="add_db_details">Add a database details</a></td>
+		 						</tr>
+		 						<!--#4DENDIF--> 	
+		  					</table>  
+						</div>
+            		</div>
+            	</div>
+            	<!--#4DENDIF-->
+            	
+            </div>
+        </div>
+    </div>
+    
+							<div class="example-container">
+								<pre class="code" style="display:none;" id="enter_siteID">
+									var statesdemo = {
+										state0: {
+											title: 'Enter new Site ID manually?',
+											html:'&lt;div id="message"&gt;&lt;/div&gt;&lt;input type="text" name="siteIDNum" id="siteIDNum" value=""&gt;&lt;br /&gt;',
+											buttons: { Cancel : 0, Ok: 1 },
+											focus: "#siteIDNum",
+											submit:function(e,v,m,f){ 
+												//console.log(f);
+												if(v==1) {
+													if(f.siteIDNum!=null && f.siteIDNum!=""){
+														e.preventDefault();
+														var jsonRowURLStr = 'checkexistingsiteid.cgi?id='+f.siteIDNum;
+		
+														$.getJSON(jsonRowURLStr,function(result){
+															if(result.exist=='false'){
+																$('#site_id').val(f.siteIDNum);
+																$.prompt.close()
+															}
+															else{
+																e.preventDefault();
+																document.getElementById("message").innerHTML = "* Site ID "+f.siteIDNum+" already exists." ;
+																$('#siteIDNum').val('');
+																$('#siteIDNum').focus();
+															}
+															
+														});
+													}else {
+														e.preventDefault();
+														document.getElementById("message").innerHTML = "* Please enter Site ID." ;
+														$('#siteIDNum').focus();
+													}
+												}
+												if(v==0) {
+													$.prompt.close();
+													var new_id='<!--#4DVAR Sequence number([Sites])-->';
+													
+													$('#site_id').val(new_id);
+												}
+											}
+										},
+										
+									};
+
+									$.prompt(statesdemo);
+								</pre>
+								<!--<a class="run">Run It!</a>-->
+							</div>
+    <!-- end main container -->
+
+	<!-- scripts -->
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+	<!-- <script src="js/ui/jquery-ui.js"></script> -->
+	<script src="js/bootstrap.datepicker.js"></script>
+	<script src="js/jquery.uniform.min.js"></script>
+	<script src="js/jquery.validate.js"></script>
+
+	<script type="text/javascript" src="js/jquery-impromptu.js"></script>
+	
+  	<script type='text/javascript' src='js/site_options.js'></script>
+    <script type="text/javascript">
+	
+        $(function () {
+        	$("input:checkbox").uniform();
+        	<!--#4DIF (Records in selection([Sites])=0)-->
+				code = $('#enter_siteID').text();
+				(new Function(code))();
+			<!--#4DELSE-->
+			$( "#tabs" ).tabs();
+        	loadftpdata();
+			<!--#4DENDIF-->
+			
+			// validate form on keyup and submit
+			$("#UserSetting").validate({
+				ignore: "",
+				onkeyup: false,
+				errorClass: 'error',
+				validClass: 'valid',
+				errorElement: "em",
+				errorPlacement: function(error, element) {
+					$(element).closest('div').append(error);
+				},
+				rules: {
+					site_name: { required: true },
+					site_code: { required: true },
+					uuid_client:{ required: true },
+				},
+			});	
+			 
+		});
+function deleteFtp(uuid){
+		var site_uuid=$('#site_uuid').val();
+		var dataString = 'delete_uuids='+ uuid+'&uuid_site='+site_uuid+'&table_name=ftp_account&site_page=yes&redirect=false';
+
+		$.ajax({
+			type: "GET",
+			url: "deleteftpordb.cgi",
+			data: dataString,
+			cache: false,
+			success: function(html){
+				$('.ftp-row').remove();
+				loadftpdata();
+			}
+		});
+}
+function loadftpdata(){
+	var siteID='<!--#4DVAR [Sites]ID-->';
+	var jsonRow = 'loadftpservers.cgi?start=0&end=10&tablname=ftp_users&site_id='+siteID;
+	JSONdata=new Array();
+		$.getJSON(jsonRow,function(result){
+			if(result.Alert){
+				code = $('#no_rec_prompt').text();
+				(new Function(code))();
+				complete=true;
+			}else{
+				$.each(result.uuid, function(i,item){
+					JSONdata[i]=new Array();
+					JSONdata[i][3]='<a href="ftpserver.shtml?uuid='+item+'" target="_blank">Edit</a>';	
+					JSONdata[i][4]='<a href="javascript:void(0)" onClick="deleteFtp(\''+item+'\')">Remove</a>';					
+				}); 
+				$.each(result.ftp_server, function(i,item){
+					JSONdata[i][0]=item;
+				});
+				$.each(result.ftp_user, function(i,item){
+					JSONdata[i][1]=item;
+				});
+				$.each(result.ftp_root_path, function(i,item){					
+					JSONdata[i][2]=item;
+				});
+ 			
+				var table_html='';
+				
+				$.each(JSONdata, function(i,row){
+					table_html+='<tr class="ftp-row">';
+					$.each(row, function(i,col){
+						table_html+='<td>'+col+'</td>';
+					});
+					table_html+='</tr>';
+				});
+				
+				$('.ftpdataClass').after(table_html);
+			}
+			
+		});
+	}
+
+
+	 var xhr; 
+  (function( $ ) {
+    $.widget( "custom.combobox", {
+      _create: function() {
+        this.wrapper = $( "<span>" )
+          .addClass( "custom-combobox" )
+          .insertAfter( this.element );
+ 
+        this.element.hide();
+        this._createAutocomplete();
+        this._createShowAllButton();
+      },
+ 
+      _createAutocomplete: function() {
+        var selected = this.element.children( ":selected" ),
+          value = selected.val() ? selected.text() : "";
+ 
+        this.input = $( "<input>" )
+          .appendTo( this.wrapper )
+          .val( value )
+          .attr( "title", "" )
+          .addClass( "custom-combobox-input ui-widget ui-widget-content ui-state-default ui-corner-left" )
+          .autocomplete({
+            delay: 0,
+            minLength: 0,
+            source: $.proxy( this, "_source" )
+          })
+          .tooltip({
+            tooltipClass: "ui-state-highlight"
+          });
+ 
+        this._on( this.input, {
+          autocompleteselect: function( event, ui ) {
+		  	//alert("show all");
+            ui.item.option.selected = true;
+			
+            this._trigger( "select", event, {
+              item: ui.item.option
+            });
+          },
+ 
+          autocompletechange: "_removeIfInvalid"
+        });
+      },
+ 
+      _createShowAllButton: function() {
+        var input = this.input,
+          wasOpen = false;
+ 
+        $( "<a>" )
+          .attr( "tabIndex", -1 )
+          .attr( "title", "Show All Items" )
+          .tooltip()
+          .appendTo( this.wrapper )
+          .button({
+            icons: {
+              primary: "ui-icon-triangle-1-s"
+            },
+            text: false
+          })
+          .removeClass( "ui-corner-all" )
+          .addClass( "custom-combobox-toggle ui-corner-right" )
+          .mousedown(function() {
+            wasOpen = input.autocomplete( "widget" ).is( ":visible" );
+          })
+          .click(function() {
+            input.focus();
+ 
+            // Close if already visible
+            if ( wasOpen ) {
+              return;
+            }
+ 
+            // Pass last search string as value to search for, displaying last results
+            input.autocomplete( "search", 'SHOWALL' );
+          });
+      },
+ 
+      _source: function( request, response ) {
+        //var matcher = new RegExp( $.ui.autocomplete.escapeRegex(request.term), "i" );
+		var ele_select= this.element;
+		if(request.term=='SHOWALL'){
+			response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+		
+		}
+		else
+		{
+		var jsonRow = 'getcompaniesonsearch.cgi?srch='+request.term;
+		
+
+		//alert(jsonRowURLStr);
+		if(xhr) xhr.abort();
+		xhr=$.getJSON(jsonRow,function(result){
+			
+			if(result){
+				var html='<option value=""></option>';
+
+				$.each(result, function(i,item)
+				{
+					html += '<option value="'+item.CustoemrUUID+'">'+item.value+'</option>';
+				});
+				ele_select.html(html);
+				
+				
+				response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+				
+				
+			}
+		});
+       
+	  } 
+		
+      },
+ 
+      _removeIfInvalid: function( event, ui ) {
+ 
+        // Selected an item, nothing to do
+        if ( ui.item ) {
+
+          return;
+        }
+ 
+        // Search for a match (case-insensitive)
+        var value = this.input.val(),
+          valueLowerCase = value.toLowerCase(),
+          valid = false;
+        this.element.children( "option" ).each(function() {
+          if ( $( this ).text().toLowerCase() === valueLowerCase ) {
+            this.selected = valid = true;	
+			
+            return false;
+          }
+        });
+ 
+        // Found a match, nothing to do
+        if ( valid ) {
+          return;
+        }
+ 
+        // Remove invalid value
+        this.input
+          .val( "" )
+          .attr( "title", value + " didn't match any item" )
+          .tooltip( "open" );
+        this.element.val( "" );
+        this._delay(function() {
+          this.input.tooltip( "close" ).attr( "title", "" );
+        }, 2500 );
+        this.input.data( "ui-autocomplete" ).term = "";
+      },
+ 
+      _destroy: function() {
+        this.wrapper.remove();
+        this.element.show();
+      }
+    });
+  })( jQuery );
+ 
+  $(function() {
+    $( "#uuid_client" ).combobox();
+   
+	
+  });
+
+  </script>
+</body>
+</html>

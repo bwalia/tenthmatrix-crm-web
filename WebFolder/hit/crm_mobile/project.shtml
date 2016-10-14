@@ -1,0 +1,272 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+C_TEXT(_HTMLTITLETXT)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+ALL RECORDS([Tax_Codes])
+QUERY([Projects];[Projects]uuid=_HIT_WebApp_GetField ("uuid"))
+
+IF (Records in selection([Projects])=0)
+_HTMLTITLETXT:="New Project"
+
+//select default client
+C_TEXT(pUserUUIDStr;pUserClient)
+pUserUUIDStr:=_HIT_WebSession_GetVar ("auth_user_uuid")
+pUserClient:=User_GetPreferences (pUserUUIDStr;"client_id")
+QUERY([Companies];[Companies]account_Number=num(pUserClient))
+
+ELSE
+_HTMLTITLETXT:= "Edit Project: "+[Projects]proj_name
+
+//selected client
+QUERY([Companies];[Companies]account_Number=num([Projects]client_id))
+
+END IF
+
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+
+C_BOOLEAN(mUserIsCurrentBool)
+mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
+
+-->
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/main-header.shtml-->
+<link rel="stylesheet" href="css/jquery-ui.css">
+<script src="js/datepicker.js"></script>
+<script src="js/jquery.validate.js"></script>
+<script type="text/javascript">
+var tableUUIDStr= '<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->';
+var tableNameStr='Projects';
+var taskNameStr='',xhrAbortLoad, xhrAbortSearch;
+var loadmoreNum=10, start=0, end=loadmoreNum;
+
+$(document).ready(function() {
+	$('#Start_Date').datepicker({
+    	autoclose: true,
+    	changeMonth: true,
+      	changeYear: true,
+      	dateFormat: 'dd/mm/yy'
+	});
+	
+	$('#deadline_date').datepicker({
+    	autoclose: true,
+    	changeMonth: true,
+      	changeYear: true,
+      	dateFormat: 'dd/mm/yy'
+	});
+	
+	$(".ui-table-columntoggle-btn").hide();
+	$("#ProjectForm").validate({
+		ignore: "",
+        rules: {
+            projectNameStr: { required: true },
+			Project_Name: { required: true },
+        }
+    });
+    
+    //on keyup, start the countdown
+	$('.projectNameStr').keyup(function(){
+    	if ($('.projectNameStr').val()) {
+      		var jsonRow="getcompaniesonsearch.cgi?srch="+$('.projectNameStr').val()+"&"+Math.random();
+			if(xhrAbortSearch) xhrAbortSearch.abort();
+			xhrAbortLoxhrAbortSearchad=$.getJSON(jsonRow,function(result){
+				if(result.error){
+					$("#Client_ID").val("");
+				}else{
+					var html='';
+					$.each(result, function(i,item){
+						html += '<li><a class="ui-btn ui-btn-icon-right ui-icon-carat-r" href="javascript:void(0)" onClick="selectValue(\''+item.id+'\',\''+item.value+'\')">'+item.value+'</a></li>';
+					});
+					$( ".projectListView").html("");
+					$( ".projectListView").html(html);
+				}
+			});
+          
+    	}
+    });
+    $('.ui-input-clear').click(function(){
+    	$("#Client_ID").val("");
+    });
+    
+});
+function selectValue(val, name){
+	$(".projectNameStr").val(name);
+	$("#Client_ID").val(val);
+	$( ".projectListView" ).listview( "refresh" );
+	$( ".projectListView li" ).addClass("ui-screen-hidden");
+}
+</script>
+<script type='text/javascript' src='js/customerNotes.js'></script>
+<style>
+label.error { 
+	float: left; 
+	color: red; 
+	padding-top: 1.5em; 
+	vertical-align: top; 
+}
+</style>
+</head>
+<body>
+<div data-role="page" class="jqm-demos" data-quicklinks="true">
+	<!-- header -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/top-header.shtml-->
+	<!-- /header -->
+	
+	<div role="main" class="ui-content jqm-content">
+		<h3><!--#4DIF (Records in selection([Projects])=1)-->Edit "<!--#4DVAR [Projects]proj_name-->"<!--#4DELSE-->New Project<!--#4DENDIF--></h3>
+		<div data-demo-html="true">
+			<div data-role="tabs" id="tabs">
+		      <div data-role="navbar">
+			    <ul>
+			      <li><a href="#one" data-ajax="false" class="ui-btn-active">Project Details</a></li>
+			      <!--#4DIF (Records in selection([Projects])=1)-->
+			      <li><a href="#two" data-ajax="false">Additional notes</a></li>
+			      <!--#4DENDIF-->
+			    </ul>
+		      </div>
+		     	<div id="one" class="ui-body-d ui-content">
+		     		<form name="ProjectForm" action="saveproject.cgi" id="ProjectForm" data-ajax="false" method="post">
+					<!--#4DIF (mUserIsCurrentBool)-->
+						<input name="company_Name" type="hidden" value="<!--4DVAR [Companies]company_Name--> [<!--4DVAR [Companies]account_Number-->]" id="company_Name">                
+					<!--#4DELSE--> 
+					<div class="ui-field-contain">
+						<label for="uuid_reported_by" class="select">Client Name:</label>
+						<input name="Client_ID" id="Client_ID" type="hidden" value="<!--4DVAR [Companies]account_Number-->">
+						<!--#4DIF (Records in selection([Projects])=1)-->
+						<span class="ui-filterable">
+   							<input id="inset-autocomplete-input" data-type="search" placeholder="Search project..." class="projectNameStr" value="<!--4DVAR [Companies]company_Name-->" name="projectNameStr">
+						</span>
+						<!--#4DELSE-->
+							<!--#4DIF (pUserClient#"")-->
+								<span class="ui-filterable">
+   									<input id="inset-autocomplete-input" data-type="search" placeholder="Search project..." class="projectNameStr" value="<!--4DVAR [Companies]company_Name-->" name="projectNameStr">
+								</span>
+							<!--#4DELSE-->
+							<span class="ui-filterable">
+   								<input id="inset-autocomplete-input" data-type="search" placeholder="Search project..." class="projectNameStr" name="projectNameStr">
+							</span>
+							
+							
+							
+							
+							
+							<!--#4DENDIF-->
+						<!--#4DENDIF-->
+					
+						<ul data-role="listview" data-inset="true" data-filter="true" data-filter-reveal="true" data-input="#inset-autocomplete-input" class="projectListView">
+   							<!--#4DIF (Records in selection([Projects])=0)-->
+								<!--#4DIF (pUserClient="")-->
+									<!--#4DSCRIPT/Web_LoadCustomers/-->
+                                    <!--4DLOOP  [Companies]-->
+										<li><a href="javascript:void(0)" onClick="selectValue('<!--4DVAR [Companies]account_Number-->','<!--4DVAR [Companies]company_Name-->')"><!--4DVAR [Companies]company_Name--></a></li>
+									<!--4DENDLOOP-->
+								<!--#4DENDIF-->								 
+							<!--#4DENDIF-->
+						</ul>
+					</div>
+					<!--#4DENDIF-->        
+                    <input name="Project_uuid" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="Project_uuid">               
+                              	
+					<div class="ui-field-contain">
+   						<label for="Project_Name">Project Name:</label>
+   						<textarea cols="40" rows="8" name="Project_Name" id="Project_Name" placeholder="Project Name"><!--#4DVAR [Projects]proj_name--></textarea>
+					</div>
+					
+					<div class="ui-field-contain">
+   						<label for="Task_Name">Start Date :</label>
+						<input data-role="date" type="text" data-date-format="dd/mm/yyyy" <!--#4DIF ([Projects]start_date=!00/00/00!)-->value="<!--#4DHTMLVAR Current date -->"<!--4DELSE-->value="<!--#4DVAR [Projects]start_date-->"<!--4DENDIF--> name="Start_Date" id="Start_Date" readonly>
+					</div>
+					<div class="ui-field-contain">
+   						<label for="Budget">Budget :</label>
+						<input type="text" id="Budget" value="<!--#4DVAR [Projects]budget-->" name="Budget" placeholder="Budget">
+					</div>
+					<div class="ui-field-contain">
+   						<label for="Rate">Rate:</label>
+						<input id="Rate" value="<!--#4DVAR [Projects]proj_rate-->" name="Rate" placeholder="Rate" type="text">
+   					</div>
+					<div class="ui-field-contain">
+   						<label for="Currency">Currency :</label>
+   						<select name="Currency" id="Currency"  data-native-menu="false">
+							<option value="">--Select Currency--</option>
+							<!--4DLOOP [Tax_Codes]-->
+							<option value="<!--#4DVAR [Tax_Codes]Currency_Code-->" <!--#4DIF ([Tax_Codes]Currency_Code=[Projects]currency_code)-->selected<!--4DELSE--><!--4DENDIF-->><!--4DVAR [Tax_Codes]Currency_Code--></option>	
+							<!--4DENDLOOP-->
+						</select>
+   					</div>
+   					<div class="ui-field-contain">
+   						<label for="deadline_date">Deadline Date :</label>
+						<input data-role="date" type="text" data-date-format="dd/mm/yyyy" name="deadline_date" id="deadline_date" readonly <!--#4DIF ([Projects]project_end_date=!00/00/00!)-->value=""<!--4DELSE-->value="<!--#4DVAR [Projects]project_end_date-->"<!--4DENDIF--> readonly>
+					</div>
+					<div class="ui-field-contain">
+   						<label for="Project_Active">Status:</label>
+						<select name="Project_Active" id="Project_Active"  data-native-menu="false">
+							<option value="Active" <!--#4DIF ([Projects]proj_active=True)-->selected<!--4DELSE--><!--4DENDIF-->>Active</option>
+							<option value="Completed" <!--#4DIF ([Projects]proj_active=false)-->selected<!--4DELSE--><!--4DENDIF-->>Completed</option>
+						</select>  
+					</div>
+					<div class="ui-field-contain">
+   						<label for="status">Stage:</label>
+						<select name="status" id="status"  data-native-menu="false">
+							<option value="">--Select Stage--</option>
+							<option value="Proposal" <!--#4DIF ([Projects]status="Proposal")-->selected<!--4DELSE--><!--4DENDIF-->>Proposal</option>
+							<option value="Development" <!--#4DIF ([Projects]status="Development")-->selected<!--4DELSE--><!--4DENDIF-->>Development</option>
+							<option value="Testing" <!--#4DIF ([Projects]status="Testing")-->selected<!--4DELSE--><!--4DENDIF-->>Testing</option>
+						</select>  
+					</div>
+					<button type="submit" class="ui-shadow ui-btn ui-corner-all ui-mini">Submit</button>
+					<a href="projects.shtml" data-ajax="false" class="ui-shadow ui-btn ui-corner-all ui-mini">Cancel</a>
+					</form>	
+		    	</div>
+		    	<!--#4DIF (Records in selection([Projects])=1)-->
+		      	<div id="two">
+		      		<a href="#popupLogin" data-rel="popup" data-position-to="window" data-transition="pop"><input type="button" value="Add new note"></a>
+					<div data-role="popup" id="popupLogin" data-overlay-theme="a" class="ui-content">
+						<div style="padding:10px 20px;">
+        				   	<h3>Add new note</h3>
+        					<label for="textarea" class="ui-hidden-accessible newMsgStr">Note:</label>
+            				<textarea name="add_new_note" id="add_new_note" value="" placeholder="Add note.." cols="50"  type="text"></textarea>
+            				<button type="button" class="ui-btn ui-corner-all ui-shadow ui-btn-b ui-btn-icon-left ui-icon-check" onClick="addCustomerNote()">Save</button>
+             				<button type="button" class="ui-btn ui-corner-all ui-shadow ui-btn-b ui-btn-icon-left ui-icon-delete" onClick="$('#popupLogin').popup('close')">Close</button>
+        				</div>
+					</div>
+					<fieldset data-role="controlgroup">
+ 						<table data-role="table" id="table-column-toggle" data-mode="columntoggle" class="ui-responsive table-stroke">
+     						<thead>
+      							<tr>
+       	  							<th>Username</th>
+         							<th>Last Modified</th>
+         							<th>Note</th>
+       							</tr>
+     						</thead>
+     						<tbody id="notesBody">
+     							<!--#4DSCRIPT/Web_LoadProjectNotes/-->	
+								<!--#4DLOOP [Notes]--><!-- row -->
+       							<tr>
+        							<td><!--#4DHTMLVAR [Notes]note_user_name--></td>
+        							<td><!--4DHTMLVAR timestamp_unix_toGMT ([Notes]Timestamp_modified)--></td>
+         							<td><!--#4DHTMLVAR [Notes]Note--></td>
+       							</tr>
+      							<!--#4DENDLOOP-->
+     						</tbody>
+   						</table>
+					</fieldset>
+		      	</div>
+		      	<!--#4DENDIF-->
+		    </div>
+		</div>
+
+	</div><!-- /content -->
+	<!-- panel -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/sidebar.shtml-->
+	<!-- /panel -->
+
+	<!-- footer -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/footer.shtml-->
+	<!-- /footer -->
+</div><!-- /page -->
+
+</body>
+</html>

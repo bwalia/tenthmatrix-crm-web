@@ -1,0 +1,407 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+C_TEXT(_HTMLTITLETXT)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+_HTMLTITLETXT:="System Activity Log"
+
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml?url="+HTTPD_DocumentURI)
+end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+_HIT_HTMLTXT:=_HIT_HTTP_GetReferer
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+<link rel="stylesheet" media="all" type="text/css" href="css/jquery-impromptu.css" />
+<style>
+#message{
+	color:#FF0000;
+}
+.table-wrapper .table ul.actions{
+	float:left;
+}
+</style>
+</head>
+<body>
+
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
+
+	<!-- main container -->
+    <div class="content">
+        
+        <div class="container-fluid">
+            <div id="pad-wrapper">
+
+                <!-- projects table -->
+                <div class="table-wrapper orders-table section">
+                    <div class="row-fluid head">
+                        <div class="span12">
+                            <h4>System Activity Log</h4>
+                        </div>
+                    </div>
+
+                    <div class="row-fluid filter-block">
+                        <div class="pull-right">
+                            <div class="btn-group pull-right">
+                                <button class="glow left large" onClick="__showActivities(); return false;">All</button>
+                                <button class="glow middle large" onClick="__showActivitiesNotDone(); return false;">Active</button>
+                                <button class="glow middle large" onClick="__showActivitiesEmail(); return false;">Email</button>
+                                <button class="glow middle large" onClick="__showActivitiesPayment(); return false;">Payments</button>
+                                <button class="glow middle large" onClick="__showActivitiesInvoices(); return false;">Invoices</button>
+                                <button class="glow middle large" onClick="__showActivitiesPO(); return false;">PO</button>
+                                <button class="glow right large" onClick="__showActivitiesDone(); return false;">Done</button>
+                            </div>
+                            <input name="keyword_type" id="keyword_type" type="text" class="search order-search" placeholder="Search for Client.." value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->">
+                        </div>
+                    </div>
+
+                    <div class="row-fluid">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th class="span2">
+                                        DATE
+                                    </th>
+                                    <th class="span2">
+									<span class="line"></span>
+                                        TYPE
+                                    </th>
+                                    <th class="span3">
+                                        <span class="line"></span>
+                                        TITLE
+                                    </th>
+                                    <th class="span3">
+                                        <span class="line"></span>
+                                        NOTES
+                                    </th>
+									<th class="span1">
+                                        <span class="line"></span>
+                                        STATUS
+                                    </th>
+                                     <th class="span3">
+                                        <span class="line"></span>
+                                        DESCRIPTION
+                                    </th>                      
+                                </tr>
+                            </thead>
+                            <tfoot>
+                            <tr>  
+                                <th align="left">DATE</th>
+                                <th align="left">TYPE</th>
+                                <th align="left">TITLE</th>
+                                <th align="left">NOTES</th>
+                                <th align="left">STATUS</th>
+                                <th align="left">DESCRIPTION</th>
+                            </tr>
+                        	</tfoot>
+                            <tbody id="systemactivity_table_body">
+                            </tbody>
+                        </table>
+						<div id="img_loading_div" style="text-align:center">
+							<img src="loading.gif"  style="padding:20px;" width="34" >
+						</div>
+                    </div>
+                </div>
+                <!-- end projects table -->
+
+            </div>
+        </div>
+    </div>
+    <!-- end main container -->
+	<div class="example-container">
+	<pre class="code" style="display:none;" id="no_rec_prompt">
+									var statesdemo = {
+										state0: {
+											title: 'No more records found',
+											html:'',
+											buttons: { OK: 1 },																		
+											submit:function(e,v,m,f){ 
+												//console.log(f);
+												if(v==1) {
+													$.prompt.close();
+												}
+												
+											}
+										},
+										
+									};
+									if(!($(".jqibox").length))
+									$.prompt(statesdemo);
+								</pre>
+							</div>
+
+	<!-- scripts -->
+   <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+	<script type="text/javascript" src="js/jquery-impromptu.js"></script>
+	 <script>
+var JSONdata;
+var start=0, end=25;
+var old_srch='',keyword='', jsonRow='', tab='', set='';
+var tablname='Activity_Log';
+var complete=false;
+
+ 
+ function __showActivitiesPayment()
+{
+start=0;
+	end=25;
+	tab='payment';
+	keyword= $("#keyword_type").val();
+	jsonRow = 'loadactivity.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab;
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}
+	$('#systemactivity_table_body').html('');
+	$('#img_loading_div').show();		
+	load_data(jsonRow);
+}
+
+
+function __showActivitiesInvoices()
+{
+	start=0;
+	end=25;
+	tab='invoice';
+	keyword= $("#keyword_type").val();
+	jsonRow = 'loadactivity.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab;
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}
+	$('#systemactivity_table_body').html('');
+	$('#img_loading_div').show();		
+	load_data(jsonRow);
+	
+}
+
+function __showActivitiesPO()
+{
+ 	start=0;
+	end=25;
+	tab='po';
+	keyword= $("#keyword_type").val();
+	jsonRow = 'loadactivity.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab;
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}
+	$('#systemactivity_table_body').html('');
+	$('#img_loading_div').show();		
+	load_data(jsonRow);
+	
+}
+
+function __showActivitiesEmail()
+{
+
+	start=0;
+	end=25;
+	tab='email';
+	keyword= $("#keyword_type").val();
+	jsonRow = 'loadactivity.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab;
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}
+	$('#systemactivity_table_body').html('');
+	$('#img_loading_div').show();		
+	load_data(jsonRow);
+}
+
+
+function __showActivitiesNotDone()
+{
+	start=0;
+	end=25;
+	tab='active';
+	keyword= $("#keyword_type").val();
+	jsonRow = 'loadactivity.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab;
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}
+	$('#systemactivity_table_body').html('');
+	$('#img_loading_div').show();		
+	load_data(jsonRow);
+}
+
+
+function __showActivitiesDone()
+{
+	start=0;
+	end=25;
+	tab='done';
+	keyword= $("#keyword_type").val();
+	jsonRow = 'loadactivity.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab;
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}
+	$('#systemactivity_table_body').html('');
+	$('#img_loading_div').show();		
+	load_data(jsonRow);
+}
+
+function __showActivities()
+{
+	start=0;
+	end=25;
+	tab='';
+	keyword= $("#keyword_type").val();
+	jsonRow = 'loadactivity.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab;
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}
+	$('#systemactivity_table_body').html('');
+	$('#img_loading_div').show();		
+	load_data(jsonRow);
+}
+ 
+$(document).ready(function() {
+
+	$('#keyword_type').focus();
+	keyword= $("#keyword_type").val();
+	jsonRow = 'loadactivity.cgi?start='+start+'&end='+end+'&tablname='+tablname;
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}		
+	load_data(jsonRow);	
+	
+	$(window).scroll(function(){
+		if ($(window).scrollTop() == $(document).height() - $(window).height()){
+		if(complete==false) {
+			//alert("scrolling...");
+			start=end+1;
+			end=start+25;
+			jsonRow = 'loadactivity.cgi?start='+start+'&end='+end+'&tablname='+tablname;
+			if(keyword!=''){
+				jsonRow +='&keyword='+keyword;
+			}
+			if(tab!=''){
+				jsonRow +='&tab='+tab;
+			}		
+			load_data(jsonRow);
+		}
+		
+		}
+	});
+	
+	//setup before functions
+	var typingTimer;                //timer identifier
+	var doneTypingInterval = 1000;  //time in ms, 5 second for example
+
+	//on keyup, start the countdown
+	$('#keyword_type').keyup(function(){
+		clearTimeout(typingTimer);
+		if ($('#keyword_type').val) {
+			typingTimer = setTimeout(function(){
+				//do stuff here e.g ajax call etc....
+				$('#systemactivity_table_body').html('');
+				$('#img_loading_div').show();
+				start=0;
+				end=start+25;
+				tab='';
+				keyword= $("#keyword_type").val();
+				jsonRow = 'loadactivity.cgi?start='+start+'&end='+end+'&tablname='+tablname;
+				if(keyword!=''){
+					jsonRow +='&keyword='+keyword;
+				}
+				if(tab!=''){
+					jsonRow +='&tab='+tab;
+				}	
+				load_data(jsonRow);
+			}, doneTypingInterval);
+		}
+	});
+
+});
+ 
+var proj_uuid=new Array();  
+function load_data(jsonRow){
+	JSONdata=new Array();
+	$.getJSON(jsonRow,function(result){
+			if(result.Alert){
+				code = $('#no_rec_prompt').text();
+				(new Function(code))();
+				complete=true;
+			}
+			else{
+				// $.each(result.uuid, function(i,item)
+// 				{
+// 					JSONdata[i]=new Array();
+// 					JSONdata[i][0]='<a href="customers.shtml?keyword='+item+'">'+item+'</a>';					
+// 				}); 
+				 
+				$.each(result.date, function(i,item)
+				{
+					JSONdata[i]=new Array();
+					JSONdata[i][0]= item;
+				});
+				
+				$.each(result.type, function(i,item)
+				{	
+					JSONdata[i][1]=item;
+				});
+				$.each(result.title, function(i,item)
+				{	
+					JSONdata[i][2]=item;
+				});
+				$.each(result.notes, function(i,item)
+				{					
+					JSONdata[i][3]=item;
+				});
+				$.each(result.status, function(i,item)
+				{					
+					switch(item)
+					{
+					case 0:
+					  JSONdata[i][4]='<span class="label label-important">Assigned</span>';
+					  break;
+					case 1:
+					  JSONdata[i][4]='<span class="label label-success">Done</span>';
+					  break;
+					case 2:
+					  JSONdata[i][4]='<span class="label label-warning">System</span>';
+					  break;
+					  }
+				});
+				$.each(result.Desc, function(i,item)
+				{					
+					JSONdata[i][5]=item;
+				});
+				
+				var table_html='';
+				
+				$.each(JSONdata, function(i,row)
+				{
+					table_html+='<tr >';
+					
+					$.each(row, function(i,col){
+						table_html+='<td>'+col+'</td>';
+					});
+					table_html+='</tr>';
+				});
+				if(old_srch!=keyword){
+					$('#systemactivity_table_body').html('');
+					old_srch=keyword;
+				}
+				//alert(table_html);
+				
+				$('#systemactivity_table_body').append(table_html);
+				complete=false;
+				
+		}
+		$('#img_loading_div').hide();
+		});
+}
+
+
+    </script>
+	
+</body>
+</html>

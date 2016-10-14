@@ -1,0 +1,558 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+C_TEXT(_HTMLTITLETXT)
+
+QUERY([categories];[categories]uuid=_HIT_WebApp_GetField ("uuid"))
+pSelectedCatStr:=[categories]uuid
+QUERY([Projects];[Projects]uuid=[categories]project_uuid)
+
+If (Records in selection([Projects])=0)
+Web_LoadProjects ("")
+
+Else 
+
+End if 
+
+IF (Records in selection([categories])=0)
+_HTMLTITLETXT:="New Category"
+ELSE
+_HTMLTITLETXT:= "Edit: "+[categories]name
+END IF
+
+-->
+<!DOCTYPE html>
+<html lang="en">
+<!-- BEGIN HEAD -->
+<head>
+<!--#4DIF (Records in selection([categories])=1)-->
+<title>Category:<!--#4DVAR [categories]name--></title>
+<!--#4DELSE-->
+<title>New Category</title>
+<!--#4DENDIF-->
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<meta content="" name="description"/>
+<meta content="" name="author"/>
+
+<!-- BEGIN CORE FRAMEWORK -->
+<link href="assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+<link href="assets/plugins/ionicons/css/ionicons.min.css" rel="stylesheet" />
+<link href="assets/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+<!-- END CORE FRAMEWORK -->
+
+<!-- BEGIN PLUGIN STYLES -->
+<link href="assets/plugins/animate/animate.css" rel="stylesheet" />
+
+<link href="assets/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css" rel="stylesheet" />
+<!-- END PLUGIN STYLES -->
+
+<!-- BEGIN THEME STYLES -->
+<link href="assets/css/material.css" rel="stylesheet" />
+<link href="assets/css/style.css" rel="stylesheet" />
+<link href="assets/css/plugins.css" rel="stylesheet" />
+<link href="assets/css/helpers.css" rel="stylesheet" />
+<link href="assets/css/responsive.css" rel="stylesheet" />
+<!-- END THEME STYLES -->
+
+<link rel="stylesheet" media="all" type="text/css" href="assets/css/jquery-impromptu.css" />
+<!-- BEGIN PLUGIN STYLES -->
+<link href="assets/plugins/jquery-jvectormap/jquery-jvectormap-1.2.2.css" rel="stylesheet" />
+<!-- END PLUGIN STYLES -->
+<link href="assets/css/autocomplete.css" rel="stylesheet">
+</head>
+<style>
+.rightside {
+	padding-top: 0px!important;
+}
+.chosen-container-multi .chosen-choices {
+	background: #fafafa!important;
+	border: 1px solid #eeeeee!important;
+	border-radius: 3px;
+	padding: 3px;
+}
+
+.boxbcg{
+	border:1px solid #E1E1E1!important;
+	padding: 0px 8px 8px 8px !important;
+	border-radius:4px!important;
+	margin-bottom:10px!important;
+}
+
+.boxbcg h3{
+	padding: 0px 0px 0px 6px;
+font-size: 21px;
+color: #108cd3;
+}
+
+.pdng3{
+	padding:3px 0px;
+}
+
+.labelnew{
+	padding-left: 0px; float: left; width: 124px; padding-top: 5px;
+}
+
+.labtext{
+	position: relative; padding-right: 7px; bottom: 4px; float: left;
+}
+
+.tablebox{
+width: 97%;
+margin: 6px;
+}
+
+.overflowdata{
+height: 146px;
+margin-bottom: 10px;
+overflow-x: none;
+overflow-y: scroll;
+}
+
+.savebtn{
+	  text-align: center;
+    width: 97%;
+    color: rgb(255, 255, 255);
+    padding-right: 0px;
+    margin-left: 7px;
+}
+
+.savebtn a{
+	color:#fff;
+}
+
+.savebtn a:hover{
+	text-decoration:none;
+}
+</style>
+<!-- END HEAD -->
+<!-- BEGIN BODY -->
+<body class="fixed-leftside fixed-header">
+<div class="wrapper"> 
+		
+		<!-- BEGIN RIGHTSIDE -->
+		<div class="rightside bg-grey-100"> 
+				<!-- BEGIN PAGE HEADING -->
+				<div class="page-head">
+						<div class="row">
+								<div class="col-sm-6">
+										<h1 class="page-title"><!--#4DIF (Records in selection([categories])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Category</h1>
+								</div>
+						</div>
+				</div>
+				<!-- END PAGE HEADING -->
+				<div class="container-fluid">
+						<div class="row">
+								<div class="col-md-12">
+										<div class="panel" style="padding-top:20px;">
+												<div class="panel-body no-padding-top bg-white">
+														<!--#4DIF (_HIT_WebApp_GetField ("msg")="success")-->
+															<div role="alert" class="alert alert-success">Category saved successfully!</div>
+														<!--#4DENDIF-->
+														<!--#4DIF (_HIT_WebApp_GetField ("msg")="error")-->
+															<div role="alert" class="alert alert-danger">Sorry, some error occurred while saving category. Please try after some time!</div>
+														<!--#4DENDIF-->
+														<form name="ProductForm" action="savecategory.cgi" id="ProductForm" method="post" class="form-horizontal" >
+																<div class="row">
+																		<div class=" col-sm-12 ">
+																				<input name="uuid" class="span9" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="uuid">
+																				<div class="form-group">
+																						<label for="" class="col-sm-2 control-label">Project<sup class="req">*</sup></label>
+																						<div class="ui-widget col-sm-6">
+																							<select name="project_uuid" id="project_uuid" class="form-control">
+																							<!--#4DIF (Records in selection([categories])=0)-->
+																								<option value=""></option>
+																								<!--#4DSCRIPT/Web_LoadProjects/-->
+																								<!--4DLOOP [Projects]-->
+																									<option value="<!--#4DVAR [Projects]uuid-->" <!--#4DIF (Selected record number([Projects])=1)-->selected<!--#4DELSE--><!--#4DENDIF-->><!--4DVAR [Projects]proj_name--></option>
+																								<!--4DENDLOOP-->
+																							<!--#4DELSE-->
+										 														<option value="<!--4DVAR [Projects]uuid-->" selected><!--4DVAR [Projects]proj_name--></option>									 
+																							<!--#4DENDIF-->
+																							</select>                                     
+																						</div>
+																				</div>
+																				<div class="form-group errorNameClass">
+																					<label for="" class="col-sm-2 control-label">Category Name<sup class="req">*</sup></label>
+																					<div class="col-sm-6">
+																						<input type="hidden" class="form-control" id="actualName" value="<!--#4DVAR [categories]name-->">
+																						
+																						<input type="text" class="form-control" onKeyUp="generate_code('cat_name','code')" onBlur="generate_code('cat_name','code')" name="cat_name" id="cat_name" value="<!--#4DVAR [categories]name-->">
+																						<small id="errorEM" style="display: none;" data-bv-validator-for="title" class="help-block">This category name already exists!</small>
+																					</div>
+																				</div>
+																				<div class="form-group">
+																					<label for="" class="col-sm-2 control-label">Category Code</label>
+																					<div class="col-sm-6">
+																						<input readonly type="text" class="form-control" id="code" value="<!--#4DVAR [categories]code-->" name="code">
+																					</div>
+																				</div>
+																				<div class="form-group">
+   		        																	<div class="col-sm-offset-2 col-sm-9">
+    			  																		<div class="checkbox">
+      		  																				<label> <input type="checkbox" name="is_active" value="true" id="is_active" <!--#4DIF ([categories]is_active)-->checked<!--4DELSE--><!--4DENDIF--> >Active</label>
+    			  																		</div>
+  																					</div>
+  																				</div>
+  																				<div class="form-group">
+																						<label for="" class="col-sm-2 control-label">Assign Parent category (Optional).<sup class="req">*</sup></label>
+																						<div class="ui-widget col-sm-6">
+																							<select name="uuid_top_level_category" id="uuid_top_level_category" class="form-control">
+																							
+																							</select>                                     
+																						<span style="font-size:small">Note: If this Category is Top Level Parent category itself, then leave this popup blank.</span></div>
+																				</div>	
+																				<div class="form-group">
+																						<label for="" class="col-sm-2 control-label">Description<sup class="req">*</sup></label>
+																						<div class="ui-widget col-sm-6">
+																							<textarea class="form-control" id="description" name="description"><!--#4DVAR [categories]description--></textarea>                                 
+																						</div>
+																				</div>																				
+																				
+																		</div>
+																</div>
+																<div class="row">
+																		<div class="col-sm-12 text-center">
+																				<input type="submit" class="btn palette-carrot btn-color margin-right-5 btn-sm save_exit">
+																				<!--#4DIF (Records in selection([categories])=0)-->
+																				<input type="reset" class="btn btn-primary btn-sm">
+																				<!--4DENDIF--> 
+																		</div>
+																</div>
+														</form>
+												</div>
+										</div>
+								</div>
+								<!-- /.col --> 
+						</div>
+						<!-- /.row --> 
+				</div>
+				<!-- /.container-fluid --> 
+		</div>
+		<!-- /.rightside --> 
+</div>
+<!-- /.wrapper --> 
+
+<!-- END CONTENT --> 
+
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/v2/includes/InitJs.shtml--> 
+<!-- BEGIN JAVASCRIPTS --> 
+
+<!-- bootstrap validator --> 
+<script src="assets/plugins/bootstrapValidator/bootstrapValidator.min.js" type="text/javascript"></script> 
+<script type="text/javascript" src="assets/js/autocomplete.js"></script>
+<!-- maniac --> 
+<script src="assets/js/maniac.js" type="text/javascript"></script> 
+<script type="text/javascript">
+ var selectedCatStr='<!--#4DVAR [categories]uuid-->';
+  var selectedTopCatStr="<!--#4DVAR [categories]uuid_top_level_category-->";
+    function fetchCategories(){
+    	var jsonRequest= "getcategoryonsearch.cgi?project_uuid="+$("#project_uuid").val();
+    	var htmlStr='<option value=""></option>';
+		$.getJSON(jsonRequest,function(result){
+			$("#uuid_top_level_category").html("");
+			if(result.error){
+				//
+			}else{
+				$.each(result, function(i,item){
+					if(selectedCatStr!=item.uuid){
+						htmlStr += '<option value="'+item.uuid+'"';
+						if(selectedTopCatStr!="" && item.uuid==selectedTopCatStr){
+							htmlStr += ' selected ';
+						}
+						htmlStr += '>'+item.value+'</option>';
+					}
+				});
+			}
+			if(htmlStr!=""){
+				$("#uuid_top_level_category").html(htmlStr);
+				$( "#uuid_top_level_category" ).combobox("destroy");
+				$( "#uuid_top_level_category" ).combobox();
+			}
+		});
+	 }
+    
+    
+    function generate_code(src,dest){
+		var valStr=$("#"+src).val();
+		var patt=/[^A-Za-z0-9_-]/g;
+		var result=valStr.replace(patt,' ');
+		result=result.replace(/-/g, ' ');
+		result=result.replace(/\s+/g, ' ');
+		result = result.replace(/^\s+|\s+$/g,'');
+		result=result.replace(/\s/g, '-');
+		result=result.toLowerCase();
+		$("#"+dest).val(result);
+		//document.getElementById("code").value=result;
+	}
+	$('#ProductForm').bootstrapValidator({
+			message: 'This value is not valid',
+			excluded: ':disabled',
+			fields: {
+				cat_name: {
+					message: 'Name is not valid',
+					validators: {
+						notEmpty: {
+							message: 'Name is required and can\'t be empty'
+						}
+					}
+				},
+				project_uuid: {
+					validators: {
+						notEmpty: {
+							message: 'This field is required and can\'t be empty'
+						}
+					}
+				},
+				description: {
+					validators: {
+						notEmpty: {
+							message: 'This field is required and can\'t be empty'
+						}
+					}
+				}
+			},submitHandler: function(validator, form, submitButton) {
+					//var actualNameStr= '<!--#4DVAR [categories]name-->';
+					var actualNameStr=$("#actualName").val();
+					var prodNameStr=$("#cat_name").val();
+					$(".alert").remove();
+       				<!--#4DIF (Records in selection([categories])=1)-->	
+						if(actualNameStr!=prodNameStr){
+							var jsonRow = 'checkalready.cgi?field_value='+prodNameStr+'&table_name=categories&field_name=name';
+							$.getJSON(jsonRow,function(html){
+								if(html.result=="yes" ){
+									$('#errorEM').show();
+									$('.errorNameClass').addClass("has-error");
+									return false;
+								}else{
+									$('#errorEM').hide();
+									$('.errorNameClass').removeClass("has-error");
+									validator.defaultSubmit();
+								}
+							});
+						}else{
+							validator.defaultSubmit();
+						}
+					<!--#4DELSE-->
+						var jsonRow = 'checkalready.cgi?field_value='+prodNameStr+'&table_name=categories&field_name=name';
+						$.getJSON(jsonRow,function(html){
+							if(html.result=="yes" ){
+								$('#errorEM').show();
+								$('.errorNameClass').addClass("has-error");
+								return false;
+							}else{
+								$('#errorEM').hide();
+								$('.errorNameClass').removeClass("has-error");
+								validator.defaultSubmit();
+							}
+						});
+					<!--#4DENDIF-->
+			}
+		});
+
+	$(document).ready(function () {
+		fetchCategories();
+       
+    });
+ var xhr;
+  (function( $ ) {
+    $.widget( "custom.combobox", {
+      _create: function() {
+        this.wrapper = $( "<span>" )
+          .addClass( "custom-combobox" )
+          .insertAfter( this.element );
+ 
+        this.element.hide();
+        this._createAutocomplete();
+        this._createShowAllButton();
+      },
+ 
+      _createAutocomplete: function() {
+      	var ele_select= this.element;
+        var selected = this.element.children( ":selected" ),
+          value = selected.val() ? selected.text() : "";
+ 
+        this.input = $( "<input>" )
+          .appendTo( this.wrapper )
+          .val( value )
+          .attr( "title", "" )
+          .addClass( "custom-combobox-input ui-widget ui-widget-content ui-state-default ui-corner-left" )
+          .autocomplete({
+            delay: 0,
+            minLength: 0,
+            source: $.proxy( this, "_source" )
+          })
+          .tooltip({
+            tooltipClass: "ui-state-highlight"
+          });
+ 
+        this._on( this.input, {
+          autocompleteselect: function( event, ui ) {
+		  	//alert("show all");
+            ui.item.option.selected = true;
+			
+            this._trigger( "select", event, {
+              item: ui.item.option
+            });
+            if(ele_select.attr('id')=='project_uuid'){
+				fetchCategories();
+			}
+          },
+ 
+          autocompletechange: "_removeIfInvalid"
+        });
+      },
+ 
+      _createShowAllButton: function() {
+        var input = this.input,
+          wasOpen = false;
+ 
+        $( "<a>" )
+          .attr( "tabIndex", -1 )
+          .attr( "title", "Show All Items" )
+          .tooltip()
+          .appendTo( this.wrapper )
+          .button({
+            icons: {
+              primary: "ui-icon-triangle-1-s"
+            },
+            text: false
+          })
+          .removeClass( "ui-corner-all" )
+          .addClass( "custom-combobox-toggle ui-corner-right" )
+          .mousedown(function() {
+            wasOpen = input.autocomplete( "widget" ).is( ":visible" );
+          })
+          .click(function() {
+            input.focus();
+ 
+            // Close if already visible
+            if ( wasOpen ) {
+              return;
+            }
+ 
+            // Pass last search string as value to search for, displaying last results
+            input.autocomplete( "search", 'SHOWALL' );
+          });
+      },
+ 
+      _source: function( request, response ) {
+        //var matcher = new RegExp( $.ui.autocomplete.escapeRegex(request.term), "i" );
+		var ele_select= this.element;
+		if(request.term=='SHOWALL'){
+			response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+		
+		}
+		else
+		{
+			if(ele_select.attr('id')=='project_uuid'){
+				var jsonRow = 'getprojectsonsearch.cgi?srch='+request.term;
+			}else if(ele_select.attr('id')=='uuid_top_level_category'){
+				var jsonRow = 'getcategoryonsearch.cgi?name='+request.term+'&project_uuid='+$("#project_uuid").val();
+			}
+		if(xhr) xhr.abort();
+		xhr=$.getJSON(jsonRow,function(result){
+			if(result.error){
+				//
+			}else{
+				var html='<option value=""></option>';
+				$.each(result, function(i,item){
+					if(ele_select.attr('id')=='project_uuid'){
+						html += '<option value="'+item.ProjectUUID+'">'+item.value+'</option>';
+					}else if(ele_select.attr('id')=='uuid_top_level_category'){
+						if(selectedCatStr!=item.uuid){
+							html += '<option value="'+item.uuid+'">'+item.value+'</option>';
+						}
+					}	
+				});
+				ele_select.html(html);
+				
+				
+				response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+				
+				
+			}
+		});
+       
+	  } 
+		
+      },
+ 
+      _removeIfInvalid: function( event, ui ) {
+ 
+        // Selected an item, nothing to do
+        if ( ui.item ) {
+
+          return;
+        }
+ 
+        // Search for a match (case-insensitive)
+        var value = this.input.val(),
+          valueLowerCase = value.toLowerCase(),
+          valid = false;
+           var ele_select= this.element;
+        this.element.children( "option" ).each(function() {
+          if ( $( this ).text().toLowerCase() === valueLowerCase ) {
+            this.selected = valid = true;	
+			 if(ele_select.attr('id')=='project_uuid'){
+				fetchCategories();
+			}
+            return false;
+          }
+        });
+ 
+        // Found a match, nothing to do
+        if ( valid ) {
+          return;
+        }
+ 
+        // Remove invalid value
+        this.input
+          .val( "" )
+          .attr( "title", value + " didn't match any item" )
+          .tooltip( "open" );
+        this.element.val( "" );
+        this._delay(function() {
+          this.input.tooltip( "close" ).attr( "title", "" );
+        }, 2500 );
+        this.input.data( "ui-autocomplete" ).term = "";
+      },
+ 
+      _destroy: function() {
+        this.wrapper.remove();
+        this.element.show();
+      }
+    });
+  })( jQuery );
+	
+	$(function() {
+		$( "#project_uuid" ).combobox();
+		$( "#uuid_top_level_category" ).combobox();
+	});
+</script> 
+<script src="assets/js/product.js" type="text/javascript"></script> 
+<!-- END JAVASCRIPTS -->
+</body>
+<!-- END BODY -->
+</html>

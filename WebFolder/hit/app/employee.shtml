@@ -1,0 +1,173 @@
+<!--HIT_EXECUTE
+
+ALL RECORDS([Employees])
+QUERY([Employees];[Employees]uuid=_HIT_WebApp_GetField ("uuid"))
+
+-->
+<!DOC html>
+<html>
+<head>
+	<title>Tenthmatrix CRM App : Employee</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- bootstrap -->
+	<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="bootstrap/css/bootstrap-responsive.min.css" />
+   <!--#4DSCRIPT/_HIT_LoadInclude/hit/app/includes/header.shtml-->
+	
+</head>
+<body>
+
+	<!-- main container -->
+    <div class="content wide-content">
+        <div class="container-fluid">
+            <div id="pad-wrapper" class="form-page">
+				<div class="row-fluid">
+					<div class="span12">
+						<form name="EmployeeForm" action="saveemployee.cgi" method="post" class="form_validation_reg">
+							<input name="Employee_uuid" class="span5" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="Employee_uuid">
+							<div class="formSep">
+								<div class="row-fluid">
+									<div class="span3">
+										<label>Position <span class="f_req">*</span></label>
+										<input name="Position" class="span12" type="text" value="<!--#4DTEXT [Employees]emp_position-->" id="Position" >
+									</div>
+								</div>
+							</div>
+							<div class="formSep">
+								<div class="row-fluid">
+									<div class="span3">
+										<label>First Name <span class="f_req">*</span></label>
+										<input name="FirstName" class="span12" type="text" value="<!--#4DTEXT [Employees]emp_first_name-->" id="FirstName" >
+									</div>
+									<div class="span3">
+										<label>Last Name <span class="f_req">*</span></label>
+										<input name="Lastname" class="span12" type="text" value="<!--#4DTEXT [Employees]emp_last_name-->" id="Lastname" >
+									</div>
+								</div>
+							</div>
+							<div class="formSep">
+								<div class="row-fluid">
+									<div class="span3">
+										<label>Email <span class="f_req">*</span></label>
+										<input name="Email" class="span12" type="text" value="<!--#4DTEXT [Employees]email-->" id="Email" >
+									</div>
+									<div class="span3">
+										<label>Password <span class="f_req">*</span></label>
+										<input name="Password" class="span12" type="password" value="<!--#4DTEXT [Employees]zWebPassword-->" id="Password" >
+									</div>
+								</div>
+							</div>
+
+							<div class="formSep">
+								<div class="row-fluid">
+									<div class="span3">
+										<label>Type</label>
+										<Select name="Type" id="Type">
+											<option value="0">Select an option</option>
+											<option value="Administrator" <!--#4DIF ([Employees]emp_type="Administrator")-->selected<!--4DELSE--><!--4DENDIF-->>Administrator</option>
+											<option value="Bookkeeper" <!--#4DIF ([Employees]emp_type="Bookkeeper")-->selected<!--4DELSE--><!--4DENDIF-->>Bookkeeper</option>
+											<option value="Customer Relationship Manager" <!--#4DIF ([Employees]emp_type="Customer Relationship Manager")-->selected<!--4DELSE--><!--4DENDIF-->>Customer Relationship Manager</option>
+											<option value="Designer" <!--#4DIF ([Employees]emp_type="Designer")-->selected<!--4DELSE--><!--4DENDIF-->>Designer</option>
+											<option value="Developer" <!--#4DIF ([Employees]emp_type="Developer")-->selected<!--4DELSE--><!--4DENDIF-->>Developer</option>
+											<option value="Manager" <!--#4DIF ([Employees]emp_type="Manager")-->selected<!--4DELSE--><!--4DENDIF-->>Manager</option>
+											<option value="Shareholder" <!--#4DIF ([Employees]emp_type="Shareholder")-->selected<!--4DELSE--><!--4DENDIF-->>Shareholder</option>
+											<option value="Support" <!--#4DIF ([Employees]emp_type="Support")-->selected<!--4DELSE--><!--4DENDIF-->>Support</option>
+											<option value="Technical" <!--#4DIF ([Employees]emp_type="Technical")-->selected<!--4DELSE--><!--4DENDIF-->>Technical</option>
+										</select>
+									</div>
+								</div>
+							</div>
+							<div class="formSep">
+								<div class="row-fluid">
+									<div class="span3">
+										<label>Select Manager</label>
+										<select name="Select_Manager" id="Select_Manager">
+											<option value="0">Select an option</option>
+											<!--#4DSCRIPT/Web_LoadManager/-->
+											<!--4DLOOP  [Employees]-->
+											<option value="<!--#4DHTMLVAR [Employees]uuid-->"><!--#4DHTMLVAR [Employees]emp_first_name--> <!--#4DHTMLVAR [Employees]emp_last_name--></option>
+											<!--4DENDLOOP-->
+										</select>   
+									</div>
+								</div>
+							</div>
+							<div class="formSep">
+								<div class="row-fluid">
+									<div class="span3">
+										<label>Status</label>
+										<select name="Status" id="Status">
+											<option value="Active" <!--#4DIF ([Employees]emp_active=True)-->selected<!--4DELSE--><!--4DENDIF-->>Active</option>
+											<option value="Inactive" <!--#4DIF ([Employees]emp_active=True)-->selected<!--4DELSE--><!--4DENDIF-->>Inactive</option>
+										</select>   
+									</div>
+									<div class="span3">
+										<label>Web Access</label>
+										<select name="Allow_Web_Access" id="Allow_Web_Access">
+											<option value="Allow" <!--#4DIF ([Employees]AllowWebAccess=True)-->selected<!--4DELSE--><!--4DENDIF-->>Allow</option>
+											<option value="Deny" <!--#4DIF ([Employees]AllowWebAccess=False)-->selected<!--4DELSE--><!--4DENDIF-->>Deny</option>
+										</select>    
+									</div>
+								</div>
+							</div>
+							<div style="text-align: center;" class="span9 field-box">
+								<input type="submit" value="Submit" class="btn-glow primary">
+								<span>OR</span>
+								<a href="employees.shtml">Cancel</a>
+							</div>
+						</form>
+					</div>
+				</div>
+		
+            </div>
+		</div>
+    </div>
+    <!-- end main container -->
+
+	
+	<script src="js/jquery.min.js"></script>
+	
+	<script src="bootstrap/js/bootstrap.min.js"></script>
+	<!-- validation -->
+    <script src="lib/validation/jquery.validate.min.js"></script>
+<script type="text/javascript">
+
+	$(document).ready(function() {
+		//* regular validation
+		gebo_validation.reg();
+		
+		$.validator.addMethod("isemail", 
+		   function(value, element) {
+			  var regex = /^([a-zA-Z0-9_\.\-\+])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+				return regex.test(value);
+		   }, 
+		   "Not a valid email"    ); 
+	});
+	gebo_validation = {
+		reg: function() {
+			reg_validator = $('.form_validation_reg').validate({
+				onkeyup: false,
+				errorClass: 'error',
+				validClass: 'valid',
+				highlight: function(element) {
+					$(element).closest('div').addClass("f_error");
+				},
+				unhighlight: function(element) {
+					$(element).closest('div').removeClass("f_error");
+				},
+				errorPlacement: function(error, element) {
+					$(element).closest('div').append(error);
+				},
+				rules: {
+					Position: { required: true },
+					FirstName: { required: true },
+					Lastname: { required: true },
+					Email: { required: true, isemail : true },
+					Password: { required: true }
+				},
+			})
+		}
+	};
+</script>
+</body>
+</html>

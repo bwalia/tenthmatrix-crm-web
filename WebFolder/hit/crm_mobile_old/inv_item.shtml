@@ -1,0 +1,179 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+C_BOOLEAN(mUserIsCurrentBool)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+ALL RECORDS([Tax_Codes])
+QUERY([Invoice_Items];[Invoice_Items]uuid=_HIT_WebApp_GetField ("uuid"))
+
+
+//$nrecords:=Records in selection([Invoices])
+//If ($nrecords=0)
+//$newid:=Sequence number([Invoices])
+//End if
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+-->
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/main-header.shtml-->
+
+
+<style>
+label.error {
+	float: left;
+	color: red;
+	padding-top: .5em;
+	vertical-align: top;
+	font-weight:bold
+}
+</style>
+
+
+
+
+</head>
+<body>
+<div data-role="page" id="home" data-add-back-btn="false">
+
+	<div data-role="content" style="padding: 15px;">
+	
+	<script src="js/jquery.validate.js"></script>
+<script src="js/additional-methods.js"></script>
+
+<script type="text/javascript">
+
+function roundNumber(number,decimals) {
+  var newString;// The new rounded number
+  decimals = Number(decimals);
+  if (decimals < 1) {
+    newString = (Math.round(number)).toString();
+  } else {
+    var numString = number.toString();
+    if (numString.lastIndexOf(".") == -1) {// If there is no decimal point
+      numString += ".";// give it one at the end
+    }
+    var cutoff = numString.lastIndexOf(".") + decimals;// The point at which to truncate the number
+    var d1 = Number(numString.substring(cutoff,cutoff+1));// The value of the last decimal place that we'll end up with
+    var d2 = Number(numString.substring(cutoff+1,cutoff+2));// The next decimal, after the last one we want
+    if (d2 >= 5) {// Do we need to round up at all? If not, the string will just be truncated
+      if (d1 == 9 && cutoff > 0) {// If the last digit is 9, find a new cutoff point
+        while (cutoff > 0 && (d1 == 9 || isNaN(d1))) {
+          if (d1 != ".") {
+            cutoff -= 1;
+            d1 = Number(numString.substring(cutoff,cutoff+1));
+          } else {
+            cutoff -= 1;
+          }
+        }
+      }
+      d1 += 1;
+    } 
+    if (d1 == 10) {
+      numString = numString.substring(0, numString.lastIndexOf("."));
+      var roundedNum = Number(numString) + 1;
+      newString = roundedNum.toString() + '.';
+    } else {
+      newString = numString.substring(0,cutoff) + d1.toString();
+    }
+  }
+  if (newString.lastIndexOf(".") == -1) {// Do this again, to the new string
+    newString += ".";
+  }
+  var decs = (newString.substring(newString.lastIndexOf(".")+1)).length;
+  for(var i=0;i<decimals-decs;i++) newString += "0";
+  //var newNumber = Number(newString);// make it a number if you like
+  return newString; // Output the result to the form field (change for your purposes)
+}
+
+function update_price() {
+  var price = $('#rate').val() * $('#hours').val();
+  alert(price);
+  /*price = roundNumber(price,2);
+  isNaN(price) ? $('#amount').html("N/A") : $('#amount').html(price);*/
+  
+}
+
+$(document).on('pageinit', function(){
+
+
+	$("#frm").validate({
+        rules: {
+			description: "required",
+            rate: "required",
+            hours : "required",
+           
+        },
+		messages: {
+			description: "Please enter description",
+			rate: "Please enter rate",
+			hours: "Please enter hours",
+			
+		}
+    });
+});
+
+
+	
+</script>
+	
+	
+		<ul data-role="listview" data-inset="true">
+			<li data-role="list-divider"><span style=" color:#2B89D0; font-stretch:narrower;"><!--#4DIF (Records in selection([Invoice_Items])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Invoice Item</span></li>
+		</ul>
+		<form data-ajax="false" name="InvoiceItemForm" action="saveinvoiceitem.cgi" method="post" id="frm" >
+		
+		
+		
+		<input name="invoice_id" type="hidden"  value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("inv_id")-->" id="invoice_id">
+		<input name="ivcnitem_uuid" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="ivcnitem_uuid">
+		
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput1">Description<font color="#FF0000">*</font></label>
+					<textarea name="description" id="description" placeholder="Description" ><!--#4DHTMLVAR [Invoice_Items]item_description--></textarea>
+					
+				</fieldset>
+			</div>
+					
+					
+					
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput12">Rate<font color="#FF0000">*</font></label>
+					<input type="text" name="rate" id="rate" placeholder="Rate" onBlur="update_price()" value="<!--#4DHTMLVAR [Invoice_Items]item_rate-->" >
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput12">Hours<font color="#FF0000">*</font></label>
+						<input type="text" name="hours" id="hours" placeholder="Hours" onBlur="update_price()" value="<!--#4DHTMLVAR [Invoice_Items]item_hours-->">
+				</fieldset>
+			</div>
+			
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput12">Amount<font color="#FF0000">*</font></label>
+						<input type="text" name="amount" id="amount" placeholder="Amount" value="<!--#4DHTMLVAR [Invoice_Items]item_amount-->" readonly>
+				</fieldset>
+			</div>
+			
+			
+			
+			<input type="submit" value="Submit" id="submit" name="submit" >
+			<input type="button" value="Cancel" onClick="__close(); return false;">
+			
+			
+			
+		</form>
+	</div><!-- END DATA ROLE CONTENT-->
+
+    
+ </div>
+ 
+</body>
+</html>

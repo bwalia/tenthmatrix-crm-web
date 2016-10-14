@@ -1,0 +1,145 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+
+//if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+QUERY([Documents];[Documents]uuid=_HIT_WebApp_GetField ("uuid"))
+QUERY([Companies];[Companies]uuid=[Documents]uuid_customer)
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+//else
+//_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+//end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+
+-->
+<!DOC html>
+<html>
+<head>
+	<title>Tenthmatrix CRM App : Document</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- bootstrap -->
+	<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="bootstrap/css/bootstrap-responsive.min.css" />
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/app/includes/header.shtml-->
+	<style type="text/css">
+
+  #message, #tax_message{
+	color:#FF0000;
+}
+	</style>
+</head>
+<body>
+
+	<!-- main container -->
+    <div class="content wide-content">
+        <div class="container-fluid">
+            <div id="pad-wrapper" class="form-page">
+				<div class="row-fluid">
+					<div class="span12">
+						<form name="DocumentForm" action="savedocument.cgi" id="DocumentForm" class="form-comment form_validation_reg" method="post" enctype="multipart/form-data"> 
+						<input name="company_uuid" class="span6" type="hidden" value="<!--#4DVAR [Companies]uuid-->" id="company_uuid">
+							<div class="formSep">
+								<div class="row-fluid">
+									<div class="span6">
+										<label>Filename <span class="f_req">*</span></label>
+										
+											<input class="span6" name="file_name" type="text" value="<!--#4DVAR [Documents]filename-->" id="file_name">&nbsp;Size:&nbsp;<!--#4DVAR _HIT_FileSizeHumanReadable (BLOB size([Documents]filecontent))-->
+										
+									</div>
+									</div>
+							</div>
+							        
+							<div class="formSep">
+								<div class="row-fluid">
+									
+									<div class="span6">
+										<label>File Content </label>
+										<input name="file_content" type="file" id="file_content">
+								 <span class="label label-success"><a title="Download Document <!--#4DHTMLVAR String([Documents]filename)-->" target="_blank" href="javascript:alert('Coming...soon...')">
+                                        <i class="icon-download-alt"></i>&nbsp;</a>
+                                    </span>Download					
+										</div>
+
+								</div>
+							</div>
+							        
+							<div class="formSep">
+								<div class="row-fluid">
+								
+								<div class="span6">
+										<label>Relationship Type </label>
+										<input class="span6" name="type" type="text" value="<!--#4DVAR [Documents]doctype-->" id="type">
+								<input name="customer" type="hidden" value="<!--#4DVAR [Companies]company_Name-->" id="customer">
+									</div>
+									</div>
+							</div>
+							        
+							<div class="formSep">
+								<div class="row-fluid">
+								
+									<div class="span6">
+										<label>Metadata </label>
+										<textarea class="span6" name="metadata" id="metadata" rows="10"><!--#4DVAR [Documents]metadata--></textarea>
+									</div>
+
+								</div>
+							</div>
+							
+
+							<div style="text-align: center;" class="span9 field-box">
+								<input type="submit" id="btn_submit" value="Submit" class="btn-glow primary">
+								<span>OR</span>
+								<a href="documents.shtml">Cancel</a>							</div>
+						</form>
+					</div>
+				</div>
+            </div>
+		</div>
+    </div>
+	
+    <!-- end main container -->
+
+	
+	<script src="js/jquery.min.js"></script>
+	<script src="bootstrap/js/bootstrap.min.js"></script>
+	<!-- validation -->
+    <script src="lib/validation/jquery.validate.min.js"></script>
+	<script type="text/javascript" src="js/jquery-impromptu.js"></script>
+	<script src="js/jquery-ui-1.9.1.custom.js"></script>
+	
+	
+<script type="text/javascript">
+
+	$(document).ready(function() {
+		
+		$('.form_validation_reg').validate({
+				ignore: "",
+				onkeyup: false,
+				errorClass: 'error',
+				validClass: 'valid',
+				highlight: function(element) {
+					$(element).closest('div').addClass("f_error");
+				},
+				unhighlight: function(element) {
+					$(element).closest('div').removeClass("f_error");
+				},
+				errorPlacement: function(error, element) {
+					$(element).closest('div').append(error);
+				},
+				rules: {
+					file_name: { required: true },
+					
+				},
+			});	
+			 
+});
+
+</script>
+
+
+
+</body>
+</html>

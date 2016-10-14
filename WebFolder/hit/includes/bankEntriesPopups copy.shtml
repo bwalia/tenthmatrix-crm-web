@@ -1,0 +1,193 @@
+<!-- Reconcile -->
+			<div id="reconcileManager" class="modal modal-modified hide fade" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+           		 <div class="modal-dialog" role="document">
+    				<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-hidden="true" onClick="refreshReconcileManager();$('#r_window_smsg').html(''); $('#r_window_emsg').html('');">&times;</button>
+							<h3 class="modal-title">Reconcile</h3>
+						</div>
+						<div class="modal-body">
+							<p><span class="label-default" id="r_window_smsg" style="color:#006600"></span><span class="label-default" id="r_window_emsg" style="color:#FF0000"></span></p>
+						<div>
+						
+						<input  type="hidden" value="" id="formTypeField">
+						<input  type="hidden" value="" id="bankamountField">
+						<input  type="hidden" value="" id="selectedStatusField">
+						<input  type="hidden" value="" id="bankentryuuidField">
+						<input  type="hidden" value="" id="invUUIDVal">
+						<input  type="hidden" value="" id="clientName">
+						<input  type="hidden" value="" id="clientUUID">
+						<div id="reconcileWin">
+						<input  type="text" value="" id="searchInvoiceField" style="width:97%; ">
+                        <div class="fixed-table-container">
+                        	<div class="header-background"> </div>
+							<div class="fixed-table-container-inner">
+        						<table CLASS="table-hover newtd reconcileTable" style="width:100%;">
+        						
+       							</table>
+      						</div>
+      					</div>
+     					<div style="clear:both;border-top:1px solids #ccc; padding-top:5px;">
+      						<label style="display:inline-block; margin-right:5px; vertical-align:top; padding-top:5px;"><strong><span id="invnoLabel">Sales Invoice Number:</span></strong></label>
+      						<input style="width:90px;" type="text" value="" id="invNoVal" readonly>
+      						<label style="display:inline-block;margin-right:5px; margin-left:15px;vertical-align:top; padding-top:5px;"><strong><span id="invamountLabel">Invoice Amount:</span></strong></label>
+      						<input style="width:90px;" class="num"  type="text" value="" id="invamountVal" >
+      						<br/>
+      						<label style="display:inline-block;margin-right:5px;vertical-align:top; padding-top:5px;" class="attachLabel"><strong><span id="attachdocumentLabel">Attach</span></strong></label>
+      						<input name="document_attach" class="filestyle" type="file" id="document_attach">
+      						<br/>
+      						<button type="button" class="btn btn-info sm-btn" style="margin-left:0px; margin-top:10px;" onClick="$('#r_window_smsg').html(''); $('#r_window_emsg').html(''); reconcile_bankentry()">Reconcile</button>
+						</div>
+						</div>
+      					<div style="clear:both;border: 1px solid #ddd; border-radius: 4px; padding-bottom: 10px; display:none; padding-top:10px; padding-left:10px" id="purchaseInvEntry">
+      						<h4>Add new Purchase Invoice</h4><br/>
+      						<p><span class="label-default" id="pi_window_smsg" style="color:#FF0000"></span></p>
+      						<label style="display:inline-block; margin-right:5px;width:180px;vertical-align:top; padding-top:5px;"><strong>Supplier Name:</strong></label>
+      						<div class="ui-widget" style="display:inline-block;"><select id="supplierDropdown" class="companiesDropDown"></select></div>
+      						<br/><br/>
+      						<label style="display:inline-block;margin-right:5px;width:180px;vertical-align:top; padding-top:5px;"><strong>Amount:</strong></label>
+      						<input style="width:90px;" class="num" type="text" value="" id="n_purchase_amount" >
+      						<label style="display:inline-block;margin-right:5px;padding-left:10px;vertical-align:top; padding-top:5px;">
+      							<input type="checkbox" id="is_vat" value="true" class="span1">VAT
+      						</label>
+      						 <br/><br/>
+      						<label style="display:inline-block;margin-right:5px;width:150px;vertical-align:top; padding-top:5px;"><strong>Attach Bill:</strong></label>
+      						<input name="n_purchase_bill" class="filestyle" type="file" id="n_purchase_bill">
+      						<div style="margin-left: 60px;">
+      							<button type="button" class="btn btn-info sm-btn" style="margin-left:100px;margin-top:10px;" onclick="saveNewPurchaseInvoice()">Save</button>
+      							<button type="button" class="btn btn-default sm-btn" style="margin-left:15px;margin-top:10px;" onclick="cancelNewPurchaseInvoice()">Cancel</button>
+      						</div>
+      					</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<a href="invoice.shtml" target="_blank" class="btn btn-info sm-btn addInvbtn" style="display:none;">Add new Invoice</a>
+					<a href="javascript:void(0)" onClick="addPurchaseInvWin()" class="btn btn-info sm-btn addPurchasbtn" style="display:none;">Add new Purchase Invoice</a>
+					<button type="button" class="btn btn-default sm-btn" data-dismiss="modal" onClick="$('#r_window_smsg').html(''); $('#r_window_emsg').html(''); refreshReconcileManager();">Close</button>
+				</div>
+			</div>
+            </div>
+			</div>
+			
+			<!-- Create Missing Links-->
+			<div id="createMissingLinksManager" class="modal modal-modified hide fade" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+             <div class="modal-dialog" role="document">
+    				<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true" onClick="refreshMissingLinksManager()">&times;</button>
+					<h3 class="modal-title">Create Missing Links</h3>
+				</div>
+				<div class="modal-body" >
+					<p><span class="label-default" id="c_window_smsg" style="color:#006600"></span></p>
+					<div>
+						<input  type="hidden" value="" id="c_formTypeField">
+						<input  type="hidden" value="" id="c_bankentryuuidField">
+						<input  type="hidden" value="" id="c_bankamountField">
+						<input  type="hidden" value="" id="c_selectedStatusField">
+						<div style="max-height:200px;clear:both; margin-bottom:15px; overflow:auto;  ">
+       						<table class="table table-bordered table-hover" style="margin-bottom:0px;">
+       							<thead id="createMisLinkHead">
+       							
+       							</thead>
+       							<tbody id="createMissingTable">
+       							
+       							</tbody>
+      						</table>
+      					</div>
+      					<a href="javascript:void(0)" style="text-decoration:none;margin-bottom:10px;" onClick="openmissingLinkForm(); $('#c_window_smsg').html(''); $('#c_window_emsg').html('');"><strong>+ Create new Link</strong></a>	
+      					
+      					<div style="padding-top: 10px;padding-left:10px; border: 1px solid #ddd; border-radius: 4px; padding-bottom: 10px; display:none;" id="missingLinkForm">
+     						<p><span class="label-default" id="c_window_emsg" style="color:#FF0000"></span></p>
+     						<label style="display:inline-block; margin-right:5px; vertical-align:top; padding-top:5px;"><strong><span id="c_CustomerLabel"></span></strong></label>
+     						<div class="ui-widget" style="display:inline-block;"><select id="c_linkcustomer" class=""></select></div>
+     						<div class="c_newCreateMisLinkDiv" style="display:none;">
+     							 <div class="fixed-table-container" style="margin: 5px -6px;">
+                        			<div class="header-background"> </div>
+									<div class="fixed-table-container-inner">
+        								<table CLASS="table-hover newtd" style="width:100%;">
+     										<thead id="c_newCreateMisLinkHead">
+       						
+       										</thead>
+       										<tbody id="c_newCreateMissingBody">
+       							
+       										</tbody>
+      									</table>
+      								</div>
+      							</div>
+      							<br/>
+      							<div style="clear:both;border-top:1px solids #ccc; padding-top:5px;">
+      								<input type="hidden" id="c_receipt_uuid" value="">
+     								<input type="hidden" id="c_invoice_uuid" value="">
+     								<label style="display:inline-block; margin-right:5px; vertical-align:top; padding-top:5px;"><strong><span id="c_reciptNoLabel"></span></strong></label>
+      								<input style="width:90px;" type="text" value="" id="c_recipt_no" readonly>
+      								
+      								<label style="display:inline-block;margin-right:5px; vertical-align:top; padding-top:5px;"><strong><span id="c_invnoLabel"></span></strong></label>
+      								<input style="width:90px;" type="text" value="" id="c_inv_no" readonly>
+      								<br/>
+      								<label style="display:inline-block;margin-right:5px;vertical-align:top; padding-top:5px;" class="attachLabel"><strong><span id="c_attachdocumentLabel">Attach</span></strong></label>
+      								<input name="c_document_attach" class="filestyle" type="file" id="c_document_attach">
+      								<br/>
+      							</div>
+       						     						
+
+      						</div>
+      						 <div style="margin-left: 100px;"><button type="button" class="btn btn-info sm-btn" style="margin-left:100px;margin-top:10px;" onclick="saveCreateMissingLinks()">Save new link</button></div>
+      						
+      						
+      					</div>
+      					<div style="clear:both;border: 1px solid #ddd; border-radius: 4px; padding-bottom: 10px; display:none; padding-top:10px; padding-left:10px" id="c_purchaseInvEntry">
+      						<h4>Add new Purchase Invoice</h4><br/>
+      						<p><span class="label-default" id="cpi_window_emsg" style="color:#FF0000"></span></p>
+      						<label style="display:inline-block; margin-right:5px;width:180px;vertical-align:top; padding-top:5px;"><strong>Supplier Name:</strong></label>
+      						<div class="ui-widget" style="display:inline-block;"><select id="c_n_supplierDropdown" class="companiesDropDown"></select></div>
+      						<br/><br/>
+      						<label style="display:inline-block;margin-right:5px;width:180px;vertical-align:top; padding-top:5px;"><strong>Amount:</strong></label>
+      						<input style="width:90px;" class="num" type="text" value="" id="c_n_purchase_amount" >
+      						<label style="display:inline-block;margin-right:5px;padding-left:10px;vertical-align:top; padding-top:5px;">
+      							<input type="checkbox" id="c_is_vat" value="true" class="span1">VAT
+      						</label>
+      						 <br/><br/>
+      						<label style="display:inline-block;margin-right:5px;width:150px;vertical-align:top; padding-top:5px;"><strong>Attach Bill:</strong></label>
+      						<input name="c_n_purchase_bill" class="filestyle" type="file" id="c_n_purchase_bill">
+      						<div style="margin-left: 60px;">
+      							<button type="button" class="btn btn-info sm-btn" style="margin-left:100px;margin-top:10px;" onclick="c_saveNewPurchaseInvoice()">Save</button>
+      							<button type="button" class="btn btn-default sm-btn" style="margin-left:15px;margin-top:10px;" onclick="c_cancelNewPurchaseInvoice()">Cancel</button>
+      						</div>
+      					</div>
+      				</div>
+				</div>
+				<div class="modal-footer">
+					<a href="javascript:void(0)" onClick="addPurchaseInvForMisiingLinks()" class="btn btn-info sm-btn c_addPurchasbtn" style="display:none;">Add new Purchase Invoice</a>
+					<button type="button" class="btn btn-default sm-btn" data-dismiss="modal" onClick="refreshMissingLinksManager()">Cancel</button>
+				</div>
+			</div>
+            	</div>
+			</div>
+			
+			<!--upload document-->
+			<div id="uploadDocumentManager" class="modal modal-modified hide fade" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+             <div class="modal-dialog" role="document">
+    				<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true" onClick="refreshMissingLinksManager()">&times;</button>
+					<h3 class="modal-title">Upload Document</h3>
+				</div>
+				<div class="modal-body" >
+					<p><span class="label-default" id="u_window_smsg" style="color:#006600"></span><span class="label-default" id="u_window_emsg" style="color:#FF0000"></span></p>
+					<div>
+						<input  type="hidden" value="" id="u_table_uuid">
+						<input  type="hidden" value="" id="u_bankuuid">
+						<input  type="hidden" value="" id="u_tableName">
+						<label style="display:inline-block;margin-right:5px;vertical-align:top; padding-top:5px;" class="attachLabel"><strong>Attach Document</strong></label>
+      					<input name="u_document_attach" class="filestyle" type="file" id="u_document_attach">
+      				</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-info sm-btn" onclick="uploadDocument()">Upload</button>
+					<button type="button" class="btn btn-default sm-btn" data-dismiss="modal" onClick="refreshMissingLinksManager()">Cancel</button>
+				</div>
+			</div>
+            	</div>
+			</div>
+			
+			<div style="text-align:center" id="dialog" ></div>

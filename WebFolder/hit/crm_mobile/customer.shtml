@@ -1,0 +1,197 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+C_TEXT(_HTMLTITLETXT)
+
+If(_HIT_AuthenticateSession="Session-Authenticated-OK")
+ALL RECORDS([Tax_Codes])
+
+QUERY([Companies];[Companies]uuid=_HIT_WebApp_GetField ("uuid"))
+QUERY([Contacts];[Contacts]client_id=[Companies]account_Number)
+
+If (Records in selection([Companies])=0)
+_HTMLTITLETXT:="New Customer"
+Else
+_HTMLTITLETXT:= "Customer: "+[Companies]company_Name
+END If
+
+Else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+End If
+-->
+
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/main-header.shtml-->
+<link rel="stylesheet" href="css/jquery-ui.css">
+<script src="js/datepicker.js"></script>
+<script src="js/jquery.validate.js"></script>
+<script type="text/javascript">
+var tableUUIDStr= '<!--#4DVAR [Companies]uuid -->';
+var tableNameStr='Companies';
+$(document).ready(function() {
+	<!--#4DIF (Records in selection([Companies])=0)-->
+		var new_acc_no='<!--#4DVAR  SequenceNumber (->[Companies]account_Number)-->';
+		var new_uuid='<!--#4DVAR Generate UUID-->';
+		$('#acc_no').val(new_acc_no);
+		$('#Company_uuid').val(new_uuid);
+	<!--#4DELSE--><!--#4DENDIF-->
+			
+	$(".ui-table-columntoggle-btn").hide();
+	$("#ContentForm").validate({
+		ignore: "",
+        rules: {
+            Company_Name: { required: true },
+			Email: { email: true },
+			Address_1: { required: true },
+        }
+    });
+    
+   		$('#follow_date').datepicker({
+    		autoclose: true,
+    		changeMonth: true,
+      		changeYear: true,
+      		dateFormat: 'dd/mm/yy'
+      	});
+});
+</script>
+<script type='text/javascript' src='js/customerNotes.js'></script>
+<style>
+label.error { 
+	float: left; 
+	color: red; 
+	padding-top: 1.5em; 
+	vertical-align: top; 
+}
+</style>
+</head>
+<body>
+<div data-role="page" class="jqm-demos" data-quicklinks="true">
+	<!-- header -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/top-header.shtml-->
+	<!-- /header -->
+	
+	<div role="main" class="ui-content jqm-content">
+		<h3><!--#4DIF (Records in selection([Companies])=1)-->Edit <!--4DVAR [Companies]company_Name--> [<!--4DVAR [Companies]account_Number-->]<!--#4DELSE-->New Customer<!--#4DENDIF--></h3>
+		<div data-demo-html="true">
+			<div data-role="tabs" id="tabs">
+		      <div data-role="navbar">
+			    <ul>
+			      <li><a href="#one" data-ajax="false" class="ui-btn-active">Companies Details</a></li>
+			      <!--#4DIF (Records in selection([Companies])=1)-->
+			      <li><a href="#two" data-ajax="false">Additional notes</a></li>
+			      <!--#4DENDIF-->
+			    </ul>
+		      </div>
+		     	<div id="one" class="ui-body-d ui-content">
+		     		<form name="ContentForm" action="savecustomer.cgi" id="ContentForm" data-ajax="false" method="post">
+					
+					<div class="ui-field-contain">
+   						<label for="Company_Name">Company Name :</label>
+						<input type="text" id="Company_Name" value="<!--#4DVAR [Companies]company_Name-->" name="Company_Name" placeholder="Company Name">
+					</div>        
+                    <input name="Company_uuid" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="Company_uuid">               
+                              	
+					<div class="ui-field-contain">
+   						<label for="acc_no">Account Number:</label>
+   						<input readonly type="text" id="acc_no" value="<!--#4DVAR [Companies]account_Number-->" name="acc_no" placeholder="Account Number">
+					</div>
+					<div class="ui-field-contain">
+   						<label for="Contact_First_Name">Contact First Name :</label>
+						<input type="text" id="Contact_First_Name" name="Contact_First_Name" value="<!--#4DVAR [Companies]contact_firstname-->">
+					</div>
+					<div class="ui-field-contain">
+   						<label for="Contact_Last_Name">Contact Last Name :</label>
+						<input type="text"id="Contact_Last_Name" name="Contact_Last_Name" value="<!--#4DVAR [Companies]contact_Lastname-->">
+					</div>
+					<div class="ui-field-contain">
+   						<label for="Email">Email :</label>
+						<input type="text" name="Email" id="Email" value="<!--#4DVAR [Companies]email_address-->">
+					</div>
+					<div class="ui-field-contain">
+   						<label for="Address_1">Address 1: </label>
+						<textarea cols="40" rows="8" name="Address_1" id="Address_1" placeholder="Address 1"><!--#4DVAR [Companies]address_line_1--></textarea>
+					</div>
+					
+					<div class="ui-field-contain">
+   						<label for="City">City :</label>
+						<input type="text" name="City" value="<!--#4DVAR [Companies]city_or_town-->" id="City">
+					</div>
+					<div class="ui-field-contain">
+   						<label for="Post_Code">Post Code :</label>
+						<input name="Post_Code" type="text" value="<!--#4DVAR [Companies]post_zip_code-->" id="Post_Code">
+					</div>
+					
+					<div class="ui-field-contain">
+   						<label for="Phone">Phone:</label>
+						<input  name="Phone" type="text" value="<!--#4DVAR [Companies]telephone-->" id="Phone">
+   					</div>
+   					<div class="ui-field-contain">
+   						<label for="Country">Country:</label>
+						<input  name="Country" type="text"  value="<!--#4DVAR [Companies]country-->" id="Country">
+   					</div>
+   					<div class="ui-field-contain">
+   						<label>
+       						<input name="is_supplier" type="checkbox" value="true" id="is_supplier" <!--#4DIF ([Companies]is_supplier)-->checked<!--4DELSE--><!--4DENDIF--> >Supplier
+   						</label>
+   					</div>
+					<div class="ui-field-contain">
+   						<label for="Task_Name">Follow Up Date :</label>
+						<input data-role="date" type="text" data-date-format="dd/mm/yyyy" <!--#4DIF ([Companies]followup_date=!00/00/00!)-->value=""<!--4DELSE-->value="<!--#4DHTMLVAR ([Companies]followup_date)-->"<!--4DENDIF--> name="follow_date" id="follow_date" readonly >
+					</div>
+				
+					<button type="submit" class="ui-shadow ui-btn ui-corner-all ui-mini">Submit</button>
+					<a href="customers.shtml" data-ajax="false" class="ui-shadow ui-btn ui-corner-all ui-mini">Cancel</a>
+					</form>	
+		    	</div>
+		    	<!--#4DIF (Records in selection([Companies])=1)-->
+		      	<div id="two">
+		      		<a href="#popupLogin" data-rel="popup" data-position-to="window" data-transition="pop"><input type="button" value="Add new note"></a>
+					<div data-role="popup" id="popupLogin" data-overlay-theme="a" class="ui-content">
+						<div style="padding:10px 20px;">
+        				   	<h3>Add new note</h3>
+        					<label for="textarea" class="ui-hidden-accessible newMsgStr">Note:</label>
+            				<textarea name="add_new_note" id="add_new_note" value="" placeholder="Add note.." cols="50"  type="text"></textarea>
+            				<button type="button" class="ui-btn ui-corner-all ui-shadow ui-btn-b ui-btn-icon-left ui-icon-check" onClick="addCustomerNote()">Save</button>
+             				<button type="button" class="ui-btn ui-corner-all ui-shadow ui-btn-b ui-btn-icon-left ui-icon-delete" onClick="$('#popupLogin').popup('close')">Close</button>
+        				</div>
+					</div>
+					<fieldset data-role="controlgroup">
+ 						<table data-role="table" id="table-column-toggle" data-mode="columntoggle" class="ui-responsive table-stroke">
+     						<thead>
+      							<tr>
+       	  							<th>Username</th>
+         							<th>Last Modified</th>
+         							<th>Note</th>
+       							</tr>
+     						</thead>
+     						<tbody id="notesBody">
+     							<!--#4DSCRIPT/Web_LoadCompaniesNotes/-->	
+								<!--#4DLOOP [Notes]--><!-- row -->
+       							<tr>
+        							<td><!--#4DHTMLVAR [Notes]note_user_name--></td>
+        							<td><!--4DHTMLVAR timestamp_unix_toGMT ([Notes]Timestamp_modified)--></td>
+         							<td><!--#4DHTMLVAR [Notes]Note--></td>
+       							</tr>
+      							<!--#4DENDLOOP-->
+     						</tbody>
+   						</table>
+					</fieldset>
+					
+					<a href="customers.shtml" data-ajax="false" class="ui-shadow ui-btn ui-corner-all ui-mini">Cancel</a>
+		      	</div>
+		      	<!--#4DENDIF-->
+		    </div>
+		</div>
+
+	</div><!-- /content -->
+	<!-- panel -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/sidebar.shtml-->
+	<!-- /panel -->
+
+	<!-- footer -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/footer.shtml-->
+	<!-- /footer -->
+</div><!-- /page -->
+
+</body>
+</html>

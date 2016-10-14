@@ -1,0 +1,328 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+ 
+If(_HIT_AuthenticateSession="Session-Authenticated-OK")
+
+QUERY([Employees];[Employees]uuid=_HIT_WebApp_GetField ("uuid"))
+
+Else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+End If
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<!-- BEGIN HEAD -->
+<head>
+	<title><!--#4DIF (Records in selection([Employees])=0)-->New Employee<!--#4DELSE-->Edit <!--#4DVAR [Employees]emp_first_name--><!--#4DENDIF--></title>
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/v2/includes/InitCss.shtml-->
+	<link href="assets/plugins/datepicker/css/bootstrap.datepicker.css" rel="stylesheet" />
+ 	
+	<style>
+		#message{
+			color:#FF0000;
+		}
+
+		.jqibox {
+			z-index:9999!important;
+		}
+	</style>
+</head>
+<!-- END HEAD -->
+<!-- BEGIN BODY -->
+<body class="fixed-leftside fixed-header">
+	<!-- BEGIN HEADER -->
+		<!--#4DSCRIPT/_HIT_LoadInclude/hit/v2/includes/header.shtml-->
+	<!-- END HEADER -->
+
+	<div class="wrapper"> 
+ 		
+		
+ 		 <!-- BEGIN RIGHTSIDE -->
+  <div class="rightside bg-grey-100"> 
+    <!-- BEGIN PAGE HEADING -->
+    <div class="page-head">
+    	<div class="row">
+        <div class="col-sm-6">
+     	 <h1 class="page-title"><!--#4DIF (Records in selection([Employees])=0)-->New Employee<!--#4DELSE-->Update Employee<!--#4DENDIF--></h1>
+         </div>
+      <!-- BEGIN BREADCRUMB -->
+      	<div class="col-sm-6">
+          	<ol class="breadcrumb sm-pullright">
+           	 	<li><a href="javascript:void(0)" onclick="funURLHandler('index.shtml','open-index-window')"><i class="ion-home margin-right-5"></i> Dashboard</a></li>
+        		<li><a href="javascript:void(0)" onclick="funURLHandler('employees.shtml','open-employee-window')"> Employees</a></li>
+        		<li><!--#4DIF (Records in selection([Employees])=1)-->Update Employee<!--#4DELSE-->New Employee<!--#4DENDIF--></li>
+          	</ol>
+       </div>   
+      <!-- END BREADCRUMB -->
+      </div> 
+    </div>
+    <!-- END PAGE HEADING -->
+    
+    <div class="container-fluid">
+      
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel" style="padding-top:20px;"> 
+      <div class="panel-body no-padding-top bg-white"> 
+  
+      <form class="form-horizontal" name="EmployeeForm" id="EmployeeForm" action="saveemployee.cgi" method="post" enctype="multipart/form-data">							
+						
+       	<div class="row">
+           	<div class=" col-sm-12 col-lg-6">
+             	<input name="Employee_uuid" class="span5" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="Employee_uuid">
+  				<div class="form-group">
+    				<label for="" class="col-sm-4 control-label">Position<sup class="req">*</sup></label>
+    				<div class="col-sm-6  ">
+      					<input type="text" class="form-control" id="Position" placeholder="" value="<!--#4DVAR [Employees]emp_position-->" name="Position">
+    				</div>
+  				</div>
+  				<input name="Employee_uuid" class="span5" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="Employee_uuid">        
+							 
+  				<div class="form-group">
+    				<label for="" class="col-sm-4 control-label">First Name<sup class="req">*</sup></label>
+    				<div class="col-sm-6  ">
+      					<input type="text" class="form-control" id="FirstName" placeholder="" value="<!--#4DVAR [Employees]emp_first_name-->" name="FirstName">
+    				</div>
+  				</div>
+  				<div class="form-group">
+    				<label for="" class="col-sm-4 control-label">Last Name<sup class="req">*</sup></label>
+    				<div class="col-sm-6  ">
+      					<input type="text" class="form-control" id="Lastname" placeholder="" value="<!--#4DVAR [Employees]emp_last_name-->" name="Lastname">
+    				</div>
+  				</div>
+  				<div class="form-group">
+   			 		<label for="firstname" class="col-sm-4  control-label">Date Of Birth</label>
+    				<div class="col-sm-6">
+      					<input type="text" class="form-control datepicker" data-date-format="dd/mm/yyyy"  id="DOB" name="DOB" <!--#4DIF ([Employees]date_of_birth=!00/00/00!)-->value=""<!--4DELSE-->value="<!--#4DVAR [Employees]date_of_birth-->"<!--4DENDIF--> readonly>
+    				</div>
+  				</div>
+  				<div class="form-group">
+    				<label for="" class="col-sm-4 control-label">Address</label>
+    				<div class="col-sm-6  ">
+    					<textarea name="Address" class="form-control" id="Address"><!--#4DTEXT [Employees]emp_address--></textarea> 
+      				</div>
+  				</div>
+  				<div class="form-group">
+    				<label for="" class="col-sm-4 control-label">Telephone Number</label>
+    				<div class="col-sm-6  ">
+      					<input type="text" class="form-control" id="telephone" placeholder="" value="<!--#4DVAR [Employees]emp_telephone-->" name="telephone">
+    				</div>
+  				</div>
+  				<div class="form-group">
+    				<label for="" class="col-sm-4 control-label">Email<sup class="req">*</sup></label>
+    				<div class="col-sm-6  ">
+      					<input type="text" class="form-control" value="<!--#4DTEXT [Employees]email-->" id="Email" name="Email">
+    				</div>
+  				</div>
+  				<div class="form-group">
+    				<label for="" class="col-sm-4 control-label">Password<sup class="req">*</sup></label>
+    				<div class="col-sm-6  ">
+      					<input type="password" class="form-control" id="Password" placeholder="" value="<!--#4DVAR [Employees]zWebPassword-->" name="Password">
+    				</div>
+  				</div>
+  				
+  				<div class="form-group">
+   					<label for="" class="col-sm-4 control-label">Status</label>
+                    <div class="col-sm-6">
+                        <select class="form-control" name="Status" id="Status">
+                            <option value="Active" <!--#4DIF ([Employees]emp_active=True)-->selected<!--4DELSE--><!--4DENDIF-->>Active</option>
+							<option value="Inactive" <!--#4DIF ([Employees]emp_active=True)-->selected<!--4DELSE--><!--4DENDIF-->>Inactive</option>
+                        </select>
+                    </div>
+     			</div>
+     			
+  			</div>
+            <div class=" col-sm-12 col-lg-6">
+            	<div class="form-group">
+   					<label for="" class="col-sm-3 control-label">Type</label>
+                    <div class="col-sm-6">
+                        <Select class="form-control" name="Type" id="Type">
+                            <option value="0">Select an option</option>
+							<option value="Administrator" <!--#4DIF ([Employees]emp_type="Administrator")-->selected<!--4DELSE--><!--4DENDIF-->>Administrator</option>
+							<option value="Bookkeeper" <!--#4DIF ([Employees]emp_type="Bookkeeper")-->selected<!--4DELSE--><!--4DENDIF-->>Bookkeeper</option>
+							<option value="Customer Relationship Manager" <!--#4DIF ([Employees]emp_type="Customer Relationship Manager")-->selected<!--4DELSE--><!--4DENDIF-->>Customer Relationship Manager</option>
+							<option value="Designer" <!--#4DIF ([Employees]emp_type="Designer")-->selected<!--4DELSE--><!--4DENDIF-->>Designer</option>
+							<option value="Developer" <!--#4DIF ([Employees]emp_type="Developer")-->selected<!--4DELSE--><!--4DENDIF-->>Developer</option>
+							<option value="Manager" <!--#4DIF ([Employees]emp_type="Manager")-->selected<!--4DELSE--><!--4DENDIF-->>Manager</option>
+							<option value="Shareholder" <!--#4DIF ([Employees]emp_type="Shareholder")-->selected<!--4DELSE--><!--4DENDIF-->>Shareholder</option>
+							<option value="Support" <!--#4DIF ([Employees]emp_type="Support")-->selected<!--4DELSE--><!--4DENDIF-->>Support</option>
+							<option value="Technical" <!--#4DIF ([Employees]emp_type="Technical")-->selected<!--4DELSE--><!--4DENDIF-->>Technical</option>
+                        </select>
+                    </div>
+     			</div>
+            	<div class="form-group">
+    				<label for="" class="col-sm-3 control-label">Employement Start Date</label>
+    				<div class="col-sm-6  ">
+      					<input type="text" class="form-control datepicker" data-date-format="dd/mm/yyyy"  name="employment_start_date" id="employment_start_date" <!--#4DIF ([Employees]employment_start_date=!00/00/00!)-->value=""<!--4DELSE-->value="<!--#4DVAR [Employees]employment_start_date-->"<!--4DENDIF--> readonly>
+    				</div>
+  				</div>
+  				<div class="form-group">
+    				<label for="" class="col-sm-3 control-label">Number of years in Employement</label>
+    				<div class="col-sm-6  ">
+      					<input type="text" class="form-control" name="number_of_years_in_employment" id="number_of_years_in_employment" value="" readonly>
+    				</div>
+  				</div>
+             	<div class="form-group">
+    				<label for="" class="col-sm-3 control-label">Current Holidays Entitlement</label>
+    				<div class="col-sm-6  ">
+      					<input type="text" class="form-control" name="current_holiday_entitlement" id="current_holiday_entitlement" value="<!--#4DTEXT [Employees]current_holiday_entitlement-->" readonly>
+    				</div>
+  				</div>
+  				<div class="form-group">
+    				<label for="" class="col-sm-3 control-label">NI Number</label>
+    				<div class="col-sm-6  ">
+      					<input type="text" class="form-control" value="<!--#4DTEXT [Employees]ni_number-->" id="ni_number" name="ni_number">    
+    				</div>
+  				</div>
+				<div class="form-group">
+    				<label for="" class="col-sm-3 control-label">Emergency Contact Name</label>
+    				<div class="col-sm-6  ">
+      					<input type="text" class="form-control" id="EcontactName" placeholder="" value="<!--#4DVAR [Employees]emergency_contact_name-->" name="EcontactName">
+    				</div>
+  				</div>
+  				
+  				<div class="form-group">
+    				<label for="" class="col-sm-3 control-label">Shared Folder Path</label>
+    				<div class="col-sm-6  ">
+      					<input type="text" class="form-control" id="shared_folder_path" placeholder="" value="<!--#4DVAR [Employees]shared_folder_path-->" name="shared_folder_path">
+    				</div>
+  				</div>
+  				
+     			<div class="form-group">
+   					<label for="" class="col-sm-3 control-label">Manager</label>
+                    <div class="col-sm-6">
+                        <Select class="form-control" name="Select_Manager" id="Select_Manager">
+                            <option value="0">Select an option</option>
+							<!--#4DSCRIPT/Web_LoadManager/-->
+							<!--4DLOOP  [Employees]-->
+							<option value="<!--#4DHTMLVAR [Employees]uuid-->"><!--#4DHTMLVAR [Employees]emp_first_name--> <!--#4DHTMLVAR [Employees]emp_last_name--></option>
+							<!--4DENDLOOP-->
+                        </select>
+                    </div>
+     			</div>
+     			
+     			<div class="form-group">
+   					<label for="" class="col-sm-3 control-label">Web Access</label>
+                    <div class="col-sm-6">
+                        <select class="form-control" name="Allow_Web_Access" id="Allow_Web_Access">
+                            <option value="Allow" <!--#4DIF ([Employees]AllowWebAccess=True)-->selected<!--4DELSE--><!--4DENDIF-->>Allow</option>
+							<option value="Deny" <!--#4DIF ([Employees]AllowWebAccess=True)-->selected<!--4DELSE--><!--4DENDIF-->>Deny</option>
+                        </select>
+                    </div>
+     			</div>
+ 			</div>
+             
+       		 </div>
+             
+             
+             <div class="row">
+             	<div class="col-sm-12 text-center">
+                <input type="submit" class="btn palette-carrot btn-color margin-right-5 btn-sm">
+               	<!--#4DIF (Records in selection([Employees])=0)-->
+               	<input type="reset" class="btn btn-primary btn-sm">
+               	<!--4DENDIF-->
+                </div>
+             </div>
+             </form>
+  
+</div>
+</div>
+</div>
+  <!-- /.col --> 
+</div>
+<!-- /.row --> 
+
+<!-- BEGIN FOOTER -->
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/v2/includes/footer.shtml-->
+<!-- END FOOTER --> 
+</div>
+<!-- /.container-fluid -->
+</div>
+<!-- /.rightside -->
+<!-- BEGIN LEFTSIDE -->
+        <!--#4DSCRIPT/_HIT_LoadInclude/hit/v2/includes/left-navigation.shtml-->
+		<!-- END LEFTSIDE -->
+</div>
+<!-- /.wrapper --> 
+<!-- END CONTENT --> 
+
+<!-- BEGIN JAVASCRIPTS --> 
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/v2/includes/InitJs.shtml-->
+<!-- bootstrap validator -->
+<script src="assets/plugins/bootstrapValidator/bootstrapValidator.min.js" type="text/javascript"></script>
+	
+<!-- maniac -->
+<script type="text/javascript" src="assets/js/maniac.js"></script>
+<!-- datepicker --> 
+<script src="assets/plugins/datepicker/js/bootstrap.datepicker.js" type="text/javascript"></script>
+
+<!-- dashboard --> 
+ <script type="text/javascript">
+var annual_holidays=20;
+
+function set_no_of_employement_holidays(){
+	var ONE_DAY = 1000 * 60 * 60 * 24
+
+	var start_date= $('#employment_start_date').val();
+	start_date=new Date(start_date);
+	var now = new Date();
+	
+	// Convert both dates to milliseconds
+    var date1_ms = start_date.getTime();
+    var date2_ms = now.getTime()
+
+    // Calculate the difference in milliseconds
+    var difference_ms = Math.abs(date1_ms - date2_ms)
+	
+    // Convert back to days and return
+    var days = Math.round(difference_ms/ONE_DAY)
+	
+	var s_year=start_date.getFullYear();
+	var thisyear = now.getFullYear();
+	var number_of_long_years = 0;
+	for(var y=s_year; y <= thisyear; y++){ 
+		if(days>=365){
+			days = days-366;
+			number_of_long_years++; 
+		} else {
+			days=days-365;
+		}
+	}
+	$('#number_of_years_in_employment').val(number_of_long_years);
+	var current_holiday_entitlement=annual_holidays+number_of_long_years;
+	$('#current_holiday_entitlement').val(current_holiday_entitlement);
+}
+
+$(function () {
+	set_no_of_employement_holidays();
+ 	maniac.loadvalidator();
+ 	$('#DOB').datepicker({"autoclose": true});
+
+	$('#employment_start_date').datepicker({"autoclose": true}).on('changeDate', function (ev) {
+		set_no_of_employement_holidays();
+	});
+	 
+	 $('#pan_image').click(function(){
+	 	$('#file_pan_image').trigger('click');
+	 });
+
+	 $("#file_pan_image").change(function(){
+		if (this.files && this.files[0]) {
+			var reader = new FileReader();
+
+			reader.onload = function (e) {
+				$('#pan_image').attr('src', e.target.result);
+			};
+
+			 reader.readAsDataURL(this.files[0]);
+		 }
+	});
+	
+ });
+<!-- END JAVASCRIPTS -->
+</script>
+</body>
+<!-- END BODY -->
+</html>

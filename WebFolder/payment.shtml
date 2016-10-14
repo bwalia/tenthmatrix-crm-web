@@ -1,0 +1,203 @@
+<!--HIT_EXECUTE
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+QUERY([Payments];[Payments]uuid=_HIT_WebApp_GetField ("uuid"))
+QUERY([Companies];[Companies]account_Number=[Payments]client_accountnumber)
+
+QUERY([Invoices];[Invoices]inv_idzzz=[Payments]invoice_number)
+
+Web_LoadPaymentRelated
+
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+_HIT_WebSession_SetVar ("last-payment-uuid";_HIT_WebApp_GetField ("uuid"))
+-->
+<!DOCTYPE html>
+<html>
+<head>
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+</head>
+<body>
+
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
+
+	<!-- main container -->
+    <div class="content">
+        
+        <div class="container-fluid">
+            <div id="pad-wrapper" class="form-page">
+				 <div class="row-fluid header">
+                    <h3><!--#4DIF (Records in selection([Payments])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Payment Receipt</h3>
+                </div>
+                <div class="row-fluid form-wrapper">
+					<!-- left column -->
+                    <div class="span9 with-sidebar">
+						<form name="PaymentForm" action="savepayment.cgi" class="form-comment" method="post" onSubmit="return ValidateForm();">
+							<input name="uuid" class="span9" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="uuid">
+							<div class="span12 field-box">
+								<label>Invoice no <span style="color:#6E829B">*</span></label>
+								<input name="inv_no" onBlur="get_client()" class="span9" type="text" value="<!--#4DVAR [Payments]invoice_number-->" id="inv_no" >
+								<br/>
+								<span id="err_msg" style="color:#FF0000"></span>
+								<input class="span8" name="invoice_uuid" id="invoice_uuid" type="hidden" value="<!--#4DVAR [Invoices]uuid-->">
+							</div>                                                                 
+							<div class="span12 field-box">
+								<label>Company</label>
+								<input class="span9" name="company_name"  type="text" value="<!--4DVAR [Companies]company_Name-->" id="company_name" readonly>
+								<input class="span8" name="client_uuid" id="client_uuid" type="hidden" value="<!--#4DVAR [Companies]uuid-->">
+							</div>							
+							<div class="span12 field-box">
+								<label>Date <span style="color:#6E829B">*</span></label>
+								<input name="date_received" class="input-large datepicker" type="text" data-date-format="dd/mm/yyyy" <!--#4DIF ([Payments]date_received=!00/00/00!)-->value=""<!--4DELSE-->value="<!--#4DVAR [Payments]date_received-->"<!--4DENDIF--> id="date_received" readonly>
+							</div>
+                  
+							<div class="span12 field-box">
+								<label>Amount <span style="color:#6E829B">*</span></label>
+								<input name="amount" class="span9 num" type="text" value="<!--#4DVAR [Payments]amount_received-->" id="amount">
+							</div>                                                                 
+							<div class="field-box">
+                                <label>Mode of Payment</label>
+                                <div class="ui-select span5">
+									<Select name="mode_of_payment" id="mode_of_payment">
+										<option value="Active" <!--#4DIF ([Payments]mode_of_payment="BACS")-->selected<!--4DELSE--><!--4DENDIF-->>BACS</option>
+										<option value="Paid by Debit or Credit Card" <!--#4DIF ([Payments]mode_of_payment="Paid by Debit or Credit Card")-->selected<!--4DELSE--><!--4DENDIF-->>Paid by Debit or Credit Card</option>
+										<option value="Cash" <!--#4DIF ([Payments]mode_of_payment="Cash")-->selected<!--4DELSE--><!--4DENDIF-->>Cash</option>
+										<option value="Cheque" <!--#4DIF ([Payments]mode_of_payment="Cheque")-->selected<!--4DELSE--><!--4DENDIF-->>Cheque</option>
+										<option value="International Banking" <!--#4DIF ([Payments]mode_of_payment="International Banking")-->selected<!--4DELSE--><!--4DENDIF-->>International Banking</option>
+										<option value="PayPal" <!--#4DIF ([Payments]mode_of_payment="PayPal")-->selected<!--4DELSE--><!--4DENDIF-->>PayPal</option>
+									</select>                                     
+                                </div>
+                            </div>
+                            <div class="span12 field-box">
+								<label>Notes</label>
+								<textarea name="notes" class="span8" rows="4" id="notes"><!--#4DVAR [Payments]notes--></textarea>
+							</div>
+
+							<div class="span11 field-box" style="text-align: center;">
+								<input type="submit" class="btn-glow primary" value="Submit">
+								<span>OR</span>
+								<a href="payments.shtml">Cancel</a>
+							</div>
+						</form>
+                    </div>
+				</div>
+            </div>
+        </div>
+    </div>
+    <!-- end main container -->
+
+	<!-- scripts -->
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+	<script src="js/bootstrap.datepicker.js"></script>
+	<script src="js/jquery.uniform.min.js"></script>
+	<!-- call this page plugins -->
+
+<script language="javascript">
+function ValidateForm () {
+
+if (document.PaymentForm.inv_no.value=="" || document.PaymentForm.inv_no.value==0)
+{  
+	alert('Please Specify Invoice Number');
+	document.PaymentForm.inv_no.focus() ;
+	return false;
+}
+if (document.PaymentForm.date_received.value=="")
+{  
+	alert('Please Specify Date Received');
+	document.PaymentForm.date_received.focus() ;
+	return false;
+}
+if (document.PaymentForm.amount.value=="" || document.PaymentForm.amount.value=="0")
+{ 
+	alert('Please Specify Amount');
+	document.PaymentForm.amount.focus() ;
+	return false;
+}
+
+}
+</script>
+    <script type="text/javascript">
+        $(function () {
+
+            // add uniform plugin styles to html elements
+            $("input:checkbox").uniform();
+
+            // datepicker plugin
+            $('.datepicker').datepicker().on('changeDate', function (ev) {
+                $(this).datepicker('hide');
+            });
+			
+        });
+    </script> 
+<script type="text/javascript">
+    function get_client()
+{
+	var inv_no=	$("#inv_no").val();
+	if(inv_no!=''){
+	var dataString = 'inv_no='+inv_no;
+	$.ajax({
+type: "GET",
+dataType: "json",
+url: "getclientinvoice.cgi",
+data: dataString,
+cache: false,
+success: function(html)
+{
+	if(html.invoiceuuid){
+		$('#err_msg').html('');
+		$("#invoice_uuid").val(html.invoiceuuid);
+		$("#amount").val(html.Amount);
+		$("#client_uuid").val(html.CustomerID);
+		$("#company_name").val(html.CustomerName);
+	}
+	else{
+		//alert("Invoice no "+inv_no+" doesn't exists.");
+		$('#err_msg').html("Invoice no "+inv_no+" doesn't exists.");
+		$("#inv_no").val('0');
+		$("#invoice_uuid").val('');
+		$("#amount").val('0');
+		$("#client_uuid").val('');
+		$("#company_name").val('');
+	}
+	
+}
+});
+}
+}
+
+$('#inv_no').keypress(function(e){
+						var k = e.which;
+    					/* numeric inputs can come from the keypad or the numeric row at the top */
+   						 if ((k<48 || k>57) && (k!=8) && (k!=0)) {
+        					e.preventDefault();
+							//alert("Allowed characters are 0-9, +, -, (, )");
+        					return false;
+    					}
+					
+					}); 
+					
+		$('.num').keypress(function(e){
+					checknumber(e);	
+					
+					});
+					
+	function checknumber(e)
+	{
+		var k = e.which;
+    					/* numeric inputs can come from the keypad or the numeric row at the top */
+   						 if ((k<48 || k>57) && (k!=46) && (k!=8) && (k!=0)) {
+        					e.preventDefault();
+							//alert("Allowed characters are 0-9, +, -, (, )");
+        					return false;
+    					}
+	
+	}
+</script>
+	
+</body>
+</html>

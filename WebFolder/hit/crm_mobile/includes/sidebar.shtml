@@ -1,0 +1,73 @@
+	<div data-role="panel" class="jqm-navmenu-panel" data-position="left" data-display="overlay" data-theme="a">
+		<input id="menu" value="" type="text" placeholder="Search menu...">
+		<ul class="jqm-list ui-alt-icon ui-nodisc-icon" id="dashboard-menu">
+			<li data-filtertext="demos homepage" data-icon="home"><a href="index.shtml" data-ajax="false">Home</a></li>
+			<li data-role="collapsible" data-enhanced="true" data-collapsed-icon="carat-d" data-expanded-icon="carat-u" data-iconpos="right" data-inset="false" class="ui-collapsible ui-collapsible-themed-content ui-collapsible-collapsed">
+				<h3 class="ui-collapsible-heading ui-collapsible-heading-collapsed">
+				<a href="#" class="ui-collapsible-heading-toggle ui-btn ui-btn-icon-right ui-btn-inherit ui-icon-carat-d">
+					Tasks<span class="ui-collapsible-heading-status"> click to expand contents</span>
+				</a>
+				</h3>
+				<div class="ui-collapsible-content ui-body-inherit ui-collapsible-content-collapsed" aria-hidden="true">
+					<ul>
+						<li data-filtertext="form checkboxradio widget checkbox input checkboxes controlgroups"><a href="tasks.shtml" data-ajax="false">Tasks</a></li>
+						<li data-filtertext="form checkboxradio widget radio input radio buttons controlgroups"><a href="task.shtml" data-ajax="false">Enter New Task</a></li>
+					</ul>	
+				</div>
+			</li>
+			<li data-role="collapsible" data-enhanced="true" data-collapsed-icon="carat-d" data-expanded-icon="carat-u" data-iconpos="right" data-inset="false" class="ui-collapsible ui-collapsible-themed-content ui-collapsible-collapsed">
+				<h3 class="ui-collapsible-heading ui-collapsible-heading-collapsed">
+				<a href="#" class="ui-collapsible-heading-toggle ui-btn ui-btn-icon-right ui-btn-inherit ui-icon-carat-d">
+					Projects<span class="ui-collapsible-heading-status"> click to expand contents</span>
+				</a>
+				</h3>
+				<div class="ui-collapsible-content ui-body-inherit ui-collapsible-content-collapsed" aria-hidden="true">
+					<ul>
+						<li data-filtertext="form checkboxradio widget checkbox input checkboxes controlgroups"><a href="projects.shtml" data-ajax="false">Projects</a></li>
+						<li data-filtertext="form checkboxradio widget radio input radio buttons controlgroups"><a href="project.shtml" data-ajax="false">Enter New Project</a></li>
+					</ul>	
+				</div>
+			</li>
+			<li data-role="collapsible" data-enhanced="true" data-collapsed-icon="carat-d" data-expanded-icon="carat-u" data-iconpos="right" data-inset="false" class="ui-collapsible ui-collapsible-themed-content ui-collapsible-collapsed">
+				<h3 class="ui-collapsible-heading ui-collapsible-heading-collapsed">
+				<a href="#" class="ui-collapsible-heading-toggle ui-btn ui-btn-icon-right ui-btn-inherit ui-icon-carat-d">
+					Customers<span class="ui-collapsible-heading-status"> click to expand contents</span>
+				</a>
+				</h3>
+				<div class="ui-collapsible-content ui-body-inherit ui-collapsible-content-collapsed" aria-hidden="true">
+					<ul>
+						<li data-filtertext="form checkboxradio widget checkbox input checkboxes controlgroups"><a href="customers.shtml" data-ajax="false">Customers</a></li>
+						<li data-filtertext="form checkboxradio widget radio input radio buttons controlgroups"><a href="customer.shtml" data-ajax="false">Enter New Customer</a></li>
+					</ul>	
+				</div>
+			</li>
+			<!--Contacts-->
+			<li data-role="collapsible" data-enhanced="true" data-collapsed-icon="carat-d" data-expanded-icon="carat-u" data-iconpos="right" data-inset="false" class="ui-collapsible ui-collapsible-themed-content ui-collapsible-collapsed">
+				<h3 class="ui-collapsible-heading ui-collapsible-heading-collapsed">
+				<a href="#" class="ui-collapsible-heading-toggle ui-btn ui-btn-icon-right ui-btn-inherit ui-icon-carat-d">
+					Contacts<span class="ui-collapsible-heading-status"> click to expand contents</span>
+				</a>
+				</h3>
+				<div class="ui-collapsible-content ui-body-inherit ui-collapsible-content-collapsed" aria-hidden="true">
+					<ul>
+						<li data-filtertext="form checkboxradio widget checkbox input checkboxes controlgroups"><a href="contacts.shtml" data-ajax="false">Contacts</a></li>
+						<li data-filtertext="form checkboxradio widget radio input radio buttons controlgroups"><a href="contact.shtml" data-ajax="false">Enter New Contact</a></li>
+					</ul>	
+				</div>
+			</li>
+			<!--Documents-->
+			<li data-role="collapsible" data-enhanced="true" data-collapsed-icon="carat-d" data-expanded-icon="carat-u" data-iconpos="right" data-inset="false" class="ui-collapsible ui-collapsible-themed-content ui-collapsible-collapsed">
+				<h3 class="ui-collapsible-heading ui-collapsible-heading-collapsed">
+				<a href="#" class="ui-collapsible-heading-toggle ui-btn ui-btn-icon-right ui-btn-inherit ui-icon-carat-d">
+					Documents<span class="ui-collapsible-heading-status"> click to expand contents</span>
+				</a>
+				</h3>
+				<div class="ui-collapsible-content ui-body-inherit ui-collapsible-content-collapsed" aria-hidden="true">
+					<ul>
+						<li data-filtertext="form checkboxradio widget checkbox input checkboxes controlgroups"><a href="documents.shtml" data-ajax="false">Documents</a></li>
+						<li data-filtertext="form checkboxradio widget radio input radio buttons controlgroups"><a href="document.shtml" data-ajax="false">Enter New Document</a></li>
+					</ul>	
+				</div>
+			</li>
+		</ul>
+	</div>

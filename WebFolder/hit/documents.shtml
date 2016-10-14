@@ -1,0 +1,370 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+C_TEXT(_HTMLTITLETXT)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+_HTMLTITLETXT:="Documents"
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml?url="+HTTPD_DocumentURI)
+end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+_HIT_HTMLTXT:=_HIT_HTTP_GetReferer
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+<link rel="stylesheet" media="all" type="text/css" href="css/jquery-impromptu.css" />
+<style>
+#message{
+	color:#FF0000;
+}
+.table-wrapper .table ul.actions{
+	float:left;
+}
+</style>
+</head>
+<body>
+
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
+
+	<!-- main container -->
+    <div class="content">
+        
+        <div class="container-fluid">
+            <div id="pad-wrapper">
+
+                <!-- projects table -->
+                <div class="table-wrapper orders-table section">
+                    <div class="row-fluid head">
+                        <div class="span12">
+                            <h4>Documents</h4>
+                        </div>
+                    </div>
+
+                    <div class="row-fluid filter-block">
+                        <div class="pull-right">
+                            <div class="btn-group pull-right">
+									<button class="glow left large" onClick="__showAllDocuments(); return false;">All</button>
+									<button class="glow middle large" onClick="__showCustomers(); return false;">Customers</button>
+									<button class="glow right large" onClick="__showInvocies(); return false;">Invoices</button>
+									<a href="document.shtml" class="btn-flat success new-product margn-lft35">+ Add new document</a>
+								</div>
+                            <input name="keyword_type" id="keyword_type" type="text" class="search order-search" placeholder="Search for Client or filename.." value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->">
+                        </div>
+                    </div>
+
+                    <div class="row-fluid">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th class="span3">
+                                        CLIENT
+                                    </th>
+                                    <th class="span3">
+									<span class="line"></span>
+                                        FILE NAME
+                                    </th>
+                                    <th class="span1">
+                                        <span class="line"></span>
+                                        DOCUMENT TYPE
+                                    </th>
+                                    <th class="span1">
+                                        <span class="line"></span>
+                                        SIZE
+                                    </th>
+									<th class="span1">
+                                        <span class="line"></span>
+                                        DATE MODIFIED
+                                    </th>
+                                     <th class="span2">
+                                        <span class="line"></span>
+                                        DATE CREATED
+                                    </th>
+                                    <th class="span2">
+                                        <span class="line"></span>
+                                        ACTION
+                                    </th>                           
+                                </tr>
+                            </thead>
+                            <tfoot>
+                            <tr>  
+                                <th align="left">CLIENT</th>
+                                <th align="left">FILE NAME</th>
+                                <th align="left">DOCUMENT TYPE</th>
+                                <th align="left">SIZE</th>
+                                <th align="left">DATE MODIFIED</th>
+                                <th align="left">DATE CREATED</th>
+								<th align="left">ACTION</th>
+                            </tr>
+                        	</tfoot>
+                            <tbody id="documents_table_body">
+                            </tbody>
+                        </table>
+						<div id="img_loading_div" style="text-align:center">
+							<img src="loading.gif"  style="padding:20px;" width="34" >
+						</div>
+                    </div>
+                </div>
+                <!-- end projects table -->
+
+            </div>
+        </div>
+    </div>
+    <!-- end main container -->
+	<div class="example-container">
+	<pre class="code" style="display:none;" id="no_rec_prompt">
+									var statesdemo = {
+										state0: {
+											title: 'No more records found',
+											html:'',
+											buttons: { OK: 1 },																		
+											submit:function(e,v,m,f){ 
+												//console.log(f);
+												if(v==1) {
+													$.prompt.close();
+												}
+												
+											}
+										},
+										
+									};
+									if(!($(".jqibox").length))
+									$.prompt(statesdemo);
+								</pre>
+							</div>
+
+	<!-- scripts -->
+   <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+	<script type="text/javascript" src="js/jquery-impromptu.js"></script>
+	 <script>
+var JSONdata;
+var start=0, end=25;
+var old_srch='',keyword='', jsonRow='', tab='', set='';
+var tablname='Documents';
+var complete=false;
+ var completeScroll=false;
+
+function __showDocumentForm(uuid)
+{
+pUrlStr='document.shtml?uuid='+uuid;
+window.location.href=pUrlStr;
+}
+
+
+function __showCustomers()
+{
+	start=0;
+	end=25;
+	tab='Customers';
+	keyword= $("#keyword_type").val();
+	jsonRow = 'loaddocuments.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab;
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}
+	$('#documents_table_body').html('');
+	$('#img_loading_div').show();		
+	load_data(jsonRow);
+}
+
+function __showInvocies()
+{
+	start=0;
+	end=25;
+	tab='Invoices';
+	jsonRow = 'loaddocuments.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab;
+	keyword= $("#keyword_type").val();
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}
+	$('#documents_table_body').html('');
+	$('#img_loading_div').show();		
+	load_data(jsonRow);
+}
+
+
+function __showAllDocuments()
+{
+	start=0;
+	end=25;
+	tab='';
+	jsonRow = 'loaddocuments.cgi?start='+start+'&end='+end+'&tablname='+tablname;
+	$('#documents_table_body').html('');
+	$('#img_loading_div').show();	
+	load_data(jsonRow);
+}
+
+function __deleteDocument(e){
+	var r = confirm("Are you sure to delete?");
+	if (r == true) {
+   		if(e!=""){
+			$.ajax({
+				type: "GET",
+				dataType: "json",
+				url: "deletedocfile.cgi",
+				data: {"DocumentUUID" : e},
+				cache: false,
+				success: function(html)	{
+					if(html.success){
+						$.prompt(html.success);
+						start=0;
+						end=25;
+						jsonRow = 'loaddocuments.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab;
+						keyword= $("#keyword_type").val();
+						if(keyword!=''){
+							jsonRow +='&keyword='+keyword;
+						}
+						$('#documents_table_body').html('');
+						$('#img_loading_div').show();		
+						load_data(jsonRow);
+					}else if(html.error){
+						$.prompt(html.error);
+					}
+				}
+			});
+		}else{
+			$.prompt('This entry can\'t be deleted!');
+		}
+	}
+}
+
+$(document).ready(function() {
+
+	$('#keyword_type').focus();
+	keyword= $("#keyword_type").val();
+	jsonRow = 'loaddocuments.cgi?start='+start+'&end='+end+'&tablname='+tablname;
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}		
+	load_data(jsonRow);	
+	
+	$(window).scroll(function(){
+		if ($(window).scrollTop() == $(document).height() - $(window).height()){
+		if(complete==false && completeScroll==false) {
+			$('#img_loading_div').show();
+			//alert("scrolling...");
+			start=end+1;
+			end=start+25;
+			jsonRow = 'loaddocuments.cgi?start='+start+'&end='+end+'&tablname='+tablname;
+			if(keyword!=''){
+				jsonRow +='&keyword='+keyword;
+			}
+			if(tab!=''){
+				jsonRow +='&tab='+tab;
+			}		
+			load_data(jsonRow);
+		}
+		
+		}
+	});
+	
+	//setup before functions
+	var typingTimer;                //timer identifier
+	var doneTypingInterval = 1000;  //time in ms, 5 second for example
+
+	//on keyup, start the countdown
+	$('#keyword_type').keyup(function(){
+		clearTimeout(typingTimer);
+		if ($('#keyword_type').val) {
+			typingTimer = setTimeout(function(){
+				//do stuff here e.g ajax call etc....
+				$('#documents_table_body').html('');
+				$('#img_loading_div').show();
+				start=0;
+				end=start+25;
+				tab='';
+				keyword= $("#keyword_type").val();
+				jsonRow = 'loaddocuments.cgi?start='+start+'&end='+end+'&tablname='+tablname;
+				if(keyword!=''){
+					jsonRow +='&keyword='+keyword;
+				}
+				if(tab!=''){
+					jsonRow +='&tab='+tab;
+				}	
+				load_data(jsonRow);
+			}, doneTypingInterval);
+		}
+	});
+
+});
+ 
+var proj_uuid=new Array();  
+function load_data(jsonRow){
+	completeScroll=true;
+	JSONdata=new Array();
+	$.getJSON(jsonRow,function(result){
+			if(result.Alert){
+				code = $('#no_rec_prompt').text();
+				(new Function(code))();
+				complete=true;
+			}
+			else{
+				$.each(result.Client, function(i,item)
+				{
+					JSONdata[i]=new Array();
+					JSONdata[i][0]='<a target="_blank" href="customers.shtml?keyword='+item+'">'+item+'</a>';					
+				}); 
+				$.each(result.FileName, function(i,item)
+				{
+					JSONdata[i][1]=item;
+				});
+				$.each(result.DocType, function(i,item)
+				{	
+					JSONdata[i][2]=item;
+				});
+				$.each(result.DocSize, function(i,item)
+				{	
+					JSONdata[i][3]=item;
+				});
+				$.each(result.Created, function(i,item)
+				{					
+					JSONdata[i][4]=item;
+				});
+				$.each(result.Modified, function(i,item)
+				{					
+					JSONdata[i][5]=item;
+				});  
+				$.each(result.uuid, function(i,item)
+				{
+					JSONdata[i][6]='<ul class="actions"><li><a href="javascript:void(0)" onClick="__showDocumentForm(\''+item+'\')"><i class="table-edit"></i></a></li><li><a href="javascript:void(0)" onClick="__deleteDocument(\''+item+'\')"><i class="table-delete"></i></a></li></ul>';					
+				});
+				
+				
+				var table_html='';
+				
+				$.each(JSONdata, function(i,row)
+				{
+					table_html+='<tr >';
+					
+					$.each(row, function(i,col){
+						table_html+='<td>'+col+'</td>';
+					});
+					table_html+='</tr>';
+				});
+				if(old_srch!=keyword){
+					$('#documents_table_body').html('');
+					old_srch=keyword;
+				}
+				
+				$('#documents_table_body').append(table_html);
+				complete=false;
+
+				
+		}
+		$('#img_loading_div').hide();
+			completeScroll=false;
+		});
+}
+
+
+    </script>
+	
+</body>
+</html>

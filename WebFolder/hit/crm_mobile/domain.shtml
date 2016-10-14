@@ -1,0 +1,241 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+C_TEXT(_HTMLTITLETXT)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+QUERY([domains];[domains]uuid=_HIT_WebApp_GetField ("uuid"))
+QUERY([Companies];[Companies]uuid=[domains]uuid_client)
+QUERY([Projects];[Projects]uuid=[domains]uuid_project)
+
+IF (Records in selection([domains])=0)
+_HTMLTITLETXT:="New domain"
+ELSE
+_HTMLTITLETXT:= "Edit domain"
+END IF
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+-->
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/main-header.shtml-->
+<link rel="stylesheet" href="css/jquery-ui.css">
+<script src="js/datepicker.js"></script>
+
+<script src="js/jquery.validate.js"></script>
+<script type="text/javascript">
+var tableUUIDStr= '<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->';
+var tableNameStr='Projects';
+var taskNameStr='',xhrAbortLoad, xhrAbortSearch;
+var loadmoreNum=10, start=0, end=loadmoreNum;
+
+$(document).ready(function() {
+	$(".ui-table-columntoggle-btn").hide();
+	$("#DetailForm").validate({
+		ignore: "",
+        rules: {
+            domain_name : { required: true },
+			Client_ID : { required: true },
+			Project_ID : { required: true },
+			domain_expiry_date : { required: true },
+        }
+    });
+    
+    $('#domain_expiry_date').datepicker({
+    	autoclose: true,
+    	changeMonth: true,
+      	changeYear: true,
+      	dateFormat: 'dd/mm/yy'
+    });
+    $('#domain_renewal_date').datepicker({
+    	autoclose: true,
+    	changeMonth: true,
+      	changeYear: true,
+      	dateFormat: 'dd/mm/yy'
+    });
+    //on keyup, start the countdown
+	$('.projectNameStr').keyup(function(){
+    	if ($('.projectNameStr').val()) {
+      		var jsonRow="getprojectsonsearch.cgi?srch="+$('.projectNameStr').val()+"&"+Math.random()+"&client="+$('#Client_ID').val();
+			if(xhrAbortSearch) xhrAbortSearch.abort();
+			xhrAbortLoxhrAbortSearchad=$.getJSON(jsonRow,function(result){
+				if(result){
+					var html='';
+					$.each(result, function(i,item){
+						html += '<li><a class="ui-btn ui-btn-icon-right ui-icon-carat-r" href="javascript:void(0)" onClick="selectProject(\''+item.id+'\',\''+item.value+'\')">'+item.value+'</a></li>';
+					});
+					$( ".projectListView").html("");
+					$( ".projectListView").html(html);
+				}
+			});
+          
+    	}
+    });
+     //on keyup, start the countdown
+	$('.clientNameStr').keyup(function(){
+    	if ($('.clientNameStr').val()) {
+      		var jsonRow="getcompaniesonsearch.cgi?srch="+$('.clientNameStr').val()+"&"+Math.random();
+			if(xhrAbortSearch) xhrAbortSearch.abort();
+			xhrAbortLoxhrAbortSearchad=$.getJSON(jsonRow,function(result){
+				if(result){
+					var html='';
+					$.each(result, function(i,item){
+						html += '<li><a class="ui-btn ui-btn-icon-right ui-icon-carat-r" href="javascript:void(0)" onClick="selectClient(\''+item.id+'\',\''+item.value+'\')">'+item.value+'</a></li>';
+					});
+					$( ".clientListView").html("");
+					$( ".clientListView").html(html);
+				}
+			});
+          
+    	}
+    });
+    $('.ui-input-clear').click(function(){
+    	$("#Project_ID").val("");
+    });
+    
+});
+function selectClient(val, name){
+	$(".clientNameStr").val(name);
+	$("#Client_ID").val(val);
+	$( ".clientListView" ).listview( "refresh" );
+	$( ".clientListView li" ).addClass("ui-screen-hidden");
+}
+function selectProject(val, name){
+	$(".projectNameStr").val(name);
+	$("#Project_ID").val(val);
+	$( ".projectListView" ).listview( "refresh" );
+	$( ".projectListView li" ).addClass("ui-screen-hidden");
+}
+</script>
+<script type='text/javascript' src='js/customerNotes.js'></script>
+<style>
+label.error { 
+	float: left; 
+	color: red; 
+	padding-top: 1.5em; 
+	vertical-align: top; 
+}
+</style>
+</head>
+<body>
+<div data-role="page" class="jqm-demos" data-quicklinks="true">
+	<!-- header -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/top-header.shtml-->
+	<!-- /header -->
+	
+	<div role="main" class="ui-content jqm-content">
+		<h3><!--#4DIF (Records in selection([domains])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Domain</h3>
+		<div data-demo-html="true">
+		     <form name="DetailForm" action="savedomain.cgi" id="DetailForm" data-ajax="false" method="post">
+					<input name="domain_uuid" class="span9" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="domain_uuid"> 
+					<div class="ui-field-contain">
+						<label>Domain</label>
+						<input name="domain_name" type="text" onKeyUp="sub_domains_name()" onkeypress="sub_domains_name()" value="<!--#4DVAR [domains]domain_name-->" id="domain_name">
+					</div>	
+					<div class="ui-field-contain">
+						<label for="Client_ID" class="select">Client Name:</label>
+						<input name="Client_ID" id="Client_ID" type="hidden" value="[Companies]account_Number">
+						<span class="ui-filterable">
+   							<input id="inset-autocomplete-input" data-type="search" placeholder="Search client..." class="clientNameStr" name="clientNameStr">
+						</span>
+					
+						<ul data-role="listview" data-inset="true" data-filter="true" data-filter-reveal="true" data-input="#inset-autocomplete-input" class="clientListView">
+   							<!--#4DIF (Records in selection([domains])=0)-->
+								<!--#4DSCRIPT/Web_LoadCustomers/-->
+                                    <!--4DLOOP  [Companies]-->
+										<li><a href="javascript:void(0)" onClick="selectClient('[Companies]account_Number','<!--4DVAR [Companies]company_Name-->')"><!--4DVAR [Companies]company_Name--></a></li>
+									<!--4DENDLOOP-->
+							<!--#4DENDIF-->
+						</ul>
+					</div>
+					
+					<div class="ui-field-contain">
+						<label for="Project_ID" class="select">Project:</label>
+						<input name="Project_ID" id="Project_ID" type="hidden" value="[Projects]proj_id">
+						<span class="ui-filterable">
+   							<input id="inset-autocomplete-input" data-type="search" placeholder="Search project..." class="projectNameStr" name="projectNameStr">
+						</span>
+						<ul data-role="listview" data-inset="true" data-filter="true" data-filter-reveal="true" data-input="#inset-autocomplete-input" class="projectListView">
+   							<!--#4DIF (Records in selection([domains])=0)-->
+								<!--#4DSCRIPT/Web_LoadProjects/-->
+                                    <!--4DLOOP  [Projects]-->
+										<li><a href="javascript:void(0)" onClick="selectProject('[Projects]proj_id','<!--4DVAR [Projects]proj_name-->')"><!--4DVAR [Projects]proj_name--></a></li>
+									<!--4DENDLOOP-->
+							<!--#4DENDIF-->
+						</ul>
+					</div>     
+                   
+					<div class="ui-field-contain">
+   						<label for="domain_expiry_date">Expiary Date</label>
+						<input data-role="date" name="domain_expiry_date" type="text" <!--#4DIF ([domains]domain_expiry_date=!00/00/00!)-->value=""<!--4DELSE-->value="<!--#4DVAR [domains]domain_expiry_date-->"<!--4DENDIF--> id="domain_expiry_date" readonly >
+					</div>
+					<div class="ui-field-contain">
+   						<label for="domain_renewal_date">Domain Renewal Date </label>
+						<input name="domain_renewal_date"  data-role="date" type="text" <!--#4DIF ([domains]domain_renewal_date=!00/00/00!)-->value=""<!--4DELSE-->value="<!--#4DVAR [domains]domain_renewal_date-->"<!--4DENDIF--> id="domain_renewal_date" readonly >                                
+					</div>
+				
+					<div class="ui-field-contain">
+   						<label for="managed_by_uuid">Modified By :</label>
+   						<select data-native-menu="false"  name="managed_by_uuid" id="managed_by_uuid">
+							<!--#4DSCRIPT/Web_LoadEmployees/-->
+							<!--4DLOOP  [Employees]-->
+								<option value="<!--4DVAR [Employees]uuid-->" <!--#4DIF ([domains]managed_by_uuid=[Employees]uuid)-->selected<!--4DELSE--><!--4DENDIF-->><!--4DVAR [Employees]emp_first_name--> <!--4DVAR [Employees]emp_last_name--></option>
+							<!--4DENDLOOP-->	
+						</select>
+   					</div>
+   					<div class="ui-field-contain">
+   						<label>Currency Code</label>
+						<input name="currency_code" type="text" value="<!--#4DVAR [domains]currency_code -->" id="currency_code">
+					</div>
+					<div class="ui-field-contain">
+						<label>Cost Price </label>
+						<input name="cost_price" type="text" value="<!--#4DVAR [domains]cost_price-->" id="cost_price">
+					</div>						   
+					<div class="ui-field-contain">
+						<label>Sales Price </label>
+						<input name="sales_price" type="text" value="<!--#4DVAR [domains]sales_price-->" id="sales_price">						
+					</div>
+					<div class="ui-field-contain">
+						<label>Domain Age </label>
+						<select name="domain_age" id="domain_age" data-native-menu="false" >
+							<option value="">--Select Domain Age--</option>
+							<option value="1" <!--#4DIF ([domains]domain_age="1")-->selected<!--4DELSE--><!--4DENDIF--> >1</option>
+							<option value="2" <!--#4DIF ([domains]domain_age="2")-->selected<!--4DELSE--><!--4DENDIF--> >2</option>
+							<option value="3" <!--#4DIF ([domains]domain_age="3")-->selected<!--4DELSE--><!--4DENDIF--> >3</option>
+							<option value="5" <!--#4DIF ([domains]domain_age="5")-->selected<!--4DELSE--><!--4DENDIF--> >5</option>
+							<option value="10" <!--#4DIF ([domains]domain_age="10")-->selected<!--4DELSE--><!--4DENDIF--> >10</option>
+						</select>
+					</div>
+					<div class="ui-field-contain">
+						<label>Status </label>
+						<select name="domain_status" id="domain_status" data-native-menu="false" >
+							<option value="">--Select Status--</option>
+							<option value="Nearly Expired" <!--#4DIF ([domains]domain_status="Nearly Expired")-->selected<!--4DELSE--><!--4DENDIF--> >Nearly Expired</option>
+							<option value="Active" <!--#4DIF ([domains]domain_status="Active")-->selected<!--4DELSE--><!--4DENDIF--> >Active</option>
+							<option value="Expired" <!--#4DIF ([domains]domain_status="Expired")-->selected<!--4DELSE--><!--4DENDIF--> >Expired</option>
+						</select>	
+					</div>
+					<div class="ui-field-contain">
+						<label>Comments </label>
+						<textarea rows="4" name="comments" id="comments"><!--#4DVAR [domains]comments--></textarea>
+					</div>
+					
+					<button type="submit" class="ui-shadow ui-btn ui-corner-all ui-mini">Submit</button>
+					<a href="domains.shtml" class="ui-shadow ui-btn ui-corner-all ui-mini" data-ajax="false">Cancel</a>
+					</form>	
+		    	
+		</div>
+
+	</div><!-- /content -->
+	<!-- panel -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/sidebar.shtml-->
+	<!-- /panel -->
+
+	<!-- footer -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/footer.shtml-->
+	<!-- /footer -->
+</div><!-- /page -->
+
+</body>
+</html>

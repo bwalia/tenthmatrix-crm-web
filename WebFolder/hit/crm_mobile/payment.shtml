@@ -1,0 +1,184 @@
+<!--HIT_EXECUTE
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+C_TEXT(_HTMLTITLETXT)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+QUERY([Payments];[Payments]uuid=_HIT_WebApp_GetField ("uuid"))
+QUERY([Companies];[Companies]account_Number=[Payments]supplier_accountnumber)
+
+QUERY([purchase_invoices];[purchase_invoices]id=[Payments]purchase_invoice_number)
+
+//Web_LoadPaymentRelated
+
+IF (Records in selection([Payments])=0)
+_HTMLTITLETXT:="New Payment"
+ELSE
+_HTMLTITLETXT:= "Edit Payment"
+END IF
+
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+_HIT_WebSession_SetVar ("last-payment-uuid";_HIT_WebApp_GetField ("uuid"))
+-->
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/main-header.shtml-->
+<link rel="stylesheet" href="css/jquery-ui.css">
+<script src="js/datepicker.js"></script>
+<script src="js/jquery.validate.js"></script>
+<script type="text/javascript">
+
+$(document).ready(function() {
+		$('#date_received').datepicker({
+    		autoclose: true,
+    		changeMonth: true,
+      		changeYear: true,
+      		dateFormat: 'dd/mm/yy'
+    	});
+	$.validator.addMethod('checkinteger', function(value, element, param) {
+    	return (value != 0);
+    }, 'Please enter a non zero value!');
+		
+	$("#DetailForm").validate({
+		ignore: "",
+        rules: {
+			date_received: { required: true },
+			amount: { required: true, checkinteger : true  },
+			purchase_inv_no: { required: true },
+		}
+    });
+        
+    $('#purchase_inv_no').keypress(function(e){
+		checknumber(e);	
+	}); 
+						
+	$('.num').keypress(function(e){
+		checknumber(e);	
+	});
+});
+function get_client(){
+	$('#err_msg').html('');
+	var purchase_inv_no=	$("#purchase_inv_no").val();
+	if(purchase_inv_no!=''){
+		var dataString = 'purchase_inv_no='+purchase_inv_no;
+		$.ajax({
+			type: "GET",
+			dataType: "json",
+			url: "getpaymentclient.cgi",
+			data: dataString,
+			cache: false,
+			success: function(html){
+				if(html.success){
+					$('#err_msg').html('');
+					$("#purchase_invoice_uuid").val(html.invoice_uuid);
+					$("#amount").val(html.amount);
+					$("#client_uuid").val(html.customer_id);
+					$("#company_name").val(html.customer_name);
+					$('#submit').attr('disabled',false);
+				}else if(html.error){
+					if(html.paid){
+						var errorMsg='<span id="err_msg" style="color:#FF0000;font-style: italic;">  This purchase invoice is already paid</span>';
+						$('.displayMsg').before(errorMsg);
+						$('#submit').attr('disabled',true);
+					}else{
+						var errorMsg='<span id="err_msg" style="color:#FF0000;font-style: italic;">   Invoice no '+purchase_inv_no+' doesn\'t exists.</span>';
+						$('.displayMsg').before(errorMsg);
+						$("#purchase_inv_no").val('0');
+					}
+					$("#purchase_invoice_uuid").val('');
+					$("#amount").val('0');
+					$("#client_uuid").val('');
+					$("#company_name").val('');
+				}
+
+			}
+		});
+	}
+}
+				
+	function checknumber(e){
+		var k = e.which;
+		/* numeric inputs can come from the keypad or the numeric row at the top */
+		 if ((k<48 || k>57) && (k!=46) && (k!=8) && (k!=0)) {
+			e.preventDefault();
+			//alert("Allowed characters are 0-9, +, -, (, )");
+			return false;
+		}
+	
+	}
+</script>
+<script type='text/javascript' src='js/customerNotes.js'></script>
+<style>
+label.error { 
+	float: left; 
+	color: red; 
+	padding-top: 1.5em; 
+	vertical-align: top; 
+}
+</style>
+</head>
+<body>
+<div data-role="page" class="jqm-demos" data-quicklinks="true">
+	<!-- header -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/top-header.shtml-->
+	<!-- /header -->
+	
+	<div role="main" class="ui-content jqm-content">
+		<h3><!--#4DIF (Records in selection([Payments])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Payment</h3>
+		<div data-demo-html="true">
+			<form name="DetailForm" action="savepayment.cgi" id="DetailForm" data-ajax="false" method="post">
+					     
+                   	<input name="uuid" class="span9" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="uuid">
+					<input name="req_from" type="hidden" value="payment" id="req_from">
+					<div class="ui-field-contain displayMsg">
+   						<label for="inv_no">Purchase Invoice no:</label>
+   						<input name="purchase_inv_no" onBlur="get_client()" type="text" value="<!--#4DVAR [Payments]purchase_invoice_number-->" id="purchase_inv_no" placeholder="Purchase Invoice no">
+   						<input name="purchase_invoice_uuid" id="purchase_invoice_uuid" type="hidden" value="<!--#4DVAR [purchase_invoices]uuid-->">
+					</div>
+					<div class="ui-field-contain">
+   						<label for="company_name">Company:</label>
+   						<input name="company_name"  type="text" value="<!--4DVAR [Companies]company_Name-->" id="company_name" readonly placeholder="Company">
+						<input name="client_uuid" id="client_uuid" type="hidden" value="<!--#4DVAR [Companies]uuid-->">
+					</div>
+					
+					<div class="ui-field-contain">
+   						<label for="date_received">Date :</label>
+						<input name="date_received" data-role="date" type="text" data-date-format="dd/mm/yyyy" <!--#4DIF ([Payments]date_paid=!00/00/00!)-->value="<!--#4DHTMLVAR Current date -->"<!--4DELSE-->value="<!--#4DVAR [Payments]date_paid-->"<!--4DENDIF--> id="date_received" readonly placeholder="Date">
+					</div>
+					<div class="ui-field-contain">
+   						<label for="amount">Amount:</label>
+						<input name="amount" class="num" type="text" value="<!--#4DVAR [Payments]amount_paid-->" id="amount" placeholder="Amount">
+   					</div>
+   					<div class="ui-field-contain">
+   						<label for="mode_of_payment">Mode of Payment</label>
+   						<select data-native-menu="false" name="mode_of_payment" id="mode_of_payment">
+							<option value="BACS" <!--#4DIF ([Payments]mode_of_payment="BACS")-->selected<!--4DELSE--><!--4DENDIF-->>BACS</option>
+							<option value="Paid by Debit or Credit Card" <!--#4DIF ([Payments]mode_of_payment="Paid by Debit or Credit Card")-->selected<!--4DELSE--><!--4DENDIF-->>Paid by Debit or Credit Card</option>
+							<option value="Cash" <!--#4DIF ([Payments]mode_of_payment="Cash")-->selected<!--4DELSE--><!--4DENDIF-->>Cash</option>
+							<option value="Cheque" <!--#4DIF ([Payments]mode_of_payment="Cheque")-->selected<!--4DELSE--><!--4DENDIF-->>Cheque</option>
+							<option value="International Banking" <!--#4DIF ([Payments]mode_of_payment="International Banking")-->selected<!--4DELSE--><!--4DENDIF-->>International Banking</option>
+							<option value="PayPal" <!--#4DIF ([Payments]mode_of_payment="PayPal")-->selected<!--4DELSE--><!--4DENDIF-->>PayPal</option>
+						</select>    
+   					</div>
+   					
+   					<div class="ui-field-contain">
+   						<label for="date_received">Notes :</label>
+						<textarea name="notes" rows="4" id="notes"><!--#4DVAR [Payments]notes--></textarea>
+					</div>
+					<button type="submit" id="submit" class="ui-shadow ui-btn ui-corner-all ui-mini">Submit</button>
+					<a href="payments.shtml" data-ajax="false" class="ui-shadow ui-btn ui-corner-all ui-mini">Cancel</a>
+				</form>	
+		    	
+		    </div>
+	</div><!-- /content -->
+	<!-- panel -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/sidebar.shtml-->
+	<!-- /panel -->
+
+	<!-- footer -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/footer.shtml-->
+	<!-- /footer -->
+</div><!-- /page -->
+
+</body>
+</html>

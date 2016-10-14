@@ -1,0 +1,130 @@
+<!--HIT_EXECUTE
+QUERY([analysis_account];[analysis_account]uuid=_HIT_WebApp_GetField ("uuid"))
+-->
+<html>
+<head>
+	<title>Tenthmatrix CRM App : Analysis Account</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- bootstrap -->
+	<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="bootstrap/css/bootstrap-responsive.min.css" />
+     <!-- jQuery UI theme-->
+     <link rel="stylesheet" href="lib/jquery-ui/css/Aristo/Aristo.css" />
+
+    <!-- global styles -->
+    <link rel="stylesheet" type="text/css" href="css/compiled/layout.css">
+    <link rel="stylesheet" type="text/css" href="css/compiled/elements.css">
+    <link rel="stylesheet" type="text/css" href="css/compiled/icons.css">
+	<!-- splashy icons -->
+    <link rel="stylesheet" href="img/splashy/splashy.css" />
+	<!-- datepicker -->
+    <link rel="stylesheet" href="lib/datepicker/datepicker.css" />
+	<link rel="stylesheet" href="css/style.css" />
+    <!-- open sans font -->
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!-- libraries -->
+    <link href="css/lib/font-awesome.css" type="text/css" rel="stylesheet" />
+</head>
+<body>
+
+	<!-- main container -->
+    <div class="content wide-content">
+        <div class="container-fluid">
+            <div id="pad-wrapper" class="form-page">
+				<div class="row-fluid">
+					<div class="span12">
+						<form name="Form" action="saveanalaccount.cgi" method="post" class="form_validation_reg">
+						<input name="uuid" class="span7" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="uuid">
+						<div class="formSep">
+								<div class="row-fluid">
+									<div class="span3">
+										<label>Legder Name<span class="f_req">*</span></label>
+										<div class="ui-widget">
+											<select id="ledger_uuid" name="ledger_uuid">
+											<option value=""></option>
+											<!--#4DSCRIPT/Web_LoadAnalysisLegder/-->
+												<!--4DLOOP  [analysis_ledger]-->
+											<option value="<!--#4DVAR [analysis_ledger]uuid-->" <!--#4DIF ([analysis_ledger]uuid=[analysis_account]uuid_anlaysis_ledger)--> selected<!--4DELSE--><!--4DENDIF-->><!--4DVAR [analysis_ledger]ledger_name--></option>	
+											<!--4DENDLOOP-->								 
+											</select>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="formSep">
+							<div class="row-fluid">
+								<div class="span3">
+								<label>ACCOUNT NAME</label>
+								<input name="account_name" class="span12" type="text" value="<!--4DVAR [analysis_account]account_name-->" id="account_name">
+							</div>
+							</div>
+							</div>
+				 
+ 							<div class="formSep">
+								<div class="row-fluid">
+									<div class="span3">
+										<label>CURRENCY CODE<span class="f_req">*</span></label>
+										<div class="ui-widget">
+											<select id="currency_code" name="currency_code">
+											<option value=""></option>
+											<!--HIT_EXECUTE _HIT_HTMLTXT:=Currency_HTMLPopup-->					 
+											</select>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="formSep">
+							<div class="row-fluid">
+								<div class="span4">
+								<label>NOTES</label>
+								<textarea name="notes" class=span12 rows=4 id="notes"><!--4DVAR [analysis_account]notes--></textarea>
+							</div>
+							</div>
+							</div>
+							<div class="formSep">
+							<div class="row-fluid">
+								<div class="span3">
+								<label><input name="is_in_scope_of_tax" class="span1" type="checkbox" value="true" id="is_in_scope_of_tax"  <!--#4DIF ([analysis_account]is_in_scope_of_tax)-->checked<!--4DELSE--><!--4DENDIF-->>Entry in this Account are in scope oh TAX (VAT)?</label>
+							</div>
+							</div>
+							</div>
+							<div class="formSep">
+							<div class="row-fluid">
+								<div class="span3">
+								<label><input name="enteries_allowed" class="span1" type="checkbox" value="true" id="enteries_allowed"  <!--#4DIF ([analysis_account]enteries_allowed)-->checked<!--4DELSE--><!--4DENDIF-->>Entry Allowed</label>
+							</div>
+							</div>
+							</div>
+							<div style="text-align: center;" class="span9 field-box">
+								<input type="submit" value="Submit" class="btn-glow primary">
+								<span>OR</span>
+								<a href="#">Cancel</a>
+							</div>
+						</form>
+					</div>
+				</div>
+		
+            </div>
+		</div>
+    </div>
+    <!-- end main container -->
+</body>
+
+	<script src="js/jquery.min.js"></script>
+	<script src="bootstrap/js/bootstrap.min.js"></script>
+	<!-- validation -->
+    <script src="lib/validation/jquery.validate.min.js"></script>
+	<script src="lib/datepicker/bootstrap-datepicker.min.js"></script>
+	<script src="js/jquery-ui-1.9.1.custom.js"></script>
+	<script type="text/javascript">
+	
+	$(function() {
+ 	
+ 	
+	});
+	
+	</script>
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/app/includes/InitJS4DCallBacks.shtml-->
+</html>

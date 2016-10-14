@@ -1,0 +1,150 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml?url="+HTTPD_DocumentURI)
+end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+-->
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/main-header.shtml-->
+
+<style>
+label.error {
+	float: left;
+	color: red;
+	padding-top: .5em;
+	vertical-align: top;
+	font-weight:bold
+}
+.label{
+width:auto;
+}
+.table-opt tbody tr:hover td a { color: #FFF!important; }
+.table-opt tbody tr:hover td a:hover { color: #FFF; text-decoration:underline}
+</style>
+<link rel="stylesheet" type="text/css" href="css/jqm-datebox.min.css" /> 
+<script type="text/javascript" src="js/jqm-datebox.core.min.js"></script>
+<script type="text/javascript" src="js/jqm-datebox.mode.calbox.min.js"></script>
+<script type="text/javascript" src="js/jquery.mobile.datebox.i18n.en_US.utf8.js"></script>
+<script src="js/jquery.validate.js"></script>
+<script src="js/additional-methods.js"></script>
+<script>
+    function __showChargeable()
+{
+pUrlStr='timeslips.shtml?keyword='+$('#keyword').val()+'&chargeable=on';
+window.location.href=pUrlStr;
+}
+
+function __showNotChargeable()
+{
+pUrlStr='timeslips.shtml?keyword='+$('#keyword').val()+'&chargeable=off';
+window.location.href=pUrlStr;
+}
+
+function __showAllTravelExpenses()
+{
+pUrlStr='travel_expenses.shtml';
+window.location.href=pUrlStr;
+}
+
+function __showTravelExpenses()
+{
+pUrlStr='travel_expenses.shtml?keyword='+$('#keyword').val();
+window.location.href=pUrlStr;
+}
+
+function __showTravelExpenseForm(uuid)
+{
+pUrlStr='travel_expense.shtml?uuid='+uuid;
+window.location.href=pUrlStr;
+}
+
+$(document).ready(function() {
+
+$('#keyword').focus();
+
+//setup before functions
+var typingTimer;                //timer identifier
+var doneTypingInterval = 1000;  //time in ms, 5 second for example
+
+//on keyup, start the countdown
+$('#keyword').keyup(function(){
+    clearTimeout(typingTimer);
+    if ($('#keyword').val) {
+        typingTimer = setTimeout(function(){
+            //do stuff here e.g ajax call etc....
+             var v = $("#keyword").val();
+__showTravelExpenses();
+        }, doneTypingInterval);
+    }
+});
+
+    });
+    </script>
+
+</head>
+<body>
+<div data-role="page" id="home" data-add-back-btn="false">
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/top-header.shtml-->
+	<form method="get" onSubmit="__showTravelExpenses(); return false;">
+	<div class="search-container" data-theme="a" style="height:30px;">
+		<div data-role="fieldcontain" >
+			<input name="keyword" id="keyword" type="search" placeholder="Enter client or project name.." value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" />
+		</div>
+	</div>
+	</form>
+				
+	
+	<div data-role="content" style="padding: 15px;">
+		<ul data-role="listview" data-inset="true">
+			<li data-role="list-divider"><span style=" color:#2B89D0; font-stretch:narrower;">Travel Expenses</span></li>
+		</ul>
+		<table class="table-opt" summary="Product Options">
+			<thead>
+				<tr>
+					<th></th>
+					<th>Client</th>
+					<th>Project Code</th>
+					<th>Amount</th>
+					
+					
+				</tr>
+			</thead>
+			<tbody>
+			<!--#4DSCRIPT/Web_LoadMileage/-->
+                                <!--#4DLOOP [Mileage]--><!--#4DSCRIPT/Web_LoadMileageRelated/--><!-- row -->
+				<tr> 											
+					<td width="10%">
+						<a data-ajax="false" href="travel_expense.shtml?uuid=<!--#4DHTMLVAR [Mileage]uuid-->" ><!--#4DVAR Selected record number([Mileage])--></a>
+					</td>
+					 <td width="10%">
+						<!--#4DHTMLVAR [Companies]company_Name-->
+					</td>
+					<td width="10%">
+						<!--#4DHTMLVAR [Mileage]Project_Code-->
+					</td>
+					<td width="10%">
+						<!--#4DHTMLVAR [Mileage]Total_Amount-->
+					</td>
+					
+					
+
+				</tr>
+
+<!--#4DENDLOOP-->
+			</tbody>
+		</table>
+	</div><!-- END DATA ROLE CONTENT-->
+
+   <!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/footer.shtml-->
+   
+    
+ </div>
+ 
+</body>
+</html>

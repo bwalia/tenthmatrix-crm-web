@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Tenthmatrix CRM App : Leads</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- bootstrap -->
+	<link href="css/bootstrap/bootstrap.css" rel="stylesheet">
+    <link href="css/bootstrap/bootstrap-responsive.css" rel="stylesheet">
+    <link href="css/bootstrap/bootstrap-overrides.css" type="text/css" rel="stylesheet">
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/app/includes/header.shtml-->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    
+    	<style type="text/css">
+		.Highlight
+		{
+			background-color: #dcfac9!important;
+			cursor: pointer;
+		}
+		
+		.pull-right
+		{
+		
+		margin: 0 4px 4px 4px;
+		padding:0 4px 4px 4px;
+		
+		}
+		ul.actions{
+			list-style:none;
+		}
+		#message{
+	color:#FF0000;
+}
+		
+	</style>
+
+
+</head>
+<body>
+
+	<!-- main container -->
+    <div class="content wide-content">
+	 <div class="container-fluid">
+	<form id="frm_set" name="frm_set"  method="post" action="">
+        <div class="" style=" padding:15px 0 0 0;">					
+			<div class="pull-right">
+				<div class="btn-group pull-right">
+					<button class="glow left large" onClick="__showAllContacts(); return false;">All</button>
+					<button class="glow middle large" onClick="__showActive(); return false;">Active</button>
+					<button class="glow right large" onClick="__showInActive(); return false;">In-Active</button>
+					<a href="lead.shtml" class="btn-flat success new-product margn-lft35"  style="margin-left:15px;">+ Add New Lead Contact</a>
+				</div>
+				<input style="margin-top:3px;" name="keyword_type" id="keyword_type" type="text" class="search order-search" placeholder="search for lead, name, email.." value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" />
+			</div>
+		</div>
+            <div id="pad-wrapper" class="datatables-page">
+                <div class="row-fluid">
+                    <div class="span12">
+
+                        <table cellpadding="0" cellspacing="0" border="0" class="dataTable" id="leads_table">
+                            <thead>
+                                <tr role="row">
+                                    <th align="left"><input name="chk_all" type="checkbox" id="chk_all" value="">
+                                    </th>
+                                    <th align="left">LEAD NAME
+                                    </th>
+                                    <th align="left">CONTACT NAME
+                                    </th>
+                                    <th align="left">E-MAIL
+                                    </th>
+                                    <th align="left">MOBILE
+                                    </th>
+                                    <th align="left">SKYPE
+                                    </th>
+                                    <th align="left">DO NOT MAIL STATUS
+                                    </th>
+                                </tr>
+                            </thead>
+                           <tfoot>
+                            <tr>
+                                <th align="left">&nbsp;</th>
+                                <th align="left">LEAD NAME</th>
+                                <th align="left">CONTACT NAME</th>
+                                <th align="left">E-MAIL</th>
+                                <th align="left">MOBILE</th>
+                                <th align="left">SKYPE</th> 
+                                <th align="left">DO NOT MAIL STATUS</th>
+                            </tr>
+                        </tfoot> 
+                        <tbody id="leads_table_body">
+                        </tbody>
+                        </table>
+						<div id="img_loading_div" style="text-align:center">
+							<img src="../loading.gif"  style="padding:20px;" width="34" >
+						</div>
+
+                    </div>
+                </div>
+            </div>
+			</form>
+        </div>
+    </div>
+	
+	<div class="example-container">
+		<pre class="code" style="display:none;" id="no_rec_prompt">
+		var statesdemo = {
+			state0: {
+				title: 'No more records found',
+				html:'',
+				buttons: { OK: 1 },																		
+				submit:function(e,v,m,f){ 
+				//console.log(f);
+				if(v==1) {
+					$.prompt.close();
+				}
+
+				}
+			},
+		};
+			if(!($(".jqibox").length))
+			$.prompt(statesdemo);
+		</pre>
+	</div>
+    <!-- end main container -->
+
+	<!-- scripts -->
+    <script src="js/jquery-latest.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.dataTables.js"></script>
+	<script type="text/javascript" src="js/jquery-impromptu.js"></script>
+    <script src="js/theme.js"></script>
+   
+<script>
+var JSONdata;
+var selected='';
+var start=0, end=25;
+var old_srch='',keyword='', jsonRow='', tab='', set='';
+var tablname='Lead_Contacts';
+var process=false;
+var selected_set='<!--#4DVAR _HIT_WebApp_GetField ("load_set") -->';
+// Hide the first cell for JavaScript enabled browsers.
+$('#leads_table td:first-child').hide();
+
+// Apply a class on mouse over and remove it on mouse out.
+$('#leads_table tr').hover(function ()
+{
+	$(this).toggleClass('Highlight');
+});
+
+// Assign a click handler that grabs the URL from the first cell and redirects the user.
+$('#leads_table tr').click(function ()
+{
+	if(!($(this).find(':checkbox').length)){
+		location.href = 'lead_contacts.shtml?uuid='+$(this).parents('tr').find(':checkbox').val()+'&token='+Math.random();
+	}
+});
+ 
+function getMonthName(m) {
+	if(m==1){ monthName= "Jan";}
+	else if(m==2){ monthName= "Feb";}
+	else if(m==3){ monthName= "Mar"; }
+	else if(m==4){ monthName= "Apr"; }
+	else if(m==5){ monthName= "May"; }
+	else if(m==6){ monthName= "Jun"; }
+	else if(m==7){ monthName= "Jul"; }
+	else if(m==8){ monthName= "Aug"; }
+	else if(m==9){ monthName= "Sep"; }
+	else if(m==10){ monthName= "Oct"; }
+	else if(m==11){ monthName= "Nov"; }
+	else if(m==12){ monthName= "Dec"; }
+	else{ monthName= m; }
+	return monthName;
+ }
+
+function __showActive()
+{
+	start=0;
+	end=25;
+	tab='active';
+	keyword= $("#keyword_type").val();
+	jsonRow = 'loadleadcontacts.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab;
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}
+	$('#leads_table_body').html('');
+	$('#img_loading_div').show();		
+	load_data(jsonRow);
+}
+
+function __showInActive()
+{
+	start=0;
+	end=25;
+	tab='inactive';
+	jsonRow = 'loadleadcontacts.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab;
+	keyword= $("#keyword_type").val();
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}
+	$('#leads_table_body').html('');
+	$('#img_loading_div').show();		
+	load_data(jsonRow);
+}
+
+
+function __showAllContacts()
+{
+	start=0;
+	end=25;
+	tab='';
+	jsonRow = 'loadleadcontacts.cgi?start='+start+'&end='+end+'&tablname='+tablname;
+	$('#leads_table_body').html('');
+	$('#img_loading_div').show();	
+	load_data(jsonRow);
+}
+
+function deleteSelection()
+{
+	
+	var chk=confirm("Are you sure to delete?");
+	if(chk){
+		var selected='';
+		$('.check').each(function(){
+			if($(this).is(":checked")){
+				if(selected==''){
+					selected=$(this).val();
+				}
+				else{
+					selected+=","+$(this).val();
+				}
+			}
+		
+		});
+			
+		var dataString = 'selected='+selected;
+		console.log(dataString);
+		$.ajax({
+			type: "GET",
+			dataType: "json",
+			url: "delete_leadcontact.cgi",
+			data: dataString,
+			cache: false,
+			success: function(html)
+			{
+				alert("Deleted successfully");
+				pUrlStr='lead_contacts.shtml?keyword='+$('#keyword').val();
+				window.location.href=pUrlStr;
+
+			}
+		});
+	} 
+}
+$(document).ready(function() {
+
+	$('#keyword_type').focus();
+	keyword= $("#keyword_type").val();
+	jsonRow = 'loadleadcontacts.cgi?start='+start+'&end='+end+'&tablname='+tablname;
+	
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}	
+	load_data(jsonRow);	
+	
+	$(window).scroll(function(){
+		if ($(window).scrollTop() == $(document).height() - $(window).height()){
+		
+		//alert("scrolling...");
+		start=end+1;
+		end=start+25;
+		jsonRow = 'loadleadcontacts.cgi?start='+start+'&end='+end+'&tablname='+tablname;
+		if(keyword!=''){
+			jsonRow +='&keyword='+keyword;
+		}
+		if(tab!=''){
+			jsonRow +='&tab='+tab;
+		}		
+		load_data(jsonRow);
+		
+		}
+	});
+	
+	//setup before functions
+	var typingTimer;                //timer identifier
+	var doneTypingInterval = 1000;  //time in ms, 5 second for example
+
+	//on keyup, start the countdown
+	$('#keyword_type').keyup(function(){
+		clearTimeout(typingTimer);
+		if ($('#keyword_type').val) {
+			typingTimer = setTimeout(function(){
+				//do stuff here e.g ajax call etc....
+				$('#leads_table_body').html('');
+				$('#img_loading_div').show();
+				start=0;
+				end=start+25;
+				tab='';
+				keyword= $("#keyword_type").val();
+				jsonRow = 'loadleadcontacts.cgi?start='+start+'&end='+end+'&tablname='+tablname;
+				if(keyword!=''){
+					jsonRow +='&keyword='+keyword;
+				}
+				if(tab!=''){
+					jsonRow +='&tab='+tab;
+				}	
+				load_data(jsonRow);
+			}, doneTypingInterval);
+		}
+	});
+	
+	$('#leads_table').on("click","#chk_all", function(){
+			if($(this).is(":checked")){
+					$('.check').prop('checked', true);
+				}
+				else{
+					$('.check').prop('checked', false);
+				}
+		});	
+
+});
+    
+function load_data(jsonRow){
+	JSONdata=new Array();
+	$.getJSON(jsonRow,function(result){
+			if(result.Alert){
+				code = $('#no_rec_prompt').text();
+				(new Function(code))();
+			}
+			else{
+				$.each(result.uuid, function(i,item)
+				{
+					JSONdata[i]=new Array();
+					JSONdata[i][0]='<input name="Select" class="check" type="checkbox" id="Select" value="'+item+'">';
+				}); 
+				 
+				$.each(result.ClientName, function(i,item)
+				{
+					JSONdata[i][1]=item;
+				});
+				$.each(result.Contactname, function(i,item)
+				{
+					JSONdata[i][2]=item;
+				});
+				$.each(result.Email, function(i,item)
+				{	
+					JSONdata[i][3]=item;
+				});
+				$.each(result.Mobile, function(i,item)
+				{					
+					JSONdata[i][4]=item;
+				});
+				$.each(result.Skype, function(i,item)
+				{					
+					JSONdata[i][5]=item;
+				});
+				$.each(result.Status, function(i,item)
+				{					
+					if(item==true){
+						JSONdata[i][6]='<span class="label label-success"> Active </span>';
+					}
+					else{
+						JSONdata[i][6]='<span class="label label-important"> In-Active </span>';
+					}
+				}); 
+				
+				var table_html='';
+				$.each(JSONdata, function(i,row)
+				{
+					table_html+='<tr>';
+					$.each(row, function(i,col){
+						table_html+='<td>'+col+'</td>';
+					});
+					table_html+='</tr>';
+				});
+				if(old_srch!=keyword){
+					$('#leads_table_body').html('');
+					old_srch=keyword;
+				}
+				//alert(table_html);
+				
+				$('#leads_table_body').append(table_html);
+				
+				// Apply a class on mouse over and remove it on mouse out.
+				
+				$('#leads_table tbody tr').unbind();
+			$('#leads_table tbody tr').hover(function ()
+			{
+				$(this).toggleClass('Highlight');
+			});
+
+			// Assign a click handler that grabs the URL from the first cell and redirects the user.
+			$('#leads_table tr td').click(function ()
+			{
+				if(!($(this).find(':checkbox').length || $(this).find('a').length)){
+				location.href = 'lead_contact.shtml?uuid='+$(this).parents('tr').find(':checkbox').val()+'&token='+Math.random();
+				}
+			});
+				
+		}
+		$('#img_loading_div').hide();
+		});
+}
+
+</script>
+</body>
+</html>

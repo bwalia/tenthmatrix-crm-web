@@ -1,0 +1,444 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+
+//if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+QUERY([Contacts];[Contacts]uuid=_HIT_WebApp_GetField ("uuid"))
+QUERY([Companies];[Companies]account_Number=num([Contacts]client_id))
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+//else
+//_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+//end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+-->
+<!DOC html>
+<html>
+<head>
+	<title>Tenthmatrix CRM App : Contact</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- bootstrap -->
+	<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="bootstrap/css/bootstrap-responsive.min.css" />
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/app/includes/header.shtml-->
+	<style>
+		.custom-combobox {
+    position: relative;
+    display: inline-block;
+  }
+  .custom-combobox-toggle {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    margin-left: -1px;
+    padding: 0;
+    /* support: IE7 */
+    *height: 1.7em;
+    *top: 0.1em;
+  }
+  .custom-combobox-input {
+    margin: 0;
+    padding: 0.3em;
+  }
+  .ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {
+  	width:auto;
+	height:auto;
+	 background: none repeat scroll 0% 0% #FFF;
+	 border: 1px solid #B6B6B6;
+	 
+  }
+  .ui-autocomplete{
+  	max-height:300px;
+	overflow:scroll;
+  }
+  
+  .ui-autocomplete li a{
+  	color: #737f8d;
+	text-shadow: 1px 1px 1px #fff;
+  }
+  .ui-widget-content {
+    border: 1px solid #B6B6B6;
+	width: 280px;
+	}
+	</style>
+</head>
+<body>
+
+	<!-- main container -->
+    <div class="content wide-content">
+        <div class="container-fluid">
+            <div id="pad-wrapper" class="form-page">
+				<div class="row-fluid">
+					<div class="span12">
+						<form name="ContactForm" action="savecontact.cgi" method="post" class="form_validation_reg">
+							<div class="formSep">
+								<div class="row-fluid">
+									<div class="span3">
+										<label>Customer <span class="f_req">*</span></label>
+										<div class="ui-widget">
+											<select id="Client_ID" name="Client_ID">
+												<!--#4DIF (Records in selection([Contacts])=0)-->
+											<option value=""></option>
+												<!--#4DSCRIPT/Web_LoadCustomers/-->
+												<!--4DLOOP  [Companies]-->
+											<option value="<!--4DVAR [Companies]account_Number-->"  <!--#4DIF ([Contacts]client_id=[Companies]account_Number)-->selected<!--4DELSE--><!--4DENDIF-->><!--4DVAR [Companies]company_Name--></option>		
+												<!--4DENDLOOP-->
+												<!--#4DELSE-->
+											<option value="<!--4DVAR [Companies]account_Number-->" selected><!--4DVAR [Companies]company_Name--></option>									 
+												<!--#4DENDIF-->
+											</select>
+										</div>
+									</div>
+								</div>
+							</div>
+							<input name="form_name" class="span9" type="hidden" value="ContactForm" id="form_name">
+							<input name="Contact_uuid" class="span9" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="Contact_uuid">        
+							<div class="formSep">
+								<div class="row-fluid">
+									<div class="span3">
+										<label>First name <span class="f_req">*</span></label>
+										<input name="First_Name" class="span12" type="text" value="<!--#4DVAR [Contacts]First name-->" id="First_Name" >
+									</div>
+									<div class="span3">
+										<label>Surname </label>
+										<input class="span12" name="Surname"  type="text" value="<!--#4DVAR [Contacts]Surname-->" id="Surname">
+									</div>
+								</div>
+							</div>
+							<div class="formSep">
+								<div class="row-fluid">
+									<div class="span3">
+										<label>Title</label>
+										<input name="Title" class="span12" type="text" value="<!--#4DVAR [Contacts]Title-->" id="Title">
+									</div>
+								</div>
+							</div>
+							<div class="formSep">
+								<div class="row-fluid">
+									<div class="span3">
+										<label>Salutation</label>
+										<input name="Salutation" class="span12" type="text" value="<!--#4DVAR [Contacts]Salutation-->" id="Salutation">
+									</div>
+								</div>
+							</div>
+							<div class="formSep">
+								<div class="row-fluid">
+									<div class="span3">
+										<label>Email <span class="f_req">*</span></label>
+										<input name="Email" class="span12" type="text" value="<!--#4DVAR [Contacts]Email-->" id="Email">
+									</div>
+									<div class="span3">
+										<label>Password</label>
+										<input name="zWebPassword" class="span12" type="password" value="<!--#4DVAR [Contacts]zWebPassword-->" id="zWebPassword">
+									</div>
+								</div>
+							</div>
+							<div class="formSep">
+								<div class="row-fluid">
+									<div class="span3">
+										<label>Direct Phone</label>
+										<input name="Direct_Phone" class="span12 phone" type="text" value="<!--#4DVAR [Contacts]Direct Phone-->" id="Direct_Phone">
+									</div>
+									<div class="span3">
+										<label>Mobile</label>
+										<input name="Mobile" class="span12 phone" type="text" value="<!--#4DVAR [Contacts]Mobile-->" id="Mobile">
+									</div>
+								</div>
+							</div>
+							<div class="formSep">
+								<div class="row-fluid">
+									<div class="span3">
+										<label>Direct fax</label>
+										<input name="Direct_fax" class="span12" type="text" value="<!--#4DVAR [Contacts]Direct fax-->" id="Direct_fax">
+									</div>
+								</div>
+							</div>
+							<div class="formSep">
+								<div class="row-fluid">
+									<div class="span4">
+										<label>Comments</label>
+										<textarea name="Comments" class="span12" rows="4" id="Comments"><!--#4DVAR [Contacts]Comments--></textarea>
+									</div>
+								</div>
+							</div>
+							<div class="formSep">
+								<div class="row-fluid">
+									<div class="span3">
+										<label>News Letter Status</label>
+										<select name="News_Letter_Status" id="News_Letter_Status">
+											<option value="Subscriber" <!--#4DIF ([Contacts]GetsNewsletter=True)-->selected<!--4DELSE--><!--4DENDIF-->>Subscriber</option>
+											<option value="Non Subscriber" <!--#4DIF ([Contacts]GetsNewsletter=False)-->selected<!--4DELSE--><!--4DENDIF-->>Non Subscriber</option>
+										</select> 
+									</div>
+								</div>
+							</div>
+							<div class="formSep">
+								<div class="row-fluid">
+									<div class="span3">
+										<label><input name="allow_webAccess" class="span1" type="checkbox" value="true" id="allow_webAccess" <!--#4DIF ([Contacts]AllowWebAccess)-->checked<!--4DELSE--><!--4DENDIF--> >Allow WebAccess</label>
+									</div>
+								</div>
+							</div>
+							<div style="text-align: center;" class="span9 field-box">
+								<input type="submit" value="Submit" class="btn-glow primary">
+								<span>OR</span>
+								<a href="payments.shtml">Cancel</a>
+							</div>
+						</form>
+					</div>
+				</div>
+		
+            </div>
+		</div>
+    </div>
+    <!-- end main container -->
+
+	
+	<script src="js/jquery.min.js"></script>
+	<script src="bootstrap/js/bootstrap.min.js"></script>
+	<!-- validation -->
+    <script src="lib/validation/jquery.validate.min.js"></script>
+	
+<script type="text/javascript">
+
+	$(document).ready(function() {
+	
+	$.__4D_WindowTitle_Set('<!--#4DVAR [Contacts]First name--> <!--#4DVAR [Contacts]Surname-->');
+	
+		//* regular validation
+		gebo_validation.reg();
+		
+		$('.phone').keypress(function(e){
+			var k = e.which;
+			/* numeric inputs can come from the keypad or the numeric row at the top */
+			 if ((k<48 || k>57) && (k!=45) && (k!=43) && (k!=40) && (k!=41) && (k!=32) && (k!=44) && (k!=46) && (k!=8) && (k!=0)) {
+				e.preventDefault();
+				//alert("Allowed characters are 0-9, +, -, (, )");
+				return false;
+			}
+
+		}); 
+		$.validator.addMethod("isemail", 
+		   function(value, element) {
+			  var regex = /^([a-zA-Z0-9_\.\-\+])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+				return regex.test(value);
+		   }, 
+		   "Not a valid email"    ); 
+	});
+    
+
+	gebo_validation = {
+		reg: function() {
+			reg_validator = $('.form_validation_reg').validate({
+				ignore: "",
+				onkeyup: false,
+				errorClass: 'error',
+				validClass: 'valid',
+				highlight: function(element) {
+					$(element).closest('div').addClass("f_error");
+				},
+				unhighlight: function(element) {
+					$(element).closest('div').removeClass("f_error");
+				},
+				errorPlacement: function(error, element) {
+					$(element).closest('div').append(error);
+				},
+				rules: {
+					Client_ID: { required: true },
+					First_Name: { required: true },
+					Email: { required: true, isemail : true  }
+				},
+			})
+		}
+	};
+</script>
+	<script src="js/jquery-ui-1.9.1.custom.js"></script>
+<script>
+	 var xhr;
+  (function( $ ) {
+    $.widget( "custom.combobox", {
+      _create: function() {
+        this.wrapper = $( "<span>" )
+          .addClass( "custom-combobox" )
+          .insertAfter( this.element );
+ 
+        this.element.hide();
+        this._createAutocomplete();
+        this._createShowAllButton();
+      },
+ 
+      _createAutocomplete: function() {
+        var selected = this.element.children( ":selected" ),
+          value = selected.val() ? selected.text() : "";
+ 
+        this.input = $( "<input>" )
+          .appendTo( this.wrapper )
+          .val( value )
+          .attr( "title", "" )
+          .addClass( "custom-combobox-input ui-widget ui-widget-content ui-state-default ui-corner-left" )
+          .autocomplete({
+            delay: 0,
+            minLength: 0,
+            source: $.proxy( this, "_source" )
+          })
+          .tooltip({
+            tooltipClass: "ui-state-highlight"
+          });
+ 
+        this._on( this.input, {
+          autocompleteselect: function( event, ui ) {
+		  	//alert("show all");
+            ui.item.option.selected = true;
+			
+            this._trigger( "select", event, {
+              item: ui.item.option
+            });
+          },
+ 
+          autocompletechange: "_removeIfInvalid"
+        });
+      },
+ 
+      _createShowAllButton: function() {
+        var input = this.input,
+          wasOpen = false;
+ 
+        $( "<a>" )
+          .attr( "tabIndex", -1 )
+          .attr( "title", "Show All Items" )
+          .tooltip()
+          .appendTo( this.wrapper )
+          .button({
+            icons: {
+              primary: "ui-icon-triangle-1-s"
+            },
+            text: false
+          })
+          .removeClass( "ui-corner-all" )
+          .addClass( "custom-combobox-toggle ui-corner-right" )
+          .mousedown(function() {
+            wasOpen = input.autocomplete( "widget" ).is( ":visible" );
+          })
+          .click(function() {
+            input.focus();
+ 
+            // Close if already visible
+            if ( wasOpen ) {
+              return;
+            }
+ 
+            // Pass last search string as value to search for, displaying last results
+            input.autocomplete( "search", 'SHOWALL' );
+          });
+      },
+ 
+      _source: function( request, response ) {
+        //var matcher = new RegExp( $.ui.autocomplete.escapeRegex(request.term), "i" );
+		var ele_select= this.element;
+		if(request.term=='SHOWALL'){
+			response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+		
+		}
+		else
+		{
+		var jsonRow = 'getcompaniesonsearch.cgi?srch='+request.term;
+		
+
+		//alert(jsonRowURLStr);
+		if(xhr) xhr.abort();
+		xhr=$.getJSON(jsonRow,function(result){
+			
+			if(result){
+				var html='<option value=""></option>';
+
+				$.each(result, function(i,item)
+				{
+					html += '<option value="'+item.id+'">'+item.value+'</option>';
+				});
+				ele_select.html(html);
+				
+				
+				response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+				
+				
+			}
+		});
+       
+	  } 
+		
+      },
+ 
+      _removeIfInvalid: function( event, ui ) {
+ 
+        // Selected an item, nothing to do
+        if ( ui.item ) {
+
+          return;
+        }
+ 
+        // Search for a match (case-insensitive)
+        var value = this.input.val(),
+          valueLowerCase = value.toLowerCase(),
+          valid = false;
+        this.element.children( "option" ).each(function() {
+          if ( $( this ).text().toLowerCase() === valueLowerCase ) {
+            this.selected = valid = true;	
+			
+            return false;
+          }
+        });
+ 
+        // Found a match, nothing to do
+        if ( valid ) {
+          return;
+        }
+ 
+        // Remove invalid value
+        this.input
+          .val( "" )
+          .attr( "title", value + " didn't match any item" )
+          .tooltip( "open" );
+        this.element.val( "" );
+        this._delay(function() {
+          this.input.tooltip( "close" ).attr( "title", "" );
+        }, 2500 );
+        this.input.data( "ui-autocomplete" ).term = "";
+      },
+ 
+      _destroy: function() {
+        this.wrapper.remove();
+        this.element.show();
+      }
+    });
+  })( jQuery );
+ 
+  $(function() {
+    $( "#Client_ID" ).combobox();
+   
+	
+  });
+
+  </script>
+
+</body>
+</html>

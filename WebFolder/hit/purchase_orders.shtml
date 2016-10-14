@@ -1,0 +1,427 @@
+<!--HIT_EXECUTE
+_HIT_HTTPD_SetHTTPHeader ("Content-type";"text/html; charset=utf-8")
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+C_TEXT(_HTMLTITLETXT)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+
+_HTMLTITLETXT:="Purchase Orders"
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml?url="+HTTPD_DocumentURI)
+end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+<link rel="stylesheet" media="all" type="text/css" href="css/jquery-impromptu.css" />
+<style>
+#message{
+	color:#FF0000;
+}
+</style>
+</head>
+<body>
+
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
+
+	<!-- main container -->
+    <div class="content">
+        
+        <div class="container-fluid">
+
+            <div id="pad-wrapper">
+
+                <!-- timeslips table -->
+                <div class="table-wrapper orders-table section">
+				 <form id="frm_set" name="frm_set" method="post" action="invoices.shtml">
+                    <div class="row-fluid filter-block">
+                        <div class="pull-right">
+                            <div class="btn-group pull-right">
+                                <button class="glow left large" onClick="__showOrders(); return false;">All</button>
+                                <!-- 
+<button class="glow middle large" onClick="__showAcknowledgedOrders(); return false;">Acknowledged</button> -->
+                                <button class="glow middle large" onClick="__showActiveOrders(); return false;">Active</button>
+                                <button class="glow right large" onClick="__showInactiveOrders(); return false;">Inactive</button>
+
+                                <a href="purchase_order.shtml" class="btn-flat success new-product margn-lft35">+ Add New Purchase Order</a>
+                            </div>
+                            <input name="typeKeyword" id="typeKeyword" type="text" class="search order-search" placeholder="Enter customer name.." value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" />
+                        </div>
+                    </div>
+
+                            </form>
+
+                    <div class="row-fluid">
+                        <table class="table table-hover" id="orders_table">
+                            <thead>
+                                <tr>
+                                	<th class="span1">
+                                        <!-- Select For Sets -->
+                                        <input name="Select" class="check chk_all" type="checkbox" id="select" ></label>
+                                    </th>
+                                    <th class="span2">
+									<span class="line"></span>
+                                      PURCHASE ORDER NUMBER
+                                    </th>
+                                    <th class="span2">
+									<span class="line"></span>
+                                        START DATE
+                                    </th>
+                                    <th class="span2">
+                                        <span class="line"></span>
+                                        CLIENT
+                                    </th>
+                                    <th class="span2">
+                                        <span class="line"></span>
+                                        PROJECT CODE
+                                    </th>
+                                    <th class="span2">
+                                        <span class="line"></span>
+                                        PAYMENT DUE DATE
+                                    </th>
+                                    <th class="span2">
+                                        <span class="line"></span>
+                                        TOTAL WITHOUT VAT
+                                    </th>
+                                    <th class="span2">
+                                        <span class="line"></span>
+                                        TOTAL AMOUNT
+                                    </th>
+                                    <th class="span2">
+                                        <span class="line"></span>
+                                        ORDER STATUS
+                                    </th>
+                                    <th class="span1"> 
+                                        <span class="line"></span>
+                                        Action
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tfoot>
+                            <tr>
+                                <th align="left">&nbsp;</th>
+                                <th align="left">PURCHASE ORDER NUMBER</th>
+                                <th align="left">START DATE</th>
+                                <th align="left">CLIENT</th>
+                                <th align="left">PROJECT CODE</th>
+                                <th align="left">PAYMENT DUE DATE</th>
+                                <th align="left">TOTAL WITHOUT VAT</th>
+								<th align="left">TOTAL AMOUNT</th>
+								<th align="left">ORDER STATUS</th>
+								<th align="left">ACTION</th>
+                            </tr>
+                        	</tfoot>
+                            <tbody id="orders_table_body">
+                            </tbody>
+                        </table>
+						<div id="img_loading_div" style="text-align:center">
+		<img src="loading.gif"  style="padding:20px;" width="34" >
+		</div>
+                    </div>
+                </div>
+                <!-- end timeslips table -->
+
+            </div>
+        </div>
+    </div>
+    <!-- end main container -->
+	<div class="example-container">
+								
+								<pre class="code" style="display:none;" id="no_rec_prompt">
+									var statesdemo = {
+										state0: {
+											title: 'No more records found',
+											html:'',
+											buttons: { OK: 1 },																		
+											submit:function(e,v,m,f){ 
+												//console.log(f);
+												if(v==1) {
+													$.prompt.close();
+												}
+												
+											}
+										},
+										
+									};
+									if(!($(".jqibox").length))
+									$.prompt(statesdemo);
+								</pre> 
+								
+								<!--<a class="run">Run It!</a>-->
+							</div>
+	<!-- scripts -->
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml-->
+	<script type="text/javascript" src="js/jquery-impromptu.js"></script>
+    <script src="js/money.js"></script>
+  
+  
+    
+<script type="text/javascript">
+var JSONdata;
+var selected='';
+var start=0, end=50;
+var old_srch='',keyword='', jsonRow='', tab='', set='';
+var tablname='Purchase_Orders';
+var selected_set='<!--#4DVAR _HIT_WebApp_GetField ("set") -->';
+var complete=false; 
+var completeScroll=false;
+var checkAllFlag=false;
+
+function __updateMsgFor4D(pMsgTxt)
+{
+$('#__4D_StatusMsg').val(pMsgTxt);
+}
+
+function __showCompletedOrders(){
+	if(checkAllFlag==true){
+		$(".chk_all").trigger('click');
+	}
+	start=0;
+	end=50;
+	tab=5;
+	jsonRow = 'loadPurchase_Orders.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab+'&set='+selected_set;
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}
+	$('#orders_table_body').html('');
+	$('#img_loading_div').show();		
+	load_data(jsonRow);
+}
+ 
+function __showOrders(){
+	if(checkAllFlag==true){
+		$(".chk_all").trigger('click');
+	}
+	start=0;
+	end=50;
+	tab='';
+	jsonRow = 'loadPurchase_Orders.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&set='+selected_set;
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}	
+	$('#orders_table_body').html('');
+	$('#img_loading_div').show();	
+	load_data(jsonRow);
+}
+function __showActiveOrders(){
+	if(checkAllFlag==true){
+		$(".chk_all").trigger('click');
+	}
+	start=0;
+	end=50;
+	tab='active';
+	jsonRow = 'loadPurchase_Orders.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&set='+selected_set+'&tab='+tab;
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}	
+	$('#orders_table_body').html('');
+	$('#img_loading_div').show();	
+	load_data(jsonRow);
+}
+function __showInactiveOrders(){
+	if(checkAllFlag==true){
+		$(".chk_all").trigger('click');
+	}
+	start=0;
+	end=50;
+	tab='inactive';
+	jsonRow = 'loadPurchase_Orders.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&set='+selected_set+'&tab='+tab;
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}	
+	$('#orders_table_body').html('');
+	$('#img_loading_div').show();	
+	load_data(jsonRow);
+}
+
+$(document).ready(function() {
+
+	$('#typeKeyword').focus();
+	$('#load_sets').val(selected_set);
+	$('#add_sets option[value="'+selected_set+'"]').hide();
+	
+	keyword= $("#typeKeyword").val();
+	jsonRow = 'loadPurchase_Orders.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&set='+selected_set;		
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}
+	if(tab!=''){
+		jsonRow +='&tab='+tab;
+	}	
+	load_data(jsonRow);		 
+	
+	$(window).scroll(function(){
+		if ($(window).scrollTop() == $(document).height() - $(window).height()){
+			if(complete==false && completeScroll==false) {
+				$('#img_loading_div').show();
+				//alert("scrolling before..."+start+", "+end);
+				start=end+1;
+				end=start+50;
+				//alert("scrolling after..."+start+", "+end);
+				jsonRow = 'loadPurchase_Orders.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&set='+selected_set;
+				if(keyword!=''){
+					jsonRow +='&keyword='+keyword;
+				}
+				if(tab!=''){
+					jsonRow +='&tab='+tab;
+				}		
+				load_data(jsonRow);
+			}
+		}
+	});	
+	
+	//setup before functions
+	var typingTimer;                //timer identifier
+	var doneTypingInterval = 1000;  //time in ms, 5 second for example
+	
+	//on keyup, start the countdown
+	$('#typeKeyword').keyup(function(){
+		clearTimeout(typingTimer);
+		if ($('#typeKeyword').val) {
+			typingTimer = setTimeout(function(){
+				//do stuff here e.g ajax call etc....
+				$('#orders_table_body').html('');
+				$('#img_loading_div').show();
+				start=0;
+				end=start+50;
+				tab='';
+				keyword= $("#typeKeyword").val();
+				jsonRow = 'loadPurchase_Orders.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&set='+selected_set;
+				if(keyword!=''){
+					jsonRow +='&keyword='+keyword;
+				}
+				if(tab!=''){
+					jsonRow +='&tab='+tab;
+				}	
+				load_data(jsonRow);
+			}, doneTypingInterval);
+		}
+	});	
+	// toggle all checkboxes from a table when header checkbox is clicked
+  	$(".table th input:checkbox").click(function () {
+  		$checks = $(this).closest(".table").find("tbody input:checkbox");
+  		if ($(this).is(":checked")) {	
+			checkAllFlag=true;
+  			$checks.prop("checked", true);
+  		} else {
+			checkAllFlag=false;
+  			$checks.prop("checked", false);
+  		}  		
+  	});
+	
+	
+});
+
+function load_data(jsonRow){
+	completeScroll=true;
+	JSONdata=new Array();
+	$.getJSON(jsonRow,function(result){
+	
+			if(result.Alert){
+				code = $('#no_rec_prompt').text();
+				(new Function(code))();
+			}
+			else{
+			
+				$.each(result.uuid, function(i,item)
+				{
+					JSONdata[i]=new Array();
+					if(checkAllFlag==true){
+					JSONdata[i][0]='<input class="check" checked type="checkbox" value="'+item+'">';
+					}else{
+					JSONdata[i][0]='<input class="check" type="checkbox" value="'+item+'">';
+					}
+					JSONdata[i][9]='<ul class="actions"><li><a href="purchase_order.shtml?uuid='+item+'" ><i class="table-edit"></i><a></li></ul>';
+					
+				}); 
+				$.each(result.Purchase_Order_number, function(i,item)
+				{
+					JSONdata[i][1]=item;
+						
+				});
+				    
+				$.each(result.Purchase_Start_Date, function(i,item)
+				{
+					JSONdata[i][2]=item;
+						
+				});
+				  
+				$.each(result.client, function(i,item)
+				{
+					JSONdata[i][3]=item;
+						
+				});
+				  
+				$.each(result.Project_code, function(i,item)
+				{
+					JSONdata[i][4]=item;
+						
+				});
+				
+				$.each(result.Payment_Due_Date, function(i,item)
+				{
+					JSONdata[i][5]=item;
+						
+				});
+				
+				$.each(result.Total_Without_VAT, function(i,item)
+				{
+					JSONdata[i][6]=item;
+						
+				});
+				
+				$.each(result.Total_Amount, function(i,item)
+				{
+					JSONdata[i][7]=item;
+						
+				});
+				
+				$.each(result.Puchase_Order_Status, function(i,item)
+				{
+					if(item==true){
+						JSONdata[i][8]='<span class="label label-success"> Order Active </span>';
+					}
+					else{
+						JSONdata[i][8]='<span class="label label-important"> Order In-Active</span>';
+					}
+						
+				});
+								
+				var table_html='';
+				var trClassStr='odd';
+				$.each(JSONdata, function(i,row)
+				{
+				
+					table_html+='<tr >';
+					$.each(row, function(i,col){
+						table_html+='<td>'+col+'</td>';
+					});
+					table_html+='</tr>';
+				});
+				if(old_srch!=keyword){
+					$('#orders_table_body').html('');
+					old_srch=keyword;
+				}
+				//alert(table_html);
+				
+				$('#orders_table_body').append(table_html);
+				complete=false;
+		}
+		$('#img_loading_div').hide();
+		completeScroll=false;
+		});
+}
+
+</script>
+
+</body>
+</html>

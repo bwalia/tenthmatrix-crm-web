@@ -1,0 +1,209 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+
+_HIT_HTMLTXT:=_HIT_HTTP_GetReferer
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+
+</head>
+<body>
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
+
+	<!-- main container -->
+    <div class="content">
+        
+        <div class="container-fluid">
+            <div id="pad-wrapper">
+
+                <!-- timeslips table -->
+                <div class="table-wrapper orders-table section">
+                    <div class="row-fluid head">
+                        <div class="span12">
+                            <h4>Travel Expenses</h4>
+                        </div>
+                    </div>
+                    <div class="row-fluid filter-block">
+                        <div class="pull-right">
+                            <div class="btn-group pull-right">
+                               <!-- 
+								 <button class="glow left large" onClick="__showAllTravelExpenses(); return false;">All</button>
+                                 <button class="glow middle large" onClick="__showChargeable(); return false;">Chargeable</button>
+                                 <button class="glow right large" onClick="__showNotChargeable(); return false;">Not Chargeable</button>
+ 								-->
+ 								 <a href="travel_expense.shtml" class="btn-flat success new-product margn-lft35">+ Add New Travel Expense Sheet</a>
+                            </div>
+                            <input name="keyword" id="keyword" type="text" class="search order-search" placeholder="Enter client or project name.." value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" />
+                        </div>
+                    </div>
+
+                            </form>
+
+                    <div class="row-fluid">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+								<!-- 
+	<th class="span2">
+									 Edit
+                                    </th>
+ -->
+                                    <th class="span3">
+                                        Client
+                                    </th>
+                                    <th class="span3">
+                                        Project
+                                    </th>
+                                    <th class="span2">
+                                        Amount
+                                    </th>
+                                    <th class="span1">
+                                        
+                                        Vehicle Start Reading
+                                    </th>
+                                    <th class="span1">
+                                        
+                                        Vehicle End Reading
+                                    </th>
+                                    <th class="span2">
+                                       
+                                        Total Distance
+                                    </th>
+                                    <th class="span2">
+                                        
+                                        Travel Start Time
+                                    </th>
+									<th class="span3">
+                                        
+                                        Travel End Time
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody><!--#4DSCRIPT/Web_LoadMileage/-->
+                                <!--#4DLOOP [Mileage]--><!--#4DSCRIPT/Web_LoadMileageRelated/--><!-- row -->
+                                <tr class="first">
+									<!-- 
+<td>
+									<a href="javascript:void(0)" onClick="__showTravelExpenseForm('<!~~#4DHTMLVAR [Mileage]uuid~~>')"><i class="icon-edit"></i><!~~ Selected record number([Mileage])~~></a>
+									</td>
+ -->
+                                    <td>
+                                    	<a href="javascript:void(0)" onClick="__showTravelExpenseForm('<!--#4DHTMLVAR [Mileage]uuid-->')"><!--#4DHTMLVAR [Companies]company_Name--></a>    
+                                    </td>
+                                    <td>
+                                    	<a href="javascript:void(0)" onClick="__showTravelExpenseForm('<!--#4DHTMLVAR [Mileage]uuid-->')"><!--#4DHTMLVAR [Mileage]Project_Code--></a>
+                                    </td>
+                                    <td>
+                                        <!--#4DHTMLVAR [Mileage]Total_Amount-->
+                                    </td>
+                                    <td>
+                                        <!--#4DHTMLVAR [Mileage]Vehicle_Start_Reading-->
+                                    </td>
+                                    <td>
+                                        <!--#4DHTMLVAR [Mileage]Vehicle_End_Reading-->
+                                    </td>
+                                    <td>
+                                        <!--#4DHTMLVAR [Mileage]Total_Distance_Travelled-->
+                                    </td>
+                                    <td>
+                                        <!--#4DHTMLVAR timestamp_unix_toDate([Mileage]Travel_Start_Timestamp)-->
+                                    </td>
+									<td>
+                                        <!--#4DHTMLVAR timestamp_unix_toDate([Mileage]Travel_End_Timestamp)-->
+                                        <ul class="actions">
+                                    		<li><a href="javascript:void(0)" onClick="__showTravelExpenseForm('<!--#4DHTMLVAR [Mileage]uuid-->')"><i class="table-edit"></i></a></li>
+                                        	<li><i class="table-settings"></i></li>
+                                        	<li class="last"><i class="table-delete"></i></li>
+                                   	 	</ul>
+                                    </td>
+                                </tr>
+
+<!--#4DENDLOOP-->
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- end timeslips table -->
+
+            </div>
+        </div>
+    </div>
+    <!-- end main container -->
+
+	<!-- scripts -->
+   <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+    
+    <script>
+    
+    function __showChargeable()
+{
+pUrlStr='timeslips.shtml?keyword='+$('#keyword').val()+'&chargeable=on';
+window.location.href=pUrlStr;
+}
+
+function __showNotChargeable()
+{
+pUrlStr='timeslips.shtml?keyword='+$('#keyword').val()+'&chargeable=off';
+window.location.href=pUrlStr;
+}
+
+function __showAllTravelExpenses()
+{
+pUrlStr='travel_expenses.shtml';
+window.location.href=pUrlStr;
+}
+
+function __showTravelExpenses()
+{
+pUrlStr='travel_expenses.shtml?keyword='+$('#keyword').val();
+window.location.href=pUrlStr;
+}
+
+function __showTravelExpenseForm(uuid)
+{
+pUrlStr='travel_expense.shtml?uuid='+uuid;
+window.location.href=pUrlStr;
+}
+
+$(document).ready(function() {
+
+$('#keyword').focus();
+
+//setup before functions
+var typingTimer;                //timer identifier
+var doneTypingInterval = 1000;  //time in ms, 5 second for example
+
+//on keyup, start the countdown
+$('#keyword').keyup(function(){
+    clearTimeout(typingTimer);
+    if ($('#keyword').val) {
+        typingTimer = setTimeout(function(){
+            //do stuff here e.g ajax call etc....
+             var v = $("#keyword").val();
+__showTravelExpenses();
+        }, doneTypingInterval);
+    }
+});
+
+    });
+
+    </script>
+    
+</body>
+</html>

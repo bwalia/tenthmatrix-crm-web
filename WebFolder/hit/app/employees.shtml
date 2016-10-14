@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Tenthmatrix CRM App : Employees</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- bootstrap -->
+	<link href="css/bootstrap/bootstrap.css" rel="stylesheet">
+    <link href="css/bootstrap/bootstrap-responsive.css" rel="stylesheet">
+    <link href="css/bootstrap/bootstrap-overrides.css" type="text/css" rel="stylesheet">
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/app/includes/header.shtml-->
+
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    
+    	<style type="text/css">
+		.Highlight
+		{
+			background-color: #dcfac9!important;
+			cursor: pointer;
+		}
+		
+		.pull-right
+		{
+		
+		margin: 0 4px 4px 4px;
+		padding:0 4px 4px 4px;
+		
+		}
+		ul.actions{
+			list-style:none;
+		}
+	</style>
+
+
+</head>
+<body>
+
+	<!-- main container -->
+    <div class="content wide-content">
+	
+	<div class="container-fluid">
+		<form id="frm_set" name="frm_set"  method="post" action="">
+		
+         <div class="" style=" padding:15px 0 0 0;">
+		  <!--#4DIF (_HIT_WebApp_GetField ("keyword")="load_@")--> <input name="manageruuid" id="manageruuid" type="hidden" value="<!--#4DHTMLVAR _HIT_WebApp_GetField ("uuid")-->"><input type="button" name="button" id="button" class="btn-glow primary" value="Delete Selected" onClick="deletemanageremployee('<!--#4DHTMLVAR _HIT_WebApp_GetField ("uuid")-->')"><!--#4DELSE--><!--#4DENDIF-->
+			<!--#4DIF (_HIT_WebApp_GetField ("keyword")#"load_@")-->
+			
+				<strong>Select Manager : </strong>
+				<input type="hidden" name="selected" id="selected" value="">
+				<div class="ui-select" style="margin-right:15px;"> 
+					<select name="sets" onChange="__showemployeeForm_Selectmanager(this.value)" id="add_sets">
+						<option value="">--Select Manager--</option>
+						<!--#4DSCRIPT/Web_LoadManager/-->
+							<!--4DLOOP  [Employees]-->									
+							<option value="<!--#4DHTMLVAR [Employees]uuid-->" ><!--#4DHTMLVAR [Employees]emp_first_name-->  <!--#4DHTMLVAR [Employees]emp_last_name--></option>
+							<!--4DENDLOOP-->
+						<!-- <option value="new_set">Add New Manager</option> -->
+					</select>
+				</div>
+			<!--#4DELSE--><!--#4DENDIF-->		
+					
+			<strong>Load Set:</strong>
+			<div class="ui-select" >
+			
+				<select name="load_sets" id="load_sets">
+					<option onClick="__showEmployeeForm_Loadmanager('','')"> All Records</option>
+					<!--#4DSCRIPT/Web_LoadManager/-->
+					<!--4DLOOP  [Employees]-->
+					<option <!--#4DIF (_HIT_WebApp_GetField ("manageruuid")= [Employees]uuid)-->selected<!--#4DELSE--><!--#4DENDIF--> onClick="__showEmployeeForm_Loadmanager('<!--#4DHTMLVAR [Employees]emp_first_name--> <!--#4DHTMLVAR [Employees]emp_last_name-->','<!--#4DHTMLVAR [Employees]uuid-->')" ><!--#4DHTMLVAR [Employees]emp_first_name--> <!--#4DHTMLVAR [Employees]emp_last_name--></option>
+					<!--4DENDLOOP-->
+					<!--#4DSCRIPT/Web_LoadManager/restore-->
+				</select>
+			</div>
+			 <div class="pull-right">
+				<div class="btn-group pull-right">
+					<button class="glow left large" onClick="__showAllEmployees(); return false;">All</button>
+					<button class="glow middle large" onClick="__showActiveEmployees(); return false;">Active</button>
+					<button class="glow right large" onClick="__showInActiveEmployees(); return false;">In-Active</button>
+					<a href="employee.shtml" class="btn-flat success new-product margn-lft35"  style="margin-left:15px;">+ Add New Employee</a>
+				</div>
+				<input style="margin-top:3px;" name="keyword_type" id="keyword_type" type="text" class="search order-search" placeholder="Enter name,email, postion...." value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" />
+			</div>
+		</div>
+        
+        <div class="container-fluid">
+            <div id="pad-wrapper" class="datatables-page">
+                <div class="row-fluid">
+                    <div class="span12">
+
+                        <table cellpadding="0" cellspacing="0" border="0" class="dataTable" id="employees_table">
+                            <thead>
+                                <tr role="row">
+                                    <th  align="left"><input name="chk_all" type="checkbox" id="chk_all" value=""></th>
+									<th align="left">EMPLOYEE NAME
+                                    </th>
+                                    <th align="left">POSITION
+                                    </th>
+                                    <th align="left">E-MAIL
+                                    </th>
+                                    <th align="left">TYPE
+                                    </th>
+                                    <th align="left">WEB-ACCESS
+                                    </th>
+                                    <th align="left">STATUS
+                                    </th>
+                                </tr>
+                            </thead>
+                           <tfoot>
+                            <tr>
+									<th>&nbsp;</th>
+									<th align="left">EMPLOYEE NAME</th>
+                                    <th align="left">POSITION
+                                    </th>
+                                    <th align="left">E-MAIL
+                                    </th>
+                                    <th align="left">TYPE
+                                    </th>
+                                    <th align="left">WEB-ACCESS
+                                    </th>
+                                    <th align="left">STATUS
+                                </th>
+                            </tr>
+                        </tfoot>
+
+                        <tbody id="employees_table_body">
+
+                        </tbody>
+                        </table>
+						<div id="img_loading_div" style="text-align:center">
+							<img src="../loading.gif"  style="padding:20px;" width="34" >
+						</div>
+
+                    </div>
+                </div>
+            </div>
+        </form>
+        </div>
+    </div>
+	<div class="example-container">
+	<pre class="code" style="display:none;" id="load_prompt">
+									var statesdemo = {
+										state0: {
+											title: message+' Do you want to load the records of '+$('#add_sets option:selected').text()+'?',
+											html:'',
+											buttons: { No : 0, Yes: 1 },																		
+											submit:function(e,v,m,f){ 
+												//console.log(f);
+												if(v==1) {
+													location.href='employees.shtml?manager='+$('#add_sets option:selected').text()+'&manageruuid='+$('#add_sets').val();
+												}
+												if(v==0) {
+													$.prompt.close();
+													$('#add_sets').val('');
+													$('.check').prop('checked', false);
+												}
+											}
+										},
+										
+									};
+
+									$.prompt(statesdemo);
+								</pre>
+	<pre class="code" style="display:none;" id="no_rec_prompt">
+									var statesdemo = {
+										state0: {
+											title: 'No more records found',
+											html:'',
+											buttons: { OK: 1 },																		
+											submit:function(e,v,m,f){ 
+												//console.log(f);
+												if(v==1) {
+													$.prompt.close();
+												}
+												
+											}
+										},
+										
+									};
+									if(!($(".jqibox").length))
+									$.prompt(statesdemo);
+								</pre>
+			<pre class="code" style="display:none;" id="valid_prompt">
+									var statesdemo = {
+										state0: {
+											title: 'Please Select atleast one Employee',
+											html:'',
+											buttons: { OK: 1 },																		
+											submit:function(e,v,m,f){ 
+												//console.log(f);
+												if(v==1) {
+													$.prompt.close();
+												}
+												
+											}
+										},
+										
+									};
+									if(!($(".jqibox").length))
+									$.prompt(statesdemo);
+								</pre>
+								<pre class="code" style="display:none;" id="del_prompt">
+									var html='';
+									if(managerUUID!=''){
+										html= '&lt;div id="message"&gt;&lt;/div&gt;&lt;label style="width:auto; display:inline" &gt&lt;input type="radio" class="radio" name="opt_emp_del" id="opt1" value="permanentely" &gt; Permanentely &lt;/label&gt;'+
+																'&lt;label style="width:auto; display:inline" &gt;&lt;input type="radio" class="radio" name="opt_emp_del" id="opt2" value="from_manager"&gt; From Manager &lt;/label&gt;';
+									}
+									else{
+										html= '';
+									}
+									var statesdemo = {
+										state0: {
+											title: 'Delete Employee',
+											html:html,
+											buttons: { Cancel : 0, OK: 1 },																		
+											submit:function(e,v,m,f){ 
+												//console.log(f);
+												if(v==1) {
+												if(managerUUID!='' && f.opt_emp_del == null){
+													e.preventDefault();
+													document.getElementById("message").innerHTML = "* Please select an option." ;
+												}
+												else {
+												
+												
+												if(managerUUID!='' && f.opt_emp_del != null){
+													var url= "delmanageremp.cgi";
+													var dataString = 'selected='+selected+'&manager='+managerUUID;
+													if(f.opt_emp_del=='permanentely'){
+														dataString+='&del_type=permanent';
+													}
+													else{
+														dataString+='&del_type=from_manager';
+													}
+												}
+												else{
+													var url= "deleteemployee.cgi";
+													var dataString = 'selected='+selected;												
+												}
+
+	
+														$.ajax({
+															type: "GET",
+															dataType: "json",
+															url: url,
+															data: dataString,
+															cache: false,
+															success: function(html)
+															{
+																if(html.Succ){		
+																	//alert(html.Result);
+																	$.prompt.close();				
+																	start=0;
+																	end=50;
+																	jsonRow = 'loademployees.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&manager='+manager+'&manageruuid='+managerUUID+'&tab='+tab;
+																	if(keyword!=''){
+																		jsonRow +='&keyword='+keyword;
+																	}
+																	if(tab!=''){
+																		jsonRow +='&tab='+tab;
+																	}
+																	$('#employees_table_body').html('');
+																	$('#img_loading_div').show();		
+																	load_data(jsonRow);
+																}
+															}
+														});
+													}
+												}
+												if(v==0) {
+													$.prompt.close();
+												}
+												
+											}
+										},
+										
+									};
+									
+									$.prompt(statesdemo);
+								</pre>	
+							
+							</div>
+    <!-- end main container -->
+
+	<!-- scripts -->
+    <script src="js/jquery-latest.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.dataTables.js"></script>
+	<script type="text/javascript" src="js/jquery-impromptu.js"></script>
+    <script src="js/theme.js"></script>
+   
+<script>
+var JSONdata;
+var start=0, end=25;
+var old_srch='',keyword='', jsonRow='', tab='', set='';
+var tablname='Employees';
+var process=false;
+var manager='<!--#4DVAR _HIT_WebApp_GetField ("manager") -->';
+var managerUUID='<!--#4DVAR _HIT_WebApp_GetField ("manageruuid") -->';
+
+// Hide the first cell for JavaScript enabled browsers.
+			
+			$('#employees_table td:first-child').hide();
+			
+
+			// Assign a click handler that grabs the URL from the first cell and redirects the user.
+			$('#employees_table tr td').click(function ()
+			{
+				if(!($(this).find(':checkbox').length)){
+				location.href = 'employee.shtml?uuid='+$(this).parents('tr').find(':checkbox').val()+'&token='+Math.random();
+				}
+			});
+
+function getMonthName(m) {
+	if(m==1){ monthName= "Jan";}
+	else if(m==2){ monthName= "Feb";}
+	else if(m==3){ monthName= "Mar"; }
+	else if(m==4){ monthName= "Apr"; }
+	else if(m==5){ monthName= "May"; }
+	else if(m==6){ monthName= "Jun"; }
+	else if(m==7){ monthName= "Jul"; }
+	else if(m==8){ monthName= "Aug"; }
+	else if(m==9){ monthName= "Sep"; }
+	else if(m==10){ monthName= "Oct"; }
+	else if(m==11){ monthName= "Nov"; }
+	else if(m==12){ monthName= "Dec"; }
+	else{ monthName= m; }
+	return monthName;
+ }
+ 
+
+function __showemployeeForm_Selectmanager(manageruuid)
+{
+	if(manageruuid!=''){
+		var selected='';
+		$('.check').each(function(){
+			if($(this).is(":checked")){
+				if(selected==''){
+					selected=$(this).val();
+				}
+				else{
+					selected+=","+$(this).val();
+				}
+			}
+		
+		});
+		
+	var dataString = 'selected='+selected+"&manager="+manageruuid;
+	if(selected!=""){
+	$.ajax({
+	type: "GET",
+	dataType: "json",
+	url: "add_manager_employee.cgi",
+	data: dataString,
+	cache: false,
+	success: function(html)
+	{
+	 if(html.MessageAlert){		
+		//alert(html.MessageAlert);
+		message= html.MessageAlert;
+		 code = $('#load_prompt').text();
+		(new Function(code))();
+	  }
+		
+	}
+	});}
+	else{
+	code = $('#valid_prompt').text();
+		(new Function(code))();
+	}
+	}
+}
+function __deleteSelected(del_uuid){
+	selected= del_uuid;
+	 code = $('#del_prompt').text();
+	(new Function(code))();
+}
+function __showActiveEmployees()
+{
+	start=0;
+	end=25;
+	tab='active';
+	keyword= $("#keyword_type").val();
+	jsonRow = 'loademployees.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab+'&manager='+manager+'&manageruuid='+managerUUID;
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}
+	$('#employees_table_body').html('');
+	$('#img_loading_div').show();		
+	load_data(jsonRow);
+}
+function __showEmployeeForm_Loadmanager(name,uuid)
+{
+	manager=name;
+	managerUUID=uuid;
+	pUrlStr='employees.shtml?manager='+name+'&manageruuid='+uuid;
+	window.location.href=pUrlStr;
+}
+function __showInActiveEmployees()
+{
+	start=0;
+	end=25;
+	tab='inactive';
+	jsonRow = 'loademployees.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab+'&manager='+manager+'&manageruuid='+managerUUID;
+	keyword= $("#keyword_type").val();
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}
+	$('#employees_table_body').html('');
+	$('#img_loading_div').show();		
+	load_data(jsonRow);
+}
+
+
+function __showAllEmployees()
+{
+	start=0;
+	end=25;
+	tab='';
+	jsonRow = 'loademployees.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&manager='+manager+'&manageruuid='+managerUUID;
+	$('#employees_table_body').html('');
+	$('#img_loading_div').show();	
+	load_data(jsonRow);
+}
+
+
+
+$(document).ready(function() {
+
+	$('#keyword_type').focus();
+	keyword= $("#keyword_type").val();
+	jsonRow = 'loademployees.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&manager='+manager+'&manageruuid='+managerUUID;
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}		
+	load_data(jsonRow);	
+	
+	$(window).scroll(function(){
+		if ($(window).scrollTop() == $(document).height() - $(window).height()){
+		$('#img_loading_div').show();	
+		//alert("scrolling...");
+		start=end+1;
+		end=start+25;
+		jsonRow = 'loademployees.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&manager='+manager+'&manageruuid='+managerUUID;
+		if(keyword!=''){
+			jsonRow +='&keyword='+keyword;
+		}
+		if(tab!=''){
+			jsonRow +='&tab='+tab;
+		}		
+		load_data(jsonRow);
+		
+		}
+	});
+	
+	//setup before functions
+	var typingTimer;                //timer identifier
+	var doneTypingInterval = 1000;  //time in ms, 5 second for example
+
+	//on keyup, start the countdown
+	$('#keyword_type').keyup(function(){
+		clearTimeout(typingTimer);
+		if ($('#keyword_type').val) {
+			typingTimer = setTimeout(function(){
+				//do stuff here e.g ajax call etc....
+				$('#employees_table_body').html('');
+				$('#img_loading_div').show();
+				start=0;
+				end=start+25;
+				tab='';
+				keyword= $("#keyword_type").val();
+				jsonRow = 'loademployees.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&manager='+manager+'&manageruuid='+managerUUID;
+				if(keyword!=''){
+					jsonRow +='&keyword='+keyword;
+				}
+				if(tab!=''){
+					jsonRow +='&tab='+tab;
+				}	
+				load_data(jsonRow);
+			}, doneTypingInterval);
+		}
+	});
+	$('#employees_table').on("click","#chk_all", function(){
+			if($(this).is(":checked")){
+					$('.check').prop('checked', true);
+				}
+				else{
+					$('.check').prop('checked', false);
+				}
+		});	
+});
+    
+function load_data(jsonRow){
+	JSONdata=new Array();
+	$.getJSON(jsonRow,function(result){
+			if(result.Alert){
+				code = $('#no_rec_prompt').text();
+				(new Function(code))();
+			}
+			else{
+				
+				$.each(result.uuid, function(i,item)
+				{
+					JSONdata[i]=new Array();
+					JSONdata[i][0]='<input class="check" type="checkbox" value="'+item+'">';
+					JSONdata[i][7]='<ul class="actions"><li><a href="javascript:void(0)" onClick="__deleteSelected(\''+item+'\')"><i class="icon-remove"></i></a></li></ul>';
+				});
+				$.each(result.EmpName, function(i,item)
+				{
+					JSONdata[i][1]=item;
+					
+				}); 				
+				$.each(result.Position, function(i,item)
+				{
+					JSONdata[i][2]=item;
+				});
+				
+				$.each(result.Email, function(i,item)
+				{	
+					JSONdata[i][3]=item;
+				});
+				$.each(result.Type, function(i,item)
+				{	
+					JSONdata[i][4]=item;
+				});
+				$.each(result.Access, function(i,item)
+				{					
+				 	if(item==true){
+						JSONdata[i][5]='<span class="label label-success"> Allow </span>';
+					}
+					else{
+						JSONdata[i][5]='<span class="label label-important"> Deny </span>';
+					}
+					
+				});
+				$.each(result.Active, function(i,item)
+				{					
+				    if(item==true){
+						JSONdata[i][6]='<span class="label label-success"> Active </span>';
+					}
+					else{
+						JSONdata[i][6]='<span class="label label-important"> In-Active </span>';
+					}
+				});
+				
+				
+				var table_html='';
+				var trClassStr='odd';
+				$.each(JSONdata, function(i,row)
+				{
+					table_html+='<tr class="'+trClassStr+'">';
+					if(trClassStr=='odd') { trClassStr='even'; } else { trClassStr='odd' };
+					$.each(row, function(i,col){
+						table_html+='<td>'+col+'</td>';
+					});
+					table_html+='</tr>';
+				});
+				if(old_srch!=keyword){
+					$('#employees_table_body').html('');
+					old_srch=keyword;
+				}
+				//alert(table_html);
+				
+				$('#employees_table_body').append(table_html);
+				
+				// Apply a class on mouse over and remove it on mouse out.
+				$('#employees_table tbody tr').unbind();
+				$('#employees_table tbody tr').hover(function ()
+				{
+					$(this).toggleClass('Highlight');
+				});
+				// Assign a click handler that grabs the URL from the first cell and redirects the user.
+				$('#employees_table tr td').click(function ()
+				{
+					if(!($(this).find(':checkbox').length || $(this).find('a').length)){
+					location.href = 'employee.shtml?uuid='+$(this).parents('tr').find(':checkbox').val()+'&token='+Math.random();
+					}
+				});
+		}
+		$('#img_loading_div').hide();
+		});
+}
+
+</script>
+
+
+</body>
+</html>

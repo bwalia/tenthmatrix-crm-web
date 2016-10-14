@@ -1,0 +1,233 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+<title>Add New TimeSlip</title>
+	
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+	
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="robots" content="noindex, nofollow" />	
+<link rel="stylesheet" href="css/jquery.fumobile.theme-1.1.0.min.css?" />
+<link rel="stylesheet" href="css/jquery.mobile.structure-1.3.1.min.css" /> 
+<link rel="stylesheet" href="css/jquery.fumobile.extra-1.1.0.css" />
+<link rel="stylesheet" href="themes/selectedtheme.min.css" />
+	 
+<script src="js/jquery-1.7.1.min.js"></script>
+<script>
+    $(document).bind("mobileinit", function() {
+    $.mobile.defaultPageTransition = 'slide';
+    $.mobile.page.prototype.options.addBackBtn = true;
+    $.mobile.page.prototype.options.headerTheme = 'b'; // page headers
+    $.mobile.listview.prototype.options.headerTheme = 'd'; // nested list headers
+    });
+</script>
+	
+<script src="js/jquery.mobile-1.3.1.min.js"></script>
+<script src="js/swipe-carousel.min.js"></script>  
+<script src="js/lists.js"></script>        
+<script src="js/job_detail.js"></script>        
+<script src="http://jquery.bassistance.de/validate/jquery.validate.js"></script>
+<script src="http://jquery.bassistance.de/validate/additional-methods.js"></script>
+<script type="text/javascript">
+	$(document).on('pageinit', function(){
+	$("#TimeSLipForm").validate({
+        rules: {
+            Task_ID: "required",
+            Slip_Date: "required",
+            Slip_Description: "required",
+            Slip_Timer_Started: "required",
+            Slip_Timer_End: "required",
+            Slip_Hours: "required",
+            slip_timer_accumulated_seconds: "required",
+        },
+		messages: {
+			Task_ID: "Please Enter Task ID",
+			Slip_Date: "Please Enter Slip Date",
+			Slip_Description: "Please Enter Slip Description",
+			Slip_Timer_Started: "Please Enter Slip Timer Started",
+			Slip_Timer_End: "Please Enter Slip Timer End",
+			Slip_Hours: "Please Enter Slip Hours",
+			slip_timer_accumulated_seconds: "Please Enter Slip Timer accumulated seconds",
+		}
+    });
+	$("#Slip_Timer_Started").change(function() {
+			Start = 0;
+			var Slip_TimerStarted = $(this).val();
+			var last2 = Slip_TimerStarted.substr(Slip_TimerStarted.length - 2);
+			var n=Slip_TimerStarted.split(":");
+			var minu= n[1].substr(0,2);
+			var StartTime = n[0];
+			StartTime= parseInt(StartTime, 10)
+			if(last2 == 'pm'){
+				StartTime= StartTime + 12;
+			}
+			//Start = StartTime + '.' + minu;
+			Start = (StartTime*60) + parseInt(minu);
+			
+			if(End!=0){
+				if(End<Start){
+					End = End+(24*60);
+				}
+				var diff= End - Start;
+				
+				var diff_min=diff%60;
+				
+				var diff_hour=(diff-diff_min)/60;
+				
+				var diff_time=diff_hour+"."+diff_min;
+				
+				$('#Slip_Hours').val(diff_time);
+			}
+		});
+		$("#Slip_Timer_End").change(function() {
+			End = 0;
+			var Slip_TimerEnded = $(this).val();
+			var last2 = Slip_TimerEnded.substr(Slip_TimerEnded.length - 2);
+			var n=Slip_TimerEnded.split(":");
+			var minu= n[1].substr(0,2);
+			var EndTime = n[0];
+			EndTime= parseInt(EndTime, 10)
+			if(last2 == 'pm'){
+				EndTime= EndTime + 12;
+			}
+			//End = EndTime + '.' + minu;
+			End = (EndTime*60) + parseInt(minu);
+			if(Start!=0){
+				if(End<Start){
+					End = End+(24*60);
+				}
+				
+				var diff= End - Start;
+				
+				var diff_min=diff%60;
+				
+				var diff_hour=(diff-diff_min)/60;
+				
+				var diff_time=diff_hour+"."+diff_min;
+				
+				$('#Slip_Hours').val(diff_time);
+			}
+		}); 
+	});
+</script>
+<link rel="stylesheet" type="text/css" href="css/jqm-datebox.min.css" /> 
+<script type="text/javascript" src="js/jqm-datebox.core.min.js"></script>
+<script type="text/javascript" src="js/jqm-datebox.mode.calbox.min.js"></script>
+
+
+	<script type="text/javascript" src="http://dev.jtsage.com/cdn/datebox/latest/jqm-datebox.mode.datebox.min.js"></script>
+	<script type="text/javascript" src="http://dev.jtsage.com/cdn/datebox/latest/jqm-datebox.mode.flipbox.min.js"></script>
+	<script type="text/javascript" src="http://dev.jtsage.com/cdn/datebox/latest/jqm-datebox.mode.durationbox.min.js"></script>
+	<script type="text/javascript" src="http://dev.jtsage.com/cdn/datebox/latest/jqm-datebox.mode.slidebox.min.js"></script>
+
+<script type="text/javascript" src="js/jquery.mobile.datebox.i18n.en_US.utf8.js"></script>
+</head>
+
+<body>
+
+<div data-role="page" id="home" data-add-back-btn="false">
+	<div data-role="header" class="head-border" data-theme="a">
+		<div style="text-align:right">
+			<a href="#" class="my-account" style="color: #FFFFFF;font-size:12px;text-decoration: none;">Sign out</a>
+		</div>
+	</div>
+	<div class="search-container" data-theme="a">
+		<div id="search-home"><a href="index.shtml"><span>Click here for Home</span></a></div>
+	</div>
+    <div data-role="content" style="padding: 15px;" >
+		<ul data-role="listview" data-inset="true">
+			<li data-role="list-divider"><span style=" color:#2B89D0; font-size:15px; font-stretch:narrower;">Add New TimeSlip</span></li>
+		</ul>
+		 <form name="TimeSLipForm" action="saveTimeSLip.cgi" method="post" id="TimeSLipForm">
+			 <div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput9">Task ID<font color="#FF0000"></font></label>
+					<select name="Task_ID" id="Task_ID" >
+					
+							<option value="<!--4DVAR [Tasks]task_id-->" name=""><!--4DVAR [Tasks]task_id--></option>
+					
+					</select>
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput9">Employee's ID<font color="#FF0000"></font></label>
+					<select name="Employee_ID" id="Employee_ID" >
+							<option value="Neha kapoor" >Neha kapoor</option>
+							<option value="Virender Singh">Virender Singh</option>
+							<option value="Sandeep Shah">Sandeep Shah</option>
+							<option value="Tanima Gupta">Tanima Gupta</option>
+							<option value="Gurpreet Cheema">Gurpreet Cheema</option>
+							<option value="Harpreet Brar">Harpreet Brar</option>
+							<option value="Nitish Pal">Nitish Pal</option>
+					</select>
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput9">Slip Date<font color="#FF0000">*</font></label>
+					<input name="Slip_Date" id="Slip_Date" type="date" value="" data-role="datebox" data-options='{"mode": "calbox"}' placeholder="Slip Date">
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput5">Slip Description<font color="#FF0000">*</font></label>
+					<input type="text" name="Slip_Description" id="Slip_Description" placeholder="Slip Description">
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput8">Slip Timer Started<font color="#FF0000">*</font></label>
+					<input type="date" value="" name="Slip_Timer_Started" class="textbox" id="Slip_Timer_Started" placeholder="Slip Timer Started" id="Slip_Timer_Started" data-role="datebox" data-options='{"mode": "timebox"}'>
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput10">Slip Timer End<font color="#FF0000">*</font></label>
+					<input type="text" value="" name="Slip_Timer_End" class="textbox" id="Slip_Timer_End" placeholder="Slip Timer End" id="Slip_Timer_End" data-role="datebox" data-options='{"mode": "timebox"}'>
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput11">Slip Hours<font color="#FF0000">*</font></label>
+					<input type="text" name="Slip_Hours" id="Slip_Hours" placeholder="Slip Hours" >
+				</fieldset>
+			</div>
+			<div data-role="fieldcontain">
+				<fieldset data-role="controlgroup">
+					<label for="textinput13">slip timer accumulated seconds<font color="#FF0000">*</font></label>
+					<input type="text" name="slip_timer_accumulated_seconds" id="slip_timer_accumulated_seconds" placeholder="slip timer accumulated seconds" >
+				</fieldset>
+			</div> 		
+			<input type="submit" value="Add New TimeSlip" id="submit" name="submit">
+			<div>
+			<a class="ui-btn ui-shadow ui-btn-corner-all ui-btn-inline ui-btn-icon-left ui-btn-up-c" data-inline="true" data-theme="c" data-iconpos="left" data-icon="back" data-role="button" href="index.shtml" data-corners="true" data-shadow="true" data-iconshadow="true" data-wrapperels="span">
+			<span class="ui-btn-inner">
+			<span class="ui-btn-text">Back</span>
+			<span class="ui-icon ui-icon-back ui-icon-shadow"> </span>
+			</span>
+			</a>
+			</div>
+		</form>
+		</div><!-- END DATA ROLE CONTENT-->
+    
+ </div>
+ 
+</body>
+</html>

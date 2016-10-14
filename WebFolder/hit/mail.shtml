@@ -1,0 +1,365 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+QUERY([Email_Test];[Email_Test]uuid=_HIT_WebApp_GetField ("uuid"))
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+-->
+<!DOCTYPE html>
+<html>
+<head>
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+	
+	<link rel="stylesheet" href="css/base/jquery-ui.css" />
+	
+	
+<link rel="stylesheet" href="css/autocomplete.css" />
+
+</head>
+<body>
+
+	<!-- main container -->
+    <div class="content">
+        
+        <div class="container-fluid">
+            <div id="pad-wrapper" class="form-page">
+				 <div class="row-fluid header">
+					<h3><!--#4DIF (Records in selection([Email_Test])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Mail</h3>
+                </div>
+                <div class="row-fluid form-wrapper">
+					<!-- left column -->
+                    <div class="span9 with-sidebar">
+						<form name="SendMailForm" action="sendmail.cgi" class="form-comment" method="post" onSubmit="return ValidateForm();">							
+							 <div class="field-box">
+								<label>Name :</label>
+								<input name="Name" class="span9" type="text" value="<!--#4DVAR [Email_Test]Name-->" id="Name">
+							</div>
+							<div class="field-box">
+								<label>To :</label>
+								<div class="ui-select span5">
+									<select id="ToEmailAddress" name="ToEmailAddress">
+									 <!--#4DIF (Records in selection([Email_Test])=0)-->
+									 	<option value=""></option>
+                                        <!--#4DSCRIPT/Web_LoadCustomers/-->
+									 <!--#4DSCRIPT/Web_LoadMails/-->
+									 <!--4DLOOP  [Email_Test]-->
+									 	<option value="<!--4DVAR [Email_Test]RecordNumber-->" selected><!--4DVAR [Email_Test]ToEmailAddress--></option>		
+									 <!--4DENDLOOP-->
+									 <!--#4DELSE-->
+									 	 <option value="<!--4DVAR [Email_Test]RecordNumber-->" selected><!--4DVAR [Email_Test]ToEmailAddress--></option>									 
+									 <!--#4DENDIF-->									 										
+									</select>
+						 	</div>
+							</div>
+							<!-- <input name="email_uuid" class="span9" type="hidden" value="<!~~HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")~~>" id="email_uuid">  -->       
+							 <div class="field-box">
+								<label>Host Name :</label>
+								<div class="ui-select span5">
+									<select id="HostName" name="HostName">
+									<!--#4DSCRIPT/Web_LoadMailAccount/-->
+									 <!--4DLOOP  [Email_Accounts_test]-->
+										<option value="<!--4DVAR [Email_Accounts_test]uuid-->" selected><!--4DVAR [Email_Accounts_test]Account_Name--></option>		
+									 <!--4DENDLOOP-->									 										
+									</select>
+						 	    </div>
+							</div>
+							<div class="span12 field-box">
+								<label>Subject :</label>
+								<input name="Subject" class="span9" type="text" value="<!--#4DVAR [Email_Test]Subject-->" id="Subject">                                 
+							</div>	
+							<div class="field-box">
+								<label>Send Message :</label>
+								<textarea class="span8" name="Message_Body" id="Message_Body" rows="4"><!--#4DVAR [Email_Test]Body--></textarea>
+							</div>
+							<!-- 
+<div class="field-box">
+                                <label>News Letter Status</label>
+                                <div class="ui-select span5">
+									<Select name="News_Letter_Status" id="Task_Active" name="News_Letter_Status">
+										<option value="Subscriber" <!~~#4DIF ([Contacts]GetsNewsletter=True)~~>selected<!~~4DELSE~~><!~~4DENDIF~~>>Subscriber</option>
+										<option value="Non Subscriber" <!~~#4DIF ([Contacts]GetsNewsletter=False)~~>selected<!~~4DELSE~~><!~~4DENDIF~~>>Non Subscriber</option>
+									</select>                                     
+                                </div>
+                            </div>
+ -->
+							<div class="span11 field-box" style="text-align: center;">
+								<input type="button" class="btn-glow primary" value="Send Mail" onClick="send_mail()">
+								<span>OR</span>
+								<a href="mails.shtml">Cancel</a>
+								<!-- <input type="reset" value="Cancel" class="reset"> -->
+							</div>
+						</form>
+                    </div>
+				</div>
+            </div>
+        </div>
+    </div>
+    <!-- end main container -->
+
+	<!-- scripts -->
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+	<script src="js/bootstrap.datepicker.js"></script>
+	<script src="js/jquery.uniform.min.js"></script>
+	<script src="js/ui/jquery-ui.js"></script>
+	<!-- call this page plugins -->
+	<script language="javascript">
+function ValidateForm () {
+var msg = '';
+if (document.SendMailForm.Name.value=="")
+{ msg = msg + 'Please Specify Name \n'; }
+
+{ msg = msg + 'Please Specify Email\n'; }
+if (document.ContactForm.Date_Added.value=="")
+{ msg = msg + 'Please Specify Date Added\n'; }
+if (document.ContactForm.Mobile.value=="")
+{ msg = msg + 'Please Specify Mobile\n'; }
+
+var regex = /^([a-zA-Z0-9_\.\-\+])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+if(document.ContactForm.Email.value!="" && !regex.test(document.ContactForm.Email.value))
+{ msg = msg + 'Please Specify valid Email\n'; }
+
+if (msg=="") {
+return true;
+} else {
+alert (msg);
+return false;
+}}
+
+ function send_mail()
+{
+	var Name=$("#Name").val();
+	var ToEmailAddress=	$("#ToEmailAddress").val();
+	var HostName=$("#HostName").val();
+	var Subject=$("#Subject").val();
+	var Message_Body=$("#Message_Body").val();
+	var dataString = 'Name='+Name+'&ToEmailAddress='+ToEmailAddress+'&HostName='+HostName+'&Subject='+Subject+'&Message_Body='+Message_Body;
+	$.ajax({
+type: "GET",
+dataType: "json",
+url: "sendmail.cgi",
+data: dataString,
+cache: false,
+success: function(html)
+{
+	alert(html.Result);
+	
+}
+});
+}
+
+</script>
+<script type="text/javascript">
+	$(function () {
+		// datepicker plugin
+		//$( "#Date_Added" ).datepicker();
+		$('.datepicker').datepicker().on('changeDate', function(){
+          $(this).blur();
+        });
+		
+		$('.phone').keypress(function(e){
+						var k = e.which;
+    					/* numeric inputs can come from the keypad or the numeric row at the top */
+   						 if ((k<48 || k>57) && (k!=45) && (k!=43) && (k!=40) && (k!=41) && (k!=32) && (k!=44) && (k!=46) && (k!=8) && (k!=0)) {
+        					e.preventDefault();
+							//alert("Allowed characters are 0-9, +, -, (, )");
+        					return false;
+    					}
+					
+					}); 
+	});
+</script>
+    <script>
+	 var xhr;
+  (function( $ ) {
+    $.widget( "custom.combobox", {
+      _create: function() {
+        this.wrapper = $( "<span>" )
+          .addClass( "custom-combobox" )
+          .insertAfter( this.element );
+ 
+        this.element.hide();
+        this._createAutocomplete();
+        this._createShowAllButton();
+      },
+ 
+      _createAutocomplete: function() {
+        var selected = this.element.children( ":selected" ),
+          value = selected.val() ? selected.text() : "";
+ 
+        this.input = $( "<input>" )
+          .appendTo( this.wrapper )
+          .val( value )
+          .attr( "title", "" )
+          .addClass( "custom-combobox-input ui-widget ui-widget-content ui-state-default ui-corner-left" )
+          .autocomplete({
+            delay: 0,
+            minLength: 0,
+            source: $.proxy( this, "_source" )
+          })
+          .tooltip({
+            tooltipClass: "ui-state-highlight"
+          });
+ 
+        this._on( this.input, {
+          autocompleteselect: function( event, ui ) {
+		  	//alert("show all");
+            ui.item.option.selected = true;
+			
+            this._trigger( "select", event, {
+              item: ui.item.option
+            });
+          },
+ 
+          autocompletechange: "_removeIfInvalid"
+        });
+      },
+ 
+      _createShowAllButton: function() {
+        var input = this.input,
+          wasOpen = false;
+ 
+        $( "<a>" )
+          .attr( "tabIndex", -1 )
+          .attr( "title", "Show All Items" )
+          .tooltip()
+          .appendTo( this.wrapper )
+          .button({
+            icons: {
+              primary: "ui-icon-triangle-1-s"
+            },
+            text: false
+          })
+          .removeClass( "ui-corner-all" )
+          .addClass( "custom-combobox-toggle ui-corner-right" )
+          .mousedown(function() {
+            wasOpen = input.autocomplete( "widget" ).is( ":visible" );
+          })
+          .click(function() {
+            input.focus();
+ 
+            // Close if already visible
+            if ( wasOpen ) {
+              return;
+            }
+ 
+            // Pass last search string as value to search for, displaying last results
+            input.autocomplete( "search", 'SHOWALL' );
+          });
+      },
+ 
+      _source: function( request, response ) {
+        //var matcher = new RegExp( $.ui.autocomplete.escapeRegex(request.term), "i" );
+		var ele_select= this.element;
+		if(request.term=='SHOWALL'){
+			response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+		
+		}
+		else
+		{
+		var jsonRow = 'getcompaniesonsearch.cgi?srch='+request.term;
+		
+
+		//alert(jsonRowURLStr);
+		if(xhr) xhr.abort();
+		xhr=$.getJSON(jsonRow,function(result){
+			
+			if(result){
+				var html='<option value=""></option>';
+
+				$.each(result, function(i,item)
+				{
+					html += '<option value="'+item.compantaccnt+'">'+item.companyname+'</option>';
+				});
+				ele_select.html(html);
+				
+				
+				response(ele_select.children( "option" ).map(function() {
+          var text = $( this ).text();
+		 var value= $( this ).val();
+          //if ( this.value && ( !request.term || matcher.test(text) ) )
+            return {
+              label: text,
+              value: text,
+              option: this
+            };
+        }) );
+				
+				
+			}
+		});
+       
+	  } 
+		
+      },
+ 
+      _removeIfInvalid: function( event, ui ) {
+ 
+        // Selected an item, nothing to do
+        if ( ui.item ) {
+
+          return;
+        }
+ 
+        // Search for a match (case-insensitive)
+        var value = this.input.val(),
+          valueLowerCase = value.toLowerCase(),
+          valid = false;
+        this.element.children( "option" ).each(function() {
+          if ( $( this ).text().toLowerCase() === valueLowerCase ) {
+            this.selected = valid = true;	
+			
+            return false;
+          }
+        });
+ 
+        // Found a match, nothing to do
+        if ( valid ) {
+          return;
+        }
+ 
+        // Remove invalid value
+        this.input
+          .val( "" )
+          .attr( "title", value + " didn't match any item" )
+          .tooltip( "open" );
+        this.element.val( "" );
+        this._delay(function() {
+          this.input.tooltip( "close" ).attr( "title", "" );
+        }, 2500 );
+        this.input.data( "ui-autocomplete" ).term = "";
+      },
+ 
+      _destroy: function() {
+        this.wrapper.remove();
+        this.element.show();
+      }
+    });
+  })( jQuery );
+ 
+  $(function() {
+    $( "#Client_ID" ).combobox();
+   
+	
+  });
+
+  </script>
+	
+	
+</body>
+</html>

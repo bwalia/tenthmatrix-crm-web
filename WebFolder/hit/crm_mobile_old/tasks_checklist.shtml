@@ -1,0 +1,234 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+
+QUERY([Tasks];[Tasks]uuid=_HIT_WebApp_GetField ("uuid"))
+-->
+
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/main-header.shtml-->
+<link rel="stylesheet" href="css/jquery.ui.button.css" />
+	<link rel="stylesheet" href="css/jquery.ui.tooltip.css" />
+<link rel="stylesheet" href="css/combobox.css" />
+
+<style>
+label.error {
+	float: left;
+	color: red;
+	padding-top: .5em;
+	vertical-align: top;
+	font-weight:bold
+}
+a:hover{
+	text-decoration:none;
+}
+.table-opt tbody tr:hover td a { color: #FFF!important; }
+.table-opt tbody tr:hover td a:hover { color: #FFF; text-decoration:underline}
+.ui-btn-up-c {
+border: 1px solid #044062 /*{b-bup-border}*/;
+background: #396b9e /*{b-bup-background-color}*/;
+font-weight: bold;
+color: #fff /*{b-bup-color}*/;
+text-shadow: 0 /*{b-bup-shadow-x}*/ 1px /*{b-bup-shadow-y}*/ 1px /*{b-bup-shadow-radius}*/ #194b7e /*{b-bup-shadow-color}*/;
+background-image: -webkit-gradient(linear, left top, left bottom, from( #5f9cc5 /*{b-bup-background-start}*/), to( #396b9e /*{b-bup-background-end}*/)); /* Saf4+, Chrome */
+background-image: -webkit-linear-gradient( #5f9cc5 /*{b-bup-background-start}*/, #396b9e /*{b-bup-background-end}*/); /* Chrome 10+, Saf5.1+ */
+background-image:    -moz-linear-gradient( #5f9cc5 /*{b-bup-background-start}*/, #396b9e /*{b-bup-background-end}*/); /* FF3.6 */
+background-image:     -ms-linear-gradient( #5f9cc5 /*{b-bup-background-start}*/, #396b9e /*{b-bup-background-end}*/); /* IE10 */
+background-image:      -o-linear-gradient( #5f9cc5 /*{b-bup-background-start}*/, #396b9e /*{b-bup-background-end}*/); /* Opera 11.10+ */
+background-image:         linear-gradient( #5f9cc5 /*{b-bup-background-start}*/, #396b9e /*{b-bup-background-end}*/);
+}
+
+.ui-btn-hover-c{
+border: 1px solid #00415e /*{b-bhover-border}*/;
+background: #4b88b6 /*{b-bhover-background-color}*/;
+font-weight: bold;
+color: #fff !important;/*{b-bhover-color}*/;
+text-shadow: 0 /*{b-bhover-shadow-x}*/ 1px /*{b-bhover-shadow-y}*/ 1px /*{b-bhover-shadow-radius}*/ #194b7e /*{b-bhover-shadow-color}*/;
+background-image: -webkit-gradient(linear, left top, left bottom, from( #6facd5 /*{b-bhover-background-start}*/), to( #4272a4 /*{b-bhover-background-end}*/)); /* Saf4+, Chrome */
+background-image: -webkit-linear-gradient( #6facd5 /*{b-bhover-background-start}*/, #4272a4 /*{b-bhover-background-end}*/); /* Chrome 10+, Saf5.1+ */
+background-image:    -moz-linear-gradient( #6facd5 /*{b-bhover-background-start}*/, #4272a4 /*{b-bhover-background-end}*/); /* FF3.6 */
+background-image:     -ms-linear-gradient( #6facd5 /*{b-bhover-background-start}*/, #4272a4 /*{b-bhover-background-end}*/); /* IE10 */
+background-image:      -o-linear-gradient( #6facd5 /*{b-bhover-background-start}*/, #4272a4 /*{b-bhover-background-end}*/); /* Opera 11.10+ */
+background-image:         linear-gradient( #6facd5 /*{b-bhover-background-start}*/, #4272a4 /*{b-bhover-background-end}*/);
+}
+/*.table-opt tbody.checkListData tr td{
+	background:none;
+}
+.table-opt tbody.checkListData tr.green-color{
+	background:#dff0d8!important;
+}*/
+.table-opt tbody.checkListData tr td{
+	background:none;
+}
+.table-opt tbody.checkListData tr{
+background:#fcd76c;
+color:#fff!important;
+text-shadow:none;
+}
+.table-opt tbody.checkListData tr:hover{
+background:#ffbe00;
+
+}
+.table-opt tbody.checkListData tr.green-color{
+	background:#dff0d8!important;
+	color:#000;
+	text-shadow:none;
+}
+.table-opt tbody.checkListData tr.green-color:hover{
+background:#8fd174!important;
+
+}
+</style>
+<link rel="stylesheet" type="text/css" href="css/jqm-datebox.min.css" /> 
+<script type="text/javascript" src="js/jqm-datebox.core.min.js"></script>
+<script type="text/javascript" src="js/jqm-datebox.mode.calbox.min.js"></script>
+<script type="text/javascript" src="js/jquery.mobile.datebox.i18n.en_US.utf8.js"></script>
+<script src="js/jquery.validate.js"></script>
+<script src="js/additional-methods.js"></script>
+<script type="text/javascript">
+var loadmoreNum=5, start=0, end=loadmoreNum;
+var task_uuid='<!--#4DTEXT _HIT_WebApp_GetField ("uuid")-->';
+function load_more_checklist(){
+	start=end+1;
+	end=end+loadmoreNum;
+	loadCheckList();
+}
+function saveChecklist(){
+	$("#errMsg").remove();
+	var desc=$("#textarea").val();
+	var uuid="";
+	var duplicateOption="";
+	$('.duplicate_checklist').each(function(){
+		if($(this).is(':checked')){
+			duplicateOption= $(this).val();
+		}
+	});
+	//console.log(duplicateOption);
+	if(desc!=""){
+		$.ajax({
+			type: "GET",
+			url: "savetaskchecklist.cgi",
+			data: {'table' : 'Tasks', 'task_uuid' : task_uuid, 'description': desc, 'duplicate' : duplicateOption },
+			success: function(response){
+				$('#popupLogin').popup('close');
+			
+				$('.checkListData').html("");
+				end=start+loadmoreNum;
+				start=0;
+				loadCheckList();
+			}
+		});
+	}else{
+		$(".newMsgStr").before('<span id="errMsg" style="color:#CC0000">* Please add description for new Checklist item!</span>');
+	}
+}
+
+function changeStatus(evt,uuid){
+	$.ajax({
+		type: "GET",
+		url: "managetaskchecllist.cgi",
+		data: {'status' : evt.checked, 'uuid' : uuid, "action" : "status", 'task_uuid' : task_uuid},
+		success: function(response){
+			$('.checkListData').html("");
+			end=start+loadmoreNum;
+			start=0;
+			loadCheckList();	
+		}
+	});
+}
+
+var xhrAbortLoad;
+function loadCheckList(){
+	$("#load_more_checklist").hide();
+	
+	var jsonRow="loadtaskchecklist.cgi?task_uuid="+task_uuid+"&start="+start+"&end="+end;
+	if(xhrAbortLoad) xhrAbortLoad.abort();
+	xhrAbortLoad=$.getJSON(jsonRow,function(result){
+		if(result.Alert){
+			//$.prompt("* No more record found!");
+		}else{
+		if(result.aaData!=""){
+			$(".checklistTable").show();
+				var table_html="";
+				$.each(result.aaData, function(i,row){
+					if(row.status==1 || row.status=="1"){
+						table_html+='<tr class="green-color">';
+						table_html+='<td><input type="checkbox" id="chk_all" class="check" checked value="true" name="Select" onChange="changeStatus(this,\''+row.uuid+'\')"></td>';
+					}else{
+						table_html+='<tr>';
+						table_html+='<td><input type="checkbox" id="chk_all" class="check" value="false" name="Select" onClick="changeStatus(this,\''+row.uuid+'\')"></td>';
+					}
+					table_html+='<td>'+row.description+'</td>';
+					table_html+='</tr>';
+				});
+			
+				$('.checkListData').append(table_html);
+				if(end< result.total_records){
+					$("#load_more_checklist").show();
+				}
+		}else{
+			$.prompt("* No more record found!");
+		}
+		}
+	});
+}
+$(document).on('pageinit', function(){
+	loadCheckList();
+});
+
+</script>
+</head>
+<body>
+<div data-role="page" id="home" data-add-back-btn="false">
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/top-header.shtml-->
+	<div data-role="content" style="padding: 15px;">
+		<ul data-role="listview" data-inset="true">
+			<li data-role="list-divider"><span style=" color:#2B89D0; font-stretch:narrower;"><!--#4DIF (Records in selection([Tasks])=1)--><!--#4DVAR [Tasks]task_name--><!--#4DENDIF--> Checklist</span></li>
+		</ul>
+		<a data-ajax="false" href="task.shtml?uuid=<!--#4DHTMLVAR [Tasks]uuid-->" class="ui-btn-inline"><input type="button" value="Back to task"></a>
+			
+		<a href="#popupLogin" data-rel="popup" data-position-to="window" data-transition="pop"><input type="button" value="Add new Checklist"></a>
+		<div data-role="popup" id="popupLogin" data-overlay-theme="a" class="ui-content">
+				<div style="padding:10px 20px;">
+        		   	<h3>Add new Checklist</h3>
+        			<label for="textarea" class="ui-hidden-accessible newMsgStr">Description:</label>
+            		<textarea name="description" id="textarea" value="" placeholder="Description" cols="50"  type="text"></textarea>
+            		
+            		 <fieldset data-role="controlgroup" >
+        				<legend>Horizontal:</legend>
+        <input name="duplicate_checklist" class="duplicate_checklist" id="c_a" value="daily" type="radio">
+        <label for="c_a">Daily</label>
+        <input name="duplicate_checklist" class="duplicate_checklist" id="c_b" value="weekly" type="radio">
+        <label for="c_b">Weekly</label>
+        <input name="duplicate_checklist" class="duplicate_checklist" id="c_c" value="monthly" type="radio">
+        <label for="c_c">Monthly</label>
+        <input name="duplicate_checklist" class="duplicate_checklist" id="c_d" value="yearly" type="radio">
+        <label for="c_d">Yearly</label>
+    </fieldset>
+            		
+            		
+             		<button type="button" class="ui-btn ui-corner-all ui-shadow ui-btn-b ui-btn-icon-left ui-icon-check" onClick="saveChecklist()">Save</button>
+             		<button type="button" class="ui-btn ui-corner-all ui-shadow ui-btn-b ui-btn-icon-left ui-icon-check" onClick="$('#popupLogin').popup('close')">Close</button>
+        		</div>
+		</div>
+	<table class="table-opt checklistD" summary="Product Options">
+		<thead>
+			<tr class="green-color">
+				<th>&nbsp;</th>
+				<th>Checklist</th>
+			</tr>
+		</thead>
+		<tbody class="checkListData">
+			
+		</tbody>
+	</table>
+	<a id="load_more_checklist" onclick="load_more_checklist()" href="javascript:void(0)"><input type="button" value="Load more"></a>
+		
+</div><!-- END DATA ROLE CONTENT-->
+
+   <!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/footer.shtml-->
+    
+ </div>
+ 
+</body>
+</html>

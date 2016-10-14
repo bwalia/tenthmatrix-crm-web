@@ -1,0 +1,201 @@
+<!--HIT_EXECUTE
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+QUERY([Lead_Contacts];[Lead_Contacts]uuid=_HIT_WebApp_GetField ("uuid"))
+QUERY([Leads];[Leads]RecordNumber=[Lead_Contacts]CompanyNumber)
+
+IF (Records in selection([Timeslips])=0)
+_HTMLTITLETXT:="New Lead Contact"
+ELSE
+_HTMLTITLETXT:= "Edit Lead Contact"
+END IF
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+-->
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/main-header.shtml-->
+<script src="js/jquery.validate.js"></script>
+<script type="text/javascript">
+var xhrAbortSearch;
+$(document).ready(function() {
+	$('.phone').keypress(function(e){
+		var k = e.which;
+		if ((k<48 || k>57) && (k!=45) && (k!=43) && (k!=40) && (k!=41) && (k!=32) && (k!=44) && (k!=46) && (k!=8) && (k!=0)) {
+			e.preventDefault();
+			return false;
+		}
+	});
+	
+	// validate signup form on keyup and submit
+	$("#DetailForm").validate({
+		rules: {
+			Fore_name: { required: true  },
+			Email: { required: true , email : true  },
+			Surname: { required: true  },
+			projectNameStr: { required: true  },
+		}
+	});
+	
+	 //on keyup, start the countdown
+	$('.projectNameStr').keyup(function(){
+    	if ($('.projectNameStr').val()) {
+      		var jsonRow="getleadsonsearch.cgi?srch="+$('.projectNameStr').val()+"&"+Math.random();
+			if(xhrAbortSearch) xhrAbortSearch.abort();
+			xhrAbortLoxhrAbortSearchad=$.getJSON(jsonRow,function(result){
+				if(result){
+					var html='';
+					$.each(result, function(i,item){
+						html += '<li><a class="ui-btn ui-btn-icon-right ui-icon-carat-r" href="javascript:void(0)" onClick="selectValue(\''+item.id+'\',\''+item.value+'\')">'+item.value+'</a></li>';
+					});
+					$( ".projectListView").html("");
+					$( ".projectListView").html(html);
+				}
+			});
+          
+    	}
+    });
+    $('.ui-input-clear').click(function(){
+    	$("#Lead_ID").val("");
+    });
+});
+function selectValue(val, name){
+	$(".projectNameStr").val(name);
+	$("#Lead_ID").val(val);
+	$( ".projectListView").listview( "refresh" );
+	$( ".projectListView li").addClass("ui-screen-hidden");
+}
+</script>
+<style>
+label.error { 
+	float: left; 
+	color: red; 
+	padding-top: 1.5em; 
+	vertical-align: top; 
+}<div class="ui-field-contain">
+</style>
+</head>
+<body>
+<div data-role="page" class="jqm-demos" data-quicklinks="true">
+	<!-- header -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/top-header.shtml-->
+	<!-- /header -->
+	<div role="main" class="ui-content jqm-content">
+		<h3><!--#4DIF (Records in selection([Lead_Contacts])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Lead Contact</h3>
+		<div  class="ui-body-d ui-content">
+  			<div data-demo-html="true">
+  				<form novalidate="novalidate" data-ajax="false" name="DetailForm" id="DetailForm" action="saveLeadscontact.cgi" method="post">
+  					<input name="uuid" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="uuid">        
+					<div class="ui-field-contain">
+						<label for="uuid_reported_by" class="select">Lead</label>
+						<input name="Lead_ID" id="Lead_ID" type="hidden" value="<!--4DVAR [Leads]RecordNumber-->">
+						<span class="ui-filterable">
+   							<input id="inset-autocomplete-input" data-type="search" placeholder="Search..." class="projectNameStr" value="<!--4DVAR [Leads]CompanyName-->" name="projectNameStr">
+						</span>
+						
+						<ul data-role="listview" data-inset="true" data-filter="true" data-filter-reveal="true" data-input="#inset-autocomplete-input" class="projectListView">
+   							<!--#4DIF (Records in selection([Lead_Contacts])=0)-->
+								<!--#4DSCRIPT/Web_LoadLeads/-->
+                                    <!--4DLOOP  [Leads]-->
+										<li><a href="javascript:void(0)" onClick="selectValue('<!--4DVAR [Leads]RecordNumber-->','<!--4DVAR [Leads]CompanyName-->')"><!--4DVAR [Leads]CompanyName--></a></li>
+									<!--4DENDLOOP-->							 
+							<!--#4DENDIF-->
+						</ul>       
+					</div>
+
+							<input name="Contact_uuid" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="Contact_uuid">        
+
+							 <div class="ui-field-contain">
+
+								<label>Fore Name</label>
+
+								<input name="Fore_name" type="text" value="<!--#4DVAR [Lead_Contacts]Forename-->" id="Fore_name">
+
+							</div>
+
+							<div class="ui-field-contain">
+
+								<label>Surname</label>
+
+								<input name="Surname"  type="text" value="<!--#4DVAR [Lead_Contacts]Surname-->" id="Surname">                                 
+
+							</div>
+
+							<div class="ui-field-contain">
+
+								<label>Title </label>
+
+								<input name="Title"  type="text" value="<!--#4DVAR [Lead_Contacts]Title-->" id="Title">
+
+							</div>						   
+
+							<div class="ui-field-contain">
+
+								<label>Salutation </label>
+
+								<input name="Salutation"  type="text" value="<!--#4DVAR [Lead_Contacts]Salutation-->" id="Salutation">						
+
+							</div>
+
+							<div class="ui-field-contain">
+
+								<label>Email</label>
+
+								<input name="Email"  type="text" value="<!--#4DVAR [Lead_Contacts]Email-->" id="Email">
+
+							</div>
+
+							<div class="ui-field-contain">
+
+								<label>Skype </label>
+
+								<input name="Skype"  type="text" value="<!--#4DVAR [Lead_Contacts]Skype-->" id="Skype">
+							</div>
+
+							<div class="ui-field-contain">
+								<label>Direct Phone </label>
+								<input class=" phone" type="text" value="<!--#4DVAR [Lead_Contacts]Direct Phone-->" name="Direct_Phone" id="Direct_Phone">
+							</div>
+
+							<div class="ui-field-contain">
+								<label>Direct Fax </label>
+								<input class="span6 phone" type="text" value="<!--#4DVAR [Lead_Contacts]DrectFax-->" name="Direct_Fax" id="Direct_Fax">
+							</div>
+
+							<div class="ui-field-contain">
+								<label>Mobile </label>
+								<input name="Mobile" class="span6 phone" type="text" value="<!--#4DVAR [Lead_Contacts]Mobile-->" id="Mobile">
+							</div>							
+
+							<div class="ui-field-contain">
+								<label>Job Type</label>
+								<input name="job_type"  type="text" value="<!--#4DVAR [Lead_Contacts]JobType-->" id="job_type">
+							</div>
+ 							<div class="ui-field-contain">
+								<label>
+									<input name="dont_Email"  type="checkbox" value="true" id="dont_Email" <!--#4DIF ([Lead_Contacts]dontEmail)-->checked<!--4DELSE--><!--4DENDIF--> >Do not Email
+								</label>
+							</div>
+ 							<div class="ui-field-contain">
+								<label>							
+									<input name="Transferred_to_CC"  type="checkbox" value="true" id="Transferred_to_CC" <!--#4DIF ([Lead_Contacts]Transferred to CC)-->checked<!--4DELSE--><!--4DENDIF--> >Transferred to CC
+								</label>                                                             
+							</div>
+                		<button type="submit" class="ui-shadow ui-btn ui-corner-all ui-mini">Submit</button>
+						<a href="lead_contacts.shtml" data-ajax="false" class="ui-shadow ui-btn ui-corner-all ui-mini">Cancel</a>
+				</form>
+			</div>
+  		</div>
+	</div>
+	<!-- /content -->
+	<!-- panel -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/sidebar.shtml-->
+	<!-- /panel -->
+
+	<!-- footer -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/footer.shtml-->
+	<!-- /footer -->
+</div><!-- /page -->
+</body>
+</html>

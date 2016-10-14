@@ -1,0 +1,377 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml?url="+HTTPD_DocumentURI)
+end if 
+
+//_HIT_HTMLTXT:=_HIT_SessionStr
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+	<link href='css/lib/fullcalendar.css' rel='stylesheet' />
+    <link href='css/lib/fullcalendar.print.css' rel='stylesheet' media='print' />
+    <link rel="stylesheet" href="css/compiled/calendar.css" type="text/css" media="screen" />
+	<link rel="stylesheet" type="text/css" href="lib/base.css" />
+	<link rel="stylesheet" type="text/css" href="css/jquery.timepicker.css" />
+	
+</head>
+<body>
+
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+
+     <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
+
+	<!-- main container -->
+    <div class="content">
+        
+        <div class="container-fluid">
+		 <div id="pad-wrapper">
+            <div class="row-fluid calendar-wrapper">
+                    <div class="span12">
+
+                        <!-- div that fullcalendar plugin uses  -->
+                        <div id='calendar'></div>
+
+                        <!-- edit image pop up -->
+                        <div class="new-event popup" style="display:none" >
+                            <div class="pointer">
+                                <div class="arrow"></div>
+                                <div class="arrow_border"></div>
+                            </div>
+                            <i class="close-pop table-delete"></i>
+                            <h5>Date: 
+                                <span class="date"></span></h5>
+                            <form name="frm_task" class="form-comment" > 
+							<input type="hidden" value="" name="curr_date" id="curr_date">
+							<div class="field">
+                               Task Name:
+							   <div class="ui-select">
+									<select name="Task_ID" id="Task_ID" >
+									<option value="" >--Select Task--</option>
+									<!--#4DSCRIPT/Web_LoadTasks/-->
+									<!--4DLOOP  [Tasks]-->
+											<option value="<!--4DVAR [Tasks]task_id-->" ><!--4DVAR [Tasks]task_name--></option>
+									<!--4DENDLOOP-->
+									</select>
+								</div>
+                            </div>
+							<div class="field">
+                                Start Time:
+                                <input type="text" class="event-input timepicker" style="width:20%;margin-left:0px;" name="s_time" id="s_time" />
+								End Time:
+								<input type="text" class="event-input timepicker" style="width:20%;margin-left:0px;" name="e_time" id="e_time" />
+                            </div>
+                            <div class="field">
+                                Description:
+                                <!--<input type="text" class="event-input" />-->
+								<textarea name="slip_descr" id="slip_descr" rows="1" cols="10" class="event-input" style="width:45%; height:20px"></textarea>
+                            </div>
+                            <input type="submit" value="Create" class="btn-glow primary" onClick="return ValidateForm();">
+							</form>
+                        </div>
+                    </div>
+                </div>
+			</div>
+        </div>
+    </div>
+    <!-- end main container -->
+
+	<!-- scripts for this page -->
+   <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+   
+   <script src="js/jquery-ui-1.10.2.custom.min.js"></script>
+    
+    <script src='js/fullcalendar_new.min.js'></script>
+   <script type="text/javascript" src="js/jquery.timepicker.js"></script>
+
+<script language="javascript">
+var new_event=new Array();
+var new_holidays=new Array();
+
+function ValidateForm () {
+var msg = '';
+if (document.frm_task.Task_ID.value=="")
+{ msg = msg + 'Please Specify Task Name\n'; }
+if (document.frm_task.s_time.value=="")
+{ msg = msg + 'Please Specify Start Time\n'; }
+if (document.frm_task.e_time.value=="")
+{ msg = msg + 'Please Specify End Time\n'; }
+if (document.frm_task.slip_descr.value=="")
+{ msg = msg + 'Please Specify Timeslip Description\n'; }
+
+if (msg=="") {
+save();
+return false;
+} else {
+alert (msg);
+return false;
+}}
+
+function save(){
+var date=$("#curr_date").val();
+var s_time=$("#s_time").val();
+var e_time=$("#e_time").val();
+var task_id=$("#Task_ID").val();
+var task_name=$("#Task_ID option[value='"+task_id+"']").text();
+var descr=$("#slip_descr").val();
+var dataString = 'date='+date+'&s_time='+s_time+'&e_time='+e_time+'&task_id='+task_id+'&descr='+descr+'&redirect=false';
+//alert(dataString);
+$.ajax({
+type: "GET",
+url: "savecalender.cgi",
+data: dataString,
+cache: false,
+success: function(html)
+{
+	
+	var new_arr=new Array();
+	new_arr['id']=html;
+	new_arr['title']=task_name;
+	new_arr['start']=get_datetime(date, s_time);
+	new_arr['end']=get_datetime(date, e_time);
+	new_arr['url']='timeslip.shtml?uuid='+html;
+	new_arr['allDay']=false;
+	new_event.push(new_arr);
+	
+	$('#calendar').fullCalendar( 'removeEventSource', new_event );
+	$('#calendar').fullCalendar( 'addEventSource', new_event );
+	$(".new-event").fadeOut("fast");
+}
+});
+
+}
+</script>
+
+
+    <!-- builds fullcalendar example -->
+    <script>
+	function get_datetime(date, time)
+	{
+
+		var date_arr=date.split('/');		
+		var last2 = time.substr(time.length - 2);
+		var time_arr=time.split(":");
+		var minu= Number(time_arr[1].substr(0,2));
+		var hour = Number(time_arr[0]);
+		if(last2 == 'pm'){
+			hour= hour + 12;
+		}
+		var new_date = new Date(date_arr[2], Number(date_arr[1])-1, date_arr[0], hour, minu);
+		//alert(new_date);
+		return new_date;
+	}
+	
+	var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+	var days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+	
+	
+        $(document).ready(function() {
+        
+		
+		$('.timepicker').timepicker({ 'step': 15 });
+		
+            var flag=0;
+			
+            
+            $('#calendar').fullCalendar({
+                header: {
+                    left: 'month,agendaWeek,agendaDay',
+                    center: 'title',
+                    right: 'today prev,next'
+                },
+                selectable: true,
+                selectHelper: true,
+                editable: true,
+				
+				timeFormat: 'd MMM h(:mm)t{ - d MMM h(:mm)t}',
+               /* events: [
+				
+                 
+					<!--#4DSCRIPT/Web_LoadTimeslips/-->
+                         <!--#4DLOOP [Timeslips]--><!--#4DSCRIPT/Web_LoadTimeslipRelated/--><!-- row -->
+					{
+                        id: '<!--#4DVAR [Timeslips]uuid-->',
+                        title: '<!--#4DVAR [Tasks]task_name-->',
+						start: get_datetime('<!--#4DVAR timestamp_unix_toDate ([Timeslips]Timestamp_start)-->', '<!--#4DVAR timestamp_unix_toTime ([Timeslips]Timestamp_start)-->'),						
+						end: get_datetime('<!--#4DVAR timestamp_unix_toDate ([Timeslips]Timestamp_end)-->', '<!--#4DVAR timestamp_unix_toTime ([Timeslips]Timestamp_end)-->'),						
+						url: 'timeslip.shtml?uuid=<!--#4DVAR [Timeslips]uuid-->'
+                        //allDay: false
+                    },
+					<!--#4DENDLOOP-->
+					
+                ],*/
+                eventBackgroundColor: '#278ccf',
+				
+				 dayClick: function(date, allDay, jsEvent, view) {
+				 
+			var s_time='';
+        if (allDay) {
+           // alert('Clicked on the entire day: ' + date);
+        }else{
+            //alert('Clicked on the slot: ' + date);
+			
+			var date_arr=String(date).split(" ");
+			var timestring='';
+			for(var i=0; i<date_arr.length; i++){
+				var contains = (date_arr[i].indexOf(":") > -1);
+					if(contains){
+						timestring=date_arr[i];
+						break;
+					}
+			}
+			var time_arr=timestring.split(":");
+			if(time_arr[0]>12){ var h=time_arr[0]-12; s_time=h+":"+time_arr[1]+"pm"; }
+			else{ s_time=time_arr[0]+":"+time_arr[1]+"am"; }
+			
+        }
+
+        //alert('Coordinates: ' + jsEvent.pageX + ',' + jsEvent.pageY);
+		//alert('caloffset: ' + $('#calendar').offset().left + ',' + $('#calendar').offset().top);
+		//alert('widthheight: ' + $(".new-event").outerWidth()/2 + ',' + $(".new-event").outerHeight()+','+$(".arrow_border").outerHeight());
+
+        //alert('Current view: ' + view.name);
+		var cal_left=Number($('#calendar').offset().left);
+		var cal_top=Number($('#calendar').offset().top);
+		var left = jsEvent.pageX - cal_left - (Number($(".new-event").outerWidth())/2);
+		var top = jsEvent.pageY - cal_top - Number($(".new-event").outerHeight()) - Number($(".arrow_border").outerHeight());
+		
+	
+		if(left<0){
+			left=0;
+		}
+		else if(left>(Number($('#calendar').outerWidth())-Number($(".new-event").outerWidth()))){
+			left=Number($('#calendar').outerWidth())-Number($(".new-event").outerWidth());
+		}
+		if(top<0){
+			top=0;
+		}
+        $(".new-event").css('left', left);
+		$(".new-event").css('top', top);
+				
+		
+		var converted = days[date.getDay()] + ", " + date.getDate() + " " +months[date.getMonth()];
+		var curr_month=Number(date.getMonth())+1;
+		var curr_date=	date.getDate()+'/'+	curr_month+'/'+date.getFullYear();
+		
+		$(".new-event").find('.date').html(converted);
+		$("#curr_date").val(curr_date);
+		$("#s_time").val(s_time);
+		$("#e_time").val();
+		$("#Task_ID").val('');
+		$("#slip_descr").val('');
+        $(".new-event").fadeIn("fast");
+
+    },
+			viewRender: function( view, element ) {
+				
+				var s_month=Number(view.visStart.getMonth())+1;
+				var s_date=	view.visStart.getDate()+'/'+s_month+'/'+view.visStart.getFullYear();
+				var e_month=Number(view.end.getMonth())+1;
+				var e_date=	view.end.getDate()+'/'+e_month+'/'+view.end.getFullYear();
+				
+				var date_arr=String(view.visStart).split(" ");
+				var s_time='';
+				for(var i=0; i<date_arr.length; i++){
+					var contains = (date_arr[i].indexOf(":") > -1);
+					if(contains){
+						s_time=date_arr[i];
+						break;
+					}
+				}
+				
+				var date_arr1=String(view.end).split(" ");
+				var e_time='';
+				for(var i=0; i<date_arr1.length; i++){
+					var contains = (date_arr1[i].indexOf(":") > -1);
+					if(contains){
+						e_time=date_arr1[i];
+						break;
+					}
+				}
+				
+				
+				//var s_date=	view.start.getTime();
+				//var e_date= view.end.getTime();
+				var dataString = 's_date='+s_date+'&e_date='+e_date+'&s_time='+s_time+'&e_time='+e_time+'&redirect=false';
+				
+				//alert(dataString);
+								
+				jsonRow = 'returncalenderValues.cgi?'+dataString;
+
+		
+		$.getJSON(jsonRow,function(result){
+		$('#calendar').fullCalendar( 'removeEventSource', new_event );
+			if(result){
+				
+				new_event=new Array();
+				$.each(result, function(i,item)
+				{
+					var new_arr=new Array();
+					new_arr['id']=item.uuid;
+					new_arr['title']=item.Task_Name;
+					new_arr['start']=get_datetime(item.Start_date, item.Start_time);
+					new_arr['end']=get_datetime(item.end_date, item.end_time);
+					new_arr['url']='timeslip.shtml?uuid='+item.uuid;
+					new_arr['allDay']=false;
+					new_event.push(new_arr);
+					
+				});
+				
+				$('#calendar').fullCalendar( 'addEventSource', new_event );
+			}
+		});
+		
+		jsonRow = 'returnHolidays.cgi?'+dataString;
+
+		
+		$.getJSON(jsonRow,function(result){
+		$('#calendar').fullCalendar( 'removeEventSource', new_holidays );
+			if(result){
+				
+				new_holidays=new Array();
+				$.each(result, function(i,item)
+				{
+					var new_arr=new Array();
+					new_arr['id']=item.uuid;
+					new_arr['title']=item.Subject;
+					new_arr['start']=get_datetime(item.Start_date);
+					new_arr['end']=get_datetime(item.End_date);
+					new_arr['url']='holiday.shtml?uuid='+item.uuid;
+					new_arr['allDay']=false;
+					new_holidays.push(new_arr);
+					
+				});
+				
+				$('#calendar').fullCalendar( 'addEventSource', new_holidays );
+			}
+		});
+		
+				
+			},
+	
+            });
+			
+			
+            
+            // handler to close the new event popup just for displaying purposes
+            // more documentation for fullcalendar on http://arshaw.com/fullcalendar/
+            $(".popup .close-pop").click(function () {
+                $(".new-event").fadeOut("fast");
+            });
+			
+			
+			
+			
+        });
+    </script>
+    
+</body>
+</html>

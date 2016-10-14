@@ -1,0 +1,195 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+C_TEXT(_HTMLTITLETXT)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+ALL RECORDS([Tax_Codes])
+QUERY([project_batch_scripts];[project_batch_scripts]uuid=_HIT_WebApp_GetField ("uuid"))
+QUERY([Projects];[Projects]uuid=[project_batch_scripts]uuid_project)
+
+IF (Records in selection([project_batch_scripts])=0)
+_HTMLTITLETXT:="New Script"
+ELSE
+_HTMLTITLETXT:= "Edit Script:"+[project_batch_scripts]script_name
+END IF
+
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+-->
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/main-header.shtml-->
+<link rel="stylesheet" href="css/jquery.mobile.datepicker.css">
+<script src="js/jquery.ui.datepicker.js"></script>
+<script id="mobile-datepicker" src="js/jquery.mobile.datepicker.js"></script>
+<script src="js/jquery.validate.js"></script>
+<script type="text/javascript">
+var tableUUIDStr= '<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->';
+var tableNameStr='Projects';
+var taskNameStr='',xhrAbortLoad, xhrAbortSearch;
+var loadmoreNum=10, start=0, end=loadmoreNum;
+
+$(document).ready(function() {
+	<!--#4DIF (_HIT_WebApp_GetField ("uuid")="")-->
+		$(':input','#ContactForm')
+ 		.not(':button, :submit, :reset, :hidden')
+ 		.val('')
+ 		.removeAttr('checked')
+ 		.removeAttr('selected');
+	<!--#4DELSE--><!--#4DENDIF-->
+		
+	$(".ui-table-columntoggle-btn").hide();
+	$("#DetailForm").validate({
+		ignore: "",
+        rules: {
+          	projectNameStr: { required: true },
+			server_type: { required: true },
+			ftp_host_name: { required: true },
+			ftp_user_name: { required: true },
+			ftp_password: { required: true },
+        }
+    });
+    
+    //on keyup, start the countdown
+	$('.projectNameStr').keyup(function(){
+    	if ($('.projectNameStr').val()) {
+      		var jsonRow="getprojectsonsearch.cgi?srch="+$('.projectNameStr').val()+"&"+Math.random()+'&closed=false';
+			if(xhrAbortSearch) xhrAbortSearch.abort();
+			xhrAbortLoxhrAbortSearchad=$.getJSON(jsonRow,function(result){
+				if(result){
+					var html='';
+					$.each(result, function(i,item){
+						html += '<li><a class="ui-btn ui-btn-icon-right ui-icon-carat-r" href="javascript:void(0)" onClick="selectValue(\''+item.uuid+'\',\''+item.value+'\')">'+item.value+'</a></li>';
+					});
+					$( ".projectListView").html("");
+					$( ".projectListView").html(html);
+				}
+			});
+          
+    	}
+    });
+    $('.ui-input-clear').click(function(){
+    	$("#uuid_project").val("");
+    });
+    
+});
+function selectValue(val, name){
+	$(".projectNameStr").val(name);
+	$("#uuid_project").val(val);
+	$( ".projectListView" ).listview( "refresh" );
+	$( ".projectListView li" ).addClass("ui-screen-hidden");
+}
+</script>
+<script type='text/javascript' src='js/customerNotes.js'></script>
+<style>
+label.error { 
+	float: left; 
+	color: red; 
+	padding-top: 1.5em; 
+	vertical-align: top; 
+}
+.movie-list thead th,
+.movie-list tbody tr:last-child {
+	border-bottom: 1px solid #d6d6d6; /* non-RGBA fallback */
+	border-bottom: 1px solid rgba(0,0,0,.1);
+}
+.movie-list tbody th,
+.movie-list tbody td {
+	border-bottom: 1px solid #e6e6e6; /* non-RGBA fallback  */
+	border-bottom: 1px solid rgba(0,0,0,.05);
+}
+.movie-list tbody tr:last-child th,
+.movie-list tbody tr:last-child td {
+	border-bottom: 0;
+}
+.movie-list tbody tr:nth-child(odd) td,
+.movie-list tbody tr:nth-child(odd) th {
+	background-color: #eeeeee; /* non-RGBA fallback  */
+	background-color: rgba(0,0,0,.04);
+}
+</style>
+</head>
+<body>
+<div data-role="page" class="jqm-demos" data-quicklinks="true">
+	<!-- header -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/top-header.shtml-->
+	<!-- /header -->
+	
+	<div role="main" class="ui-content jqm-content">
+		<h3><!--#4DIF (Records in selection([Projects])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Script</h3>
+		<div data-demo-html="true">
+			<form novalidate="novalidate" name="DetailForm" action="saveprojectscript.cgi" id="DetailForm" data-ajax="false" method="post">
+					<div class="ui-field-contain">
+						<label for="uuid_reported_by" class="select">Project</label>
+						<input name="uuid_project" id="uuid_project" type="hidden" value="<!--#4DVAR [Projects]uuid-->">
+						<span class="ui-filterable">
+   							<input id="inset-autocomplete-input" data-type="search" placeholder="Search client..." class="projectNameStr" value="<!--#4DVAR [Projects]proj_name-->" name="projectNameStr">
+						</span>
+						
+						<ul data-role="listview" data-inset="true" data-filter="true" data-filter-reveal="true" data-input="#inset-autocomplete-input" class="projectListView">
+   							<!--#4DIF (Records in selection([project_batch_scripts])=0)-->
+								<!--#4DSCRIPT/Web_LoadProjects/-->
+                                    <!--4DLOOP  [Projects]-->
+										<li><a href="javascript:void(0)" onClick="selectValue('<!--#4DVAR [Projects]uuid-->,'<!--#4DVAR [Projects]proj_name-->')"><!--#4DVAR [Projects]proj_name--></a></li>
+									<!--4DENDLOOP-->						 
+							<!--#4DENDIF-->
+						</ul>
+					</div>      
+                   	<input name="uuid" class="span7" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="uuid">
+								                    	
+					<div class="ui-field-contain">
+   						<label>Script Name</label>
+                        <input name="script_name" class="span5" type="text" value="<!--4DVAR [project_batch_scripts]script_name-->" id="script_name">
+        	        </div>
+        	        <!--#4DIF (Records in selection([project_batch_scripts])=1)-->
+        	        <table data-role="table" id="movie-table-custom" data-mode="reflow" class="movie-list ui-responsive loadedTable">
+						<thead>
+						<tr>
+							<th data-priority="1">Script Name</th>
+							<th data-priority="2">Source Directory</th>
+							<th data-priority="3">Target Directory</th>
+		      				<th data-priority="4">Rsync Options</th>
+			  				
+	               		</tr>
+	           	 		</thead>
+	            		<tbody id="contentoftable">
+	            			<!--#4DIF (Records in selection([project_batch_scripts])=1)-->
+												<!--#4DSCRIPT/Web_LoadRsyncEntries/-->
+												<!--#4DLOOP [rsync_enteries]-->
+												<tr>
+												<td><!--4DVAR [rsync_enteries]script_name--></td>
+												<td><!--4DVAR [rsync_enteries]dir_source--></td>
+												<td><!--4DVAR [rsync_enteries]dir_target--></td>
+												<td><!--4DVAR [rsync_enteries]rsync_options--></td>
+												</tr>
+												<!--#4DENDLOOP-->
+											<!--#4DENDIF-->
+	        			</tbody>
+	        		</table>
+	        		<!--#4DENDIF-->
+					<div class="ui-field-contain">
+                        <label>Comments</label>
+						<textarea name="comments" class="span7" rows="4" id="comments"><!--4DVAR [project_batch_scripts]comments--></textarea>
+                    </div>
+								
+					<div class="ui-field-contain">
+						<label><input name="is_enabled" class="span1" type="checkbox" value="true" id="is_enabled" <!--#4DIF ([project_batch_scripts]is_enabled)-->checked<!--4DELSE--><!--4DENDIF--> > IS ENABLED</label>
+                	</div> 
+					<button type="submit" class="ui-shadow ui-btn ui-corner-all ui-mini">Submit</button>
+					<a href="projectscripts.shtml" class="ui-shadow ui-btn ui-corner-all ui-mini" data-ajax="false">Cancel</a>
+				</form>	
+		    	
+		    </div>
+	</div><!-- /content -->
+	<!-- panel -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/sidebar.shtml-->
+	<!-- /panel -->
+
+	<!-- footer -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/footer.shtml-->
+	<!-- /footer -->
+</div><!-- /page -->
+
+</body>
+</html>

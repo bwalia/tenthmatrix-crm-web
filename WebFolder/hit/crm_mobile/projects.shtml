@@ -1,0 +1,248 @@
+<!--HIT_EXECUTE
+_HIT_HTTPD_SetHTTPHeader ("Content-type";"text/html; charset=utf-8")
+C_TEXT(_HTMLTITLETXT)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+
+_HTMLTITLETXT:="Projects"
+
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml?url="+HTTPD_DocumentURI)
+end if 
+-->
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/main-header.shtml-->
+
+<script type="text/javascript">
+var JSONdata, nPageSize=10;
+var start=0, end=nPageSize;
+var old_srch='',keyword='', tab='';
+var tablname='Projects';
+var complete=false;
+var completeScroll=false;
+
+$(document).ready(function() {
+	$('#keyword').focus();
+	load_data();			 
+	
+	$(window).scroll(function(){
+		if ($(window).scrollTop() == $(document).height() - $(window).height()){
+			if(complete==false && completeScroll==false) {
+				$('#load_more_btn').parent().hide();
+				$('#img_loading_div').show();
+				start=end+1;
+				end=start+nPageSize;
+				load_data();
+			}
+		}
+	});
+	$('.ui-btn').bind("click","#load_more_btn", function(){
+		$('#load_more_btn').parent().hide();
+		$('#img_loading_div').show();
+		start=end+1;
+		end=start+nPageSize;
+		load_data();
+	});
+	
+	//setup before functions
+	var typingTimer;                //timer identifier
+	var doneTypingInterval = 1000;  //time in ms, 5 second for example
+
+	//on keyup, start the countdown
+	$('#keyword').keyup(function(){
+    	clearTimeout(typingTimer);
+    	if ($('#keyword').val) {
+      		typingTimer = setTimeout(function(){
+      			$('#tableBody').html('');
+           		$('#load_more_btn').parent().hide();
+				$('#img_loading_div').show();
+				start=0;
+				end=start+nPageSize;
+				tab='';
+				load_data();
+        	}, doneTypingInterval);
+    	}
+    });
+    $('.ui-input-clear').bind("click",function(){
+		$('#contentoftable').html('');
+        $('#load_more_btn').parent().hide();
+		$('#img_loading_div').show();
+		start=0;
+		end=start+nPageSize;
+		load_data();
+	});
+	
+});
+
+function __showProjectForm(uuid){
+var pUrlStr='project.shtml?uuid='+uuid;
+window.location.href=pUrlStr;
+}
+
+var task_uuid= new Array();
+function load_data(){
+	$('#errorMsgStr').remove();
+	keyword= $("#keyword").val();
+	jsonRow = 'loadprojects.cgi?start='+start+'&end='+end+'&tablname='+tablname;
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}
+	if(tab!=''){
+		jsonRow +='&tab='+tab;
+	}
+	completeScroll=true;
+	var proj_uuid=new Array();  
+	JSONdata=new Array();
+	$.getJSON(jsonRow,function(result){
+		if(result.Alert){
+			var contentStr=$('#tableBody').html();
+			if(contentStr.length>=1){
+			}else{
+				$(".dataTable").before("<span id='errorMsgStr' style='color:red;font-style:italic;'>Sorry, no records found!</span>");
+			}
+			$('#load_more_btn').parent().hide();
+			$('#img_loading_div').hide();
+			complete=true;
+				
+		}else{ 
+			$.each(result.uuid, function(i,item){
+				proj_uuid[i]=item;  
+			});
+			if(proj_uuid.length<=0){
+				var contentStr=$('#tableBody').html();
+				if(contentStr.length>=1){
+				}else{
+					$(".dataTable").before("<span id='errorMsgStr' style='color:red;font-style:italic;'>Sorry, no records found!</span>");
+				}
+				$('#load_more_btn').parent().hide();
+				$('#img_loading_div').hide();
+				complete=true;
+					
+			}else{
+				$.each(result.projName, function(i,item)
+				{
+					JSONdata[i]=new Array();
+					JSONdata[i][0]='<a href="javascript:void(0)" onClick="__showProjectForm(\''+proj_uuid[i]+'\')">'+item+'</a>';
+				});
+				$.each(result.ClientName, function(i,item)
+				{
+					JSONdata[i][1]='<a target="_blank" href="customers.shtml?keyword='+item+'">'+item+'</a>';					
+				});
+				$.each(result.budget, function(i,item)
+				{	
+					JSONdata[i][2]=item;
+				});
+				$.each(result.Rate, function(i,item)
+				{	
+					JSONdata[i][3]=item;
+				});
+				$.each(result.currency, function(i,item)
+				{					
+					JSONdata[i][4]=item;
+				});
+				$.each(result.StartDate, function(i,item)
+				{					
+					JSONdata[i][5]=item;
+				}); 
+				
+				$.each(result.Active, function(i,item)
+				{		
+					if(item==true){
+						JSONdata[i][6]='<span style="color:#68A3D5;">Active</span>';
+					}else{
+						JSONdata[i][6]='<span style="color:#81BD82;">Completed</span>';
+					}
+				});
+				
+				$.each(result.status, function(i,item)
+				{					
+					JSONdata[i][7]=item;
+				});
+				 
+				var table_html='';
+				
+				$.each(JSONdata, function(i,row){
+					table_html+='<tr>';
+					$.each(row, function(i,col){
+						if(i==0){
+						table_html+='<td class="title">'+col+'</td>';
+						}else{
+						table_html+='<td>'+col+'</td>';
+						}
+					});
+					table_html+='</tr>';
+				});
+				if(old_srch!=keyword){
+					$('#tableBody').html('');
+					old_srch=keyword;
+				}
+				
+				$('#tableBody').append(table_html);
+				$( ".dataTable" ).table( "rebuild" );
+				complete=false;
+				$('#img_loading_div').hide();
+				$('#load_more_btn').parent().show();
+			}
+		}
+
+		completeScroll=false;
+	});
+}
+</script>
+<link rel="stylesheet" href="css/jquery-table-custom.css">
+</head>
+<body>
+<div data-role="page" class="jqm-demos" data-quicklinks="true">
+	<!-- header -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/top-header.shtml-->
+	<!-- /header -->
+	
+	<div role="main" class="ui-content jqm-content">
+		<h3>Projects</h3>
+		<div class="ui-grid-b ui-responsive">
+        	<div class="ui-block-a">
+				<div class="jqm-block-content" style="min-height: 3em; padding:0em;">
+    				<div class="ui-input-search  ui-corner-all ui-shadow-inset "><input name="keyword" id="keyword" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" placeholder="Search for Project.." data-type="search" type="text"><a title="Clear text" href="#" tabindex="-1" aria-hidden="true" class="ui-input-clear ui-btn ui-icon-delete ui-btn-icon-notext ui-corner-all ui-input-clear-hidden">Clear text</a></div>
+				</div>
+        	</div>  
+			<div class="ui-block-b">
+        		<div class="jqm-block-content" style="min-height: 5em; padding:0em;">
+        			<div class="success"><a href="project.shtml" data-ajax="false">+ Add New Project</a></div>
+				</div>
+        	</div>      	
+        </div>
+		<div data-demo-html="true">
+			<table data-role="table" id="movie-table-custom" data-mode="reflow" class="movie-list dataTable">
+				<thead>
+					<tr>
+	              		<th data-priority="1" style="width:40%">Project</th>
+	               		<th data-priority="2">Client</th>
+	               		<th data-priority="3">Budget</th>
+	               		<th data-priority="4">Rate</th>
+	               		<th data-priority="5">Currency</th>
+	               		<th data-priority="6">Start Date</th>
+	               		<th data-priority="7">Status</th>
+	               		<th data-priority="8">Stage</th>
+	               </tr>
+	            </thead>
+	            <tbody id="tableBody">
+	              
+	        	</tbody>
+	        </table>
+	        <div id="img_loading_div" style="text-align:center">
+				<img src="loading.gif"  style="padding:20px;">
+			</div>
+
+			<input id="load_more_btn" type="button" value="load more" style="display:none;">
+		</div><!--/demo-html -->
+
+	</div><!-- /content -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/sidebar.shtml-->
+	<!-- /panel -->
+
+	<!-- footer -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/crm_mobile/includes/footer.shtml-->
+	<!-- /footer -->
+</div><!-- /page -->
+
+</body>
+</html>
