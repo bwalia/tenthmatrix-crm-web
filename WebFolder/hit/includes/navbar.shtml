@@ -24,11 +24,7 @@ last_week:=curr_date-6
           <li class="dropdown notifications-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
               <i class="fa fa-bell-o"></i>
-              <span class="label label-warning">10</span>
-            </a>
-            <ul class="dropdown-menu">
-              <li class="header">You have 
-              <!--HIT_EXECUTE
+              <span class="label label-warning"><!--HIT_EXECUTE
 						C_TEXT(_HIT_HTMLTXT;noti_num_str)
 						C_LONGINT(mNotiNum)
 						Web_LoadNotifications("all_pending")
@@ -38,7 +34,14 @@ last_week:=curr_date-6
 						noti_num_str:=String(mNotiNum)
 						_HIT_HTMLTXT:=noti_num_str
 						End If
-						--> notifications</li>
+						--></span>
+            </a>
+            <ul class="dropdown-menu">
+              <li class="header">You have <!--HIT_EXECUTE
+                                 Web_LoadNotifications("last_week")
+								_HIT_HTMLTXT:=noti_num_str
+								--> 
+								pending notifications</li>
               <li>
                 <!-- inner menu: contains the actual data -->
                 
