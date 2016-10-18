@@ -1,6 +1,7 @@
 <!--HIT_EXECUTE
 
-
+C_TEXT(_HTMLTITLETXT)
+_HTMLTITLETXT:="Dashboard"
 if(_HIT_AuthenticateSession="Session-Authenticated-OK")
 //_HIT_HTMLTXT:="<h1>AUTH</h1>"
 else
@@ -117,33 +118,133 @@ _HIT_HTMLTXT:=String(Sum([Projects]budget))
       </div>
 	  
 	  
-	  
 	  <div class="row">
-        		<table>
-					<tr><td style="padding:20px;">
-					<div class="smallChart" ><iframe src="hours_chart.shtml?view=small" style="border:#000000; width:400px; height:300px"></iframe>
-					<div style="text-align:right; padding-right:10px;padding-bottom:10px;"><a class='iframe' href="hours_chart.shtml"><button class="btn-flat primary" >View Full Chart</button></a></div></div>
-					</td><td style="padding:20px;">
-					<div class="smallChart"><iframe src="payments_chart.shtml?view=small" style="border:#000000; width:400px; height:300px;"></iframe>
-					<div style="text-align:right; padding-right:10px;padding-bottom:10px;"><a class='iframe' href="payments_chart.shtml"><button class="btn-flat primary" >View Full Chart</button></a></div></div>
-					</td></tr>
-					<tr><td style="padding:20px;">
-					<div class="smallChart" ><iframe src="expenses_chart.shtml?view=small" style="border:#000000; width:400px; height:300px"></iframe>
-					<div style="text-align:right; padding-right:10px;padding-bottom:10px;"><a class='iframe' href="expenses_chart.shtml"><button class="btn-flat primary" >View Full Chart</button></a></div></div>
-					</td><td style="padding:20px;">
-					<div class="smallChart"><iframe src="invoice_chart.shtml?view=small" style="border:#000000; width:400px; height:300px"></iframe>
-					<div style="text-align:right; padding-right:10px;padding-bottom:10px;"><a class='iframe' href="invoice_chart.shtml"><button class="btn-flat primary" >View Full Chart</button></a></div></div>
-					</td></tr>
-					<tr><td style="padding:20px;">
-					<div class="smallChart" ><iframe src="tasks_status_column_drilldown.shtml?view=small" style="border:#000000; width:400px; height:300px"></iframe>
-					<div style="text-align:right; padding-right:10px;padding-bottom:10px;"><a class='iframe' href="tasks_status_column_drilldown.shtml"><button class="btn-flat primary" >View Full Chart</button></a></div></div>
-					</td>
-					<td style="padding:20px;">
-					<div class="smallChart" ><iframe src="invoice_column_chart.shtml?view=small" style="border:#000000; width:400px; height:300px"></iframe>
-					<div style="text-align:right; padding-right:10px;padding-bottom:10px;"><a class='iframe' href="invoice_column_chart.shtml"><button class="btn-flat primary" >View Full Chart</button></a></div></div>
-					</td></tr>
-				</table>
+        <div class="col-md-6">
+        
+          <div class="box box-primary">
+            <div class="box-header with-border">
+              <h3 class="box-title">Hours Worked</h3>
+
+              <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                </button>
+                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+              </div>
+            </div>
+            <div class="box-body">
+              <div class="chart">
+                <iframe src="hours_chart.shtml?view=small" style="height:350px;width:100%;"></iframe>
+              </div>
+            </div>
+           
+          </div>
+          
+          <div class="box box-danger">
+            <div class="box-header with-border">
+              <h3 class="box-title">Payments Received</h3>
+
+              <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                </button>
+                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+              </div>
+            </div>
+            <div class="box-body">
+             <iframe src="payments_chart.shtml?view=small" style="width:100%; height:350px;"></iframe>
+            </div>
+          
+          </div>
+        </div>
+        
+        <div class="col-md-6">
+          <!-- LINE CHART -->
+          <div class="box box-info">
+            <div class="box-header with-border">
+              <h3 class="box-title">Expenses</h3>
+
+              <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                </button>
+                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+              </div>
+            </div>
+            <div class="box-body">
+              <div class="chart">
+                <iframe src="expenses_chart.shtml?view=small" style="width:100%; height:350px"></iframe>
+              </div>
+            </div>
+          
+          </div>
+         
+          <div class="box box-success">
+            <div class="box-header with-border">
+              <h3 class="box-title">Invoice Status</h3>
+
+              <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                </button>
+                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+              </div>
+            </div>
+            <div class="box-body">
+              <div class="chart">
+                <iframe src="invoice_chart.shtml?view=small" style="width:100%; height:350px"></iframe>
+              </div>
+            </div>
+           
+          </div>
+      
+
+        </div>
+      
       </div>
+       <div CLASS="row">
+	  <div class="col-xs-6">
+          <!-- interactive chart -->
+          <div class="box box-primary">
+            <div class="box-header with-border">
+              <i class="fa fa-bar-chart-o"></i>
+
+              <h3 class="box-title">Tasks Chart</h3>
+
+              <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                </button>
+                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+              </div>
+            </div>
+            <div class="box-body">
+             <iframe src="tasks_status_column_drilldown.shtml?view=small" style="width:100%; height:350px"></iframe>
+            </div>
+            <!-- /.box-body-->
+          </div>
+          <!-- /.box -->
+
+        </div>
+	  <div class="col-xs-6">
+          <!-- interactive chart -->
+          <div class="box box-primary">
+            <div class="box-header with-border">
+              <i class="fa fa-bar-chart-o"></i>
+
+              <h3 class="box-title">Invoice Status Chart</h3>
+
+              <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                </button>
+                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+              </div>
+            </div>
+            <div class="box-body">
+              <iframe src="invoice_column_chart.shtml?view=small" style="width:100%; height:350px"></iframe>
+            </div>
+            <!-- /.box-body-->
+          </div>
+          <!-- /.box -->
+
+        </div>
+	  </div>
+	  
       <!-- /.row -->
       <!-- Main row -->
       

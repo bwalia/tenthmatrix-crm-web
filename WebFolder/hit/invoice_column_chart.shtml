@@ -1,7 +1,6 @@
 <!--HIT_EXECUTE
 C_TEXT(_HTMLTITLETXT)
 if(_HIT_AuthenticateSession="Session-Authenticated-OK")
-//_HIT_HTMLTXT:="<h1>AUTH</h1>"
 _HTMLTITLETXT:="Invoices Status"
 else
 _HIT_HTTPD_RedirectToURL ("sign-in.shtml")
@@ -14,17 +13,8 @@ end if
     <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
     
 
-	<!-- <link rel="stylesheet" href="css/base/jquery-ui.css" /> -->
-
-    <!-- this page specific styles -->
-    <link rel="stylesheet" href="css/compiled/index.css" type="text/css" media="screen" />   
-	
-	<link rel="stylesheet" href="css/autocomplete.css" />
-		<!--[if lt IE 9]>
-		  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-		<![endif]-->
 	</head>
-	<body style="background-color:#FFFFFF">
+	<body >
 
 	<!--#4DIF (_HIT_WebApp_GetField ("view")="small")-->
 
@@ -88,7 +78,6 @@ end if
 
 		<!-- scripts -->
 		<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
-		<!-- <script src="js/ui/jquery-ui.js"></script> -->
 		<script src="js/bootstrap.datepicker.js"></script>
 		<script src="js/jquery.uniform.min.js"></script>
 		<!-- charts -->
