@@ -31,7 +31,7 @@ function load_navigation_data(){
 		if(result.Alert){
 			//
 		}else{
-			var table_html='<li><a href="index.shtml"><i><img src="img/home.png"  alt=""/></i><span>Home</span></a></li>';
+			var table_html='<li><a href="index.shtml"><i class="fa fa-dashboard"></i> <span>Dashboard</span><span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span></a></li>';
 			var urlStr = window.location.pathname;
 			var openedFileNameStr = urlStr.substring(urlStr.lastIndexOf('/')+1);
 			
@@ -48,7 +48,7 @@ function load_navigation_data(){
 							var loadSetsFileStr="";
 							$.each(item.Sub_Module, function(i,row){
 								if(openedFileNameStr==row.sub_module_file){
-									subTableHtmlStr+='<li class="active">';
+									subTableHtmlStr+='<li class="active ">';
 									activeMenuFlag=true;
 								}else{
 									subTableHtmlStr+='<li>';
@@ -56,28 +56,28 @@ function load_navigation_data(){
 								if(i==0 && loadSetsFileStr==""){
 									loadSetsFileStr=row.sub_module_file;
 								}
-								subTableHtmlStr+='<a href="'+row.sub_module_file+'" target="_blank" onclick="saveusermodulepreferences(\''+item.uuid+'\');">'+row.sub_module_name+'</a></li>';
+								subTableHtmlStr+='<a href="'+row.sub_module_file+'" target="_blank" onclick="saveusermodulepreferences(\''+item.uuid+'\');"><i class="fa fa-circle-o"></i> '+row.sub_module_name+'</a></li>';
 							});
 									
 							if(activeMenuFlag){
-								table_html+='<li class="active">';
+								table_html+='<li class="active treeview">';
 							}else{
-								table_html+='<li>';
+								table_html+='<li class="treeview">';
 							}
-							table_html+='<a class="dropdown-toggle" href="javascript:void(0)" onclick="toggle_left_submenu(this)">';
+							table_html+='<a href="javascript:void(0)" onclick="toggle_left_submenu(this)">';
 							if(pathStr>=0 || imgPathStr>=0 || imagesPathStr>=0){
-								table_html+='<i><img width="24" height="24" alt="" src="'+iconStr+'"></i>';
+								table_html+='<i><img width="18" height="18" alt="" src="'+iconStr+'"></i>';
 							}else{
 								table_html+='<i class="'+iconStr+'"></i>';
 							}
-							table_html+='<span>'+item.module_name+'</span><i class="icon-chevron-down"></i></a>';
+							table_html+='<span>'+item.module_name+'</span><i class="icon-chevron-down"></i><span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span></a>';
 							if(activeMenuFlag){
-								table_html+='<div class="pointer"><div class="arrow"></div><div class="arrow_border"></div></div><ul class="submenu active">';
+								table_html+='<ul class="submenu active treeview-menu">';
 							}else{
-								table_html+='<ul class="submenu">';
+								table_html+='<ul class="submenu treeview-menu">';
 							}
 							table_html+=subTableHtmlStr;
-							if(item.Sets){
+							/**if(item.Sets){
 								if(item.Sets!=""){
 					        		table_html+='<li><a class="dropdown-toggle" href="javascript:void(0)" onclick="toggle_left_submenu(this)"><span style="margin-left: 1px;"><strong> Sets</strong></span><i class="icon-chevron-down" style="padding-right: 13px;"></i>';
 									table_html+='</a><ul class="submenu" style="padding-left: 15px;padding-bottom: 1px;list-style-type: none; border-bottom: 1px ; box-shadow: 0 0px 1px -1px;">';
@@ -86,7 +86,7 @@ function load_navigation_data(){
 									});					
 									table_html+='</ul></li>';
 								}
-							}
+							}**/
 							table_html+='</ul>';
 						}							
 					}
