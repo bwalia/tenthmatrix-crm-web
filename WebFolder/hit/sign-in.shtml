@@ -41,15 +41,18 @@ _HTMLTITLETXT:="Detail Admin - Sign in"
                                <!-- <a href="index.html" class="btn btn-lg btn-success btn-block">Login</a>-->
                                 <a href="javascript:$('#form-auth').submit()" class="btn btn-light-orange" style="WIDTH: 100%; font-size:17px; line-height: 27px;" >Login</a>
                                 <p class="text-right"><small><a href="forgot_password.shtml"><em>forgot password?</em></a></small></p>
-                                <div style="margin: 0px; padding-top: 30px; color: #999333; font-size: 10px">Version: <!--HIT_EXECUTE _HIT_HTMLTXT:=Sys_VersionGet--></div></div>
-                                <div class="span4 no-account">
-            <p>Don't have an account?</p>
-            <a href="signup.html">Sign up</a>
-                           
-        </div>
+                                <div style="margin: 0px; padding-top: 15px; font-size: 10px; text-align: center;">Version: <!--HIT_EXECUTE _HIT_HTMLTXT:=Sys_VersionGet--></div></div>
+                             
                             </fieldset>
                         </form>
                     </div>
+					
+					   <div class="row">
+            <div class="col-md-8">Don't have an account?</div>
+           <div class="col-md-4"> <a href="signup.html">Sign up</a></div>
+                           
+        </div>
+					
                 </div>
                 
             </div>
