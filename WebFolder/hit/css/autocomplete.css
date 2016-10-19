@@ -1,8 +1,16 @@
+ 
+
+ 
+ 
+ 
+ 
  .custom-combobox {
     position: relative;
     display: inline-block;
 	font-family: "Open Sans", Arial;
     font-size: 12px;
+	top: 14px;
+	right:26px;
   }
   .custom-combobox-toggle {
     position: absolute;
@@ -23,7 +31,7 @@
 	height:auto;
 	 line-height: 19px !important;
     background: #fafafa !important;
-    padding: 6px;
+   padding: 7px 6px;
 	border: 1px solid #ddd;
   }
   .ui-autocomplete{
@@ -451,5 +459,13 @@ input.search {
 .table-wrapper .filter-block .new-product {
     padding: 8px 13px;
 }
+
+
+
+
+
+
+
+
  
  

@@ -25,6 +25,10 @@ body {
 	overflow-y: auto
 }
 
+
+
+
+
 @font-face {	
 	font-family: 'icomoon';
 	src:url('../fonts/icomoon/icomoon.eot');
@@ -88,6 +92,10 @@ border-top:none;
 .btn-light-orange.focus, .btn-light-orange:focus{
 	background-color: #dc9a1e!important;
 }
+
+
+
+
 
 
 
@@ -4808,7 +4816,7 @@ a {
 .btn-inline >.btn-left-align {
 	position: absolute;
 	right: 0;
-	top: -5px;
+	top: 7px;
 	margin: 8px 2px 0 0;
 }
 .btn-inline > .btn-left-align > i {
@@ -4902,6 +4910,9 @@ table > tbody > tr > td {
 .table{
 
 }
+
+
+
 
 
 

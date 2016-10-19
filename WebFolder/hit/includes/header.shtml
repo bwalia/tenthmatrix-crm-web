@@ -18,3 +18,24 @@
   	<link rel="stylesheet" href="css/skins/_all-skins.min.css">
 
 	<link rel="stylesheet" href="css/base/jquery-ui.css" />
+	<link rel="stylesheet" href="css/base/date-picker.css" />
+	
+	<style>
+	 .btn-left{
+	border-radius:4px 0px 0px 4px;
+	margin-right: -4px;
+	color:#fff!important;
+	}
+									
+.btn-middle{
+border-radius:0px;
+margin-right: -5px;
+color:#fff!important;
+}
+									
+.btn-right{
+border-radius:0px 4px 4px 0px;
+color:#fff!important;
+}
+	
+	</style>
