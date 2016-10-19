@@ -17,7 +17,7 @@ end if
 <html>
 <head>
 <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
-<!-- <link rel="stylesheet" href="css/base/jquery-ui.css" /> -->
+<link rel="stylesheet" href="css/basictable.css">
 <link rel="stylesheet" href="css/autocomplete.css" />
 <link rel="stylesheet" media="all" type="text/css" href="css/jquery-impromptu.css" />
 <style>
@@ -33,142 +33,112 @@ end if
 
 </style>
 </head>
-<body>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
 
 <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
 
 <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
 
 	<!-- main container -->
-    <div class="content">
-        
-        <div class="container-fluid">
-            <div id="pad-wrapper">
-
-                <!-- Task table -->
-                <div class="table-wrapper orders-table section">
-                    <div class="row-fluid head">
-                        <div class="span12">
-                            <h4>Tasks</h4>
-                        </div>
-                    </div>
-					<form id="frm_set" name="frm_set" method="get" action="tasks.shtml">
-                    <div class="row-fluid filter-block">
-						
-							
-							<div class="ui-select" style="display:none;" >
-								<select name="createorder" id="createorder" onChange="__generateOrderOption(this.value)" >
-									<option value="">--Generate Order--</option>
-									<option value="new">Generate new order</option>
-									<option value="old">Add to existing order</option>
-								</select>
+    <div class="content-wrapper">
+        <section class="content-header">
+      		<h1>
+        		Tasks
+        		<small>List panel</small>
+      		</h1>
+      		<ol class="breadcrumb">
+       			<li><a href="index.shtml"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+        		<li class="active">Tasks</li>
+      		</ol>
+    	</section>
+		<section class="content">
+			<div CLASS="row">
+				<div CLASS="col-md-12">
+					<div class="clearfix hidden-xs">
+      					<div class="form-group no-margin">
+     						<div class="pull-right margin-bottom-10 ">
+								<div class="form-inline" style="">                 	          
+                 					<div class="btn-inline display-inline-block">
+                 						<label>Projects:</label>
+										<select name="proj" id="proj" class="form-control" onChange="__showProjectTask(this.value)" >
+											<option value="">--Select Project--</option>
+											<!--#4DSCRIPT/Web_LoadProjects/-->
+											<!--4DLOOP [Projects]-->
+												<option value="<!--#4DVAR [Projects]proj_id-->" ><!--4DVAR [Projects]proj_name--></option>
+											<!--4DENDLOOP-->
+										</select>
+										<input class="form-control searchFieldClass keyword_type" style="min-width:225px; height:36px;" placeholder="Search for Task.." name="keyword" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" type="text">
+										<button class="btn btn-left-align btn-link no-shadow bg-transparent no-padding-top padding-right-10 right-auto left" type="button" id="searchBtn"><i class="glyphicon glyphicon-search"></i></button>
+									</div>
+									<button class="btn left large showall" onClick="__filtertasks(''); return false;">All</button>                                
+									<button class="btn middle large showactive" onClick="__filtertasks('Active'); return false;">Active</button>
+									<button class="btn right large showdone" onClick="__filtertasks('Done'); return false;">Done</button>
+                                    <a href="task.shtml" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink " style=""> <i class="fa fa-plus"></i>Add New Task</a>
+                  				</div>
+         					</div>
+      					</div>
+     				</div>
+					<div class="visible-xs ">
+						<div class="row">
+							<div class="col-lg-6 col-sm-12 col-xs-12">
+								<div>
+									<input class="form-control xs-margin-btm10 searchFieldClass keyword_type" name="keyword" placeholder="Search for Task.." value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" type="text">
+                     				<a href="task.shtml" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink" STYLE="width:100%; margin:10px 0px;"> <i class="fa fa-plus"></i>Add New Task</a>  
+                  				</div>
 							</div>
-							<div class="pull-right">
-							<div class="ui-widget pull-left" style="margin-right:20px;margin-bottom: -26px;">
-							<span style="padding-bottom: 26px; vertical-align: middle; padding-right: 5px;">Projects:</span>
-								<select name="proj" id="proj" onChange="__showProjectTask(this.value)" >
-								<option value="">--Select Project--</option>
-								<!--#4DSCRIPT/Web_LoadProjects/-->
-								<!--4DLOOP [Projects]-->
-									<option value="<!--#4DVAR [Projects]proj_id-->" ><!--4DVAR [Projects]proj_name--></option>
-								<!--4DENDLOOP-->
-								</select>
-							</div>
-								<div class="btn-group pull-right">
-									<input name="keyword_type" id="keyword_type" type="text" class="search order-search" placeholder="Search for Task.." value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" />
-									<button class="glow left large showall" onClick="__filtertasks(''); return false;">All</button>                                
-									<button class="glow middle large showactive" onClick="__filtertasks('Active'); return false;">Active</button>
-									<button class="glow right large showdone" onClick="__filtertasks('Done'); return false;">Done</button>
-									<a href="task.shtml" class="btn-flat success new-product margn-lft35">+ Add New Task</a>
-								</div>
-								
-							</div>						
-                    </div>
-					</form>
-                    <div class="row-fluid">
-					<input id="task_uuid" type="hidden" value="">
-					<input id="token" type="hidden" value="">
-                        <table class="table table-hover">
+						</div>
+					</div>
+				</div>
+			</div>
+   			<div class="row">
+	  			<div class="content table-responsive table-full-width">
+		 			<div class="table-responsive" style="border:none;" >
+                        <table class="table table-striped  table-bordered table-hover custom-tbl-st bt" id="table-breakpoint"  style="background-color: rgb(255, 255, 255); border-radius: 4px;" >
                             <thead>
                                 <tr>
-                                	<th>
-                                        <input name="select" class="" type="checkbox" id="chk_all" >
-                                    </th>
-                                    <th>
-                                        Task ID
-                                    </th>
-                                     <th width="25%">
-									 <span class="line"></span>
-                                        Task Name
-                                    </th>
-                                    <th >
-									<span class="line"></span>
-                                        Project
-                                    </th>
-									<th >
-									<span class="line"></span>
-                                        Start Date
-                                    </th>
-									<th >
-									<span class="line"></span>
-                                        End Date
-                                    </th>
-                                    <th>
-                                        <span class="line"></span>
-                                        Est. Hrs.
-                                    </th>
-                                     <th>
-                                        <span class="line"></span>
-                                        Rate
-                                    </th>
-                                     <th>
-                                        <span class="line"></span>
-                                        Total Timespent
-                                    </th>
-                                    <th>
-                                        <span class="line"></span>
-                                        Active
-                                    </th>
-                                    <th>
-                                        <span class="line"></span>
-                                        Status
-                                    </th><th WIDTH="7%">
-                                        <span class="line"></span>
-                                        ACTION
-                                    </th> 
-                                </tr>
-                        </thead>
-                        <tfoot>
-                            <tr>  
-                                <th align="left">&nbsp;</th>
-                                <th align="left">TASK ID</th>
-                                <th align="left">TASK NAME</th>
-                                <th align="left">PROJECT</th>
-                                <th align="left">START DATE</th>
-                                <th align="left">END DATE</th>
-                                <th align="left">EST. HRS.</th>
-                                <th align="left">RATE</th>
-                                <th align="left">TOTAL TIMESPENT</th>
-                                <th align="left">ACTIVE</th>
-                                <th align="left">STATUS</th>
-                            	<th align="left">ACTION</th>
-                            </tr>
-                        </tfoot>
-                            <tbody id="tasks_table_body">
-
-                            </tbody>
+                                            <th><input name="select" class="" type="checkbox" id="chk_all" ></th>
+                                    		<th class="col-lg-1">Task ID</th>
+                                            <th class="col-lg-2">Task Name</th>
+                                            <th>Project</th>
+                                            <th>Start Date</th>
+                                            <th>End Date</th>
+                                            <th>Est. Hours</th>
+                                            <th>Rate</th>
+                                            <th>Total Timespent</th>
+                                            <th>Active</th>
+                                            <th>Status</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                     <tfoot>
+                                        <tr>
+                                        	<th>&nbsp;</th>
+                                            <th class="col-lg-1">Task ID</th>
+                                            <th class="col-lg-2">Task Name</th>
+                                            <th>Project</th>
+                                            <th>Start Date</th>
+                                            <th>End Date</th>
+                                            <th>Est. Hours</th>
+                                            <th>Rate</th>
+                                            <th>Total Timespent</th>
+                                            <th>Active</th>
+                                            <th>Status</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </tfoot>
+                                    <tbody id="tasks_table_body">
+                                        
+                                     </tbody>
                         </table>
-                        <input id="selected_vls" type="hidden" value="" />
-									
-						<div id="img_loading_div" style="text-align:center"><img src="loading.gif"  style="padding:20px;" width="34" ></div>
                     </div>
-                </div>
-                <!-- end Tasks table -->
-
-            </div>
-        </div>
-    </div>
-    <div id="generateNewOrderDiv" class="modal modal-modified   hide fade" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				</div>
+			</div>
+      		<!-- /.row (main row) -->
+		</section>
+	</div>
+    <!-- end main container -->
+	<div id="generateNewOrderDiv" class="modal modal-modified   hide fade" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
      	<div class="modal-dialog" role="document">
    			<div class="modal-content">
 				<div class="modal-header">
@@ -249,12 +219,10 @@ end if
 			</div>
 		</div>
     </div>
-    <!-- end main container -->
-	
-	<!-- scripts -->
-    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
-	<!-- <script src="js/ui/jquery-ui.js"></script> -->
-	<script type="text/javascript" src="js/jquery-impromptu.js"></script>
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/top-footer.shtml-->
+</div>
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml-->
+<script src="js/basictable.js"></script>
 <script>
 var JSONdata;
 var start=0, end=50, checkAllFlag=false;
@@ -383,7 +351,7 @@ function __showProjectTask(name){
 	end=25;
 	tab='';
 	keyword='';
-	$("#keyword_type").val('');
+	$(".keyword_type").val('');
 	$('#tasks_table_body').html('');
 	$('#img_loading_div').show();		
 	load_data();
@@ -617,18 +585,31 @@ function __showDownloadPrompt(task_uuid, token){
 }
 
 $(document).ready(function() {
-	$('#keyword_type').focus();
-	keyword= $("#keyword_type").val();
+	$('.keyword_type').focus();
+	keyword= $(".keyword_type").val();
 	__filtertasks("");		 
 	
 	$(window).scroll(function(){
 		if ($(window).scrollTop() == $(document).height() - $(window).height()){
 			if(complete==false && completeScroll==false) {
 				$('#img_loading_div').show();
-				__filtertasks("");
+				start=end+1;
+				end=start+25;
+				load_data();
 			}
 		}
 	});	
+	$('#searchBtn').click(function(){
+		if ($('.keyword_type').val()!="") {
+			$('#tasks_table_body').html('');
+			$('#img_loading_div').show();
+			start=0;
+			end=start+25;
+			load_data();
+		}else{
+			$('.keyword_type').focus();
+		}
+	});
 	$('#n_tax_code').change(function(){
 		var tax_code=$(this).val();
 		if(tax_code=='US'){
@@ -648,9 +629,9 @@ $(document).ready(function() {
 	var doneTypingInterval = 1000;  //time in ms, 5 second for example
 	
 	//on keyup, start the countdown
-	$('#keyword_type').keyup(function(){
+	$('.keyword_type').keyup(function(){
 		clearTimeout(typingTimer);
-		if ($('#keyword_type').val) {
+		if ($('.keyword_type').val) {
 			typingTimer = setTimeout(function(){
 				//do stuff here e.g ajax call etc....
 				$('#tasks_table_body').html('');
@@ -680,7 +661,7 @@ $(document).ready(function() {
 
 var task_uuid= new Array();
 function load_data(){
-	var keyword= $("#keyword_type").val();
+	var keyword= $(".keyword_type").val();
 	var jsonRow = 'loadtasks.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&project='+project;
 	if(keyword!=''){
 		jsonRow +='&keyword='+keyword;
@@ -710,7 +691,7 @@ function load_data(){
 					}else{
 						JSONdata[i][0]='<input name="select" class="check" type="checkbox" id="Select" value="'+item+'"></td>';
 					}
-					JSONdata[i][11]='<ul class="actions"><li><a href="javascript:void(0)" onClick="__showTaskForm(\''+item+'\')" title="Edit"><i class="table-edit"></i></a></li><li><a href="javascript:void(0)" title="Download Pdf" onClick="__showDownloadPrompt(\''+item+'\',\'<!--#4DVAR _HIT_TokenGetAny-->\')"><img width="20" height="18" src="images/dowload-invoice.png"></a></li><li class="last"><atitle="Delete" href="javascript:void(0)" onClick="__deleteSelected(\''+item+'\')"><i class="table-delete"></i></a></li></ul>';	
+					JSONdata[i][11]='<a href="javascript:void(0)" onClick="__showTaskForm(\''+item+'\')" title="Edit"><i class="fa fa-pencil"></i></a><a href="javascript:void(0)" title="Download Pdf" onClick="__showDownloadPrompt(\''+item+'\',\'<!--#4DVAR _HIT_TokenGetAny-->\')"> <i class="fa fa-download"></i></a><a title="Delete" href="javascript:void(0)" onClick="__deleteSelected(\''+item+'\')"> <i class="fa fa-trash-o "></i></a>';	
 					task_uuid[i]=item;				
 				}); 
 				$.each(result.TaskName, function(i,item)
@@ -793,6 +774,10 @@ function load_data(){
 				$('#tasks_table_body').append(table_html);
 
 				complete=false;
+				$('#table').basictable();
+				$('#table-breakpoint').basictable({
+    				breakpoint: 751
+    			});
 
 		}
 		$('#img_loading_div').hide();
@@ -800,9 +785,6 @@ function load_data(){
 	});
 }
 
-
-    </script>
-	<script>
 	 var xhr;
   (function( $ ) {
     $.widget( "custom.combobox", {

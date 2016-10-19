@@ -11,9 +11,7 @@ end if
 <head>
 		
     <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
-    
-
-	</head>
+    </head>
 	<body >
 
 	<!--#4DIF (_HIT_WebApp_GetField ("view")="small")-->

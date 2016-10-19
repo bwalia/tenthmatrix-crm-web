@@ -64,7 +64,7 @@ function load_navigation_data(){
 							}else{
 								table_html+='<li class="treeview">';
 							}
-							table_html+='<a href="javascript:void(0)" onclick="toggle_left_submenu(this)">';
+							table_html+='<a href="javascript:void(0)">';
 							if(pathStr>=0 || imgPathStr>=0 || imagesPathStr>=0){
 								table_html+='<i><img width="18" height="18" alt="" src="'+iconStr+'"></i>';
 							}else{

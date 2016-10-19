@@ -253,6 +253,8 @@ _HIT_HTMLTXT:=String(Sum([Projects]budget))
     </section>
 
   </div>
+  <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/top-footer.shtml-->
+</div>
  <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml-->
  <script src="js/jquery-ui-1.10.2.custom.min.js"></script>
 	<script src="js/jquery.colorbox.js"></script>
