@@ -19,7 +19,6 @@
 
 	<link rel="stylesheet" href="css/base/jquery-ui.css" />
 
-	<link rel="stylesheet" href="css/base/date-picker.css" />
 	
 	<style>
 	 .btn-left{
@@ -42,4 +41,4 @@ color:#fff!important;
 	</style>
 
 	<link rel="stylesheet" media="all" type="text/css" href="css/jquery-impromptu.css" />
-
+	

@@ -137,6 +137,7 @@ end if
       		<!-- /.row (main row) -->
 		</section>
 	</div>
+		</section>
     <!-- end main container -->
 	<div id="generateNewOrderDiv" class="modal modal-modified   hide fade" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
      	<div class="modal-dialog" role="document">

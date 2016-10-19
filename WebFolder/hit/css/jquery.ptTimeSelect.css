@@ -1,0 +1,127 @@
+/**
+ * FILE: jquery.ptTileSelect.css
+ * 	Default style for the timeselect container.
+ * 
+ *  LAST UPDATED:
+ * 
+ * 		- $Date: 2009/04/12 20:23:02 $
+ * 		- $Author: paulinho4u $
+ * 		- $Revision: 1.1 $
+ */
+#ptTimeSelectCntr {
+	width: 250px; 
+	font-size: .9em;
+	position: absolute;
+	z-index: 10;
+	display: none;
+}
+#ptTimeSelectCntr .ui-widget{
+	padding: .2em;
+}
+#ptTimeSelectCntr .ui-widget-header {
+	padding: .2em;
+}
+#ptTimeSelectCntr #ptTimeSelectUserTime {
+	font-size: larger;
+	padding: .2em;
+	padding-left: 1em;
+	text-align: center;
+}
+#ptTimeSelectCntr #ptTimeSelectCloseCntr {
+	display: block;
+	padding: .2em;
+}
+#ptTimeSelectCntr #ptTimeSelectCloseCntr a {
+	display: block;
+	padding: .2em;
+}
+#ptTimeSelectCntr .ui-widget-content {
+	 margin-top: .1em;
+	 margin-bottom: .1em; 
+	 padding: .2em;	
+}
+#ptTimeSelectCntr .ui-widget.ui-widget-content {
+	margin-top: 0;
+}
+#ptTimeSelectCntr .ptTimeSelectLeftPane.ui-widget-content {
+	border-top:none;
+	border-bottom:none;
+	border-left:none;
+	border-right-width: 2px;
+}
+#ptTimeSelectCntr .ptTimeSelectRightPane.ui-widget-content {
+	border: none;
+}
+#ptTimeSelectCntr .ptTimeSelectHrCntr a,
+#ptTimeSelectCntr .ptTimeSelectMinCntr a {
+	display: block;
+	float: left;
+	padding: .2em;
+	width: 1.9em;
+	margin: 1px;
+	text-align: center;
+	text-decoration: none;
+}
+#ptTimeSelectCntr .ptTimeSelectHrAmPmCntr a {
+	text-align: center;
+	margin: 1px;
+	width: 30% !important;
+}
+#ptTimeSelectCntr .ptTimeSelectTimeLabelsCntr {
+	font-weight: bold;
+	font-size: .9em;
+}
+#ptTimeSelectCntr #ptTimeSelectSetButton {
+	padding-top: .2em;
+	padding-bottom: .2em;
+}
+#ptTimeSelectCntr #ptTimeSelectSetButton a {
+ 	display: block;
+padding: 4px 0px;
+width: 100%!important;
+text-align: center;
+float: right;
+background-color: #029bd3 !important;
+border: none;
+color: #fff;
+text-align: center;
+margin:0px!important;
+float:left;
+}
+
+
+#ptTimeSelectCntr #ptTimeSelectSetButton a:hover {
+	background:#212121!important;
+	
+}
+
+
+#EndTimeButton{
+background-color: #e57701 !important;
+border: none;
+color: #fff;
+padding: 4px 8px 5px 9px;
+vertical-align: super;
+border-radius: 4px;
+font-size: 13px;
+}
+
+#EndTimeButton:hover{
+background-color: #000!important;
+}
+
+#StartTimeButton{
+background-color: #e57701 !important;
+border: none;
+color: #fff;
+padding: 4px 8px 5px 9px;
+vertical-align: super;
+border-radius: 4px;
+font-size: 13px;
+}
+
+
+#StartTimeButton:hover{
+	background-color: #000!important;
+}
+

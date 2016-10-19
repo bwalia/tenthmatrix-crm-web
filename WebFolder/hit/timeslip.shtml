@@ -38,11 +38,8 @@ end if
 <html>
 <head>
 	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
-    <link rel="stylesheet" type="text/css" href="lib/base.css" />
-
-	<!-- <link rel="stylesheet" href="css/base/jquery-ui.css" /> -->
+	 <link href="css/bootstrap.datepicker.css" type="text/css" rel="stylesheet">
 	<link rel="stylesheet" type="text/css" href="css/jquery.ptTimeSelect.css" />
-	<link rel="stylesheet" media="all" type="text/css" href="css/jquery-impromptu.css" />
 	<link rel="stylesheet" href="css/autocomplete.css" />
 	<style>
 	#ptTimeSelectCntr{
@@ -67,28 +64,36 @@ border: 1px solid #d3d3d3;
 	
 	</style>
 </head>
-<body>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
 
 	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
 
     <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
 
 	<!-- main container -->
-    <div class="content" >
-        
-        <div class="container-fluid">
-            <div id="pad-wrapper" class="form-page">
-				 <div class="row-fluid header">
-                    <h3><!--#4DIF (Records in selection([Timeslips])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> TimeSlip</h3>
-                </div>
-                <div class="row-fluid form-wrapper">
-					<!-- left column -->
-                    <div class="span9 with-sidebar">
-						<form name="Timeslip" ID="timeslipnew" action="savetimeslip.cgi" class="form-comment" method="post">         
-							<div class="field-box">
-                                <label>Task Name <span style="color:#6E829B">*</span></label>
-								<div class="ui-widget">
-									<select name="Task_ID" id="Task_ID" CLASS="span3">
+    <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        <!--#4DIF (Records in selection([Timeslips])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> TimeSlip
+    </h1>
+      <ol class="breadcrumb">
+        <li><a href="index.shtml"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active"><!--#4DIF (Records in selection([Timeslips])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> TimeSlip</li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+   		<div class="row">
+       		<div class="panel-body no-padding-top bg-white"> 
+				<div class=" col-sm-12 col-lg-8">
+						<form name="Timeslip" ID="timeslipnew" action="savetimeslip.cgi" class="form-horizontal" method="post">         
+							<div class="form-group">
+    							<label for="" class="col-sm-3 control-label">Task Name <span style="color:#6E829B">*</span></label>
+								<div class="ui-widget col-sm-9">
+									<select name="Task_ID" id="Task_ID" CLASS="form-control">
 									<!--#4DIF (Records in selection([Timeslips])=0)-->
 										<!--#4DIF (pUserTask="")-->
 										<option value=""></option>
@@ -105,38 +110,53 @@ border: 1px solid #d3d3d3;
 									</select>
 								</div>
 							</div> 
-							 <div class="field-box">
-                                <label>Employee Name</label>
-								<div class="ui-select span4">
-									<select name="Employee_ID" id="Employee_ID">
+							<div class="form-group">
+    							<label for="" class="col-sm-3 control-label">Employee Name</label>
+								<div class="ui-select col-sm-9">
+									<select name="Employee_ID" id="Employee_ID" class="form-control">
 									<!--HIT_EXECUTE _HIT_HTMLTXT:=Web_TimeSlipEmpHTMLPopup([Timeslips]uuid_employee)-->
 									</select>
 								</div>
                             </div>
                             <input name="Timeslip_uuid" class="span9" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="Timeslip_uuid">                      
-                            <div class="field-box">
-                                <label>Slip Start Date <span style="color:#6E829B">*</span></label>	
-													
-                                <input <!--#4DIF (mUserIsCurrentBool)--> class="input-large time " <!--#4DELSE--> class="input-large datepicker time span4" <!--#4DENDIF--> type="text"  data-date-format="dd/mm/yyyy" <!--#4DIF (timestamp_unix_toDate([Timeslips]Timestamp_start)=!01/01/1970!)-->value="<!--#4DHTMLVAR Current date -->"<!--4DELSE-->value="<!--#4DHTMLVAR timestamp_unix_toDate([Timeslips]Timestamp_start)-->"<!--4DENDIF--> name="Slip_Date" id="Slip_Date"  readonly>
+                            <div class="form-group">
+    							<label for="" class="col-sm-3 control-label">Slip Start Date <span style="color:#6E829B">*</span></label>	
+								<div class="col-sm-6  ">					
+                             		<input <!--#4DIF (mUserIsCurrentBool)--> class="input-large time " <!--#4DELSE--> class="input-large datepicker time form-control" <!--#4DENDIF--> type="text"  data-date-format="dd/mm/yyyy" <!--#4DIF (timestamp_unix_toDate([Timeslips]Timestamp_start)=!01/01/1970!)-->value="<!--#4DHTMLVAR Current date -->"<!--4DELSE-->value="<!--#4DHTMLVAR timestamp_unix_toDate([Timeslips]Timestamp_start)-->"<!--4DENDIF--> name="Slip_Date" id="Slip_Date"  readonly>
+                            	</div>
                             </div>
 							
-							 <div class="field-box">
-                                <label>Slip Timer Started </label>
-								<input <!--#4DIF (mUserIsCurrentBool)-->readonly <!--#4DELSE--><!--#4DENDIF-->class="time timePicker" type="text" value="<!--#4DVAR timestamp_unix_toTime ([Timeslips]Timestamp_start)-->" name="Slip_TimerStarted" id="setStartTime" >&nbsp;&nbsp;&nbsp;
-								<!--#4DIF (mUserIsCurrentBool)--> <!--#4DELSE--><button id="StartTimeButton" type="button">Set current time</button><!--#4DENDIF-->
+							 <div class="form-group">
+    							<label for="" class="col-sm-3 control-label">Slip Timer Started </label>
+    							<div class="col-sm-3">	
+									<input <!--#4DIF (mUserIsCurrentBool)-->readonly <!--#4DELSE--><!--#4DENDIF-->class="time timePicker form-control" type="text" value="<!--#4DVAR timestamp_unix_toTime ([Timeslips]Timestamp_start)-->" name="Slip_TimerStarted" id="setStartTime" >&nbsp;&nbsp;&nbsp;
+								</div>
+								<!--#4DIF (mUserIsCurrentBool)--> <!--#4DELSE-->
+								<div class="col-sm-3">	
+									<button id="StartTimeButton" type="button">Set current time</button>
+								</div>
+								<!--#4DENDIF-->
                             </div>
-							<div class="field-box">
-                                <label>Slip End Date </label>
-                                <input <!--#4DIF (mUserIsCurrentBool)--> class="input-large time " <!--#4DELSE--> class="input-large datepicker time span4" <!--#4DENDIF--> data-date-format="dd/mm/yyyy" type="text" <!--#4DIF (timestamp_unix_toDate([Timeslips]Timestamp_end)=!01/01/1970!)-->value="<!--#4DHTMLVAR Current date -->"<!--4DELSE-->value="<!--#4DHTMLVAR timestamp_unix_toDate([Timeslips]Timestamp_end)-->"<!--4DENDIF--> name="Slip_EndDate" id="Slip_EndDate"  readonly>
+							<div class="form-group">
+    							<label for="" class="col-sm-3 control-label">Slip End Date </label>
+                                <div class="col-sm-6  ">
+                                	<input <!--#4DIF (mUserIsCurrentBool)--> class="input-large time " <!--#4DELSE--> class="input-large datepicker time form-control" <!--#4DENDIF--> data-date-format="dd/mm/yyyy" type="text" <!--#4DIF (timestamp_unix_toDate([Timeslips]Timestamp_end)=!01/01/1970!)-->value="<!--#4DHTMLVAR Current date -->"<!--4DELSE-->value="<!--#4DHTMLVAR timestamp_unix_toDate([Timeslips]Timestamp_end)-->"<!--4DENDIF--> name="Slip_EndDate" id="Slip_EndDate"  readonly>
+                            	</div>
                             </div>
-							<div class="field-box">
-                                <label>Slip Timer End </label>
-									<input <!--#4DIF (mUserIsCurrentBool)-->readonly <!--#4DELSE--><!--#4DENDIF-->class="time timePicker" type="text" value="<!--#4DVAR timestamp_unix_toTime ([Timeslips]Timestamp_end)-->" name="Slip_Timer_End" id="setEndTIme">&nbsp;&nbsp;&nbsp;
-									<!--#4DIF (mUserIsCurrentBool)--> <!--#4DELSE--><button id="EndTimeButton" type="button">Set current time</button><!--#4DENDIF-->           	
+							<div class="form-group">
+    							<label for="" class="col-sm-3 control-label">Slip Timer End </label>
+    							<div class="col-sm-3">
+									<input <!--#4DIF (mUserIsCurrentBool)-->readonly <!--#4DELSE--><!--#4DENDIF-->class="time timePicker form-control" type="text" value="<!--#4DVAR timestamp_unix_toTime ([Timeslips]Timestamp_end)-->" name="Slip_Timer_End" id="setEndTIme">&nbsp;&nbsp;&nbsp;
+								</div>  
+								<!--#4DIF (mUserIsCurrentBool)--> <!--#4DELSE-->
+								<div class="col-sm-3">
+									<button id="EndTimeButton" type="button">Set current time</button>
+								</div>     
+								<!--#4DENDIF-->      	
                             </div>
                             
-                            <div class="field-box">
-                                <label>Break time </label>
+                            <div class="form-group">
+    							<label for="" class="col-sm-3 control-label">Break time </label>
 								<span id="err_msg" style="color:#FF0000"></span>
 								<input class="lunchinterval" type="checkbox" style="margin-left:10px; margin-right:5px;margin-top:-2px;" <!--#4DIF (mUserIsCurrentBool)-->disabled <!--#4DELSE--><!--#4DIF ([Timeslips]exclude_lunch)-->checked disabled<!--4DELSE--><!--4DENDIF--><!--#4DENDIF--> name="lunchinterval" id="lunchinterval" value="true"> Exclude break time 
                            		<span style="display:none;" class="intervalTimeSpan"></span>
@@ -150,36 +170,46 @@ border: 1px solid #d3d3d3;
 								<input <!--#4DIF (mUserIsCurrentBool)-->readonly <!--#4DELSE--><!--#4DENDIF-->class="time brkTimePicker span1" type="text" value="" name="setBreakEndTime" id="setBreakEndTime">&nbsp;&nbsp;&nbsp;
                            		<span id="Errmessage" style="color:#FF0000"></span>
                             </div>
-                            <div class="field-box">
-                                <label>Slip Hours </label>
+                            <div class="form-group">
+    							<label for="" class="col-sm-3 control-label">Slip Hours </label>
 								<span id="err_msg" style="color:#FF0000"></span>
-								<input class="span4 num" name="Slip_Hours" id="Slip_Hours" type="text" value="<!--#4DVAR [Timeslips]slip_hours-->" readonly>
+								<div class="col-sm-6  ">
+								<input class="form-control num" name="Slip_Hours" id="Slip_Hours" type="text" value="<!--#4DVAR [Timeslips]slip_hours-->" readonly>
+								</div>
                            	</div>
                            	
-                           	<div class="field-box" <!--#4DIF ([Timeslips]interval_time=0)-->style="display:none;"<!--#4DENDIF-->>
-                                <label>Lunch Break </label>
+                           	<div class="form-group" <!--#4DIF ([Timeslips]interval_time=0)-->style="display:none;"<!--#4DENDIF-->>
+                                <label for="" class="col-sm-3 control-label">Lunch Break </label>
 								<span id="err_msg" style="color:#FF0000"></span>
-								<input class="span4 num" name="interval_time" id="interval_time" type="text" value="<!--#4DVAR [Timeslips]interval_time*60--> minutes" readonly>
+								<div class="col-sm-6  ">
+									<input class="form-control num" name="interval_time" id="interval_time" type="text" value="<!--#4DVAR [Timeslips]interval_time*60--> minutes" readonly>
+								</div>
                            	</div>
                            	
                            	
-							<div class="field-box">
-                                <label>Slip Description <span style="color:#6E829B">*</span></label>
-                                <textarea <!--#4DIF (mUserIsCurrentBool)-->readonly readonly="readonly" <!--#4DELSE--><!--#4DENDIF-->class="span4" rows="4" name="Slip_Description" id="Slip_Description"><!--#4DVAR [Timeslips]slip_description--></textarea>
+							<div class="form-group">
+    							<label for="" class="col-sm-3 control-label">Slip Description <span style="color:#6E829B">*</span></label>
+    							<div class="col-sm-6  ">
+                                	<textarea <!--#4DIF (mUserIsCurrentBool)-->readonly readonly="readonly" <!--#4DELSE--><!--#4DENDIF-->class="form-control" rows="4" name="Slip_Description" id="Slip_Description"><!--#4DVAR [Timeslips]slip_description--></textarea>
+                            	</div>
                             </div>                            
                            
-                            <div class="field-box">
-                                <label>Slip Rate</label>
-								<input <!--#4DIF (mUserIsCurrentBool)-->readonly readonly="readonly" <!--#4DELSE--><!--#4DENDIF-->class="span4 num" name="Slip_Rate" id="Slip_Rate" type="text" value="<!--#4DVAR [Timeslips]slip_rate-->">
+                            <div class="form-group">
+    							<label for="" class="col-sm-3 control-label">Slip Rate</label>
+    							<div class="col-sm-6  ">
+									<input <!--#4DIF (mUserIsCurrentBool)-->readonly readonly="readonly" <!--#4DELSE--><!--#4DENDIF-->class="form-control num" name="Slip_Rate" id="Slip_Rate" type="text" value="<!--#4DVAR [Timeslips]slip_rate-->">
+                            	</div>
                             </div>
-                            <div class="field-box">
-                                <label>Slip timer accumulated seconds</label>
-								<input <!--#4DIF (mUserIsCurrentBool)-->readonly readonly="readonly" <!--#4DELSE--><!--#4DENDIF-->type="text" name="slip_timer_accumulated_seconds" class="span4 num" value="<!--#4DVAR [Timeslips]slip_timer_accumulated_seconds-->">                                                           
+                            <div class="form-group">
+   								<label for="" class="col-sm-3 control-label">Slip timer accumulated seconds</label>
+   								<div class="col-sm-6  ">
+									<input <!--#4DIF (mUserIsCurrentBool)-->readonly readonly="readonly" <!--#4DELSE--><!--#4DENDIF-->type="text" name="slip_timer_accumulated_seconds" class="form-control num" value="<!--#4DVAR [Timeslips]slip_timer_accumulated_seconds-->">                                                           
+                            	</div>
                             </div>
-                            	<div class="field-box">
-                                    <label>Billing Status</label>
-                                    <div class="ui-select span4">
-										<Select <!--#4DIF (mUserIsCurrentBool)-->readonly readonly="readonly" <!--#4DELSE--><!--#4DENDIF-->name="Billing_Status" id="Billing_Status" name="Billing_Status">
+                            <div class="form-group">
+    							<label for="" class="col-sm-3 control-label">Billing Status</label>
+                                    <div class="ui-select col-sm-6  ">
+										<select <!--#4DIF (mUserIsCurrentBool)-->readonly readonly="readonly" <!--#4DELSE--><!--#4DENDIF--> class="form-control" id="Billing_Status" name="Billing_Status">
 											<option value="0" <!--#4DIF ([Timeslips]billing_status=0)-->selected<!--4DELSE--><!--4DENDIF-->>Non Chargeable</option>
 											<option value="1"  <!--#4DIF ([Timeslips]billing_status=1)-->selected<!--4DELSE--><!--4DENDIF-->>Chargeable</option>
 											<option value="2"  <!--#4DIF ([Timeslips]billing_status=2)-->selected<!--4DELSE--><!--4DENDIF-->>Billed</option>
@@ -232,31 +262,31 @@ border: 1px solid #d3d3d3;
 								
 							</div>
 							
-							<div class="span11 field-box" style="text-align: left; margin-left: 139px;">
+							<div class="form-group">
+								<label for="" class="col-sm-3 control-label"></label>
+                                <div class="ui-select col-sm-6  ">
                                     <!--#4DIF (mUserIsCurrentBool)-->
-<a href="timeslips.shtml">Go Back</a><!--#4DELSE-->
-<input type="button" class="btn-glow primary" value="Submit" onClick="return ValidateForm();">
-                                   <a href="timeslips.shtml"  class="cancelbtn">Cancel</a>
+										<a href="timeslips.shtml" class="btn btn-danger btn-sm ">Go Back</a><
+									<!--#4DELSE-->
+										<input type="button" class="btn btn-primary btn-color margin-right-5 btn-sm" value="Submit" onClick="return ValidateForm();">
+                                   		<a href="timeslips.shtml" class="btn btn-danger btn-sm ">Cancel</a>
                                     <!--#4DENDIF--> 
+                                </div>
                             </div>							
                         </form>
                     </div>
+                    </div>
 				</div>
-            </div>
+            </section>
         </div>
-    </div>
     <!-- end main container -->
-
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/top-footer.shtml-->
+</div>
 	<!-- scripts for this page -->
    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
-   <!-- <script src="js/ui/jquery-ui.js"></script> -->
-    <script src="js/bootstrap.datepicker.js"></script>
-    <script src="js/jquery.uniform.min.js"></script>
-	
-	
-	<script type="text/javascript" src="js/jquery.ptTimeSelect.js"></script>
-   	<script type="text/javascript" src="js/jquery-impromptu.js"></script>
-	
+   	<script src="js/bootstrap.datepicker.js"></script>
+    <script type="text/javascript" src="js/jquery.ptTimeSelect.js"></script>
+   	
     <!-- call this page plugins -->
 <script language="javascript">
 function ValidateForm () {
