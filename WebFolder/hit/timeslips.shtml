@@ -5,14 +5,11 @@ C_LONGINT(_HIT_COUNTER)
 C_TEXT(_HTMLTITLETXT)
 
 if(_HIT_AuthenticateSession="Session-Authenticated-OK")
-//_HIT_HTMLTXT:="<h1>AUTH</h1>"
 QUERY([Tasks];[Tasks]task_id=num(_HIT_WebApp_GetField ("task")))
 _HTMLTITLETXT:="Timeslips"
 else
 _HIT_HTTPD_RedirectToURL ("sign-in.shtml")
 end if 
-
-//_HIT_HTMLTXT:=_HIT_SessionStr
 
 _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
 -->
@@ -23,141 +20,127 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
 <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
 <link rel="stylesheet" href="css/basictable.css">
 <link rel="stylesheet" href="css/autocomplete.css" />
-<link rel="stylesheet" media="all" type="text/css" href="css/jquery-impromptu.css" />
 <style>
-#message {
-	color: #FF0000;
+#message{
+	color:#FF0000;
 }
-.table-wrapper .table ul.actions {
-	float: left;
-}
-.custom-combobox {
-	position: relative;
-	display: inline-block;
-	font-family: "Open Sans", Arial;
-	font-size: 12px;
-	top: 0px;
-	right: 6px;
-}
-.btn-inline > .btn-left-align {
-	position: absolute;
-	right: 4px;
-	top: -6px;
+.table-wrapper .table ul.actions{
+	float:left;
 }
 </style>
 </head>
-
 <body class="hold-transition skin-blue sidebar-mini">
-<div class="wrapper"> 
-		
-		<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml--> 
-		
-		<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml--> 
-		
-		<!-- main container -->
-		<div class="content-wrapper">
-				<div class="container-fluid">
-						<div id="pad-wrapper"> 
-								
-								<!-- timeslips table -->
-								<div class="table-wrapper orders-table section">
-										<div class="row-fluid head">
-												<div class="span12">
-														<h4>Timeslips</h4>
-												</div>
-										</div>
-										<form id="frm_set" name="frm_set" method="get" action="">
-												<div class="row-fluid filter-block">
-														<div class="ui-widget" style="margin-bottom: -50px"> <span style="padding-bottom: 26px; vertical-align: middle; padding-right: 5px;">Tasks:</span>
-																<select name="task" id="task" onChange="__showTaskTimeslips(this.value)" >
-																		<!--#4DIF (_HIT_WebApp_GetField ("task")#"")-->
-																		<option value="<!--4DVAR [Tasks]task_id-->"  ><!--4DVAR [Tasks]task_name--></option>
-																		<!--#4DELSE-->
-																		<option value=""></option>
-																		<!--#4DSCRIPT/Web_LoadTasks/--> 
-																		<!--4DLOOP [Tasks]-->
-																		<option value="<!--4DVAR [Tasks]task_id-->"  ><!--4DVAR [Tasks]task_name--></option>
-																		<!--4DENDLOOP--> 
-																		<!--#4DENDIF-->
-																</select>
-														</div>
-														<div class="pull-right"> </div>
-														<div CLASS="row">
-																<div class="form-group no-margin">
-																		<div class="pull-right margin-bottom-10 ">
-																				<div class="form-inline" style="">
-																						<div class="btn-inline display-inline-block" STYLE="padding-right:10px;">
-																								<input name="keyword_type" id="keyword_type" type="text"  class="form-control searchFieldClass keyword_type" style="min-width:225px; height:36px;" placeholder="Enter client or staff name.." value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->
-																								" />
-																								<button class="btn btn-left-align btn-link no-shadow bg-transparent no-padding-top padding-right-10 right-auto left" type="button" id="searchBtn"><i class="glyphicon glyphicon-search"></i></button>
-																						</div>
-																						<div class="btn-group pull-right" STYLE="margin-right:15px;">
-																								<button class="btn btn-primary btn-left  showall" onClick="__showAllTimeSlips(); return false;">All</button>
-																								<button class="btn btn-primary  btn-middle  showactive" onClick="__showChargeable(); return false;">Chargeable</button>
-																								<button class="btn btn-primary  btn-middle  showactive" onClick="__showNotChargeable(); return false;">Not Chargeable</button>
-																								<button class="btn btn-primary btn-right  showdone" onClick="__showBilled(); return false;" STYLE="border-radius: 0px 4px 4px 0px;
-color: #fff !important;">Billed</button>
-																								&nbsp 
-																								<!--#4DIF (_HIT_WebSession_GetVar ("auth_user_type")#"CLIENTS")-->
-																								
-																								<div  STYLE="padding-left:0px; display:inline-block;"><a href="timeslip.shtml" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink ">+ Add New TimeSheet</a> 
-																										<!--#4DENDIF--></div>
-																						</div>
-																				</div>
-																		</div>
-																</div>
-														</div>
-												</div>
-										</form>
-										<div CLASS="row">
-												<div class="content table-responsive table-full-width">
-														<div class="table-responsive" style="border:none;">
-																<table class="table table-striped  table-bordered table-hover custom-tbl-st" id="table-breakpoint" style="background-color: rgb(255, 255, 255); border-radius: 4px;">
-																		<thead>
-																				<tr>
-																						<th> TASK </th>
-																						<th > PROJECT </th>
-																						<th > EMPLOYEE </th>
-																						<th> START </th>
-																						<th> END </th>
-																						<th> EST. HOURS </th>
-																						<th> RATE </th>
-																						<th> EST. AMOUNT </th>
-																						<th> TIME SLIP STATUS </th>
-																						<th> ACTION </th>
-																				</tr>
-																		</thead>
-																		<tfoot>
-																				<tr>
-																						<th align="left">TASK</th>
-																						<th align="left">PROJECT</th>
-																						<th align="left">EMPLOYEE</th>
-																						<th align="left">START</th>
-																						<th align="left">END</th>
-																						<th align="left">EST. HOURS</th>
-																						<th align="left">RATE</th>
-																						<th align="left">EST. AMOUNT</th>
-																						<th align="left">TIME SLIP STATUS</th>
-																						<th align="left">ACTION</th>
-																				</tr>
-																		</tfoot>
-																		<tbody id="timeslip_table_body">
-																		</tbody>
-																</table>
-																<div id="img_loading_div" style="text-align:center"> <img src="loading.gif"  style="padding:20px;" width="34" > </div>
-														</div>
-												</div>
-										</div>
-								</div>
-								<!-- end timeslips table --> 
-								
+<div class="wrapper">
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
+
+	<!-- main container -->
+    <div class="content-wrapper">
+        <section class="content-header">
+      		<h1>
+        		Timeslips
+        		<small>List panel</small>
+      		</h1>
+      		<ol class="breadcrumb">
+       			<li><a href="index.shtml"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+        		<li class="active">Timeslips</li>
+      		</ol>
+    	</section>
+		<section class="content">
+        	<div CLASS="row">
+				<div CLASS="col-md-12">
+					<div class="clearfix hidden-xs">
+      					<div class="form-group no-margin">
+     						<div class="pull-right margin-bottom-10 ">
+								<div class="form-inline" style="">                 	          
+                 					<div class="btn-inline display-inline-block">
+                 						<label STYLE="right: 30px; position: relative;">Tasks:</label>
+										<select name="task" id="task" onChange="__showTaskTimeslips(this.value)" >
+											<!--#4DIF (_HIT_WebApp_GetField ("task")#"")-->
+											<option value="<!--4DVAR [Tasks]task_id-->"  ><!--4DVAR [Tasks]task_name--></option>
+											<!--#4DELSE-->
+												<option value=""></option>
+												<!--#4DSCRIPT/Web_LoadTasks/-->
+												<!--4DLOOP [Tasks]-->
+													<option value="<!--4DVAR [Tasks]task_id-->"  ><!--4DVAR [Tasks]task_name--></option>
+												<!--4DENDLOOP-->
+											<!--#4DENDIF-->
+											</select>
+										<input class="form-control searchFieldClass keyword_type" style="min-width:225px; height:36px;" placeholder="Search here.." name="keyword" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" type="text">
+										<button class="btn btn-left-align btn-link no-shadow bg-transparent no-padding-top padding-right-10 right-auto left" type="button" id="searchBtn"><i class="glyphicon glyphicon-search"></i></button>
+									</div>
+									
+									<button class="btn btn-primary btn-left" onClick="__showAllTimeSlips(); return false;">All</button>                               
+									<button class="btn btn-primary  btn-middle" onClick="__showChargeable(); return false;">Chargeable</button>                      
+									<button class="btn btn-primary  btn-middle" onClick="__showNotChargeable(); return false;">Not Chargeable</button>
+									<button class="btn btn-primary btn-right" onClick="__showBilled(); return false;">Billed</button>
+                                    <a href="timeslip.shtml" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink " style=""> <i class="fa fa-plus"></i>Add New TimeSheet</a>
+                  				</div>
+         					</div>
+      					</div>
+     				</div>
+					<div class="visible-xs ">
+						<div class="row">
+							<div class="col-lg-6 col-sm-12 col-xs-12">
+								<div>
+									<input class="form-control xs-margin-btm10 searchFieldClass keyword_type" name="keyword" placeholder="Search here.." value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" type="text">
+                     				<a href="timeslip.shtml" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink" STYLE="width:100%; margin:10px 0px;"> <i class="fa fa-plus"></i>Add New TimeSheet</a>  
+                  				</div>
+							</div>
 						</div>
+					</div>
 				</div>
-		</div>
-</div>
-<!-- end main container -->
-<div class="example-container">
-		<pre class="code" style="display:none;" id="no_rec_prompt">
+			</div>
+			
+        	<div CLASS="row">
+            	<div class="content table-responsive table-full-width">
+		 			<div class="table-responsive" style="border:none;" >
+                         <table class="table table-striped  table-bordered table-hover custom-tbl-st bt" id="table-breakpoint"  style="background-color: rgb(255, 255, 255); border-radius: 4px;" >
+                            <thead>
+                                <tr>
+                                    <th class="col-lg-2">TASK</th>
+									<th class="col-lg-2">PROJECT</th>
+                                    <th>EMPLOYEE</th>
+                                    <th>START</th>
+									<th>END</th>                                  
+                                    <th>EST. HOURS</th>
+									<th>RATE</th>
+									<th>EST. AMOUNT</th>
+                                    <th>STATUS</th>
+                                    <th>ACTION</th> 
+                                </tr>
+                            </thead>
+                            <tfoot>
+                            	<tr> 
+                              		<th class="col-lg-2">TASK</th>
+									<th class="col-lg-2">PROJECT</th>
+                                    <th>EMPLOYEE</th>
+                                    <th>START</th>
+									<th>END</th>                                  
+                                    <th>EST. HOURS</th>
+									<th>RATE</th>
+									<th>EST. AMOUNT</th>
+                                    <th>STATUS</th>
+                                    <th>ACTION</th>
+                            	</tr>
+                        	</tfoot>
+                            <tbody id="timeslip_table_body">
+                            </tbody>
+                        </table>
+						<div id="img_loading_div" style="text-align:center">
+							<img src="loading.gif"  style="padding:20px;" width="34" >
+						</div>
+                 	</div>
+                	<!-- end timeslips table -->
+				</div>
+        	</div>
+        	</div>
+        </section>
+    </div>
+    <!-- end main container -->
+	<div class="example-container">
+	<pre class="code" style="display:none;" id="no_rec_prompt">
 									var statesdemo = {
 										state0: {
 											title: 'No more records found',
@@ -177,16 +160,16 @@ color: #fff !important;">Billed</button>
 									if(!($(".jqibox").length))
 									$.prompt(statesdemo);
 								</pre>
-</div>
+							</div>
 
-<!-- scripts --> 
-<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
-<script type="text/javascript" src="js/jquery-impromptu.js"></script> 
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/top-footer.shtml-->
+</div>
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml-->
 <script src="js/basictable.js"></script>
 <script>
 var JSONdata;
 var start=0, end=50;
-var old_srch='',keyword='', jsonRow='', tab='', set='', task='';
+var old_srch='',keyword='', tab='', set='', task='';
 var tablname='Timeslips';
 var duration='<!--#4DVAR _HIT_WebApp_GetField ("duration") -->';
 var complete=false;
@@ -202,25 +185,18 @@ function __showTaskTimeslips(name)
 	start=0;
 	end=25;
 	tab='';
-	keyword='';
-	$("#keyword_type").val('');
-	jsonRow = 'loadtimeslips.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&chargeable='+tab+'&task='+task+'&duration='+duration;
 	$('#timeslip_table_body').html('');
 	$('#img_loading_div').show();		
-	load_data(jsonRow);
+	load_data();
 }
 function __showChargeable()
 {
 	start=0;
 	end=25;
 	tab='on';
-	jsonRow = 'loadtimeslips.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&chargeable='+tab+'&task='+task+'&duration='+duration;
-	if(keyword!=''){
-		jsonRow +='&keyword='+keyword;
-	}
 	$('#timeslip_table_body').html('');
 	$('#img_loading_div').show();		
-	load_data(jsonRow);
+	load_data();
 }
 
 function __showNotChargeable()
@@ -228,13 +204,10 @@ function __showNotChargeable()
 	start=0;
 	end=25;
 	tab='off';
-	jsonRow = 'loadtimeslips.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&chargeable='+tab+'&task='+task+'&duration='+duration;
-	if(keyword!=''){
-		jsonRow +='&keyword='+keyword;
-	}
+
 	$('#timeslip_table_body').html('');
 	$('#img_loading_div').show();		
-	load_data(jsonRow);
+	load_data();
 }
 
 
@@ -243,13 +216,10 @@ function __showBilled()
 	start=0;
 	end=25;
 	tab='billed';
-	jsonRow = 'loadtimeslips.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&chargeable='+tab+'&task='+task+'&duration='+duration;
-	if(keyword!=''){
-		jsonRow +='&keyword='+keyword;
-	}	
+	
 	$('#timeslip_table_body').html('');
 	$('#img_loading_div').show();	
-	load_data(jsonRow);
+	load_data();
 }
 
 
@@ -259,13 +229,10 @@ function __showAllTimeSlips()
 	start=0;
 	end=25;
 	tab='';
-	jsonRow = 'loadtimeslips.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&task='+task+'&duration='+duration;
-	if(keyword!=''){
-		jsonRow +='&keyword='+keyword;
-	}	
+	
 	$('#timeslip_table_body').html('');
 	$('#img_loading_div').show();	
-	load_data(jsonRow);
+	load_data();
 }
 
 function __showTimeslipForm(uuid)
@@ -294,16 +261,10 @@ function __deleteSelected(del_uuid){
 								$.prompt.close();				
 								start=0;
 								end=50;
-								jsonRow = 'loadtimeslips.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&chargeable='+tab+'&task='+task+'&duration='+duration;
-								if(keyword!=''){
-									jsonRow +='&keyword='+keyword;
-								}
-								if(tab!=''){
-									jsonRow +='&tab='+tab;
-								}
+								
 								$('#timeslip_table_body').html('');
 								$('#img_loading_div').show();		
-								load_data(jsonRow);
+								load_data();
 							}else if(html.Error){
 								$.prompt.close();
 								$.prompt(" ", {
@@ -327,33 +288,19 @@ function __deleteSelected(del_uuid){
 
 
 $(document).ready(function() {
-
-$('#task').val('<!--#4DVAR _HIT_WebApp_GetField ("task") -->');
-$('#keyword_type').focus();
-	keyword= $("#keyword_type").val();
-	jsonRow = 'loadtimeslips.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&duration='+duration;
-	if(keyword!=''){
-		jsonRow +='&keyword='+keyword;
-	}		
-	load_data(jsonRow);			 
+	$('#task').val('<!--#4DVAR _HIT_WebApp_GetField ("task") -->');
+	$('.keyword_type').focus();
+	load_data();			 
+	
 	$(window).scroll(function(){
-
 		if ($(window).scrollTop() == $(document).height() - $(window).height()){
 		if(complete==false && completeScroll==false) {
 			$('#img_loading_div').show();
 			//alert("scrolling...");
 			start=end+1;
-			end=start+25;
-			jsonRow = 'loadtimeslips.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&task='+task+'&duration='+duration;
-			if(keyword!=''){
-				jsonRow +='&keyword='+keyword;
-			}
-			if(tab!=''){
-				jsonRow +='&chargeable='+tab;
-			}		
-			load_data(jsonRow);
+			end=start+25;	
+			load_data();
 		}
-		
 		}
 	});	
 		
@@ -362,9 +309,9 @@ $('#keyword_type').focus();
 	var doneTypingInterval = 1000;  //time in ms, 5 second for example
 	
 	//on keyup, start the countdown
-	$('#keyword_type').keyup(function(){
+	$('.keyword_type').keyup(function(){
 		clearTimeout(typingTimer);
-		if ($('#keyword_type').val) {
+		if ($('.keyword_type').val) {
 			typingTimer = setTimeout(function(){
 				//do stuff here e.g ajax call etc....
 				$('#timeslip_table_body').html('');
@@ -372,26 +319,34 @@ $('#keyword_type').focus();
 				start=0;
 				end=start+25;
 				tab='';
-				keyword= $("#keyword_type").val();
-				jsonRow = 'loadtimeslips.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&task='+task+'&duration='+duration;
-				if(keyword!=''){
-					jsonRow +='&keyword='+keyword;
-				}
-				if(tab!=''){
-					jsonRow +='&tab='+tab;
-				}	
-				load_data(jsonRow);
+				load_data();
 			}, doneTypingInterval);
 		}
 	});	
 	
 	$( "#task" ).combobox();	
-
-    });
+	$('#searchBtn').click(function(){
+		if ($('.keyword_type').val()!="") {
+			$('#timeslip_table_body').html('');
+			$('#img_loading_div').show();
+			start=0;
+			end=start+25;
+			load_data();
+		}else{
+			$('.keyword_type').focus();
+		}
+	});
+});
 	
-function load_data(jsonRow){
+function load_data(){
 	completeScroll=true;
 	JSONdata=new Array();
+	var keyword= $(".keyword_type").val();
+	var  jsonRow= 'loadtimeslips.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&chargeable='+tab+'&task='+task+'&duration='+duration;
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}
+	
 	$.getJSON(jsonRow,function(result){
 		//console.log(result)
 		if(result.Alert){
@@ -453,7 +408,7 @@ function load_data(jsonRow){
 			});
 			$.each(result.uuid, function(i,item)
 			{
-				JSONdata[i][9]='<ul class="actions"><li><a href="javascript:void(0)" onClick="__showTimeslipForm(\''+item+'\')"><i class="table-edit"></i></a></li><li><i class="table-settings"></i></li><li class="last"><a href="javascript:void(0)" onClick="__deleteSelected(\''+item+'\')"><i class="table-delete"></i></a></li></ul>';					
+				JSONdata[i][9]='<a href="javascript:void(0)" onClick="__showTimeslipForm(\''+item+'\')" title="Edit"><i class="fa fa-pencil"></i></a><a title="Delete" href="javascript:void(0)" onClick="__deleteSelected(\''+item+'\')"> <i class="fa fa-trash-o "></i></a>';	
 			});
 			
 			var table_html='';
@@ -475,7 +430,10 @@ function load_data(jsonRow){
 			
 			$('#timeslip_table_body').append(table_html);
 			complete=false;
-			
+			$('#table').basictable();
+				$('#table-breakpoint').basictable({
+    				breakpoint: 751
+    			});
 
 		}
 		$('#img_loading_div').hide();
@@ -504,7 +462,7 @@ function chng_time_format(date_time){
 }
 
 
-    </script> 
+    </script>
 <script>
 	 var xhr;
   (function( $ ) {
@@ -690,6 +648,6 @@ function chng_time_format(date_time){
 //
 //  });
 
-  </script>
+  </script>    
 </body>
 </html>
