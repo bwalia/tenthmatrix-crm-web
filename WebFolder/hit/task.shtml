@@ -65,11 +65,6 @@ _HIT_WebSession_SetVar ("last-clicked-uuid";_HIT_WebApp_GetField ("uuid"))
 <html>
 <head>
 	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
-	<link rel='stylesheet' type='text/css' href='css/style.css' />
-	<link rel='stylesheet' type='text/css' href='css/print.css' media="print" />
-	<link href="css/img-tabs.css" type="text/css" rel="stylesheet">
-	<link rel="stylesheet" media="all" type="text/css" href="css/jquery-impromptu.css" />
-	
 	<link rel="stylesheet" href="css/autocomplete.css" />
 <style>
 .custom-combobox a.ui-button, 
@@ -129,134 +124,133 @@ _HIT_WebSession_SetVar ("last-clicked-uuid";_HIT_WebApp_GetField ("uuid"))
 }
 </style>
 </head>
-<body>
+ <body class="hold-transition skin-blue sidebar-mini">
+ <div class="wrapper">
 
     <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
 
     <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
 
 	<!-- main container -->
-    <div class="content">
-        
-        <div class="container-fluid">
-            <div id="pad-wrapper" class="form-page">
-				 <div class="row-fluid header" STYLE="margin-bottom:0px;" >
-                    <h4><!--#4DIF (Records in selection([Tasks])=1)-->"<!--#4DVAR taskNameStr-->"<!--#4DELSE-->New<!--#4DENDIF--> Task</h4>
-                </div>
-				
-				<form name="TaskForm" id="TaskForm" action="savetask.cgi" class="form-comment" method="post">
-				
-				<div id="tabs">
-						<ul >
-							<li ><a style="color:#000000" href="#tabs-1">Task Details</a></li>
+   	<div class="content-wrapper">
+        <section class="content-header">
+      		<h1>
+        		<!--#4DIF (Records in selection([Tasks])=1)-->"<!--#4DVAR taskNameStr-->"<!--#4DELSE-->New<!--#4DENDIF--> 
+        		<small>Task</small>
+      		</h1>
+      		<ol class="breadcrumb">
+       			<li><a href="index.shtml"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+        		<li class="active">Task Detail</li>
+      		</ol>
+    	</section>
+		<section class="content">
+        	<div class="row">
+				 <div class="panel-body no-padding-top bg-white"> 
+				<form name="TaskForm" id="TaskForm" action="savetask.cgi" class="form-horizontal" method="post">
+					<div data-example-id="togglable-tabs" STYLE="margin-bottom: 30px;">
+						<ul id="new-customer-tab" class="nav nav-tabs" role="tablist">
+							<li role="presentation" class="active"><a href="#tabs-1" id="tabs-1" role="tab" data-toggle="tab" aria-controls="tabs-1" aria-expanded="true">Task Details</a></li>
 							<!--#4DIF (Records in selection([Tasks])=1)-->
-							<li ><a style="color:#000000" href="#tabs-2">Related Timeslips</a></li>
-							<li ><a style="color:#000000" href="#tabs-3">Related Tasks</a></li>
-							<li ><a style="color:#000000" href="#tabs-4">Checklist</a></li>
+							<li role="presentation" ><a href="#tabs-2" id="tabs2" role="tab" data-toggle="tab" aria-controls="tabs-2">Related Timeslips</a></li>
+							<li role="presentation" ><a href="#tabs-3" id="tabs-3" role="tab" data-toggle="tab" aria-controls="tabs-3">Related Tasks</a></li>
+							<li role="presentation" ><a href="#tabs-4" id="tabs-4" role="tab" data-toggle="tab" aria-controls="tabs-4">Checklist</a></li>
 							<!--#4DENDIF-->
 						</ul>
-						<div id="tabs-1" class="var_tabs">  
-						
-                <div class="row-fluid form-wrapper">
-					<!-- left column -->
-                    <div class="span12 with-sidebar">
-						
-							<div class="span12 field-box">
-								<label>Task Name <span style="color:#6E829B">*</span></label>
-								<input name="Task_Name" class="span4" type="text" value="<!--#4DVAR [Tasks]task_name-->" id="Task_Name">
-							</div>
-							<input name="Task_uuid" class="span4" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="Task_uuid">
-							<input name="tsk_id" type="hidden" value="<!--#4DVAR [Tasks]task_id-->" id="tsk_id">
+						<div id="myTabContent" class="tab-content" style="padding-top:25px; border-left: 1px solid #ddd; border-right: 1px solid #ddd;  border-bottom: 1px solid #ddd; padding-bottom:25px; padding-left:15px; padding-right:15px;">
+						<div role="tabpanel" class="tab-pane fade in active" id="tabs-1" aria-labelledby="tabs-1">  
+							<div class="row">
+           		  				<div class=" col-sm-12 col-lg-8">
+									<div class="form-group">
+										<label class="col-sm-2 control-label">Task Name <sup class="required">*</sup></label>
+										<div class="col-sm-7">
+											<input name="Task_Name" class="form-control" type="text" value="<!--#4DVAR [Tasks]task_name-->" id="Task_Name">
+										</div>
+									</div>
+									<input name="Task_uuid" class="form-control" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="Task_uuid">
+									<input name="tsk_id" type="hidden" value="<!--#4DVAR [Tasks]task_id-->" id="tsk_id">
 							
-							<div class="field-box">
-								<label>Reported By <span style="color:#6E829B">*</span></label>
-								<div class="ui-select span4 selectClass">
-									<select name="uuid_reported_by" id="uuid_reported_by" >
-									<!--HIT_EXECUTE _HIT_HTMLTXT:=Web_EmployeeHTMLPopup([Tasks]uuid_reported_by)-->
-									</select>                                     
-								</div>
-							</div>                  
- 
-							<div class="field-box">
-								<label>Project Name <span style="color:#6E829B">*</span></label>
-								<div class="ui-widget projectClass span9" style="padding-left: 0px; margin-left: 0px;">
-									<Select name="Project_ID" id="Project_ID">
-									<!--#4DIF (Records in selection([Tasks])=0)-->
-										<!--#4DIF (pUserProject="")-->
-											<option value=""></option>
-											<!--#4DSCRIPT/Web_LoadProjects/-->
-											<!--4DLOOP [Projects]-->
-												<option value="<!--#4DVAR [Projects]proj_id-->" ><!--4DVAR [Projects]proj_name--></option>
-											<!--4DENDLOOP-->
-										<!--#4DELSE-->
-										 	<option value="<!--#4DVAR [Projects]proj_id-->" selected><!--#4DVAR [Projects]proj_name--></option>									 
-										 <!--#4DENDIF-->
-									<!--#4DELSE-->
-										 <option value="<!--#4DVAR [Projects]proj_id-->" selected><!--#4DVAR [Projects]proj_name--></option>									 
-									<!--#4DENDIF-->
-									</select>                                     
-								</div>
-							</div>							
-							<div class="field-box">
-                                <label>Task Start Date </label>
-								
-								<input name="task_start_date" class="input-large datepicker span4" type="text" data-date-format="dd/mm/yyyy" <!--#4DIF (timestamp_unix_toDate([Tasks]Timestamp_start)=!01/01/1970!)-->value=""<!--4DELSE-->value="<!--#4DVAR timestamp_unix_toDate([Tasks]Timestamp_start)-->"<!--4DENDIF--> id="task_start_date" readonly >
-                            </div>
+									<div class="form-group">
+										<label class="col-sm-2 control-label">Reported By <sup class="required">*</sup></label>
+										<div class="col-sm-7 selectClass ui-select">
+											<select name="uuid_reported_by" id="uuid_reported_by" class="form-control">
+												<!--HIT_EXECUTE _HIT_HTMLTXT:=Web_EmployeeHTMLPopup([Tasks]uuid_reported_by)-->
+											</select>                                     
+										</div>
+									</div>                  
+ 									<div class="form-group">
+										<label class="col-sm-2 control-label">Project Name <sup class="required">*</sup></label>
+										<div class="ui-widget projectClass col-sm-7">
+										<Select name="Project_ID" id="Project_ID" class="form-control">
+										<!--#4DIF (Records in selection([Tasks])=0)-->
+											<!--#4DIF (pUserProject="")-->
+												<option value=""></option>
+												<!--#4DSCRIPT/Web_LoadProjects/-->
+												<!--4DLOOP [Projects]-->
+													<option value="<!--#4DVAR [Projects]proj_id-->" ><!--4DVAR [Projects]proj_name--></option>
+												<!--4DENDLOOP-->
+											<!--#4DELSE-->
+												 	<option value="<!--#4DVAR [Projects]proj_id-->" selected><!--#4DVAR [Projects]proj_name--></option>									 
+											 <!--#4DENDIF-->
+											<!--#4DELSE-->
+												<option value="<!--#4DVAR [Projects]proj_id-->" selected><!--#4DVAR [Projects]proj_name--></option>									 
+										<!--#4DENDIF-->
+										</select>                                     
+									</div>
+								</div>							
+									<div class="form-group">
+									<label class="col-sm-2 control-label">Task Start Date </label>
+									<div class="col-sm-7">
+										<input name="task_start_date" class="input-large datepicker form-control" type="text" data-date-format="dd/mm/yyyy" <!--#4DIF (timestamp_unix_toDate([Tasks]Timestamp_start)=!01/01/1970!)-->value=""<!--4DELSE-->value="<!--#4DVAR timestamp_unix_toDate([Tasks]Timestamp_start)-->"<!--4DENDIF--> id="task_start_date" readonly >
+                            		</div>
+                            	</div>
 							
-							<div class="field-box">
-                                <label>Task End Date </label>
-								<input name="task_end_date" class="input-large datepicker span4" type="text" data-date-format="dd/mm/yyyy" <!--#4DIF (timestamp_unix_toDate ([Tasks]Timestamp_end)=!01/01/1970!)-->value=""<!--4DELSE-->value="<!--#4DVAR timestamp_unix_toDate ([Tasks]Timestamp_end)-->"<!--4DENDIF--> id="task_end_date" readonly >
+							<div class="form-group">
+								<label class="col-sm-2 control-label">Task End Date </label>
+								<div class="col-sm-7">
+									<input name="task_end_date" class="input-large datepicker form-control" type="text" data-date-format="dd/mm/yyyy" <!--#4DIF (timestamp_unix_toDate ([Tasks]Timestamp_end)=!01/01/1970!)-->value=""<!--4DELSE-->value="<!--#4DVAR timestamp_unix_toDate ([Tasks]Timestamp_end)-->"<!--4DENDIF--> id="task_end_date" readonly >
+                            	</div>
                             </div>
 							
 							                 
-							<div class="span12 field-box">
-								<label>Task Estimated Hour </label>
-								<input name="Task_Estimated_Hour" class="span4 num" type="text" value="<!--#4DVAR [Tasks]task_estimated_hours-->" id="Task_Estimated_Hour">
+							<div class="form-group">
+								<label class="col-sm-2 control-label">Task Estimated Hour </label>
+								<div class="col-sm-7">
+									<input name="Task_Estimated_Hour" class="form-control num" type="text" value="<!--#4DVAR [Tasks]task_estimated_hours-->" id="Task_Estimated_Hour">
+								</div>
 							</div>                                                                 
-							<div class="span12 field-box">
-								<label>Task Rate </label>
-								<input name="Task_Rate" class="span4 num" type="text" value="<!--#4DVAR [Tasks]task_rate-->" id="Task_Rate">
+							<div class="form-group">
+								<label class="col-sm-2 control-label">Task Rate </label>
+								<div class="col-sm-7">
+									<input name="Task_Rate" class="form-control num" type="text" value="<!--#4DVAR [Tasks]task_rate-->" id="Task_Rate">
+								</div>
 							</div>
 							
-							<div class="field-box">
-								<label>Status</label>
-								<div class="ui-select span4">
-									<Select name="Task_Status" id="Task_Status">
+							<div class="form-group">
+								<label class="col-sm-2 control-label">Status</label>
+								<div class="ui-select  col-sm-7 ">
+									<Select name="Task_Status" id="Task_Status" class="form-control">
 									<!--#4DIF (Records in selection([Tasks])=0)-->
 									<option value="assigned" >assigned</option>
 									<!--#4DELSE-->
 									<!--HIT_EXECUTE _HIT_HTMLTXT:=Task_Status_HTMLPopup-->
 									 <!--#4DENDIF-->
 									</select>
-									<Select type="hidden"name="Task_Status_old" id="Task_Status_old">
-									<!--#4DIF (Records in selection([Tasks])=0)-->
-									<option value="assigned" >assigned</option>
-									<!--#4DELSE-->
-									<!--HIT_EXECUTE _HIT_HTMLTXT:=Task_Status_HTMLPopup-->
-									<!--#4DENDIF-->
-									</select>                                   
 								</div>
 							</div>
 
-								<div class="field-box">
-								<label>Assigned to <span style="color:#6E829B">*</span></label>
-								<div class="ui-select span4 selectAsClass">
-									<Select name="uuid_assigned_to" id="uuid_assigned_to">
+							<div class="form-group">
+								<label class="col-sm-2 control-label">Assigned to <sup class="required">*</sup></label>
+								<div class="ui-select col-sm-7 selectAsClass">
+									<Select name="uuid_assigned_to" id="uuid_assigned_to" class="form-control">
 									<!--HIT_EXECUTE _HIT_HTMLTXT:=Web_EmployeeHTMLPopup([Tasks]uuid_assigned_to)-->
 									</select>                                     
 								</div>
 							</div>                  
 
-							<!-- 
-<div class="span12 field-box">
-								<label>Task Activate</label>
-								<input style="margin-left: -22%;" type="checkbox" name="Task_Activate" value=""><br>
-							</div>
- -->
-							<div class="field-box">
-                                <label>Task Active</label>
-                                <div class="ui-select span4">
-									<Select name="Task_Active" id="Task_Active" name="Task_Active">
+							<div class="form-group">
+									<label class="col-sm-2 control-label">Task Active</label>
+                                <div class="ui-select col-sm-7">
+									<Select class="form-control" id="Task_Active" name="Task_Active">
 									<!--#4DIF (Records in selection([Tasks])=1)-->
 										<option value="Active" <!--#4DIF ([Tasks]task_active=True)-->selected<!--4DELSE--><!--4DENDIF-->>Active</option>
 										<option value="Done" <!--#4DIF ([Tasks]task_active=false)-->selected<!--4DELSE--><!--4DENDIF-->>Done</option>
@@ -267,11 +261,8 @@ _HIT_WebSession_SetVar ("last-clicked-uuid";_HIT_WebApp_GetField ("uuid"))
                                 </div>
                             </div>
 							
-							
-							
-							
 							<!--#4DIF (Records in selection([Tasks])=1)-->
-							<div class="span6 ">
+							<div class="form-group">
 								<h3 style="font-size:14px; margin:0px 0 10px 0; padding-left:0px; font-weight:bold;">Attached Files</h3>
                                 <table class="table file-table table-condensed table-striped  table-hover" >
               					<thead>
@@ -295,14 +286,14 @@ _HIT_WebSession_SetVar ("last-clicked-uuid";_HIT_WebApp_GetField ("uuid"))
               					</tbody>
            				 		</table>
 							</div>
-							<div class="field-box">
-                                <label>Upload File <span style="font-size:10px;font-style:italic;">(Max size 4MB)</span></label>
+							<div class="form-group">
+									<label class="col-sm-2 control-label">Upload File <span style="font-size:10px;font-style:italic;">(Max size 4MB)</span></label>
 									<input name="file_content" type="file" id="file_content">
-									<button type="button" class="btn btn-info" onClick="add_file()" >Upload</button>
+									<button type="button" class="btn btn-primary btn-color margin-right-5 btn-sm " onClick="add_file()" >Upload</button>
                             </div>
 							
 							
-							<div class="span12 field-box">
+							<div class="form-group">
 								<h3>Notes</h3><br>
 								<!--#4DSCRIPT/Web_LoadTaskNotes/-->	
 								<!--#4DLOOP [Notes]--><!-- row -->
@@ -321,7 +312,7 @@ _HIT_WebSession_SetVar ("last-clicked-uuid";_HIT_WebApp_GetField ("uuid"))
 							</div>
 							<div class="span12 field-box">
 								<label>Add Note</label>
-								<textarea name="add_new_note" class="span4" rows="3" id="add_new_note"></textarea>
+								<textarea name="add_new_note" class="form-control" rows="3" id="add_new_note"></textarea>
 								<button type="button" id="add" class="btn-glow" onClick="addCustomerNote()">Add Note</button>
 							</div>
 							<!--#4DELSE--><!--#4DENDIF-->
@@ -331,16 +322,15 @@ _HIT_WebSession_SetVar ("last-clicked-uuid";_HIT_WebApp_GetField ("uuid"))
 								<input name="live_task_name" type="hidden" value="" id="live_task_name">
 								<input name="live_assigned_to" type="hidden" value="" id="live_assigned_to">
 							
-								<input type="submit" class="btn-glow primary" value="Submit">
+								<input type="submit" class="btn btn-primary btn-color margin-right-5 btn-sm " value="Submit">
 								<a href="tasks.shtml" CLASS="cancelbtn">Cancel</a>
 							</div>
 						
                     </div>
-				</div>
-				
-				</div>
+							</div>
+						
 				<!--#4DIF (Records in selection([Tasks])=1)-->
-					<div id="tabs-2" class="var_tabs">
+					<div role="tabpanel" class="tab-pane fade" id="tabs-2" aria-labelledby="tabs2">
 						 <div class="row-fluid form-wrapper">
 					<!-- left column -->
                     <div class="span12 with-sidebar">
@@ -376,7 +366,7 @@ _HIT_WebSession_SetVar ("last-clicked-uuid";_HIT_WebApp_GetField ("uuid"))
 					
 					</div>
 					
-			<div id="tabs-3" class="var_tabs">
+			<div role="tabpanel" class="tab-pane fade" id="tabs-3" aria-labelledby="tabs-3">
 						 <div class="row-fluid form-wrapper">
 					<!-- left column -->
                     <div class="span12 with-sidebar">
@@ -416,8 +406,8 @@ _HIT_WebSession_SetVar ("last-clicked-uuid";_HIT_WebApp_GetField ("uuid"))
 			</div>
 		</div>
 		
-		<div class="field-box">
-                                <label>Task Name </label>
+		<div class="form-group">
+									<label class="col-sm-2 control-label">Task Name </label>
 								<div class="ui-widget">
 									<select name="Task_ID" id="Task_ID">
 										<option value=""></option>
@@ -428,8 +418,8 @@ _HIT_WebSession_SetVar ("last-clicked-uuid";_HIT_WebApp_GetField ("uuid"))
 									</select>
 								</div>
 							</div>
-				<div class="field-box">
-                                <label></label>			
+				<div class="form-group">
+									<label class="col-sm-2 control-label"></label>			
 				<button type="button" class="btn-glow primary" onClick="add_relation()" >Add</button>
 				</div>
 					
@@ -438,7 +428,7 @@ _HIT_WebSession_SetVar ("last-clicked-uuid";_HIT_WebApp_GetField ("uuid"))
 					
 					</div>
 					
-		<div id="tabs-4" class="var_tabs ui-tabs-panel ui-widget-content ui-corner-bottom" aria-labelledby="ui-id-5" role="tabpanel" aria-expanded="false" aria-hidden="true" >
+		<div role="tabpanel" class="tab-pane fade" id="tabs-4" aria-labelledby="tabs-4">
             <div class="row-fluid form-wrapper"> 
               <!-- left column -->
               <div class="span12 with-sidebar"> <a hre="javascript:void(0)" onClick="add_new_checklist()" class="btn-glow primary">Add new Checklist</a>
@@ -467,14 +457,16 @@ _HIT_WebSession_SetVar ("last-clicked-uuid";_HIT_WebApp_GetField ("uuid"))
             </div>
           </div>
 				<!--#4DENDIF-->	
-				
-            </div><!-- tabs div-->
+						</div>
+            		</div><!-- tabs div-->
 				</form>
+				</div>
             </div>
-        </div>
+        </section>
     </div>
     <!-- end main container -->
-
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/top-footer.shtml-->
+</div>
 	<!-- scripts -->
     <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
 	<!-- <script src="js/ui/jquery-ui.js"></script> -->
@@ -512,7 +504,7 @@ function load_more_checklist(){
 	loadCheckList();
 }
 function add_new_checklist(){
-	var htmlStr='<textarea name="description" id="description" value="" placeholder="Description" row="8" class="span4"></textarea><br/>';
+	var htmlStr='<textarea name="description" id="description" value="" placeholder="Description" row="8" class="form-control"></textarea><br/>';
 	htmlStr+='<label>Start From :</label><input class="input-large datepicker" type="text" data-date-format="dd/mm/yyyy" value="" id="c_start_date" name="c_start_date" readonly >';
 	htmlStr+='<label>Duplicate this checklist :</label><label style="width:auto; display:inline"><input type="radio" value="daily" class="duplicate_checklist" name="duplicate_checklist"> Daily&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="weekly" name="duplicate_checklist" class="duplicate_checklist"> Weekly&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="monthly" class="duplicate_checklist" name="duplicate_checklist"> Monthly&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="yearly" class="duplicate_checklist" name="duplicate_checklist"> Yearly&nbsp;&nbsp;</label>';
 	var statesdemo = {
