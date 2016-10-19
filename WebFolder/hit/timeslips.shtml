@@ -21,141 +21,143 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
 <html>
 <head>
 <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+<link rel="stylesheet" href="css/basictable.css">
 <link rel="stylesheet" href="css/autocomplete.css" />
 <link rel="stylesheet" media="all" type="text/css" href="css/jquery-impromptu.css" />
 <style>
-#message{
-	color:#FF0000;
+#message {
+	color: #FF0000;
 }
-.table-wrapper .table ul.actions{
-	float:left;
+.table-wrapper .table ul.actions {
+	float: left;
+}
+.custom-combobox {
+	position: relative;
+	display: inline-block;
+	font-family: "Open Sans", Arial;
+	font-size: 12px;
+	top: 0px;
+	right: 6px;
+}
+.btn-inline > .btn-left-align {
+	position: absolute;
+	right: 4px;
+	top: -6px;
 }
 </style>
 </head>
-<body>
-<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
 
-<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
-
-	<!-- main container -->
-    <div class="content">
-        
-        <div class="container-fluid">
-            <div id="pad-wrapper">
-
-                <!-- timeslips table -->
-                <div class="table-wrapper orders-table section">
-                    <div class="row-fluid head">
-                        <div class="span12">
-                            <h4>Timeslips</h4>
-                        </div>
-                    </div>
-					<form id="frm_set" name="frm_set" method="get" action="">
-						<div class="row-fluid filter-block">
-							<div class="ui-widget" style="margin-bottom: -50px">
-								<span style="padding-bottom: 26px; vertical-align: middle; padding-right: 5px;">Tasks:</span>
-								<select name="task" id="task" onChange="__showTaskTimeslips(this.value)" >
-								<!--#4DIF (_HIT_WebApp_GetField ("task")#"")-->
-								<option value="<!--4DVAR [Tasks]task_id-->"  ><!--4DVAR [Tasks]task_name--></option>
-								<!--#4DELSE-->
-								<option value=""></option>
-								<!--#4DSCRIPT/Web_LoadTasks/-->
-								<!--4DLOOP [Tasks]-->
-									<option value="<!--4DVAR [Tasks]task_id-->"  ><!--4DVAR [Tasks]task_name--></option>
-								<!--4DENDLOOP-->
-								<!--#4DENDIF-->
-								</select>
-							</div>
-							<div class="pull-right">
-								<div class="btn-group pull-right">
-									<button class="glow left large" onClick="__showAllTimeSlips(); return false;">All</button>
-									<button class="glow middle large" onClick="__showChargeable(); return false;">Chargeable</button>
-									<button class="glow middle large" onClick="__showNotChargeable(); return false;">Not Chargeable</button>
-									<button class="glow right large" onClick="__showBilled(); return false;">Billed</button>
-									<!--#4DIF (_HIT_WebSession_GetVar ("auth_user_type")#"CLIENTS")-->
-									<a href="timeslip.shtml" class="btn-flat success new-product margn-lft35">+ Add New TimeSheet</a>
-									<!--#4DENDIF-->
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper"> 
+		
+		<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml--> 
+		
+		<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml--> 
+		
+		<!-- main container -->
+		<div class="content-wrapper">
+				<div class="container-fluid">
+						<div id="pad-wrapper"> 
+								
+								<!-- timeslips table -->
+								<div class="table-wrapper orders-table section">
+										<div class="row-fluid head">
+												<div class="span12">
+														<h4>Timeslips</h4>
+												</div>
+										</div>
+										<form id="frm_set" name="frm_set" method="get" action="">
+												<div class="row-fluid filter-block">
+														<div class="ui-widget" style="margin-bottom: -50px"> <span style="padding-bottom: 26px; vertical-align: middle; padding-right: 5px;">Tasks:</span>
+																<select name="task" id="task" onChange="__showTaskTimeslips(this.value)" >
+																		<!--#4DIF (_HIT_WebApp_GetField ("task")#"")-->
+																		<option value="<!--4DVAR [Tasks]task_id-->"  ><!--4DVAR [Tasks]task_name--></option>
+																		<!--#4DELSE-->
+																		<option value=""></option>
+																		<!--#4DSCRIPT/Web_LoadTasks/--> 
+																		<!--4DLOOP [Tasks]-->
+																		<option value="<!--4DVAR [Tasks]task_id-->"  ><!--4DVAR [Tasks]task_name--></option>
+																		<!--4DENDLOOP--> 
+																		<!--#4DENDIF-->
+																</select>
+														</div>
+														<div class="pull-right"> </div>
+														<div CLASS="row">
+																<div class="form-group no-margin">
+																		<div class="pull-right margin-bottom-10 ">
+																				<div class="form-inline" style="">
+																						<div class="btn-inline display-inline-block" STYLE="padding-right:10px;">
+																								<input name="keyword_type" id="keyword_type" type="text"  class="form-control searchFieldClass keyword_type" style="min-width:225px; height:36px;" placeholder="Enter client or staff name.." value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->
+																								" />
+																								<button class="btn btn-left-align btn-link no-shadow bg-transparent no-padding-top padding-right-10 right-auto left" type="button" id="searchBtn"><i class="glyphicon glyphicon-search"></i></button>
+																						</div>
+																						<div class="btn-group pull-right" STYLE="margin-right:15px;">
+																								<button class="btn btn-primary btn-left  showall" onClick="__showAllTimeSlips(); return false;">All</button>
+																								<button class="btn btn-primary  btn-middle  showactive" onClick="__showChargeable(); return false;">Chargeable</button>
+																								<button class="btn btn-primary  btn-middle  showactive" onClick="__showNotChargeable(); return false;">Not Chargeable</button>
+																								<button class="btn btn-primary btn-right  showdone" onClick="__showBilled(); return false;" STYLE="border-radius: 0px 4px 4px 0px;
+color: #fff !important;">Billed</button>
+																								&nbsp 
+																								<!--#4DIF (_HIT_WebSession_GetVar ("auth_user_type")#"CLIENTS")-->
+																								
+																								<div  STYLE="padding-left:0px; display:inline-block;"><a href="timeslip.shtml" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink ">+ Add New TimeSheet</a> 
+																										<!--#4DENDIF--></div>
+																						</div>
+																				</div>
+																		</div>
+																</div>
+														</div>
+												</div>
+										</form>
+										<div CLASS="row">
+												<div class="content table-responsive table-full-width">
+														<div class="table-responsive" style="border:none;">
+																<table class="table table-striped  table-bordered table-hover custom-tbl-st" id="table-breakpoint" style="background-color: rgb(255, 255, 255); border-radius: 4px;">
+																		<thead>
+																				<tr>
+																						<th> TASK </th>
+																						<th > PROJECT </th>
+																						<th > EMPLOYEE </th>
+																						<th> START </th>
+																						<th> END </th>
+																						<th> EST. HOURS </th>
+																						<th> RATE </th>
+																						<th> EST. AMOUNT </th>
+																						<th> TIME SLIP STATUS </th>
+																						<th> ACTION </th>
+																				</tr>
+																		</thead>
+																		<tfoot>
+																				<tr>
+																						<th align="left">TASK</th>
+																						<th align="left">PROJECT</th>
+																						<th align="left">EMPLOYEE</th>
+																						<th align="left">START</th>
+																						<th align="left">END</th>
+																						<th align="left">EST. HOURS</th>
+																						<th align="left">RATE</th>
+																						<th align="left">EST. AMOUNT</th>
+																						<th align="left">TIME SLIP STATUS</th>
+																						<th align="left">ACTION</th>
+																				</tr>
+																		</tfoot>
+																		<tbody id="timeslip_table_body">
+																		</tbody>
+																</table>
+																<div id="img_loading_div" style="text-align:center"> <img src="loading.gif"  style="padding:20px;" width="34" > </div>
+														</div>
+												</div>
+										</div>
 								</div>
-								<input name="keyword_type" id="keyword_type" type="text" class="search order-search" placeholder="Enter client or staff name.." value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" />
-							</div>
+								<!-- end timeslips table --> 
+								
 						</div>
-                    </form>
-
-                    <div class="row-fluid">
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th class="span4">
-                                        TASK
-                                    </th>
-									<th class="span3">
-									<span class="line"></span>
-                                        PROJECT
-                                    </th>
-                                    <th class="span2">
-                                        <span class="line"></span>
-                                        EMPLOYEE
-                                    </th>
-                                    <th>
-									<span class="line"></span>
-                                       START
-                                    </th>
-									<th>
-									<span class="line"></span>
-                                       END
-                                    </th>                                  
-                                    <th>
-                                        <span class="line"></span>
-                                       EST. HOURS
-                                    </th>
-									<th>
-                                        <span class="line"></span>
-                                        RATE
-                                    </th>
-									<th>
-                                        <span class="span1"></span>
-                                        EST. AMOUNT
-                                    </th>
-                                    <th>
-                                        <span class="line"></span>
-                                        TIME SLIP STATUS
-                                    </th>
-                                        <th>
-                                        <span class="line"></span>
-                                        ACTION
-                                    </th> 
-                                </tr>
-                            </thead>
-                            <tfoot>
-                            <tr> 
-                                <th align="left">TASK</th>
-                                <th align="left">PROJECT</th>
-                                <th align="left">EMPLOYEE</th>
-                                <th align="left">START</th>
-                                <th align="left">END</th>
-                                <th align="left">EST. HOURS</th>
-								<th align="left">RATE</th>
-								<th align="left">EST. AMOUNT</th>
-								<th align="left">TIME SLIP STATUS</th>
-								<th align="left">ACTION</th>
-                            </tr>
-                        	</tfoot>
-                            <tbody id="timeslip_table_body">
-                            </tbody>
-                        </table>
-						<div id="img_loading_div" style="text-align:center">
-		<img src="loading.gif"  style="padding:20px;" width="34" >
+				</div>
 		</div>
-                    </div>
-                </div>
-                <!-- end timeslips table -->
-
-            </div>
-        </div>
-    </div>
-    <!-- end main container -->
-	<div class="example-container">
-	<pre class="code" style="display:none;" id="no_rec_prompt">
+</div>
+<!-- end main container -->
+<div class="example-container">
+		<pre class="code" style="display:none;" id="no_rec_prompt">
 									var statesdemo = {
 										state0: {
 											title: 'No more records found',
@@ -175,12 +177,13 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
 									if(!($(".jqibox").length))
 									$.prompt(statesdemo);
 								</pre>
-							</div>
+</div>
 
-	<!-- scripts -->
-   <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
-	<script type="text/javascript" src="js/jquery-impromptu.js"></script>
-    <script>
+<!-- scripts --> 
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+<script type="text/javascript" src="js/jquery-impromptu.js"></script> 
+<script src="js/basictable.js"></script>
+<script>
 var JSONdata;
 var start=0, end=50;
 var old_srch='',keyword='', jsonRow='', tab='', set='', task='';
@@ -501,7 +504,7 @@ function chng_time_format(date_time){
 }
 
 
-    </script>
+    </script> 
 <script>
 	 var xhr;
   (function( $ ) {
@@ -687,6 +690,6 @@ function chng_time_format(date_time){
 //
 //  });
 
-  </script>    
+  </script>
 </body>
 </html>
