@@ -952,9 +952,15 @@
 		},
 		headTemplate: '<thead>'+
 							'<tr>'+
+<<<<<<< Updated upstream
 								'<th class="prev"><i class="fa fa-arrow-left"/></th>'+
 								'<th colspan="5" class="switch"></th>'+
 								'<th class="next"><i class="fa fa-arrow-right"/></th>'+
+=======
+								'<th class="prev"><i class="fa-arrow-left"/></th>'+
+								'<th colspan="5" class="switch"></th>'+
+								'<th class="next"><i class="fa-arrow-right"/></th>'+
+>>>>>>> Stashed changes
 							'</tr>'+
 						'</thead>',
 		contTemplate: '<tbody><tr><td colspan="7"></td></tr></tbody>',

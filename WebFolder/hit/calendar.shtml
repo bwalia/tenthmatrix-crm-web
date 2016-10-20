@@ -15,7 +15,7 @@ end if
 <html>
 <head>
 	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
-	<link href='css/fullcalendar.css' rel='stylesheet' />
+	<link href='css/fullcalendar.min.css' rel='stylesheet' />
     <link href='css/fullcalendar.print.css' rel='stylesheet' media='print' />
     <link rel="stylesheet" href="css/calendar.css" type="text/css" media="screen" />
 	<link rel="stylesheet" type="text/css" href="css/jquery.ptTimeSelect.css" />
@@ -124,10 +124,8 @@ end if
 </div>
 	<!-- scripts for this page -->
    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
-   
-   <script src="js/jquery-ui-1.10.2.custom.min.js"></script>
-    
-    <script src='js/fullcalendar_new.min.js'></script>
+   <script src='js/moment.min.js'></script>
+   <script src='js/fullcalendar.min.js'></script>
    <script type="text/javascript" src="js/jquery.ptTimeSelect.js"></script>
 
 <script language="javascript">
@@ -201,9 +199,7 @@ success: function(html)
 });
 
 }
-</script>
-<!-- builds fullcalendar example -->
-<script>
+
 	function get_datetime(date, time)
 	{
 
@@ -273,14 +269,10 @@ success: function(html)
 				defaultView: 'agendaWeek',
 				<!--#4DENDIF-->
 				
-				 dayClick: function(date, allDay, jsEvent, view) {
-				 
-			var s_time='';
-        if (allDay) {
-           // alert('Clicked on the entire day: ' + date);
-        }else{
-            //alert('Clicked on the slot: ' + date);
-			
+				 dayClick: function(date, jsEvent, view) {
+				 	var date=date._d;
+					var s_time='';
+      
 			var date_arr=String(date).split(" ");
 			var timestring='';
 			for(var i=0; i<date_arr.length; i++){
@@ -293,24 +285,17 @@ success: function(html)
 			var time_arr=timestring.split(":");
 			if(time_arr[0]>12){ var h=time_arr[0]-12; s_time=h+":"+time_arr[1]+"pm"; }
 			else{ s_time=time_arr[0]+":"+time_arr[1]+"am"; }
-			
-        }
 
-        //alert('Coordinates: ' + jsEvent.pageX + ',' + jsEvent.pageY);
-		//alert('caloffset: ' + $('#calendar').offset().left + ',' + $('#calendar').offset().top);
-		//alert('widthheight: ' + $(".new-event").outerWidth()/2 + ',' + $(".new-event").outerHeight()+','+$(".arrow_border").outerHeight());
-
-        //alert('Current view: ' + view.name);
+		
 		var cal_left=Number($('#calendar').offset().left);
 		var cal_top=Number($('#calendar').offset().top);
-		var left = jsEvent.pageX - cal_left - (Number($(".new-event").outerWidth())/2);
+		
+		var left = jsEvent.pageX - cal_left - (Number($(".new-event").outerHeight())/2);
 		var top = jsEvent.pageY - cal_top - Number($(".new-event").outerHeight()) - Number($(".arrow_border").outerHeight());
 		
-	
 		if(left<0){
 			left=0;
-		}
-		else if(left>(Number($('#calendar').outerWidth())-Number($(".new-event").outerWidth()))){
+		}else if(left>(Number($('#calendar').outerWidth())-Number($(".new-event").outerWidth()))){
 			left=Number($('#calendar').outerWidth())-Number($(".new-event").outerWidth());
 		}
 		if(top<0){
@@ -331,16 +316,16 @@ success: function(html)
 		$("#Task_ID").val('');
 		$("#slip_descr").val('');
         $(".new-event").fadeIn("fast");
-
+		
     },
 			viewRender: function( view, element ) {
 				
-				var s_month=Number(view.visStart.getMonth())+1;
-				var s_date=	view.visStart.getDate()+'/'+s_month+'/'+view.visStart.getFullYear();
-				var e_month=Number(view.end.getMonth())+1;
-				var e_date=	view.end.getDate()+'/'+e_month+'/'+view.end.getFullYear();
+				var s_month=Number(view.start._d.getMonth())+1;
+				var s_date=	view.start._d.getDate()+'/'+s_month+'/'+view.start._d.getFullYear();
+				var e_month=Number(view.end._d.getMonth())+1;
+				var e_date=	view.end._d.getDate()+'/'+e_month+'/'+view.end._d.getFullYear();
 				
-				var date_arr=String(view.visStart).split(" ");
+				var date_arr=String(view.start._d).split(" ");
 				var s_time='';
 				for(var i=0; i<date_arr.length; i++){
 					var contains = (date_arr[i].indexOf(":") > -1);
