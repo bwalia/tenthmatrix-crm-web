@@ -93,6 +93,7 @@ border: 1px solid #d3d3d3;
 							<div class="form-group">
     							<label for="" class="col-sm-3 control-label">Task Name <span style="color:#6E829B">*</span></label>
 								<div class="ui-widget col-sm-9">
+									<!--4D FUNCTION INIT REQUIRED-->
 									<select name="Task_ID" id="Task_ID" CLASS="form-control">
 									<!--#4DIF (Records in selection([Timeslips])=0)-->
 										<!--#4DIF (pUserTask="")-->
@@ -110,9 +111,10 @@ border: 1px solid #d3d3d3;
 									</select>
 								</div>
 							</div> 
-							<div class="form-group">
+							<div class="form-group"><!--4D FUNCTION INIT REQUIRED-->
     							<label for="" class="col-sm-3 control-label">Employee Name</label>
 								<div class="ui-select col-sm-9">
+									<!--4D FUNCTION INIT REQUIRED-->
 									<select name="Employee_ID" id="Employee_ID" class="form-control">
 									<!--HIT_EXECUTE _HIT_HTMLTXT:=Web_TimeSlipEmpHTMLPopup([Timeslips]uuid_employee)-->
 									</select>
@@ -164,10 +166,11 @@ border: 1px solid #d3d3d3;
                            		<input type="hidden" id="exclude_lunch" name="exclude_lunch" value="off" readonly>
                            	</div>
                            	
-							<div class="field-box breakTimeClass" style="display:none;">
-                                <label></label>
-								Start Time: &nbsp;<input <!--#4DIF (mUserIsCurrentBool)-->readonly <!--#4DELSE--><!--#4DENDIF-->class="time brkTimePicker span1" type="text" value="" name="setBreakStartTime" id="setBreakStartTime">&nbsp;&nbsp;End Time:&nbsp;
-								<input <!--#4DIF (mUserIsCurrentBool)-->readonly <!--#4DELSE--><!--#4DENDIF-->class="time brkTimePicker span1" type="text" value="" name="setBreakEndTime" id="setBreakEndTime">&nbsp;&nbsp;&nbsp;
+							<div class="form-group breakTimeClass" style="display:none;">
+                                <label class="col-sm-3 control-label">Start Time</label>
+								<div class="col-sm-3"><input <!--#4DIF (mUserIsCurrentBool)-->readonly <!--#4DELSE--><!--#4DENDIF-->class="time brkTimePicker form-control" type="text" value="" name="setBreakStartTime" id="setBreakStartTime"></div>
+								<label class="col-sm-3 control-label">End Time</label>
+								<div class="col-sm-3"><input <!--#4DIF (mUserIsCurrentBool)-->readonly <!--#4DELSE--><!--#4DENDIF-->class="time brkTimePicker form-control" type="text" value="" name="setBreakEndTime" id="setBreakEndTime"></div>
                            		<span id="Errmessage" style="color:#FF0000"></span>
                             </div>
                             <div class="form-group">

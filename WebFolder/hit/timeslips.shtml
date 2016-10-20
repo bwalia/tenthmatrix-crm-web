@@ -431,9 +431,9 @@ function load_data(){
 			$('#timeslip_table_body').append(table_html);
 			complete=false;
 			$('#table').basictable();
-				$('#table-breakpoint').basictable({
-    				breakpoint: 751
-    			});
+			$('#table-breakpoint').basictable({
+    			breakpoint: 751
+    		});
 
 		}
 		$('#img_loading_div').hide();

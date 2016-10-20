@@ -15,12 +15,10 @@ end if
 <html>
 <head>
 	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
-	<link href='css/lib/fullcalendar.css' rel='stylesheet' />
-    <link href='css/lib/fullcalendar.print.css' rel='stylesheet' media='print' />
-    <link rel="stylesheet" href="css/compiled/calendar.css" type="text/css" media="screen" />
-	<link rel="stylesheet" type="text/css" href="lib/base.css" />
+	<link href='css/fullcalendar.css' rel='stylesheet' />
+    <link href='css/fullcalendar.print.css' rel='stylesheet' media='print' />
+    <link rel="stylesheet" href="css/calendar.css" type="text/css" media="screen" />
 	<link rel="stylesheet" type="text/css" href="css/jquery.ptTimeSelect.css" />
-	<link rel="stylesheet" media="all" type="text/css" href="css/jquery-impromptu.css" />
 	<link rel="stylesheet" href="css/autocomplete.css" />
 	<style>
   	.ui-front {
@@ -32,19 +30,29 @@ end if
 	</style>
 	
 </head>
-<body>
-
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
 	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
 
      <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
 
 	<!-- main container -->
-    <div class="content">
-        
-        <div class="container-fluid">
-		 <div id="pad-wrapper">
-            <div class="row-fluid calendar-wrapper">
-                    <div class="span12">
+    <div class="content-wrapper">
+        <section class="content-header">
+      		<h1>
+        		Timeslips
+        		<small>List panel</small>
+      		</h1>
+      		<ol class="breadcrumb">
+       			<li><a href="index.shtml"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+        		<li class="active">Timeslips</li>
+      		</ol>
+    	</section>
+		<section class="content">
+        	<div class="row">
+       			<div class="panel-body no-padding-top bg-white">
+            		<div class="row-fluid calendar-wrapper">
+                    	<div class="span12">
 
                         <!-- div that fullcalendar plugin uses  -->
                         <div id='calendar'></div>
@@ -55,15 +63,15 @@ end if
                                 <div class="arrow"></div>
                                 <div class="arrow_border"></div>
                             </div>
-                            <i class="close-pop table-delete"></i>
+                            <i class="close-pop fa fa-close"></i>
                             <h5>Date 
                                 <span class="date"></span></h5>
-                            <form name="frm_task" class="form-comment" > 
+                            <form name="frm_task" class="form-horizontal col-sm-12 col-lg-12" > 
 							<input type="hidden" value="" name="curr_date" id="curr_date">
-							<div class="field">
-                               Task Name <span style="color:#6E829B">*</span>
+							<div class="form-group">
+                              Task Name <sup class="required">*</sup>
 							   <div class="ui-widget">
-									<select name="Task_ID" id="Task_ID" >
+									<select name="Task_ID" id="Task_ID" class="form-control">
 									<option value=""></option>
 									<!--#4DSCRIPT/Web_LoadTasks/-->
 									<!--4DLOOP  [Tasks]-->
@@ -72,10 +80,11 @@ end if
 									</select>
 								</div>
                             </div>
-							<div class="field">
-                                Employee Name <span style="color:#6E829B">*</span>
+							<div class="form-group">
+                                Employee Name <sup class="required">*</sup>
 								<div class="ui-select">
-									<select name="Employee_ID" id="Employee_ID">
+									<!--4D FUNCTION INIT REQUIRED-->
+									<select name="Employee_ID" id="Employee_ID" class="form-control">
 										<!--HIT_EXECUTE
 											_HIT_HTMLTXT:=""
 											QUERY([Employees];[Employees]emp_active=True)
@@ -91,27 +100,28 @@ end if
 									</select>
 								</div>
                             </div>
-							<div class="field">
-                                Start Time <span style="color:#6E829B">*</span>
-                                <input type="text" class="event-input timepicker" style="width:17%;margin-left:0px;" name="s_time" id="s_time" />
-								End Time <span style="color:#6E829B">*</span>
-								<input type="text" class="event-input timepicker" style="width:17%;margin-left:0px;" name="e_time" id="e_time" />
+							<div class="form-group">
+                                Start Time <sup class="required">*</sup>
+                                <input type="text" class="event-input timepicker form-control" style="margin-left:0px;" name="s_time" id="s_time" />
+								End Time <sup class="required">*</sup>
+								<input type="text" class="event-input timepicker form-control" style="margin-left:0px;" name="e_time" id="e_time" />
                             </div>
-                            <div class="field">
-                                Description <span style="color:#6E829B">*</span>
-                                <!--<input type="text" class="event-input" />-->
-								<textarea name="slip_descr" id="slip_descr" rows="1" cols="10" class="event-input" style="width:45%; height:20px"></textarea>
+                            <div class="form-group">
+                                Description <sup class="required">*</sup>
+                                <textarea name="slip_descr" id="slip_descr" rows="1" cols="10" class="event-input form-control"></textarea>
                             </div>
-                            <input type="button" value="Create" class="btn-glow primary" onClick="return ValidateForm();">
+                            <input type="button" value="Create" class="btn btn-primary btn-color margin-right-5 btn-sm " onClick="return ValidateForm();">
 							</form>
                         </div>
                     </div>
                 </div>
 			</div>
         </div>
+        </section>
     </div>
     <!-- end main container -->
-
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/top-footer.shtml-->
+</div>
 	<!-- scripts for this page -->
    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
    
@@ -119,7 +129,6 @@ end if
     
     <script src='js/fullcalendar_new.min.js'></script>
    <script type="text/javascript" src="js/jquery.ptTimeSelect.js"></script>
-   	<script type="text/javascript" src="js/jquery-impromptu.js"></script>
 
 <script language="javascript">
 var new_event=new Array();
