@@ -57,9 +57,9 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
      						<div class="pull-right margin-bottom-10 ">
 								<div class="form-inline" style="">                 	          
                  					<div class="btn-inline display-inline-block">
-                 						<input class="form-control searchFieldClass" id="keyword_type" style="min-width:225px; height:36px;" placeholder="Search here.." name="keyword" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" type="text">
+                 						<input class="form-control searchFieldClass" id="keyword_type" style="min-width:225px;  height:36px;" placeholder="Search here.." name="keyword" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" type="text">
 										
-										<button class="btn btn-left-align btn-link no-shadow bg-transparent no-padding-top padding-right-10 right-auto left" type="button" id="searchBtn"><i class="glyphicon glyphicon-search"></i></button>
+										<button class="btn btn-left-align btn-link no-shadow bg-transparent no-padding-top padding-right-10 right-auto left" type="button" id="searchBtn"><i class="glyphicon glyphicon-search" STYLE="top:-11px;"></i></button>
 									</div>
 									
 									<button class="btn btn-primary btn-left" onClick="__showProjects(''); return false;">All</button>                               

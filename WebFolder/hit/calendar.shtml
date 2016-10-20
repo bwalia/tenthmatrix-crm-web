@@ -272,20 +272,20 @@ success: function(html)
 				 dayClick: function(date, jsEvent, view) {
 				 	var date=date._d;
 					var s_time='';
-      
-			var date_arr=String(date).split(" ");
-			var timestring='';
-			for(var i=0; i<date_arr.length; i++){
-				var contains = (date_arr[i].indexOf(":") > -1);
-					if(contains){
-						timestring=date_arr[i];
-						break;
-					}
-			}
-			var time_arr=timestring.split(":");
-			if(time_arr[0]>12){ var h=time_arr[0]-12; s_time=h+":"+time_arr[1]+"pm"; }
-			else{ s_time=time_arr[0]+":"+time_arr[1]+"am"; }
-
+      				if(view.name!="month"){
+      					var date_arr=String(date).split(" ");
+						var timestring='';
+						for(var i=0; i<date_arr.length; i++){
+							var contains = (date_arr[i].indexOf(":") > -1);
+							if(contains){
+								timestring=date_arr[i];
+								break;
+							}
+						}
+						var time_arr=timestring.split(":");
+						if(time_arr[0]>12){ var h=time_arr[0]-12; s_time=h+":"+time_arr[1]+"pm"; }
+							else{ s_time=time_arr[0]+":"+time_arr[1]+"am"; }
+						}				
 		
 		var cal_left=Number($('#calendar').offset().left);
 		var cal_top=Number($('#calendar').offset().top);
