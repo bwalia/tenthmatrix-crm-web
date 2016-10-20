@@ -65,6 +65,8 @@ _HIT_WebSession_SetVar ("last-clicked-uuid";_HIT_WebApp_GetField ("uuid"))
 <html>
 <head>
 	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+	 <link href="css/bootstrap.datepicker.css" type="text/css" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="css/jquery.ptTimeSelect.css" />
 	<link rel="stylesheet" href="css/autocomplete.css" />
 <style>
 .custom-combobox a.ui-button, 
@@ -179,7 +181,8 @@ _HIT_WebSession_SetVar ("last-clicked-uuid";_HIT_WebApp_GetField ("uuid"))
 									</div>                  
  									<div class="form-group">
 										<label class="col-sm-2 control-label">Project Name <sup class="required">*</sup></label>
-										<div class="ui-widget projectClass col-sm-7">
+										<div class="ui-widget projectClass col-sm-7" style=" margin-left: 27px; width: 80%; margin-top: -12px; padding-bottom: 10px;
+">
 										<Select name="Project_ID" id="Project_ID" class="form-control">
 										<!--#4DIF (Records in selection([Tasks])=0)-->
 											<!--#4DIF (pUserProject="")-->
@@ -322,9 +325,19 @@ _HIT_WebSession_SetVar ("last-clicked-uuid";_HIT_WebApp_GetField ("uuid"))
 								<input name="live_task_name" type="hidden" value="" id="live_task_name">
 								<input name="live_assigned_to" type="hidden" value="" id="live_assigned_to">
 							
-								<input type="submit" class="btn btn-primary btn-color margin-right-5 btn-sm " value="Submit">
-								<a href="tasks.shtml" CLASS="cancelbtn">Cancel</a>
+							<div class="form-group">
+								<label for="" class="col-sm-2 control-label"></label>
+                                <div class="ui-select col-sm-6  ">
+                                    
+										<input type="submit" class="btn btn-primary btn-color margin-right-5 btn-sm" value="Submit" onclick="return ValidateForm();">
+                                   		<a href="tasks.shtml" class="btn btn-danger btn-sm ">Cancel</a>
+                                     
+                                </div>
+                            </div>
 							</div>
+							
+							
+							
 						
                     </div>
 							</div>
@@ -466,11 +479,14 @@ _HIT_WebSession_SetVar ("last-clicked-uuid";_HIT_WebApp_GetField ("uuid"))
     </div>
     <!-- end main container -->
 	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/top-footer.shtml-->
+	
 </div>
 	<!-- scripts -->
     <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
 	<!-- <script src="js/ui/jquery-ui.js"></script> -->
 	<script src="js/bootstrap.datepicker.js"></script>
+    <script type="text/javascript" src="js/jquery.ptTimeSelect.js"></script>
+  
 	<script src="js/jquery.uniform.min.js"></script>
 	<script type="text/javascript" src="js/jquery-impromptu.js"></script>
 	<script src="js/jquery.validate.js"></script>

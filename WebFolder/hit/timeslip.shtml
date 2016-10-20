@@ -59,7 +59,8 @@ border: 1px solid #d3d3d3;
 		
 	}
 	#timeslipnew .custom-combobox-input {
-    width: 190% !important;
+   width: 180%;
+    margin-left: 27px;
 }
 	
 	</style>
@@ -91,8 +92,10 @@ border: 1px solid #d3d3d3;
 				<div class=" col-sm-12 col-lg-8">
 						<form name="Timeslip" ID="timeslipnew" action="savetimeslip.cgi" class="form-horizontal" method="post">         
 							<div class="form-group">
-    							<label for="" class="col-sm-3 control-label">Task Name <span style="color:#6E829B">*</span></label>
-								<div class="ui-widget col-sm-9">
+    							<label for="" class="col-sm-3 control-label" style="
+    padding-top: 20px;
+">Task Name <span style="color:#6E829B">*</span></label>
+								<div class="ui-widget col-sm-6">
 									<!--4D FUNCTION INIT REQUIRED-->
 									<select name="Task_ID" id="Task_ID" CLASS="form-control">
 									<!--#4DIF (Records in selection([Timeslips])=0)-->
@@ -111,9 +114,13 @@ border: 1px solid #d3d3d3;
 									</select>
 								</div>
 							</div> 
+							
+							
+							
+							
 							<div class="form-group"><!--4D FUNCTION INIT REQUIRED-->
     							<label for="" class="col-sm-3 control-label">Employee Name</label>
-								<div class="ui-select col-sm-9">
+								<div class="ui-select col-sm-6">
 									<!--4D FUNCTION INIT REQUIRED-->
 									<select name="Employee_ID" id="Employee_ID" class="form-control">
 									<!--HIT_EXECUTE _HIT_HTMLTXT:=Web_TimeSlipEmpHTMLPopup([Timeslips]uuid_employee)-->
@@ -130,7 +137,7 @@ border: 1px solid #d3d3d3;
 							
 							 <div class="form-group">
     							<label for="" class="col-sm-3 control-label">Slip Timer Started </label>
-    							<div class="col-sm-3">	
+    							<div class="col-sm-4">	
 									<input <!--#4DIF (mUserIsCurrentBool)-->readonly <!--#4DELSE--><!--#4DENDIF-->class="time timePicker form-control" type="text" value="<!--#4DVAR timestamp_unix_toTime ([Timeslips]Timestamp_start)-->" name="Slip_TimerStarted" id="setStartTime" >&nbsp;&nbsp;&nbsp;
 								</div>
 								<!--#4DIF (mUserIsCurrentBool)--> <!--#4DELSE-->
@@ -147,7 +154,7 @@ border: 1px solid #d3d3d3;
                             </div>
 							<div class="form-group">
     							<label for="" class="col-sm-3 control-label">Slip Timer End </label>
-    							<div class="col-sm-3">
+    							<div class="col-sm-4">
 									<input <!--#4DIF (mUserIsCurrentBool)-->readonly <!--#4DELSE--><!--#4DENDIF-->class="time timePicker form-control" type="text" value="<!--#4DVAR timestamp_unix_toTime ([Timeslips]Timestamp_end)-->" name="Slip_Timer_End" id="setEndTIme">&nbsp;&nbsp;&nbsp;
 								</div>  
 								<!--#4DIF (mUserIsCurrentBool)--> <!--#4DELSE-->
