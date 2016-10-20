@@ -40,7 +40,7 @@ For (iCounter;1;Records in selection([Timeslips]))
 
 QUERY([Employees];[Employees]emp_id=[Timeslips]emp_id)
  
-_HIT_TSTXT:=_HIT_TSTXT+"<tr class='item-row' ><td class='item-id'>"+[Employees]emp_first_name+" "+[Employees]emp_last_name+"</td><td >"+[Timeslips]slip_description+"</td><td>"+String(timestamp_unix_toDate ([Timeslips]Timestamp_start))+" ("+String(timestamp_unix_toTime([Timeslips]Timestamp_start))+")</td><td>"+String(timestamp_unix_toDate ([Timeslips]Timestamp_end))+" ("+String(timestamp_unix_toTime([Timeslips]Timestamp_end))+")</td><td>"+string([Timeslips]slip_hours)+"</td><td><a href='timeslip.shtml?uuid="+[Timeslips]uuid+"' >Edit</a></td></tr>"								
+_HIT_TSTXT:=_HIT_TSTXT+"<tr class='item-row' ><td class='item-id'>"+[Employees]emp_first_name+" "+[Employees]emp_last_name+"</td><td >"+[Timeslips]slip_description+"</td><td>"+String(timestamp_unix_toDate ([Timeslips]Timestamp_start))+" ("+String(timestamp_unix_toTime([Timeslips]Timestamp_start))+")</td><td>"+String(timestamp_unix_toDate ([Timeslips]Timestamp_end))+" ("+String(timestamp_unix_toTime([Timeslips]Timestamp_end))+")</td><td>"+string([Timeslips]slip_hours)+"</td><td><a href='timeslip.shtml?uuid="+[Timeslips]uuid+"' ><i class='fa fa-pencil'></i></a></td></tr>"								
 
 NEXT RECORD([Timeslips])
 End for 
@@ -57,8 +57,6 @@ else
 _HIT_HTTPD_RedirectToURL ("sign-in.shtml")
 end if 
 
-//_HIT_HTMLTXT:=_HIT_SessionStr
-//_HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")
 _HIT_WebSession_SetVar ("last-clicked-uuid";_HIT_WebApp_GetField ("uuid"))
 -->
 <!DOCTYPE html>
@@ -124,6 +122,14 @@ _HIT_WebSession_SetVar ("last-clicked-uuid";_HIT_WebApp_GetField ("uuid"))
     border: 1px solid #d5d5d5;
     text-align: left;
 }
+
+
+		#relatedtask .custom-combobox-input {
+    width: 233%!important;
+    margin-left: 27px;
+}
+		
+
 </style>
 </head>
  <body class="hold-transition skin-blue sidebar-mini">
@@ -149,19 +155,20 @@ _HIT_WebSession_SetVar ("last-clicked-uuid";_HIT_WebApp_GetField ("uuid"))
         	<div class="row">
 				 <div class="panel-body no-padding-top bg-white"> 
 				<form name="TaskForm" id="TaskForm" action="savetask.cgi" class="form-horizontal" method="post">
-					<div data-example-id="togglable-tabs" STYLE="margin-bottom: 30px;">
-						<ul id="new-customer-tab" class="nav nav-tabs" role="tablist">
-							<li role="presentation" class="active"><a href="#tabs-1" id="tabs-1" role="tab" data-toggle="tab" aria-controls="tabs-1" aria-expanded="true">Task Details</a></li>
-							<!--#4DIF (Records in selection([Tasks])=1)-->
-							<li role="presentation" ><a href="#tabs-2" id="tabs2" role="tab" data-toggle="tab" aria-controls="tabs-2">Related Timeslips</a></li>
-							<li role="presentation" ><a href="#tabs-3" id="tabs-3" role="tab" data-toggle="tab" aria-controls="tabs-3">Related Tasks</a></li>
-							<li role="presentation" ><a href="#tabs-4" id="tabs-4" role="tab" data-toggle="tab" aria-controls="tabs-4">Checklist</a></li>
-							<!--#4DENDIF-->
-						</ul>
-						<div id="myTabContent" class="tab-content" style="padding-top:25px; border-left: 1px solid #ddd; border-right: 1px solid #ddd;  border-bottom: 1px solid #ddd; padding-bottom:25px; padding-left:15px; padding-right:15px;">
-						<div role="tabpanel" class="tab-pane fade in active" id="tabs-1" aria-labelledby="tabs-1">  
-							<div class="row">
-           		  				<div class=" col-sm-12 col-lg-8">
+				
+				<ul class="nav nav-tabs">
+  <li class="active"><a data-toggle="tab" href="#home">Task Details</a></li>
+  <!--#4DIF (Records in selection([Tasks])=1)-->
+  <li><a data-toggle="tab" href="#second"> Related Timeslips</a></li>
+   <li><a data-toggle="tab" href="#third"> Related Tasks</a></li>
+    <li><a data-toggle="tab" href="#four"> Checklist </a></li>
+	<!--#4DENDIF-->
+</ul>
+
+<div class="tab-content">
+  <div id="home" class="tab-pane fade in active">
+   <div class="row" STYLE="padding-top:20px;">
+           		  				<div class=" col-sm-12 col-lg-8" >
 									<div class="form-group">
 										<label class="col-sm-2 control-label">Task Name <sup class="required">*</sup></label>
 										<div class="col-sm-7">
@@ -181,8 +188,7 @@ _HIT_WebSession_SetVar ("last-clicked-uuid";_HIT_WebApp_GetField ("uuid"))
 									</div>                  
  									<div class="form-group">
 										<label class="col-sm-2 control-label">Project Name <sup class="required">*</sup></label>
-										<div class="ui-widget projectClass col-sm-7" style=" margin-left: 27px; width: 80%; margin-top: -12px; padding-bottom: 10px;
-">
+										<div class="ui-widget projectClass col-sm-7" style=" margin-left: 27px; width: 80%; margin-top: -12px; padding-bottom: 10px;">
 										<Select name="Project_ID" id="Project_ID" class="form-control">
 										<!--#4DIF (Records in selection([Tasks])=0)-->
 											<!--#4DIF (pUserProject="")-->
@@ -265,7 +271,7 @@ _HIT_WebSession_SetVar ("last-clicked-uuid";_HIT_WebApp_GetField ("uuid"))
                             </div>
 							
 							<!--#4DIF (Records in selection([Tasks])=1)-->
-							<div class="form-group">
+							<div class="col-md-12">
 								<h3 style="font-size:14px; margin:0px 0 10px 0; padding-left:0px; font-weight:bold;">Attached Files</h3>
                                 <table class="table file-table table-condensed table-striped  table-hover" >
               					<thead>
@@ -282,8 +288,8 @@ _HIT_WebSession_SetVar ("last-clicked-uuid";_HIT_WebApp_GetField ("uuid"))
                 				<tr>
                   					<!-- <td width="30">1</td> -->
                   					<td><a title="<!--#4DHTMLVAR [Documents]filename-->" target="_blank" href="<!--#4DHTMLVAR [Documents]doc_path-->"><!--#4DHTMLVAR [Documents]filename--></a></td>
-                  					<td width="75" ><a href="javascript:void(0)" onClick="del_file('<!--#4DHTMLVAR [Documents]uuid-->', $(this))"><i class="icon-remove" style="color:#f00;"></i></a ></td>
-                  					<td width="75"><a href="javascript:void(0)" onClick="download_file('<!--#4DHTMLVAR [Documents]uuid-->')"><i class="icon-download-alt"></i></a></td>                
+                  					<td width="75" ><a href="javascript:void(0)" onClick="del_file('<!--#4DHTMLVAR [Documents]uuid-->', $(this))"><i class="fa fa-remove"></i></a ></td>
+                  					<td width="75"><a href="javascript:void(0)" onClick="download_file('<!--#4DHTMLVAR [Documents]uuid-->')"><i class="fa fa-download"></i></a></td>                
                 				</tr>
                 				<!--#4DENDLOOP-->
               					</tbody>
@@ -291,32 +297,32 @@ _HIT_WebSession_SetVar ("last-clicked-uuid";_HIT_WebApp_GetField ("uuid"))
 							</div>
 							<div class="form-group">
 									<label class="col-sm-2 control-label">Upload File <span style="font-size:10px;font-style:italic;">(Max size 4MB)</span></label>
-									<input name="file_content" type="file" id="file_content">
-									<button type="button" class="btn btn-primary btn-color margin-right-5 btn-sm " onClick="add_file()" >Upload</button>
+									<div CLASS="col-sm-3"><input name="file_content" type="file" id="file_content"></div>
+									<div CLASS="col-sm-"><button type="button" class="btn btn-primary btn-color margin-right-5 btn-sm " onClick="add_file()" >Upload</button></div>
                             </div>
 							
 							
-							<div class="form-group">
+							<div class="col-md-12">
 								<h3>Notes</h3><br>
 								<!--#4DSCRIPT/Web_LoadTaskNotes/-->	
 								<!--#4DLOOP [Notes]--><!-- row -->
 								<div class="notes">
-									<label id="user_details"><!--#4DHTMLVAR [Notes]note_user_name--> (<!--4DHTMLVAR timestamp_unix_toGMT ([Notes]Timestamp_modified)-->) (Note: <!--#4DHTMLVAR [Notes]note_ID-->)</label>
+									<label class="col-sm-2 control-label" id="user_details"><!--#4DHTMLVAR [Notes]note_user_name--> (<!--4DHTMLVAR timestamp_unix_toGMT ([Notes]Timestamp_modified)-->) (Note: <!--#4DHTMLVAR [Notes]note_ID-->)</label>
 									<input class="note_uuid" type="hidden" value="<!--#4DHTMLVAR [Notes]uuid-->" />
-									<textarea name="note" class="span6 note" rows="3" id="note" readonly> <!--#4DHTMLVAR [Notes]Note--></textarea>
-									<button type="button" id="edit" class="btn-glow" onClick="editCustomerNote($(this))">Edit Note</button>&nbsp;
-									<button type="button" id="delete" class="btn-glow" onClick="deleteCustomerNote($(this))">Delete</button>
-									<button type="button" id="save" class="btn-glow" onClick="saveCustomerNote($(this))" style="display:none">Save Note</button>
-									<button type="button" id="cancel" class="btn-glow" onClick="cancelCustomerNote($(this))" style="display:none">Cancel</button>
+									<textarea name="note" class="col-sm-8 note form-control" rows="3" id="note" readonly> <!--#4DHTMLVAR [Notes]Note--></textarea>
+									<button type="button" id="edit" class="btn btn-danger btn-sm " onClick="editCustomerNote($(this))">Edit Note</button>&nbsp;
+									<button type="button" id="delete" class="btn btn-primary btn-sm " onClick="deleteCustomerNote($(this))">Delete</button>
+									<button type="button" id="save" class="btn btn-danger btn-sm " onClick="saveCustomerNote($(this))" style="display:none">Save Note</button>
+									<button type="button" id="cancel" class="btn btn-primary btn-sm " onClick="cancelCustomerNote($(this))" style="display:none">Cancel</button>
 								</div>
 								<!--#4DENDLOOP-->
 								
 								<div class='notes_end'></div>
 							</div>
-							<div class="span12 field-box">
+							<div class="col-md-12 field-box">
 								<label>Add Note</label>
 								<textarea name="add_new_note" class="form-control" rows="3" id="add_new_note"></textarea>
-								<button type="button" id="add" class="btn-glow" onClick="addCustomerNote()">Add Note</button>
+								<button type="button" id="add" class="btn btn-primary btn-sm" onClick="addCustomerNote()" STYLE="margin-top:10px;">Add Note</button>
 							</div>
 							<!--#4DELSE--><!--#4DENDIF-->
 							<div class="span11 field-box" >
@@ -341,14 +347,16 @@ _HIT_WebSession_SetVar ("last-clicked-uuid";_HIT_WebApp_GetField ("uuid"))
 						
                     </div>
 							</div>
-						
-				<!--#4DIF (Records in selection([Tasks])=1)-->
-					<div role="tabpanel" class="tab-pane fade" id="tabs-2" aria-labelledby="tabs2">
-						 <div class="row-fluid form-wrapper">
+  </div>
+  <!--#4DIF (Records in selection([Tasks])=1)-->
+
+  <div id="second" class="tab-pane fade">
+    <div class="row-fluid form-wrapper">
 					<!-- left column -->
-                    <div class="span12 with-sidebar">
-					
-					<table id="items">
+                    <div class="row">
+					<div class="content table-responsive table-full-width">
+		 			<div class="table-responsive" style="border:none;" >
+                         <table class="table table-striped  table-bordered table-hover custom-tbl-st bt" id="items"  style="background-color: rgb(255, 255, 255); border-radius: 4px;" >
 		
 		  <tr class="item">
 		      <th>Employee</th>
@@ -372,19 +380,20 @@ _HIT_WebSession_SetVar ("last-clicked-uuid";_HIT_WebApp_GetField ("uuid"))
 		 	</tr>
 		  <!--#4DENDIF-->
 		  
-		</table>	<br/>
+		</table>	</div></div>
 					
 					</div>
 					</div>
-					
-					</div>
-					
-			<div role="tabpanel" class="tab-pane fade" id="tabs-3" aria-labelledby="tabs-3">
-						 <div class="row-fluid form-wrapper">
+  </div>
+  
+  
+  <div id="third" class="tab-pane fade">
+  <div class="row-fluid form-wrapper">
 					<!-- left column -->
-                    <div class="span12 with-sidebar">
-					
-					<table id="items">
+                  <div CLASS="row">
+            	<div class="content table-responsive table-full-width">
+		 			<div class="table-responsive" style="border:none;" >
+                         <table class="table table-striped  table-bordered table-hover custom-tbl-st bt" id="table-breakpoint"  style="background-color: rgb(255, 255, 255); border-radius: 4px;" >
 		  
 		  <tr class="item">
 		      <th>Relationship</th>
@@ -398,53 +407,69 @@ _HIT_WebSession_SetVar ("last-clicked-uuid";_HIT_WebApp_GetField ("uuid"))
 		      <td><!--#4DHTMLVAR [Related_Task]Relationship--></td>
 		      <td><!--#4DHTMLVAR [Tasks]task_name--></td>
 		      <td><!--#4DHTMLVAR [Tasks]task_status--></td>	      
-			  <td ><a href="javascript:void(0)" onClick="del_relation('<!--#4DHTMLVAR [Related_Task]uuid-->', $(this))" >Delete</a></td>			  
+			  <td ><a href="javascript:void(0)" onClick="del_relation('<!--#4DHTMLVAR [Related_Task]uuid-->', $(this))" ><i class="fa fa-trash-o "></i></a></td>			  
 		  </tr>
 		  <!--#4DENDLOOP-->
-		</table><br/><br/>
+		</table>
+		
+		</div>
+		</div>
 		
 		
-		<h3>New Relationship</h3>
-		<br/>
-		<div class="field-box">
-			<label>Current Issue</label>
-			<div class="ui-select span2">
-				<Select name="current_issue" id="current_issue" >
+		<div CLASS="col-md-12"><h3>New Relationship</h3></div>
+		
+		
+		
+		<div class="form-group" >
+    							<label for="" class="col-sm-1 control-label">Current Issue<span style="color:#6E829B">*</span></label>	
+								<div class="col-sm-4  ">					
+                             			<Select name="current_issue" id="current_issue" CLASS="form-control" >
 					<option value="parent of" >parent of</option>
 					<option value="child of" >child of</option>
 					<option value="duplicate of">duplicate of</option>
 					<option value="has duplicate">has duplicate</option>
 					<option value="related to">related to</option>
-				</select>                                    
-			</div>
-		</div>
+				</select>  
+                            	</div>
+                            </div>
 		
-		<div class="form-group">
-									<label class="col-sm-2 control-label">Task Name </label>
-								<div class="ui-widget">
-									<select name="Task_ID" id="Task_ID">
+		<div class="form-group" ID="relatedtask">
+    							<label for="" class="col-sm-1 control-label" style="padding-top: 20px;">Task Name</label>	
+								<div class="col-sm-4  ">					
+                             			<select name="Task_ID" id="Task_ID" CLASS="form-control" >
 										<option value=""></option>
 									<!--#4DSCRIPT/Web_LoadTasks/-->
 									<!--4DLOOP  [Tasks]-->
 											<option value="<!--4DVAR [Tasks]task_id-->" <!--#4DIF ([Tasks]task_id= Num(_HIT_WebApp_GetField ("task_id")))-->selected<!--4DELSE--><!--4DENDIF-->><!--4DVAR [Tasks]task_name--></option>
 									<!--4DENDLOOP-->									
-									</select>
-								</div>
-							</div>
-				<div class="form-group">
-									<label class="col-sm-2 control-label"></label>			
-				<button type="button" class="btn-glow primary" onClick="add_relation()" >Add</button>
+									</select> 
+                            	</div>
+                            </div>
+		
+			
+	
+		<div class="form-group" >
+    							<label for="" class="col-sm-1 control-label"></label>	
+								<div class="col-sm-4">					
+                             		<button type="button" class="btn btn-primary" onClick="add_relation()" >Add</button>
+                            	</div>
+                            </div>
+	
+								
+				<div class="field-box">
+                                <label></label>			
+				
 				</div>
 					
 					</div>
 					</div>
-					
-					</div>
-					
-		<div role="tabpanel" class="tab-pane fade" id="tabs-4" aria-labelledby="tabs-4">
-            <div class="row-fluid form-wrapper"> 
+  </div>
+  
+  
+  <div id="four" class="tab-pane fade">
+   <div class="row-fluid form-wrapper"> 
               <!-- left column -->
-              <div class="span12 with-sidebar"> <a hre="javascript:void(0)" onClick="add_new_checklist()" class="btn-glow primary">Add new Checklist</a>
+               <a hre="javascript:void(0)" onClick="add_new_checklist()" class="btn  btn-primary" STYLE="margin:10px;">Add new Checklist</a>
               <div class="table-wrapper checklistTable" style="display:none;">
                 <table class="table table-hover" id="items" style="width:75%">
                 <thead>
@@ -468,10 +493,15 @@ _HIT_WebSession_SetVar ("last-clicked-uuid";_HIT_WebApp_GetField ("uuid"))
                 </div>
               </div>
             </div>
-          </div>
-				<!--#4DENDIF-->	
-						</div>
-            		</div><!-- tabs div-->
+  </div>
+  <!--#4DENDIF-->	
+  
+</div>
+				
+				
+				
+				
+					
 				</form>
 				</div>
             </div>
@@ -770,7 +800,7 @@ function loadCheckList(){
 						table_html+='<tr>';
 						table_html+='<td><input type="checkbox" id="chk_all" class="check" value="false" name="Select" onClick="changeStatus(this,\''+row.uuid+'\')"></td>';
 					}
-					table_html+='<td><span id="span_'+row.uuid+'">'+row.description+'</span><textarea style="display:none;width:95%;height:35px;" rows="3" id="text_'+row.uuid+'">'+row.description+'</textarea></td>';
+					table_html+='<td><span id="span_'+row.uuid+'">'+row.description+'</span><textarea style="display:none;width:95%;height:35px;" class="form-control" rows="3" id="text_'+row.uuid+'">'+row.description+'</textarea></td>';
 					//table_html+='<td><span id="user_'+row.uuid+'">'+row.user_name+'</span></td>';
 					table_html+='<td><span id="modified_'+row.uuid+'">'+row.user_name+' ('+row.last_modified+')</span></td>';
 					if(row.duplicate_interval=="none" || row.duplicate_interval=="None"){
@@ -781,8 +811,8 @@ function loadCheckList(){
 					}
 					table_html+='<td align="left">'+row.next_duplicate_time+'</td>';
 					table_html+='<td align="left">';
-					table_html+='<ul class="actions" id="editRemove_'+row.uuid+'"><li><a href="javascript:void(0)" onClick="editChecklist(\''+row.uuid+'\')" title="Edit"><i class="table-edit"></i></a></li><li class="last"><a href="javascript:void(0)" onClick="deleteChecklist(\''+row.uuid+'\')" title="Delete"><i class="table-delete"></i></a></li></ul>';
-					table_html+='<ul class="actions" id="saveCancel_'+row.uuid+'" style="display:none;"><li><a href="javascript:void(0)" onClick="saveChecklist(\''+row.uuid+'\')" title="Save"><i class="table-save"></i></a></li><li class="last"><a href="javascript:void(0)" onClick="cancelChecklist(\''+row.uuid+'\')" title="Cancel"><i class="table-cancel"></i></a></li></ul>';
+					table_html+='<div id="editRemove_'+row.uuid+'"><a href="javascript:void(0)" onClick="editChecklist(\''+row.uuid+'\')" title="Edit"><i class="fa fa-pencil"></i></a>&nbsp;<a href="javascript:void(0)" onClick="deleteChecklist(\''+row.uuid+'\')" title="Delete"><i class="fa fa-trash"></i></a></div>';
+					table_html+='<div id="saveCancel_'+row.uuid+'" style="display:none;"><a href="javascript:void(0)" onClick="saveChecklist(\''+row.uuid+'\')" title="Save"><i class="fa fa-save"></i></a>&nbsp;<a href="javascript:void(0)" onClick="cancelChecklist(\''+row.uuid+'\')" title="Cancel"><i class="fa fa-remove"></i></a></div>';
 					table_html+='</td>';
 					table_html+='</tr>';
 				});

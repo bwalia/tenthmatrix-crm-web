@@ -27,6 +27,11 @@ end if
 	#ptTimeSelectCntr{
 		z-index: 1001!important;
 	}
+	
+	#taskname .custom-combobox-input {
+		width:200px!important;
+		    margin-left: 24px;
+	}
 	</style>
 	
 </head>
@@ -68,7 +73,7 @@ end if
                                 <span class="date"></span></h5>
                             <form name="frm_task" class="form-horizontal col-sm-12 col-lg-12" > 
 							<input type="hidden" value="" name="curr_date" id="curr_date">
-							<div class="form-group">
+							<div class="form-group" ID="taskname">
                               Task Name <sup class="required">*</sup>
 							   <div class="ui-widget">
 									<select name="Task_ID" id="Task_ID" class="form-control">
