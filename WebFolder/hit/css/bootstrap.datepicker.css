@@ -67,6 +67,7 @@
 }
 .datepicker table {
   margin: 0;
+  width:320px;
 }
 .datepicker td,
 .datepicker th {
