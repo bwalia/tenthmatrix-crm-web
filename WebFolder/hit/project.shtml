@@ -39,15 +39,21 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 <!DOCTYPE html>
 <html>
 <head>
-<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
-<link href="css/img-tabs.css" type="text/css" rel="stylesheet">
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+	 <link href="css/bootstrap.datepicker.css" type="text/css" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="css/jquery.ptTimeSelect.css" />
 	<link rel="stylesheet" href="css/autocomplete.css" />
-	<link rel="stylesheet" href="css/chosen.css">
-	
-	<link rel="stylesheet" media="all" type="text/css" href="css/jquery-impromptu.css" />
-	<link rel='stylesheet' type='text/css' href='css/style.css' />
+	<link rel="stylesheet" href="css/basictable.css">
 <style>
-#ProjectForm em.error {
+.custom-combobox a.ui-button, 
+  .custom-combobox a.ui-widget, 
+  .custom-combobox a.ui-state-default, 
+  .custom-combobox a.ui-button-icon-only, 
+  .custom-combobox a.custom-combobox-toggle, 
+  .custom-combobox a.ui-corner-right {
+	top:0px;
+  }
+ #ProjectForm em.error {
 	margin-left: 10px;
 	width: auto;
 	display: inline;
@@ -59,19 +65,7 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 #ProjectForm input.error, textarea.error, select.error{
     border: 1px solid red;
 }
- .file-table thead th{
-	  padding-bottom:10px;
-  }
-  .file-table tbody td{
-	  padding:5px;
-  }
-  .file-table td, .file-table th{
-	  border: 1px solid #ddd;
-  }
-  
-  .file-table td a:hover {
-	  text-decoration:none;
-  }
+
   
   .chosen-container{
 	  width: 424px !important;
@@ -86,44 +80,73 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
  
   }
   
+  
+  #ProjectForm .custom-combobox{
+  
+      width: 351px;
+    margin-left: 25px;
+    top: 2px;
+  }
+  
+  
+
+  
+		
 
 </style>
 </head>
-<body>
+ <body class="hold-transition skin-blue sidebar-mini">
+ <div class="wrapper">
 
     <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
 
     <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
 
 	<!-- main container -->
-    <div class="content">
-    
-        <div class="container-fluid">
-            <div id="pad-wrapper" class="form-page">
-				<div class="row-fluid header">
-                    <h3><!--#4DIF (Records in selection([Projects])=1)-->Edit <!--#4DVAR [Projects]proj_name--><!--#4DELSE-->New Project<!--#4DENDIF--></h3>
-                </div>
-               	
-                    <div id="tabs">
-						<ul>
-							<li><a style="color:#000000" href="#tabs-1">Project Details</a></li>
-							<!--#4DIF (Records in selection([Projects])=1)-->
-							<li><a style="color:#000000" href="#tabs-2">Additional notes and documents</a></li>
-							<li><a style="color:#000000" href="#tabs-3">Related Tasks</a></li>
-							<!--#4DENDIF-->
-						</ul>
-						<div id="tabs-1" class="var_tabs">
-							<div class="row-fluid form-wrapper">
+   	<div class="content-wrapper">
+        <section class="content-header">
+      		<h1>
+        		<!--#4DIF (Records in selection([Tasks])=1)-->"<!--#4DVAR taskNameStr-->"<!--#4DELSE-->New<!--#4DENDIF--> 
+        		<small>Project</small>
+      		</h1>
+      		<ol class="breadcrumb">
+       			<li><a href="index.shtml"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+        		<li class="active">Project Detail</li>
+      		</ol>
+    	</section>
+		<section class="content">
+        	<div class="row">
+				 <div class="panel-body no-padding-top bg-white"> 
+				 
+				 <form name="ProjectForm" action="saveproject.cgi" id="ProjectForm" method="post" class="form-horizontal" >
+							
+				<ul class="nav nav-tabs">
+  <li class="active"><a data-toggle="tab" href="#home">Project Details</a></li>
+  		<!--#4DIF (Records in selection([Projects])=1)-->
+  <li><a data-toggle="tab" href="#second"> Additional notes and documents</a></li>
+   <li><a data-toggle="tab" href="#third"> Related Tasks</a></li>
+  
+	<!--#4DENDIF-->
+</ul>
+
+<div class="tab-content" STYLE="    overflow: hidden;     border: 1px solid #ddd;     border-top: none;">
+
+  <div id="home" class="tab-pane fade in active">
+  
+<div class=" col-sm-12 col-lg-8" STYLE="margin-top:20px;" >
+
 								<!-- left column -->
 								<form name="ProjectForm" action="saveproject.cgi" id="ProjectForm" method="post" class="form-comment" >
                     			<div class="span12 with-sidebar">
 						  		<!--#4DIF (mUserIsCurrentBool)-->
 								<input name="company_Name" class="span9" type="hidden" value="<!--4DVAR [Companies]company_Name--> [<!--4DVAR [Companies]account_Number-->]" id="company_Name">                
 						   		<!--#4DELSE--> 
-								<div class="field-box">
-                                 <label>Client Name <span style="color:#6E829B">*</span></label>
-                                 <div class="ui-widget span9" STYLE="margin-left:0px;">
-                                 <select id="Client_ID" name="Client_ID" >
+								
+								
+								<div class="form-group" >
+    							<label for="" class="col-sm-2 control-label">Client Name<sup class="required">*</sup></label>	
+								<div class="col-sm-4">					
+                             		<select id="Client_ID" name="Client_ID"  CLASS="form-control"  >
 										<!--#4DIF (Records in selection([Projects])=0)-->
 											<!--#4DIF (pUserClient="")-->
 												<option value=""></option>
@@ -138,9 +161,11 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 										 <option value="<!--4DVAR [Companies]account_Number-->" selected><!--4DVAR [Companies]company_Name--></option>									 
 										 <!--#4DENDIF-->
                                         </select>
-                                    </div>
-     
-                                </div> 
+                            	</div>
+                            </div>
+								
+								
+								 
 								<!--#4DENDIF-->        
                                 <input name="Project_uuid" class="span9" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="Project_uuid">               
                               	
@@ -150,15 +175,27 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
                                     <input class="span8" name="Project_id" type="text" value="<!~~#4DVAR [Projects]proj_id~~>" id="Project_id">
                                 </div>
 								-->
-                                <div class="span12 field-box">
-                                    <label>Project Name <span style="color:#6E829B">*</span></label>
-                                    <input class="span4" type="text" name="Project_Name" id="Project_Name" value="<!--#4DVAR [Projects]proj_name-->">
-                                </div>
+								
+								<div class="form-group">
+								<label class="col-sm-2 control-label">Project Name <sup class="required">*</sup></label>
+								<div class=" col-sm-4">
+									<input CLASS="form-control" type="text" name="Project_Name" id="Project_Name" value="<!--#4DVAR [Projects]proj_name-->">                                 
+								</div>
+							</div>
+							
+							
+							<div class="form-group">
+								<label class="col-sm-2 control-label">Start Date</label>
+								<div class=" col-sm-4">
+								 <input type="text" ame="task_start_date" class="input-large datepicker form-control" type="text"  data-date-format="dd/mm/yyyy" <!--#4DIF ([Projects]start_date=!00/00/00!)-->value="<!--#4DHTMLVAR Current date -->"<!--4DELSE-->value="<!--#4DVAR [Projects]start_date-->"<!--4DENDIF--> name="Start_Date" id="Start_Date" readonly >
+								                         
+								</div>
+							</div>
+								
+								
                                 
-                                <div class="span12 field-box">
-                                    <label>Start Date </label>
-                                    <input type="text" class="input-large span4 datepicker"  data-date-format="dd/mm/yyyy" <!--#4DIF ([Projects]start_date=!00/00/00!)-->value="<!--#4DHTMLVAR Current date -->"<!--4DELSE-->value="<!--#4DVAR [Projects]start_date-->"<!--4DENDIF--> name="Start_Date" id="Start_Date" readonly >
-                                </div>
+                                
+                                
                                 
 								<!-- 
 								<div class="span12 field-box">
@@ -166,18 +203,27 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
                                     <input type="date" value="" class="input-large datepicker" value="<!~~#4DVAR [Projects]end_date~~>" name="End_Date" id="End_Date" >
                                 </div>
 								-->
-                                <div class="span12 field-box">
-                                    <label>Budget </label>
-                                    <input class="span4 num" type="text" id="Budget" value="<!--#4DVAR [Projects]budget-->" name="Budget">
+								
+								<div class="form-group">
+								<label class="col-sm-2 control-label">Budget</label>
+								<div class=" col-sm-4">
+								<input CLASS="form-control" type="text" id="Budget" value="<!--#4DVAR [Projects]budget-->" name="Budget">
+								                    
+								</div>
+							</div>
+								
+								
+                                
+								
+								<div class="form-group">
+                                  <label class="col-sm-2 control-label">Rate</label>
+								  <div class=" col-sm-4">
+                                    <input CLASS="form-control" type="text" id="Rate" value="<!--#4DVAR [Projects]proj_rate-->" name="Rate"></div>
                                 </div>
-								<div class="span12 field-box">
-                                    <label>Rate</label>
-                                    <input class="span4 num" type="text" id="Rate" value="<!--#4DVAR [Projects]proj_rate-->" name="Rate">
-                                </div>
-								<div class="span12 field-box">
-                                    <label>Currency</label>
-									<div class="ui-select span4">
-										<select id="Currency" name="Currency">
+								<div class="form-group">
+                                     <label class="col-sm-2 control-label">Currency</label>
+									<div class=" col-sm-4">
+										<select id="Currency" name="Currency" CLASS="form-control">
 											<option value=""></option>
 											<!--4DLOOP [Tax_Codes]-->
 												<option value="<!--#4DVAR [Tax_Codes]Currency_Code-->" <!--#4DIF ([Tax_Codes]Currency_Code=[Projects]currency_code)-->selected<!--4DELSE--><!--4DENDIF-->><!--4DVAR [Tax_Codes]Currency_Code--></option>	
@@ -185,33 +231,43 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 										</select>                                     
 									</div>
                                 </div>
+										
+										
+										
+										<div class="form-group">
+								<label class="col-sm-2 control-label">Deadline Date</label>
+								<div class=" col-sm-4">
+								 <input type="text" CLASS="form-control" data-date-format="dd/mm/yyyy" name="deadline_date" id="deadline_date" readonly <!--#4DIF ([Projects]project_end_date=!00/00/00!)-->value=""<!--4DELSE-->value="<!--#4DVAR [Projects]project_end_date-->"<!--4DENDIF-->>
+								
+								                    
+								</div>
+							</div>
 																
-								<div class="span12 field-box">
-                                    <label>Deadline Date </label>
-                                    <input type="text" class="input-large datepicker span4" data-date-format="dd/mm/yyyy" name="deadline_date" id="deadline_date" readonly <!--#4DIF ([Projects]project_end_date=!00/00/00!)-->value=""<!--4DELSE-->value="<!--#4DVAR [Projects]project_end_date-->"<!--4DENDIF-->>
-                                </div>
+								
+								
+								
                                 
-                                <div class="span12 field-box">
-                                	<label>Project Incharge </label>
-                                	<input class="span4" type="hidden" id="project_incharge" value="" name="project_incharge">
+                               	<div class="form-group">
+                                		<label class="col-sm-2 control-label">Project Incharge </label>
+                                	<div class=" col-sm-4"><input CLASS="form-control" type="hidden" id="project_incharge" value="" name="project_incharge">
 										<!--HIT_EXECUTE
 										 _HIT_HTMLTXT:=Web_ProjectInchargePopup([Projects]uuid)
 										-->
-                                </div>
+                                </div></div>
                                 
-								<div class="field-box">
-                                    <label>Project Active</label>
-                                    <div class="ui-select span4">
-										<select name="Project_Active" id="Project_Active" name="Project_Active">
+								<div class="form-group">
+                                    <label class="col-sm-2 control-label">Project Active</label>
+                                   <div class=" col-sm-4">
+										<select name="Project_Active" id="Project_Active" name="Project_Active" CLASS="form-control">
 											<option value="Active" <!--#4DIF ([Projects]proj_active=True)-->selected<!--4DELSE--><!--4DENDIF-->>Active</option>
 											<option value="Completed" <!--#4DIF ([Projects]proj_active=false)-->selected<!--4DELSE--><!--4DENDIF-->>Completed</option>
 										</select>                                     
                                     </div>
                                 </div>
-                                <div class="field-box">
-                                    <label>Project Status</label>
-                                    <div class="ui-select span4">
-										<select name="status" id="status" name="status">
+                               <div class="form-group">
+                                  <label class="col-sm-2 control-label">Project Status</label>
+                                    <div class=" col-sm-4">
+										<select name="status" id="status" name="status" CLASS="form-control">
 											<option value=""></option>
 											<option value="Proposal" <!--#4DIF ([Projects]status="Proposal")-->selected<!--4DELSE--><!--4DENDIF-->>Proposal</option>
 											<option value="Development" <!--#4DIF ([Projects]status="Development")-->selected<!--4DELSE--><!--4DENDIF-->>Development</option>
@@ -220,25 +276,38 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 										</select>                                      
                                     </div>
                                 </div>
-                                <div class="span11 field-box" >
-									<input type="submit" name="Submit" class="btn-glow primary save_exit" value="Submit">
-									<LABEL></LABEL>
-                                  
-                                      <a href="projects.shtml" CLASS="cancelbtn">Cancel</a>
-                                    <!-- <input type="submit" class="submit" href=""> -->
+								
+								
+								<div class="form-group">
+								<label for="" class="col-sm-2 control-label"></label>
+                                <div class="ui-select col-sm-6  ">
+                                    
+										<input type="submit" name="Submit" class="btn btn-primary btn-color margin-right-5 btn-sm" value="Submit" onclick="return ValidateForm();">
+                                   		<a href="projects.shtml" class="btn btn-danger btn-sm ">Cancel</a>
+                                     
                                 </div>
+                            </div>
+								
+                                
                                 </div>
                                 </form>
                             </div>
-                        </div>
-                        <!--#4DIF (Records in selection([Projects])=1)-->
-                        <div id="tabs-2" class="var_tabs">
-							<div class="row-fluid form-wrapper">
+  </div>
+  
+  <!--#4DIF (Records in selection([Projects])=1)-->
+
+
+  <div id="second" class="tab-pane fade" >
+   <div class="col-sm-12 col-lg-8" STYLE="margin-top:20px;" >
 								<!-- left column -->
-                    			<div class="span12 with-sidebar">
-						  			<div class="span7">
-										<h3 style="font-size:14px; margin:0px 0 10px 0; padding-left:0px; font-weight:bold;">Attached Documents</h3>
-                                		<table class="table file-table table-condensed table-striped  table-hover" >
+								
+								<div class="form-group">
+								<label for="" class="col-sm-2 control-label">Attached Documents</label>
+                                <div class="col-sm-6  ">
+                                    
+									<div class=" table-responsive table-full-width">
+		 			<div class="table-responsive" style="border:none;" >
+                        <table class="table table-striped  table-bordered table-hover custom-tbl-st bt" id="table-breakpoint1"  style="background-color: rgb(255, 255, 255); border-radius: 4px;" >
               								<thead>
                 								<tr>
                   									<th class="span7">File Name</th>
@@ -252,57 +321,84 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
                 							<tr>
                   								<!-- <td width="30">1</td> -->
                   								<td><a title="<!--#4DHTMLVAR [Documents]filename-->" target="_blank" href="#" onClick="download_file('<!--#4DHTMLVAR [Documents]uuid-->')"><!--#4DHTMLVAR [Documents]filename--></a></td>
-                  								<td width="75" ><a href="javascript:void(0)" onClick="del_file('<!--#4DHTMLVAR [Documents]uuid-->', $(this))"><i class="icon-remove" style="color:#f00;"></i></a ></td>
-                  								<td width="75"><a href="javascript:void(0)" onClick="download_file('<!--#4DHTMLVAR [Documents]uuid-->')"><i class="icon-download-alt"></i></a></td>                
+                  								<td width="75" ><a href="javascript:void(0)" onClick="del_file('<!--#4DHTMLVAR [Documents]uuid-->', $(this))"><i class="fa fa-remove"></i></a ></td>
+                  								<td width="75"><a href="javascript:void(0)" onClick="download_file('<!--#4DHTMLVAR [Documents]uuid-->')"><i class="fa fa-download"></i></a></td>                
                 							</tr>
                 							<!--#4DENDLOOP-->
            									</tbody>
            				 				</table>
-									</div>
-								<div class="field-box">
-                                	<label>Upload New Document</label>
-									<input name="file_content" type="file" id="file_content">
-									<button type="button" class="btn btn-info" onClick="add_file()" >Upload</button>
-                           		</div>
+										</div>
+										</div>
+                                     
+                                </div>
+                            </div>
 							
-								<div class="span12 field-box">
-									<h3>Notes</h3><br>
-									<!--#4DSCRIPT/Web_LoadProjectNotes/-->	
+							
+							<div class="form-group">
+								<label for="" class="col-sm-2 control-label">Upload New Document</label>
+                                <div class="col-sm-6  ">
+                                    
+									<input name="file_content" type="file" id="file_content" CLASS="form-control">
+									<button type="button" class="btn btn-primary" onClick="add_file()" STYLE="margin-top:10px;" >Upload</button>
+                                     
+                                </div>
+                            </div>
+							
+							<h2 for="" class="col-sm-12 ">Notes</h2>
+							<div class="form-group">
+								
+                                <div class="col-sm-12">
+                                  <!--#4DSCRIPT/Web_LoadProjectNotes/-->	
 									<!--#4DLOOP [Notes]--><!-- row -->
 									<div class="notes">
-										<label id="user_details"><!--#4DHTMLVAR [Notes]note_user_name--> (<!--4DHTMLVAR timestamp_unix_toGMT ([Notes]Timestamp_modified)-->) (Note: <!--#4DHTMLVAR [Notes]note_ID-->)</label>
-										<input class="note_uuid" type="hidden" value="<!--#4DHTMLVAR [Notes]uuid-->" />
-										<textarea name="note" class="span6 note" rows="3" id="note" readonly> <!--#4DHTMLVAR [Notes]Note--></textarea>
-										<button type="button" id="edit" class="btn-glow" onClick="editCustomerNote($(this))">Edit Note</button>&nbsp;
-										<button type="button" id="delete" class="btn-glow" onClick="deleteCustomerNote($(this))">Delete</button>
-										<button type="button" id="save" class="btn-glow" onClick="saveCustomerNote($(this))" style="display:none">Save Note</button>
-										<button type="button" id="cancel" class="btn-glow" onClick="cancelCustomerNote($(this))" style="display:none">Cancel</button>
+										<label class="col-sm-2 control-label" id="user_details"><!--#4DHTMLVAR [Notes]note_user_name--> (<!--4DHTMLVAR timestamp_unix_toGMT ([Notes]Timestamp_modified)-->) (Note: <!--#4DHTMLVAR [Notes]note_ID-->)</label>
+										<input class="note_uuid form-control" type="hidden" value="<!--#4DHTMLVAR [Notes]uuid-->" />
+										<textarea name="note" class="col-sm-6 form-control" rows="3" id="note" readonly> <!--#4DHTMLVAR [Notes]Note--></textarea>
+										<button type="button" id="edit" class="btn btn-danger btn-sm" onClick="editCustomerNote($(this))">Edit Note</button>&nbsp;
+										<button type="button" id="delete" class="btn btn-primary btn-sm" onClick="deleteCustomerNote($(this))">Delete</button>
+										<button type="button" id="save" class="btn btn-danger btn-sm" onClick="saveCustomerNote($(this))" style="display:none">Save Note</button>
+										<button type="button" id="cancel" class="btn btn-primary btn-sm" onClick="cancelCustomerNote($(this))" style="display:none">Cancel</button>
 									</div>
 									<!--#4DENDLOOP-->
 									<div class='notes_end'></div>
-								</div>
-								<div class="span12 field-box">
-									<label>Add Note</label>
-									<textarea name="add_new_note" class="span6" rows="3" id="add_new_note"></textarea>
-									<button type="button" id="add" class="btn-glow" onClick="addCustomerNote()">Add Note</button>
+                                     
+                                </div>
+                            </div>
+								
+								
+                    			
+								
+							
+								
+								<div class="form-group">
+									<label for="" class="col-sm-2 control-label">Add Note</label>
+									 <div class="col-sm-6  ">
+									<textarea name="add_new_note" class="form-control" rows="3" id="add_new_note" CLASS="form-control"> </textarea>
+									</div>
+									<button type="button" id="add" class="btn btn-primary" onClick="addCustomerNote()">Add Note</button>
 								</div>
 							
                                 </div>
                             </div>
-                        </div>
-                        <div id="tabs-3" class="var_tabs">
-							<div class="row-fluid form-wrapper">
+
+  
+  
+  <div id="third" class="tab-pane fade" >
+<div class="col-sm-12 col-lg-12">
 								
-								<div class="span12 with-sidebar">
-								<div class="span12">
-									<a title="Download All" target="_blank" href="project_preview.shtml?uuid=<!--#4DVAR [Projects]uuid-->&token=<!--#4DVAR _HIT_TokenGetAny-->&preview=pdf&full=true" class="btn-flat margn-lft35">Download All</a>
-									<a title="Download Active Tasks" target="_blank" href="project_preview.shtml?uuid=<!--#4DVAR [Projects]uuid-->&token=<!--#4DVAR _HIT_TokenGetAny-->&preview=pdf&full=true&activity_option=active" class="btn-flat success margn-lft35">Download Active Tasks</a>
-									<a title="Download Completed Tasks" target="_blank" href="project_preview.shtml?uuid=<!--#4DVAR [Projects]uuid-->&token=<!--#4DVAR _HIT_TokenGetAny-->&preview=pdf&full=true&activity_option=completed" class="btn-flat margn-lft35"> Download Completed Tasks</a>
+								
+								<div class="col-sm-12" STYLE="margin-top:20px;">
+									<a title="Download All" target="_blank" href="project_preview.shtml?uuid=<!--#4DVAR [Projects]uuid-->&token=<!--#4DVAR _HIT_TokenGetAny-->&preview=pdf&full=true" class="btn btn-primary">Download All</a>
+									<a title="Download Active Tasks" target="_blank" href="project_preview.shtml?uuid=<!--#4DVAR [Projects]uuid-->&token=<!--#4DVAR _HIT_TokenGetAny-->&preview=pdf&full=true&activity_option=active" class="btn btn-danger">Download Active Tasks</a>
+									<a title="Download Completed Tasks" target="_blank" href="project_preview.shtml?uuid=<!--#4DVAR [Projects]uuid-->&token=<!--#4DVAR _HIT_TokenGetAny-->&preview=pdf&full=true&activity_option=completed" class="btn btn-default"> Download Completed Tasks</a>
 								</div><br/>
-									<div>
-									<span class="span6" style="float:left;" id="displayCountStr"></span>
-									<span class="span6 text-right"><input class="keywordSearchClass" type="text" value=""></span></div>
-									<table id="items">
+									<div CLASS="row">
+									 
+									<div class="col-sm-4" style="float:left;     margin-top: 17px;     margin-left: 15px; " id="displayCountStr"></div>
+									<div class="col-sm-3 text-right pull-right" STYLE="margin-right:20px;"><input class="form-control"  type="text" value=""></div></div>
+									<div class="content table-responsive table-full-width">
+		 			<div class="table-responsive" style="border:none;" >
+                        <table class="table table-striped  table-bordered table-hover custom-tbl-st bt" id="table-breakpoint"  style="background-color: rgb(255, 255, 255); border-radius: 4px;" >
 										<thead>
 											<tr>
 		      									<th>ID</th>
@@ -317,30 +413,45 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 		  									
 		  								</tbody>
 		  							</table>
+									</div>
+									</div>
 		  							<div class="text-center" style="padding-top:20px;">
             							<button onclick="load_related_tasks()" id="btn_more_tasks" class="btn btn-info" type="button" style="width: 25%; margin-bottom: 10px;">+ show more records</button> 
 									</div>
 								</div>
-							</div>
-                        </div>
-                        <!--#4DELSE--><!--#4DENDIF-->
-                    </div>
-            	
-             </div>
-        </div>
+							
+  </div>
+   <!--#4DELSE--><!--#4DENDIF-->
+  
+  
+  
+  </div >
+  
+  
+</div >
+				
+				
+				
+				
+					
+				</form>
+				</div>
+            </div>
+        </section>
     </div>
+	
+	
+	
     <!-- end main container -->
-
 	<!-- scripts -->
 	<script src="js/wysihtml5-0.3.0.js"></script>
   	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
-	<!-- <script src="js/ui/jquery-ui.js"></script>-->
+	<script src="js/basictable.js"></script>
 	<script src="js/bootstrap.datepicker.js"></script>
-	<script src="js/jquery.uniform.min.js"></script>
 	<script src="js/jquery.validate.js"></script>
 	<script src="js/chosen.jquery.js" type="text/javascript"></script>
 	
-	<script type="text/javascript" src="js/jquery-impromptu.js"></script>
+
 	<!-- call this page plugins -->
 
     <script type="text/javascript">
@@ -382,7 +493,7 @@ function load_related_tasks(){
 				}); 
 				$.each(result.uuid, function(i,item)
 				{
-					JSONdata[i][5]='<a href="task.shtml?uuid='+item+'" target="_blank" title="View Detail"><i class="table-edit"></i></a>';
+					JSONdata[i][5]='<a href="task.shtml?uuid='+item+'" target="_blank" title="View Detail"><i class="fa fa-pencil"></i></a>';
 						
 				}); 
 				$.each(result.TaskName, function(i,item)
@@ -576,8 +687,7 @@ function del_file(del_uuid, ref){
 			<!--#4DIF (_HIT_WebApp_GetField ("tab")="1")-->
 			$("#tabs").tabs({ active: 1 });
 			<!--#4DENDIF-->
-            // add uniform plugin styles to html elements
-            $("input:checkbox").uniform();
+            
 
             // datepicker plugin
             $('.datepicker').datepicker().on('changeDate', function (ev) {
@@ -626,6 +736,9 @@ function del_file(del_uuid, ref){
     
     var config = {
       '.chosen-select'           : {},
+
+
+
       '.chosen-select-deselect'  : {allow_single_deselect:true},
       '.chosen-select-no-single' : {disable_search_threshold:10},
       '.chosen-select-no-results': {no_results_text:'Oops, nothing found!'},
@@ -814,12 +927,18 @@ function del_file(del_uuid, ref){
  
   $(function() {
     $( "#Client_ID" ).combobox();
-   
+	
+   	$('#table-breakpoint').basictable({
+    				breakpoint: 751
+    			});
+				
+					$('#table-breakpoint1').basictable({
+    				breakpoint: 751
+    			});
 	
   });
 
   </script>
-	<script type='text/javascript' src='js/customerNotes.js'></script>
-	
+  <script type='text/javascript' src='js/customerNotes.js'></script>
 </body>
 </html>
