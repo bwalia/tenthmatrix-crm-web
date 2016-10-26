@@ -162,7 +162,7 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 										 <!--#4DENDIF-->
                                         </select>
                             	</div>
-                            </div>
+                            </div>	
 								
 								
 								 

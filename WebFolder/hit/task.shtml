@@ -1299,7 +1299,7 @@ function del_relation(del_uuid, ref){
 				ele_select.html(html);
 				
 				
-				response(ele_select.children( "option" ).map(function() {
+			response(ele_select.children( "option" ).map(function() {
           var text = $( this ).text();
 		 var value= $( this ).val();
           //if ( this.value && ( !request.term || matcher.test(text) ) )

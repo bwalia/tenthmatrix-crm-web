@@ -27,78 +27,139 @@ end if
 <html>
 <head>
 	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
-	<link rel='stylesheet' type='text/css' href='css/style.css' />
+	 <link href="css/bootstrap.datepicker.css" type="text/css" rel="stylesheet">
+	 <link rel="stylesheet" href="css/basictable.css">
+	<link rel="stylesheet" type="text/css" href="css/jquery.ptTimeSelect.css" />
+	<link rel="stylesheet" href="css/autocomplete.css" />
 	<style>
-	#EmployeeForm em.error {
-		margin-left: 10px;
-		width: auto;
-		display: inline;
+	#ptTimeSelectCntr{
+		/*z-index: 1100!important;*/
 	}
-	#EmployeeForm em.error {
-		color: red;
-		font-style: italic;
-	}
-	#EmployeeForm input.error, textarea.error, select.error{
-		border: 1px solid red;
-	}
+	
+	.ui-widget-header{
+		margin: 1px 1px 3px 1px;
+		* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#ffffff+0,e5e5e5+100;White+3D */
+background: #ffffff; /* Old browsers */
+background: -moz-linear-gradient(top, #ffffff 0%, #e5e5e5 100%); /* FF3.6-15 */
+background: -webkit-linear-gradient(top, #ffffff 0%,#e5e5e5 100%); /* Chrome10-25,Safari5.1-6 */
+background: linear-gradient(to bottom, #ffffff 0%,#e5e5e5 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#e5e5e5',GradientType=0 ); /* IE6-9 */
+border: 1px solid #d3d3d3;
 
-</style>
+		
+	}
+	#timeslipnew .custom-combobox-input {
+   width: 180%;
+    margin-left: 27px;
+}
+	
+	</style>
 </head>
-<body>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
 
-    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
 
     <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
 
 	<!-- main container -->
-    <div class="content">
-        
-        <div class="container-fluid">
-            <div id="pad-wrapper" class="form-page">
-				 <div class="row-fluid header">
-					<h3><!--#4DIF (Records in selection([Employees])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Employee</h3>
-                </div>
-                <div class="row-fluid form-wrapper">
-					<!-- left column -->
-                    <div class="span9 with-sidebar">
-						<form name="EmployeeForm" id="EmployeeForm" action="saveemployee.cgi" class="form-comment" method="post" enctype="multipart/form-data">							
-							 <div class="span12 field-box">
-								<label>Position <span style="color:#6E829B">*</span></label>
-								<input class="span5" type="text" value="<!--#4DTEXT [Employees]emp_position-->" name="Position" id="Position">
+    <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        <!--#4DIF (Records in selection([Timeslips])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Employee
+    </h1>
+      <ol class="breadcrumb">
+        <li><a href="index.shtml"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active"><!--#4DIF (Records in selection([Timeslips])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Employee</li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+   		<div class="row">
+       		<div class="panel-body no-padding-top bg-white"> 
+				<div class=" col-sm-12 col-lg-8">
+				<form name="EmployeeForm" id="EmployeeForm" action="saveemployee.cgi" class="form-horizontal" method="post" enctype="multipart/form-data">	
+				
+				<div class="form-group">
+    							<label for="" class="col-sm-3 control-label">Position <span style="color:#6E829B">*</span></label>
+								<div class=" col-sm-6">
+									<input class="form-control" type="text" value="<!--#4DTEXT [Employees]emp_position-->" name="Position" id="Position">
+								</div>
+								<input name="Employee_uuid" class="form-control" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="Employee_uuid">        
 							</div>
-							 <input name="Employee_uuid" class="span5" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="Employee_uuid">        
-							 <div class="field-box">
-								<label>First Name <span style="color:#6E829B">*</span></label>
-								<input name="FirstName" class="span5" type="text" value="<!--#4DTEXT [Employees]emp_first_name-->" id="FirstName">
+							
+							<div class="form-group">
+    							<label for="" class="col-sm-3 control-label" >First Name <span style="color:#6E829B">*</span></label>
+								<div class="col-sm-6">
+									<input name="FirstName" class="form-control" type="text" value="<!--#4DTEXT [Employees]emp_first_name-->" id="FirstName">
+								</div>
+								    
 							</div>
-							<div class="span12 field-box">
-								<label>Last Name <span style="color:#6E829B">*</span></label>
-								<input name="Lastname" class="span5" type="text" value="<!--#4DTEXT [Employees]emp_last_name-->" id="Lastname">                                 
+				
+									
+									
+									<div class="form-group">
+    							<label for="" class="col-sm-3 control-label" >Last Name <span style="color:#6E829B">*</span></label>
+								<div class=" col-sm-6">
+									<input name="Lastname" class="form-control" type="text" value="<!--#4DTEXT [Employees]emp_last_name-->" id="Lastname">  
+								</div>
+								    
+							</div>	
+							 
+							 
+							 <div class="form-group">
+    							<label for="" class="col-sm-3 control-label" >Date Of Birth  <span style="color:#6E829B">*</span></label>
+								<div class=" col-sm-6">
+								<input type="text" class="form-control datepicker" data-date-format="dd/mm/yyyy"  name="DOB" id="DOB" <!--#4DIF ([Employees]date_of_birth=!00/00/00!)-->value=""<!--4DELSE-->value="<!--#4DVAR [Employees]date_of_birth-->"<!--4DENDIF--> readonly>  
+								</div>
+								    
 							</div>
-							<div class="span12 field-box">
-								<label>Date Of Birth <span style="color:#6E829B"></span></label>
-								<input type="text" class="span5 datepicker" data-date-format="dd/mm/yyyy"  name="DOB" id="DOB" <!--#4DIF ([Employees]date_of_birth=!00/00/00!)-->value=""<!--4DELSE-->value="<!--#4DVAR [Employees]date_of_birth-->"<!--4DENDIF--> readonly>                               
+							
+							
+							<div class="form-group">
+    							<label for="" class="col-sm-3 control-label" >Address <span style="color:#6E829B">*</span></label>
+								<div class=" col-sm-6">
+								<textarea name="Address" class="form-control"  id="Address"><!--#4DTEXT [Employees]emp_address--></textarea>          
+								</div>
+								    
 							</div>
-							<div class="span12 field-box">
-								<label>Address  <span style="color:#6E829B"></span></label>
-								<textarea name="Address" class="span5"  id="Address"><!--#4DTEXT [Employees]emp_address--></textarea>                        
-							</div>
-							<div class="span12 field-box">
-								<label>Telephone Number </label>
-								<input name="telephone" class="span5" type="text" value="<!--#4DTEXT [Employees]emp_telephone-->" id="telephone">                                 
-							</div>
-							<div class="span12 field-box">
-								<label>Emergency Contact Name</label>
-								<input name="EcontactName" class="span5" type="text" value="<!--#4DTEXT [Employees]emergency_contact_name-->" id="EcontactName">                                 
-							</div>
-							<div class="span12 field-box">
-								<label>Emergency Contact Number</label>
-								<input name="EcontactNumber" class="span5" type="text" value="<!--#4DTEXT [Employees]emergency_contact_number-->" id="EcontactNumber">                                 
-							</div>
-							<div class="span12 field-box">
-								<label class="span4">Pan Card Detail</label>
+							
+							
 								
-								<table id="items" style="width:auto; display:inline-block; margin-top:0px;">
+							<div class="form-group">
+    							<label for="" class="col-sm-3 control-label" >Telephone Number</label>
+								<div class=" col-sm-6">
+								<input name="telephone" class="form-control" type="text" value="<!--#4DTEXT [Employees]emp_telephone-->" id="telephone">            
+								</div>
+								    
+							</div>
+							 
+							 
+							 <div class="form-group">
+    							<label for="" class="col-sm-3 control-label" >Emergency Contact Name</label>
+								<div class=" col-sm-6">
+								<input name="EcontactName" class="form-control" type="text" value="<!--#4DTEXT [Employees]emergency_contact_name-->" id="EcontactName">             
+								</div>
+								    
+							</div>
+							
+							<div class="form-group">
+    							<label for="" class="col-sm-3 control-label" >Emergency Contact Number</label>
+								<div class=" col-sm-6">
+							<input name="EcontactNumber" class="form-control" type="text" value="<!--#4DTEXT [Employees]emergency_contact_number-->" id="EcontactNumber">                 
+								</div>
+								    
+							</div>
+							
+							<div class="form-group">
+    							<label for="" class="col-sm-3 control-label" >Pan Card Detail</label>
+								<div class=" col-sm-6">
+									<div class="table-responsive table-full-width">
+		 			<div class="table-responsive" style="border:none;" >
+                         <table class="table table-striped  table-bordered table-hover custom-tbl-st bt" id="table-breakpoint"  style="background-color: rgb(255, 255, 255); border-radius: 4px;" >
+							
 		
 		  <tbody><tr class="item">
 		      <th style="width:auto;" >Pan Card No.</th>
@@ -108,7 +169,7 @@ end if
 		 		  
 		  <tr class="item-row">
 				<td class="item-id " style="padding:0px; margin:0px;" >
-				<input name="pan_card_no" class="span5"  type="text" value="<!--#4DTEXT [Employees]pan_card_no-->" id="pan_card_no"  style="height:auto; margin-bottom:1px; padding:2%; border:none;  border-radius:none;  -webkit-border-radius: 0; -moz-border-radius: 0; border-radius: 0 ;" >
+				<input name="pan_card_no" class="form-control"  type="text" value="<!--#4DTEXT [Employees]pan_card_no-->" id="pan_card_no" style="margin:4px; width:95%;">
 								</td>
 				<td>									
 				
@@ -119,28 +180,56 @@ end if
 										
 				</tr>
 
-		</tbody></table> 
-		</div>              
-						<div class="span12 field-box">
-							<label>Employement Start Date <span style="color:#6E829B"></span></label>
-							<input type="text" class="span5 datepicker" data-date-format="dd/mm/yyyy"  name="employment_start_date" id="employment_start_date" <!--#4DIF ([Employees]employment_start_date=!00/00/00!)-->value=""<!--4DELSE-->value="<!--#4DVAR [Employees]employment_start_date-->"<!--4DENDIF--> readonly>                               
-						</div>
-						<div class="span12 field-box">
-							<label>Number of years in Employement </label>
-							<input type="text" class="span5" name="number_of_years_in_employment" id="number_of_years_in_employment" value="" readonly>                               
-						</div>
-						<div class="span12 field-box">
-							<label>Current Holidays Entitlement </label>
-							<input type="text" class="span5" name="current_holiday_entitlement" id="current_holiday_entitlement" value="<!--#4DTEXT [Employees]current_holiday_entitlement-->" readonly>                               
-						</div>
-						<div class="span12 field-box">
-							<label>NI Number</label>
-							<input name="ni_number" class="span5" type="text" value="<!--#4DTEXT [Employees]ni_number-->" id="ni_number">                                 
-						</div>
+		</tbody></table>
+		</div>
+		</div>             
+								</div>
+								    
+							</div>
+							 
 							
-					<div class="span12 field-box">
-							<label>Medical Details: </label>
-							<table id="items"  class="table" style="width:auto; display:inline-block; margin-top:0px;">
+							<div class="form-group">
+    							<label for="" class="col-sm-3 control-label" >Employement Start Date<span style="color:#6E829B">*</span></label>
+								<div class=" col-sm-6">
+							<input type="text" class="form-control datepicker" data-date-format="dd/mm/yyyy"  name="employment_start_date" id="employment_start_date" <!--#4DIF ([Employees]employment_start_date=!00/00/00!)-->value=""<!--4DELSE-->value="<!--#4DVAR [Employees]employment_start_date-->"<!--4DENDIF--> readonly>                
+								</div>
+								    
+							</div>
+							
+							
+							<div class="form-group">
+    							<label for="" class="col-sm-3 control-label" >Number of years in Employement</label>
+								<div class=" col-sm-6">
+							<input type="text" class="form-control" name="number_of_years_in_employment" id="number_of_years_in_employment" value="" readonly>               
+								</div>
+								    
+							</div>
+							
+							
+								<div class="form-group">
+    							<label for="" class="col-sm-3 control-label" >Current Holidays Entitlement</label>
+								<div class=" col-sm-6">
+							<input type="text" class="form-control" name="current_holiday_entitlement" id="current_holiday_entitlement" value="<!--#4DTEXT [Employees]current_holiday_entitlement-->" readonly>              
+								</div>
+								    
+							</div>
+							
+							
+							     <div class="form-group">
+    							<label for="" class="col-sm-3 control-label" >NI Number</label>
+								<div class=" col-sm-6">
+							<input name="ni_number" class="form-control" type="text" value="<!--#4DTEXT [Employees]ni_number-->" id="ni_number">             
+								</div>
+								    
+							</div>    
+							
+							<div class="form-group">
+    							<label for="" class="col-sm-3 control-label" style="     padding-top: 20px; ">Medical Details:</label>
+								<div class=" col-sm-6">
+									<div class="table-responsive table-full-width">
+		 			<div class="table-responsive" style="border:none;" >
+                         <table class="table table-striped  table-bordered table-hover custom-tbl-st bt" id="table-breakpoint1"  style="background-color: rgb(255, 255, 255); border-radius: 4px;" >
+						
 		
 		  <tr class="item">
 		      <th>Doctor Name</th>
@@ -152,35 +241,56 @@ end if
 		  <tr class="item-row" >
 				<td class="item-id" style="padding:0px; margin:0px;  ">
 				
-				<textarea name="doctor_name" id="doctor_name" style="width:88%; height:60px; margin-bottom:1px; padding:3% 6% 3% 6%; border:none;  border-radius:none;  -webkit-border-radius: 0; -moz-border-radius: 0; border-radius: 0 ;" ><!--#4DTEXT [Employees]doctor_name--></textarea>
+				<textarea name="doctor_name" id="doctor_name" CLASS="form-control"  ><!--#4DTEXT [Employees]doctor_name--></textarea>
 				</td>
 				<td style="padding:0px; margin:0px; ">									
-				<textarea name="surgery_address" id="surgery_address" style="width:88%; height:60px; margin-bottom:1px; padding:3% 6% 3% 6%; border:none;  border-radius:none;  -webkit-border-radius: 0; -moz-border-radius: 0; border-radius: 0 ;" ><!--#4DTEXT [Employees]surgery_address--></textarea>
+				<textarea name="surgery_address" id="surgery_address" CLASS="form-control" ><!--#4DTEXT [Employees]surgery_address--></textarea>
 				</td>
 				<td style="padding:0px; margin:0px;  ">
-				<textarea name="medical_conditions" id="medical_conditions" style="width:88%; height:60px; margin-bottom:1px; padding:3% 6% 3% 6%; border:none;  border-radius:none;  -webkit-border-radius: 0; -moz-border-radius: 0; border-radius: 0 ;"><!--#4DTEXT [Employees]medical_conditions--></textarea>
+				<textarea name="medical_conditions" id="medical_conditions"  CLASS="form-control"><!--#4DTEXT [Employees]medical_conditions--></textarea>
 				</td>
 										
 				</tr>
 
-		</table></div>	<br/>	
-							
-							<div class="span12 field-box">
-								<label>Email <span style="color:#6E829B">*</span></label>
-								<input name="Email" class="span5" type="text" value="<!--#4DTEXT [Employees]email-->" id="Email">
-							</div>						   
-							<div class="span12 field-box">
-								<label>Password <span style="color:#6E829B">*</span></label>
-								<input name="Password" class="span5" type="password" value="<!--#4DTEXT [Employees]zWebPassword-->" id="Password">						
+		</table>
+		</div>
+		</div>        
+								</div>
+								    
 							</div>
-							<div class="span12 field-box">
-								<label>Shared Folder Path </label>
-								<input name="shared_folder_path" class="span5" type="text" value="<!--#4DTEXT [Employees]shared_folder_path-->" id="shared_folder_path">
-							</div>	
-							<div class="span12 field-box">
-								<label>Type</label>
-								<div class="ui-select span5">
-									<select name="Type" id="Type">
+							
+							  <div class="form-group">
+    							<label for="" class="col-sm-3 control-label" >Email<span style="color:#6E829B">*</span></label>
+								<div class=" col-sm-6">
+							<input name="Email" class="form-control" type="text" value="<!--#4DTEXT [Employees]email-->" id="Email">            
+								</div>
+								    
+							</div>        
+						
+						
+						<div class="form-group">
+    							<label for="" class="col-sm-3 control-label" >Password<span style="color:#6E829B">*</span></label>
+								<div class=" col-sm-6">
+						<input name="Password" class="form-control" type="password" value="<!--#4DTEXT [Employees]zWebPassword-->" id="Password">         
+								</div>
+								    
+							</div>
+							
+							<div class="form-group">
+    							<label for="" class="col-sm-3 control-label" >Shared Folder Path</label>
+								<div class=" col-sm-6">
+						<input name="shared_folder_path" class="form-control" type="text" value="<!--#4DTEXT [Employees]shared_folder_path-->" id="shared_folder_path">       
+								</div>
+								    
+							</div>
+					
+							
+													   
+							
+							<div class="form-group">
+    							<label for="" class="col-sm-3 control-label" >Type</label>
+								<div class=" col-sm-6">
+						<select name="Type" id="Type" CLASS="form-control">
 										<option value="0">Select an option</option>
 										<option value="Administrator" <!--#4DIF ([Employees]emp_type="Administrator")-->selected<!--4DELSE--><!--4DENDIF-->>Administrator</option>
 										<option value="Bookkeeper" <!--#4DIF ([Employees]emp_type="Bookkeeper")-->selected<!--4DELSE--><!--4DENDIF-->>Bookkeeper</option>
@@ -191,61 +301,82 @@ end if
 										<option value="Shareholder" <!--#4DIF ([Employees]emp_type="Shareholder")-->selected<!--4DELSE--><!--4DENDIF-->>Shareholder</option>
 										<option value="Support" <!--#4DIF ([Employees]emp_type="Support")-->selected<!--4DELSE--><!--4DENDIF-->>Support</option>
 										<option value="Technical" <!--#4DIF ([Employees]emp_type="Technical")-->selected<!--4DELSE--><!--4DENDIF-->>Technical</option>
-									</select>                                     
-                                </div>
+									</select>     
+								</div>
+								    
 							</div>
-							<div class="span12 field-box">
-								<label> Manager</label>
-								<div class="ui-select span5">
-									<select name="Select_Manager" id="Select_Manager">
+							
+								
+								<div class="form-group">
+    							<label for="" class="col-sm-3 control-label" >Manager</label>
+								<div class=" col-sm-6">
+						<select name="Select_Manager" id="Select_Manager" CLASS="form-control">
 										<option value="0">Select an option</option>
 										<!--#4DSCRIPT/Web_LoadManager/-->
 										<!--4DLOOP  [Employees]-->
 										<option value="<!--#4DHTMLVAR [Employees]uuid-->"><!--#4DHTMLVAR [Employees]emp_first_name--> <!--#4DHTMLVAR [Employees]emp_last_name--></option>
 										<!--4DENDLOOP-->
-									</select>                                     
-                                </div>
+									</select>   
+								</div>
+								    
 							</div>
-							
-							<div class="field-box">
-                                <label>Status</label>
-                                <div class="ui-select span5">
-									<Select name="Status" id="Status">
+								
+								
+								
+								<div class="form-group">
+    							<label for="" class="col-sm-3 control-label" >Status</label>
+								<div class=" col-sm-6">
+						<Select name="Status" id="Status" CLASS="form-control">
 										<option value="Active" <!--#4DIF ([Employees]emp_active=True)-->selected<!--4DELSE--><!--4DENDIF-->>Active</option>
 										<option value="Inactive" <!--#4DIF ([Employees]emp_active=True)-->selected<!--4DELSE--><!--4DENDIF-->>Inactive</option>
-									</select>                                     
-                                </div>
-                            </div>
-							<div class="field-box">
-                                <label>Web Access</label>
-                                <div class="ui-select span5">
-									<Select name="Allow_Web_Access" id="Allow_Web_Access">
+									</select>     
+								</div>
+								    
+							</div>
+							
+							
+							
+							
+							<div class="form-group">
+    							<label for="" class="col-sm-3 control-label" >Web Access</label>
+								<div class=" col-sm-6">
+						<Select name="Allow_Web_Access" id="Allow_Web_Access" CLASS="form-control">
 										<option value="Allow" <!--#4DIF ([Employees]AllowWebAccess=True)-->selected<!--4DELSE--><!--4DENDIF-->>Allow</option>
 										<option value="Deny" <!--#4DIF ([Employees]AllowWebAccess=True)-->selected<!--4DELSE--><!--4DENDIF-->>Deny</option>
-									</select>                                     
+									</select>    
+								</div>
+								    
+							</div>
+							
+							
+							<div class="form-group">
+								<label for="" class="col-sm-3 control-label"></label>
+                                <div class="ui-select col-sm-6  ">
+                                 <input type="submit" class="btn btn-primary btn-color margin-right-5 btn-sm" value="Submit">
+								 
+                                   		<a href="employees.shtml" class="btn btn-danger btn-sm ">Cancel</a>
+                                    <!--#4DENDIF--> 
                                 </div>
                             </div>
-							<div class="span11 field-box" style="margin-left:138px; text-align:left;">
-								<input type="submit" class="btn-glow primary" value="Submit">
-								
-								<a href="employees.shtml" CLASS="cancelbtn">Cancel</a>
-								<!-- <input type="reset" value="Cancel" class="reset"> -->
-							</div>
+							
+							
+							
 						</form>
                     </div>
+                    </div>
 				</div>
-            </div>
+            </section>
         </div>
-    </div>
     <!-- end main container -->
-
-	<!-- scripts -->
-    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
-	<script src="js/bootstrap.datepicker.js"></script>
-	<script src="js/jquery.uniform.min.js"></script>
-	<script src="js/jquery.validate.js"></script>
-	<script type="text/javascript" src="js/jquery-impromptu.js"></script>
-	<!-- call this page plugins -->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/top-footer.shtml-->
+</div>
+	<!-- scripts for this page -->
+   <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+   	<script src="js/bootstrap.datepicker.js"></script>
+	<script src="js/basictable.js"></script>
+    <script type="text/javascript" src="js/jquery.ptTimeSelect.js"></script>
+   	
+   	<!-- call this page plugins -->
 	<script language="javascript">
 	var annual_holidays=20;
 
@@ -282,6 +413,17 @@ function set_no_of_employement_holidays(){
 	$('#current_holiday_entitlement').val(current_holiday_entitlement);
 }
  $(function () {
+	 
+	 $('#table-breakpoint').basictable({
+    				breakpoint: 751
+    			});
+				
+				 $('#table-breakpoint1').basictable({
+    				breakpoint: 751
+    			});
+	 
+	 
+	 
 	set_no_of_employement_holidays();
  	 $('#DOB').datepicker({"autoclose": true});
 	$('#employment_start_date').datepicker({"autoclose": true}).on('changeDate', function (ev) {
@@ -301,6 +443,10 @@ function set_no_of_employement_holidays(){
 
 			 reader.readAsDataURL(this.files[0]);
 		 }
+		 
+		 
+		 
+		 
 	});
 	$("#EmployeeForm").validate({
 		rules: {
@@ -331,6 +477,7 @@ function set_no_of_employement_holidays(){
  });
  
 </script>
-	
+
 </body>
+</html>
 </html>
