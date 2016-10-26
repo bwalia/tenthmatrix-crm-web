@@ -98,7 +98,7 @@ end if
                         <table class="table table-striped  table-bordered table-hover custom-tbl-st bt" id="table-breakpoint"  style="background-color: rgb(255, 255, 255); border-radius: 4px;" >
                             <thead>
                                 <tr>
-                                            <th><input name="select" class="" type="checkbox" id="chk_all" ></th>
+                                            <th class="hidden-xs"><input name="select" class="" type="checkbox" id="chk_all" ></th>
                                     		<th class="col-lg-1">Task ID</th>
                                             <th class="col-lg-2">Task Name</th>
                                             <th>Project</th>
@@ -114,7 +114,7 @@ end if
                                     </thead>
                                      <tfoot>
                                         <tr>
-                                        	<th>&nbsp;</th>
+                                        	<th class="hidden-xs">&nbsp;</th>
                                             <th class="col-lg-1">Task ID</th>
                                             <th class="col-lg-2">Task Name</th>
                                             <th>Project</th>
@@ -146,7 +146,6 @@ end if
       		<!-- /.row (main row) -->
 		</section>
 	</div>
-		</section>
     <!-- end main container -->
 	<div id="generateNewOrderDiv" class="modal modal-modified   hide fade" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
      	<div class="modal-dialog" role="document">
@@ -611,7 +610,7 @@ function __showDownloadPrompt(task_uuid, token){
 
 $(document).ready(function() {
 	$('#keyword_type').focus();
-	__filtertasks("");		 
+	load_data();		 
 	
 	$(window).scroll(function(){
 		if ($(window).scrollTop() == $(document).height() - $(window).height()){
@@ -725,6 +724,7 @@ function load_data(){
 	JSONdata=new Array();
 	$.getJSON(jsonRow,function(result){
 			if(result.Alert){
+				$(".jqibox").remove();
 				$.prompt('No more records found!');
 				complete=true;
 				$('#display_more_btn').hide();
@@ -742,11 +742,11 @@ function load_data(){
 				{
 					JSONdata[i][1]+='<input type="hidden" value="'+item+'">';
 					if(checkAllFlag==true){
-						JSONdata[i][0]='<input name="select" class="check" checked type="checkbox" id="Select" value="'+item+'"></td>';
+						JSONdata[i][0]='<input name="select" class="check" checked type="checkbox" id="Select" value="'+item+'">';
 					}else{
-						JSONdata[i][0]='<input name="select" class="check" type="checkbox" id="Select" value="'+item+'"></td>';
+						JSONdata[i][0]='<input name="select" class="check" type="checkbox" id="Select" value="'+item+'">';
 					}
-					JSONdata[i][11]='<a href="javascript:void(0)" onClick="__showTaskForm(\''+item+'\')" title="Edit"><i class="fa fa-pencil"></i></a><a href="javascript:void(0)" title="Download Pdf" onClick="__showDownloadPrompt(\''+item+'\',\'<!--#4DVAR _HIT_TokenGetAny-->\')"> <i class="fa fa-download"></i></a><a title="Delete" href="javascript:void(0)" onClick="__deleteSelected(\''+item+'\')"> <i class="fa fa-trash-o "></i></a>';	
+					JSONdata[i][11]='<a href="javascript:void(0)" onClick="__showTaskForm(\''+item+'\')" title="Edit"><i class="fa fa-pencil"></i></a><a class="hidden-xs" href="javascript:void(0)" title="Download Pdf" onClick="__showDownloadPrompt(\''+item+'\',\'<!--#4DVAR _HIT_TokenGetAny-->\')"> <i class="fa fa-download"></i></a><a title="Delete" href="javascript:void(0)" onClick="__deleteSelected(\''+item+'\')"> <i class="fa fa-trash-o "></i></a>';	
 					task_uuid[i]=item;				
 				}); 
 				$.each(result.TaskName, function(i,item)
@@ -813,10 +813,14 @@ function load_data(){
 				$.each(JSONdata, function(i,row)
 				{
 				
-					table_html+='<tr >';
+					table_html+='<tr>';
 					
 					$.each(row, function(i,col){
-						table_html+='<td>'+col+'</td>';
+						if(i==0){
+							table_html+='<td class="hidden-xs">'+col+'</td>';	
+						}else{
+							table_html+='<td>'+col+'</td>';
+						}
 					});
 					table_html+='</tr>';
 				});
@@ -824,14 +828,13 @@ function load_data(){
 					$('#tasks_table_body').html('');
 					old_srch=keyword;
 				}
-				//alert(table_html);
-				
 				$('#tasks_table_body').append(table_html);
+				
 				$('#table-breakpoint').basictable({
     				breakpoint: 751
-    			});
-    			complete=false;
-			$('#display_more_btn').show();
+   			 	});
+				complete=false;
+				$('#display_more_btn').show();
 		}
 		$('#img_loading_div').hide();
 		completeScroll=false;

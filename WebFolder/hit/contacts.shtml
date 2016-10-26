@@ -648,7 +648,7 @@ $(document).ready(function() {
 var cont_id=new Array();    
 function load_data(jsonRow){
 	completeScroll=true;
-	JSONdata=new Array();
+	var JSONdata=new Array();
 	
 	var keyword= $("#keyword").val();
 	var jsonRow = 'loadcontacts.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&set='+selected_set+'&setUUID='+setUUID;

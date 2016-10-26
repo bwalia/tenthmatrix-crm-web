@@ -271,6 +271,7 @@ function load_data(){
 	$.getJSON(jsonRow,function(result){
 	
 			if(result.Alert){
+				$(".jqibox").remove();
 				$.prompt('No more records found!');
 				complete=true;
 				$('#display_more_btn').hide();
@@ -284,7 +285,7 @@ function load_data(){
 					JSONdata[i]=new Array();
 					
 					JSONdata[i][8]='<a href="order.shtml?uuid='+item+'" ><i class="fa fa-pencil"></i><a>&nbsp;';
-					JSONdata[i][8]+='<a title="Download Invoice '+item+'" target="_blank" href="order_preview.shtml?uuid='+item+'&token=<!--#4DVAR _HIT_TokenGetAny-->&preview=pdf"><i class="fa fa-download"></i></a>';
+					JSONdata[i][8]+='<a class="hidden-xs" title="Download Invoice '+item+'" target="_blank" href="order_preview.shtml?uuid='+item+'&token=<!--#4DVAR _HIT_TokenGetAny-->&preview=pdf"><i class="fa fa-download"></i></a>';
 				}); 
 				$.each(result.orderid, function(i,item)
 				{

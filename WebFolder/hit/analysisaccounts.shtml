@@ -249,6 +249,7 @@ function load_data(jsonRow){
 	}
 	$.getJSON(jsonRow,function(result){
 			if(result.Alert){
+				$(".jqibox").remove();
 				$.prompt('No more records found');
 				complete=true;
 				$('#display_more_btn').hide();

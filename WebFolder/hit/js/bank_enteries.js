@@ -41,26 +41,8 @@ function __filterByBill(value){
 	
 	start_date=$('#start_date').val();
 	end_date=$('#end_date').val();
-	keyword= $("#keyword").val();
-	$('#payment_table_body').html('');
-	$('#img_loading_div').show();
-	jsonRow = 'load_bankenteriesnew.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&start_date='+start_date+'&end_date='+end_date+'&set='+selected_set+'&setUUID='+setUUID;;	
-	if(keyword!=''){
-		jsonRow +='&keyword='+keyword;
-	}	
-	if(bank_account!=''){
-			jsonRow +='&uuid_bank='+bank_account;
-		}
-		if(start_date!='' || end_date!=''){
-			jsonRow +='&date_selected=yes';
-		}else{
-			jsonRow +='&date_selected=no';
-		}
-	if(status!=''){
-		jsonRow +='&status='+status;
-	}
-			
-	load_data(jsonRow);	
+	$('#content_table').html('');
+	refreshCommonElements();
 }
 
 function __filterByType(value){
@@ -73,26 +55,8 @@ function __filterByType(value){
 	
 	start_date=$('#start_date').val();
 	end_date=$('#end_date').val();
-	keyword= $("#keyword").val();
-	$('#payment_table_body').html('');
-	$('#img_loading_div').show();
-	jsonRow = 'load_bankenteriesnew.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&start_date='+start_date+'&end_date='+end_date+'&set='+selected_set+'&setUUID='+setUUID;;	
-	if(keyword!=''){
-		jsonRow +='&keyword='+keyword;
-	}	
-	if(bank_account!=''){
-			jsonRow +='&uuid_bank='+bank_account;
-		}
-		if(start_date!='' || end_date!=''){
-			jsonRow +='&date_selected=yes';
-		}else{
-			jsonRow +='&date_selected=no';
-		}
-	if(status!=''){
-		jsonRow +='&status='+status;
-	}
-			
-	load_data(jsonRow);	
+	$('#content_table').html('');
+	refreshCommonElements();
 }
 function __showselectedBank(value){
 	if(checkAllFlag==true){
@@ -104,26 +68,8 @@ function __showselectedBank(value){
 	
 	start_date=$('#start_date').val();
 	end_date=$('#end_date').val();
-	keyword= $("#keyword").val();
-	$('#payment_table_body').html('');
-	$('#img_loading_div').show();
-	jsonRow = 'load_bankenteriesnew.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&start_date='+start_date+'&end_date='+end_date+'&set='+selected_set+'&setUUID='+setUUID;;	
-	if(keyword!=''){
-		jsonRow +='&keyword='+keyword;
-	}	
-	if(bank_account!=''){
-			jsonRow +='&uuid_bank='+bank_account;
-		}
-		if(start_date!='' || end_date!=''){
-			jsonRow +='&date_selected=yes';
-		}else{
-			jsonRow +='&date_selected=no';
-		}
-	if(status!=''){
-		jsonRow +='&status='+status;
-	}
-			
-	load_data(jsonRow);	
+	$('#content_table').html('');
+	refreshCommonElements();
 }
 
 function __filterResults(str){
@@ -166,26 +112,8 @@ function __filterResults(str){
 
 	start_date=$('#start_date').val();
 	end_date=$('#end_date').val();
-	keyword= $("#keyword").val();
-	$('#payment_table_body').html('');
-	$('#img_loading_div').show();
-	jsonRow = 'load_bankenteriesnew.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&start_date='+start_date+'&end_date='+end_date+'&set='+selected_set+'&setUUID='+setUUID;;	
-	if(keyword!=''){
-		jsonRow +='&keyword='+keyword;
-	}	
-	if(bank_account!=''){
-	jsonRow +='&uuid_bank='+bank_account;
-	}
-	if(status!=''){
-	jsonRow +='&status='+status;
-	}
-		if(start_date!='' || end_date!=''){
-			jsonRow +='&date_selected=yes';
-		}else{
-			jsonRow +='&date_selected=no';
-		}
-		
-	load_data(jsonRow);	
+	$('#content_table').html('');
+	refreshCommonElements();
 }
 
 function __showForm_AddSet(val,name){
@@ -208,7 +136,7 @@ function __showForm_AddSet(val,name){
 				var statesdemo = {
 					state0: {
 						title: 'Please enter name of new set',
-						html:'<div id="message"></div><input type="text" name="new_set" id="new_set" value="userset_1"><br />',
+						html:'<div id="message"></div><input type="text" name="new_set" id="new_set" value="userset_1" class="form-control"><br />',
 						buttons: { Cancel : 0, Ok: 1 },
 						focus: "#new_set",																		
 						submit:function(e,v,m,f){ 
@@ -405,23 +333,17 @@ function reset_dates(){
 	if(checkAllFlag==true){
 		$("#chk_all").trigger('click');
 	}
-	$('#payment_table_body').html('');
+	$('#content_table').html('');
 	$('#img_loading_div').show();
 	start=0, end=start+25;
 	$('#start_date').val('');
 	$('#end_date').val('');
 	start_date=$('#start_date').val();
 	end_date=$('#end_date').val();
-	keyword= $("#keyword").val();
-	$('#payment_table_body').html('');
-	$('#img_loading_div').show();
+	$('#content_table').html('');
 	bank_account='';
-	jsonRow = 'load_bankenteriesnew.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&start_date='+start_date+'&end_date='+end_date+'&date_selected=no&set='+selected_set+'&setUUID='+setUUID+'&uuid_bank='+bank_account;	
-	if(keyword!=''){
-		jsonRow +='&keyword='+keyword;
-	}	
 	
-	load_data(jsonRow);	
+	refreshCommonElements();	
 }
 function uploadDocument(){
 	$("#u_window_emsg").html("");
@@ -531,12 +453,29 @@ function open_upload_window(b,uuid,t,check){
 }
 
 var xhrAbortLoad;	
-function load_data(jsonRow, refRow){
+function load_data(refRow){
+	var keyword= $("#keyword").val();
+	var jsonRow = 'load_bankenteriesnew.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&start_date='+start_date+'&end_date='+end_date+'&set='+selected_set+'&setUUID='+setUUID;
+	if(start_date!='' || end_date!=''){
+		jsonRow +='&date_selected=yes';
+	}else{
+		jsonRow +='&date_selected=no';
+	}
+	if(keyword!=''){
+		jsonRow +='&keyword='+keyword;
+	}
+					
+	if(bank_account!=''){
+		jsonRow +='&uuid_bank='+bank_account;
+	}
+	if(status!=''){
+		jsonRow +='&status='+status;
+	}
 	var refRowUUID = typeof refRow !== 'undefined' ? refRow : '';
 	completeScroll=true;
-	JSONdata=new Array();
+	var JSONdata=new Array();
 	if(refRowUUID!=""){
-	
+		var jsonRow = 'load_bankenteriesnew.cgi?uuid_entry='+refRowUUID;	
 	}else{
 		if(entry_type!=''){
 			jsonRow +='&entry_type='+entry_type;
@@ -550,6 +489,7 @@ function load_data(jsonRow, refRow){
 	}else{
 		$("#remove_from_set").hide();
 	}
+	
 	if(xhrAbortLoad) xhrAbortLoad.abort();
 	xhrAbortLoad=$.getJSON(jsonRow,function(result){
 		if(result.displaying){
@@ -559,6 +499,10 @@ function load_data(jsonRow, refRow){
 			complete=true;
 			$(".jqibox").remove();
 			$.prompt('No more records found');
+			$('#display_more_btn').hide();
+			$('#table-breakpoint').basictable({
+    				breakpoint: 751
+   			});
 		}else{
 		var table_html='';
 			$.each(result.aadata, function(i,row){
@@ -571,9 +515,9 @@ function load_data(jsonRow, refRow){
 				}
 				if(refRowUUID==""){
 					if(row.Receipts!=''){
-						table_html+='<tr class="invoice_'+row.uuid+' selectTable bankEntryTrClass '+maintableClass+'"><td>';
+						table_html+='<tr class="invoice_'+row.uuid+' selectTable bankEntryTrClass '+maintableClass+'"><td class="hidden-xs">';
 					}else{
-						table_html+='<tr class="invoice_'+row.uuid+' '+maintableClass+'"><td>';
+						table_html+='<tr class="invoice_'+row.uuid+' '+maintableClass+'"><td  class="hidden-xs">';
 					}
 				}
 				if(checkAllFlag==true){
@@ -597,7 +541,7 @@ function load_data(jsonRow, refRow){
 			
 				//table_html+='<td>'+row.balance+'</td>';
 				table_html+='<td><span class="amount_due_'+row.uuid+'">'+row.amount_due+'</span></td>';
-					table_html+='<td><div class="ui-select"><select name="status" id="status_'+row.uuid+'" onchange="saveStatus(this,\''+row.uuid+'\',\''+row.status+'\')">';
+					table_html+='<td><select class="form-control" name="status" id="status_'+row.uuid+'" onchange="saveStatus(this,\''+row.uuid+'\',\''+row.status+'\')">';
 					if(row.status=="reconciled"){
 					table_html +='<option value="Create missing links">Create missing links</option>';
 					//table_html +='<option value="pending">Pending</option>';
@@ -619,7 +563,7 @@ function load_data(jsonRow, refRow){
 							table_html +='<option value="reconciled">Scan Bill & Reconcile</option>';
 						}
 					}
-					table_html +='</select></div></td>';
+					table_html +='</select></td>';
 				
 				var commentStr=row.comment;
 				if(commentStr!=""){
@@ -627,20 +571,19 @@ function load_data(jsonRow, refRow){
 				}else{
 					table_html+='<td><span class="'+row.uuid+'"><a href="javascript:void(0)" onclick="addNote(\''+row.uuid+'\')" title="Add">Add</a></span></td>';
 				}
-				table_html+='<td><ul class="actions"><li><a href="bank_entry.shtml?uuid='+row.uuid+'"><i class="table-edit"></i></a></li><li><i class="table-settings"></i></li>';
+				table_html+='<td><a href="bank_entry.shtml?uuid='+row.uuid+'"><i class="fa fa-pencil"></i></a>';
 				if(isAdminUser==1 || isAdminUser=="1"){
-				table_html+='<li class="last delete_icon_'+row.uuid+'"><a href="javascript:void(0)" onClick="deleteBankEntry(\''+row.uuid+'\')"><i class="table-delete"></i></a></li>';
+				table_html+='&nbsp;<a class="delete_icon_'+row.uuid+'" href="javascript:void(0)" onClick="deleteBankEntry(\''+row.uuid+'\')"><i class="fa fa-trash"></i></a>';
 				}
 				if(row.Receipts!=''){
-					table_html+='<li>';
+					table_html+='&nbsp;';
 					if(showallReceiptsFlag==true){
-					table_html+='<span class="hideReceiptDetails_'+row.uuid+' hideReceiptDetails" style=""><a href="javascript:void(0)" onclick="viewReceipt(\''+row.uuid+'\')" title="Hide Receipt"><img src="images/hide-receipt.png" width="25" height="18"></a></span><a href="javascript:void(0)" onclick="viewReceipt(\''+row.uuid+'\')" title="Show Receipt"><span class="showReceiptDetails_'+row.uuid+' showReceiptDetails" style="display:none;"><img src="images/show-receipt.png" width="24" height="15"></a></span>';
+					table_html+='<span class="hideReceiptDetails_'+row.uuid+' hideReceiptDetails hidden-xs" style=""><a href="javascript:void(0)" onclick="viewReceipt(\''+row.uuid+'\')" title="Hide Receipt"><i class="fa fa-eye-slash"></i></a></span><a href="javascript:void(0)" onclick="viewReceipt(\''+row.uuid+'\')" title="Show Receipt"><span class="showReceiptDetails_'+row.uuid+' showReceiptDetails" style="display:none;"><i class="fa fa-eye"></i></a></span>';
 					}else{
-					table_html+='<span class="hideReceiptDetails_'+row.uuid+' hideReceiptDetails" style="display:none;"><a href="javascript:void(0)" onclick="viewReceipt(\''+row.uuid+'\')" title="Hide Receipt"><img src="images/hide-receipt.png" width="25" height="18"></a></span><a href="javascript:void(0)" onclick="viewReceipt(\''+row.uuid+'\')" title="Show Receipt"><span class="showReceiptDetails_'+row.uuid+' showReceiptDetails" style=""><img src="images/show-receipt.png" width="24" height="15"></a></span>';
+					table_html+='<span class="hideReceiptDetails_'+row.uuid+' hideReceiptDetails hidden-xs" style="display:none;"><a href="javascript:void(0)" onclick="viewReceipt(\''+row.uuid+'\')" title="Hide Receipt"><i class="fa fa-eye-slash"></i></a></span><a href="javascript:void(0)" onclick="viewReceipt(\''+row.uuid+'\')" title="Show Receipt"><span class="showReceiptDetails_'+row.uuid+' showReceiptDetails" style=""><i class="fa fa-eye"></i></a></span>';
 					}
-					table_html+='</li>';
 				}
-				table_html+='</ul></td>';
+				table_html+='</td>';
 				if(refRowUUID==""){					
 					table_html+='</tr>';
 				}else{
@@ -657,9 +600,9 @@ function load_data(jsonRow, refRow){
 						secondTRClass='paymentTrClass';
 					}
 					if(showallReceiptsFlag==true){
-						receiptTableHtmlStr+='<tr id="displayReceipt_'+row.uuid+'" class="detailTrClass '+secondTRClass+'" >';
+						receiptTableHtmlStr+='<tr id="displayReceipt_'+row.uuid+'" class="detailTrClass '+secondTRClass+' hidden-xs" >';
 					}else{
-						receiptTableHtmlStr+='<tr id="displayReceipt_'+row.uuid+'" class="detailTrClass '+secondTRClass+'" style="display:none;" >';
+						receiptTableHtmlStr+='<tr id="displayReceipt_'+row.uuid+'" class="detailTrClass '+secondTRClass+' hidden-xs" style="display:none;" >';
 					}
 					receiptTableHtmlStr+='<td colspan="14" align="left" style="background:#f5fafc; position:relative;" class="tdmrgnbtm"><div class="payment-detail"><table border="0" cellspacing="0" cellpadding="0" class="table table-hover" style="background:#fff; border-radius:5px; margin-bottom: 0px;"><tr>';
 					
@@ -734,11 +677,15 @@ function load_data(jsonRow, refRow){
 				if(refRowUUID!=""){
 					
 				}else{
-					$('#payment_table_body').append(table_html);
+					$('#content_table').append(table_html);
 				}
+				$('#table-breakpoint').basictable({
+    				breakpoint: 751
+   				 });
 				complete=false;
+				$('#display_more_btn').show();	
 				
-		}
+			}
 		$('#img_loading_div').hide();
 		completeScroll=false;
 	});
@@ -1356,29 +1303,17 @@ function getreceiptdetails(para){
 	}
 }
 
-function refreshTable(){
-	$('#payment_table_body').html('');
+function refreshCommonElements(){
+	$('#table-breakpoint').basictable('destroy');
 	$('#img_loading_div').show();
+	$('#display_more_btn').hide();
+	load_data();	
+}
+function refreshTable(){
+	$('#content_table').html('');
 	start=0;
 	tab='';
-	keyword= $("#keyword").val();
-	jsonRow = 'load_bankenteriesnew.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&start_date='+start_date+'&end_date='+end_date+'&set='+selected_set+'&setUUID='+setUUID;
-	if(start_date!='' || end_date!=''){
-		jsonRow +='&date_selected=yes';
-	}else{
-		jsonRow +='&date_selected=no';
-	}
-	if(keyword!=''){
-		jsonRow +='&keyword='+keyword;
-	}
-				
-	if(bank_account!=''){
-		jsonRow +='&uuid_bank='+bank_account;
-	}
-	if(status!=''){
-		jsonRow +='&status='+status;
-	}
-	load_data(jsonRow);
+	refreshCommonElements();
 }
 
 function openmissingLinkForm(){
@@ -1489,7 +1424,7 @@ function viewReceipt(num){
 		$.prompt({
 			state0: {
 				title: 'Add Note',
-				html: '<textarea name="bankNote" class="span4" rows="3" id="bankNote"></textarea>',
+				html: '<textarea class="form-control" name="bankNote" class="span4" rows="3" id="bankNote"></textarea>',
 				buttons: { Cancel: 0 , Save: 1 },																		
 				submit:function(e,v,m,f){ 
 					if(v==1) {
@@ -1538,7 +1473,7 @@ function viewReceipt(num){
 		$.prompt({
 			state0: {
 				title: 'Edit Note',
-				html: '<textarea name="bankNote" class="span4" rows="3" id="bankNote">'+note+'</textarea>',
+				html: '<textarea class="form-control" name="bankNote" class="span4" rows="3" id="bankNote">'+note+'</textarea>',
 				buttons: { Cancel: 0 , Save: 1 },																		
 				submit:function(e,v,m,f){ 
 					if(v==1) {
@@ -1898,8 +1833,9 @@ function viewReceipt(num){
 	}
 	
 	function refreshBankentryRow(e){
-		jsonRow = 'load_bankenteriesnew.cgi?uuid_entry='+e;	
-		load_data(jsonRow,e);	
+		$('#table-breakpoint').basictable('destroy');
+		
+		load_data(e);	
 	}
 	
 	function reconcile_bankentry(){
@@ -2450,4 +2386,139 @@ function viewReceipt(num){
       }
     });
   })( jQuery );
+  
+$(document).ready(function() {
+	$('select.selectpicker').on('change', function(e){
+  		bank_account='', entry_type='', bill='';
+  		$('.selectpicker :selected').each(function(i, selectedElement) {
+ 			var selectedValues = $(selectedElement).val();
+ 			var selectedValues = $(selectedElement).val();
+ 			if(selectedValues.indexOf("bank_")>=0){
+ 				var valStr = selectedValues.replace("bank_", ""); 
+				bank_account= valStr;
+ 			}else if(selectedValues.indexOf("display_")>=0){
+ 				var valStr = selectedValues.replace("display_", ""); 
+				entry_type=valStr;
+ 			}
+ 			else if(selectedValues.indexOf("show_")>=0){
+ 				var valStr = selectedValues.replace("show_", ""); 
+				bill=valStr;
+ 			}
+		});
+		
+		refreshTable();
+	});
+	
+	$('#keyword').focus();
+	load_data();		 
+	
+	$(window).scroll(function(){
+		if ($(window).scrollTop() == $(document).height() - $(window).height()){
+			if(complete==false && completeScroll==false) {
+				$('#img_loading_div').show();
+				start=end+1;
+				end=start+25;
+				refreshCommonElements();
+			}
+		}
+	});	
+	
+	//setup before functions
+	var typingTimer;                //timer identifier
+	var doneTypingInterval = 600;  //time in ms, 5 second for example
+	
+	//on keyup, start the countdown
+	$('#keyword').keyup(function(){
+		clearTimeout(typingTimer);
+		if ($('#keyword').val) {
+			typingTimer = setTimeout(function(){
+				//do stuff here e.g ajax call etc....
+				$('#content_table').html('');
+				start=0;
+				end=start+25;
+				tab='';
+				refreshCommonElements();
+			}, doneTypingInterval);
+		}
+	});		
+	
+	//on keyup, start the countdown
+	var doneTypingInterval = 1000;  //time in ms, 5 second for example
+	$('#searchInvoiceField').keyup(function(){
+		clearTimeout(typingTimer);
+		if ($('#searchInvoiceField').val) {
+			typingTimer = setTimeout(function(){
+				var formtypeStr= $("#formTypeField").val();
+				if(formtypeStr=="Payment"){
+					refreshPurInvoiceTable();
+				}else if(formtypeStr=="Receipt"){
+					refreshInvoicesTable();
+				}
+			}, doneTypingInterval);
+		}
+	});		
+	$('#start_date').datepicker({"autoclose": true}).on('changeDate', function (ev) {
+		start_date=$('#start_date').val();
+		var arrStartDate= $('#start_date').val().split('/');
+		var dateText = new Date(arrStartDate[1]+'/'+arrStartDate[0]+'/'+arrStartDate[2]);
+		$('#end_date').datepicker('setStartDate', dateText);
+		
+		$('#content_table').html('');
+		if(checkAllFlag==true){
+			$("#chk_all").trigger('click');
+		}
+		start=0,end=start+25;
+		refreshCommonElements();
+	});
+	
+	$('#end_date').datepicker({"autoclose": true}).on('changeDate', function (ev) {
+		end_date=$('#end_date').val();
+		var arrEndDate= $('#end_date').val().split('/');
+		var dateText = new Date(arrEndDate[1]+'/'+arrEndDate[0]+'/'+arrEndDate[2]);
+		
+		$('#start_date').datepicker('setEndDate', dateText);
+		
+		$('#content_table').html('');
+		if(checkAllFlag==true){
+			$("#chk_all").trigger('click');
+		}
+		start=0, end=start+25;
+		refreshCommonElements();
+	});
+	
+	$('#start_date').datepicker().on('changeDate', function (ev) {
+		$(this).datepicker('hide');
+	});
+	$('#end_date').datepicker().on('changeDate', function (ev) {
+		$(this).datepicker('hide');
+	});
+	
+	// toggle all checkboxes from a table when header checkbox is clicked
+  	$(".table th input:checkbox").click(function () {
+  		$checks = $(this).closest(".table").find("tbody input:checkbox");
+  		if ($(this).is(":checked")) {
+			checkAllFlag=true;
+			$('#chk_all').prop("checked", true);
+  			$checks.prop("checked", true);
+  		} else {
+			checkAllFlag=false;
+			$('#chk_all').prop("checked", false);
+  			$checks.prop("checked", false);
+  		}  		
+  	});
+	
+	$('.num').keypress(function(e){
+		var k = e.which;
+    	/* numeric inputs can come from the keypad or the numeric row at the top */
+   		if ((k<48 || k>57) && (k!=46) && (k!=8) && (k!=0)) {
+        	e.preventDefault();
+			//alert("Allowed characters are 0-9, +, -, (, )");
+        	return false;
+    	}
+	}); 
+	
+	$('#n_purchase_amount').change(function(e){
+		 clearAlertMsg()
+	}); 
+});
  

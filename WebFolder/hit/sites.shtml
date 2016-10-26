@@ -14,110 +14,119 @@ end if
 
 //_HIT_HTMLTXT:=_HIT_SessionStr
 -->
-
 <!DOCTYPE html>
 <html>
 <head>
 <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
-<link rel="stylesheet" media="all" type="text/css" href="css/jquery-impromptu.css" />
+<link rel="stylesheet" href="css/basictable.css">
+<style>
+#message{
+	color:#FF0000;
+}
+.table-wrapper .table ul.actions{
+	float:left;
+}
+</style>
 </head>
-<body>
-
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
 <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
-	
+
 <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
 
 	<!-- main container -->
-    <div class="content">
-        
-        <div class="container-fluid">
-<div id="pad-wrapper">
-
-                <!-- timeslips table -->
-                <div class="table-wrapper orders-table section">
-                    <div class="row-fluid head">
-                        <div class="span12">
-                            <h4>Sites</h4>
-                        </div>
-                    </div>
-                    
-                    <form method="get" onSubmit="__showInvoices(); return false;">
-
-                    <div class="row-fluid filter-block">
-                    <a href="javascript:void(0)" onClick="delSelectedSites()" class="btn-flat success new-product">Delete Selected Site(s)</a>
-                        <div class="pull-right">
-                            <div class="btn-group pull-right">
-                            </div>
-                            <input name="keyword" id="keyword" type="text" class="search order-search" placeholder="Search site name.." value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" />
-                       		<a href="site.shtml" class="btn-flat success new-product margn-lft35">+ Add New Site</a>
-                        </div>
-                    </div>
-
-                            </form>
-
-                    <div class="row-fluid">
-                        <table class="table table-hover">
+    <div class="content-wrapper">
+        <section class="content-header">
+      		<h1>
+        		Sites
+        		<small>List panel</small>
+      		</h1>
+      		<ol class="breadcrumb">
+       			<li><a href="index.shtml"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+        		<li class="active">Sites</li>
+      		</ol>
+    	</section>
+		<section class="content">
+        	<div CLASS="row">
+				<div CLASS="col-md-12">
+					<div class="clearfix hidden-xs">
+      					<div class="form-group no-margin">
+     						<div class="pull-left margin-bottom-10 ">
+								<div class="form-inline" style="">                 	          
+                 					<a href="javascript:void(0)" onClick="delSelectedSites()" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink ">Delete Selected Site(s)</a>
+                                 </div>
+         					</div>
+         					<div class="pull-right margin-bottom-10 ">
+								<div class="form-inline" style="">                 	          
+                 					<div class="btn-inline display-inline-block">
+                 						<input class="form-control searchFieldClass" id="keyword_type" style="min-width:225px; height:36px;" placeholder="Search here.." name="keyword" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" type="text">
+										
+										<button class="btn btn-left-align btn-link no-shadow bg-transparent no-padding-top padding-right-10 right-auto left" type="button" id="searchBtn"><i class="glyphicon glyphicon-search"></i></button>
+									</div>
+									<a href="site.shtml" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink " style=""> <i class="fa fa-plus"></i>Add New Site</a>
+                  				</div>
+         					</div>
+      					</div>
+     				</div>
+     				<input id="keyword" name="keyword" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" type="hidden">
+					<div class="visible-xs ">
+						<div class="row">
+							<div class="col-lg-6 col-sm-12 col-xs-12">
+								<div>
+									<input class="form-control xs-margin-btm10 searchFieldClass" id="small_screen_keyword" name="keyword" placeholder="Search here.." value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" type="text">
+                     				<a href="site.shtml" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink" STYLE="width:100%; margin:10px 0px;"> <i class="fa fa-plus"></i>Add New Site</a>    
+                  				</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+        	<div CLASS="row">
+            	<div class="content table-responsive table-full-width">
+		 			<div class="table-responsive" style="border:none;" >
+                         <table class="table table-striped  table-bordered table-hover custom-tbl-st bt" id="table-breakpoint"  style="background-color: rgb(255, 255, 255); border-radius: 4px;" >
                             <thead>
-                                <tr> 
-                                	<th width="6%">
-                                        <input name="Select" class="check" type="checkbox" id="chk_all" >
-                                    </th>
-                                    <th class="span2">
-                                       SITE ID
-                                    </th>
-                                    <th class="span3">
-										<span class="line"></span>
-                                        UUID
-                                    </th>
-                                    <th class="span3">
-                                        <span class="line"></span>
-                                        CODE
-                                    </th>
-                                    <th class="span3">
-                                        <span class="line"></span>
-                                        SITE NAME
-                                    </th>
-                                    <th class="span3">
-                                        <span class="line"></span>
-                                        DATE CREATED
-                                    </th>
-                                    <th class="span3">
-                                        <span class="line"></span>
-                                        Root Path
-                                    </th>
-									<th class="span3">
-                                        <span class="line"></span>
-                                    </th>
+                                <tr>
+                                	<th><input name="select" class="" type="checkbox" id="chk_all" ></th>
+                                    <th>SITE ID</th>
+									<th>CODE</th>
+                                    <th>SITE NAME</th>
+                                    <th>DATE CREATED</th>
+                                    <th>Root Path</th>
+                                    <th>ACTION</th> 
                                 </tr>
                             </thead>
                             <tfoot>
-                            <tr> 
-                            	<th align="left">&nbsp;</th> 
-                                <th align="left">SITE ID</th>
-                                <th align="left">UUID</th>
-                                <th align="left">CODE</th>
-                                <th align="left">SITE NAME</th>
-                                <th align="left">DATE CREATED</th>
-                                <th align="left">Root Path</th>
-                                 <th align="left"></th>
-                            </tr>
+                            	<tr> 
+                            		<th>&nbsp;</th>
+                              		<th>SITE ID</th>
+									<th>CODE</th>
+                                    <th>SITE NAME</th>
+                                    <th>DATE CREATED</th>
+                                    <th>Root Path</th>
+                                    <th>ACTION</th> 
+                            	</tr>
                         	</tfoot>
-                            <tbody id="data_table_body">
-
+                            <tbody id="content_table">
                             </tbody>
                         </table>
+                        <div style="text-align:center">
+							<a style="width: 60%; margin-bottom: 10px; display: none;" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink " id="display_more_btn" title="Load more" onclick="load_more()" href="javascript:void(0);">
+								Load more
+							</a>
+        				</div>
 						<div id="img_loading_div" style="text-align:center">
-		<img src="loading.gif"  style="padding:20px;" width="34" >
-		</div>
-                    </div>
-                </div>
-                <!-- end sites table -->
-
-            </div>
-        </div>
+							<img src="images/loading.gif?as"  style="padding:20px;" width="34" >
+						</div>
+                 	</div>
+                	<!-- end timeslips table -->
+				</div>
+        	</div>
+        	</div>
+        </section>
     </div>
     <!-- end main container -->
-
 	<div class="example-container">
 		<pre class="code" style="display:none;" id="no_rec_prompt">
 									var statesdemo = {
@@ -180,11 +189,10 @@ end if
 								</pre>
 								
 							</div>
-
-	<!-- scripts -->
-    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
- <script type="text/javascript" src="js/jquery-impromptu.js"></script>   
-    
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/top-footer.shtml-->
+</div>
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml-->
+<script src="js/basictable.js"></script>
 <script>
 var JSONdata;
  var start=0, end=50;
@@ -194,80 +202,8 @@ var JSONdata;
  var completeScroll=false;  
  var checkAllFlag=false;
 var deleteuuid='';
-
-$(document).ready(function() {
-
-	$('#keyword').focus();
-	keyword= $("#keyword").val();
-	jsonRow = 'loadsites.cgi?start='+start+'&end='+end+'&tablname='+tablname;
-	if(keyword!=''){
-		jsonRow +='&keyword='+keyword;
-	}		
-	load_data(jsonRow);			 
-	
-	$(window).scroll(function(){
-		if ($(window).scrollTop() == $(document).height() - $(window).height()){
-		if(complete==false && completeScroll==false) {
-			$('#img_loading_div').show();
-			//alert("scrolling...");
-			start=end+1;
-			end=start+25;
-			jsonRow = 'loadsites.cgi?start='+start+'&end='+end+'&tablname='+tablname;
-			if(keyword!=''){
-				jsonRow +='&keyword='+keyword;
-			}
-			if(tab!=''){
-				jsonRow +='&tab='+tab;
-			}		
-			load_data(jsonRow);
-		}
-		}
-	});	
-	
-	//setup before functions
-	var typingTimer;                //timer identifier
-	var doneTypingInterval = 1000;  //time in ms, 5 second for example
-	
-	//on keyup, start the countdown
-	$('#keyword').keyup(function(){
-		clearTimeout(typingTimer);
-		if ($('#keyword').val) {
-			typingTimer = setTimeout(function(){
-				//do stuff here e.g ajax call etc....
-				$('#data_table_body').html('');
-				$('#img_loading_div').show();
-				start=0;
-				end=start+25;
-				tab='';
-				keyword= $("#keyword").val();
-				jsonRow = 'loadsites.cgi?start='+start+'&end='+end+'&tablname='+tablname;
-				if(keyword!=''){
-					jsonRow +='&keyword='+keyword;
-				}
-				if(tab!=''){
-					jsonRow +='&tab='+tab;
-				}	
-				load_data(jsonRow);
-			}, doneTypingInterval);
-		}
-	});		
-	// toggle all checkboxes from a table when header checkbox is clicked
-  	$(".table th input:checkbox").click(function () {
-  		$checks = $(this).closest(".table").find("tbody input:checkbox");
-  		if ($(this).is(":checked")) {
-			checkAllFlag=true;
-			$('#chk_all').prop("checked", true);
-  			$checks.prop("checked", true);
-  		} else {
-			checkAllFlag=false;
-			$('#chk_all').prop("checked", false);
-  			$checks.prop("checked", false);
-  		}  		
-  	});
-});
-
  
- function delSelectedSites(){
+function delSelectedSites(){
 	var deluuid='';
 	$('.check').each(function(){
 		if($(this).is(":checked")){
@@ -290,17 +226,129 @@ $(document).ready(function() {
 	}
 }
 
-function load_data(jsonRow){
+function load_more(){
+	$('#img_loading_div').show();
+	$('#display_more_btn').hide();	
+	$('#table-breakpoint').basictable('destroy');
+	start=end+1;
+	end=start+25;	
+	load_data();
+}
+$(document).ready(function() {
+	$('#keyword_type').focus();
+	load_data();			 
+	
+	$(window).scroll(function(){
+		if ($(window).scrollTop() == $(document).height() - $(window).height()){
+		if(complete==false && completeScroll==false) {
+			$('#img_loading_div').show();
+			$('#display_more_btn').hide();	
+			$('#table-breakpoint').basictable('destroy');
+			//alert("scrolling...");
+			start=end+1;
+			end=start+25;	
+			load_data();
+		}
+		}
+	});	
+		
+	//setup before functions
+	var typingTimer;                //timer identifier
+	var doneTypingInterval = 1000;  //time in ms, 5 second for example
+	
+	//on keyup, start the countdown
+	$('#keyword_type').keyup(function(){
+		clearTimeout(typingTimer);
+		if ($('#keyword_type').val) {
+			typingTimer = setTimeout(function(){
+				var keyVal=$('#keyword_type').val();
+				$('#keyword').val(keyVal);
+				//do stuff here e.g ajax call etc....
+				$('#table-breakpoint').basictable('destroy');
+				$('#display_more_btn').hide();	
+				$('#content_table').html('');
+				$('#img_loading_div').show();
+				start=0;
+				end=start+25;
+				tab='';
+				load_data();
+			}, doneTypingInterval);
+		}
+	});	
+	
+	$('#small_screen_keyword').keyup(function(){
+		clearTimeout(typingTimer);
+		if ($('#small_screen_keyword').val) {
+			typingTimer = setTimeout(function(){
+				var keyVal=$('#small_screen_keyword').val();
+				$('#keyword').val(keyVal);
+				//do stuff here e.g ajax call etc....
+				$('#table-breakpoint').basictable('destroy');
+				$('#display_more_btn').hide();	
+				$('#content_table').html('');
+				$('#img_loading_div').show();
+				start=0;
+				end=start+25;
+				tab='';
+				load_data();
+			}, doneTypingInterval);
+		}
+	});	
+	
+	$('#searchBtn').click(function(){
+		if ($('#keyword_type').val()!="") {
+			var keyVal=$('#keyword_type').val();
+			$('#keyword').val(keyVal);
+			$('#table-breakpoint').basictable('destroy');
+			$('#content_table').html('');
+			$('#img_loading_div').show();
+			$('#display_more_btn').hide();	
+			start=0;
+			end=start+25;
+			load_data();
+		}else{
+			$('#keyword_type').focus();
+		}
+	});
+	// toggle all checkboxes from a table when header checkbox is clicked
+  	$(".table th input:checkbox").click(function () {
+  		$checks = $(this).closest(".table").find("tbody input:checkbox");
+  		if ($(this).is(":checked")) {
+			checkAllFlag=true;
+			$('#chk_all').prop("checked", true);
+  			$checks.prop("checked", true);
+  		} else {
+			checkAllFlag=false;
+			$('#chk_all').prop("checked", false);
+  			$checks.prop("checked", false);
+  		}  		
+  	});
+});
+	
+function load_data(){
 	completeScroll=true;
 	JSONdata=new Array();
+	var keyword= $("#keyword").val();
+	var  jsonRow = 'loadsites.cgi?start='+start+'&end='+end+'&tablname='+tablname;
+		if(keyword!=''){
+			jsonRow +='&keyword='+keyword;
+		}
+		if(tab!=''){
+			jsonRow +='&tab='+tab;
+		}	
+	
 	$.getJSON(jsonRow,function(result){
-			if(result.Alert){
-				code = $('#no_rec_prompt').text();
-				(new Function(code))();
-				complete=true;
-			}
-			else{
-				$.each(result.site_uuid, function(i,item)
+		//console.log(result)
+		if(result.Alert){
+			code = $('#no_rec_prompt').text();
+			(new Function(code))();
+			complete=true;	
+			$('#display_more_btn').hide();
+			$('#table-breakpoint').basictable({
+    				breakpoint: 751
+   			});	
+		}else{
+		 	$.each(result.site_uuid, function(i,item)
 				{
 					JSONdata[i]=new Array();
 					if(checkAllFlag==true){
@@ -308,9 +356,8 @@ function load_data(jsonRow){
 					}else{
 					JSONdata[i][0]='<input name="Select" class="check" type="checkbox" id="Select" value="'+item+'">';
 					}
- 					//JSONdata[i][0]=item;
 					JSONdata[i][2]=item;
-					JSONdata[i][7]='<ul class="actions"><li><a href="site.shtml?uuid='+item+'"><i class="table-edit"></i></a></li><li><i class="table-settings"></i></li><li class="last"><i class="table-delete"></i></li></ul>';					
+					JSONdata[i][7]='<a href="site.shtml?uuid='+item+'"><i class="fa fa-pencil"></i></a>';					
 				}); 
 				
 			 	$.each(result.site_id, function(i,item)
@@ -335,36 +382,40 @@ function load_data(jsonRow){
 					JSONdata[i][6]=item;
 				});
  
-				
-				var table_html='';
-				
-				$.each(JSONdata, function(i,row)
-				{
-				
-					table_html+='<tr >';
-					
-					$.each(row, function(i,col){
-						table_html+='<td>'+col+'</td>';
-					});
-					table_html+='</tr>';
-				});
-				if(old_srch!=keyword){
-					$('#data_table_body').html('');
-					old_srch=keyword;
-				}
-				//alert(table_html);
-				
-				$('#data_table_body').append(table_html);
-				complete=false;
 			
+			var table_html='';
+			var trClassStr='odd';
+			$.each(JSONdata, function(i,row)
+			{
+			
+				table_html+='<tr>';
+				$.each(row, function(i,col){
+					if(i==0){
+						table_html+='<td class="hidden-xs">'+col+'</td>';
+					}else{
+					table_html+='<td>'+col+'</td>';
+					}
+				});
+				table_html+='</tr>';
+			});
+			if(old_srch!=keyword){
+				$('#content_table').html('');
+				old_srch=keyword;
+			}
+			//alert(table_html);
+			
+			$('#content_table').append(table_html);
+			$('#table-breakpoint').basictable({
+    				breakpoint: 751
+   			 });
+			complete=false;
+			$('#display_more_btn').show();	
 		}
 		$('#img_loading_div').hide();
+		
 		completeScroll=false;
-		});
-}
-
-    </script>
-
-    
+	});
+	
+}  </script>    
 </body>
 </html>

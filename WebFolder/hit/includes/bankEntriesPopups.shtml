@@ -1,5 +1,5 @@
 <!-- Reconcile -->
-			<div id="reconcileManager" class="modal modal-modified hide fade" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+			<div class="modal fade" id="reconcileManager" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" aria-labelledby="myModalLabel" aria-hidden="true">
            		 <div class="modal-dialog" role="document">
     				<div class="modal-content">
 						<div class="modal-header">
@@ -84,8 +84,8 @@
 			</div>
 			
 			<!-- Create Missing Links-->
-			<div id="createMissingLinksManager" class="modal modal-modified hide fade" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
-             <div class="modal-dialog" role="document">
+			<div class="modal fade" id="createMissingLinksManager" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" aria-labelledby="myModalLabel" aria-hidden="true">
+				<div class="modal-dialog" role="document">
     				<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal" aria-hidden="true" onClick="refreshMissingLinksManager()">&times;</button>
@@ -191,8 +191,8 @@
 			</div>
 			
 			<!--upload document-->
-			<div id="uploadDocumentManager" class="modal modal-modified hide fade" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
-             <div class="modal-dialog" role="document">
+			<div class="modal fade" id="uploadDocumentManager" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" aria-labelledby="myModalLabel" aria-hidden="true">
+				<div class="modal-dialog" role="document">
     				<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal" aria-hidden="true" onClick="refreshMissingLinksManager()">&times;</button>
