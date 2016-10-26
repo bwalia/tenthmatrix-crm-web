@@ -463,7 +463,7 @@
 				)
 			).find('div div').css({'float': 'left'});
 			
-			$loadingBay = $tag(div, false, 'position:absolute; width:9999px; visibility:hidden; display:none; max-width:none;');
+			$loadingBay = $tag(div, false, 'position:absolute; width:9999px; visibility:hidden; display:none; ');
 			
 			$groupControls = $next.add($prev).add($current).add($slideshow);
 

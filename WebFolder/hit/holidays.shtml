@@ -31,6 +31,13 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
     z-index: 10000;
 }
 
+.btn-inline >.btn-left-align {
+    position: absolute;
+    right: 0;
+    top: -4px;
+    margin: 8px 2px 0 0;
+}
+
 </style>
 </head>
 <body class="hold-transition skin-blue sidebar-mini">

@@ -30,24 +30,30 @@ end if
                 <div class="row-fluid form-wrapper">
 				
 					<!-- left column -->
-                    <div class="span10">
+                    <div class="col-md-12">
 					
-						<form name="LicenceManager" action="" class="form-comment" method="post" >
+						<form name="LicenceManager" action="" class="form-horizontal" method="post"  >
 						<div id="validation" align="center"></div>
 						<input type="hidden" name="client_uuid" id="client_uuid" value="">
 						
-							<div class="field-box">
-								<label>Version</label>
-								<div class="ui-select span5">
+						<div class="form-group">
+								<label class="col-sm-4 control-label">Logo Path</label>
+								<div class=" col-sm-8"><input class="form-control" type="text" id="logo_path" name="logo_path" value="<!--#4DVAR [Companies]logo_path-->"></div>
+							</div>
+						
+						
+							<div class="form-group">
+								<label class="col-sm-4 control-label">Version</label>
+								<div class="ui-select col-sm-8">
 									<Select name="Version" id="Version" class="form-control">
 										<option value="7.0">7.0</option>
 										<option value="6.7">6.7</option>
 									</select>                                     
 								</div>
 							</div>
-							<div class="field-box">
-								<label>Vertical</label>
-								<div class="ui-select span5">
+							<div class="form-group">
+								<label class="col-sm-4 control-label">Vertical</label>
+								<div class="ui-select col-sm-8">
 									<select name="Vertical" id="Vertical" class="form-control">
 										<option value="Generic">Generic</option>
 										<option value="Catalog">Catalog</option>
@@ -59,21 +65,28 @@ end if
 									</select>                                     
 								</div>
 							</div>
-							<div class="field-box">
-							<label>Platform</label>
-								<label class="radio" style="width:20%">
-                                    <span><input  type="radio" value="Mac" name="platform" id="platform1" onClick="set_platform_check(this.value)" class="rdo"></span> Mac
-                                </label>
-								<label class="radio" style="width:20%">
-                                    <span><input type="radio" value="Windows" name="platform" id="platform2" onClick="set_platform_check(this.value)" class="rdo"></span> Windows
-                            	</label>
-								<label class="radio" style="width:20%">
-                                    <span><input type="radio" value="Multi-user" name="platform" id="platform3" onClick="set_platform_check(this.value)" class="rdo"></span> Multi-user
-                                </label>
-                                <input id="platform_check" type="hidden" >
+							<div class="form-group">
+							<label class="col-sm-4 control-label">Platform</label>
+							<div class="col-sm-8">
+							<div CLASS="row">
+							<div CLASS="col-sm-4"><input  type="radio" value="Mac" name="platform" id="platform1" onClick="set_platform_check(this.value)" > <span>Mac</span></div>
+							<div CLASS="col-sm-4"><input type="radio" value="Windows" name="platform" id="platform2" onClick="set_platform_check(this.value)" >Windows
+                            </div>
+							<div CLASS="col-sm-4">
+                            <input type="radio" value="Multi-user" name="platform" id="platform3" onClick="set_platform_check(this.value)" > Multi-user
+                            </div>
+								
+								<input id="platform_check" type="hidden" >
 							</div>
-							<div class="field-box">
-								<label>Type Of Licence</label>
+							
+							
+                              </div>
+								
+								
+                                
+							</div>
+							<div class="form-group">
+								<label class="col-sm-4 control-label">Type Of Licence</label>
 								<label class="radio" style="width:20%">
                                     <span><input  type="radio" value="Enterprise" name="type_of_licence" id="type_of_licence1" onClick="set_type_check(this.value)" class="rdo"></span> Enterprise
                                 </label>
@@ -86,12 +99,12 @@ end if
                                 <input id="type_of_licence_check" type="hidden" >
 							</div>
 							
-							<div class="field-box">
-								<label>Number Of Users</label>
+							<div class="form-group">
+								<label class="col-sm-4 control-label">Number Of Users</label>
 								<input type="text" class="form-control" name="noOfUsers" id="noOfUsers" value="">
 							</div>
-							<div class="field-box">
-							<label>License Number</label>
+							<div class="form-group">
+							<label class="col-sm-4 control-label">License Number</label>
 								<input type="text" class="form-control" name="licenceNo" id="licenceNo" value="">
 							</div><br>
 							<span id="err_msg" style="color:#FF0000"></span>

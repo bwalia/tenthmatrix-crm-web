@@ -71,13 +71,15 @@ End If
  
   }
   
+  #CompanyForm .custom-combobox {
+    width: 98%!important;
+    margin-left: 26px;
+    top: 1px;
+}
   
-  #ProjectForm .custom-combobox{
   
-      width: 351px;
-    margin-left: 25px;
-    top: 2px;
-  }
+  
+
 </style>
 </head>
  <body class="hold-transition skin-blue sidebar-mini">
@@ -210,34 +212,41 @@ End If
 							<div class="form-group ">
 								<label class="col-sm-3 control-label">&nbsp;</label>
 								<label  class="control-label">							
-								<div class=" col-sm-5" STYLE="margin-left:15px;">
+								<div class=" col-sm-6" STYLE="margin-left:15px;">
 								<input  name="is_supplier" type="checkbox" value="true" id="is_supplier"  <!--#4DIF ([Companies]is_supplier)-->checked<!--4DELSE--><!--4DENDIF--> >
 								 <strong STYLE="float:left; position:absolute; top: 1px;  left: 35px;">Supplier</strong>
 								</label></div>
 								</div>	
 								<div class="form-group">
 									<label class="col-sm-3 control-label">Follow Up Date</label>
-									<div class=" col-sm-5"><input type="text" class="input-large datepicker form-control"  data-date-format="dd/mm/yyyy" <!--#4DIF ([Companies]followup_date=!00/00/00!)-->value=""<!--4DELSE-->value="<!--#4DHTMLVAR ([Companies]followup_date)-->"<!--4DENDIF--> name="follow_date" id="follow_date" readonly ></div>
+									<div class=" col-sm-6"><input type="text" class="input-large datepicker form-control"  data-date-format="dd/mm/yyyy" <!--#4DIF ([Companies]followup_date=!00/00/00!)-->value=""<!--4DELSE-->value="<!--#4DHTMLVAR ([Companies]followup_date)-->"<!--4DENDIF--> name="follow_date" id="follow_date" readonly ></div>
 								</div>
 								<div class="form-group">
 									<label class="col-sm-3 control-label">Technical Person : </label>
-									<div class=" col-sm-5">First name: <input name="tech_cont_firstname" class="form-control" type="text" value="<!--#4DVAR [Companies]tech_cont_firstname-->" id="tech_cont_firstname" >
-									&nbsp;&nbsp;&nbsp;Last name: <input name="tech_contact_lastname" class="colsm-3 form-control" type="text" value="<!--#4DVAR [Companies]tech_contact_lastname-->" id="tech_contact_lastname" ></div>
+									<div class=" col-sm-6">
+									<div CLASS="row">
+									<div CLASS="col-sm-6">First name: <input name="tech_cont_firstname" class="form-control" type="text" value="<!--#4DVAR [Companies]tech_cont_firstname-->" id="tech_cont_firstname" ></div>
+									<div CLASS="col-sm-6">&nbsp;&nbsp;&nbsp;Last name: <input name="tech_contact_lastname" class="colsm-3 form-control" type="text" value="<!--#4DVAR [Companies]tech_contact_lastname-->" id="tech_contact_lastname" ></div>
+									
+									</div>
+									
+									
+									</div>
 								</div>
 																
 								<div class="form-group">
 									<label class="col-sm-3 control-label">Other email</label>
-									<div class=" col-sm-5"><input name="other_email" class="form-control" type="text" value="<!--#4DVAR [Companies]other_email-->" id="other_email" ></div>
+									<div class=" col-sm-6"><input name="other_email" class="form-control" type="text" value="<!--#4DVAR [Companies]other_email-->" id="other_email" ></div>
 								</div>
 								<div class="form-group">
 									<label class="col-sm-3 control-label">Support Renewal</label>
-									<div class=" col-sm-5"><input name="support_renew2" readonly class="input-large datepicker form-control" data-date-format="dd/mm/yyyy" type="text" <!--#4DIF ([Companies]support_renew2=!00/00/00!)-->value=""<!--4DELSE-->value="<!--#4DHTMLVAR ([Companies]support_renew2)-->"<!--4DENDIF--> id="support_renew2" ></div>
+									<div class=" col-sm-6"><input name="support_renew2" readonly class="input-large datepicker form-control" data-date-format="dd/mm/yyyy" type="text" <!--#4DIF ([Companies]support_renew2=!00/00/00!)-->value=""<!--4DELSE-->value="<!--#4DHTMLVAR ([Companies]support_renew2)-->"<!--4DENDIF--> id="support_renew2" ></div>
 								</div>
 												
 								<div class="form-group">
 									<label class="col-sm-3 control-label">Currency</label>
 									<div class="ui-select">
-									<div class=" col-sm-5"><select id="currency_code" name="currency_code" CLASS="form-control">
+									<div class=" col-sm-6"><select id="currency_code" name="currency_code" CLASS="form-control">
 										<option value=""></option>
 										<!--4DLOOP [Tax_Codes]-->
 										<option value="<!--#4DVAR [Tax_Codes]Currency_Code-->" <!--#4DIF ([Tax_Codes]Currency_Code=[Companies]base_currency_code)-->selected<!--4DELSE--><!--4DENDIF-->><!--4DVAR [Tax_Codes]Currency_Code--></option>	
@@ -248,12 +257,12 @@ End If
 								</div>
 								<div class="form-group">
 									<label class="col-sm-3 control-label">VAT Number</label>
-									<div class=" col-sm-5"><input name="VAT_number" class="form-control" type="text" value="<!--#4DVAR [Companies]vat_tax_number-->" id="VAT_number" ></div>
+									<div class=" col-sm-6"><input name="VAT_number" class="form-control" type="text" value="<!--#4DVAR [Companies]vat_tax_number-->" id="VAT_number" ></div>
 								</div>
 								<div class="form-group">
 									<label class="col-sm-3 control-label">VAT Claimed</label>
 									<div class="ui-select">
-									<div class=" col-sm-5"><select id="vat_claimed" name="vat_claimed" CLASS="form-control">
+									<div class=" col-sm-6"><select id="vat_claimed" name="vat_claimed" CLASS="form-control">
 										<option value="">--SELECT TYPE--</option>
 										<option value="Yes" <!--#4DIF ([Companies]vat_claimed="Yes")-->selected<!--4DELSE--><!--4DENDIF-->>Yes</option>
 										<option value="No" <!--#4DIF ([Companies]vat_claimed="No")-->selected<!--4DELSE--><!--4DENDIF-->>No</option>
@@ -263,19 +272,19 @@ End If
 								</div>
 								<div class="form-group">
 									<label class="col-sm-3 control-label">Bank Sort Code</label>
-									<div class=" col-sm-5"><input name="bank_sort_code" class="form-control" type="text" value="<!--#4DVAR [Companies]bank_sort_code-->" id="bank_sort_code" ></div>
+									<div class=" col-sm-6"><input name="bank_sort_code" class="form-control" type="text" value="<!--#4DVAR [Companies]bank_sort_code-->" id="bank_sort_code" ></div>
 								</div>
 								<div class="form-group">
 									<label class="col-sm-3 control-label">Bank Account Number</label>
-									<div class=" col-sm-5"><input name="bank_acc_num" class="form-control" type="text" value="<!--#4DVAR [Companies]bank_account_number-->" id="bank_acc_num" ></div>
+									<div class=" col-sm-6"><input name="bank_acc_num" class="form-control" type="text" value="<!--#4DVAR [Companies]bank_account_number-->" id="bank_acc_num" ></div>
 								</div>
 								<div class="form-group">
 									<label class="col-sm-3 control-label">IBAN</label>
-									<div class=" col-sm-5"><input name="IBAN" class="form-control" type="text" value="<!--#4DVAR [Companies]bank_iban_number-->" id="IBAN" ></div>
+									<div class=" col-sm-6"><input name="IBAN" class="form-control" type="text" value="<!--#4DVAR [Companies]bank_iban_number-->" id="IBAN" ></div>
 								</div>
 								<div class="form-group">
 									<label class="col-sm-3 control-label">Default Analysis Ledger</label>
-									<div class=" col-sm-5"><input CLASS="form-control"  type="hidden" value="<!--#4DVAR [Companies]uuid_analysis_ledger-->">
+									<div class=" col-sm-6"><input CLASS="form-control"  type="hidden" value="<!--#4DVAR [Companies]uuid_analysis_ledger-->">
 									<div class="ui-widget">
 										<select id="analysis_ledger" name="analysis_ledger" class="form-control">
 											<!--#4DIF (Records in selection([Companies])=0)-->
@@ -295,7 +304,7 @@ End If
 								</div>
 								<div class="form-group">
 									<label class="col-sm-3 control-label">Default Analysis Account</label>
-									<div class=" col-sm-5"><input type="hidden" value="<!--#4DVAR [Companies]uuid_analysis_account-->">
+									<div class=" col-sm-6"><input type="hidden" value="<!--#4DVAR [Companies]uuid_analysis_account-->">
 									<div class="ui-widget" id="account_div">
 										<select id="uuid_analysis_account" name="uuid_analysis_account" class="form-control">
 											<!--#4DIF (Records in selection([Companies])=0)-->
@@ -313,7 +322,7 @@ End If
 								</div>
 								<div class="form-group">
 									<label class="col-sm-3 control-label"></label>
-										<div class=" col-sm-5">			
+										<div class=" col-sm-6">			
 										<input name="renewal_letter"  type="checkbox" value="true" id="renewal_letter" <!--#4DIF ([Companies]renewal_letter)-->checked<!--4DELSE--><!--4DENDIF--> > Renewal letter
 																	</div>
 								</div>						
@@ -399,7 +408,12 @@ End If
 							</div>
 							<br/>
 							<!--#4DIF (Records in selection([Companies])=1)-->
-							<div class=" table-responsive table-full-width">
+							
+							
+							
+							
+								<div class=" table-responsive table-full-width">
+							
 		 			<div class="table-responsive" style="border:none;" >
                         <table class="table table-striped  table-bordered table-hover custom-tbl-st bt" id="table-breakpoint"  style="background-color: rgb(255, 255, 255); border-radius: 4px;" >
 							  <tr class="item">
@@ -409,8 +423,8 @@ End If
 								  <th>E-mail</th>
 								 
 								  <th>Mobile</th>
-								  <th>Save</th>
-								  <th>Cancel</th>
+								  <th>Edit/Save</th>
+								  <th>Cancel/Remove</th>
 							  </tr>
 		 					<div class=" col-sm-6"><input id="edited_contact_uuid" type="hidden" CLASS="form-control" value="edited_contact_uuid" /></div>
 
@@ -437,11 +451,11 @@ End If
 									<input type="text" class="mobile phone form-control" style="display:none;" value="<!--#4DHTMLVAR [Contacts]Mobile-->">
 									</td>
 									<td >
-									<a href="javascript:void(0)" class="editlink">Edit</a>
-									<a href="javascript:void(0)" class="savelink" style="display:none">Save</a>
+									<a href="javascript:void(0)" class="editlink"><i class="fa fa-pencil"></i></a>
+									<a href="javascript:void(0)" class="savelink" style="display:none"><i class="fa fa-save"></i></a>
 									 </td>	
-									 <td><a href="javascript:void(0)" class="removelink" >Remove</a>
-									<a href="javascript:void(0)" class="cancellink" style="display:none">Cancel</a>
+									 <td><a href="javascript:void(0)" class="removelink" ><i class="fa fa-remove"></i></a>
+									<a href="javascript:void(0)" class="cancellink" style="display:none"><i class="fa fa-remove"></i></a>
 									</td>								
 									</tr>
 		  
@@ -456,6 +470,9 @@ End If
 		</table>
 		
 		</div></div>
+							
+							
+							
 		<!--#4DENDIF-->
 		
 							

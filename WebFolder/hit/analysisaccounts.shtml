@@ -24,6 +24,14 @@ end if
 .table-wrapper .table ul.actions{
 	float:left;
 }
+
+.btn-inline >.btn-left-align {
+    position: absolute;
+    right: 0;
+    top: -5px!important;
+    margin: 8px 2px 0 0;
+}
+
 </style>
 </head>
 <body class="hold-transition skin-blue sidebar-mini">

@@ -19,68 +19,138 @@ mReadOnly:=(Records in selection([employee_holidays])=1)
 <!DOCTYPE html>
 <html>
 <head>
-<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+	 <link href="css/bootstrap.datepicker.css" type="text/css" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="css/jquery.ptTimeSelect.css" />
+	<link rel="stylesheet" href="css/autocomplete.css" />
+	<style>
+	#ptTimeSelectCntr{
+		/*z-index: 1100!important;*/
+	}
+	
+	.ui-widget-header{
+		margin: 1px 1px 3px 1px;
+		* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#ffffff+0,e5e5e5+100;White+3D */
+background: #ffffff; /* Old browsers */
+background: -moz-linear-gradient(top, #ffffff 0%, #e5e5e5 100%); /* FF3.6-15 */
+background: -webkit-linear-gradient(top, #ffffff 0%,#e5e5e5 100%); /* Chrome10-25,Safari5.1-6 */
+background: linear-gradient(to bottom, #ffffff 0%,#e5e5e5 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#e5e5e5',GradientType=0 ); /* IE6-9 */
+border: 1px solid #d3d3d3;
+
+		
+	}
+	#timeslipnew .custom-combobox-input {
+   width: 180%;
+    margin-left: 27px;
+}
+	
+	</style>
 </head>
-<body>
-    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
 
     <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
 
 	<!-- main container -->
-    <div class="content">
-    
-        <div class="container-fluid">
-            <div id="pad-wrapper" class="form-page">
-				 <div class="row-fluid header">
-                    <h3>New Holiday</h3>
-                </div>
-                <div class="row-fluid form-wrapper">
-					<!-- left column -->
-					<div class="span8 column">
-					   <form name="HolidayForm" action="savecompanyholiday.cgi" id="HolidayForm" method="post" class="form-comment" onSubmit="return ValidateForm();" >
-							<input name="holiday_uuid" class="span4" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="holiday_uuid">        
-							<div class="span12 field-box">
-								<label>Start Date :</label>
-								<input type="text" class="input-large span4 datepicker" data-date-format="dd/mm/yyyy" <!--#4DIF (timestamp_unix_toDate([employee_holidays]timestamp_start)=!01/01/1970!)-->value=""<!--4DELSE-->value="<!--#4DVAR timestamp_unix_toDate ([employee_holidays]timestamp_start)-->"<!--4DENDIF--> name="Start_Date" id="Start_Date" readonly>
+    <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        <!--#4DIF (Records in selection([Timeslips])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Holiday
+    </h1>
+      <ol class="breadcrumb">
+        <li><a href="index.shtml"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active"><!--#4DIF (Records in selection([Timeslips])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Holiday</li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+   		<div class="row">
+       		<div class="panel-body no-padding-top bg-white"> 
+				<div class=" col-sm-12 col-lg-8">
+						
+						<form name="HolidayForm" action="savecompanyholiday.cgi" id="HolidayForm" method="post" class="form-horizontal" onSubmit="return ValidateForm();" >
+							<input name="holiday_uuid" class="span4" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="holiday_uuid"> 
+							
+							
+							
+							
+							<div class="form-group">
+    							<label for="" class="col-sm-3 control-label" style=" padding-top: 20px; ">Start Date :</label>
+								<div class="col-sm-6">
+									<input type="text" class="input-large form-control datepicker" data-date-format="dd/mm/yyyy" <!--#4DIF (timestamp_unix_toDate([employee_holidays]timestamp_start)=!01/01/1970!)-->value=""<!--4DELSE-->value="<!--#4DVAR timestamp_unix_toDate ([employee_holidays]timestamp_start)-->"<!--4DENDIF--> name="Start_Date" id="Start_Date" readonly>
+								</div>
 							</div>
 							
-							<div class="span12 field-box">
-								<label>End Date :</label>
-									<input type="text" class="input-large span4 datepicker" data-date-format="dd/mm/yyyy" <!--#4DIF (timestamp_unix_toDate([employee_holidays]timestamp_end)=!01/01/1970!)-->value=""<!--4DELSE-->value="<!--#4DVAR timestamp_unix_toDate ([employee_holidays]timestamp_end)-->"<!--4DENDIF--> name="End_Date" id="End_Date" readonly>
+							
+							
+							<div class="form-group">
+    							<label for="" class="col-sm-3 control-label" style=" padding-top: 20px; ">End Date :</label>
+								<div class=" col-sm-6">
+									<input type="text" class="input-large form-control datepicker" data-date-format="dd/mm/yyyy" <!--#4DIF (timestamp_unix_toDate([employee_holidays]timestamp_end)=!01/01/1970!)-->value=""<!--4DELSE-->value="<!--#4DVAR timestamp_unix_toDate ([employee_holidays]timestamp_end)-->"<!--4DENDIF--> name="End_Date" id="End_Date" readonly>
 								<span id="err_msg" style="color:#FF0000"></span>
 							</div>
-							<div class="span12 field-box">
-								<label>Days Used</label>
-									<input name="days_used" class="span4" type="text" value="" id="days_used"   readonly>        
-							</div>
-							<div class="span12 field-box">
-								<label>Subject :</label>
-								<!--#4DIF (mReadOnly)--><textarea class="span4" rows="2" name="Subject" id="Subject"><!--#4DVAR [employee_holidays]subject--></textarea><!--#4DELSE-->
-								<textarea  class="span4" rows="2" name="Subject" id="Subject"><!--#4DVAR [employee_holidays]subject--></textarea><!--#4DENDIF-->
 							
 							</div>
-							<div class="span12 field-box" >
-							<LABEL></LABEL>
-								<input type="submit" class="btn-glow primary" value="Submit">
-															<a href="holidays.shtml" CLASS="cancelbtn">Cancel</a>
+							
+							
+							<div class="form-group">
+    							<label for="" class="col-sm-3 control-label" style=" padding-top: 20px; ">Days Used</label>
+								<div class=" col-sm-6">
+									<input name="days_used" class="form-control" type="text" value="" id="days_used"   readonly>   
 							</div>
+							
+							</div>
+							       
+								   
+						 <div class="form-group">
+    							<label for="" class="col-sm-3 control-label" style=" padding-top: 20px; ">Subject</label>
+								<div class=" col-sm-6">
+									<!--#4DIF (mReadOnly)--><textarea class="span4" rows="2" name="Subject" id="Subject"><!--#4DVAR [employee_holidays]subject--></textarea><!--#4DELSE-->
+								<textarea  class="form-control" rows="2" name="Subject" id="Subject"><!--#4DVAR [employee_holidays]subject--></textarea><!--#4DENDIF-->
+							</div>
+							
+							</div>
+							
+							
+							<div class="form-group">
+								<label for="" class="col-sm-3 control-label"></label>
+                                <div class="ui-select col-sm-6  ">
+								
+								
+								<input type="submit" class="btn btn-primary btn-color margin-right-5 btn-sm" value="Submit">
+															<a href="holidays.shtml" class="btn btn-danger btn-sm ">Cancel</a>
+                                   
+										
+                                </div>
+                            </div>
+							
+							
+							
+							
+							
+							
 						</form>
+						
+						
                     </div>
-					<!--<div class="span4 column pull-right">
-						<h4>* You have X annual holidays left</h4>
-					</div>-->
+                    </div>
 				</div>
-            </div>
+            </section>
         </div>
-    </div>
     <!-- end main container -->
-
-	<!-- scripts -->
-	<script src="js/wysihtml5-0.3.0.js"></script>
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/top-footer.shtml-->
+</div>
+	<!-- scripts for this page -->
    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
-	<script src="js/bootstrap.datepicker.js"></script>
-	<script src="js/jquery.uniform.min.js"></script>
-	<!-- call this page plugins -->
+   	<script src="js/bootstrap.datepicker.js"></script>
+    <script type="text/javascript" src="js/jquery.ptTimeSelect.js"></script>
+   	
+    <!-- call this page plugins -->
 <script language="javascript">
 function ValidateForm () {
 var msg = '';
@@ -162,9 +232,7 @@ function days_between(date1, date2) {
 			var s_date= $("#Start_Date").val();
 			var e_date= $("#End_Date").val();
 			
-            // add uniform plugin styles to html elements
-            $("input:checkbox").uniform();
-
+          
             // datepicker plugin
              $('#Start_Date').datepicker({"autoclose": true}).on('changeDate', function (ev) {
                 var arrStartDate= $('#Start_Date').val().split('/');
@@ -225,5 +293,7 @@ function days_between(date1, date2) {
 			}); 
 		}); 
     </script>
+
 </body>
+</html>
 </html>
