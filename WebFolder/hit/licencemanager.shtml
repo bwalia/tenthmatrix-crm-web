@@ -39,7 +39,7 @@ end if
 							<div class="field-box">
 								<label>Version</label>
 								<div class="ui-select span5">
-									<Select name="Version" id="Version">
+									<Select name="Version" id="Version" class="form-control">
 										<option value="7.0">7.0</option>
 										<option value="6.7">6.7</option>
 									</select>                                     
@@ -48,7 +48,7 @@ end if
 							<div class="field-box">
 								<label>Vertical</label>
 								<div class="ui-select span5">
-									<Select name="Vertical" id="Vertical">
+									<select name="Vertical" id="Vertical" class="form-control">
 										<option value="Generic">Generic</option>
 										<option value="Catalog">Catalog</option>
 										<option value="Directory">Directory</option>
@@ -88,11 +88,11 @@ end if
 							
 							<div class="field-box">
 								<label>Number Of Users</label>
-								<input type="text" class="span9" name="noOfUsers" id="noOfUsers" value="">
+								<input type="text" class="form-control" name="noOfUsers" id="noOfUsers" value="">
 							</div>
 							<div class="field-box">
 							<label>License Number</label>
-								<input type="text" class="span9" name="licenceNo" id="licenceNo" value="">
+								<input type="text" class="form-control" name="licenceNo" id="licenceNo" value="">
 							</div><br>
 							<span id="err_msg" style="color:#FF0000"></span>
 						

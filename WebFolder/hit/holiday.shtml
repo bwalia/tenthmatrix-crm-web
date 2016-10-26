@@ -26,7 +26,7 @@ mReadOnly:=(Records in selection([employee_holidays])=1)
 <head>
 	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
 	 <link href="css/bootstrap.datepicker.css" type="text/css" rel="stylesheet">
-	<link rel="stylesheet" type="text/css" href="css/jquery.ptTimeSelect.css" />
+	<link rel="stylesheet" type="text/css" href="css/jquery.timepicker.css" />
 	<link rel="stylesheet" href="css/autocomplete.css" />
 	<style>
 #HolidayForm em.error {
@@ -146,24 +146,12 @@ mReadOnly:=(Records in selection([employee_holidays])=1)
 									</select>
                             </div>
 							</div>
-							
-							
-							<div class="form-group">
-    							<label for="" class="col-sm-2 control-label"></label>
-    							<div class="col-sm-4">	
-								<Select name="type_of_holiday" id="type_of_holiday" CLASS="form-control">
-										<option value="0">Select an option</option>
-										<option value="Paid Leave" <!--#4DIF ([employee_holidays]type_of_holiday="Paid Leave")-->selected<!--4DELSE--><!--4DENDIF-->>Paid Leave</option>
-										<option value="Unpaid Leave" <!--#4DIF ([employee_holidays]type_of_holiday="Unpaid Leave")-->selected<!--4DELSE--><!--4DENDIF-->>Unpaid Leave</option>
-									</select>  
-                            </div>
-							</div>
-							
+									
 							
 							<div class="form-group">
     							<label for="" class="col-sm-2 control-label">Reason For Leave :</label>
     							<div class="col-sm-4">	
-								<!--#4DIF (mReadOnly)--><textarea class="span4" rows="4" name="Subject" id="Subject"><!--#4DVAR [employee_holidays]subject--></textarea><!--#4DELSE-->
+								<!--#4DIF (mReadOnly)--><textarea class="span4" rows="4" name="Subject" id="Subject" class="form-control"><!--#4DVAR [employee_holidays]subject--></textarea><!--#4DELSE-->
 								<textarea  class="form-control" rows="4" name="Subject" id="Subject"><!--#4DVAR [employee_holidays]subject--></textarea><!--#4DENDIF-->
                             </div>
 							</div>
@@ -220,8 +208,8 @@ mReadOnly:=(Records in selection([employee_holidays])=1)
 	<!-- scripts for this page -->
    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
    	<script src="js/bootstrap.datepicker.js"></script>
-    <script type="text/javascript" src="js/jquery.ptTimeSelect.js"></script>
-   	
+    <script type="text/javascript" src="js/jquery.timepicker.js"></script>
+   	<script src="js/jquery.validate.js"></script>
     <!-- call this page plugins -->
 <script language="javascript">
 function __alertMessage(msg){

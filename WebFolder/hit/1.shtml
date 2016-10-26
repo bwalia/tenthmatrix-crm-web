@@ -1,168 +1,118 @@
-
 <!DOCTYPE html>
 <html>
 <head>
-	<!--#4DSCRIPT/Web_LoadIncluded/admin/includes/header.shtml-->
-	<link href="css/lib/select2.css" type="text/css" rel="stylesheet">
-	
+<meta charset='utf-8' />
+<link href='css/fullcalendar.min.css' rel='stylesheet' />
+<link href='css/fullcalendar.print.css' rel='stylesheet' media='print' />
+<script src='js/moment.min.js'></script>
+<script src="js/jquery-2.2.3.min.js"></script>
+<script src='js/fullcalendar.min.js'></script>
+<script>
+
+	$(document).ready(function() {
+		
+		$('#calendar').fullCalendar({
+			header: {
+				left: 'prev,next today',
+				center: 'title',
+				right: 'month,agendaWeek,agendaDay,listWeek'
+			},
+			defaultDate: '2016-09-12',
+			navLinks: true, // can click day/week names to navigate views
+			editable: true,
+			eventLimit: true, // allow "more" link when too many events
+			dayClick: function(date, jsEvent, view) {
+			
+        alert('Clicked on: ' + date);
+
+       // alert('Coordinates: ' + jsEvent.pageX + ',' + jsEvent.pageY);
+
+       	//alert('Current view: ' + view.name);
+
+        // change the day's background color just for fun
+        $(this).css('background-color', 'red');
+
+    },
+			events: [
+				{
+					title: 'All Day Event',
+					start: '2016-09-01'
+				},
+				{
+					title: 'Long Event',
+					start: '2016-09-07',
+					end: '2016-09-10'
+				},
+				{
+					id: 999,
+					title: 'Repeating Event',
+					start: '2016-09-09T16:00:00'
+				},
+				{
+					id: 999,
+					title: 'Repeating Event',
+					start: '2016-09-16T16:00:00'
+				},
+				{
+					title: 'Conference',
+					start: '2016-09-11',
+					end: '2016-09-13'
+				},
+				{
+					title: 'Meeting',
+					start: '2016-09-12T10:30:00',
+					end: '2016-09-12T12:30:00'
+				},
+				{
+					title: 'Lunch',
+					start: '2016-09-12T12:00:00'
+				},
+				{
+					title: 'Meeting',
+					start: '2016-09-12T14:30:00'
+				},
+				{
+					title: 'Happy Hour',
+					start: '2016-09-12T17:30:00'
+				},
+				{
+					title: 'Dinner',
+					start: '2016-09-12T20:00:00'
+				},
+				{
+					title: 'Birthday Party',
+					start: '2016-09-13T07:00:00'
+				},
+				{
+					title: 'Click for Google',
+					url: 'http://google.com/',
+					start: '2016-09-28'
+				}
+			]
+		});
+		
+	});
+
+</script>
+<style>
+
+	body {
+		margin: 40px 10px;
+		padding: 0;
+		font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
+		font-size: 14px;
+	}
+
+	#calendar {
+		max-width: 900px;
+		margin: 0 auto;
+	}
+
+</style>
 </head>
 <body>
-    <!--#4DSCRIPT/Web_LoadIncluded/admin/includes/navbar.shtml-->
 
-    <!--#4DSCRIPT/Web_LoadIncluded/admin/includes/navigation.shtml-->
+	<div id='calendar'></div>
 
-	<!-- main container -->
-    <div class="content">
-        
-        <div class="container-fluid">
-            <div id="pad-wrapper" class="form-page">
-				 <div class="row-fluid header">
-                    <h3>Add New Invoice</h3>
-                </div>
-					<div class="row-fluid form-wrapper">
-						<div id="content">
-							<p id="updatemessage"></p>
-							<button id="addrowbutton" name="addrow">Add row</button>
-							<table id='mySortable' class='tablesorter'>
-							<thead>
-							<tr>
-							<th>Name</th>
-							<th>Age</th>
-							<th>Location</th>
-							<th>Edit</th>
-							<th>Delete</th>
-							</tr>
-							<tr id="addrow" style="display:none;"> <!-- Our add new row -->
-							<form>
-							<td><input type="text" name="addname" value="" /></td>
-							<td><input type="text" name="addage" value="" /></td>
-							<td><input type="text" name="addlocation" value="" /></td>
-							<td>
-							<a href="#" id="saveadd">Save</a> | <a href="#" id="canceladd">Cancel</a>
-							</td>
-							</form>    
-							</tr>
-							</thead>
-							<tbody>
-							<?php foreach ($tablerows as $row) { echo $row; } ?>
-							</tbody>
-							</table>
-						</div>
-					
-					</div>
-            </div>
-        </div>
-    </div>
-    <!-- end main container -->
-
-	<!-- scripts -->
-    <script src="http://code.jquery.com/jquery-latest.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/theme.js"></script>
-	<script src="js/bootstrap.datepicker.js"></script>
-	<script src="js/jquery.uniform.min.js"></script>
-	<script src="js/select2.min.js"></script>
-	<!-- call this page plugins -->
-
-	<script>
-
-
-	$(function() {
-		$( "#invoice_due_date" ).datepicker();
-		$( "#invoice_date" ).datepicker('setDate', new Date());
-		$( "#invoice_paid_date" ).datepicker();
-		
-		// select2 plugin for select elements
-		$(".select2").select2({
-			placeholder: "Select a Client Name"
-		});
-		
-	
-	
-	$(".editlink").click(function() {
-		var datapos = $(this).parent().parent().prevAll().length;
-		var editpos = datapos + 1;
-		
-		$("#mySortable tbody tr:eq(" + datapos + ")").hide();
-		$("#mySortable tbody tr:eq(" + editpos + ")").show();
-	});
-	
-	$(".cancellink").click(function() {
-		var editpos = $(this).parent().parent().prevAll().length;
-		var datapos = editpos - 1;
-		
-		$("#mySortable tbody tr:eq(" + datapos + ")").show();
-		$("#mySortable tbody tr:eq(" + editpos + ")").hide();
-	});	
-	
-	$(".removelink").click(function() {
-		var datapos = $(this).parent().parent().prevAll().length;
-		
-		$("#mySortable tbody tr:eq(" + datapos + ")").remove(); // Remove data row
-		$("#mySortable tbody tr:eq(" + datapos + ")").remove(); // Remove edit row
-		
-		$("#updatemessage").text("Row remove success").fadeOut(4000, function() {
-			$(this).css('display','block').text("");
-		});		
-	});	
-	
-	$(".savelink").click(function() {
-		var editpos = $(this).parent().parent().prevAll().length;
-		var datapos = editpos - 1;
-		
-		var editname = $("#mySortable tbody tr:eq(" + editpos + ") input[name=editname]").val();
-		var editage = $("#mySortable tbody tr:eq(" + editpos + ") input[name=editage]").val();
-		var editlocation = $("#mySortable tbody tr:eq(" + editpos + ") input[name=editlocation]").val();
-		
-		$("#mySortable tbody tr:eq(" + datapos + ") .name").text(editname);
-		$("#mySortable tbody tr:eq(" + datapos + ") .age").text(editage);
-		$("#mySortable tbody tr:eq(" + datapos + ") .location").text(editlocation);
-		
-		$("#mySortable tbody tr:eq(" + datapos + ")").show();
-		$("#mySortable tbody tr:eq(" + editpos + ")").hide();
-		
-		$("#updatemessage").text("Row update success").fadeOut(4000, function() {
-			$(this).css('display','block').text("");
-		});
-	});	
-	
-	$("#addrowbutton").click(function() {
-		$("#addrow").show();
-	});
-	
-	$("#canceladd").click(function() {
-		$("#addrow").hide();
-	});
-	
-	$("#saveadd").click(function() {
-		$("#mySortable tbody tr:eq(0)").clone(true).insertBefore("#mySortable tbody tr:eq(0)");
-		$("#mySortable tbody tr:eq(2)").clone(true).insertAfter("#mySortable tbody tr:eq(0)");
-		
-		var addname = $("#addrow input[name=addname]").val();
-		var addage = $("#addrow input[name=addage]").val();
-		var addlocation = $("#addrow input[name=addlocation]").val();
-		
-		$("#mySortable tbody tr:eq(0) .name").text(addname);
-		$("#mySortable tbody tr:eq(0) .age").text(addage);
-		$("#mySortable tbody tr:eq(0) .location").text(addlocation);
-		
-		$("#mySortable tbody tr:eq(1) input[name=editname]").val(addname);
-		$("#mySortable tbody tr:eq(1) input[name=editage]").val(addage);
-		$("#mySortable tbody tr:eq(1) input[name=editlocation]").val(addlocation);		
-		
-		$("#addrow input[name=addname]").val("");
-		$("#addrow input[name=addage]").val("");
-		$("#addrow input[name=addlocation]").val("");
-
-		$("#addrow").hide();		
-		
-		$("#updatemessage").text("Row added success").fadeOut(4000, function() {
-			$(this).css('display','block').text("");
-		});
-		
-		 // sort on the first column 
-	});	
-	});
-    </script>
 </body>
 </html>
