@@ -16,162 +16,140 @@ end if
 //_HIT_HTMLTXT:=_HIT_SessionStr
 -->
 
+
 <!DOCTYPE html>
 <html>
 <head>
 <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
-<link rel="stylesheet" media="all" type="text/css" href="css/jquery-impromptu.css" />
+<link rel="stylesheet" href="css/basictable.css">
+<link rel="stylesheet" href="css/autocomplete.css" />
 <style>
 #message{
 	color:#FF0000;
 }
+.table-wrapper .table ul.actions{
+	float:left;
+}
 </style>
 </head>
-<body>
-
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
 <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
 
 <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
 
 	<!-- main container -->
-    <div class="content">
-        
-        <div class="container-fluid">
-
-            <div id="pad-wrapper">
-
-                <!-- timeslips table -->
-                <div class="table-wrapper orders-table section">
-				 <form id="frm_set" name="frm_set" method="post" action="invoices.shtml">
-                    <div class="row-fluid filter-block">
-                        <div class="pull-right">
-                            <div class="btn-group pull-right">
-                                <button class="glow left large" onClick="__showOrders(); return false;">All</button>
-                                <!-- 
-<button class="glow middle large" onClick="__showAcknowledgedOrders(); return false;">Acknowledged</button> -->
-                                <button class="glow middle large" onClick="__showActiveOrders(); return false;">Active</button>
-                                <button class="glow right large" onClick="__showInactiveOrders(); return false;">Inactive</button>
-
-                                <a href="purchase_order.shtml" class="btn-flat success new-product margn-lft35">+ Add New Purchase Order</a>
-                            </div>
-                            <input name="typeKeyword" id="typeKeyword" type="text" class="search order-search" placeholder="Enter customer name.." value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" />
-                        </div>
-                    </div>
-
-                            </form>
-
-                    <div class="row-fluid">
-                        <table class="table table-hover" id="orders_table">
+    <div class="content-wrapper">
+        <section class="content-header">
+      		<h1>
+        		Purchase Orders
+        		<small>List panel</small>
+      		</h1>
+      		<ol class="breadcrumb">
+       			<li><a href="index.shtml"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+        		<li class="active">Purchase Orders</li>
+      		</ol>
+    	</section>
+		<section class="content">
+        	<div CLASS="row">
+				<div CLASS="col-md-12">
+					<div class="clearfix hidden-xs">
+      					<div class="form-group no-margin">
+     						<div class="pull-right margin-bottom-10 ">
+								<div class="form-inline" style="">                 	          
+                 					<div class="btn-inline display-inline-block">
+                 						
+										<input class="form-control searchFieldClass" id="keyword_type" style="min-width:225px; height:36px;" placeholder="Search here.." name="keyword" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" type="text">
+										
+										<button class="btn btn-left-align btn-link no-shadow bg-transparent no-padding-top padding-right-10 right-auto left" type="button" id="searchBtn"><i class="glyphicon glyphicon-search"></i></button>
+									</div>
+									
+									<button class="btn btn-primary btn-left" onClick="__filterResults(''); return false;">All</button>                               
+									<button class="btn btn-primary  btn-middle" onClick="__filterResults('active'); return false;">Active</button>      
+									<button class="btn btn-primary btn-right" onClick="__filterResults('inactive'); return false;">Inactive</button>
+                                    <a href="purchase_order.shtml" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink " style=""> <i class="fa fa-plus"></i>Add New Purchase Order</a>
+                  				</div>
+         					</div>
+      					</div>
+     				</div>
+     				<input id="keyword" name="keyword" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" type="hidden">
+					<div class="visible-xs ">
+						<div class="row">
+							<div class="col-lg-6 col-sm-12 col-xs-12">
+								<div>
+									<input class="form-control xs-margin-btm10 searchFieldClass" id="small_screen_keyword" name="keyword" placeholder="Search here.." value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" type="text">
+                     				<button class="btn btn-primary btn-color padingmix  btn-icon-left btn-sm editorLink" STYLE="width:100%; margin:10px 0px;" onClick="__filterResults(''); return false;">All</button>
+                     				<button class="btn btn-primary btn-color padingmix  btn-icon-left btn-sm editorLink" STYLE="width:100%; margin:10px 0px;" onClick="__filterResults('active'); return false;">Active</button>  
+                     				<button class="btn btn-primary btn-color padingmix  btn-icon-left btn-sm editorLink" STYLE="width:100%; margin:10px 0px;" onClick="__filterResults('inactive'); return false;">Inactive</button>  
+                     				<a href="purchase_order.shtml" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink" STYLE="width:100%; margin:10px 0px;"> <i class="fa fa-plus"></i>Add New Purchase Order</a>    
+                  				</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+        	<div CLASS="row">
+            	<div class="content table-responsive table-full-width">
+		 			<div class="table-responsive" style="border:none;" >
+                         <table class="table table-striped  table-bordered table-hover custom-tbl-st bt" id="table-breakpoint"  style="background-color: rgb(255, 255, 255); border-radius: 4px;" >
                             <thead>
                                 <tr>
-                                	<th class="span1">
-                                        <!-- Select For Sets -->
-                                        <input name="Select" class="check chk_all" type="checkbox" id="select" ></label>
-                                    </th>
-                                    <th class="span2">
-									<span class="line"></span>
-                                      PURCHASE ORDER NUMBER
-                                    </th>
-                                    <th class="span2">
-									<span class="line"></span>
-                                        START DATE
-                                    </th>
-                                    <th class="span2">
-                                        <span class="line"></span>
-                                        CLIENT
-                                    </th>
-                                    <th class="span2">
-                                        <span class="line"></span>
-                                        PROJECT CODE
-                                    </th>
-                                    <th class="span2">
-                                        <span class="line"></span>
-                                        PAYMENT DUE DATE
-                                    </th>
-                                    <th class="span2">
-                                        <span class="line"></span>
-                                        TOTAL WITHOUT VAT
-                                    </th>
-                                    <th class="span2">
-                                        <span class="line"></span>
-                                        TOTAL AMOUNT
-                                    </th>
-                                    <th class="span2">
-                                        <span class="line"></span>
-                                        ORDER STATUS
-                                    </th>
-                                    <th class="span1"> 
-                                        <span class="line"></span>
-                                        Action
-                                    </th>
+                                    <th class="hidden-xs"><input name="select" class="" type="checkbox" id="chk_all" ></th>
+                                    <th>PURCHASE ORDER NUMBER</th>
+                                <th>START DATE</th>
+                                <th>CLIENT</th>
+                                <th>PROJECT CODE</th>
+                                <th>PAYMENT DUE DATE</th>
+                                <th>TOTAL WITHOUT VAT</th>
+								<th>TOTAL AMOUNT</th>
+								<th>ORDER STATUS</th>
+								<th>ACTION</th>
                                 </tr>
                             </thead>
                             <tfoot>
-                            <tr>
-                                <th align="left">&nbsp;</th>
-                                <th align="left">PURCHASE ORDER NUMBER</th>
-                                <th align="left">START DATE</th>
-                                <th align="left">CLIENT</th>
-                                <th align="left">PROJECT CODE</th>
-                                <th align="left">PAYMENT DUE DATE</th>
-                                <th align="left">TOTAL WITHOUT VAT</th>
-								<th align="left">TOTAL AMOUNT</th>
-								<th align="left">ORDER STATUS</th>
-								<th align="left">ACTION</th>
-                            </tr>
+                            	<tr> 
+								<th>&nbsp;</th>
+                                <th>PURCHASE ORDER NUMBER</th>
+                                <th>START DATE</th>
+                                <th>CLIENT</th>
+                                <th>PROJECT CODE</th>
+                                <th>PAYMENT DUE DATE</th>
+                                <th>TOTAL WITHOUT VAT</th>
+								<th>TOTAL AMOUNT</th>
+								<th>ORDER STATUS</th>
+								<th>ACTION</th>
+                            	</tr>
                         	</tfoot>
-                            <tbody id="orders_table_body">
+                            <tbody id="timeslip_table_body">
                             </tbody>
                         </table>
+                        <div style="text-align:center">
+							<a style="width: 60%; margin-bottom: 10px; display: none;" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink " id="display_more_btn" title="Load more" onclick="load_more()" href="javascript:void(0);">
+								Load more
+							</a>
+        				</div>
 						<div id="img_loading_div" style="text-align:center">
-		<img src="loading.gif"  style="padding:20px;" width="34" >
-		</div>
-                    </div>
-                </div>
-                <!-- end timeslips table -->
-
-            </div>
-        </div>
+							<img src="images/loading.gif?as"  style="padding:20px;" width="34" >
+						</div>
+                 	</div>
+                	<!-- end timeslips table -->
+				</div>
+        	</div>
+        	</div>
+        </section>
     </div>
     <!-- end main container -->
-	<div class="example-container">
-								
-								<pre class="code" style="display:none;" id="no_rec_prompt">
-									var statesdemo = {
-										state0: {
-											title: 'No more records found',
-											html:'',
-											buttons: { OK: 1 },																		
-											submit:function(e,v,m,f){ 
-												//console.log(f);
-												if(v==1) {
-													$.prompt.close();
-												}
-												
-											}
-										},
-										
-									};
-									if(!($(".jqibox").length))
-									$.prompt(statesdemo);
-								</pre> 
-								
-								<!--<a class="run">Run It!</a>-->
-							</div>
-	<!-- scripts -->
-    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml-->
-	<script type="text/javascript" src="js/jquery-impromptu.js"></script>
-    <script src="js/money.js"></script>
-  
-  
-    
-<script type="text/javascript">
+
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/top-footer.shtml-->
+</div>
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml-->
+<script src="js/basictable.js"></script>
+<script>
 var JSONdata;
-var selected='';
 var start=0, end=50;
-var old_srch='',keyword='', jsonRow='', tab='', set='';
+var old_srch='',tab='';
 var tablname='Purchase_Orders';
-var selected_set='<!--#4DVAR _HIT_WebApp_GetField ("set") -->';
 var complete=false; 
 var completeScroll=false;
 var checkAllFlag=false;
@@ -181,135 +159,33 @@ function __updateMsgFor4D(pMsgTxt)
 $('#__4D_StatusMsg').val(pMsgTxt);
 }
 
-function __showCompletedOrders(){
-	if(checkAllFlag==true){
-		$(".chk_all").trigger('click');
-	}
+function __filterResults(val){	
+	task=name;		
 	start=0;
-	end=50;
-	tab=5;
-	jsonRow = 'loadPurchase_Orders.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab+'&set='+selected_set;
-	if(keyword!=''){
-		jsonRow +='&keyword='+keyword;
-	}
-	$('#orders_table_body').html('');
-	$('#img_loading_div').show();		
-	load_data(jsonRow);
-}
- 
-function __showOrders(){
-	if(checkAllFlag==true){
-		$(".chk_all").trigger('click');
-	}
-	start=0;
-	end=50;
-	tab='';
-	jsonRow = 'loadPurchase_Orders.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&set='+selected_set;
-	if(keyword!=''){
-		jsonRow +='&keyword='+keyword;
-	}	
-	$('#orders_table_body').html('');
+	end=25;
+	tab=val;
+	$('#timeslip_table_body').html('');
+	$('#table-breakpoint').basictable('destroy');
 	$('#img_loading_div').show();	
-	load_data(jsonRow);
-}
-function __showActiveOrders(){
-	if(checkAllFlag==true){
-		$(".chk_all").trigger('click');
-	}
-	start=0;
-	end=50;
-	tab='active';
-	jsonRow = 'loadPurchase_Orders.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&set='+selected_set+'&tab='+tab;
-	if(keyword!=''){
-		jsonRow +='&keyword='+keyword;
-	}	
-	$('#orders_table_body').html('');
-	$('#img_loading_div').show();	
-	load_data(jsonRow);
-}
-function __showInactiveOrders(){
-	if(checkAllFlag==true){
-		$(".chk_all").trigger('click');
-	}
-	start=0;
-	end=50;
-	tab='inactive';
-	jsonRow = 'loadPurchase_Orders.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&set='+selected_set+'&tab='+tab;
-	if(keyword!=''){
-		jsonRow +='&keyword='+keyword;
-	}	
-	$('#orders_table_body').html('');
-	$('#img_loading_div').show();	
-	load_data(jsonRow);
+	$('#display_more_btn').hide();	
+	load_data();
 }
 
+function load_more(){
+	$('#img_loading_div').show();
+	$('#display_more_btn').hide();	
+	$('#table-breakpoint').basictable('destroy');
+	start=end+1;
+	end=start+25;	
+	load_data();
+}
 $(document).ready(function() {
-
-	$('#typeKeyword').focus();
-	$('#load_sets').val(selected_set);
-	$('#add_sets option[value="'+selected_set+'"]').hide();
-	
-	keyword= $("#typeKeyword").val();
-	jsonRow = 'loadPurchase_Orders.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&set='+selected_set;		
-	if(keyword!=''){
-		jsonRow +='&keyword='+keyword;
-	}
-	if(tab!=''){
-		jsonRow +='&tab='+tab;
-	}	
-	load_data(jsonRow);		 
-	
-	$(window).scroll(function(){
-		if ($(window).scrollTop() == $(document).height() - $(window).height()){
-			if(complete==false && completeScroll==false) {
-				$('#img_loading_div').show();
-				//alert("scrolling before..."+start+", "+end);
-				start=end+1;
-				end=start+50;
-				//alert("scrolling after..."+start+", "+end);
-				jsonRow = 'loadPurchase_Orders.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&set='+selected_set;
-				if(keyword!=''){
-					jsonRow +='&keyword='+keyword;
-				}
-				if(tab!=''){
-					jsonRow +='&tab='+tab;
-				}		
-				load_data(jsonRow);
-			}
-		}
-	});	
-	
-	//setup before functions
-	var typingTimer;                //timer identifier
-	var doneTypingInterval = 1000;  //time in ms, 5 second for example
-	
-	//on keyup, start the countdown
-	$('#typeKeyword').keyup(function(){
-		clearTimeout(typingTimer);
-		if ($('#typeKeyword').val) {
-			typingTimer = setTimeout(function(){
-				//do stuff here e.g ajax call etc....
-				$('#orders_table_body').html('');
-				$('#img_loading_div').show();
-				start=0;
-				end=start+50;
-				tab='';
-				keyword= $("#typeKeyword").val();
-				jsonRow = 'loadPurchase_Orders.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&set='+selected_set;
-				if(keyword!=''){
-					jsonRow +='&keyword='+keyword;
-				}
-				if(tab!=''){
-					jsonRow +='&tab='+tab;
-				}	
-				load_data(jsonRow);
-			}, doneTypingInterval);
-		}
-	});	
+	$('#keyword_type').focus();
+	load_data();			 
 	// toggle all checkboxes from a table when header checkbox is clicked
   	$(".table th input:checkbox").click(function () {
   		$checks = $(this).closest(".table").find("tbody input:checkbox");
-  		if ($(this).is(":checked")) {	
+  		if ($(this).is(":checked")) {
 			checkAllFlag=true;
   			$checks.prop("checked", true);
   		} else {
@@ -317,22 +193,104 @@ $(document).ready(function() {
   			$checks.prop("checked", false);
   		}  		
   	});
+  	
+	$(window).scroll(function(){
+		if ($(window).scrollTop() == $(document).height() - $(window).height()){
+		if(complete==false && completeScroll==false) {
+			$('#img_loading_div').show();
+			$('#display_more_btn').hide();	
+			$('#table-breakpoint').basictable('destroy');
+			//alert("scrolling...");
+			start=end+1;
+			end=start+25;	
+			load_data();
+		}
+		}
+	});	
+		
+	//setup before functions
+	var typingTimer;                //timer identifier
+	var doneTypingInterval = 1000;  //time in ms, 5 second for example
 	
+	//on keyup, start the countdown
+	$('#keyword_type').keyup(function(){
+		clearTimeout(typingTimer);
+		if ($('#keyword_type').val) {
+			typingTimer = setTimeout(function(){
+				var keyVal=$('#keyword_type').val();
+				$('#keyword').val(keyVal);
+				//do stuff here e.g ajax call etc....
+				$('#table-breakpoint').basictable('destroy');
+				$('#display_more_btn').hide();	
+				$('#timeslip_table_body').html('');
+				$('#img_loading_div').show();
+				start=0;
+				end=start+25;
+				tab='';
+				load_data();
+			}, doneTypingInterval);
+		}
+	});	
 	
+	$('#small_screen_keyword').keyup(function(){
+		clearTimeout(typingTimer);
+		if ($('#small_screen_keyword').val) {
+			typingTimer = setTimeout(function(){
+				var keyVal=$('#small_screen_keyword').val();
+				$('#keyword').val(keyVal);
+				//do stuff here e.g ajax call etc....
+				$('#table-breakpoint').basictable('destroy');
+				$('#display_more_btn').hide();	
+				$('#timeslip_table_body').html('');
+				$('#img_loading_div').show();
+				start=0;
+				end=start+25;
+				tab='';
+				load_data();
+			}, doneTypingInterval);
+		}
+	});	
+	$('#searchBtn').click(function(){
+		if ($('#keyword_type').val()!="") {
+			var keyVal=$('#keyword_type').val();
+			$('#keyword').val(keyVal);
+			$('#table-breakpoint').basictable('destroy');
+			$('#timeslip_table_body').html('');
+			$('#img_loading_div').show();
+			$('#display_more_btn').hide();	
+			start=0;
+			end=start+25;
+			load_data();
+		}else{
+			$('#keyword_type').focus();
+		}
+	});
 });
-
-function load_data(jsonRow){
+	
+function load_data(){
 	completeScroll=true;
 	JSONdata=new Array();
-	$.getJSON(jsonRow,function(result){
+	var keyword= $("#keyword").val();
+	var jsonRow = 'loadPurchase_Orders.cgi?start='+start+'&end='+end+'&tablname='+tablname;
+				if(keyword!=''){
+					jsonRow +='&keyword='+keyword;
+				}
+				if(tab!=''){
+					jsonRow +='&tab='+tab;
+				}	
 	
-			if(result.Alert){
-				code = $('#no_rec_prompt').text();
-				(new Function(code))();
-			}
-			else{
-			
-				$.each(result.uuid, function(i,item)
+	$.getJSON(jsonRow,function(result){
+		//console.log(result)
+		if(result.Alert){
+			code = $('#no_rec_prompt').text();
+			(new Function(code))();
+			complete=true;	
+			$('#display_more_btn').hide();
+			$('#table-breakpoint').basictable({
+    				breakpoint: 751
+   			});	
+		}else{
+		 	$.each(result.uuid, function(i,item)
 				{
 					JSONdata[i]=new Array();
 					if(checkAllFlag==true){
@@ -340,7 +298,7 @@ function load_data(jsonRow){
 					}else{
 					JSONdata[i][0]='<input class="check" type="checkbox" value="'+item+'">';
 					}
-					JSONdata[i][9]='<ul class="actions"><li><a href="purchase_order.shtml?uuid='+item+'" ><i class="table-edit"></i><a></li></ul>';
+					JSONdata[i][9]='<a href="purchase_order.shtml?uuid='+item+'" ><i class="fa fa-pencil"></i><a>';
 					
 				}); 
 				$.each(result.Purchase_Order_number, function(i,item)
@@ -395,33 +353,40 @@ function load_data(jsonRow){
 					}
 						
 				});
-								
-				var table_html='';
-				var trClassStr='odd';
-				$.each(JSONdata, function(i,row)
-				{
-				
-					table_html+='<tr >';
-					$.each(row, function(i,col){
+			var table_html='';
+			var trClassStr='odd';
+			$.each(JSONdata, function(i,row)
+			{
+			
+				table_html+='<tr >';
+				$.each(row, function(i,col){
+					if(i==0){
+						table_html+='<td class="hidden-xs">'+col+'</td>';
+					}else{
 						table_html+='<td>'+col+'</td>';
-					});
-					table_html+='</tr>';
+					}
 				});
-				if(old_srch!=keyword){
-					$('#orders_table_body').html('');
-					old_srch=keyword;
-				}
-				//alert(table_html);
-				
-				$('#orders_table_body').append(table_html);
-				complete=false;
+				table_html+='</tr>';
+			});
+			if(old_srch!=keyword){
+				$('#timeslip_table_body').html('');
+				old_srch=keyword;
+			}
+			//alert(table_html);
+			
+			$('#timeslip_table_body').append(table_html);
+			$('#table-breakpoint').basictable({
+    				breakpoint: 751
+   			 });
+			complete=false;
+			$('#display_more_btn').show();	
 		}
 		$('#img_loading_div').hide();
+		
 		completeScroll=false;
-		});
+	});
+	
 }
-
-</script>
-
+  </script>    
 </body>
 </html>

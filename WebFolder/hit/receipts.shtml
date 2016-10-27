@@ -14,136 +14,123 @@ end if
 
 //_HIT_HTMLTXT:=_HIT_SessionStr
 -->
-
 <!DOCTYPE html>
 <html>
 <head>
 <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
-<link rel="stylesheet" media="all" type="text/css" href="css/jquery-impromptu.css" />
+<link rel="stylesheet" href="css/basictable.css">
 </head>
-<body>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
 
 <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
-	
+
 <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
 
 	<!-- main container -->
-    <div class="content">
-        
-        <div class="container-fluid">
-<div id="pad-wrapper">
-
-                <!-- timeslips table -->
-                <div class="table-wrapper orders-table section">
-                    <div class="row-fluid head">
-                        <div class="span12">
-                            <h4>Receipts</h4>
-                        </div>
-                    </div>
-                    <form method="get" onSubmit="__showInvoices(); return false;">
-                    <div class="row-fluid filter-block">
-					<!--#4DIF (_HIT_WebSession_GetVar ("auth_user_type")#"CLIENTS")-->
-                    <a href="javascript:void(0)" onClick="__deleteMultipleEntries()" class="btn-flat success new-product">Delete</a>
-                    <!--#4DENDIF-->
-                        <div class="pull-right">
-                            <div class="btn-group pull-right">
-                            </div>
-                            <input name="keyword" id="keyword" type="text" class="search order-search" placeholder="Enter customer name.." value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" />
-                       		<!--#4DIF (_HIT_WebSession_GetVar ("auth_user_type")#"CLIENTS")-->
-                       		<a href="receipt.shtml" class="btn-flat success new-product margn-lft35">+ Add New Receipt</a>
-                       		<!--#4DENDIF-->
-                        </div>
-                    </div>
-
-                            </form>
-
-                    <div class="row-fluid">
-                        <table class="table table-hover">
+    <div class="content-wrapper">
+        <section class="content-header">
+      		<h1>
+        		Analysis Ledger
+        		<small>List panel</small>
+      		</h1>
+      		<ol class="breadcrumb">
+       			<li><a href="index.shtml"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+        		<li class="active">Analysis Ledger</li>
+      		</ol>
+    	</section>
+		<section class="content">
+			<div CLASS="row">
+				<div CLASS="col-md-12">
+					<div class="clearfix hidden-xs">
+      					<div class="form-group no-margin">
+      						<!--#4DIF (_HIT_WebSession_GetVar ("auth_user_type")#"CLIENTS")-->
+     						<div class="pull-left margin-bottom-10 ">
+								<div class="form-inline" style="">                 	          
+                 					<a href="javascript:void(0)" onClick="__deleteMultipleEntries()" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink"> <i class="fa fa-trash"></i>Deleter</a>
+                  				</div>
+         					</div>
+         					<!--#4DENDIF-->
+         					<div class="pull-right margin-bottom-10 ">
+								<div class="form-inline" style="">                 	          
+                 					<div class="btn-inline display-inline-block">
+                 						<input class="form-control searchFieldClass keyword_type" id="keyword_type" style="min-width:225px; height:36px;" placeholder="Search here.." name="keyword" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" type="text">
+										<button class="btn btn-left-align btn-link no-shadow bg-transparent no-padding-top padding-right-10 right-auto left" type="button" id="searchBtn"><i class="glyphicon glyphicon-search"></i></button>
+									</div>
+									<!--#4DIF (_HIT_WebSession_GetVar ("auth_user_type")#"CLIENTS")-->
+									<a href="receipt.shtml" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink"> <i class="fa fa-plus"></i>Add New Receipt</a>
+									<!--#4DENDIF-->
+                  				</div>
+         					</div>
+      					</div>
+     				</div>
+					<div class="visible-xs ">
+						<div class="row">
+							<div class="col-lg-6 col-sm-12 col-xs-12">
+								<div>
+									<input class="form-control xs-margin-btm10 searchFieldClass keyword_type" id="small_screen_keyword" name="keyword" placeholder="Search here.." value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" type="text">
+                     				<!--#4DIF (_HIT_WebSession_GetVar ("auth_user_type")#"CLIENTS")-->
+                     				<a href="receipt.shtml" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink" STYLE="width:100%; margin:10px 0px;"> <i class="fa fa-plus"></i>Add New Receipt</a>  
+                     				<!--#4DENDIF-->
+                  				</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<input id="keyword" name="keyword" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" type="hidden">
+   			<div class="row">
+	  			<div class="content table-responsive table-full-width">
+		 			<div class="table-responsive" style="border:none;" >
+                        <table class="table table-striped  table-bordered table-hover custom-tbl-st bt" id="table-breakpoint"  style="background-color: rgb(255, 255, 255); border-radius: 4px;" >
                             <thead>
-                                <tr> 
-                                	<th width="6%">
-                                	<input name="Select" class="chk_all" type="checkbox" id="select" >
-                                    </th>
-                                    <th class="span2">
-                                       Receipt No
-                                    </th>
-                                    <th class="span2">
-                                       Invoice No
-                                    </th>
-                                    <th class="span3">
-										<span class="line"></span>
-                                        Date
-                                    </th>
-                                    <th class="span3">
-                                        <span class="line"></span>
-                                        Client
-                                    </th>
-                                    <th class="span3">
-                                        <span class="line"></span>
-                                        Paid Amount
-                                    </th>
-                                    <th class="span3">
-                                        <span class="line"></span>
-                                        Mode of Payment
-                                    </th>
-                                    <th class="span5">
-                                        <span class="line"></span>
-                                        Notes
-                                    </th>
-									<th class="span3">
-                                        <span class="line"></span>
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tfoot>
-                            <tr>  	
-                            	<th align="left">&nbsp;</th>
-                            	<th align="left">Receipt NO</th>
-                                <th align="left">INVOICE NO</th>
-                                <th align="left">DATE</th>
-                                <th align="left">CLIENT</th>
-                                <th align="left">PAID AMOUNT</th>
-                                <th align="left">MODE OF PAYMENT</th>
-                                <th align="left">NOTES</th>
-                                <th align="left">&nbsp;</th>
-                            </tr>
-                        	</tfoot>
-                            <tbody id="payment_table_body">
-
-                            </tbody>
+                                <tr>
+                                            <th class="hidden-xs"><input name="select" class="" type="checkbox" id="chk_all" ></th>
+                                            <th>Receipt NO</th>
+                                			<th>INVOICE NO</th>
+                                			<th>DATE</th>
+                                			<th>CLIENT</th>
+                                			<th>PAID AMOUNT</th>
+                                			<th>MODE OF PAYMENT</th>
+                                			<th>NOTES</th>
+                                            <th>ACTION</th>
+                                        </tr>
+                                    </thead>
+                                     <tfoot>
+                                        <tr>
+                                        	<th class="hidden-xs">&nbsp;</th>
+                                            <th>Receipt NO</th>
+                                			<th>INVOICE NO</th>
+                                			<th>DATE</th>
+                                			<th>CLIENT</th>
+                                			<th>PAID AMOUNT</th>
+                                			<th>MODE OF PAYMENT</th>
+                                			<th>NOTES</th>
+                                            <th>ACTION</th>
+                                        </tr>
+                                    </tfoot>
+                                    <tbody id="content_table">
+                                        
+                                     </tbody>
                         </table>
+                        <div style="text-align:center">
+							<a style="width: 60%; margin-bottom: 10px; display: none;" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink " id="display_more_btn" title="Load more" onclick="load_more()" href="javascript:void(0);">
+								Load more
+							</a>
+        				</div>
 						<div id="img_loading_div" style="text-align:center">
-		<img src="loading.gif"  style="padding:20px;" width="34" >
-		</div>
+							<img src="images/loading.gif?as"  style="padding:20px;" width="34" >
+						</div>
                     </div>
-                </div>
-                <!-- end timeslips table -->
-
-            </div>
-        </div>
-    </div>
+				</div>
+			</div>
+      		<!-- /.row (main row) -->
+		</section>
+	</div>
     <!-- end main container -->
-
+	
 	<div class="example-container">
-	<pre class="code" style="display:none;" id="no_rec_prompt">
-									var statesdemo = {
-										state0: {
-											title: 'No more records found',
-											html:'',
-											buttons: { OK: 1 },																		
-											submit:function(e,v,m,f){ 
-												//console.log(f);
-												if(v==1) {
-													$.prompt.close();
-												}
-												
-											}
-										},
-										
-									};
-									if(!($(".jqibox").length))
-									$.prompt(statesdemo);
-								</pre>
+
 								<pre class="code" style="display:none;" id="del_prompt">
 								var html='';
 								
@@ -193,78 +180,100 @@ end if
 									$.prompt(statesdemo);
 								</pre>
 							</div>
-
-	<!-- scripts -->
-    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
- <script type="text/javascript" src="js/jquery-impromptu.js"></script>   
-    
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/top-footer.shtml-->
+</div>
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml-->
+<script src="js/basictable.js"></script>
 <script>
 var JSONdata;
  var start=0, end=50;
- var old_srch='',keyword='', jsonRow='', tab='', set='';
- var tablname='Receipts';
+ var old_srch='', tablname='Receipts';
  var complete=false;
  var completeScroll=false;  
  var checkAllFlag=false;
-$(document).ready(function() {
 
-	$('#keyword').focus();
-	keyword= $("#keyword").val();
-	jsonRow = 'loadreceipts.cgi?start='+start+'&end='+end+'&tablname='+tablname;
-	if(keyword!=''){
-		jsonRow +='&keyword='+keyword;
-	}		
-	load_data(jsonRow);			 
+function load_more(){
+	$('#img_loading_div').show();
+	$('#display_more_btn').hide();	
+	$('#table-breakpoint').basictable('destroy');
+	start=end+1;
+	end=start+25;	
+	load_data();
+}
+
+$(document).ready(function() {
+	$('#keyword_type').focus();
+	load_data();		 
 	
 	$(window).scroll(function(){
 		if ($(window).scrollTop() == $(document).height() - $(window).height()){
-		if(complete==false && completeScroll==false) {
-			$('#img_loading_div').show();
-			//alert("scrolling...");
-			start=end+1;
-			end=start+25;
-			jsonRow = 'loadreceipts.cgi?start='+start+'&end='+end+'&tablname='+tablname;
-			if(keyword!=''){
-				jsonRow +='&keyword='+keyword;
+			if(complete==false && completeScroll==false) {
+				$('#img_loading_div').show();
+				$('#display_more_btn').hide();	
+				$('#table-breakpoint').basictable('destroy');
+				start=end+1;
+				end=start+25;
+				load_data();
 			}
-			if(tab!=''){
-				jsonRow +='&tab='+tab;
-			}		
-			load_data(jsonRow);
-		}
 		}
 	});	
+	$('#searchBtn').click(function(){
+		if ($('#keyword_type').val()!="") {
+			var keyVal=$('#keyword_type').val();
+			$('#keyword').val(keyVal);
+			$('#content_table').html('');
+			$('#table-breakpoint').basictable('destroy');
+			$('#img_loading_div').show();
+			$('#display_more_btn').hide();	
+			start=0;
+			end=start+25;
+			load_data();
+		}else{
+			$('#keyword_type').focus();
+		}
+	});
 	
 	//setup before functions
 	var typingTimer;                //timer identifier
 	var doneTypingInterval = 1000;  //time in ms, 5 second for example
 	
 	//on keyup, start the countdown
-	$('#keyword').keyup(function(){
+	$('#keyword_type').keyup(function(){
 		clearTimeout(typingTimer);
-		if ($('#keyword').val) {
+		if ($('#keyword_type').val) {
 			typingTimer = setTimeout(function(){
+				var keyVal=$('#keyword_type').val();
+				$('#keyword').val(keyVal);
+				$('#content_table').html('');
+				$('#table-breakpoint').basictable('destroy');
+				$('#img_loading_div').show();
+				$('#display_more_btn').hide();	
+				start=0;
+				end=start+25;
+				//tab='';
+				load_data();
+			}, doneTypingInterval);
+		}
+	});		
+	$('#small_screen_keyword').keyup(function(){
+		clearTimeout(typingTimer);
+		if ($('#small_screen_keyword').val) {
+			typingTimer = setTimeout(function(){
+				var keyVal=$('#small_screen_keyword').val();
+				$('#keyword').val(keyVal);
 				//do stuff here e.g ajax call etc....
-				$('#payment_table_body').html('');
+				$('#table-breakpoint').basictable('destroy');
+				$('#display_more_btn').hide();	
+				$('#content_table').html('');
 				$('#img_loading_div').show();
 				start=0;
 				end=start+25;
 				tab='';
-				keyword= $("#keyword").val();
-				jsonRow = 'loadreceipts.cgi?start='+start+'&end='+end+'&tablname='+tablname;
-				if(keyword!=''){
-					jsonRow +='&keyword='+keyword;
-				}
-				if(tab!=''){
-					jsonRow +='&tab='+tab;
-				}	
-				load_data(jsonRow);
+				load_data();
 			}, doneTypingInterval);
 		}
-	});		
-	
+	});	
 });
-
  
  function __deleteMultipleEntries(){
 	var selected='';
@@ -285,22 +294,40 @@ $(document).ready(function() {
 	}else{
 		__alertMessage("Please select one or more receipts for deletion!");
 	}
-}  
-
-function load_data(jsonRow){
+} 
+function load_data(){
+	var keyword= $("#keyword").val();
+	var jsonRow = 'loadreceipts.cgi?start='+start+'&end='+end+'&tablname='+tablname;
+				if(keyword!=''){
+					jsonRow +='&keyword='+keyword;
+				}
+	
 	completeScroll=true;
 	JSONdata=new Array();
 	$.getJSON(jsonRow,function(result){
 			if(result.Alert){
-				code = $('#no_rec_prompt').text();
-				(new Function(code))();
+				$(".jqibox").remove();
+				$.prompt('No more records found!');
 				complete=true;
-			}
-			else{
-			 	$.each(result.Receipt_no, function(i,item)
+				$('#display_more_btn').hide();
+				$('#table-breakpoint').basictable({
+    					breakpoint: 751
+   				});
+			}else{
+				$.each(result.uuid, function(i,item)
 				{
-				    JSONdata[i]=new Array();
-					JSONdata[i][1]=item;
+					JSONdata[i]=new Array();
+					
+					if(checkAllFlag==true){
+					JSONdata[i][0]='<input name="Select" checked class="check" type="checkbox" id="Select" value="'+item+'">';
+					}else{
+					JSONdata[i][0]='<input name="Select" class="check" type="checkbox" id="Select" value="'+item+'">';
+					}
+					JSONdata[i][8]='<a href="receipt.shtml?uuid='+item+'"><i class="fa fa-pencil"></i></a>';					
+				}); 
+				$.each(result.Receipt_no, function(i,item)
+				{
+				    JSONdata[i][1]=item;
 					
 				});
 				$.each(result.PaymentInvNo, function(i,item)
@@ -308,17 +335,7 @@ function load_data(jsonRow){
 					JSONdata[i][2]='<a target="_blank" href="invoice.shtml?inv_id='+item+'">'+item+'</a>';
 					
 				});
-				$.each(result.uuid, function(i,item)
-				{
-					//JSONdata[i][0]+='<input type="hidden" value="'+item+'">';
-					//JSONdata[i][6]='<ul class="actions"><li><a href="receipt.shtml?uuid='+item+'"><i class="table-edit"></i></a></li><li><i class="table-settings"></i></li><li class="last"><i class="table-delete"></i></li></ul>';					
-					if(checkAllFlag==true){
-					JSONdata[i][0]='<input name="Select" checked class="check" type="checkbox" id="Select" value="'+item+'">';
-					}else{
-					JSONdata[i][0]='<input name="Select" class="check" type="checkbox" id="Select" value="'+item+'">';
-					}
-					JSONdata[i][8]='<ul class="actions"><li><a href="receipt.shtml?uuid='+item+'"><i class="table-edit"></i></a></li><li><i class="table-settings"></i></li><li class="last"><a onclick="__deleteSelectedEntry(\''+item+'\')" href="javascript:void(0)"><i class="table-delete"></i></a></li></ul>';					
-				}); 
+				
 				
 				$.each(result.DateAdded, function(i,item)
 				{
@@ -341,42 +358,38 @@ function load_data(jsonRow){
 				 
 					JSONdata[i][7]=item;
 				});
-				//$.each(result.uuid, function(i,item)
-				//{	
-			  	 
-			  	//	JSONdata[i][6]='<ul class="actions"><li><a href="payment.shtml?uuid='+item+'" title="Edit" ><i class="table-edit"></i><a></li>';
-				
-				//});
-				
 				var table_html='';
 				
 				$.each(JSONdata, function(i,row)
 				{
 				
-					table_html+='<tr >';
+					table_html+='<tr>';
 					
 					$.each(row, function(i,col){
-						table_html+='<td>'+col+'</td>';
+						if(i==0){
+							table_html+='<td class="hidden-xs">'+col+'</td>';
+						}else{
+							table_html+='<td>'+col+'</td>';
+						}
 					});
 					table_html+='</tr>';
 				});
 				if(old_srch!=keyword){
-					$('#payment_table_body').html('');
+					$('#content_table').html('');
 					old_srch=keyword;
 				}
-				//alert(table_html);
+				$('#content_table').append(table_html);
 				
-				$('#payment_table_body').append(table_html);
+				$('#table-breakpoint').basictable({
+    				breakpoint: 751
+   			 	});
 				complete=false;
-			
+				$('#display_more_btn').show();
 		}
 		$('#img_loading_div').hide();
 		completeScroll=false;
-		});
+	});
 }
-
-    </script>
-
-    
+   </script>
 </body>
 </html>
