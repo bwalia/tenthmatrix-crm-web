@@ -35,48 +35,91 @@ end if
 <html>
 <head>
 	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
-	<!--<link rel="stylesheet" href="css/base/jquery-ui.css" />-->
-<link rel="stylesheet" href="css/autocomplete.css" />
-<link rel="stylesheet" href="css/chosen.css">
+	 <link href="css/bootstrap.datepicker.css" type="text/css" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="css/jquery.ptTimeSelect.css" />
+	<link rel="stylesheet" href="css/autocomplete.css" />
+	<link rel="stylesheet" href="css/colorbox.css" />
+	<link rel="stylesheet" href="css/basictable.css">
 <style>
-#ContactForm em.error {
+.custom-combobox a.ui-button, 
+  .custom-combobox a.ui-widget, 
+  .custom-combobox a.ui-state-default, 
+  .custom-combobox a.ui-button-icon-only, 
+  .custom-combobox a.custom-combobox-toggle, 
+  .custom-combobox a.ui-corner-right {
+	top:0px;
+  }
+ #ProjectForm em.error {
 	margin-left: 10px;
 	width: auto;
 	display: inline;
 }
-#ContactForm em.error {
+#ProjectForm em.error {
     color: red;
     font-style: italic;
 }
-#ContactForm input.error, textarea.error, select.error{
+#ProjectForm input.error, textarea.error, select.error{
     border: 1px solid red;
 }
 
+  
+  .chosen-container{
+	  width: 424px !important;
+	  
+
+  }
+  
+  .chosen-container-multi .chosen-choices{
+	  height: 32px !important;
+	  border-radius:4px!important;
+	  border: 1px solid #d3d3d3!important;
+ 
+  }
+  
+
+#DomainForm .custom-combobox-input {
+    width: 205%!important;
+    margin-left: 25px;
+    position: relative;
+    bottom: 0px;
+}
+  
+  
+  
+
 </style>
 </head>
-<body>
+ <body class="hold-transition skin-blue sidebar-mini">
+ <div class="wrapper">
 
     <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
 
     <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
 
-
 	<!-- main container -->
-    <div class="content">
-        
-        <div class="container-fluid">
-            <div id="pad-wrapper" class="form-page">
-				 <div class="row-fluid header">
-					<h3><!--#4DIF (Records in selection([Contacts])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Contact</h3>
-                </div>
-                <div class="row-fluid form-wrapper">
-					<!-- left column -->
-                    <div class="span9 with-sidebar">
-						<form name="ContactForm" id="ContactForm" action="savecontact.cgi" class="form-comment" method="post">							
-							<div class="field-box">
-								<label>Client Name <span style="color:#6E829B">*</span></label>
-								<div class="ui-widget">
-									<select id="Client_ID" name="Client_ID">
+   	<div class="content-wrapper" >
+        <section class="content-header">
+      		<h1>
+        		<!--#4DIF (Records in selection([Tasks])=1)-->"<!--#4DVAR taskNameStr-->"<!--#4DELSE-->New<!--#4DENDIF--> 
+        		<small>Contact</small>
+      		</h1>
+      		<ol class="breadcrumb">
+       			<li><a href="index.shtml"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+        		<li class="active">Contact</li>
+      		</ol>
+    	</section>
+		
+		
+		<section>
+		
+		
+		<div class="row" STYLE="margin-top:20px;">
+		<div CLASS="col-md-6">
+		<form name="ContactForm" id="ContactForm" action="savecontact.cgi" class="form-horizontal" method="post">							
+							<div class="form-group">
+								<label class="col-sm-3 control-label">Client Name <span style="color:#6E829B">*</span></label>
+								<div class="ui-widget col-sm-6">
+									<select id="Client_ID" name="Client_ID" CLASS="form-control">
 									<!--#4DIF (Records in selection([Contacts])=0)-->
 										<option value=""></option>
 									<!--#4DSCRIPT/Web_LoadCustomers/-->
@@ -91,97 +134,115 @@ end if
 							</div>
 							<input name="form_name" class="span9" type="hidden" value="ContactForm" id="form_name">
 							<input name="Contact_uuid" class="span9" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="Contact_uuid">        
-							 <div class="field-box">
-								<label>First name <span style="color:#6E829B">*</span></label>
-								<input name="First_Name" class="span5" type="text" value="<!--#4DVAR [Contacts]First name-->" id="First_Name">
+							 <div class="form-group">
+								<label class="col-sm-3 control-label">First name <span style="color:#6E829B">*</span></label>
+								<div CLASS="col-sm-6"><input name="First_Name" class="form-control" type="text" value="<!--#4DVAR [Contacts]First name-->" id="First_Name"></div>
 							</div>
-							<div class="span12 field-box">
-								<label>Surname </label>
-								<input name="Surname" class="span5" type="text" value="<!--#4DVAR [Contacts]Surname-->" id="Surname">                                 
+							<div CLASS="form-group">
+								<label class="col-sm-3 control-label">Surname </label>
+							<div CLASS="col-sm-6">	<input name="Surname" class="form-control" type="text" value="<!--#4DVAR [Contacts]Surname-->" id="Surname">    </div>                             
 							</div>
-							<div class="span12 field-box">
-								<label>Title</label>
-								<input name="Title" class="span5" type="text" value="<!--#4DVAR [Contacts]Title-->" id="Title">
+							<div CLASS="form-group">
+								<label class="col-sm-3 control-label">Title</label>
+								<div CLASS="col-sm-6"><input name="Title" class="form-control" type="text" value="<!--#4DVAR [Contacts]Title-->" id="Title"></div>
 							</div>						   
-							<div class="span12 field-box">
-								<label>Salutation</label>
-								<input name="Salutation" class="span5" type="text" value="<!--#4DVAR [Contacts]Salutation-->" id="Salutation">						
+							<div CLASS="form-group">
+								<label class="col-sm-3 control-label">Salutation</label>
+								<div CLASS="col-sm-6"><input name="Salutation" class="form-control" type="text" value="<!--#4DVAR [Contacts]Salutation-->" id="Salutation">		</div>				
 							</div>
-							<div class="span12 field-box">
-								<label>Email </label>
-								<input name="Email" class="span5" type="text" value="<!--#4DVAR [Contacts]Email-->" id="Email">
+							<div CLASS="form-group">
+								<label class="col-sm-3 control-label">Email </label>
+								<div CLASS="col-sm-6"><input name="Email" class="form-control" type="text" value="<!--#4DVAR [Contacts]Email-->" id="Email"></div>
 							</div>
-							<div class="span12 field-box">
-								<label>Password </label>
-								<input name="zWebPassword" class="span5" type="password" value="<!--#4DVAR [Contacts]zWebPassword-->" id="zWebPassword">
+							<div CLASS="form-group">
+								<label class="col-sm-3 control-label">Password </label>
+								<div CLASS="col-sm-6"><input name="zWebPassword" class="form-control" type="password" value="<!--#4DVAR [Contacts]zWebPassword-->" id="zWebPassword"></div>
 							</div>
-							<div class="span12 field-box">
-								<label>Direct Phone</label>
-								<input class="span5 phone" type="text" value="<!--#4DVAR [Contacts]Direct Phone-->" name="Direct_Phone" id="Direct_Phone">
+							<div CLASS="form-group">
+								<label class="col-sm-3 control-label">Direct Phone</label>
+								<div CLASS="col-sm-6"><input class="form-control phone" type="text" value="<!--#4DVAR [Contacts]Direct Phone-->" name="Direct_Phone" id="Direct_Phone"></div>
 							</div>
-							<div class="span12 field-box">
-								<label>Mobile </label>
-								<input name="Mobile" class="span5 phone" type="text" value="<!--#4DVAR [Contacts]Mobile-->" id="Mobile">
-							</div>							
+							<div CLASS="form-group">
+								<label class="col-sm-3 control-label">Mobile </label>
+								<div CLASS="col-sm-6"> <input name="Mobile" class="form-control phone" type="text" value="<!--#4DVAR [Contacts]Mobile-->" id="Mobile"></div>
+							</div>			
 							
-							<div class="span12 field-box">
-								<label>Direct fax</label>
-								<input name="Direct_fax" class="span5" type="text" value="<!--#4DVAR [Contacts]Direct fax-->" id="Direct_fax">
+							<div CLASS="form-group">
+								<label class="col-sm-3 control-label">Direct fax</label>
+							<div CLASS="col-sm-6">	<input name="Direct_fax" class="form-control" type="text" value="<!--#4DVAR [Contacts]Direct fax-->" id="Direct_fax"></div>
 							</div>
 							<div class="span12 field-box" style="display:none;">
-                           		<label>Assign Group :</label>
-                           		<input type="hidden" name="user_group" id="user_group" value="">
+                           		<label class="col-sm-3 control-label">Assign Group :</label>
+                           		<div CLASS="col-sm-6"><input type="hidden" name="user_group" id="user_group" value="">
 									<!--#4DIF (Records in selection([Contacts])=1)-->
 									<!--HIT_EXECUTE _HIT_HTMLTXT:=Web_UserGroupHTMLPopup([Contacts]uuid)-->
 									<!--#4DELSE-->
 									<!--HIT_EXECUTE _HIT_HTMLTXT:=Web_UserGroupHTMLPopup("")-->
 									<!--#4DENDIF-->
-							</div>
+							</div></div>
 
-							<input name="DateAdded" class="span5" type="hidden" value="<!--#4DVAR [Contacts]DateAdded-->" id="DateAdded">
-							<div class="span12 field-box">
-								<label>Comments</label>
-								<textarea name="Comments" class="span5" rows="4" id="Comments"><!--#4DVAR [Contacts]Comments --></textarea>
-							</div>
-							<div class="field-box">
-                                <label>News Letter Status</label>
-                                <div class="ui-select span5">
-									<Select name="News_Letter_Status" id="Task_Active" name="News_Letter_Status">
+							<input name="DateAdded" class="form-control" type="hidden" value="<!--#4DVAR [Contacts]DateAdded-->" id="DateAdded">
+							<div CLASS="form-group">
+								<label class="col-sm-3 control-label">Comments</label>
+								<div CLASS="col-sm-6"><textarea name="Comments" class="form-control" rows="4" id="Comments"><!--#4DVAR [Contacts]Comments --></textarea>
+							</div></div>
+							<div class="form-group">
+                                <label class="col-sm-3 control-label">News Letter Status</label>
+                                <div class="ui-select col-sm-6">
+									<Select name="News_Letter_Status" CLASS="form-control" id="Task_Active" name="News_Letter_Status">
 										<option value="Subscriber" <!--#4DIF ([Contacts]GetsNewsletter=True)-->selected<!--4DELSE--><!--4DENDIF-->>Subscriber</option>
 										<option value="Non Subscriber" <!--#4DIF ([Contacts]GetsNewsletter=False)-->selected<!--4DELSE--><!--4DENDIF-->>Non Subscriber</option>
 									</select>                                     
                                 </div>
                             </div>
-                            <div class="field-box">
-							<label></label>
-							<label class="checkbox" style="width:auto">							
-								<input name="allow_webAccess" class="span9" type="checkbox" value="true" id="allow_webAccess" <!--#4DIF ([Contacts]AllowWebAccess)-->checked<!--4DELSE--><!--4DENDIF--> >Allow WebAccess
-							</label>                                                         
+                            <div class="form-group">
+							<label class="col-sm-3 control-label"></label>
+							
+							<div CLASS="col-sm-6">	<input name="allow_webAccess"  type="checkbox" value="true" id="allow_webAccess" <!--#4DIF ([Contacts]AllowWebAccess)-->checked<!--4DELSE--><!--4DENDIF--> > Allow WebAccess
+							</div>                                                        
                             </div>
-							<div class="span11 field-box" style="text-align: left; margin-left:138px;">
-								<input type="submit" class="btn-glow primary" value="Submit">
+							
+							
+							<div class="form-group"  >
+							<label class="col-sm-3 control-label"></label>
+							<div CLASS="col-sm-6">
+							<input type="submit" class="btn btn-primary btn-sm" value="Submit">
+							
 								
-								<a href="contacts.shtml" CLASS="cancelbtn"> Cancel</a>
-								<!-- <input type="reset" value="Cancel" class="reset"> -->
+								<a href="contacts.shtml" CLASS="btn btn-danger btn-sm">Cancel</a>
+								</div>
 							</div>
+							
+							
+							
 						</form>
-                    </div>
+						</div>
+                    
 				</div>
-            </div>
-        </div>
-    </div>
-    <!-- end main container -->
-
-	<!-- scripts -->
-    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
-	<!-- <script src="js/ui/jquery-ui.js"></script> -->
-	<script src="js/bootstrap.datepicker.js"></script>
-	<script src="js/jquery.uniform.min.js"></script>
-	<script src="js/jquery.validate.js"></script>
+		
+		</section>
+		</div>
+		
+		
+		
 	
+    </div>
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/bankEntriesPopups.shtml--> 
+	
+	
+	
+    <!-- end main container -->
+	<!-- scripts -->
+	<script src="js/wysihtml5-0.3.0.js"></script>
+  	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+	<script src="js/basictable.js"></script>
+	<script src="js/bootstrap.datepicker.js"></script>
+	<script src="js/jquery.validate.js"></script>
 	<script src="js/chosen.jquery.js" type="text/javascript"></script>
+	<script src='js/jquery.MetaData.js' type="text/javascript" language="javascript"></script>
+	<script src="js/jquery.colorbox.js"></script>
 	<!-- call this page plugins -->
-	<script language="javascript">
+<script language="javascript">
 function ValidateForm () {
 var msg = '';
 if (document.ContactForm.Client_ID.value=="")
@@ -453,7 +514,5 @@ var config = {
   });
 
   </script>
-	
-	
 </body>
 </html>
