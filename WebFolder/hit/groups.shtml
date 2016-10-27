@@ -6,168 +6,157 @@ C_LONGINT(_HIT_COUNTER)
 C_TEXT(_HTMLTITLETXT)
 
 if(_HIT_AuthenticateSession="Session-Authenticated-OK")
-
 _HTMLTITLETXT:="Groups"
 
 else
-_HIT_HTTPD_RedirectToURL ("sign-in.shtml?url="+HTTPD_DocumentURI)
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
 end if 
 
 -->
-
 <!DOCTYPE html>
 <html>
 <head>
 <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
-<!-- <link rel="stylesheet" href="css/base/jquery-ui.css" /> -->
-<link rel="stylesheet" href="css/autocomplete.css" />
-<link rel="stylesheet" media="all" type="text/css" href="css/jquery-impromptu.css" />
-<style>
-#message{
-	color:#FF0000;
-}
-.table-wrapper .table ul.actions{
-	float:left;
-}
-</style>
+<link rel="stylesheet" href="css/basictable.css">
 </head>
-<body>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
 
 <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
 
 <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
 
 	<!-- main container -->
-    <div class="content">
-        
-        <div class="container-fluid">
-            <div id="pad-wrapper">
-
-                <!-- Task table -->
-                <div class="table-wrapper orders-table section">
-                    <div class="row-fluid head">
-                        <div class="span12">
-                            <h4>Groups</h4>
-                        </div>
-                    </div>
-					<form id="frm_set" name="frm_set" method="get" action="tasks.shtml">
-                    	<div class="row-fluid filter-block">
-						
-						
-							<div class="pull-right">
-								<div class="btn-group pull-right">
-								<!--	<button class="glow left large" onClick="__showAllTasks(); return false;">All</button>                                
-									<button class="glow middle large" onClick="__showActive(); return false;">Active</button>
-									<button class="glow right large" onClick="__showDone(); return false;">Done</button>-->
-									<a href="group.shtml" class="btn-flat success new-product margn-lft35">+ Add New Group</a>
-								</div>
-								<input name="keyword_type" id="keyword_type" type="text" class="search order-search" placeholder="Search for module.." value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" />
-							</div>						
-                    	</div>
-					</form>
-                    <div class="row-fluid">
-					<input id="task_uuid" type="hidden" value="">
-					<input id="token" type="hidden" value="">
-                        <table class="table table-hover">
+    <div class="content-wrapper">
+        <section class="content-header">
+      		<h1>
+        		Groups
+        		<small>List panel</small>
+      		</h1>
+      		<ol class="breadcrumb">
+       			<li><a href="index.shtml"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+        		<li class="active">Groups</li>
+      		</ol>
+    	</section>
+		<section class="content">
+			<div CLASS="row">
+				<div CLASS="col-md-12">
+					<div class="clearfix hidden-xs">
+      					<div class="form-group no-margin">
+     						<div class="pull-right margin-bottom-10 ">
+								<div class="form-inline" style="">                 	          
+                 					<div class="btn-inline display-inline-block">
+                 						<input class="form-control searchFieldClass keyword_type" id="keyword_type" style="min-width:225px; height:36px;" placeholder="Search here.." name="keyword" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" type="text">
+										<button class="btn btn-left-align btn-link no-shadow bg-transparent no-padding-top padding-right-10 right-auto left" type="button" id="searchBtn"><i class="glyphicon glyphicon-search"></i></button>
+									</div>
+									
+									<a href="group.shtml" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink"> <i class="fa fa-plus"></i>Add New Group</a>
+                  				</div>
+         					</div>
+      					</div>
+     				</div>
+					<div class="visible-xs ">
+						<div class="row">
+							<div class="col-lg-6 col-sm-12 col-xs-12">
+								<div>
+									<input class="form-control xs-margin-btm10 searchFieldClass keyword_type" id="small_screen_keyword" name="keyword" placeholder="Search here.." value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" type="text">
+                     				<a href="group.shtml" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink" STYLE="width:100%; margin:10px 0px;"> <i class="fa fa-plus"></i>Add New Group</a>  
+                  				</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<input id="keyword" name="keyword" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" type="hidden">
+   			<div class="row">
+	  			<div class="content table-responsive table-full-width">
+		 			<div class="table-responsive" style="border:none;" >
+                        <table class="table table-striped  table-bordered table-hover custom-tbl-st bt" id="table-breakpoint"  style="background-color: rgb(255, 255, 255); border-radius: 4px;" >
                             <thead>
                                 <tr>
-                                	<th class="span4">
-										<span class="line"></span>
-                                       NAME
-                                    </th>
-                                    <th class="span3">
-										<span class="line"></span>
-                                       	Status
-                                    </th>
-                                    <th class="span2">
-                                        <span class="line"></span>
-                                        ACTION
-                                    </th> 
-                                </tr>
-                            </thead>
-                            <tfoot>
-                            <tr>  
-                                <th align="left">NAME</th>
-                                <th align="left">Status</th>
-                               	<th align="left">ACTION</th>
-                            </tr>
-                        	</tfoot>
-                            <tbody id="groups_table_body">
-
-                            </tbody>
+                                            <th>NAME</th>
+                                            <th>STATUS</th>
+                                            <th>ACTION</th>
+                                        </tr>
+                                    </thead>
+                                     <tfoot>
+                                        <tr>
+                                        	<th>NAME</th>
+                                            <th>STATUS</th>
+                                            <th>ACTION</th>
+                                        </tr>
+                                    </tfoot>
+                                    <tbody id="content_table">
+                                        
+                                     </tbody>
                         </table>
+                        <div style="text-align:center">
+							<a style="width: 60%; margin-bottom: 10px; display: none;" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink " id="display_more_btn" title="Load more" onclick="load_more()" href="javascript:void(0);">
+								Load more
+							</a>
+        				</div>
 						<div id="img_loading_div" style="text-align:center">
-		<img src="loading.gif"  style="padding:20px;" width="34" >
-		</div>
+							<img src="images/loading.gif?as"  style="padding:20px;" width="34" >
+						</div>
                     </div>
-                </div>
-                <!-- end Tasks table -->
-
-            </div>
-        </div>
-    </div>
+				</div>
+			</div>
+      		<!-- /.row (main row) -->
+		</section>
+	</div>
     <!-- end main container -->
-	<div class="example-container">
-	<pre class="code" style="display:none;" id="no_rec_prompt">
-		var statesdemo = {
-			state0: {
-				title: 'No more records found',
-				html:'',
-				buttons: { OK: 1 },																		
-				submit:function(e,v,m,f){ 
-					//console.log(f);
-					if(v==1) {
-						$.prompt.close();
-					}
-					
-				}
-			},
-			
-		};
-		if(!($(".jqibox").length))
-		$.prompt(statesdemo);
-	</pre>
 	
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/top-footer.shtml-->
 </div>
-
-	<!-- scripts -->
-    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
-	<script type="text/javascript" src="js/jquery-impromptu.js"></script>
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml-->
+<script src="js/basictable.js"></script>
 <script>
-var JSONdata;
- var start=0, end=50;
- var old_srch='',keyword='', jsonRow='';
- var tablname='Groups';
- var process=false;
+var start=0, end=50;
+var old_srch='';
+var tablname='Groups';
 var complete=false;
 var completeScroll=false;
 
+function load_more(){
+	$('#img_loading_div').show();
+	$('#display_more_btn').hide();	
+	$('#table-breakpoint').basictable('destroy');
+	start=end+1;
+	end=start+25;	
+	load_data();
+}
+
 $(document).ready(function() {
 	$('#keyword_type').focus();
-	keyword= $("#keyword_type").val();
-	jsonRow = 'loadgroups.cgi?start='+start+'&end='+end+'&tablname='+tablname;
-	if(keyword!=''){
-		jsonRow +='&keyword='+keyword;
-	}		
-	load_data(jsonRow);			 
+	load_data();		 
 	
 	$(window).scroll(function(){
 		if ($(window).scrollTop() == $(document).height() - $(window).height()){
-		if(complete==false && completeScroll==false) {
-			$('#img_loading_div').show();
-			//alert("scrolling...");
-			start=end+1;
-			end=start+25;
-			jsonRow = 'loadgroups.cgi?start='+start+'&end='+end+'&tablname='+tablname;
-			if(keyword!=''){
-				jsonRow +='&keyword='+keyword;
+			if(complete==false && completeScroll==false) {
+				$('#img_loading_div').show();
+				$('#display_more_btn').hide();	
+				$('#table-breakpoint').basictable('destroy');
+				start=end+1;
+				end=start+25;
+				load_data();
 			}
-					
-			load_data(jsonRow);
-		}
-		
 		}
 	});	
+	$('#searchBtn').click(function(){
+		if ($('#keyword_type').val()!="") {
+			var keyVal=$('#keyword_type').val();
+			$('#keyword').val(keyVal);
+			$('#content_table').html('');
+			$('#table-breakpoint').basictable('destroy');
+			$('#img_loading_div').show();
+			$('#display_more_btn').hide();	
+			start=0;
+			end=start+25;
+			load_data();
+		}else{
+			$('#keyword_type').focus();
+		}
+	});
 	
 	//setup before functions
 	var typingTimer;                //timer identifier
@@ -178,24 +167,39 @@ $(document).ready(function() {
 		clearTimeout(typingTimer);
 		if ($('#keyword_type').val) {
 			typingTimer = setTimeout(function(){
-				//do stuff here e.g ajax call etc....
-				$('#groups_table_body').html('');
+				var keyVal=$('#keyword_type').val();
+				$('#keyword').val(keyVal);
+				$('#content_table').html('');
+				$('#table-breakpoint').basictable('destroy');
 				$('#img_loading_div').show();
+				$('#display_more_btn').hide();	
 				start=0;
-				end=start+50;
-				tab='';
-				keyword= $("#keyword_type").val();
-				jsonRow = 'loadgroups.cgi?start='+start+'&end='+end+'&tablname='+tablname;
-				if(keyword!=''){
-					jsonRow +='&keyword='+keyword;
-				}
-					
-				load_data(jsonRow);
+				end=start+25;
+				//tab='';
+				load_data();
 			}, doneTypingInterval);
 		}
 	});		
-	
+	$('#small_screen_keyword').keyup(function(){
+		clearTimeout(typingTimer);
+		if ($('#small_screen_keyword').val) {
+			typingTimer = setTimeout(function(){
+				var keyVal=$('#small_screen_keyword').val();
+				$('#keyword').val(keyVal);
+				//do stuff here e.g ajax call etc....
+				$('#table-breakpoint').basictable('destroy');
+				$('#display_more_btn').hide();	
+				$('#content_table').html('');
+				$('#img_loading_div').show();
+				start=0;
+				end=start+25;
+				tab='';
+				load_data();
+			}, doneTypingInterval);
+		}
+	});	
 });
+
 
 function __deleteSelected(deleteuuid){
 	var statesdemo = {
@@ -214,17 +218,14 @@ function __deleteSelected(deleteuuid){
 							cache: false,
 							success: function(html){
 								if(html.Result){		
-									$('#groups_table_body').html('');
+									$('#table-breakpoint').basictable('destroy');
+									$('#display_more_btn').hide();	
+									$('#content_table').html('');
 									$('#img_loading_div').show();
 									start=0;
-									end=start+50;
+									end=start+25;
 									tab='';
-									keyword= $("#keyword_type").val();
-									jsonRow = 'loadgroups.cgi?start='+start+'&end='+end+'&tablname='+tablname;
-									if(keyword!=''){
-										jsonRow +='&keyword='+keyword;
-									}
-									load_data(jsonRow);
+									load_data();
 								}
 							}
 						});
@@ -240,23 +241,29 @@ function __deleteSelected(deleteuuid){
 								$.prompt(statesdemo);
 }
 
- var task_uuid= new Array();
-function load_data(jsonRow){
+function load_data(){
+	var keyword= $("#keyword").val();
+	var jsonRow = 'loadgroups.cgi?start='+start+'&end='+end+'&tablname='+tablname;
+			if(keyword!=''){
+				jsonRow +='&keyword='+keyword;
+			}
+	
 	completeScroll=true;
-	JSONdata=new Array();
+	var JSONdata=new Array();
 	$.getJSON(jsonRow,function(result){
 			if(result.Alert){
-				code = $('#no_rec_prompt').text();
-				(new Function(code))();
+				$(".jqibox").remove();
+				$.prompt('No more records found!');
 				complete=true;
-			}
-			else{
-				 
+				$('#display_more_btn').hide();
+				$('#table-breakpoint').basictable({
+    					breakpoint: 751
+   				});
+			}else{
 				$.each(result.uuid, function(i,item)
 				{
 					JSONdata[i]=new Array();
-					JSONdata[i][2]='<ul class="actions"><li><a href="group.shtml?uuid='+item+'" title="Edit"><i class="table-edit"></i></a></li><li class="last"><atitle="Delete" href="javascript:void(0)" onClick="__deleteSelected(\''+item+'\')"><i class="table-delete"></i></a></li></ul>';	
-					task_uuid[i]=item;				
+					JSONdata[i][2]='<a href="group.shtml?uuid='+item+'" title="Edit"><i class="fa fa-pencil"></i></a>&nbsp;<a title="Delete" href="javascript:void(0)" onClick="__deleteSelected(\''+item+'\')"><i class="fa fa-trash"></i></a>';	
 				}); 
 				$.each(result.name, function(i,item){
 					JSONdata[i][0]=item;
@@ -269,33 +276,34 @@ function load_data(jsonRow){
 						JSONdata[i][1]='<span class="label label-important">'+item+'</span>';
 					}
 				});
-				
 				var table_html='';
 				
-				$.each(JSONdata, function(i,row){
-					table_html+='<tr >';
+				$.each(JSONdata, function(i,row)
+				{
+				
+					table_html+='<tr>';
+					
 					$.each(row, function(i,col){
 						table_html+='<td>'+col+'</td>';
 					});
 					table_html+='</tr>';
 				});
 				if(old_srch!=keyword){
-					$('#groups_table_body').html('');
+					$('#content_table').html('');
 					old_srch=keyword;
 				}
-				//alert(table_html);
+				$('#content_table').append(table_html);
 				
-				$('#groups_table_body').append(table_html);
-
+				$('#table-breakpoint').basictable({
+    				breakpoint: 751
+   			 	});
 				complete=false;
-
+				$('#display_more_btn').show();
 		}
 		$('#img_loading_div').hide();
 		completeScroll=false;
 	});
 }
-
-
-    </script>
+   </script>
 </body>
 </html>

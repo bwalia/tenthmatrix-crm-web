@@ -1,8 +1,6 @@
 function __alertMessage(msg){
-	$.prompt(" ", {
-		title: msg,
-		buttons: { "Close": false }
-	});
+	$(".jqibox").remove();
+	$.prompt(msg);
 }
 
 function openLoadedMenu(){
