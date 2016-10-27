@@ -4681,7 +4681,7 @@ a {
 .btn-inline >.btn-left-align {
 	position: absolute;
 	right: 0;
-	top: 7px;
+	top: -5px;
 	margin: 8px 2px 0 0;
 }
 .btn-inline > .btn-left-align > i {
@@ -4719,6 +4719,7 @@ a {
 
 .display-inline-block {
     display: inline-block !important;
+	margin-top:8px;
 }
 
 
