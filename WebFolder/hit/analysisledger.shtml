@@ -24,54 +24,94 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 <!DOCTYPE html>
 <html>
 <head>
-<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
-<!--<link rel="stylesheet" href="css/base/jquery-ui.css" />-->
-<link rel="stylesheet" href="css/autocomplete.css" />
-<link rel="stylesheet" media="all" type="text/css" href="css/jquery-impromptu.css" />
-	<style>
-	#AnaledgerForm em.error {
-		margin-left: 10px;
-		width: auto;
-		display: inline;
-	}
-	#AnaledgerForm em.error {
-		color: red;
-		font-style: italic;
-	}
-	#AnaledgerForm input.error, textarea.error, select.error{
-		border: 1px solid red;
-	}
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+	 <link href="css/bootstrap.datepicker.css" type="text/css" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="css/jquery.ptTimeSelect.css" />
+	<link rel="stylesheet" href="css/autocomplete.css" />
+	<link rel="stylesheet" href="css/colorbox.css" />
+	<link rel="stylesheet" href="css/basictable.css">
+<style>
+.custom-combobox a.ui-button, 
+  .custom-combobox a.ui-widget, 
+  .custom-combobox a.ui-state-default, 
+  .custom-combobox a.ui-button-icon-only, 
+  .custom-combobox a.custom-combobox-toggle, 
+  .custom-combobox a.ui-corner-right {
+	top:0px;
+  }
+ #ProjectForm em.error {
+	margin-left: 10px;
+	width: auto;
+	display: inline;
+}
+#ProjectForm em.error {
+    color: red;
+    font-style: italic;
+}
+#ProjectForm input.error, textarea.error, select.error{
+    border: 1px solid red;
+}
 
-	</style>
+  
+  .chosen-container{
+	  width: 424px !important;
+	  
+
+  }
+  
+  .chosen-container-multi .chosen-choices{
+	  height: 32px !important;
+	  border-radius:4px!important;
+	  border: 1px solid #d3d3d3!important;
+ 
+  }
+  
+
+
+#OrderForm .custom-combobox {
+    width: 98%!important;
+    top: inherit;
+    left: 0px;
+}
+  
+  
+  
+
+</style>
 </head>
-<body>
+ <body class="hold-transition skin-blue sidebar-mini">
+ <div class="wrapper">
 
     <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
 
     <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
 
 	<!-- main container -->
-    <div class="content">
-    
-        <div class="container-fluid">
-            <div id="pad-wrapper" class="form-page">
-				 <div class="row-fluid header">
-                    <h3><!--#4DIF (Records in selection([analysis_ledger])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Analysis Ledger</h3>
-                </div>
-                <div class="row-fluid form-wrapper">
-					<!-- left column -->
-                    <div class="span9 with-sidebar">
+   	<div class="content-wrapper" >
+        <section class="content-header">
+      		<h1>
+        		<!--#4DIF (Records in selection([Tasks])=1)-->"<!--#4DVAR taskNameStr-->"<!--#4DELSE-->New<!--#4DENDIF--> 
+        		<small>Edit Analysis Ledger</small>
+      		</h1>
+      		<ol class="breadcrumb">
+       			<li><a href="index.shtml"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+        		<li class="active">Analysis Ledger</li>
+      		</ol>
+    	</section>
+		<section class="content">
+		
+		<div class="col-sm-8 with-sidebar">
                            <form name="AnaledgerForm" action="saveanalegder.cgi" id="AnaledgerForm" method="post" class="form-comment" >
 						     
-								<div class="span7 field-box">
-                                    <label>Ledger Name <span style="color:#6E829B">*</span></label>
-                                    <input name="ledger_name" class="span5" type="text" value="<!--4DVAR [analysis_ledger]ledger_name-->" id="ledger_name">
+								<div class="form-group">
+                                  <label class="col-sm-3 control-label">Ledger Name <span style="color:#6E829B">*</span></label>
+                                    <input name="ledger_name" class="form-control" type="text" value="<!--4DVAR [analysis_ledger]ledger_name-->" id="ledger_name">
 									<input name="ledger_uuid" class="span5" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="ledger_uuid">
                                 </div>
-                                <div class="span7 field-box">
-                                    <label>Type of Accounts<span style="color:#6E829B">*</span></label>
-                                    <div class="ui-select span5">
-										<select id="type_of_accounts" name="type_of_accounts">
+                                <div class="form-group">
+                                  <label class="col-sm-3 control-label">Type of Accounts<span style="color:#6E829B">*</span></label>
+                                    <div class="ui-select col-sm-6">
+										<select id="type_of_accounts" name="type_of_accounts" CLASS="form-control"> 
 											<option value="Profit and loss" <!--#4DIF ([analysis_ledger]type_of_accounts="Profit and loss")-->selected<!--4DELSE--><!--4DENDIF-->>Profit and loss</option>
 											<option value="Balance sheet" <!--#4DIF ([analysis_ledger]type_of_accounts="Balance sheet")-->selected<!--4DELSE--><!--4DENDIF-->>Balance sheet</option>
 										</select>                                     
@@ -138,54 +178,23 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
                                 </div>
                             </form>
                     </div>
-				</div>
-            </div>
-        </div>
-    </div>
-	<div class="example-container">
 		
-		<pre class="code" style="display:none;" id="no_selection_prompt">
-			var statesdemo = {
-				state0: {
-					title: 'Please select accounts to delete',
-					html:'',
-					buttons: { OK: 1 },																		
-					submit:function(e,v,m,f){ 
-						if(v==1) {
-							$.prompt.close();
-						}
-					}
-				},
-			};
-			if(!($(".jqibox").length))
-			$.prompt(statesdemo);
-		</pre>
-		<pre class="code" style="display:none;" id="delete_selected_prompt">
-			var statesdemo = {
-				state0: {
-					title: 'Deleted successfully!',
-					html:'',
-					buttons: { OK: 1 },																		
-					submit:function(e,v,m,f){ 
-						if(v==1) {
-							$.prompt.close();
-						}
-					}
-				},
-			};
-			if(!($(".jqibox").length))
-			$.prompt(statesdemo);
-		</pre>
-	</div>
+		
+        </section>
+    </div>
+	
+	
+	
     <!-- end main container -->
-
 	<!-- scripts -->
 	<script src="js/wysihtml5-0.3.0.js"></script>
-   <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+  	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+	<script src="js/basictable.js"></script>
 	<script src="js/bootstrap.datepicker.js"></script>
-	<script src="js/jquery.uniform.min.js"></script>
-	<script type="text/javascript" src="js/jquery-impromptu.js"></script>
 	<script src="js/jquery.validate.js"></script>
+	<script src="js/chosen.jquery.js" type="text/javascript"></script>
+	<script src='js/jquery.MetaData.js' type="text/javascript" language="javascript"></script>
+	<script src="js/jquery.colorbox.js"></script>
 	<!-- call this page plugins -->
 	
 	<script language="javascript">
@@ -351,5 +360,6 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 		}
 	}		
     </script>
-	</body>
+	
+</body>
 </html>

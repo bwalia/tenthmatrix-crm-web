@@ -24,103 +24,145 @@ end if
 <html>
 <head>
 	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
-	<!--<link rel="stylesheet" href="css/base/jquery-ui.css" />-->
+	 <link href="css/bootstrap.datepicker.css" type="text/css" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="css/jquery.ptTimeSelect.css" />
 	<link rel="stylesheet" href="css/autocomplete.css" />
-	<link rel="stylesheet" href="css/chosen.css">
-	<link href="css/img-tabs.css" type="text/css" rel="stylesheet">
-	<link rel="stylesheet" media="all" type="text/css" href="css/jquery-impromptu.css" />
+	<link rel="stylesheet" href="css/colorbox.css" />
+	<link rel="stylesheet" href="css/basictable.css">
 <style>
-#GroupForm em.error {
+.custom-combobox a.ui-button, 
+  .custom-combobox a.ui-widget, 
+  .custom-combobox a.ui-state-default, 
+  .custom-combobox a.ui-button-icon-only, 
+  .custom-combobox a.custom-combobox-toggle, 
+  .custom-combobox a.ui-corner-right {
+	top:0px;
+  }
+ #ProjectForm em.error {
 	margin-left: 10px;
 	width: auto;
 	display: inline;
 }
-#GroupForm em.error {
+#ProjectForm em.error {
     color: red;
     font-style: italic;
 }
-#GroupForm input.error, textarea.error, select.error{
+#ProjectForm input.error, textarea.error, select.error{
     border: 1px solid red;
 }
-.chosen-container-multi .chosen-choices{
-	border:1px solid #d3d3d3;
-	border-radius:4px!important;
-	min-height: 33px !important;
-	box-shadow:none!important;
-	width: 451px!important;
+
+  
+  .chosen-container{
+	  width: 424px !important;
+	  
+
+  }
+  
+  .chosen-container-multi .chosen-choices{
+	  height: 32px !important;
+	  border-radius:4px!important;
+	  border: 1px solid #d3d3d3!important;
+ 
+  }
+  
+
+
+#InvoiceForm .custom-combobox {
+    width: 97%!important;
+    margin-left: 26px;
+    top: initial;
 }
-
-
+  
+  
+  
 
 </style>
 </head>
-<body>
+ <body class="hold-transition skin-blue sidebar-mini">
+ <div class="wrapper">
 
     <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
 
     <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
 
-
 	<!-- main container -->
-    <div class="content">
-        
-        <div class="container-fluid">
-            <div id="pad-wrapper" class="form-page">
-				 <div class="row-fluid header">
-					<h3><!--#4DIF (Records in selection([Groups])=1)-->Edit Group<!--#4DVAR [Groups]group_name --><!--#4DELSE-->New<!--#4DENDIF--></h3>
-                </div>
-                <!--#4DIF (Records in selection([Groups])=1)-->
-                <div id="tabs">
-					<ul>
-						<li ><a style="color:#000000" href="#tabs-1">Basic Details</a></li>
-						<li ><a style="color:#000000" href="#tabs-2">Assign Modules</a></li>
-					</ul>
-					<div id="tabs-1" class="var_tabs">
-					<!--#4DENDIF-->  
-                <div class="row-fluid form-wrapper">
+   	<div class="content-wrapper" >
+        <section class="content-header">
+      		<h1>
+        		<!--#4DIF (Records in selection([Tasks])=1)-->"<!--#4DVAR taskNameStr-->"<!--#4DELSE-->New<!--#4DENDIF--> 
+        		<small>Group</small>
+      		</h1>
+      		<ol class="breadcrumb">
+       			<li><a href="index.shtml"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+        		<li class="active">Group</li>
+      		</ol>
+    	</section>
+		<section class="content">
+		<form name="InvoiceForm" id="InvoiceForm" action="saveinvoice.cgi" class="form-horizontal"  method="post" >
+	
+        	<div class="row" >
+				 <div class="panel-body no-padding-top bg-white" > 
+				 
+				<ul class="nav nav-tabs">
+  <li class="active"><a data-toggle="tab" href="#home"> Basic Details</a></li>
+  <li><a data-toggle="tab" href="#second"> Assign Modules</a></li>
+ 
+   
+</ul>
+
+<div class="tab-content" STYLE=" overflow: hidden;    border: 1px solid #ddd;     border-top: none;">
+
+  <div id="home" class="tab-pane fade in active"  >
+  
+
+				
+                <div class="row">
 					<!-- left column -->
-                    <div class="span9 with-sidebar">
-						<form name="GroupForm" id="GroupForm" action="savegroup.cgi" class="form-comment" method="post">							
+                    <div class="col-md-8 with-sidebar" STYLE="padding-top:10px;">
+						<form name="GroupForm" id="GroupForm" action="savegroup.cgi" class="form-horizontal" method="post">							
 							<input name="uuid" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="uuid">        
-							 <div class="field-box">
-								<label>Group name <span style="color:#6E829B">*</span></label>
-								<input name="group_name" class="span5" type="text" value="<!--#4DVAR [Groups]group_name -->" id="group_name">
-							</div>
+								<div class="form-group" >
+								<label class="col-sm-3 control-label">Group name <span style="color:#6E829B">*</span></label>
+								<div CLASS="col-sm-6"><input name="group_name" class="form-control" type="text" value="<!--#4DVAR [Groups]group_name -->" id="group_name"></div>
+							</div> 
 							
-							<div class="span12 field-box">
-								<label>Assign Users</label>
-								<input name="users_selected" type="hidden" value="" id="users_selected">
+							<div class="form-group">
+								<label class="col-sm-3 control-label">Assign Users</label>
+							<div CLASS="col-sm-6">	<input name="users_selected" type="hidden" value="" id="users_selected">
 								
-								<select id="group_users" multiple="multiple" name="group_users" style="width: 418px;" class="chosen-select">
+								<select id="group_users" CLASS="form-control" multiple="multiple" name="group_users" >
 								<!--#4DIF (Records in selection([Groups])=1)-->
 									<!--HIT_EXECUTE _HIT_HTMLTXT:=Web_GroupUsersHTMLPopup([Groups]uuid)-->
 								<!--#4DELSE-->
 									<!--HIT_EXECUTE _HIT_HTMLTXT:=Web_GroupUsersHTMLPopup("")-->
 								<!--#4DENDIF--> 
-								</select>                            
+								</select>   </div>                         
 							</div>
-							<div class="span12 field-box">
-								<label>Comments</label>
-								<textarea name="notes" class="span5" rows="4" id="notes"><!--#4DVAR [Groups]notes --></textarea>
-							</div>
+								<div class="form-group">
+								<label class="col-sm-3 control-label">Comments</label>
+							<div CLASS="col-sm-6">	<textarea name="notes" class="form-control" rows="4" id="notes"><!--#4DVAR [Groups]notes --></textarea>
+							</div></div>
 							
-                            <div class="field-box">
-							<label></label>
-							<label class="checkbox">							
-								<input name="enabled" class="span2" type="checkbox" value="true" id="enabled" <!--#4DIF ([Groups]enabled)-->checked<!--4DELSE--><!--4DENDIF--> > Enable
-							</label>                                                         
+                          	<div class="form-group">
+							<label class="col-sm-3 control-label"></label>
+													
+								<div CLASS="col-sm-6"><input name="enabled"  type="checkbox" value="true" id="enabled" <!--#4DIF ([Groups]enabled)-->checked<!--4DELSE--><!--4DENDIF--> > Enable
+							                                    </div>                  
                             </div>
-                            <div class="span11 field-box" >
-							<LABEL></LABEL>
-							<input type="submit" class="btn-glow primary" value="Submit">							
-							<a href="groups.shtml" CLASS="cancelbtn">Cancel</a>
+                          	<div class="form-group">
+							<label class="col-sm-3 control-label"></LABEL>
+							<input type="submit" class="btn btn-primary btn-sm" value="Submit">							
+							<a href="groups.shtml" CLASS="btn btn-danger btn-sm">Cancel</a>
 							</div>
 						</form>
                     </div>
+					<!--#4DIF (Records in selection([Groups])=1)-->
 				</div>
-				<!--#4DIF (Records in selection([Groups])=1)-->
-				</div>
-					<div id="tabs-2" class="var_tabs">
+				
+		
+  <div id="second" class="tab-pane fade col-md-12" STYLE="padding-top:20px;"  >
+ 
+
 						<div class="moduleClass">
 					
 						</div>
@@ -129,21 +171,35 @@ end if
 							<a href="javascript:void(0)" class="btn-glow primary" onClick="assign_modules()">Assign Modules</a>
 						</div>
 					</div>
-				</div>
-				<!--#4DENDIF--> 
-				 
-            </div>
-        </div>
-    </div>
-    <!-- end main container -->
-
-	<!-- scripts -->
-    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
-	<script src="js/jquery.validate.js"></script>
-	<script type="text/javascript" src="js/jquery-impromptu.js"></script>
-	<script src="js/chosen.jquery.js" type="text/javascript"></script>
+ 
+ 
+					
 	
-	<!-- call this page plugins -->
+ </div>
+ 
+ <!--#4DENDIF--> 
+ 
+  			</div>
+		</div>
+				
+           </div>
+			</form>
+        </section>
+    </div>
+	
+	
+	
+    <!-- end main container -->
+	<!-- scripts -->
+	<script src="js/wysihtml5-0.3.0.js"></script>
+  	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+	<script src="js/basictable.js"></script>
+	<script src="js/bootstrap.datepicker.js"></script>
+	<script src="js/jquery.validate.js"></script>
+	<script src="js/chosen.jquery.js" type="text/javascript"></script>
+	<script src='js/jquery.MetaData.js' type="text/javascript" language="javascript"></script>
+	<script src="js/jquery.colorbox.js"></script>
+		<!-- call this page plugins -->
 
 <script type="text/javascript">
 function assign_modules(){
@@ -364,7 +420,6 @@ function load_group_modules(){
       $(selector).chosen(config[selector]);
     }
   </script>
-	
 	
 </body>
 </html>
