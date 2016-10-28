@@ -155,14 +155,14 @@ end if
 								<label class="col-sm-3 control-label">Comment</label>
 								<div CLASS="col-sm-6"><textarea name="comment" class="form-control" rows="4" id="comment"><!--#4DVAR [bank_statement_entries]comment--></textarea>
 							</div></div>
-							<div class="form-group"  >
-							<label class="col-sm-3 control-label"></label>
-							<div CLASS="col-sm-6">
-								<input type="submit" id="submit" class="btn btn-primary btn-sm" value="Submit">
-								
-								<a href="bank_enteries.shtml" CLASS="btn btn-danger btn-sm">Cancel</a>
+								<div class="form-group"  >
+								<label class="col-sm-3 control-label"></label>
+								<div CLASS="col-sm-6">
+									<input type="submit" id="submit" class="btn btn-primary btn-sm" value="Submit">
+									
+									<a href="bank_enteries.shtml" CLASS="btn btn-danger btn-sm">Cancel</a>
+									</div>
 								</div>
-							</div>
 						</form>
 						</div>
                     
