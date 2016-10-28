@@ -232,7 +232,7 @@ table td, table th { border: none!important; }
 											</select></div>
 										</div>
 									</div></div>
-									<div id="tabs-2" class="tab-pane fade col-md-7" STYLE="padding-top:20px;"  >
+									<div id="tabs-2" class="tab-pane fade col-md-12" STYLE="padding-top:20px;"  >
 										<!--#4DIF (Records in selection([servers])=1)-->
 											<a href="domain.shtml" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink"  style="float:right;">+ Add New Domain</a></br></br>
 										<!--#4DENDIF-->
@@ -240,8 +240,8 @@ table td, table th { border: none!important; }
 										<table class="table table-bordered table-striped table_vam" id="dt_gal" style="font-size:12px;">
 											<thead>
 											<tr>
-												<th style="width:20%">Domain name</th>
-												<th style="width:30%">Project</th>
+												<th >Domain name</th>
+												<th >Project</th>
 												<th>Expiry date</th>
 												<th>Status </th>
 												<th>Action </th>

@@ -30,6 +30,12 @@ end if
     z-index: 10000;
 }
 
+.btn-inline >.btn-left-align {
+ 
+    top: 7px!important;
+   
+}
+
 </style>
 </head>
 <body class="hold-transition skin-blue sidebar-mini">

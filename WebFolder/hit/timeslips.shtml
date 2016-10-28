@@ -27,6 +27,13 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
 .table-wrapper .table ul.actions{
 	float:left;
 }
+
+.btn-inline >.btn-left-align {
+ 
+    top: 7px!important;
+   
+}
+
 </style>
 </head>
 <body class="hold-transition skin-blue sidebar-mini">

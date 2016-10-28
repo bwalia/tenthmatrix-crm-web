@@ -28,6 +28,12 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
 	float:left;
 }
 
+.btn-inline >.btn-left-align {
+ 
+    top: 7px!important;
+   
+}
+
 
 </style>
 <body class="hold-transition skin-blue sidebar-mini">
