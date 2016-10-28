@@ -146,7 +146,7 @@ mUserIsCurrentBool:=userHasAccessToDelete
                          <table class="table table-striped  table-bordered table-hover custom-tbl-st bt" id="table-breakpoint"  style="background-color: rgb(255, 255, 255); border-radius: 4px;" >
                             <thead>
                                 <tr>
-                                	<th><input name="select" class="" type="checkbox" id="chk_all" ></th>
+                                	<th class="hidden-xs"><input name="select" class="" type="checkbox" id="chk_all" ></th>
                                     <th class="col-lg-2">Customer</th>
 									<th class="col-lg-2">Telephone</th>
                                     <th>City/Town</th>
@@ -159,7 +159,7 @@ mUserIsCurrentBool:=userHasAccessToDelete
                             </thead>
                             <tfoot>
                             	<tr> 
-                            		<th>&nbsp;</th>
+                            		<th class="hidden-xs">&nbsp;</th>
                               		<th class="col-lg-2">Customer</th>
 									<th class="col-lg-2">Telephone</th>
                                     <th>City/Town</th>
@@ -809,7 +809,7 @@ function load_data(jsonRow){
 					}else{
 					JSONdata[i][0]='<input name="Select" class="check" type="checkbox" id="Select" value="'+item+'">';
 					}
-					JSONdata[i][8]='<a title="Download Statement" target="_blank" href="statement_preview.shtml?uuid='+item+'&token=<!--#4DVAR _HIT_TokenGetAny-->&preview=pdf"><i class="fa fa-download"></i></a>&nbsp;';
+					JSONdata[i][8]='<a class="hidden-xs" title="Download Statement" target="_blank" href="statement_preview.shtml?uuid='+item+'&token=<!--#4DVAR _HIT_TokenGetAny-->&preview=pdf"><i class="fa fa-download"></i></a>&nbsp;';
 					JSONdata[i][8]+='<a href="javascript:void(0)" onClick="__showCustomerForm(\''+item+'\')"><i class="fa fa-pencil"></i></a>&nbsp;<a href="javascript:void(0)" onClick="__showEmailForm(\''+item+'\')"><i class="fa fa-envelope"></i></a>';
 					<!--#4DIF (mUserIsCurrentBool)-->
 					JSONdata[i][8]+='&nbsp;<a href="javascript:void(0)" onClick="__deleteSelected(\''+item+'\')"><i class="fa fa-trash"></i></a>';
@@ -852,7 +852,11 @@ function load_data(jsonRow){
 				{
 					table_html+='<tr >';
 					$.each(row, function(i,col){
-						table_html+='<td>'+col+'</td>';
+						if(i==0){
+							table_html+='<td class="hidden-xs">'+col+'</td>';
+						}else{
+							table_html+='<td>'+col+'</td>';
+						}
 					});
 					table_html+='</tr>';
 				});

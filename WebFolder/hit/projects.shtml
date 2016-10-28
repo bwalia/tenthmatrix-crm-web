@@ -101,18 +101,9 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
                          <table class="table table-striped  table-bordered table-hover custom-tbl-st bt" id="table-breakpoint"  style="background-color: rgb(255, 255, 255); border-radius: 4px;" >
                             <thead>
                                 <tr>
-<<<<<<< Updated upstream
-                                	<th class="hidden-xs">
-=======
                                 	<th CLASS="hidden-sm">
->>>>>>> Stashed changes
                                         <input name="select" class="" type="checkbox" id="chk_all" >
                                     </th>
-									
-									
-									
-									
-									
 									
                                     <th class="col-lg-2">
                                         Client
@@ -148,11 +139,8 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
                             </thead>
                             <tfoot>
                             <tr>  
-<<<<<<< Updated upstream
-                            	<th class="hidden-xs">&nbsp;</th>
-=======
-                            	<th >&nbsp;</th>
->>>>>>> Stashed changes
+								<th class="hidden-xs">&nbsp;</th>
+
                                 <th class="col-lg-2">
                                         Client
                                     </th>
