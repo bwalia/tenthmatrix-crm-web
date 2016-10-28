@@ -25,12 +25,7 @@ end if
 	<!-- datatables -->
     <link rel="stylesheet" type='text/css' href="lib/datatables/extras/TableTools/media/css/TableTools.css">
 	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
-	<link rel='stylesheet' type='text/css' href='css/style.css' />
-	<link rel='stylesheet' type='text/css' href='css/print.css' media="print" />
-	<link rel="stylesheet" href="css/compiled/ui-elements.css" type="text/css" media="screen" />
-	<link href="css/img-tabs.css" type="text/css" rel="stylesheet">
-	<!-- splashy icons -->
-    <link rel="stylesheet" href="img/splashy/splashy.css" />
+
 	<style>
 	.pagination {
 margin: 0px 0;
@@ -111,170 +106,171 @@ table td, table th { border: none!important; }
 }
 </style>
 	
-</head>
-<body>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
 
     <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
 
     <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
-	
-	<!-- main container -->
-    <div class="content">
-        
-        <div class="container-fluid">
-            <div id="pad-wrapper" class="form-page">
-				 <div class="row-fluid header">
-					<h3><!--#4DIF (Records in selection([servers])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Server</h3>
-					
-                </div>
-				
-                <div class="row-fluid form-wrapper">
-				
-					<!-- left column -->
-                    <div class="span9 with-sidebar">
-					
-						<form name="ServersForm" id="ServersForm" action="saveserver.cgi" class="form-comment" method="post" >
-						<div id="tabs">
-								<ul >
-									<li ><a style="color:#000000" href="#tabs-1">Server Details</a></li>
-									<li ><a style="color:#000000" href="#tabs-2">Active Domains on Server</a></li>
-								</ul>
-							<div id="tabs-1" class="var_tabs">    
-							<div class="field-box">
-								<label>Server Name <span style="color:#6E829B">*</span></label>
-								<input class="span6" name="server_name" type="text" value="<!--#4DVAR [servers]server_name-->" id="server_name">
-							</div>
-							<input name="uuid" class="span6" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="uuid">
+	<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        <!--#4DIF (Records in selection([vt_cashbook_activity])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> VT CashBook Activity
+    </h1>
+      <ol class="breadcrumb">
+        <li><a href="index.shtml"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active"><!--#4DIF (Records in selection([vt_cashbook_activity])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> VT CashBook Activity</li>
+      </ol>
+    </section>
 
-							<div class="field-box">
-								<label>Server Type <span style="color:#6E829B">*</span></label>
-								<select name="server_type" id="server_type" class="span6">
-									<option value="Live" <!--#4DIF ([servers]server_type="Live")-->selected<!--4DELSE--><!--4DENDIF-->>Live</option>
-									<option value="Staging" <!--#4DIF ([servers]server_type="Staging")-->selected<!--4DELSE--><!--4DENDIF-->>Staging</option>
-									<option value="Dev" <!--#4DIF ([servers]server_type="Dev")-->selected<!--4DELSE--><!--4DENDIF-->>Dev</option>
-								</select>
-							</div>
-							<div class="field-box">
-								<label>Managed By <span style="color:#6E829B">*</span></label>
-								<select name="managed_by_uuid" id="managed_by_uuid" class="span6">
-								<!--#4DSCRIPT/Web_LoadEmployees/-->
-								<!--4DLOOP  [Employees]-->
-									<option value="<!--4DVAR [Employees]uuid-->" <!--#4DIF ([servers]managed_by_uuid=[Employees]uuid)-->selected<!--4DELSE--><!--4DENDIF-->><!--4DVAR [Employees]emp_first_name--> <!--4DVAR [Employees]emp_last_name--></option>
-								<!--4DENDLOOP-->	
-								</select> 
-							</div>
-							
-							<div class="field-box">
-								<label>Server OS </label>
-								<select name="server_os" id="server_os" class="span6">
-									<option value="">--Select OS--</option>
-									<option value="CentOS" <!--#4DIF ([servers]server_os="CentOS")-->selected<!--4DELSE--><!--4DENDIF-->>CentOS</option>
-									<option value="RedHat" <!--#4DIF ([servers]server_os="RedHat")-->selected<!--4DELSE--><!--4DENDIF-->>RedHat</option>
-									<option value="Windows" <!--#4DIF ([servers]server_os="Windows")-->selected<!--4DELSE--><!--4DENDIF-->>Windows</option>
-									<option value="Apple OSX" <!--#4DIF ([servers]server_os="Apple OSX")-->selected<!--4DELSE--><!--4DENDIF-->>Apple OSX</option>
-								</select>
-							</div>
-							<div class="field-box">
-								<label>Root User </label>
-								<input class="span6" type="text" name="root_user" id="root_user" value="<!--#4DVAR [servers]root_user-->">
-							</div>
-							<div class="field-box">
-								<label>Root Password </label>
-								<input class="span6" type="password" name="root_password" id="root_password" value="<!--#4DVAR [servers]root_password-->">
-							</div>
-							
-							<div class="field-box">
-								<label>Root Path </label>
-								<input class="span6" name="www_root_path" type="text" value="<!--#4DVAR [servers]www_root_path-->" id="www_root_path">
-							</div>
-							<div class="field-box">
-								<label>Server Location <span style="color:#6E829B">*</span></label>
-								<input class="span6" name="server_location" type="text" value="<!--#4DVAR [servers]server_location-->" id="server_location">
-							</div>								
-							<div class="field-box">
-								<label>Lan IP Address </label>
-								<input class="span6" name="lan_ip_addr" type="text" value="<!--#4DVAR [servers]lan_ip_addr-->" id="lan_ip_addr">
-							</div>
-							<div class="field-box">
-								<label>Lan IP Address (Long) </label>
-								<input class="span6" name="lan_ip_addr_long" type="text" value="<!--#4DVAR [servers]lan_ip_addr_long-->" id="lan_ip_addr_long">
-							</div>
-							
-							<div class="field-box">
-								<label>Lan IP Address v6</label>
-								<input class="span6" name="lan_ip_addr_v6" type="text"  value="<!--#4DVAR [servers]lan_ip_addr_v6-->" id="lan_ip_addr_v6">
-							</div>
-							
-							<div class="span12 field-box">
-								<label>Server Support Ref no</label>
-								<input class="span6" type="text" id="server_support_ref_no" name="server_support_ref_no" value="<!--#4DVAR [servers]server_support_ref_no-->">
-							</div>
-							<div class="span12 field-box">
-								<label>Wan IP Address</label>
-								<input class="span6" type="text" id="wan_ip_addr" name="wan_ip_addr" value="<!--#4DVAR [servers]wan_ip_addr-->">
-							</div>
-							<div class="span12 field-box">
-								<label>Wan IP Address (Long)</label>
-								<input class="span6" type="text" id="wan_ip_addr_long" name="wan_ip_addr_long" value="<!--#4DVAR [servers]wan_ip_addr_long-->">
-							</div>
-							<div class="span12 field-box">
-								<label>Wan IP Address v6o</label>
-								<input class="span6" type="text" id="wan_ip_addr_v6" name="wan_ip_addr_v6" value="<!--#4DVAR [servers]wan_ip_addr_v6-->">
-							</div>
-							<div class="span12 field-box">
-								<label>Status <span style="color:#6E829B">*</span></label>
-								<select name="is_active" id="is_active" class="span6">
-									<option value="">--Select Status--</option>
-									<option value="true" <!--#4DIF ([servers]isactive=true)-->selected<!--4DELSE--><!--4DENDIF--> >Active</option>
-									<option value="false" <!--#4DIF ([servers]isactive=false)-->selected<!--4DELSE--><!--4DENDIF--> >InActive</option>
-								</select>
-							</div>
-						</div>
-						<div id="tabs-2" class="var_tabs" style="display:none" >
-							<!--#4DIF (Records in selection([servers])=1)-->
-							<a href="domain.shtml" class="btn-flat success new-product margn-lft35"  style="float:right;">+ Add New Domain</a></br></br>
-							<!--#4DENDIF-->
-							<table class="table table-bordered table-striped table_vam" id="dt_gal" style="font-size:12px;">
-								<thead>
-									<tr>
-										<th style="width:20%">Domain name</th>
-										<th style="width:30%">Project</th>
-										<th>Expiry date</th>
-										<th>Status </th>
-										<th>Action </th>
-									</tr>
-								</thead>
-								<tbody>
+    <!-- Main content -->
+    <section class="content">
+   		<div class="row">
+       		<div class="panel-body no-padding-top bg-white"> 
+				<div class=" col-sm-12 col-lg-8">
+					<form name="ServersForm" id="ServersForm" action="saveserver.cgi" class="form-horizontal" method="post" >
+						<div class="row" >
+				 			<div class="panel-body no-padding-top bg-white" >
+				 				<ul class="nav nav-tabs">
+									<li class="active"><a data-toggle="tab" href="#tabs-1">Server Details</a></li>
+									<li><a data-toggle="tab" href="#tabs-2">Active Domains on Server</a></li>
+								</ul>
+								<div class="tab-content" STYLE="overflow: hidden;border: 1px solid #ddd;border-top: none;">
+									<div id="tabs-1" class="tab-pane fade in active"><div class="col-md-8 column" style="padding-top:20px;">
+									
+										<div class="form-group">
+    										<label for="" class="col-sm-3 control-label">Server Name <span style="color:#6E829B">*</span></label>
+											<div class="col-sm-9"><input class="form-control" name="server_name" type="text" value="<!--#4DVAR [servers]server_name-->" id="server_name"></div>
+										</div>
+										<input name="uuid" class="form-control" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="uuid">
+										<div class="form-group">
+    										<label for="" class="col-sm-3 control-label">Server Type <span style="color:#6E829B">*</span></label>
+											<div class="col-sm-9">
+												<select name="server_type" id="server_type" class="form-control">
+													<option value="Live" <!--#4DIF ([servers]server_type="Live")-->selected<!--4DELSE--><!--4DENDIF-->>Live</option>
+													<option value="Staging" <!--#4DIF ([servers]server_type="Staging")-->selected<!--4DELSE--><!--4DENDIF-->>Staging</option>
+													<option value="Dev" <!--#4DIF ([servers]server_type="Dev")-->selected<!--4DELSE--><!--4DENDIF-->>Dev</option>
+												</select>
+											</div>
+										</div>
+										<div class="form-group">
+    										<label for="" class="col-sm-3 control-label">Managed By <span style="color:#6E829B">*</span></label>
+											<div class="col-sm-9">
+												<select name="managed_by_uuid" id="managed_by_uuid" class="form-control">
+												<!--#4DSCRIPT/Web_LoadEmployees/-->
+												<!--4DLOOP  [Employees]-->
+													<option value="<!--4DVAR [Employees]uuid-->" <!--#4DIF ([servers]managed_by_uuid=[Employees]uuid)-->selected<!--4DELSE--><!--4DENDIF-->><!--4DVAR [Employees]emp_first_name--> <!--4DVAR [Employees]emp_last_name--></option>
+												<!--4DENDLOOP-->	
+												</select> 
+											</div>
+										</div>
+										<div class="form-group">
+    										<label for="" class="col-sm-3 control-label">Server OS </label>
+											<div class="col-sm-9">
+												<select name="server_os" id="server_os" class="form-control">
+													<option value="">--Select OS--</option>
+													<option value="CentOS" <!--#4DIF ([servers]server_os="CentOS")-->selected<!--4DELSE--><!--4DENDIF-->>CentOS</option>
+													<option value="RedHat" <!--#4DIF ([servers]server_os="RedHat")-->selected<!--4DELSE--><!--4DENDIF-->>RedHat</option>
+													<option value="Windows" <!--#4DIF ([servers]server_os="Windows")-->selected<!--4DELSE--><!--4DENDIF-->>Windows</option>
+													<option value="Apple OSX" <!--#4DIF ([servers]server_os="Apple OSX")-->selected<!--4DELSE--><!--4DENDIF-->>Apple OSX</option>
+												</select>
+											</div>
+										</div>
+										<div class="form-group">
+    										<label for="" class="col-sm-3 control-label">Root User </label>
+    										<div class="col-sm-9">
+												<input class="form-control" type="text" name="root_user" id="root_user" value="<!--#4DVAR [servers]root_user-->">
+											</div>
+										</div>
+										<div class="form-group">
+    										<label for="" class="col-sm-3 control-label">Root Password </label>
+											<div class="col-sm-9"><input class="form-control" type="password" name="root_password" id="root_password" value="<!--#4DVAR [servers]root_password-->"></div>
+										</div>
+										<div class="form-group">
+    										<label for="" class="col-sm-3 control-label">Root Path </label>
+											<div class="col-sm-9"><input class="form-control" name="www_root_path" type="text" value="<!--#4DVAR [servers]www_root_path-->" id="www_root_path"></div>
+										</div>
+										<div class="form-group">
+    										<label for="" class="col-sm-3 control-label">Server Location <span style="color:#6E829B">*</span></label>
+											<div class="col-sm-9"><input class="form-control" name="server_location" type="text" value="<!--#4DVAR [servers]server_location-->" id="server_location"></div>
+										</div>								
+										<div class="form-group">
+    										<label for="" class="col-sm-3 control-label">Lan IP Address </label>
+											<div class="col-sm-9"><input class="form-control" name="lan_ip_addr" type="text" value="<!--#4DVAR [servers]lan_ip_addr-->" id="lan_ip_addr"></div>
+										</div>
+										<div class="form-group">
+    										<label for="" class="col-sm-3 control-label">Lan IP Address (Long) </label>
+											<div class="col-sm-9"><input class="form-control" name="lan_ip_addr_long" type="text" value="<!--#4DVAR [servers]lan_ip_addr_long-->" id="lan_ip_addr_long"></div>
+										</div>
+										<div class="form-group">
+    										<label for="" class="col-sm-3 control-label">Lan IP Address v6</label>
+											<div class="col-sm-9"><input class="form-control" name="lan_ip_addr_v6" type="text"  value="<!--#4DVAR [servers]lan_ip_addr_v6-->" id="lan_ip_addr_v6"></div>
+										</div>
+										<div class="form-group">
+    										<label for="" class="col-sm-3 control-label">Server Support Ref no</label>
+											<div class="col-sm-9"><input class="form-control" type="text" id="server_support_ref_no" name="server_support_ref_no" value="<!--#4DVAR [servers]server_support_ref_no-->"></div>
+										</div>
+										<div class="form-group">
+    										<label for="" class="col-sm-3 control-label">Wan IP Address</label>
+											<div class="col-sm-9"><input class="form-control" type="text" id="wan_ip_addr" name="wan_ip_addr" value="<!--#4DVAR [servers]wan_ip_addr-->"></div>
+										</div>
+										<div class="form-group">
+    										<label for="" class="col-sm-3 control-label">Wan IP Address (Long)</label>
+											<div class="col-sm-9"><input class="form-control" type="text" id="wan_ip_addr_long" name="wan_ip_addr_long" value="<!--#4DVAR [servers]wan_ip_addr_long-->"></div>
+										</div>
+										<div class="form-group">
+    										<label for="" class="col-sm-3 control-label">Wan IP Address v6o</label>
+											<div class="col-sm-9"><input class="form-control" type="text" id="wan_ip_addr_v6" name="wan_ip_addr_v6" value="<!--#4DVAR [servers]wan_ip_addr_v6-->"></div>
+										</div>
+										<div class="form-group">
+    										<label for="" class="col-sm-3 control-label">Status <span style="color:#6E829B">*</span></label>
+											<div class="col-sm-9"><select name="is_active" id="is_active" class="form-control">
+												<option value="">--Select Status--</option>
+												<option value="true" <!--#4DIF ([servers]isactive=true)-->selected<!--4DELSE--><!--4DENDIF--> >Active</option>
+												<option value="false" <!--#4DIF ([servers]isactive=false)-->selected<!--4DELSE--><!--4DENDIF--> >InActive</option>
+											</select></div>
+										</div>
+									</div></div>
+									<div id="tabs-2" class="tab-pane fade col-md-7" STYLE="padding-top:20px;"  >
+										<!--#4DIF (Records in selection([servers])=1)-->
+											<a href="domain.shtml" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink"  style="float:right;">+ Add New Domain</a></br></br>
+										<!--#4DENDIF-->
+										
+										<table class="table table-bordered table-striped table_vam" id="dt_gal" style="font-size:12px;">
+											<thead>
+											<tr>
+												<th style="width:20%">Domain name</th>
+												<th style="width:30%">Project</th>
+												<th>Expiry date</th>
+												<th>Status </th>
+												<th>Action </th>
+											</tr>
+											</thead>
+											<tbody>
 								
-								</tbody>
-							</table>
-						</div>	
-						<br/>
-						
-						<div class="span12 field-box" style="text-align: center;">
-							<input type="submit" name="Submit" class="btn-glow primary" value="Submit"> 
-							
-							<a href="servers.shtml" CLASS="cancelbtn">Cancel</a>
-							
-							<!-- <input type="reset" value="Cancel" class="reset"> -->
+											</tbody>
+										</table>
+									</div>
+								</div>
+									<div style="text-align:center; margin-top: 11px;">
+										<input type="submit" name="Submit" class="btn btn-primary btn-color margin-right-5 btn-sm" value="Submit">
+										<a href="servers.shtml" class="btn btn-danger btn-sm">Cancel</a>
+									</div>
+							</div>
 						</div>
-                   					
 					</form>
-					</div>
 				</div>
-				
-            </div>
-            
-            
-        </div>
+			</div>
+		</div>
+     </section>
     </div>
     <!-- end main container -->
-
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/top-footer.shtml-->
+</div>
 	<!-- scripts -->
     <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
 	
-	<script src="js/jquery-ui.custom.min.js"></script>
-	<script src="js/jquery.uniform.min.js"></script>
 	<script src='js/jquery.MetaData.js' type="text/javascript" language="javascript"></script>
 	<!-- call this page plugins -->
 	<!-- datatable -->
@@ -288,7 +284,6 @@ table td, table th { border: none!important; }
 
     $(function () {
 		
-		$( "#tabs" ).tabs();
 		// validate form on keyup and submit
 		$("#ServersForm").validate({
 			ignore: "",
