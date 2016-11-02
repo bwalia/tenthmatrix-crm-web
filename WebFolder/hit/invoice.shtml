@@ -111,11 +111,11 @@ end if
         <section class="content-header">
       		<h1>
         		<!--#4DIF (Records in selection([Tasks])=1)-->"<!--#4DVAR taskNameStr-->"<!--#4DELSE-->New<!--#4DENDIF--> 
-        		<small>New Invoice</small>
+        		<small>Invoice</small>
       		</h1>
       		<ol class="breadcrumb">
        			<li><a href="index.shtml"><i class="fa fa-dashboard"></i> Dashboard</a></li>
-        		<li class="active">Work Order</li>
+        		<li class="active">Invoice</li>
       		</ol>
     	</section>
 		<section class="content">
