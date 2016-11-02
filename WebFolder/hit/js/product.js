@@ -75,7 +75,8 @@ function edit() {
 	function cancel() {
 		var row = $(this).parents('.item-row');
 		var id=row.find('.item_uuid').val();
-		if(id!=''){
+		console.log(id);
+		if(id!='' && id!="undefined" && id!=null){
 			row.find('.s_parameter_name').show();
 			row.find('.s_parameter_value').show();
 			
@@ -142,11 +143,8 @@ function fetchspecifications() {
 		}else{
 			$.each(result, function(i,item){
 				if(item.uuid){
-					htmlStr+='<tr class="item-row"><td><input type="hidden" class="item_uuid" value="'+item.uuid+'"><span class="s_parameter_name">'+item.name+'</span><input type="text" class="parameter_name" value="'+item.name+'" style="display:none"></td><td><span class="s_parameter_value" >'+item.value+'</span><input style="display:none" type="text" class="parameter_value" value="'+item.value+'"></td><td><a href="javascript:void(0)" class="editlink">Edit</a>&nbsp;<a href="javascript:void(0)" class="savelink" style="display:none">Save</a>&nbsp;<a href="javascript:void(0)" class="removelink" >Remove</a>&nbsp;<a href="javascript:void(0)" class="cancellink" style="display:none">Cancel</a></td></tr>';
+					htmlStr+='<tr class="item-row"><td><input type="hidden" class="item_uuid" value="'+item.uuid+'"><span class="s_parameter_name">'+item.name+'</span><input type="text" class="parameter_name form-control" value="'+item.name+'" style="display:none"></td><td><span class="s_parameter_value" >'+item.value+'</span><input style="display:none" type="text" class="parameter_value form-control" value="'+item.value+'"></td><td><a href="javascript:void(0)" class="editlink" title="Edit"><i class="fa fa-pencil"></i></a>&nbsp;<a href="javascript:void(0)" class="savelink" style="display:none" title="Save"><i class="fa fa-save"></i></a>&nbsp;<a href="javascript:void(0)" class="removelink" title="Delete" ><i class="fa fa-trash"></i></a>&nbsp;<a href="javascript:void(0)" class="cancellink" style="display:none" title="Cancel"><i class="fa fa-remove"></i></a></td></tr>';
 				}
-				//$.each(item, function(key, value){
-        		//	htmlStr+='<tr class="item-row"><td><span class="s_parameter_name">'+key+'</span><input type="text" class="parameter_name" value="'+key+'" style="display:none"></td><td><span class="s_parameter_value" >'+value+'</span><input style="display:none" type="text" class="parameter_value" value="'+value+'"></td><td><a href="javascript:void(0)" class="editlink">Edit</a>&nbsp;<a href="javascript:void(0)" class="savelink" style="display:none">Save</a>&nbsp;<a href="javascript:void(0)" class="removelink" >Remove</a>&nbsp;<a href="javascript:void(0)" class="cancellink" style="display:none">Cancel</a></td></tr>';
-				//});
 			});
 		}
 		$('.item').after(htmlStr);
@@ -176,7 +174,7 @@ $(function() {
 	
 	//fetchavailableoptions();
 	$("#addrow").click(function(){
-		$(".item").after('<tr class="item-row"><td><span class="s_parameter_name" style="display:none" ></span><input type="text" class="parameter_name" value=""></td><td><span class="s_parameter_value" style="display:none" ></span><input type="text" class="parameter_value" value=""></td><td><a href="javascript:void(0)" class="editlink" style="display:none">Edit</a>&nbsp;<a href="javascript:void(0)" class="savelink" >Save</a>&nbsp;<a href="javascript:void(0)" class="removelink" style="display:none" >Remove</a>&nbsp;<a href="javascript:void(0)" class="cancellink" >Cancel</a></td></tr>');
+		$(".item").after('<tr class="item-row"><td><span class="s_parameter_name" style="display:none" ></span><input type="text" class="parameter_name form-control" value=""></td><td><span class="s_parameter_value" style="display:none" ></span><input type="text" class="parameter_value form-control" value=""></td><td><a href="javascript:void(0)" class="editlink" style="display:none" title="Edit"><i class="fa fa-pencil"></i></a>&nbsp;<a href="javascript:void(0)" class="savelink" title="Save"><i class="fa fa-save"></i></a>&nbsp;<a href="javascript:void(0)" class="removelink" style="display:none" title="Delete"><i class="fa fa-trash"></i></a>&nbsp;<a href="javascript:void(0)" class="cancellink" title="Cancel"><i class="fa fa-remove"></i></a></td></tr>');
 		var curr_row = $('.item').next();
 		curr_row.find('.parameter_name').focus();
 		if ($(".delete").length > 0) $(".delete").show();
@@ -331,7 +329,7 @@ function fetchuploadedimages() {
 			var optionStatusStr= new Array();
 			
 			$.each(result, function(i,row){
-				table_html+='<div class="span3 mrgntp">';
+				table_html+='<div class="col-sm-2 mrgntp">';
 				table_html+='<img alt="" ';
 				if(row.default=="yes"){
 					table_html+='class="imgbrdrslectd"';
@@ -347,8 +345,8 @@ function fetchuploadedimages() {
 				}
 				table_html+='<input type="checkbox" class="check" value="true">';
 				if(row.default=="no"){
-					table_html+='<a title="Set as default image" href="javascript:void(0)" onClick="modify_image(\''+row.image_uuid+'\')" class="btn btn-default btn-xs" STYLE="margin:0 7px;"><i class="icon-paste"> &nbsp; Set as Default Image</i></a>';
-					table_html+='<a title="Remove" href="javascript:void(0)" onClick="remove_image(\''+row.image_uuid+'\')" class="btn  btn-danger btn-file btn-xs" style="float:right"><i class="icon-trash"></i></a>';
+					table_html+='<a title="Set as default image" href="javascript:void(0)" onClick="modify_image(\''+row.image_uuid+'\')" class="btn btn-default btn-xs" STYLE="margin:0 7px;"><i class="fa fa-paste"> &nbsp; Set as Default Image</i></a>';
+					table_html+='<a title="Remove" href="javascript:void(0)" onClick="remove_image(\''+row.image_uuid+'\')" class="btn  btn-danger btn-file btn-xs" style="float:right"><i class="fa fa-trash"></i></a>';
 				}
 				if(row.default=="no"){
 					table_html+='</div></div>';

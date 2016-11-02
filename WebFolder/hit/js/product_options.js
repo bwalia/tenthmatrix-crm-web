@@ -73,7 +73,7 @@ function fetchsuboptions() {
           			subOptionArr.push(item); 
         		}
         		
-				htmlStr+='<tr class="item-row"><td><span class="s_parameter_name">'+item+'</span><input type="text" class="parameter_name" value="'+item+'" style="display:none"></td><td><a href="javascript:void(0)" class="savelink" style="display:none">Done</a>&nbsp;<a href="javascript:void(0)" class="removelink" >Remove</a>&nbsp;<a href="javascript:void(0)" class="cancellink" style="display:none">Cancel</a></td></tr>';
+				htmlStr+='<tr class="item-row"><td><span class="s_parameter_name">'+item+'</span><input type="text" class="parameter_name form-control" value="'+item+'" style="display:none"></td><td><a href="javascript:void(0)" class="savelink" style="display:none" title="Done"><i class="fa fa-save"></i></a>&nbsp;<a href="javascript:void(0)" class="removelink" title="Remove"><i class="fa fa-trash"></i></a>&nbsp;<a href="javascript:void(0)" class="cancellink" style="display:none" title="Cancel"><i class="fa fa-remove"></i></a></td></tr>';
 			});
 		}
 		$('.item').after(htmlStr);
@@ -85,7 +85,7 @@ $(function() {
 	fetchsuboptions();
 	
 	$("#addrow").click(function(){
-		$(".item").after('<tr class="item-row"><td><span class="s_parameter_name" style="display:none" ></span><input type="text" class="parameter_name" value=""></td><td><a href="javascript:void(0)" class="savelink" >Done</a>&nbsp;<a href="javascript:void(0)" class="removelink" style="display:none" >Remove</a>&nbsp;<a href="javascript:void(0)" class="cancellink" >Cancel</a></td></tr>');
+		$(".item").after('<tr class="item-row"><td><span class="s_parameter_name" style="display:none" ></span><input type="text" class="parameter_name form-control" value=""></td><td><a href="javascript:void(0)" class="savelink" title="Done"><i class="fa fa-save"></i></a>&nbsp;<a href="javascript:void(0)" class="removelink" style="display:none" title="Remove"><i class="fa fa-trash"></i></a>&nbsp;<a href="javascript:void(0)" class="cancellink" title="Cancel"><i class="fa fa-remove"></i></a></td></tr>');
 		var curr_row = $('.item').next();
 		curr_row.find('.parameter_name').focus();
 		if ($(".delete").length > 0) $(".delete").show();
@@ -94,9 +94,9 @@ $(function() {
   	
   	bind();
 
-            // add uniform plugin styles to html elements
-            $("input:checkbox").uniform();
-		   		
+            $('#table-breakpoint').basictable({
+    				breakpoint: 751
+   			 });	
 			// validate form on keyup and submit
 			$.validator.addMethod('checkinteger', function(value, element, param) {
 			return (value != 0);
