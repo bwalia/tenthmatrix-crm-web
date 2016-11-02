@@ -22,55 +22,89 @@ _HIT_HTTPD_RedirectToURL ("sign-in.shtml")
 end if 
 
 //_HIT_HTMLTXT:=_HIT_SessionStr
--->
-<!DOCTYPE html>
+--><!DOCTYPE html>
 <html>
 <head>
 	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
-	<link href="css/lib/select2.css" type="text/css" rel="stylesheet">
-	<link rel='stylesheet' type='text/css' href='css/style.css' />
-	<link rel='stylesheet' type='text/css' href='css/print.css' media="print" />
-	<link rel="stylesheet" href="css/base/jquery-ui.css" />
-	<link href="css/lib/bootstrap-wysihtml5.css" type="text/css" rel="stylesheet">
-	
+	 <link href="css/bootstrap.datepicker.css" type="text/css" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="css/jquery.ptTimeSelect.css" />
 	<link rel="stylesheet" href="css/autocomplete.css" />
-
-</head>
-
-
+	<link rel="stylesheet" href="css/basictable.css">
+	<link rel="stylesheet" href="css/chosen.css">
 <style>
-#MailSendForm .custom-combobox-input {
-    width: 94% !important;
+.custom-combobox a.ui-button, 
+  .custom-combobox a.ui-widget, 
+  .custom-combobox a.ui-state-default, 
+  .custom-combobox a.ui-button-icon-only, 
+  .custom-combobox a.custom-combobox-toggle, 
+  .custom-combobox a.ui-corner-right {
+	top:0px;
+  }
+ #ProjectForm em.error {
+	margin-left: 10px;
+	width: auto;
+	display: inline;
+}
+#ProjectForm em.error {
+    color: red;
+    font-style: italic;
+}
+#ProjectForm input.error, textarea.error, select.error{
+    border: 1px solid red;
 }
 
+  
+  .chosen-container{
+	  width: 424px !important;
+	  
+
+  }
+  
+  .chosen-container-multi .chosen-choices{
+	  height: 32px !important;
+	  border-radius:4px!important;
+	  border: 1px solid #d3d3d3!important;
+ 
+  }
+  
+ 
 </style>
-<body>
-	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+</head>
+ <body class="hold-transition skin-blue sidebar-mini">
+ <div class="wrapper">
+
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
 
     <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
 
 	<!-- main container -->
-    <div class="content">
-        
-        <div class="container-fluid">
-            <div id="pad-wrapper" class="form-page">
-				 <div class="row-fluid header">
-					<h3><!--#4DIF (Records in selection([_emailc_queue])=1)-->Resend Mail<!--#4DELSE-->New mail<!--#4DENDIF--></h3>             
-                </div>
-                <div class="row-fluid form-wrapper">
+   	<div class="content-wrapper">
+        <section class="content-header">
+      		<h1>
+        		<!--#4DIF (Records in selection([Tasks])=1)-->"<!--#4DVAR taskNameStr-->"<!--#4DELSE-->New<!--#4DENDIF--> 
+        		<small>Mail</small>
+      		</h1>
+      		<ol class="breadcrumb">
+       			<li><a href="index.shtml"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+        		<li class="active">Mail</li>
+      		</ol>
+    	</section>
+		
+	<section class="content">
+	<div class="row">
 					<!-- left column -->
-                    <div class="span9 with-sidebar">
-						<form name="MailSendForm" action="sendmailQueue.cgi" class="form-comment" method="post" enctype="multipart/form-data" id="MailSendForm">
+                    <div class="col-sm-12">
+						<form name="MailSendForm" action="sendmailQueue.cgi" class="form-horizontal" method="post" enctype="multipart/form-data" id="MailSendForm">
 							<!-- <input name="company_uuid" class="span9" type="hidden" value="<!~~#4DVAR [Companies]uuid~~>" id="company_uuid"> -->
-							<div class="field-box">
-								<label>From </label>
-								<input name="From_name" class="span4" type="text" value="<!--#4DVAR [_emailc_queue]_from_name-->" id="From_name">
+							<div class="form-group">
+								<label class="col-sm-2 control-label">From </label>
+								<div CLASS="col-sm-6"><input name="From_name" class="form-control" type="text" value="<!--#4DVAR [_emailc_queue]_from_name-->" id="From_name"></div>
 							</div>
 							<input name="email_uuid" class="span4" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="email_uuid">
-							<div class="field-box">
-							<label>Recipient </label>
-							<div class="ui-widget">
-									<select id="ToEmailAddress" name="ToEmailAddress">
+							<div class="form-group">
+							<label class="col-sm-2 control-label">Recipient </label>
+							<div class="ui-widget col-sm-6">
+									<select id="ToEmailAddress" name="ToEmailAddress" CLASS="form-control">
 									<!--#4DIF (mReadEmail)-->
 									     <option value="<!--4DVAR [_emailc_queue]_recipient-->" selected><!--4DVAR [_emailc_queue]_recipient--></option>	
 									<!--#4DELSE--> 
@@ -82,20 +116,20 @@ end if
 								</select>
 						 	</div>
 						 	</div>
-						 	<div class="field-box">
-								<label>Cc  </label>
-								<div class="ui-widget">
-									<select id="CCToEmailAddress" name="CCToEmailAddress">
+						 	<div class="form-group">
+								<label class="col-sm-2 control-label">Cc  </label>
+								<div class="ui-widget col-sm-6">
+									<select id="CCToEmailAddress" name="CCToEmailAddress" CLASS="form-control">
 									<!--#4DIF (mReadEmail)-->
 									<option value="<!--4DVAR [_emailc_queue]_cc-->"><!--4DVAR [_emailc_queue]_cc--></option>
 									<!--#4DENDIF-->
 									</select>
 						 	</div>
 						 	</div>
-						 	<div class="field-box">
-								<label>BCc  </label>
-								<div class="ui-widget">
-									<select id="BCCToEmailAddress" name="BCCToEmailAddress">
+						 	<div class="form-group">
+								<label class="col-sm-2 control-label">BCc  </label>
+								<div class="ui-widget col-sm-6">
+									<select id="BCCToEmailAddress" name="BCCToEmailAddress" CLASS="form-control">
 									<option value=""></option>
 									<!--#4DIF (mReadEmail)-->
 									 <option value="<!--4DVAR [_emailc_queue]_bcc-->"><!--4DVAR [_emailc_queue]_bcc--></option>
@@ -103,66 +137,73 @@ end if
 									</select>
 						 	</div>
 						 	</div>
-						 	<div class="field-box">
-								<label>Send By </label>
-								<div class="ui-select span4">
-									<select id="HostName" name="HostName">
+						 	<div class="form-group">
+								<label class="col-sm-2 control-label">Send By </label>
+								<div class="ui-select col-sm-6">
+									<select id="HostName" name="HostName" CLASS="form-control">
 								      <option value="Balinder">Balinder Walia</option>
 								      <option value="Pat">Pat Bensky</option>
 								      <option  value="Sandeep" selected>Sandeep Shah</option>  
 									</select>
 						 	    </div>
 							</div>
-							<div class="span12 field-box">
-								<label>Subject </label>
-								<input name="Subject" id="Subject" class="span4" type="text"  value="<!--#4DHTMLVAR [_emailc_queue]_subject-->" >                               
+							<div class="form-group">
+								<label class="col-sm-2 control-label">Subject </label>
+								<div CLASS="col-sm-6"><input name="Subject" id="Subject" class="form-control" type="text"  value="<!--#4DHTMLVAR [_emailc_queue]_subject-->" >  </div>                             
 							</div>
-							<div class="field-box">
-								<label>File Content </label>
-								<input id="file_content" name="file_content" style="width : 78px;"  type="file" class="multi" maxlength="15" />
-								<input id="num_files" name="num_files" type="hidden"  />
+							<div class="form-group">
+								<label class="col-sm-2 control-label">File Content </label>
+								<div CLASS="col-sm-6"><input id="file_content" name="file_content" style="width : 78px;"  type="file" class="multi" maxlength="15" />
+								<input id="num_files" name="num_files" type="hidden"  /></div>
 							</div>						
-							 <div class="field-box">		
-							<label></label>
-								<label class="checkbox" style="width:auto">							
-								<input name="send_html_mail" class="span9" type="checkbox" value="true" id="send_html_mail" checked  >Send HTML mail
-							</label>  
+							 <div class="form-group">		
+							<label class="col-sm-2 control-label"></label>
+													
+							<div CLASS="col-sm-6">	<input name="send_html_mail"  type="checkbox" value="true" id="send_html_mail" checked > Send HTML mail
+							 </div>
 							</div>
-							<div class="field-box">
-								<label>Send Message </label>
-								<div class="wysi-column" id="div_wysiwyg">
-                                    <textarea id="html_Message_Body" class="span10 wysihtml5" rows="25" columns="40" name="Message_Body"><!--#4DHTMLVAR [_emailc_queue]_email_body_html--></textarea>
+							<div class="form-group">
+								<label class="col-sm-2 control-label">Send Message </label>
+								<div class="wysi-column col-sm-6" id="div_wysiwyg">
+<textarea id="html_Message_Body" class="form-control wysihtml5" rows="10"  name="Message_Body"><!--#4DHTMLVAR [_emailc_queue]_email_body_html--></textarea>
                                 </div>
-						       <textarea id="Message_Body" class="span10" rows="25" columns="40" name="disable_Message_Body" ><!--#4DHTMLVAR [_emailc_queue]_email_body--></textarea>
+								
+								</div>
+									<div class="form-group">
+								<label class="col-sm-2 control-label"> </label>
+						    <div CLASS="col-sm-6">    <textarea id="Message_Body" rows="10" class="form-control" name="disable_Message_Body" ><!--#4DHTMLVAR [_emailc_queue]_email_body--></textarea>
 								<input type="hidden" name="mail_content" id="mail_content" >
-							</div> 
+							</div> </div>
+							
+							
+							
 							<div class="span11 field-box" >
-							<LABEL></LABEL>
-								<input type="button" name="Submit" class="btn-glow primary" value="Send Mail" onClick="send_mail()">        
-								<input type="button" name="Submit" class="btn-glow primary" value="Save Mail" onClick="Save_Mail()">							
-								 <a href="emailqueue.shtml" CLASS="cancelbtn" STYLE="margin-left:18px;">Cancel</a>
+							<label class="col-sm-2 control-label"></LABEL>
+								<input type="button" name="Submit" class="btn btn-primary" value="Send Mail" onClick="send_mail()">        
+								<input type="button" name="Submit" class="btn btn-danger" value="Save Mail" onClick="Save_Mail()">							
+								 <a href="emailqueue.shtml" CLASS="btn btn-primary" STYLE="margin-left:18px;">Cancel</a>
 							</div>               					
 							</form>
 						</div>
-                  </div>
-             </div>
-    	</div>
-    </div>
+                  </div>	
+	
+    </section>
+    
+	</div>
+	</div>
+	
+	
+	
     <!-- end main container -->
-
 	<!-- scripts -->
-	 <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
-     
-     <script src="js/wysihtml5-0.3.0.js"></script>
-	<script src="js/bootstrap-wysihtml5-0.0.2.js"></script>
+	<script src="js/wysihtml5-0.3.0.js"></script>
+  	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+	<script src="js/basictable.js"></script>
 	<script src="js/bootstrap.datepicker.js"></script>
-	<script src="js/jquery.uniform.min.js"></script>
-	<script src="js/ui/jquery-ui.js"></script>
-	<script src="js/bootstrap.datepicker.js"></script>
-	<script src="js/jquery.uniform.min.js"></script>
-	<!--<script src="http://code.jquery.com/jquery-1.9.1min.js" type="text/javascript" language="javascript"></script>-->	
-	<script src="js/jquery.MultiFile.js" type="text/javascript" language="javascript"></script>
-	 
+	<script src="js/jquery.validate.js"></script>
+	<script src="js/chosen.jquery.js" type="text/javascript"></script>
+	
+
 	<!-- call this page plugins -->
 	
 <script language="javascript">
@@ -316,6 +357,7 @@ function Save_Mail()
               primary: "ui-icon-triangle-1-s"
             },
             text: false
+
           })
           .removeClass( "ui-corner-all" )
           .addClass( "custom-combobox-toggle ui-corner-right" )

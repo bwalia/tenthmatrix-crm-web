@@ -101,13 +101,14 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 		<section class="content">
 		
 		<div class="col-sm-8 with-sidebar">
-                           <form name="AnaledgerForm" action="saveanalegder.cgi" id="AnaledgerForm" method="post" class="form-comment" >
-						     
+                           <form name="AnaledgerForm" action="saveanalegder.cgi" id="AnaledgerForm" method="post" class="form-horizontal" >
+						     <div CLASS="row">
+							 <div CLASS="col-sm-12">
 								<div class="form-group">
                                   <label class="col-sm-3 control-label">Ledger Name <span style="color:#6E829B">*</span></label>
-                                    <input name="ledger_name" class="form-control" type="text" value="<!--4DVAR [analysis_ledger]ledger_name-->" id="ledger_name">
-									<input name="ledger_uuid" class="span5" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="ledger_uuid">
-                                </div>
+                                   <div CLASS="col-sm-6"> <input name="ledger_name" class="form-control" type="text" value="<!--4DVAR [analysis_ledger]ledger_name-->" id="ledger_name">
+									<input name="ledger_uuid" class="form-control" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="ledger_uuid">
+                                </div></div>
                                 <div class="form-group">
                                   <label class="col-sm-3 control-label">Type of Accounts<span style="color:#6E829B">*</span></label>
                                     <div class="ui-select col-sm-6">
@@ -117,15 +118,19 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 										</select>                                     
                                		</div>
                                	</div>
-                                <div class="tab-pane" id="tab2">
-									<div class="row-fluid">
-										<div class="span12">
-											<div class="row-fluid">
+								</div>
+								</div>
+								
+								<div CLASS="col-sm-12">
+								
+                              
 												<div class="span9">
 													<div class="form-horizontal well">
 														<fieldset>
 														<span style="font-size:16px;"><b>Analysis accounts in this ledger</b></span><br/>
-															<table id="items" class="items table table-condensed table-striped" data-provides="rowlink">
+															<div class=" table-responsive table-full-width">
+		 			<div class="table-responsive" style="border:none;" >
+                        <table class="table table-striped  table-bordered table-hover custom-tbl-st bt" id="table-breakpoint"  style="background-color: rgb(255, 255, 255); border-radius: 4px;" >
 															<thead>
 																<tr class="item">
 																	<th><input name="chek_all[]" type="checkbox" class="chk_all" /></th>
@@ -145,37 +150,44 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 																	<td><!--4DVAR [analysis_account]account_name--></td>
 																	<td><!--4DVAR [analysis_account]money_in_or_out--></td>
 																	<td><!--4DVAR [analysis_account]currency_code--></td>
-																	<td><input type="checkbox" onchange="change_scope_of_tax(this,'<!--4DVAR [analysis_account]uuid-->')" name="is_in_scope_of_tax" <!--#4DIF ([analysis_account]is_in_scope_of_tax)-->checked<!--4DELSE--><!--4DENDIF-->/></td>
+																	<td><input type="checkbox" CLASS="form-control" onchange="change_scope_of_tax(this,'<!--4DVAR [analysis_account]uuid-->')" name="is_in_scope_of_tax" <!--#4DIF ([analysis_account]is_in_scope_of_tax)-->checked<!--4DELSE--><!--4DENDIF-->/></td>
 																	</tr>
 																	<!--#4DENDLOOP-->
 																<!--#4DENDIF-->
 																
 															</tbody>
-														</table>	
-														<br/>
+														</table>
+														</div>
+														</div>	
+														
 														</fieldset>
 													
 													</div>
 												</div>
-												<div class="span3" style="padding:10px;">
+												</div>
+												
+												
+												<div class="form-group" style="padding:10px;">
 													<a class="well" style="padding-top:5px;text-decoration:none; font-size:18px;" href="javascript:void(0)" title="Add new" onclick="add_new_analysis_accounts()">+</a>
 													<a class="well" style="padding-top:5px; text-decoration:none;font-size:18px;" href="javascript:void(0)" title="Delete" onclick="delete_analysis_accounts()">-</a>
 												</div>
-											</div>
-										</div>
-									</div>
-								</div>
 								
- 							 	<div class="span7 field-box">
-								<label>Notes</label>
-									<textarea name="notes" class="span6" rows="3" id="notes"><!--#4DVAR [analysis_ledger]notes--></textarea>
-								</div>
 								
-					            <div class="span11 field-box" style="text-align: left; margin-left:138px;">
-									<input type="submit" name="Submit" class="btn-glow primary" value="Submit">
+								
+								
+ 							 	<div class="form-group">
+							 <label class="col-sm-3 control-label">Notes</label>
+								<div CLASS="col-sm-7">	<textarea name="notes" class="form-control" rows="3" id="notes"><!--#4DVAR [analysis_ledger]notes--></textarea>
+								</div></div>
+								
+					        
+							<div class="form-group">
+							 <label class="col-sm-3 control-label"></label>
+							
+								<div CLASS="col-sm-7">	<input type="submit" name="Submit" class="btn btn-primary" value="Submit">
                                   
-                                      <a href="analysisledgers.shtml" CLASS="cancelbtn"> Cancel</a>
-                                </div>
+                                      <a href="analysisledgers.shtml" CLASS="btn btn-danger"> Cancel</a>
+                                </div></div>
                             </form>
                     </div>
 		
@@ -199,6 +211,11 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 	
 	<script language="javascript">
 	$(function () {
+		
+		
+		$('#table-breakpoint').basictable({
+    				breakpoint: 751
+    			});
 
 		<!--#4DIF (Records in selection([analysis_ledger])=0)-->
 			var new_uuid='<!--#4DVAR Generate UUID-->';	
