@@ -3,6 +3,10 @@ function __alertMessage(msg){
 	$.prompt(msg);
 }
 
+function __alertModalBox(msg){
+	$("#globalMessage").html(msg);
+	$('#globalPrompt').modal('show');
+}
 function openLoadedMenu(){
 var url = window.location.pathname;
 var filename = url.substring(url.lastIndexOf('/')+1);

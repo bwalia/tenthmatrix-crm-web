@@ -730,8 +730,9 @@ function load_data(){
 	JSONdata=new Array();
 	$.getJSON(jsonRow,function(result){
 			if(result.Alert){
-				$(".jqibox").remove();
-				$.prompt('No more records found!');
+				//$(".jqibox").remove();
+				//$.prompt('No more records found!');
+				__alertModalBox('No more records found!');
 				complete=true;
 				$('#display_more_btn').hide();
 				$('#table-breakpoint').basictable({
