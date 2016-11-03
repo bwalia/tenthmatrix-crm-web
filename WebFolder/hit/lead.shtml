@@ -236,44 +236,36 @@ end if
 								<label class="col-sm-3 control-label"></label>	
 								<div CLASS="col-sm-6">
 														
-								<input name="QuarkUser" class="span9" type="checkbox" value="true" id="QuarkUser" <!--#4DIF ([Leads]QuarkUser)-->checked<!--4DELSE--><!--4DENDIF--> > Quark User
+								<input name="QuarkUser" class="span9" type="checkbox" value="true" id="QuarkUser" <!--#4DIF ([Leads]QuarkUser)-->checked<!--4DELSE--><!--4DENDIF--> > Quark User<BR>
+<input name="InDesign_user"  type="checkbox" value="true" id="InDesign_user" <!--#4DIF ([Leads]InDesign user)-->checked<!--4DELSE--><!--4DENDIF--> > InDesign User<BR>
+<input name="Responded" class="span9" type="checkbox" value="true" id="Responded" <!--#4DIF ([Leads]Responded)-->checked<!--4DELSE--><!--4DENDIF--> > Responded to mailing<BR>
+
+<input name="Affiliate" class="span9" type="checkbox" value="true" id="Affiliate" <!--#4DIF ([Leads]Affiliate)-->checked<!--4DELSE--><!--4DENDIF--> > Affiliate<BR>
+	<input name="Send_Info" class="span9" type="checkbox" value="true" id="Send_Info" <!--#4DIF ([Leads]Send Info)-->checked<!--4DELSE--><!--4DENDIF--> > Send Info<BR>
+	<input name="Keep_Us_Posted" class="span9" type="checkbox" value="true" id="Keep_Us_Posted" <!--#4DIF ([Leads]KeepUsPosted)-->checked<!--4DELSE--><!--4DENDIF--> >Keep Us Posted<BR>
+
+<input name="Give_to_reseller" class="span9" type="checkbox" value="true" id="Give_to_reseller" <!--#4DIF ([Leads]Give to reseller)-->checked<!--4DELSE--><!--4DENDIF--> >Give to reseller
 						 </div>
 							
 							</div>
 							 
-							<label class="checkbox">							
-								<input name="InDesign_user" class="span9" type="checkbox" value="true" id="InDesign_user" <!--#4DIF ([Leads]InDesign user)-->checked<!--4DELSE--><!--4DENDIF--> >InDesign User
-							</label>   
-							<label class="checkbox" style="width:auto;">
+											
+								
+							
+							
 														
-								<input name="Responded" class="span9" type="checkbox" value="true" id="Responded" <!--#4DIF ([Leads]Responded)-->checked<!--4DELSE--><!--4DENDIF--> >Responded to mailing
-							</label> 
+								
+						
 							</div>
 								
-								<div class="form-group">
-							<label class="col-sm-3 control-label"></label>	
-							<label class="checkbox">							
-								<input name="Affiliate" class="span9" type="checkbox" value="true" id="Affiliate" <!--#4DIF ([Leads]Affiliate)-->checked<!--4DELSE--><!--4DENDIF--> >Affiliate
-							</label>
-							<label class="checkbox">
-														
-								<input name="Send_Info" class="span9" type="checkbox" value="true" id="Send_Info" <!--#4DIF ([Leads]Send Info)-->checked<!--4DELSE--><!--4DENDIF--> >Send Info
-							</label>   
-							<label class="checkbox">							
-								<input name="Keep_Us_Posted" class="span9" type="checkbox" value="true" id="Keep_Us_Posted" <!--#4DIF ([Leads]KeepUsPosted)-->checked<!--4DELSE--><!--4DENDIF--> >Keep Us Posted
+												
+							
 							</label>
 							</div>
 							
 							
 								
-								<div class="form-group">
-							<label class="col-sm-3 control-label"></label>	
-							<label class="checkbox">
-														
-								<input name="Give_to_reseller" class="span9" type="checkbox" value="true" id="Give_to_reseller" <!--#4DIF ([Leads]Give to reseller)-->checked<!--4DELSE--><!--4DENDIF--> >Give to reseller
-							</label>   
-							                                                 
-                            </div>
+								
 							
 							<div class="form-group">
 									<label class="col-sm-3 control-label">Given to reseller </label>

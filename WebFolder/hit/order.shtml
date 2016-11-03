@@ -579,14 +579,15 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
            </div>
 			</form>
         </section>
-    </div>
+
 	
 	
 	
     <!-- end main container -->
 	<!-- scripts -->
-	<script src="js/wysihtml5-0.3.0.js"></script>
-  	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+  	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/top-footer.shtml-->
+</div>
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml-->
 	<script src="js/basictable.js"></script>
 	<script src="js/bootstrap.datepicker.js"></script>
 	<script src="js/jquery.validate.js"></script>
