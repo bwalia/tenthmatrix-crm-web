@@ -308,11 +308,11 @@ end if
 								
 								<div class="form-group" >
 								<label class="col-sm-3 control-label"></LABEL>
-									<input type="submit" class="btn-glow primary" value="Submit">     
-									<input type="button" name="Submit" class="btn-glow primary" value="Add to Customer" onClick="__addtoCustomer()">     
-									<input type="button" name="Submit" class="btn-glow primary" value="Send Mail" onClick="__showEmailForm('<!--#4DHTMLVAR [Leads]uuid-->')"> 
+									<input type="submit" class="btn btn-primary" value="Submit">     
+									<input type="button" name="Submit" class="btn btn-danger" value="Add to Customer" onClick="__addtoCustomer()">     
+									<input type="button" name="Submit" class="btn btn-primary" value="Send Mail" onClick="__showEmailForm('<!--#4DHTMLVAR [Leads]uuid-->')"> 
 								
-									<a href="leads.shtml" CLASS="cancelbtn">Cancel</a>
+									<a href="leads.shtml" CLASS="btn btn-danger">Cancel</a>
 								</div>
 							
 					
@@ -379,11 +379,11 @@ end if
     </div>
 	
 	
-	
-    <!-- end main container -->
+ <!-- end main container -->
 	<!-- scripts -->
-	<script src="js/wysihtml5-0.3.0.js"></script>
-  	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+  	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/top-footer.shtml-->
+</div>
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml-->
 	<script src="js/basictable.js"></script>
 	<script src="js/bootstrap.datepicker.js"></script>
 	<script src="js/jquery.validate.js"></script>

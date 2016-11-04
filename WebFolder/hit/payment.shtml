@@ -92,11 +92,11 @@ _HIT_WebSession_SetVar ("last-payment-uuid";_HIT_WebApp_GetField ("uuid"))
         <section class="content-header">
       		<h1>
         		<!--#4DIF (Records in selection([Tasks])=1)-->"<!--#4DVAR taskNameStr-->"<!--#4DELSE-->New<!--#4DENDIF--> 
-        		<small>Contact</small>
+        		<small>Payment</small>
       		</h1>
       		<ol class="breadcrumb">
        			<li><a href="index.shtml"><i class="fa fa-dashboard"></i> Dashboard</a></li>
-        		<li class="active">Contact</li>
+        		<li class="active">Payment</li>
       		</ol>
     	</section>
 		
@@ -185,15 +185,16 @@ _HIT_WebSession_SetVar ("last-payment-uuid";_HIT_WebApp_GetField ("uuid"))
 		
 		
 	
-    </div>
+    
 	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/bankEntriesPopups.shtml--> 
 	
 	
 	
-    <!-- end main container -->
+     <!-- end main container -->
 	<!-- scripts -->
-	<script src="js/wysihtml5-0.3.0.js"></script>
-  	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+  	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/top-footer.shtml-->
+</div>
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml-->
 	<script src="js/basictable.js"></script>
 	<script src="js/bootstrap.datepicker.js"></script>
 	<script src="js/jquery.validate.js"></script>
