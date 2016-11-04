@@ -30,7 +30,12 @@
 						$("#add_new_note").val("");
 						//var username="<!--HIT_EXECUTE _HIT_HTMLTXT:= _HIT_NAMETXT -->";
 						var username=html.user_name;
-						$(".notes_end").before('<div class="notes"><label>'+username+' ('+date_time+')</label><input class="note_uuid" type="hidden" value="'+note_uuid+'" /><textarea name="note" class="span6 note" rows="3" id="note" readonly>'+add_note+'</textarea> <button type="button" id="edit" class="btn-glow" onclick="editCustomerNote($(this))">Edit Note</button><button type="button" id="delete" class="btn-glow" onclick="deleteCustomerNote($(this))">Delete</button><button type="button" id="save" class="btn-glow" onclick="saveCustomerNote($(this))" style="display:none">Save Note</button><button type="button" id="cancel" class="btn-glow" onclick="cancelCustomerNote($(this))" style="display:none">Cancel</button>');
+						$(".notes_end").before('<div class="notes"><div class="form-group"><div CLASS="col-sm-8"><input class="note_uuid" type="hidden" value="'+note_uuid+'" /><div ALIGN="LEFT" STYLE="text-align::left; padding-left:0px;">'
+							+'<label class="col-sm-9"  STYLE="padding-left:0px; padding-top:7px;" id="user_details">'+username+' ('+date_time+')</label></div>'
+							+'<div STYLE=" padding-left:15px;">&nbsp;<button type="button" id="edit" class="btn btn-danger btn-sm" onclick="editCustomerNote($(this))">Edit Note</button>&nbsp;<button type="button" id="delete" class="btn btn-primary btn-sm" onclick="deleteCustomerNote($(this))">Delete</button>&nbsp;<button type="button" id="save" class="btn btn-danger btn-sm" onclick="saveCustomerNote($(this))" style="display:none">Save Note</button>&nbsp;<button type="button" id="cancel" class="btn btn-primary btn-sm" onclick="cancelCustomerNote($(this))" style="display:none">Cancel</button></div>'
+							+'</div></div>'
+							+'<div class="form-group ><div CLASS="col-sm-8"><textarea name="note" class="form-control col-sm-5 note" rows="3" id="note" readonly>'+add_note+'</textarea></div></div>'
+							+'</div>');
 						}
 					}else if(html.error){
 						__alertMessage(html.error);

@@ -94,26 +94,9 @@ _HIT_WebSession_SetVar ("last-clicked-uuid";_HIT_WebApp_GetField ("uuid"))
 }
 
 .green-color{
-	background:#dff0d8;;
+	background:#dff0d8 !important;
 }
-.table thead th {
-	padding-top:10px;
-	padding-bottom:10px;
-	vertical-align:middle;
-	border: 1px solid #d5d5d5!important;
-}
-#items th {
-    background: #f4f4f5;
-    border: 1px solid #d5d5d5!important;
-    text-align: left;
-}
- #items tr td {
-    border: 1px solid #d5d5d5;
-    text-align: left;
-}
-
-
-		#relatedtask .custom-combobox-input {
+#relatedtask .custom-combobox-input {
     width: 233%!important;
     margin-left: 27px;
 }
@@ -294,29 +277,27 @@ _HIT_WebSession_SetVar ("last-clicked-uuid";_HIT_WebApp_GetField ("uuid"))
 								<h3>Notes</h3><br>
 								<!--#4DSCRIPT/Web_LoadTaskNotes/-->	
 								<!--#4DLOOP [Notes]--><!-- row -->
-								<div class="notes form-group">
-														
-							<div CLASS="col-sm-8">		<input class="note_uuid" type="hidden" value="<!--#4DHTMLVAR [Notes]uuid-->" />
-								<div ALIGN="LEFT" STYLE="text-align::left; padding-left:0px;">	<label class="col-sm-9"  STYLE="padding-left:0px; padding-top:7px;" id="user_details"><!--#4DHTMLVAR [Notes]note_user_name--> (<!--4DHTMLVAR timestamp_unix_toGMT ([Notes]Timestamp_modified)-->) (Note: <!--#4DHTMLVAR [Notes]note_ID-->)</label></div>
-									
-									<div STYLE=" padding-left:15px;">	<button type="button" id="edit" class="btn btn-danger btn-sm " onClick="editCustomerNote($(this))">Edit Note</button>&nbsp;
-									<button type="button" id="delete" class="btn btn-primary btn-sm " onClick="deleteCustomerNote($(this))">Delete</button></div>
-									</div></div>
-									
-										<div class="form-group">
-										
-									
-									<div CLASS="col-sm-8"><textarea name="note" class="col-sm-5 note form-control" rows="3" id="note" readonly> <!--#4DHTMLVAR [Notes]Note--></textarea>
-									
-									
-								
-									</div></div>
-									
-									
-									
-									<button type="button" id="save" class="btn btn-danger btn-sm " onClick="saveCustomerNote($(this))" style="display:none">Save Note</button>
-									<button type="button" id="cancel" class="btn btn-primary btn-sm " onClick="cancelCustomerNote($(this))" style="display:none">Cancel</button>
+								<div class="notes"><div class="form-group">
+									<div CLASS="col-sm-8">
+										<input class="note_uuid" type="hidden" value="<!--#4DHTMLVAR [Notes]uuid-->" />
+										<div ALIGN="LEFT" STYLE="text-align::left; padding-left:0px;">
+											<label class="col-sm-9"  STYLE="padding-left:0px; padding-top:7px;" id="user_details"><!--#4DHTMLVAR [Notes]note_user_name--> (<!--4DHTMLVAR timestamp_unix_toGMT ([Notes]Timestamp_modified)-->) (Note: <!--#4DHTMLVAR [Notes]note_ID-->)</label>
+										</div>
+										<div STYLE=" padding-left:15px;">
+											<button type="button" id="edit" class="btn btn-danger btn-sm " onClick="editCustomerNote($(this))">Edit Note</button>&nbsp;
+											<button type="button" id="delete" class="btn btn-primary btn-sm " onClick="deleteCustomerNote($(this))">Delete</button>&nbsp;
+											<button type="button" id="save" class="btn btn-danger btn-sm " onClick="saveCustomerNote($(this))" style="display:none">Save Note</button>&nbsp;
+											<button type="button" id="cancel" class="btn btn-primary btn-sm " onClick="cancelCustomerNote($(this))" style="display:none">Cancel</button>&nbsp;
+										</div>
+									</div>
 								</div>
+								<div class="form-group">
+									<div CLASS="col-sm-8">
+										<textarea name="note" class="col-sm-5 note form-control" rows="3" id="note" readonly> <!--#4DHTMLVAR [Notes]Note--></textarea>
+									</div>
+								</div>
+								</div>
+
 								<!--#4DENDLOOP-->
 								
 								<div class='notes_end'></div>
@@ -356,6 +337,11 @@ _HIT_WebSession_SetVar ("last-clicked-uuid";_HIT_WebApp_GetField ("uuid"))
     <div class="row-fluid form-wrapper">
 					<!-- left column -->
                     <div class="row">
+                    	<!--#4DIF (mUserIsCurrentBool)-->
+                    	
+                    	<!--#4DELSE-->
+                    	<div style="padding:20px;"><a href="timeslip.shtml?task_id=<!--#4DVAR [Tasks]task_id-->" type="button" class="btn btn-primary btn-color margin-right-5 btn-sm " title="Add a Timeslip">Add new Timeslip</a></div>
+                    	<!--#4DENDIF-->
 						<div class="table-responsive table-full-width col-md-12 " STYLE="margin-top:10px;">
 		 			<div class="table-responsive" style="border:none;" >
                          <table class="table table-striped  table-bordered table-hover custom-tbl-st bt" id="table-breakpoint1"  style="background-color: rgb(255, 255, 255); border-radius: 4px;" >
@@ -373,15 +359,7 @@ _HIT_WebSession_SetVar ("last-clicked-uuid";_HIT_WebApp_GetField ("uuid"))
 		  <!--#4DIF (Records in selection([Tasks])=1)-->
 		  <!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_TSTXT -->
 		  <!--#4DENDIF-->
-		  
-		  <!--#4DIF (mUserIsCurrentBool)-->
-		  
-		  <!--#4DELSE-->
-			<tr id="hiderow">
-		   		<td colspan="4"><a href="timeslip.shtml?task_id=<!--#4DVAR [Tasks]task_id-->" title="Add a row">Add new Timeslip</a></td>
-		 	</tr>
-		  <!--#4DENDIF-->
-		  
+		 
 		</table>	</div></div>
 					
 					</div>
@@ -395,7 +373,7 @@ _HIT_WebSession_SetVar ("last-clicked-uuid";_HIT_WebApp_GetField ("uuid"))
                   <div CLASS="row">
             	<div class="table-responsive table-full-width col-md-12 " STYLE="margin-top:10px;">
 		 			<div class="table-responsive" style="border:none;" >
-                         <table class="table table-striped  table-bordered table-hover custom-tbl-st bt" id="table-breakpoint"  style="background-color: rgb(255, 255, 255); border-radius: 4px;" >
+                         <table class="table table-striped  table-bordered table-hover custom-tbl-st bt" id="items"  style="background-color: rgb(255, 255, 255); border-radius: 4px;" >
 		  
 		  <tr class="item">
 		      <th>Relationship</th>
@@ -450,9 +428,7 @@ _HIT_WebSession_SetVar ("last-clicked-uuid";_HIT_WebApp_GetField ("uuid"))
                             </div>
 							</div>
 		
-			
-	
-		<div class="form-group" >
+							<div class="form-group" >
     							<label for="" class="col-sm-1 control-label"></label>	
 								<div class="col-sm-4">					
                              		<button type="button" class="btn btn-primary" onClick="add_relation()" >Add</button>
@@ -473,39 +449,38 @@ _HIT_WebSession_SetVar ("last-clicked-uuid";_HIT_WebApp_GetField ("uuid"))
   <div id="four" class="tab-pane fade">
    <div class="row-fluid form-wrapper"> 
               <!-- left column -->
-               <a hre="javascript:void(0)" onClick="add_new_checklist()" class="btn  btn-primary" STYLE="margin:10px;">Add new Checklist</a>
-              <div class="table-wrapper checklistTable" style="display:none;">
-                <table class="table table-hover" id="items" style="width:75%" >
+              <button type="button" data-toggle="modal" data-target="#enterCheckList" class="btn  btn-primary" STYLE="margin:10px;">Add new Checklist</button>
+              <div class="table-responsive table-full-width col-md-12 checklistTable" STYLE="margin-top:10px;">
+		 			<div class="table-responsive" style="border:none;" >
+                         <table class="table table-striped  table-bordered table-hover custom-tbl-st bt" id="checklist_items"  style="background-color: rgb(255, 255, 255); border-radius: 4px;" >
+		  
                 <thead>
                 	<tr>
-                      <th style="width:5% ;border:1px solid #d5d5d5!important;background-clip: padding-box ">&nbsp;</th>
-                      <th style="border: 1px solid #d5d5d5!important;background-clip: padding-box">Checklist</th>
-                      <th style="width:25%;border: 1px solid #d5d5d5!important;background-clip: padding-box">Modified </th>
-                      <th style="width:15%;	border: 1px solid #d5d5d5!important;background-clip: padding-box">Duplicate Status</th>
-                      <th style="width:25%;border: 1px solid #d5d5d5!important;background-clip: padding-box">Will Regenerate On</th>
-                      <th style="width:6%; border: 1px solid #d5d5d5!important;background-clip: padding-box" align="left">Action</th>
+                      <th style="width:5% ; ">Status</th>
+                      <th style="">Checklist</th>
+                      <th style="width:25%;">Modified </th>
+                      <th style="width:15%;	">Duplicate Status</th>
+                      <th style="width:25%;">Will Regenerate On</th>
+                      <th style="width:6%;" align="left">Action</th>
                     </tr>
                 </thead>
                   <tbody id="checkListData">
                     
                   </tbody>
                 </table>
-                <span style="font-size:11px;font-style:italic;padding-right: 400px;float:right;">*Note: Checklist with green background indicates "Completed"!</span>
+                </div>
+                
+                </div>
+                <span style="font-size:11px;font-style:italic;float:right;">*Note: Checklist with green background indicates "Completed"!</span>
                 <br>
                 <div style="width:75%; margin-top:10px;" class="text-center"><a style="margin:0 auto;display:none;" class="btn-glow  text-center" id="load_more_checklist" onclick="load_more_checklist()" href="javascript:void(0)">Load more</a></div>
                 
-                </div>
               </div>
             </div>
   </div>
   <!--#4DENDIF-->	
   
 </div>
-				
-				
-				
-				
-					
 				</form>
 				</div>
             </div>
@@ -513,7 +488,66 @@ _HIT_WebSession_SetVar ("last-clicked-uuid";_HIT_WebApp_GetField ("uuid"))
     </div>
     <!-- end main container -->
 	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/top-footer.shtml-->
+	<div class="modal fade" id="deleteChecklist" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+		<div class="modal-dialog">
+       		<div class="modal-content">
+              	<div class="modal-header">
+                	<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">x</span></button>
+                	<h3 class="modal-title" id="globalMessage">Are you sure to remove this option?</h3>
+                	<input name="deleteCheckListUUID" type="hidden" value="" id="deleteCheckListUUID">
+              	</div>
+              	<div class="modal-footer">
+              		<button type="button" class="btn btn-default pull-left" data-dismiss="modal">No</button>
+                	<button type="button" class="btn btn-primary" onClick="deleteChecklist()">Yes</button>
+				</div>
+            </div>
+            <!-- /.modal-content -->
+		</div>
+	</div>
 	
+	<div class="modal fade" id="enterCheckList" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+		<div class="modal-dialog">
+            <div class="modal-content">
+              	<div class="modal-header">
+                	<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  	<span aria-hidden="true">×</span></button>
+                	<h4 class="modal-title">Add new CheckList</h4>
+              	</div>
+              	<div class="modal-body">
+                	<textarea name="c_description" id="c_description" value="" placeholder="Description" row="8" class="form-control"></textarea><br/>
+					<label>Start From :</label><input class="input-large datepicker" type="text" data-date-format="dd/mm/yyyy" value="" id="c_start_date" name="c_start_date" readonly >
+					<label>Duplicate this checklist :</label><label style="width:auto; display:inline"><input type="radio" value="daily" class="e_duplicate_checklist" name="e_duplicate_checklist"> Daily&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="weekly" name="e_duplicate_checklist" class="e_duplicate_checklist"> Weekly&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="monthly" class="e_duplicate_checklist" name="e_duplicate_checklist"> Monthly&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="yearly" class="e_duplicate_checklist" name="e_duplicate_checklist"> Yearly&nbsp;&nbsp;</label>
+				</div>
+              	<div class="modal-footer">
+                	<button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                	<button type="button" class="btn btn-primary" onClick="add_new_checklist()">Save</button>
+              	</div>
+			</div>
+            <!-- /.modal-content -->
+          </div>
+	</div>
+	<div class="modal fade" id="changeCheckList" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+		<div class="modal-dialog">
+            <div class="modal-content">
+              	<div class="modal-header">
+                	<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  	<span aria-hidden="true">×</span></button>
+                	<h4 class="modal-title">Duplicate this CheckList</h4>
+              	</div>
+              	<input name="checkListUUID" type="hidden" value="" id="checkListUUID">
+              	<input name="checklisttype" type="hidden" value="" id="checklisttype">
+              	<div class="modal-body" id="changeCheckListBody">
+                	
+                </div>
+              	<div class="modal-footer">
+                	<button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                	<button type="button" class="btn btn-primary" onClick="duplicateChecklsit()">Update</button>
+              	</div>
+			</div>
+            <!-- /.modal-content -->
+          </div>
+	</div>
 </div>
 	<!-- scripts -->
     <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
@@ -521,8 +555,6 @@ _HIT_WebSession_SetVar ("last-clicked-uuid";_HIT_WebApp_GetField ("uuid"))
 	<script src="js/bootstrap.datepicker.js"></script>
     <script type="text/javascript" src="js/jquery.ptTimeSelect.js"></script>
   
-	<script src="js/jquery.uniform.min.js"></script>
-	<script type="text/javascript" src="js/jquery-impromptu.js"></script>
 	<script src="js/jquery.validate.js"></script>
 	<script src="js/jquery-loader.js" type="text/javascript"></script>
 	<!--HIT_EXECUTE
@@ -554,67 +586,40 @@ function load_more_checklist(){
 	loadCheckList();
 }
 function add_new_checklist(){
-	var htmlStr='<textarea name="description" id="description" value="" placeholder="Description" row="8" class="form-control"></textarea><br/>';
-	htmlStr+='<label>Start From :</label><input class="input-large datepicker" type="text" data-date-format="dd/mm/yyyy" value="" id="c_start_date" name="c_start_date" readonly >';
-	htmlStr+='<label>Duplicate this checklist :</label><label style="width:auto; display:inline"><input type="radio" value="daily" class="duplicate_checklist" name="duplicate_checklist"> Daily&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="weekly" name="duplicate_checklist" class="duplicate_checklist"> Weekly&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="monthly" class="duplicate_checklist" name="duplicate_checklist"> Monthly&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="yearly" class="duplicate_checklist" name="duplicate_checklist"> Yearly&nbsp;&nbsp;</label>';
-	var statesdemo = {
-		state0: {
-			title: 'Add new CheckList',
-			html: htmlStr ,
-			buttons: { Save : 0, Cancel: 1 },
-			submit:function(e,v,m,f){ 
-				$("#errMsg").remove();
-	
-				if(v==0) {
-					e.preventDefault();
-					var duplicateOption="";
-					var is_duplicate="false";
-					$('.duplicate_checklist').each(function(){
-						if($(this).is(':checked')){
-							duplicateOption= $(this).val();
-						}
-					});
-					if(duplicateOption!=""){
-						is_duplicate="true";
-					}else{
-						duplicateOption="none";
-					}
-					if(f.description!=""){
-						$.ajax({
-							type: "GET",
-							url: "savetaskchecklist.cgi",
-							data: {'table' : 'Tasks', 'task_uuid' : tableUUIDStr, 'description': f.description, 'start_date': f.c_start_date, 'duplicate_interval' : duplicateOption, 'is_duplicate'  :is_duplicate},
-							success: function(response){
-								$.prompt.goToState('state1');
-								return false;
-							}
-						});
-					}else{
-						$("#description").before('<span id="errMsg" style="color:#CC0000">* Please add description for new Checklist item!</span>');
-					}
-				}
-				if(v==1) {
-					$.prompt.close();
-				}
-			}
-		},
-		state1: {
-			html:'Successfully saved!',
-			buttons: { Ok: 0 },
-			submit:function(e,v,m,f){
-				e.preventDefault();
-				$.prompt.close();
+	var duplicateOption="";
+	var is_duplicate="false";
+	$('.e_duplicate_checklist').each(function(){
+		if($(this).is(':checked')){
+			duplicateOption= $(this).val();
+		}
+	});
+	if(duplicateOption!=""){
+		is_duplicate="true";
+	}else{
+		duplicateOption="none";
+	}
+	if($('#c_description').val()!=""){
+		$.ajax({
+			type: "GET",
+			url: "savetaskchecklist.cgi",
+			data: {'table' : 'Tasks', 'task_uuid' : tableUUIDStr, 'description': $('#c_description').val(), 'start_date': $('#c_start_date').val(), 'duplicate_interval' : duplicateOption, 'is_duplicate'  :is_duplicate},
+			success: function(response){
+				$('#c_description').val('');
+				$('#c_start_date').val('');
+								
+				$('#enterCheckList').modal('hide');
+				__alertModalBox('Successfully saved!');
 				$('#checkListData').html("");
+				$('#checkListData').basictable('destroy');
 				end=start+loadmoreNum;
 				start=0;
 				loadCheckList();
 			}
-		}
-	};
-	var myPrompt = $.prompt(statesdemo);
-	myPrompt.on('impromptu:loaded', function(e){
-		$('#c_start_date').datepicker({"autoclose": true});
-	});
+		});
+	}else{
+		$("#c_description").before('<span id="errMsg" style="color:#CC0000">* Please add description for new Checklist item!</span>');
+	}
+				
 }
 
 function changeStatus(evt,uuid){
@@ -624,6 +629,7 @@ function changeStatus(evt,uuid){
 		data: {'status' : evt.checked, 'uuid' : uuid, "action" : "active_status", 'task_uuid' : tableUUIDStr},
 		success: function(response){
 			$('#checkListData').html("");
+			$('#checkListData').basictable('destroy');
 			end=start+loadmoreNum;
 			start=0;
 			loadCheckList();
@@ -631,35 +637,33 @@ function changeStatus(evt,uuid){
 	});
 }
 
-function deleteChecklist(uuid){
-if(uuid!=""){
-	$.prompt({
-		state0: {
-			title: 'Are you sure to remove this option?',
-			buttons: { Yes : 0, No: 1 },
-			submit:function(e,v,m,f){ 
-				if(v==0) {
-					$.ajax({
-						type: "GET",
-						url: "managetaskchecllist.cgi",
-						data: {'uuid' : uuid, "action" : "delete"},
-						success: function(response){
-							$('#checkListData').html("");
-							end=start+loadmoreNum;
-							start=0;
-							loadCheckList();
-							$.prompt.close();
-						}
-					});
-				}
-				if(v==1) {
-					$.prompt.close();
-				}
+function deleteChecklist(){
+	var uuid=$("#deleteCheckListUUID").val();
+	if(uuid!=""){
+		$.ajax({
+			type: "GET",
+			url: "managetaskchecllist.cgi",
+			data: {'uuid' : uuid, "action" : "delete"},
+			success: function(response){
+				$('#checkListData').html("");
+				$('#checkListData').basictable('destroy');
+				end=start+loadmoreNum;
+				start=0;
+				loadCheckList();
+				$("#deleteCheckListUUID").val('');
+				$('#deleteChecklist').modal('hide');
 			}
-		}
-	});
+		});
+	}
 }
 
+function confirmDeletionChecklist(uuid){
+	if(uuid!=""){
+		$("#deleteCheckListUUID").val(uuid);
+		$('#deleteChecklist').modal('show');
+	}else{
+		__alertModalBox("Please try after sometime!");
+	}
 }
 function editChecklist(uuid){
 	if(uuid!=""){
@@ -707,31 +711,8 @@ function capitalizeFirstLetter(string) {
 }
 
 function duplicateChecklsit(dstatus, uuid, type){
-	var addDuplicateHtmlStr='<label>Start From :</label><input class="input-large datepicker" type="text" data-date-format="dd/mm/yyyy" value="" id="u_start_date" name="u_start_date" readonly ><br>';
-	var errorMsgStr="";
-	if(dstatus=="daily"){
-		addDuplicateHtmlStr+='<label style="width:auto; display:inline" class="duplicateErr"><input type="radio" value="none" class="duplicate_checklist" name="duplicate_checklist"> No&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" checked value="daily" class="duplicate_checklist" name="duplicate_checklist"> Daily&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="weekly" name="duplicate_checklist" class="duplicate_checklist"> Weekly&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="monthly" class="duplicate_checklist" name="duplicate_checklist"> Monthly&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="yearly" class="duplicate_checklist" name="duplicate_checklist"> Yearly&nbsp;&nbsp;</label>'
-	}else if(dstatus=="weekly"){
-		addDuplicateHtmlStr+='<label style="width:auto; display:inline" class="duplicateErr"><input type="radio" value="none" class="duplicate_checklist" name="duplicate_checklist"> No&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="daily" class="duplicate_checklist" name="duplicate_checklist"> Daily&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="weekly" checked name="duplicate_checklist" class="duplicate_checklist"> Weekly&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="monthly" class="duplicate_checklist" name="duplicate_checklist"> Monthly&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="yearly" class="duplicate_checklist" name="duplicate_checklist"> Yearly&nbsp;&nbsp;</label>'
-	}else if(dstatus=="monthly"){
-		addDuplicateHtmlStr+='<label style="width:auto; display:inline" class="duplicateErr"><input type="radio" value="none" class="duplicate_checklist" name="duplicate_checklist"> No&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="daily" class="duplicate_checklist" name="duplicate_checklist"> Daily&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="weekly" name="duplicate_checklist" class="duplicate_checklist"> Weekly&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="monthly" checked class="duplicate_checklist" name="duplicate_checklist"> Monthly&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="yearly" class="duplicate_checklist" name="duplicate_checklist"> Yearly&nbsp;&nbsp;</label>'
-	}else if(dstatus=="yearly"){
-		addDuplicateHtmlStr+='<label style="width:auto; display:inline" class="duplicateErr"><input type="radio" value="none" class="duplicate_checklist" name="duplicate_checklist"> No&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="daily" class="duplicate_checklist" name="duplicate_checklist"> Daily&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="weekly" name="duplicate_checklist" class="duplicate_checklist"> Weekly&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="monthly" class="duplicate_checklist" name="duplicate_checklist"> Monthly&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="yearly" checked class="duplicate_checklist" name="duplicate_checklist"> Yearly&nbsp;&nbsp;</label>'
-	}else{
-		addDuplicateHtmlStr+='<label style="width:auto; display:inline" class="duplicateErr"><input type="radio" value="daily" class="duplicate_checklist" name="duplicate_checklist"> Daily&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="weekly" name="duplicate_checklist" class="duplicate_checklist"> Weekly&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="monthly" class="duplicate_checklist" name="duplicate_checklist"> Monthly&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="yearly" class="duplicate_checklist" name="duplicate_checklist"> Yearly&nbsp;&nbsp;</label>'
-	}
-	var myPrompt = $.prompt({
-		state0: {
-			title: 'Duplicate this CheckList',
-			html: addDuplicateHtmlStr,
-			buttons: { Update : 0, Cancel: 1 },
-			submit:function(e,v,m,f){ 
-				$("#errMsg").remove();
-	
-				if(v==0) {
-					e.preventDefault();
-					var duplicateOption="";
-					var is_duplicate="false";
+	var duplicateOption="";
+	var is_duplicate="false";
 					$('.duplicate_checklist').each(function(){
 						if($(this).is(':checked')){
 							duplicateOption= $(this).val();
@@ -747,13 +728,17 @@ function duplicateChecklsit(dstatus, uuid, type){
 						$.ajax({
 							type: "GET",
 							url: "managetaskchecllist.cgi",
-							data: {'task_uuid' : tableUUIDStr, 'uuid': uuid, 'action' : 'duplicate_status', 'start_date': f.u_start_date, 'duplicate_interval' : duplicateOption, 'is_duplicate' :is_duplicate, 'type' :type},
+							data: {'task_uuid' : tableUUIDStr, 'uuid': $("#checkListUUID").val(), 'action' : 'duplicate_status', 'start_date': $('#u_start_date').val(), 'duplicate_interval' : duplicateOption, 'is_duplicate' :is_duplicate, 'type' :$("#checklisttype").val()	},
 							success: function(response){
 								if(response.success){
-									$.prompt.goToState('state1');
-									return false;
+									$('#changeCheckList').modal('hide');
+									__alertModalBox('Successfully saved!');
+									$('#checkListData').html("");
+									$('#checkListData').basictable('destroy');
+									end=start+loadmoreNum;
+									start=0;
+									loadCheckList();
 								}else{
-									errorMsgStr=response.error;
 									$(".duplicateErr").before('<span id="errMsg" style="color:#CC0000">* '+errorMsgStr+'<br/>');
 								}
 							}
@@ -761,28 +746,27 @@ function duplicateChecklsit(dstatus, uuid, type){
 					}else{
 						$(".duplicateErr").before('<span id="errMsg" style="color:#CC0000">* Please select an option!</span><br/>');
 					}
-				}
-				if(v==1) {
-					$.prompt.close();
-				}
-			}
-		},
-		state1: {
-			html:'Successfully updated!',
-			buttons: { Ok: 0 },
-			submit:function(e,v,m,f){
-				e.preventDefault();
-				$.prompt.close();
-				$('#checkListData').html("");
-				end=start+loadmoreNum;
-				start=0;
-				loadCheckList();
-			}
-		}
-	});
-	myPrompt.on('impromptu:loaded', function(e){
-		$('#u_start_date').datepicker({"autoclose": true});
-	});
+}
+function duplicateChecklistModal(dstatus, uuid, type){
+	var addDuplicateHtmlStr='<label>Start From :</label><input class="input-large datepicker" type="text" data-date-format="dd/mm/yyyy" value="" id="u_start_date" name="u_start_date" readonly ><br>';
+	var errorMsgStr="";
+	if(dstatus=="daily"){
+		addDuplicateHtmlStr+='<label style="width:auto; display:inline" class="duplicateErr"><input type="radio" value="none" class="duplicate_checklist" name="duplicate_checklist"> No&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" checked value="daily" class="duplicate_checklist" name="duplicate_checklist"> Daily&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="weekly" name="duplicate_checklist" class="duplicate_checklist"> Weekly&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="monthly" class="duplicate_checklist" name="duplicate_checklist"> Monthly&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="yearly" class="duplicate_checklist" name="duplicate_checklist"> Yearly&nbsp;&nbsp;</label>'
+	}else if(dstatus=="weekly"){
+		addDuplicateHtmlStr+='<label style="width:auto; display:inline" class="duplicateErr"><input type="radio" value="none" class="duplicate_checklist" name="duplicate_checklist"> No&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="daily" class="duplicate_checklist" name="duplicate_checklist"> Daily&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="weekly" checked name="duplicate_checklist" class="duplicate_checklist"> Weekly&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="monthly" class="duplicate_checklist" name="duplicate_checklist"> Monthly&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="yearly" class="duplicate_checklist" name="duplicate_checklist"> Yearly&nbsp;&nbsp;</label>'
+	}else if(dstatus=="monthly"){
+		addDuplicateHtmlStr+='<label style="width:auto; display:inline" class="duplicateErr"><input type="radio" value="none" class="duplicate_checklist" name="duplicate_checklist"> No&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="daily" class="duplicate_checklist" name="duplicate_checklist"> Daily&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="weekly" name="duplicate_checklist" class="duplicate_checklist"> Weekly&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="monthly" checked class="duplicate_checklist" name="duplicate_checklist"> Monthly&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="yearly" class="duplicate_checklist" name="duplicate_checklist"> Yearly&nbsp;&nbsp;</label>'
+	}else if(dstatus=="yearly"){
+		addDuplicateHtmlStr+='<label style="width:auto; display:inline" class="duplicateErr"><input type="radio" value="none" class="duplicate_checklist" name="duplicate_checklist"> No&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="daily" class="duplicate_checklist" name="duplicate_checklist"> Daily&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="weekly" name="duplicate_checklist" class="duplicate_checklist"> Weekly&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="monthly" class="duplicate_checklist" name="duplicate_checklist"> Monthly&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="yearly" checked class="duplicate_checklist" name="duplicate_checklist"> Yearly&nbsp;&nbsp;</label>'
+	}else{
+		addDuplicateHtmlStr+='<label style="width:auto; display:inline" class="duplicateErr"><input type="radio" value="daily" class="duplicate_checklist" name="duplicate_checklist"> Daily&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="weekly" name="duplicate_checklist" class="duplicate_checklist"> Weekly&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="monthly" class="duplicate_checklist" name="duplicate_checklist"> Monthly&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="yearly" class="duplicate_checklist" name="duplicate_checklist"> Yearly&nbsp;&nbsp;</label>'
+	}
+	
+	$("#checkListUUID").val(uuid);
+	$("#checklisttype").val(type);
+	$("#changeCheckListBody").html(addDuplicateHtmlStr);
+	$('#changeCheckList').modal('show');
+	$('#u_start_date').datepicker({"autoclose": true});
 }
 function loadCheckList(){
 	$("#load_more_checklist").hide();
@@ -791,7 +775,9 @@ function loadCheckList(){
 	if(xhrAbortLoad) xhrAbortLoad.abort();
 	xhrAbortLoad=$.getJSON(jsonRow,function(result){
 		if(result.Alert){
-			//$.prompt("* No more record found!");
+			$('#checklist_items').basictable({
+    			breakpoint: 751
+    		});
 		}else{
 		if(result.aaData!=""){
 			$(".checklistTable").show();
@@ -808,32 +794,36 @@ function loadCheckList(){
 					//table_html+='<td><span id="user_'+row.uuid+'">'+row.user_name+'</span></td>';
 					table_html+='<td><span id="modified_'+row.uuid+'">'+row.user_name+' ('+row.last_modified+')</span></td>';
 					if(row.duplicate_interval=="none" || row.duplicate_interval=="None"){
-						table_html+='<td><a href="javascript:void(0)" onClick="duplicateChecklsit(\''+row.duplicate_interval+'\',\''+row.uuid+'\',\'new\')" title="Duplicate this">Duplicate this</a></td>';
+						table_html+='<td><a href="javascript:void(0)" onClick="duplicateChecklistModal(\''+row.duplicate_interval+'\',\''+row.uuid+'\',\'new\')" title="Duplicate this">Duplicate this</a></td>';
 					}else{
 						var duplicateStr=capitalizeFirstLetter(row.duplicate_interval);
-						table_html+='<td>'+duplicateStr+' (<a href="javascript:void(0)" onClick="duplicateChecklsit(\''+row.duplicate_interval+'\',\''+row.uuid+'\',\'change\')" title="Change">Change</a>)</td>';
+						table_html+='<td>'+duplicateStr+' (<a href="javascript:void(0)" onClick="duplicateChecklistModal(\''+row.duplicate_interval+'\',\''+row.uuid+'\',\'change\')" title="Change">Change</a>)</td>';
 					}
 					table_html+='<td align="left">'+row.next_duplicate_time+'</td>';
 					table_html+='<td align="left">';
-					table_html+='<div id="editRemove_'+row.uuid+'"><a href="javascript:void(0)" onClick="editChecklist(\''+row.uuid+'\')" title="Edit"><i class="fa fa-pencil"></i></a>&nbsp;<a href="javascript:void(0)" onClick="deleteChecklist(\''+row.uuid+'\')" title="Delete"><i class="fa fa-trash"></i></a></div>';
+					table_html+='<div id="editRemove_'+row.uuid+'"><a href="javascript:void(0)" onClick="editChecklist(\''+row.uuid+'\')" title="Edit"><i class="fa fa-pencil"></i></a>&nbsp;<a href="javascript:void(0)" onClick="confirmDeletionChecklist(\''+row.uuid+'\')" title="Delete"><i class="fa fa-trash"></i></a></div>';
 					table_html+='<div id="saveCancel_'+row.uuid+'" style="display:none;"><a href="javascript:void(0)" onClick="saveChecklist(\''+row.uuid+'\')" title="Save"><i class="fa fa-save"></i></a>&nbsp;<a href="javascript:void(0)" onClick="cancelChecklist(\''+row.uuid+'\')" title="Cancel"><i class="fa fa-remove"></i></a></div>';
 					table_html+='</td>';
 					table_html+='</tr>';
 				});
 			
 				$('#checkListData').append(table_html);
+				$('#checklist_items').basictable({
+    				breakpoint: 751
+    			});
+			
 				if(end< result.total_records){
 					$("#load_more_checklist").show();
 				}
 		}else{
-			$.prompt("* No more record found!");
+			__alertModalBox("* No more record found!");
+			$('#checklist_items').basictable({
+    			breakpoint: 751
+    		});
 		}
 		}
 	});
 }
-
-
-		
 
 function add_file(){
 	
@@ -981,7 +971,7 @@ function add_relation(){
 			success: function(html)
 			{
 				if(html.Success){
-					$('#tabs-3 table#items').append('<tr class="item-row"><td>'+relation+'</td><td>'+task_name+'</td><td>assigned</td><td ><a href="javascript:void(0)" onClick="del_relation(\''+html.UUID+'\', $(this))" >Delete</a></td></tr>');
+					$('#third table#items').append('<tr class="item-row"><td>'+relation+'</td><td>'+task_name+'</td><td>assigned</td><td ><a href="javascript:void(0)" onClick="del_relation(\''+html.UUID+'\', $(this))" ><i class="fa fa-trash-o "></i></a></td></tr>');
 				}
 			}
 		});
@@ -1011,20 +1001,16 @@ function del_relation(del_uuid, ref){
 
     <script type="text/javascript">
         $(function () {
-			
-		
-		
-		 $('#table-breakpoint').basictable({
+        	$('#c_start_date').datepicker({"autoclose": true});
+			$('#items').basictable({
     				breakpoint: 751
-    			});
-				
-				
-					 $('#table-breakpoint1').basictable({
-    				breakpoint: 751
-    			});
+    		});
+    		
+			$('#table-breakpoint1').basictable({
+    			breakpoint: 751
+    		});
 			
-			
-        	loadCheckList();
+			loadCheckList();
         	taskNameStr = $('#Task_Name').val();
         	
 			$( "#tabs" ).tabs();
