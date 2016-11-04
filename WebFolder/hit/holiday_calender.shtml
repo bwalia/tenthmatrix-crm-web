@@ -5,79 +5,73 @@ C_LONGINT(_HIT_COUNTER)
 C_TEXT(_HTMLTITLETXT)
 
 if(_HIT_AuthenticateSession="Session-Authenticated-OK")
-//_HIT_HTMLTXT:="<h1>AUTH</h1>"
-
 _HTMLTITLETXT:="Employee Holidays"
-
 else
 _HIT_HTTPD_RedirectToURL ("sign-in.shtml?url="+HTTPD_DocumentURI)
 end if 
 
-//_HIT_HTMLTXT:=_HIT_SessionStr
 -->
-
 <!DOCTYPE html>
 <html>
 <head>
 	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
-	<link href='css/lib/fullcalendar.css' rel='stylesheet' />
-    <link href='css/lib/fullcalendar.print.css' rel='stylesheet' media='print' />
-    <link rel="stylesheet" href="css/compiled/calendar.css" type="text/css" media="screen" />
-	<link rel="stylesheet" type="text/css" href="lib/base.css" />
-	<link rel="stylesheet" type="text/css" href="css/jquery.timepicker.css" />
-	<link rel="stylesheet" href="css/base/jquery-ui.css" />
-	<link rel="stylesheet" href="css/autocomplete.css" />
-	
-	<link rel="stylesheet" media="all" type="text/css" href="css/jquery-impromptu.css" />
-<style>
-  
-  .ui-front {
-    z-index: 1000;
+	<link href='css/fullcalendar.min.css' rel='stylesheet' />
+    <link href='css/fullcalendar.print.css' rel='stylesheet' media='print' />
+    <link rel="stylesheet" href="css/calendar.css" type="text/css" media="screen" />
+	<link href="css/bootstrap.datepicker.css" type="text/css" rel="stylesheet">
+	<style>
+  	.ui-front {
+    	z-index: 1000;
 	}
-  .jqibox{
-  	z-index: 9999! important;
-  }
-  </style>
+  	.jqibox{
+  		z-index: 9999! important;
+  	}
+	</style>
 	
 </head>
-<body>
-
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
 	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
 
      <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
 
 	<!-- main container -->
-    <div class="content">
-        
-        <div class="container-fluid">
-		 <div id="pad-wrapper">
-            <div class="row-fluid calendar-wrapper">
-                    <div class="span12">
-						<h3 style="margin-bottom: 35px; font-style: italic;color: #696D73;">Employee Holidays</h3>
-						<div style="margin-top:-10px;margin-left:200px;" class="pull-left">
-						<div class="btn-group pull-right">
-							<a href="holidays.shtml" class="btn-flat success new-product margn-lft35">List View</a>
-							</div>
-						</div>
+    <div class="content-wrapper">
+        <section class="content-header">
+      		<h1>
+        		Employee Holidays
+        		<small>List panel</small>
+      		</h1>
+      		<ol class="breadcrumb">
+       			<li><a href="index.shtml"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+        		<li class="active">Employee Holidays</li>
+      		</ol>
+    	</section>
+		<section class="content">
+        	<div class="row">
+       			<div class="panel-body no-padding-top bg-white">
+            		<div class="row-fluid calendar-wrapper">
+                    	<div class="span12">
+
                         <!-- div that fullcalendar plugin uses  -->
                         <div id='calendar'></div>
-						
-						<!-- add new holiday request pop up -->
+
+                        <!-- edit image pop up -->
                         <div class="new-event popup" style="display:none" >
                             <div class="pointer">
                                 <div class="arrow"></div>
                                 <div class="arrow_border"></div>
                             </div>
-                            <i class="close-pop table-delete"></i>
+                            <i class="close-pop fa fa-close"></i>
                             <h5>Date 
                                 <span class="date"></span></h5>
-                            <form name="frm_task" class="form-comment" > 
+                            <form name="frm_task" class="form-horizontal col-sm-12 col-lg-12" > 
 								<input type="hidden" value="" name="curr_date" id="curr_date">
 								<input type="hidden" value="Requested" name="status" id="status">
-								<div class="field">
-								   Employee Name <span style="color:#6E829B">*</span>
-								   <div class="ui-select">
-										<select name="Employee_ID" id="Employee_ID">
+								<div class="form-group" ID="taskname">
+                               		Employee Name <sup class="required">*</sup>
+							   		<div class="ui-widget">
+										<select name="Employee_ID" id="Employee_ID" class="form-control">
 											
 											<option value="">--Select Employee--</option>
 											<!--HIT_EXECUTE
@@ -93,35 +87,33 @@ end if
 											-->
 										</select>
 									</div>
-								</div>
-								<div class="field">
+                            	</div>
+								<div class="form-group">
 									End Date <span style="color:#6E829B">*</span>
-									<input style="width:90px;" type="text" class="input-large datepicker" name="End_Date" id="End_Date">
+									<input type="text" class="input-large datepicker form-control" name="End_Date" id="End_Date">
 								</div>
-								<div class="field">
+								<div class="form-group">
 									Reason <span style="color:#6E829B">*</span>
-									<textarea name="Subject" id="Subject" rows="1" cols="10" class="event-input" style="width:45%; height:20px"></textarea>
+									<textarea name="Subject" id="Subject" rows="1" cols="10" class="event-input form-control"></textarea>
 								</div>
-								<input type="button" value="Request" class="btn-glow primary" onClick="return ValidateForm();">
+							
+                            <input type="button" value="Create" class="btn btn-primary btn-color margin-right-5 btn-sm " onClick="return ValidateForm();">
 							</form>
                         </div>
                     </div>
                 </div>
 			</div>
         </div>
+        </section>
     </div>
     <!-- end main container -->
-
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/top-footer.shtml-->
+</div>
 	<!-- scripts for this page -->
    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
-   
-   <script src="js/jquery-ui-1.10.2.custom.min.js"></script>
-    
-    <script src='js/fullcalendar_new.min.js'></script>
+   <script src='js/moment.min.js'></script>
+   <script src='js/fullcalendar.min.js'></script>
    <script src="js/bootstrap.datepicker.js"></script>
-   <script src="js/ui/jquery-ui.js"></script>
-
-	<script type="text/javascript" src="js/jquery-impromptu.js"></script>
 <script language="javascript">
 var new_event=new Array();
 
@@ -219,11 +211,7 @@ success: function(html)
 });
 
 }
-</script>
 
-
-    <!-- builds fullcalendar example -->
-    <script>
 	function get_datetime(date)
 	{
 
@@ -259,50 +247,30 @@ success: function(html)
                 editable: true,
 				
 				timeFormat: 'd MMM { - d MMM }',
-               /* events: [
-				
-                 
-					<!--#4DSCRIPT/Web_LoadTimeslips/-->
-                         <!--#4DLOOP [Timeslips]--><!--#4DSCRIPT/Web_LoadTimeslipRelated/--><!-- row -->
-					{
-                        id: '<!--#4DVAR [Timeslips]uuid-->',
-                        title: '<!--#4DVAR [Tasks]task_name-->',
-						start: get_datetime('<!--#4DVAR timestamp_unix_toDate ([Timeslips]Timestamp_start)-->', '<!--#4DVAR timestamp_unix_toTime ([Timeslips]Timestamp_start)-->'),						
-						end: get_datetime('<!--#4DVAR timestamp_unix_toDate ([Timeslips]Timestamp_end)-->', '<!--#4DVAR timestamp_unix_toTime ([Timeslips]Timestamp_end)-->'),						
-						url: 'timeslip.shtml?uuid=<!--#4DVAR [Timeslips]uuid-->'
-                        //allDay: false
-                    },
-					<!--#4DENDLOOP-->
-					
-                ],*/
+              
                 eventBackgroundColor: '#278ccf',
 				
 				<!--#4DIF (_HIT_WebApp_GetField ("mode")="week")-->
 				defaultView: 'agendaWeek',
 				<!--#4DENDIF-->
 				
-				 dayClick: function(date, allDay, jsEvent, view) {
-				 
-			var s_time='';
-        if (allDay) {
-           // alert('Clicked on the entire day: ' + date);
-        }else{
-            //alert('Clicked on the slot: ' + date);
-			
-			var date_arr=String(date).split(" ");
-			var timestring='';
-			for(var i=0; i<date_arr.length; i++){
-				var contains = (date_arr[i].indexOf(":") > -1);
-					if(contains){
-						timestring=date_arr[i];
-						break;
-					}
-			}
-			var time_arr=timestring.split(":");
-			if(time_arr[0]>12){ var h=time_arr[0]-12; s_time=h+":"+time_arr[1]+"pm"; }
-			else{ s_time=time_arr[0]+":"+time_arr[1]+"am"; }
-			
-        }
+				  dayClick: function(date, jsEvent, view) {
+				 var date=date._d;
+					var s_time='';
+      				if(view.name!="month"){
+      					var date_arr=String(date).split(" ");
+						var timestring='';
+						for(var i=0; i<date_arr.length; i++){
+							var contains = (date_arr[i].indexOf(":") > -1);
+							if(contains){
+								timestring=date_arr[i];
+								break;
+							}
+						}
+						var time_arr=timestring.split(":");
+						if(time_arr[0]>12){ var h=time_arr[0]-12; s_time=h+":"+time_arr[1]+"pm"; }
+							else{ s_time=time_arr[0]+":"+time_arr[1]+"am"; }
+						}	
 
 		var cal_left=Number($('#calendar').offset().left);
 		var cal_top=Number($('#calendar').offset().top);
@@ -350,12 +318,11 @@ success: function(html)
 
     },
 			viewRender: function( view, element ) {
-				
-				var s_month=Number(view.visStart.getMonth())+1;
-				var s_date=	view.visStart.getDate()+'/'+s_month+'/'+view.visStart.getFullYear();
-				var e_month=Number(view.end.getMonth())+1;
-				var e_date=	view.end.getDate()+'/'+e_month+'/'+view.end.getFullYear();
-				
+				var s_month=Number(view.start._d.getMonth())+1;
+				var s_date=	view.start._d.getDate()+'/'+s_month+'/'+view.start._d.getFullYear();
+				var e_month=Number(view.end._d.getMonth())+1;
+				var e_date=	view.end._d.getDate()+'/'+e_month+'/'+view.end._d.getFullYear();
+								
 				var date_arr=String(view.visStart).split(" ");
 				var s_time='';
 				for(var i=0; i<date_arr.length; i++){
@@ -428,190 +395,6 @@ success: function(html)
                 $(".new-event").fadeOut("fast");
             });
         });
-    </script>
-	
-	<script>
-	 var xhr;
-  (function( $ ) {
-    $.widget( "custom.combobox", {
-      _create: function() {
-        this.wrapper = $( "<span>" )
-          .addClass( "custom-combobox" )
-          .insertAfter( this.element );
- 
-        this.element.hide();
-        this._createAutocomplete();
-        this._createShowAllButton();
-      },
- 
-      _createAutocomplete: function() {
-        var selected = this.element.children( ":selected" ),
-          value = selected.val() ? selected.text() : "";
- 
-        this.input = $( "<input>" )
-          .appendTo( this.wrapper )
-          .val( value )
-          .attr( "title", "" )
-          .addClass( "custom-combobox-input ui-widget ui-widget-content ui-state-default ui-corner-left" )
-          .autocomplete({
-            delay: 0,
-            minLength: 0,
-            source: $.proxy( this, "_source" )
-          })
-          .tooltip({
-            tooltipClass: "ui-state-highlight"
-          });
- 
-        this._on( this.input, {
-          autocompleteselect: function( event, ui ) {
-		  	//alert("show all");
-            ui.item.option.selected = true;
-			
-            this._trigger( "select", event, {
-              item: ui.item.option
-            });
-          },
- 
-          autocompletechange: "_removeIfInvalid"
-        });
-      },
- 
-      _createShowAllButton: function() {
-        var input = this.input,
-          wasOpen = false;
- 
-        $( "<a>" )
-          .attr( "tabIndex", -1 )
-          .attr( "title", "Show All Items" )
-          .tooltip()
-          .appendTo( this.wrapper )
-          .button({
-            icons: {
-              primary: "ui-icon-triangle-1-s"
-            },
-            text: false
-          })
-          .removeClass( "ui-corner-all" )
-          .addClass( "custom-combobox-toggle ui-corner-right" )
-          .mousedown(function() {
-            wasOpen = input.autocomplete( "widget" ).is( ":visible" );
-          })
-          .click(function() {
-            input.focus();
- 
-            // Close if already visible
-            if ( wasOpen ) {
-              return;
-            }
- 
-            // Pass last search string as value to search for, displaying last results
-            input.autocomplete( "search", 'SHOWALL' );
-          });
-      },
- 
-      _source: function( request, response ) {
-        //var matcher = new RegExp( $.ui.autocomplete.escapeRegex(request.term), "i" );
-		var ele_select= this.element;
-		if(request.term=='SHOWALL'){
-			response(ele_select.children( "option" ).map(function() {
-          var text = $( this ).text();
-		 var value= $( this ).val();
-          //if ( this.value && ( !request.term || matcher.test(text) ) )
-            return {
-              label: text,
-              value: text,
-              option: this
-            };
-        }) );
-		
-		}
-		else
-		{
-		var jsonRow = 'gettaskonsearch.cgi?srch='+request.term;
-		
-
-		//alert(jsonRowURLStr);
-		if(xhr) xhr.abort();
-		xhr=$.getJSON(jsonRow,function(result){
-			
-			if(result){
-				var html='<option value=""></option>';
-
-				$.each(result, function(i,item)
-				{
-					html += '<option value="'+item.id+'">'+item.value+'</option>';
-				});
-				ele_select.html(html);
-				
-				
-				response(ele_select.children( "option" ).map(function() {
-          var text = $( this ).text();
-		 var value= $( this ).val();
-          //if ( this.value && ( !request.term || matcher.test(text) ) )
-            return {
-              label: text,
-              value: text,
-              option: this
-            };
-        }) );
-				
-				
-			}
-		});
-       
-	  } 
-		
-      },
- 
-      _removeIfInvalid: function( event, ui ) {
- 
-        // Selected an item, nothing to do
-        if ( ui.item ) {
-
-          return;
-        }
- 
-        // Search for a match (case-insensitive)
-        var value = this.input.val(),
-          valueLowerCase = value.toLowerCase(),
-          valid = false;
-        this.element.children( "option" ).each(function() {
-          if ( $( this ).text().toLowerCase() === valueLowerCase ) {
-            this.selected = valid = true;	
-			
-            return false;
-          }
-        });
- 
-        // Found a match, nothing to do
-        if ( valid ) {
-          return;
-        }
- 
-        // Remove invalid value
-        this.input
-          .val( "" )
-          .attr( "title", value + " didn't match any item" )
-          .tooltip( "open" );
-        this.element.val( "" );
-        this._delay(function() {
-          this.input.tooltip( "close" ).attr( "title", "" );
-        }, 2500 );
-        this.input.data( "ui-autocomplete" ).term = "";
-      },
- 
-      _destroy: function() {
-        this.wrapper.remove();
-        this.element.show();
-      }
-    });
-  })( jQuery );
- 
-  $(function() {
-    $( "#Task_ID" ).combobox();
-   
-	
-  });
 
   </script>
     
