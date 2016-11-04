@@ -97,7 +97,7 @@ _HIT_WebSession_SetVar ("last-clicked-uuid";_HIT_WebApp_GetField ("uuid"))
 	background:#dff0d8 !important;
 }
 #relatedtask .custom-combobox-input {
-    width: 233%!important;
+    width: 100%!important;
     margin-left: 27px;
 }
 		
@@ -399,11 +399,11 @@ _HIT_WebSession_SetVar ("last-clicked-uuid";_HIT_WebApp_GetField ("uuid"))
 		<div CLASS="col-md-12"><h3>New Relationship</h3></div>
 		
 		
-		
-		
-		<div class="form-group" >
-    							<label for="" class="col-sm-1 control-label">Current Issue<span style="color:#6E829B">*</span></label>	
-								<div class="col-sm-4  ">					
+		</div>
+
+<div  STYLE="padding:0 30px;">		<div class="form-group" >
+    							<label for="" class="col-sm-2 control-label">Current Issue<span style="color:#6E829B">*</span></label>	
+								<div class="col-sm-2">					
                              			<Select name="current_issue" id="current_issue" CLASS="form-control" >
 					<option value="parent of" >parent of</option>
 					<option value="child of" >child of</option>
@@ -415,8 +415,8 @@ _HIT_WebSession_SetVar ("last-clicked-uuid";_HIT_WebApp_GetField ("uuid"))
                             </div>
 		
 		<div class="form-group" ID="relatedtask">
-    							<label for="" class="col-sm-1 control-label" style="padding-top: 20px;">Task Name</label>	
-								<div class="col-sm-4  ">					
+    							<label for="" class="col-sm-2 control-label" style="padding-top: 20px;">Task Name</label>	
+								<div class="col-sm-4 ">					
                              			<select name="Task_ID" id="Task_ID" CLASS="form-control" >
 										<option value=""></option>
 									<!--#4DSCRIPT/Web_LoadTasks/-->
@@ -427,13 +427,16 @@ _HIT_WebSession_SetVar ("last-clicked-uuid";_HIT_WebApp_GetField ("uuid"))
                             	</div>
                             </div>
 							</div>
+							
+							<div  STYLE="padding:0 30px;">
 		
 							<div class="form-group" >
     							<label for="" class="col-sm-1 control-label"></label>	
-								<div class="col-sm-4">					
+								<div class="col-sm-3 text-right">					
                              		<button type="button" class="btn btn-primary" onClick="add_relation()" >Add</button>
                             	</div>
                             </div>
+							</div>
 	
 								
 				<div class="field-box">
@@ -478,9 +481,10 @@ _HIT_WebSession_SetVar ("last-clicked-uuid";_HIT_WebApp_GetField ("uuid"))
               </div>
             </div>
   </div>
+ 
   <!--#4DENDIF-->	
   
-</div>
+
 				</form>
 				</div>
             </div>
@@ -516,8 +520,37 @@ _HIT_WebSession_SetVar ("last-clicked-uuid";_HIT_WebApp_GetField ("uuid"))
               	</div>
               	<div class="modal-body">
                 	<textarea name="c_description" id="c_description" value="" placeholder="Description" row="8" class="form-control"></textarea><br/>
-					<label>Start From :</label><input class="input-large datepicker" type="text" data-date-format="dd/mm/yyyy" value="" id="c_start_date" name="c_start_date" readonly >
-					<label>Duplicate this checklist :</label><label style="width:auto; display:inline"><input type="radio" value="daily" class="e_duplicate_checklist" name="e_duplicate_checklist"> Daily&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="weekly" name="e_duplicate_checklist" class="e_duplicate_checklist"> Weekly&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="monthly" class="e_duplicate_checklist" name="e_duplicate_checklist"> Monthly&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="yearly" class="e_duplicate_checklist" name="e_duplicate_checklist"> Yearly&nbsp;&nbsp;</label>
+					
+					
+					<div CLASS="row">
+					
+					
+					<div CLASS="col-sm-5">
+					<label for="" class=" control-label" style="padding-top: 20px;">Start From :</label>
+					
+					</div>
+				<div CLASS="col-sm-7">	<input class="input-large form-control datepicker" type="text" data-date-format="dd/mm/yyyy" value="" id="c_start_date" name="c_start_date" readonly >
+					</div>
+					
+					</div>
+					
+					<div CLASS="row">
+					
+					
+					<div CLASS="col-sm-5">
+					
+					
+					<label for="" class=" control-label" style="padding-top: 20px;">Duplicate this checklist :</label>
+					
+					</div>
+					
+					<div CLASS="col-sm-7" style=" padding-top: 17px;
+">	
+					
+					<label style="width:auto; display:inline"><input type="radio" value="daily" class="e_duplicate_checklist" name="e_duplicate_checklist"> Daily&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="weekly" name="e_duplicate_checklist" class="e_duplicate_checklist"> Weekly&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="monthly" class="e_duplicate_checklist" name="e_duplicate_checklist"> Monthly&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="yearly" class="e_duplicate_checklist" name="e_duplicate_checklist"> Yearly&nbsp;&nbsp;</label>
+					</div>
+					</div>
+					
 				</div>
               	<div class="modal-footer">
                 	<button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
@@ -549,8 +582,10 @@ _HIT_WebSession_SetVar ("last-clicked-uuid";_HIT_WebApp_GetField ("uuid"))
           </div>
 	</div>
 </div>
+
 	<!-- scripts -->
     <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+	
 	<!-- <script src="js/ui/jquery-ui.js"></script> -->
 	<script src="js/bootstrap.datepicker.js"></script>
     <script type="text/javascript" src="js/jquery.ptTimeSelect.js"></script>
