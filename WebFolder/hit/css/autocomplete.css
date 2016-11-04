@@ -6,6 +6,12 @@
  }
  
  
+ .error{
+	 color:red!important;
+
+ }
+ 
+ 
  
  .custom-combobox {
     position: relative;

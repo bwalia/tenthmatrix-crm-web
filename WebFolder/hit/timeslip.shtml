@@ -303,25 +303,25 @@ function ValidateForm () {
 
 if (document.Timeslip.Task_ID.value=="")
 { 
-	__alertMessage('Please Specify Task Name'); 
+	__alertModalBox('Please Specify Task Name'); 
 	document.Timeslip.Task_ID.focus();
 	return false;
 }
 if (document.Timeslip.Employee_ID.value=="")
 { 
-	__alertMessage('Please Specify Employee Name'); 
+	__alertModalBox('Please Specify Employee Name'); 
 	document.Timeslip.Employee_ID.focus();
 	return false;
 }
 if (document.Timeslip.Slip_Date.value=="")
 { 
-	__alertMessage('Please Specify Slip Start Date'); 
+	__alertModalBox('Please Specify Slip Start Date'); 
 	document.Timeslip.Slip_Date.focus();
 	return false;
 }
 if (document.Timeslip.Slip_Description.value=="")
 { 
-	__alertMessage('Please Specify Slip Description'); 
+	__alertModalBox('Please Specify Slip Description'); 
 	document.Timeslip.Slip_Description.focus();
 	return false;
 }
@@ -330,22 +330,22 @@ if (document.getElementById('lunchinterval').checked) {
 		
 		if (document.Timeslip.interval_time.value==""){
 			if (document.Timeslip.setBreakStartTime.value==""){ 
-				__alertMessage('Please select interval start time'); 
+				__alertModalBox('Please select interval start time'); 
 				return false;
 			}
 			if (document.Timeslip.setBreakEndTime.value==""){ 
-				__alertMessage('Please select interval end time'); 
+				__alertModalBox('Please select interval end time'); 
 				return false;
 			}
 		}
 	<!--#4DELSE-->
 	
 	if (document.Timeslip.setBreakStartTime.value==""){ 
-		__alertMessage('Please select interval start time'); 
+		__alertModalBox('Please select interval start time'); 
 		return false;
 	}
 	if (document.Timeslip.setBreakEndTime.value==""){ 
-		__alertMessage('Please select interval end time'); 
+		__alertModalBox('Please select interval end time'); 
 		return false;
 	}
 	<!--#4DENDIF-->
@@ -717,7 +717,7 @@ var End=0;
 				else if(end_time<start_time){
 					
 					//$('#err_msg').html("End date time must be greater than start date time");
-					__alertMessage("End date time must be greater than start date time");
+					__alertModalBox("End date time must be greater than start date time");
 					$('#Slip_EndDate').val('');
 					$('#setEndTIme').val('');
 					$('#Slip_Hours').val('');
@@ -760,7 +760,7 @@ var End=0;
 				if($('#setStartTime').val()!="" && $('#setEndTime').val()!="" && $('#Slip_Date').val()!="" && $('#Slip_EndDate').val()!=""){
    					$('.breakTimeClass').show();
    				}else{
-   					__alertMessage('Please select start/end date and time');
+   					__alertModalBox('Please select start/end date and time');
 					$("input.lunchinterval").attr("checked", false);
    				}
    			}else{

@@ -1,11 +1,13 @@
 
 <script src="js/jquery-2.2.3.min.js"></script>
 
+
 <script src="js/bootstrap.min.js"></script>
 <script src="js/bootstrap-checkbox-radio-switch.js"></script>
 <script src="js/app.min.js"></script>
 <script src="js/ui/jquery-ui.js"></script>
 <script type="text/javascript" src="js/jquery-impromptu.js"></script>
+<script src="js/basictable.js"></script>
 <!--#4DIF (_HIT_WebApp_GetField ("view")="small")-->
 
 <!--#4DELSE-->
