@@ -19,14 +19,7 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
 <html>
 <head>
 <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
-<link rel="stylesheet" href="css/basictable.css">
 <style>
-#message{
-	color:#FF0000;
-}
-.table-wrapper .table ul.actions{
-	float:left;
-}
 
 .btn-inline >.btn-left-align {
  
@@ -177,14 +170,13 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
                             </tbody>
                         </table>
                         <input id="selected_vls" type="hidden" value="" />
-									
-						 <div style="text-align:center">
-							<a style="width: 60%; margin-bottom: 10px; display: none;" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink " id="display_more_btn" title="Load more" onclick="load_more()" href="javascript:void(0);">
+						<div style="text-align:center">
+							<a style="width: 100%; font-size:17px; display: none;" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink " id="display_more_btn" title="Load more" onclick="load_more()" href="javascript:void(0);">
 								Load more
 							</a>
         				</div>
 						<div id="img_loading_div" style="text-align:center">
-							<img src="images/loading.gif?as"  style="padding:20px;" width="34" >
+							<img src="images/loading.gif" >
 						</div>
                     </div>
                 </div>
@@ -194,34 +186,11 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
             </section>
         </div>
     </div>
-    <!-- end main container -->
-	<div class="example-container">
-	<pre class="code" style="display:none;" id="no_rec_prompt">
-									var statesdemo = {
-										state0: {
-											title: 'No more records found',
-											html:'',
-											buttons: { OK: 1 },																		
-											submit:function(e,v,m,f){ 
-												//console.log(f);
-												if(v==1) {
-													$.prompt.close();
-												}
-												
-											}
-										},
-										
-									};
-									if(!($(".jqibox").length))
-									$.prompt(statesdemo);
-								</pre>
-							</div>
-
+    
 	<!-- scripts -->
   	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/top-footer.shtml-->
 </div>
 <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml-->
-<script src="js/basictable.js"></script>
 	 <script>
 var JSONdata;
 var start=0, end=25;
@@ -246,7 +215,7 @@ function pushLiveFormGithub(){
 		if(get_selectedStr!=''){
 			console.log(get_selectedStr);
 		}else{
-			$.prompt('Please select some projects!');
+			__alertModalBox('Please select some projects!');
 			$('#selected_vls').val('');
 		}
 }
@@ -382,9 +351,7 @@ function load_data(jsonRow){
 				}	
 	$.getJSON(jsonRow,function(result){
 			if(result.Alert){
-				$(".jqibox").remove();
-				code = $('#no_rec_prompt').text();
-				(new Function(code))();
+				__alertModalBox('No more records found!');
 				complete=true;
 				$('#display_more_btn').hide();
 				$('#table-breakpoint').basictable({

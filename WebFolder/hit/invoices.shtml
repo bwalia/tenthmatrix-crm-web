@@ -17,12 +17,9 @@ end if
 <html>
 <head>
 <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
-<link rel="stylesheet" href="css/basictable.css">
 <link rel="stylesheet" href="css/autocomplete.css" />
 <style>
-	#message{
-		color:#FF0000;
-	}
+
 	.jqibox {
 		z-index:9999!important;
 	}
@@ -72,12 +69,13 @@ end if
     <div class="content-wrapper">
         <section class="content-header">
       		<h1>
+        		<!--#4DIF (_HIT_WebApp_GetField ("page") ="outstanding")-->Outstanding&nbsp;<!--#4DENDIF-->
         		Invoices
         		<small>List panel</small>
       		</h1>
       		<ol class="breadcrumb">
        			<li><a href="index.shtml"><i class="fa fa-dashboard"></i> Dashboard</a></li>
-        		<li class="active">Invoices</li>
+        		<li class="active"><!--#4DIF (_HIT_WebApp_GetField ("page") ="outstanding")-->Outstanding&nbsp;<!--#4DENDIF-->Invoices</li>
       		</ol>
     	</section>
 		<section class="content">
@@ -195,12 +193,12 @@ end if
                             </tbody>
                         </table>
                         <div style="text-align:center">
-							<a style="width: 60%; margin-bottom: 10px; display: none;" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink " id="display_more_btn" title="Load more" onclick="load_more()" href="javascript:void(0);">
+							<a style="width: 100%; font-size:17px; display: none;" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink " id="display_more_btn" title="Load more" onclick="load_more()" href="javascript:void(0);">
 								Load more
 							</a>
         				</div>
 						<div id="img_loading_div" style="text-align:center">
-							<img src="images/loading.gif?as"  style="padding:20px;" width="34" >
+							<img src="images/loading.gif" >
 						</div>
                  	</div>
                 	<!-- end timeslips table -->
@@ -309,25 +307,7 @@ end if
 									$.prompt(statesdemo);
 								</pre>
 								
-								<pre class="code" style="display:none;" id="no_selection_prompt">
-									var statesdemo = {
-										state0: {
-											title: 'Please select invoices to add to set',
-											html:'',
-											buttons: { OK: 1 },																		
-											submit:function(e,v,m,f){ 
-												//console.log(f);
-												if(v==1) {
-													$.prompt.close();
-												}
-												
-											}
-										},
-										
-									};
-									if(!($(".jqibox").length))
-									$.prompt(statesdemo);
-								</pre>
+								
 								<pre class="code" style="display:none;" id="del_prompt">
 									var html='';
 								
@@ -453,10 +433,7 @@ end if
 	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/top-footer.shtml-->
 </div>
 <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml-->
-<script src="js/basictable.js"></script>
     <script src="js/money.js"></script>
-  
-  
     
 <script type="text/javascript">
 var selected='';
@@ -470,6 +447,7 @@ var ccode_params='';
 var completeScroll=false;
 var selected_set='<!--#4DVAR _HIT_WebApp_GetField ("set") -->';
 var setUUID='<!--#4DVAR _HIT_WebApp_GetField ("set_uuid") -->';
+var pageStr='<!--#4DVAR _HIT_WebApp_GetField ("page") -->';
 var checkAllFlag=false;
 var showallReceiptsFlag=true;
 function getMonthName(m) {
@@ -585,8 +563,7 @@ function __showinvoicesForm_AddSet(val,name){
 			}
 		}
 		else{
-			code = $('#no_selection_prompt').text();
-			(new Function(code))();
+			__alertModalBox('Please select invoices to add to set');
 			$('#add_sets').val('');
 		}
 	}
@@ -805,7 +782,7 @@ function load_data(jsonRow){
 	completeScroll=true;
 	var JSONdata=new Array();
 	var keyword= $("#keyword").val();
-	var jsonRow = 'loadinvoices.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&set='+selected_set+'&setUUID='+setUUID;
+	var jsonRow = 'loadinvoices.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&set='+selected_set+'&setUUID='+setUUID+'&page='+pageStr;
 			jsonRow +=ccode_params;
 			if(keyword!=''){
 				jsonRow +='&keyword='+keyword;
@@ -815,8 +792,7 @@ function load_data(jsonRow){
 			}	
 	$.getJSON(jsonRow,function(result){
 		if(result.Alert){
-			$(".jqibox").remove();
-			$.prompt('No more records found');
+			__alertModalBox('No more records found!');
 			
 			complete=true;
 			$('#display_more_btn').hide();

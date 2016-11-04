@@ -18,15 +18,9 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
 <html>
 <head>
 <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
-<link rel="stylesheet" href="css/basictable.css">
 <link rel="stylesheet" href="css/autocomplete.css" />
 <style>
-#message{
-	color:#FF0000;
-}
-.table-wrapper .table ul.actions{
-	float:left;
-}
+
 .ui-autocomplete {
     z-index: 10000;
 }
@@ -119,7 +113,7 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
                         <table class="table table-striped  table-bordered table-hover custom-tbl-st bt" id="table-breakpoint"  style="background-color: rgb(255, 255, 255); border-radius: 4px;" >
                             <thead>
                                 <tr>
-                                            <th class="col-lg-2">EMPLOYEE NAME</th>
+                                            <th>EMPLOYEE NAME</th>
                                             <th>FROM</th>
                                             <th>TO</th>
                                             <th>DURATION</th>
@@ -131,7 +125,7 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
                                     </thead>
                                      <tfoot>
                                         <tr>
-                                        	<th class="col-lg-2">EMPLOYEE NAME</th>
+                                        	<th>EMPLOYEE NAME</th>
                                             <th>FROM</th>
                                             <th>TO</th>
                                             <th>DURATION</th>
@@ -146,12 +140,12 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
                                      </tbody>
                         </table>
                         <div style="text-align:center">
-							<a style="width: 60%; margin-bottom: 10px; display: none;" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink " id="display_more_btn" title="Load more" onclick="load_more()" href="javascript:void(0);">
+							<a style="width: 100%; font-size:17px; display: none;" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink " id="display_more_btn" title="Load more" onclick="load_more()" href="javascript:void(0);">
 								Load more
 							</a>
         				</div>
 						<div id="img_loading_div" style="text-align:center">
-							<img src="images/loading.gif?as"  style="padding:20px;" width="34" >
+							<img src="images/loading.gif" >
 						</div>
                     </div>
 				</div>
@@ -162,44 +156,7 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
 		</section>
     <!-- end main container -->
 	<div class="example-container">
-	<pre class="code" style="display:none;" id="no_rec_prompt">
-		var statesdemo = {
-			state0: {
-				title: 'No more records found',
-				html:'',
-				buttons: { OK: 1 },																		
-				submit:function(e,v,m,f){ 
-					//console.log(f);
-					if(v==1) {
-						$.prompt.close();
-					}
-					
-				}
-			},
-			
-		};
-		if(!($(".jqibox").length))
-		$.prompt(statesdemo);
-	</pre>
-	<pre class="code" style="display:none;" id="error_prompt">
-		var statesdemo = {
-			state0: {
-				title: del_error,
-				html:'',
-				buttons: { OK: 1 },																		
-				submit:function(e,v,m,f){ 
-					//console.log(f);
-					if(v==1) {
-						$.prompt.close();
-					}
-					
-				}
-			},
-			
-		};
-		if(!($(".jqibox").length))
-		$.prompt(statesdemo);
-	</pre>
+	
 	<pre class="code" style="display:none;" id="del_prompt">
 	var statesdemo = {
 		state0: {
@@ -238,8 +195,7 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
 							}
 							else if(html.Error){
 								del_error=html.Error;
-								code = $('#error_prompt').text();
-								(new Function(code))();
+								__alertModalBox(del_error);
 							}
 						}
 						});
@@ -259,10 +215,9 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
     <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/top-footer.shtml-->
 </div>
 <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml-->
-<script src="js/basictable.js"></script>
 <script>
 var JSONdata;
-var start=0, pageSize=5,  end=pageSize;
+var start=0, pageSize=50,  end=pageSize;
 var old_srch='', tab='';
 var tablname='employee_holidays';
 var complete=false;
@@ -435,8 +390,8 @@ function load_data(){
 	}	
 	$.getJSON(jsonRow,function(result){
 			if(result.Alert){
-				code = $('#no_rec_prompt').text();
-				(new Function(code))();
+				__alertModalBox('No more records found!');
+				
 				complete=true;
 				$('#display_more_btn').hide();
 				$('#table-breakpoint').basictable({

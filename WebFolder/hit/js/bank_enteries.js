@@ -227,7 +227,7 @@ function __showForm_AddSet(val,name){
 				});
 			}
 		}else{
-			$.prompt('Please select some entries to add to set!');
+			__alertModalBox('Please select some entries to add to set!');
 			$('#add_sets').val('');
 		}
 	}
@@ -497,8 +497,7 @@ function load_data(refRow){
 		}
 		if(result.Alert){
 			complete=true;
-			$(".jqibox").remove();
-			$.prompt('No more records found');
+			__alertModalBox('No more records found!');
 			$('#display_more_btn').hide();
 			$('#table-breakpoint').basictable({
     				breakpoint: 751
@@ -703,16 +702,16 @@ function deleteBankEntry(e){
 				cache: false,
 				success: function(html)	{
 					if(html.success){
-						$.prompt(html.success);
+						__alertModalBox(html.success);
 						$(".invoice_"+e).remove();
 						$("#displayReceipt_"+e).remove();
 					}else if(html.error){
-						$.prompt(html.error);
+						__alertModalBox(html.error);
 					}
 				}
 			});
 		}else{
-			$.prompt('This entry can\'t be deleted!');
+			__alertModalBox('This entry can\'t be deleted!');
 		}
 	}
 }
@@ -741,18 +740,18 @@ function remove_from_set(){
 				cache: false,
 				success: function(html)	{
 					if(html.success){
-						$.prompt(html.success);
+						__alertModalBox(html.success);
 						refreshTable();
 					}else if(html.error){
-						$.prompt(html.error);
+						__alertModalBox(html.error);
 					}
 				}
 			});
 		}else{
-			$.prompt('Please select some entries to remove from set!');
+			__alertModalBox('Please select some entries to remove from set!');
 		}
 	}else{
-		$.prompt('Please select a set!');
+		__alertModalBox('Please select a set!');
 	}
 	
 }

@@ -17,7 +17,6 @@ end if
 <html>
 <head>
 <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
-<link rel="stylesheet" href="css/basictable.css">
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
 <div class="wrapper">
@@ -95,12 +94,12 @@ end if
                                      </tbody>
                         </table>
                         <div style="text-align:center">
-							<a style="width: 60%; margin-bottom: 10px; display: none;" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink " id="display_more_btn" title="Load more" onclick="load_more()" href="javascript:void(0);">
+							<a style="width: 100%; font-size:17px; display: none;" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink " id="display_more_btn" title="Load more" onclick="load_more()" href="javascript:void(0);">
 								Load more
 							</a>
         				</div>
 						<div id="img_loading_div" style="text-align:center">
-							<img src="images/loading.gif?as"  style="padding:20px;" width="34" >
+							<img src="images/loading.gif" >
 						</div>
                     </div>
 				</div>
@@ -113,7 +112,6 @@ end if
     <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/top-footer.shtml-->
 </div>
 <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml-->
-<script src="js/basictable.js"></script>
 <script>
 var start=0, end=50;
 var old_srch='';
@@ -215,8 +213,7 @@ function load_data(){
 	var JSONdata=new Array();
 	$.getJSON(jsonRow,function(result){
 			if(result.Alert){
-				$(".jqibox").remove();
-				$.prompt('No more records found!');
+				__alertModalBox('No more records found!');
 				complete=true;
 				$('#display_more_btn').hide();
 				$('#table-breakpoint').basictable({

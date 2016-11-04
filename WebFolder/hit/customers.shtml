@@ -28,16 +28,8 @@ mUserIsCurrentBool:=userHasAccessToDelete
     margin: 8px 2px 0 0;
 }
 </style>
-<link rel="stylesheet" href="css/basictable.css">
 <link rel="stylesheet" href="css/autocomplete.css" />
 <style>
-#message{
-	color:#FF0000;
-}
-.table-wrapper .table ul.actions{
-	float:left;
-}
-
 .jqibox {
 	z-index:9999!important;
 }
@@ -174,12 +166,12 @@ mUserIsCurrentBool:=userHasAccessToDelete
                             </tbody>
                         </table>
                         <div style="text-align:center">
-							<a style="width: 60%; margin-bottom: 10px; display: none;" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink " id="display_more_btn" title="Load more" onclick="load_more()" href="javascript:void(0);">
+							<a style="width: 100%; font-size:17px; display: none;" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink " id="display_more_btn" title="Load more" onclick="load_more()" href="javascript:void(0);">
 								Load more
 							</a>
         				</div>
 						<div id="img_loading_div" style="text-align:center">
-							<img src="images/loading.gif?as"  style="padding:20px;" width="34" >
+							<img src="images/loading.gif" >
 						</div>
                  	</div>
                 	<!-- end timeslips table -->
@@ -286,45 +278,7 @@ mUserIsCurrentBool:=userHasAccessToDelete
 
 									$.prompt(statesdemo);
 								</pre>
-								<pre class="code" style="display:none;" id="no_rec_prompt">
-									var statesdemo = {
-										state0: {
-											title: 'No more records found',
-											html:'',
-											buttons: { OK: 1 },																		
-											submit:function(e,v,m,f){ 
-												//console.log(f);
-												if(v==1) {
-													$.prompt.close();
-												}
-												
-											}
-										},
-										
-									};
-									if(!($(".jqibox").length))
-									$.prompt(statesdemo);
-								</pre>
-								<pre class="code" style="display:none;" id="no_selection_prompt">
-									var statesdemo = {
-										state0: {
-											title: 'Please select some customers to add to set',
-											html:'',
-											buttons: { OK: 1 },																		
-											submit:function(e,v,m,f){ 
-												//console.log(f);
-												if(v==1) {
-													$.prompt.close();
-												}
-												
-											}
-										},
-										
-									};
-									if(!($(".jqibox").length))
-									$.prompt(statesdemo);
-								</pre>
-								
+																
 								<pre class="code" style="display:none;" id="del_prompt">
 									var html='';
 									if(selected_set!=''){
@@ -437,7 +391,6 @@ mUserIsCurrentBool:=userHasAccessToDelete
 	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/top-footer.shtml-->
 </div>
 <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml-->
-<script src="js/basictable.js"></script>
 <script>
 var selected='';
 var start=0, end=25;
@@ -573,8 +526,7 @@ function __showCustomerForm_AddSet(val,name){
 			}
 		}
 		else{
-			code = $('#no_selection_prompt').text();
-			(new Function(code))();
+			__alertModalBox('Please select some customers to add to set');
 			$('#add_sets').val('');
 		}
 	}
@@ -792,8 +744,7 @@ function load_data(jsonRow){
 				}
 		$.getJSON(jsonRow,function(result){
 			if(result.Alert){
-				code = $('#no_rec_prompt').text();
-				(new Function(code))();
+				__alertModalBox('No more records found!');
 				complete=true;
 				$('#display_more_btn').hide();
 				$('#table-breakpoint').basictable({
