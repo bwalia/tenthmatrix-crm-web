@@ -183,7 +183,8 @@ body.hold-transition .content-wrapper, body.hold-transition .right-side, body.ho
 	margin-right: auto;
 	margin-left: auto;
 	padding-left: 15px;
-	padding-right: 15px
+	padding-right: 15px;
+	margin-top:20px;
 }
 h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
 	font-family: 'Source Sans Pro', sans-serif
@@ -206,9 +207,10 @@ a:hover, a:active, a:focus {
 	margin-top: 5px
 }
 .main-header {
-	position: relative;
+	position: fixed;
 	max-height: 100px;
-	z-index: 1030
+	z-index: 1030;
+	width:100%;
 }
 .main-header .navbar {
 	-webkit-transition: margin-left .3s ease-in-out;
@@ -396,7 +398,7 @@ color:#ccc
 
 @media (max-width:767px) {
 .main-header {
-	position: relative
+	position: fixed;
 }
 .main-header .logo, .main-header .navbar {
 	width: 100%;
@@ -423,9 +425,9 @@ color:#ccc
 }
 .main-sidebar, .left-side {
 	position: absolute;
-	top: 0;
-	left: 0;
-	padding-top: 50px;
+	top: 51px;
+    left: 0;
+    padding-top: 10px;
 	min-height: 100%;
 	width: 230px;
 	z-index: 810;
