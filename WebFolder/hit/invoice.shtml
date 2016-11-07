@@ -289,9 +289,8 @@ end if
 					<BR>
 <div CLASS="col-md-12"> 
 											
-						<div class=" table-responsive table-full-width">
-							
-		 			<div class="table-responsive" style="border:none;" >
+					<div class=" table-responsive table-full-width">
+					<div class="table-responsive" style="border:none;">
                         <table class="table table-striped  table-bordered table-hover custom-tbl-st bt" id="table-breakpoint"  style="background-color: rgb(255, 255, 255); border-radius: 4px;" >
 		
 							  <tr class="item">
@@ -342,19 +341,16 @@ end if
 				<!--#4DIF (mUserIsCurrentBool)--><!--#4DELSE-->		  <tr id="hiderow">
 							<td colspan="7"><a id="addrow" href="javascript:;" title="Add a row">Add a row</a></td>
 						  </tr><!--#4DENDIF--> 
-						  
 						</table>	
-						
 						</div>
 						</div>
-						
 						</div>
 		
-							<div class="form-group">
-								<label class="col-sm-3 control-label">Tax Code</label>
-								<div class="ui-select ">
-									<input type="hidden" value="<!--#4DVAR [Invoices]inv_tax_code-->">
-								<div CLASS="col-sm-6">	<select id="inv_tax_code" name="inv_tax_code" class="form-control">
+						<div class="form-group">
+						<label class="col-sm-3 control-label">Tax Code</label>
+						<div class="ui-select ">
+						<input type="hidden" value="<!--#4DVAR [Invoices]inv_tax_code-->">
+						<div CLASS="col-sm-6">	<select id="inv_tax_code" name="inv_tax_code" class="form-control">
 									<!--#4DIF (Records in selection([Invoices])=0)-->
 									<!--#4DSCRIPT/Web_LoadTax_Codes/-->
 									<!--4DLOOP [Tax_Codes]-->

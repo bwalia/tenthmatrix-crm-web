@@ -68,26 +68,22 @@ end if
   
 
 #DomainForm .custom-combobox-input {
-    width: 205%!important;
+    width: 100%!important;
     margin-left: 25px;
     position: relative;
     bottom: 0px;
 }
   
-  
-  
-
 </style>
 </head>
- <body class="hold-transition skin-blue sidebar-mini">
- <div class="wrapper">
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
 
-    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
 
-    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
-
-	<!-- main container -->
-   	<div class="content-wrapper" >
+<!-- main container -->
+<div class="content-wrapper" >
         <section class="content-header">
       		<h1>
         		<!--#4DIF (Records in selection([Tasks])=1)-->"<!--#4DVAR taskNameStr-->"<!--#4DELSE-->New<!--#4DENDIF--> 
@@ -102,9 +98,8 @@ end if
 		
 		<section>
 		
-		
-		<div class="row">
-					<!-- left column -->
+		<div class="row" STYLE="padding-left:15px; padding-right:15px;">
+					<!-- left column --> 
                  
 						<form name="DomainForm" id="DomainForm" action="savedomain.cgi" class="form-horizontal" method="post" >	
 						   <div class="col-sm-10 with-sidebar">
