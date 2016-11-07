@@ -547,7 +547,8 @@ _HIT_WebSession_SetVar ("last-clicked-uuid";_HIT_WebApp_GetField ("uuid"))
 					<div CLASS="col-sm-7" style=" padding-top: 17px;
 ">	
 					
-					<label style="width:auto; display:inline"><input type="radio" value="daily" class="e_duplicate_checklist" name="e_duplicate_checklist"> Daily&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="weekly" name="e_duplicate_checklist" class="e_duplicate_checklist"> Weekly&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="monthly" class="e_duplicate_checklist" name="e_duplicate_checklist"> Monthly&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="yearly" class="e_duplicate_checklist" name="e_duplicate_checklist"> Yearly&nbsp;&nbsp;</label>
+					<label style="width:auto; display:inline">
+					<input type="radio" value="daily" class="e_duplicate_checklist" name="e_duplicate_checklist"> Daily&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="weekly" name="e_duplicate_checklist" class="e_duplicate_checklist"> Weekly&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="monthly" class="e_duplicate_checklist" name="e_duplicate_checklist"> Monthly&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="yearly" class="e_duplicate_checklist" name="e_duplicate_checklist"> Yearly&nbsp;&nbsp;</label>
 					</div>
 					</div>
 					
@@ -645,7 +646,7 @@ function add_new_checklist(){
 				$('#enterCheckList').modal('hide');
 				__alertModalBox('Successfully saved!');
 				$('#checkListData').html("");
-				$('#checkListData').basictable('destroy');
+				$('#checklist_items').basictable('destroy');
 				end=start+loadmoreNum;
 				start=0;
 				loadCheckList();
@@ -664,7 +665,7 @@ function changeStatus(evt,uuid){
 		data: {'status' : evt.checked, 'uuid' : uuid, "action" : "active_status", 'task_uuid' : tableUUIDStr},
 		success: function(response){
 			$('#checkListData').html("");
-			$('#checkListData').basictable('destroy');
+			$('#checklist_items').basictable('destroy');
 			end=start+loadmoreNum;
 			start=0;
 			loadCheckList();
@@ -681,7 +682,7 @@ function deleteChecklist(){
 			data: {'uuid' : uuid, "action" : "delete"},
 			success: function(response){
 				$('#checkListData').html("");
-				$('#checkListData').basictable('destroy');
+				$('#checklist_items').basictable('destroy');
 				end=start+loadmoreNum;
 				start=0;
 				loadCheckList();
@@ -769,7 +770,7 @@ function duplicateChecklsit(dstatus, uuid, type){
 									$('#changeCheckList').modal('hide');
 									__alertModalBox('Successfully saved!');
 									$('#checkListData').html("");
-									$('#checkListData').basictable('destroy');
+									$('#checklist_items').basictable('destroy');
 									end=start+loadmoreNum;
 									start=0;
 									loadCheckList();
@@ -783,7 +784,11 @@ function duplicateChecklsit(dstatus, uuid, type){
 					}
 }
 function duplicateChecklistModal(dstatus, uuid, type){
-	var addDuplicateHtmlStr='<label>Start From :</label><input class="input-large datepicker" type="text" data-date-format="dd/mm/yyyy" value="" id="u_start_date" name="u_start_date" readonly ><br>';
+	
+	
+	
+	
+	var addDuplicateHtmlStr='<label>Start From :</label><input class="input-large datepicker form-control" type="text" data-date-format="dd/mm/yyyy" value="" id="u_start_date" name="u_start_date" readonly ><br>';
 	var errorMsgStr="";
 	if(dstatus=="daily"){
 		addDuplicateHtmlStr+='<label style="width:auto; display:inline" class="duplicateErr"><input type="radio" value="none" class="duplicate_checklist" name="duplicate_checklist"> No&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" checked value="daily" class="duplicate_checklist" name="duplicate_checklist"> Daily&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="weekly" name="duplicate_checklist" class="duplicate_checklist"> Weekly&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="monthly" class="duplicate_checklist" name="duplicate_checklist"> Monthly&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="yearly" class="duplicate_checklist" name="duplicate_checklist"> Yearly&nbsp;&nbsp;</label>'
@@ -794,8 +799,17 @@ function duplicateChecklistModal(dstatus, uuid, type){
 	}else if(dstatus=="yearly"){
 		addDuplicateHtmlStr+='<label style="width:auto; display:inline" class="duplicateErr"><input type="radio" value="none" class="duplicate_checklist" name="duplicate_checklist"> No&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="daily" class="duplicate_checklist" name="duplicate_checklist"> Daily&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="weekly" name="duplicate_checklist" class="duplicate_checklist"> Weekly&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="monthly" class="duplicate_checklist" name="duplicate_checklist"> Monthly&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="yearly" checked class="duplicate_checklist" name="duplicate_checklist"> Yearly&nbsp;&nbsp;</label>'
 	}else{
+		
+		
+		
+		
 		addDuplicateHtmlStr+='<label style="width:auto; display:inline" class="duplicateErr"><input type="radio" value="daily" class="duplicate_checklist" name="duplicate_checklist"> Daily&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="weekly" name="duplicate_checklist" class="duplicate_checklist"> Weekly&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="monthly" class="duplicate_checklist" name="duplicate_checklist"> Monthly&nbsp;&nbsp;</label><label style="width:auto; display:inline"><input type="radio" value="yearly" class="duplicate_checklist" name="duplicate_checklist"> Yearly&nbsp;&nbsp;</label>'
 	}
+	
+	
+	
+	
+	
 	
 	$("#checkListUUID").val(uuid);
 	$("#checklisttype").val(type);
