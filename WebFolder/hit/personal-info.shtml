@@ -20,188 +20,159 @@ else
 end if
 
 -->
-
 <!DOCTYPE html>
 <html>
 <head>
 	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
-	
-	<!-- this page specific styles -->
-    <link rel="stylesheet" href="css/compiled/personal-info.css" type="text/css" media="screen" />
-	
 </head>
-<body>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
 
-    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
-	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
-	
-	<!-- main container .wide-content is used for this layout without sidebar -->
-    <div class="content">
-        <div class="container-fluid">
-            <div class="settings-wrapper" id="pad-wrapper">
-				<form name="PersonalForm" action="savecontactemployee.cgi" class="form-comment" method="post" onSubmit="return ValidateForm();">
-                <!-- avatar column -->
-                <div class="span3 avatar-box">
-                    <div class="personal-image">
-                        <img src="" class="avatar img-circle" id="usr_img" name="usr_img" width="107" height="98">
-                        <p>Upload a different photo...</p>
-						<input name="fileinput" type="file" id="fileinput" />
-                    </div>
-                </div>
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
 
-                <!-- edit form column -->
-                <div class="span7 personal-info">
-                    <!--<div class="alert alert-info">
-                        <i class="icon-lightbulb"></i>
-                        This page shows an example of an alternative layout with the main navbar on the top
-                        <br> using <strong>.content.wide-content</strong> for this main container
-                    </div>-->
-                    <h5 class="personal-title">Update your personal info</h5>
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
 
-                    <div style="margin-left:50px;">
-                        <div class="field-box">
-                            <label>First name:</label>
-                            <!--#4DIF (mContactBoolen)-->
-                            <input class="span5 inline-input" type="text" name="First_Name" id="First_Name" value="<!--#4DVAR [Contacts]First name-->" />
+	<!-- main container -->
+    <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+       Update personal info
+    </h1>
+      <ol class="breadcrumb">
+        <li><a href="index.shtml"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Personal info</li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+   		<div class="row">
+       		<div class="panel-body no-padding-top bg-white"> 
+				<div class=" col-sm-12 col-lg-8">
+				<form name="EmployeeForm" id="EmployeeForm" action="savecontactemployee.cgi" class="form-horizontal" method="post" enctype="multipart/form-data">	
+					<div class="form-group">
+    							<label for="" class="col-sm-3 control-label">First name <span style="color:#6E829B">*</span></label>
+								<div class=" col-sm-6">
+									<!--#4DIF (mContactBoolen)-->
+                            			<input class="form-control" type="text" name="First_Name" id="First_Name" value="<!--#4DVAR [Contacts]First name-->" />
+                            		<!--#4DELSE-->
+                            			<input class="form-control" type="text" name="First_Name" id="First_Name" value="<!--#4DVAR [Employees]emp_first_name-->" />
+                            		<!--#4DENDIF-->
+								</div>
+								<input name="uuid" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="uuid">        
+							<input name="form_name" type="hidden" value="PersonalForm" id="form_name">    
+							</div>
+							
+							<div class="form-group">
+    							<label for="" class="col-sm-3 control-label" >Last Name</label>
+								<div class="col-sm-6">
+									<!--#4DIF (mContactBoolen)-->
+                            			<input class="form-conrol" type="text" name="Surname" id="Surname" value="<!--#4DVAR [Contacts]Surname-->" />
+                            		<!--#4DELSE-->
+                            			<input class="form-control" type="text" name="Surname" id="Surname" value="<!--#4DVAR [Employees]emp_last_name-->" />
+                            		<!--#4DENDIF-->
+								</div>
+							</div>
+							<div class="form-group">
+							 <!--#4DIF (mContactBoolen)-->
+                            	<label for="" class="col-sm-3 control-label" >Title:</label>
+                            	<div class=" col-sm-6">
+									<input class="form-control" type="text" name="Title" id="Title" value="<!--#4DVAR [Contacts]Title-->" />
+								</div>
                             <!--#4DELSE-->
-                             <input class="span5 inline-input" type="text" name="First_Name" id="First_Name" value="<!--#4DVAR [Employees]emp_first_name-->" />
+                            	<label for="" class="col-sm-3 control-label" >Position:</label>
+                             	<div class=" col-sm-6">
+									<input class="form-control" type="text" name="Position" id="Position" value="<!--#4DVAR [Employees]emp_position-->" />
+								</div>
                             <!--#4DENDIF-->
-                        </div>
-						<input name="uuid" class="span9" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="uuid">        
-						<input name="form_name" class="span9" type="hidden" value="PersonalForm" id="form_name">        
-                        <div class="field-box">
-                            <label>Last name:</label>
-                            <!--#4DIF (mContactBoolen)-->
-                            <input class="span5 inline-input" type="text" name="Surname" id="Surname" value="<!--#4DVAR [Contacts]Surname-->" />
-                            <!--#4DELSE-->
-                            <input class="span5 inline-input" type="text" name="Surname" id="Surname" value="<!--#4DVAR [Employees]emp_last_name-->" />
-                            <!--#4DENDIF-->
-                        </div>
-						<div class="field-box">
-                            <!--#4DIF (mContactBoolen)-->
-                            <label>Title:</label>
-                            <input class="span5 inline-input" type="text" name="Title" id="Title" value="<!--#4DVAR [Contacts]Title-->" />
-                            <!--#4DELSE-->
-                            <label>Position:</label>
-                             <input class="span5 inline-input" type="text" name="Position" id="Position" value="<!--#4DVAR [Employees]emp_position-->" />
-                            <!--#4DENDIF-->
-                        </div>
-                        <div class="field-box">
-                            <!--#4DIF (mContactBoolen)-->
-                            <label>Company:</label>
-                            <input class="span5 inline-input" type="text" id="Client_ID" name="Client_ID" value="<!--4DVAR [Companies]company_Name-->" readonly/>
-                            <!--#4DELSE-->
-                            <!--#4DENDIF-->
-                        </div>
-                        <div class="field-box">
-                            <label>Email:</label>
-                             <!--#4DIF (mContactBoolen)-->
-                            <input class="span5 inline-input" type="text" name="Email" id="Email" onKeyUp="generateUsername()" onBlur="generateUsername()" value="<!--#4DVAR [Contacts]Email-->" />
-                            <!--#4DELSE-->
-                            <input class="span5 inline-input" type="text" name="Email" id="Email" onKeyUp="generateUsername()" onBlur="generateUsername()" value="<!--#4DVAR [Employees]email-->" />
-                            <!--#4DENDIF-->
-                        </div>
-                        <!-- <div class="field-box">
-                            <label>Time Zone:</label>
-                            <div class="ui-select">
-                                <select id="user_time_zone" name="user[time_zone]">
-                                    <option value="Hawaii">(GMT-10:00) Hawaii</option>
-                                    <option value="Alaska">(GMT-09:00) Alaska</option>
-                                    <option value="Pacific Time (US &amp; Canada)">(GMT-08:00) Pacific Time (US &amp; Canada)</option>
-                                    <option value="Arizona">(GMT-07:00) Arizona</option>
-                                    <option value="Mountain Time (US &amp; Canada)">(GMT-07:00) Mountain Time (US &amp; Canada)</option>
-                                    <option value="Central Time (US &amp; Canada)" selected="selected">(GMT-06:00) Central Time (US &amp; Canada)</option>
-                                    <option value="Eastern Time (US &amp; Canada)">(GMT-05:00) Eastern Time (US &amp; Canada)</option>
-                                    <option value="Indiana (East)">(GMT-05:00) Indiana (East)</option>                                    
-                                </select>
+    						</div>	
+							 
+							 <!--#4DIF (mContactBoolen)-->
+							 <div class="form-group">
+    							<label for="" class="col-sm-3 control-label" >Company</label>
+								<div class=" col-sm-6">
+								  <input class="form-control" type="text" id="Client_ID" name="Client_ID" value="<!--4DVAR [Companies]company_Name-->" readonly/>
+								</div>
+							</div>
+							<!--#4DENDIF-->
+							
+							<div class="form-group">
+    							<label for="" class="col-sm-3 control-label" >Email <span style="color:#6E829B">*</span></label>
+								<div class=" col-sm-6">
+								<!--#4DIF (mContactBoolen)-->
+                            		<input class="form-control" type="text" name="Email" id="Email" onKeyUp="generateUsername()" onBlur="generateUsername()" value="<!--#4DVAR [Contacts]Email-->" />
+                            	<!--#4DELSE-->
+                           			 <input class="form-control" type="text" name="Email" id="Email" onKeyUp="generateUsername()" onBlur="generateUsername()" value="<!--#4DVAR [Employees]email-->" />
+                            	<!--#4DENDIF-->     
+								</div>
+							</div>
+							<div class="form-group">
+                      			<label for="" class="col-sm-3 control-label" >Username:</label>
+                      			<div class=" col-sm-6">
+                           			<!--#4DIF (mContactBoolen)-->
+                           				<input class="form-control" type="text" id="Username" value="<!--#4DVAR [Contacts]Email-->" readonly/>
+                            		<!--#4DELSE-->
+                            			<input class="form-control" type="text" id="Username" value="<!--#4DVAR [Employees]email-->" readonly/>
+                            		<!--#4DENDIF-->
+                        		</div>
+                        	</div>
+                        	<div class="form-group">
+                           		<label for="" class="col-sm-3 control-label" >Password:</label>
+                            	<div class=" col-sm-6">
+                            		<!--#4DIF (mContactBoolen)-->
+                            			<input class="form-control" type="password" name="zWebPassword" id="zWebPassword" value="<!--#4DVAR [Contacts]zWebPassword-->" />
+                            		<!--#4DELSE-->
+                            			<input class="form-control" type="password" name="zWebPassword" id="zWebPassword" value="<!--#4DVAR [Employees]zWebPassword-->" />
+                            		<!--#4DENDIF-->
+                        		</div>
+                        	</div>
+                        	<!--#4DIF (mContactBoolen)-->
+							<div class="form-group">
+								<label for="" class="col-sm-3 control-label" >Direct phone:</label>
+								<div class=" col-sm-6">
+                            		<input class="form-control" type="text" name="Direct_Phone" id="Direct_Phone" value="<!--#4DVAR [Contacts]Direct Phone-->" />
+                            	</div>
+                         	</div>
+                         	<!--#4DENDIF-->
+                         	<!--#4DIF (mContactBoolen)-->
+							<div class="form-group">
+								<label for="" class="col-sm-3 control-label" >Mobile:</label>
+                            	<div class=" col-sm-6"><input class="form-control" type="text" name="Mobile" id="Mobile" value="<!--#4DVAR [Contacts]Mobile-->" /></div>
+                        	</div>
+                        	<!--#4DENDIF-->
+                        	<!--#4DIF (mContactBoolen)-->
+							<div class="form-group">
+								<label for="" class="col-sm-3 control-label" >Direct fax:</label>
+                           		<div class=" col-sm-6"><input class="form-control" type="text" name="Direct_fax" id="Direct_fax" value="<!--#4DVAR [Contacts]Direct fax-->" /></div>
+                        	</div>
+                        	<!--#4DENDIF-->
+							<div class="form-group">
+								<label for="" class="col-sm-3 control-label"></label>
+                                <div class="ui-select col-sm-6  ">
+                                 	<input type="submit" class="btn btn-primary btn-color margin-right-5 btn-sm" value="Submit">
+									 <a href="index.shtml" class="btn btn-danger btn-sm ">Cancel</a>
+                                </div>
                             </div>
-                        </div> -->
-                        <div class="field-box">
-                        <label>Username:</label>
-                           <!--#4DIF (mContactBoolen)-->
-                            <input class="span5 inline-input" type="text" id="Username" value="<!--#4DVAR [Contacts]Email-->" readonly/>
-                            <!--#4DELSE-->
-                            <input class="span5 inline-input" type="text" id="Username" value="<!--#4DVAR [Employees]email-->" readonly/>
-                            <!--#4DENDIF-->
-                        </div>
-                        <div class="field-box">
-                            <label>Password:</label>
-                            <!--#4DIF (mContactBoolen)-->
-                            <input class="span5 inline-input" type="password" name="zWebPassword" id="zWebPassword" value="<!--#4DVAR [Contacts]zWebPassword-->" />
-                            <!--#4DELSE-->
-                            <input class="span5 inline-input" type="password" name="zWebPassword" id="zWebPassword" value="<!--#4DVAR [Employees]zWebPassword-->" />
-                            <!--#4DENDIF-->
-                        </div>
-						<div class="field-box">
-						<!--#4DIF (mContactBoolen)-->
-                            <label>Direct phone:</label>
-                            <input class="span5 inline-input" type="text" name="Direct_Phone" id="Direct_Phone" value="<!--#4DVAR [Contacts]Direct Phone-->" />
-                            <!--#4DELSE-->
-                            <!--#4DENDIF-->
-                        </div>
-						<div class="field-box">
-						<!--#4DIF (mContactBoolen)-->
-                            <label>Mobile:</label>
-                            <input class="span5 inline-input" type="text" name="Mobile" id="Mobile" value="<!--#4DVAR [Contacts]Mobile-->" />
-                            <!--#4DELSE-->
-                            <!--#4DENDIF-->
-                        </div>
-						<div class="field-box">
-						<!--#4DIF (mContactBoolen)-->
-                            <label>Direct fax:</label>
-                            <input class="span5 inline-input" type="text" name="Direct_fax" id="Direct_fax" value="<!--#4DVAR [Contacts]Direct fax-->" />
-                            <!--#4DELSE-->
-                            <!--#4DENDIF-->
-                        </div>
-						
-                        <!--<div class="field-box">
-                            <label>Confirm password:</label>
-                            <input class="span5 inline-input" type="password" value="" />
-                        </div>-->
-						
-                        <div class="span5 field-box actions">
-                            <input type="submit" class="btn-glow primary" value="Save Changes">
-                            <span>OR</span>
-                            <a href="index.shtml">Cancel</a>
-                        </div>
+							
+							
+							
+						</form>
                     </div>
-                </div>
-				</form>
-            </div>
+                    </div>
+				</div>
+            </section>
         </div>
-    </div>
     <!-- end main container -->
-
-
-	<!-- scripts -->
-	 <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
-    <script type="text/javascript">
-	function ValidateForm () {
-		var msg = '';
-
-		if (document.PersonalForm.First_Name.value=="")
-		{ 
-			alert('Please specify your first name'); 
-			document.PersonalForm.First_Name.focus();
-			return false;
-		}
-		if (document.PersonalForm.Email.value=="")
-		{
-			alert('Please specify your email address'); 
-			document.PersonalForm.Email.focus();
-			return false;
-		}
-
-		var regex = /^([a-zA-Z0-9_\.\-\+])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
-		if(document.PersonalForm.Email.value!="" && !regex.test(document.PersonalForm.Email.value))
-		{ 
-			alert('Please Specify valid Email'); 
-			document.PersonalForm.Email.focus();
-			return false;
-		}
-
-	}
-		function generateUsername()
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/top-footer.shtml-->
+</div>
+	<!-- scripts for this page -->
+   <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
+   	<script src="js/jquery.validate.js"></script>
+	
+   	<!-- call this page plugins -->
+	<script language="javascript">
+	function generateUsername()
 		{
 			var val=document.getElementById('Email').value;
 			document.getElementById('Username').value=val;
@@ -218,7 +189,30 @@ end if
 					 reader.readAsDataURL(this.files[0]);
 				 }
 			});
-        });
-    </script>
+        
+	$("#EmployeeForm").validate({
+		rules: {
+			First_Name: "required",
+			Email: {
+				required: true,
+				email: true
+			},
+			zWebPassword: "required"
+		},
+		messages: {
+			First_Name: "Please specify first name",
+			Email: "Please enter a valid email address",
+			zWebPassword: "Please specify password"
+		},
+		errorElement: "em",
+		errorPlacement: function(error, element) {
+			error.insertAfter(element);
+		}
+	});
+ });
+ 
+</script>
+
 </body>
+</html>
 </html>

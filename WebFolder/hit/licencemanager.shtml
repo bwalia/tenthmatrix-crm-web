@@ -10,27 +10,28 @@ QUERY([Companies];[Companies]uuid=client_uuid)
 C_BOOLEAN(mReadOnly)
 mReadOnly:=(Records in selection([Companies])=1)
 
-//_HIT_HTMLTXT:="<h1>AUTH</h1>"
 else
 _HIT_HTTPD_RedirectToURL ("sign-in.shtml")
 end if 
 
-//_HIT_HTMLTXT:=_HIT_SessionStr
 -->
+<!DOCTYPE html>
+<html>
+<head>
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+	<div class="wrapper">
 
-
-
-	<!-- main container -->
-            <div id="pad-wrapper" class="form-page">
-				 <div class="row-fluid header">
-					<h3>Licence Manager</h3>
-					
-                </div>
-				
-                <div class="row-fluid form-wrapper">
-				
-					<!-- left column -->
-                    <div class="col-md-12">
+		<!-- main container -->
+        <div style="background-color: #fff;">
+			<section class="content-header">
+      			<h1>Licence Manager</h1>
+    		</section>
+			<section class="content">
+				<div class="row">
+					<div class="panel-body no-padding-top bg-white"> 
+						<div class=" col-sm-12 col-lg-12">
 					
 						<form name="LicenceManager" action="" class="form-horizontal" method="post"  >
 						<div id="validation" align="center"></div>
@@ -66,75 +67,60 @@ end if
 								</div>
 							</div>
 							<div class="form-group">
-							<label class="col-sm-4 control-label">Platform</label>
-							<div class="col-sm-8">
-							<div CLASS="row">
-							<div CLASS="col-sm-4"><input  type="radio" value="Mac" name="platform" id="platform1" onClick="set_platform_check(this.value)" > <span>Mac</span></div>
-							<div CLASS="col-sm-4"><input type="radio" value="Windows" name="platform" id="platform2" onClick="set_platform_check(this.value)" >Windows
-                            </div>
-							<div CLASS="col-sm-4">
-                            <input type="radio" value="Multi-user" name="platform" id="platform3" onClick="set_platform_check(this.value)" > Multi-user
-                            </div>
-								
-								<input id="platform_check" type="hidden" >
+								<label class="col-sm-4 control-label">Platform</label>
+								<div class="col-sm-8">
+									<label><input  type="radio" value="Mac" name="platform" id="platform1" onClick="set_platform_check(this.value)" > Mac</label> 
+							 		<label><input type="radio" value="Windows" name="platform" id="platform2" onClick="set_platform_check(this.value)" > Windows</label>
+                             		<label><input type="radio" value="Multi-user" name="platform" id="platform3" onClick="set_platform_check(this.value)" > Multi-user</label>
+                             		<input id="platform_check" type="hidden" >
+								</div>
 							</div>
 							
-							
-                              </div>
-								
-								
-                                
-							</div>
 							<div class="form-group">
 								<label class="col-sm-4 control-label">Type Of Licence</label>
-								<label class="radio" style="width:20%">
-                                    <span><input  type="radio" value="Enterprise" name="type_of_licence" id="type_of_licence1" onClick="set_type_check(this.value)" class="rdo"></span> Enterprise
-                                </label>
-								<label class="radio" style="width:20%">
-                                    <span><input type="radio" value="Standard" name="type_of_licence" id="type_of_licence2" onClick="set_type_check(this.value)" class="rdo"></span> Standard
-                                </label>
-								<label class="radio" style="width:20%"> 
-                                    <span><input type="radio" value="Chameleon" name="type_of_licence" id="type_of_licence3" onClick="set_type_check(this.value)" class="rdo"></span> Chameleon
-                                </label>
-                                <input id="type_of_licence_check" type="hidden" >
+								<div class="col-sm-8">
+									<label><input  type="radio" value="Enterprise" name="type_of_licence" id="type_of_licence1" onClick="set_type_check(this.value)" class="rdo"> Enterprise</label>
+									<label><input type="radio" value="Standard" name="type_of_licence" id="type_of_licence2" onClick="set_type_check(this.value)" class="rdo"> Standard</label>
+									<label><input type="radio" value="Chameleon" name="type_of_licence" id="type_of_licence3" onClick="set_type_check(this.value)" class="rdo"> Chameleon</label>
+                                	<input id="type_of_licence_check" type="hidden" >
+                                </div>
 							</div>
 							
 							<div class="form-group">
 								<label class="col-sm-4 control-label">Number Of Users</label>
-								<input type="text" class="form-control" name="noOfUsers" id="noOfUsers" value="">
+								<div class="col-sm-8"><input type="text" class="form-control" name="noOfUsers" id="noOfUsers" value=""></div>
 							</div>
 							<div class="form-group">
-							<label class="col-sm-4 control-label">License Number</label>
-								<input type="text" class="form-control" name="licenceNo" id="licenceNo" value="">
+								<label class="col-sm-4 control-label">License Number</label>
+								<div class="col-sm-8"><input type="text" class="form-control" name="licenceNo" id="licenceNo" value=""></div>
 							</div><br>
 							<span id="err_msg" style="color:#FF0000"></span>
 						
 							<div class="span11 field-box" style="text-align: center;">
 							 
-								<input type="button" name="new" class="btn-glow primary" value="Generate New License" onClick="get_license()">
-								<input type="button" name="activate" class="btn-glow primary" value="Activate" onClick="activate_license()">
-								<input type="button" name="send_mail" class="btn-glow primary" value="Email" onClick="email_license()">
-								<input type="button" name="done" id="done" class="btn-glow primary" value="Done">
+								<input type="button" name="new" class="btn btn-danger btn-sm" value="Generate New License" onClick="get_license()">
+								<input type="button" name="activate" class="btn btn-danger btn-sm" value="Activate" onClick="activate_license()">
+								<input type="button" name="send_mail" class="btn btn-danger btn-sm" value="Email" onClick="email_license()">
+								<input type="button" name="done" id="done" class="btn btn-primary btn-sm" value="Done">
 							</div>
                    					
 						</form>
 					</div>
+					</div>
 				</div>
-            </div>
+			</section>
+        </div>
             
             
     <!-- end main container -->
-
+	</div>
 	<!-- scripts -->
     <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
-	<script src="js/jquery.uniform.min.js"></script>
 	<!-- call this page plugins -->
 		
     <script type="text/javascript">
         $(function () {
-			// add uniform plugin styles to html elements
-            $("input:radio").uniform();
-			
+				
 			$("#done").click(function(){
 				$('#cboxClose').click();
 			});
@@ -142,5 +128,6 @@ end if
 			
         });
     </script>
-	
+</body>
+</html>
 	

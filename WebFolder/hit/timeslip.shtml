@@ -166,23 +166,24 @@ border: 1px solid #d3d3d3;
                             
                             <div class="form-group">
     							<label for="" class="col-sm-3 control-label">Break time </label>
-								<span id="err_msg" style="color:#FF0000"></span>
 								<input class="lunchinterval" type="checkbox" style="margin-left:10px; margin-right:5px;margin-top:-2px;" <!--#4DIF (mUserIsCurrentBool)-->disabled <!--#4DELSE--><!--#4DIF ([Timeslips]exclude_lunch)-->checked disabled<!--4DELSE--><!--4DENDIF--><!--#4DENDIF--> name="lunchinterval" id="lunchinterval" value="true"> Exclude break time 
                            		<span style="display:none;" class="intervalTimeSpan"></span>
                            		<input name="intervalTime" id="intervalTime" type="hidden" value="<!--#4DVAR [Timeslips]interval_time-->" readonly>
                            		<input type="hidden" id="exclude_lunch" name="exclude_lunch" value="off" readonly>
                            	</div>
-                           	
+                           	<div class="form-group" id="breakTimeMsg" style="display:none;">
+                           		 <label class="col-sm-3 control-label">&nbsp;</label>
+                           		 <div class="col-sm-6" id="Errmessage" style="color:#FF0000">
+                           		 </div>
+                           	</div>
 							<div class="form-group breakTimeClass" style="display:none;">
                                 <label class="col-sm-3 control-label">Start Time</label>
 								<div class="col-sm-3"><input <!--#4DIF (mUserIsCurrentBool)-->readonly <!--#4DELSE--><!--#4DENDIF-->class="time brkTimePicker form-control" type="text" value="" name="setBreakStartTime" id="setBreakStartTime"></div>
 								<label class="col-sm-3 control-label">End Time</label>
 								<div class="col-sm-3"><input <!--#4DIF (mUserIsCurrentBool)-->readonly <!--#4DELSE--><!--#4DENDIF-->class="time brkTimePicker form-control" type="text" value="" name="setBreakEndTime" id="setBreakEndTime"></div>
-                           		<span id="Errmessage" style="color:#FF0000"></span>
-                            </div>
+                           	</div>
                             <div class="form-group">
     							<label for="" class="col-sm-3 control-label">Slip Hours </label>
-								<span id="err_msg" style="color:#FF0000"></span>
 								<div class="col-sm-6  ">
 								<input class="form-control num" name="Slip_Hours" id="Slip_Hours" type="text" value="<!--#4DVAR [Timeslips]slip_hours-->" readonly>
 								</div>
@@ -190,7 +191,6 @@ border: 1px solid #d3d3d3;
                            	
                            	<div class="form-group" <!--#4DIF ([Timeslips]interval_time=0)-->style="display:none;"<!--#4DENDIF-->>
                                 <label for="" class="col-sm-3 control-label">Lunch Break </label>
-								<span id="err_msg" style="color:#FF0000"></span>
 								<div class="col-sm-6  ">
 									<input class="form-control num" name="interval_time" id="interval_time" type="text" value="<!--#4DVAR [Timeslips]interval_time*60--> minutes" readonly>
 								</div>
@@ -479,6 +479,7 @@ var End=0;
 		}
 	} 
 	function evaluateSlipHoursWithBreakTime(){
+		$('#breakTimeMsg').hide();
 		var s_time=$('#setBreakStartTime').val();
 		var e_time=$('#setBreakEndTime').val();
 						
@@ -531,22 +532,26 @@ var End=0;
 										$('#exclude_lunch').val("on");
 									}else if(end_time<start_time){
 										$('#Errmessage').html("End date time must be greater than start date time");
+										$('#breakTimeMsg').show();
 										$('#setBreakEndTime').val('');
 									}
 								}else{
 									$('#Errmessage').html('');
 									$('#setBreakEndTime').val('');
 									$('#Errmessage').html("Break time should lie between timeslip timing!");
+									$('#breakTimeMsg').show();
 								}
 							}else{
 								$('#Errmessage').html('');
 								$('#setBreakStartTime').val('');
 								//$('#setBreakEndTime').val('');
 								$('#Errmessage').html("Break time should lie between timeslip timing!");
+								$('#breakTimeMsg').show();
 							}
 						}else{
 							$('#Errmessage').html('');
 							$('#Errmessage').html("Please specify both Start and End Interval time!");
+							$('#breakTimeMsg').show();
 						}
 	} 
 	$(document).ready(function(){

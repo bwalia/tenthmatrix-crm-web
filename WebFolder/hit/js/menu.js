@@ -72,7 +72,7 @@ function load_navigation_data(){
 							}else{
 								table_html+='<i class="'+iconStr+'"></i>';
 							}
-							table_html+='<span>'+item.module_name+'</span><i class="icon-chevron-down"></i><span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span></a>';
+							table_html+='&nbsp;<span>'+item.module_name+'</span><i class="icon-chevron-down"></i><span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span></a>';
 							if(activeMenuFlag){
 								table_html+='<ul class="submenu active treeview-menu">';
 							}else{

@@ -110,7 +110,7 @@ border: 1px solid #d3d3d3;
 						 <div class="form-group">
     							<label for="" class="col-sm-3 control-label" style=" padding-top: 20px; ">Subject</label>
 								<div class=" col-sm-6">
-									<!--#4DIF (mReadOnly)--><textarea class="span4" rows="2" name="Subject" id="Subject"><!--#4DVAR [employee_holidays]subject--></textarea><!--#4DELSE-->
+									<!--#4DIF (mReadOnly)--><textarea class="form-control" rows="2" name="Subject" id="Subject"><!--#4DVAR [employee_holidays]subject--></textarea><!--#4DELSE-->
 								<textarea  class="form-control" rows="2" name="Subject" id="Subject"><!--#4DVAR [employee_holidays]subject--></textarea><!--#4DENDIF-->
 							</div>
 							
