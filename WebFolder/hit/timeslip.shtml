@@ -554,14 +554,39 @@ var End=0;
 							$('#breakTimeMsg').show();
 						}
 	} 
+	
+	function setCurrentTime(){
+		var d = new Date();
+			var curr_hour = d.getHours(); 
+			var curr_min = d.getMinutes();
+			var ampm='AM';
+			if(curr_hour>=12){
+				ampm='PM';
+			}
+			if(curr_hour>12){
+				curr_hour= curr_hour-12;
+			}
+			if(curr_min<10){
+				curr_min= '0'+String(curr_min);
+			}
+			var curr_time= curr_hour+':'+curr_min+' '+ampm;	
+			return curr_time;
+	}
 	$(document).ready(function(){
 	
 		chng_time_format();
 	
 		<!--#4DIF (Records in selection([Timeslips])=0)-->
-		$("#setStartTime").val('');
-		$("#setEndTIme").val('');
+			$("#setStartTime").val('');
+			$("#setEndTIme").val('');
+			var curr_time= setCurrentTime();
+		  	$('#setStartTime').val(curr_time);
+			$('#setStartTime').trigger('change');
+			$('#setEndTIme').val(curr_time);
+			$('#setEndTIme').trigger('change');
+			
 		<!--#4DELSE--><!--#4DENDIF-->
+		
 		 $('#setStartTime').ptTimeSelect({
 		 	onClose: function(input, widget){
 				$('#setStartTime').trigger('change');
@@ -584,40 +609,13 @@ var End=0;
 		});
 		 
 		 $('#StartTimeButton').on('click', function (){
-		 	var d = new Date();
-			var curr_hour = d.getHours(); 
-			var curr_min = d.getMinutes();
-			var ampm='AM';
-			if(curr_hour>=12){
-				ampm='PM';
-			}
-			if(curr_hour>12){
-				curr_hour= curr_hour-12;
-			}
-			if(curr_min<10){
-				curr_min= '0'+String(curr_min);
-			}
-			var curr_time= curr_hour+':'+curr_min+' '+ampm;			
+		 	var curr_time= setCurrentTime();
 		  	$('#setStartTime').val(curr_time);
 			$('#setStartTime').trigger('change');
-			
 		}); 
 		
 		$('#EndTimeButton').on('click', function (){
-		 	var d = new Date();
-			var curr_hour = d.getHours(); 
-			var curr_min = d.getMinutes();
-			var ampm='AM';
-			if(curr_hour>=12){
-				ampm='PM';
-			}
-			if(curr_hour>12){
-				curr_hour= curr_hour-12;
-			}
-			if(curr_min<10){
-				curr_min= '0'+String(curr_min);
-			}
-			var curr_time= curr_hour+':'+curr_min+' '+ampm;			
+		 	var curr_time= setCurrentTime();	
 		  	$('#setEndTIme').val(curr_time);
 			$('#setEndTIme').trigger('change');
 
