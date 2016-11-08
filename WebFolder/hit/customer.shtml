@@ -208,7 +208,7 @@ End If
 																		
 							</div>
 							<!-- right column -->
-							<div class="col-md-6 column pull-right" STYLE="padding-top:20px;">
+							<div class="col-md-6 column " STYLE="padding-top:20px;">
 							<div class="form-group ">
 								<label class="col-sm-3 control-label">&nbsp;</label>
 								<label  class="control-label">							
@@ -410,7 +410,7 @@ End If
 							<br/>
 							<!--#4DIF (Records in selection([Companies])=1)-->
 							
-								<div class="form-group"><label class="col-sm-4 control-label" style="text-align: left;">Contacts</label><div class="col-sm-8"><button class="btn btn-primary btn-color margin-right-5 btn-sm" type="button" id="addrow" style="float:right;">Add new contact</button></div></div>
+								<div class="form-group"><label class="col-sm-4 control-label" style="text-align: left;">Contacts</label><div class="col-sm-8 hidden-xs"><button class="btn btn-primary btn-color margin-right-5 btn-sm" type="button" id="addrow" style="float:right;">Add new contact</button></div></div>
 							
 								<div class="col-sm-12 table-responsive table-full-width">
 							

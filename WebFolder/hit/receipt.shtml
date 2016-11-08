@@ -99,16 +99,15 @@ _HIT_WebSession_SetVar ("last-payment-uuid";_HIT_WebApp_GetField ("uuid"))
    	<div class="content-wrapper" >
         <section class="content-header">
       		<h1>
-        		<!--#4DIF (Records in selection([Receipts])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> 
-        		<small>Receipt</small>
+        		<!--#4DIF (Records in selection([Receipts])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Receipt
       		</h1>
       		<ol class="breadcrumb">
        			<li><a href="index.shtml"><i class="fa fa-dashboard"></i> Dashboard</a></li>
-        		<li class="active">Receipt</li>
+        		<li class="active"><!--#4DIF (Records in selection([Receipts])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Receipt</li>
       		</ol>
     	</section>
 	<section>
-	<div class="row" STYLE="padding:0 10px;">
+	<div class="row">
 	
 					<!-- left column -->
                     <div class="col-sm-8 with-sidebar">

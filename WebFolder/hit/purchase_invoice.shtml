@@ -185,7 +185,11 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 									<input name="is_cost_of_sales"  type="checkbox" value="true" id="is_cost_of_sales" <!--#4DIF ([purchase_invoices]is_cost_of_sales)-->checked<!--4DELSE--><!--4DENDIF--> >&nbsp;Cost of Sales
 								</label></div>
 							</div>
-												
+							
+							<!--#4DIF (mUserIsCurrentBool)--><!--#4DELSE-->
+								<div CLASS="form-group hidden-xs" style="margin-bottom:5px;"><a href="javascript:void(0)" style="float:right;" class="btn btn-primary btn-color margin-right-5 btn-sm" id="addrow">Add a row</a></div>			
+							<!--#4DENDIF--> 
+							
 							<div class="table-responsive table-full-width">
 		 						<div class="table-responsive" style="border:none;" >
                       				<table class="items table table-striped  table-bordered table-hover custom-tbl-st bt" id="table-breakpoint"  style="background-color: rgb(255, 255, 255); border-radius: 4px;" >		
@@ -236,9 +240,7 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 			</tr>
 		  
 		  <!--#4DENDLOOP-->
-<!--#4DIF (mUserIsCurrentBool)--><!--#4DELSE-->		  <tr id="hiderow">
-		    <td colspan="8"><a id="addrow" href="javascript:;" title="Add a row">Add a row</a></td>
-		  </tr><!--#4DENDIF--> 
+
 		  </tbody>
 		</table>
 			</div>

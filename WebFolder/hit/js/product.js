@@ -148,6 +148,11 @@ function fetchspecifications() {
 			});
 		}
 		$('.item').after(htmlStr);
+		
+		$('#table-breakpoint').basictable('destroy');
+		$('#table-breakpoint').basictable({
+    		breakpoint: 751
+   		});
 		bind();
 	});
 	
@@ -178,6 +183,11 @@ $(function() {
 		var curr_row = $('.item').next();
 		curr_row.find('.parameter_name').focus();
 		if ($(".delete").length > 0) $(".delete").show();
+		
+		$('#table-breakpoint').basictable('destroy');
+		$('#table-breakpoint').basictable({
+    				breakpoint: 751
+   		});
     	bind();
   	});
   	

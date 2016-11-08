@@ -156,11 +156,13 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
                            	<div class="form-group">
     							<label for="" class="col-sm-3 control-label"></label>
 								<div class="col-sm-9">
-															
-										<input name="expenses_claimed" class="span9" type="checkbox" value="true"  id="expenses_claimed"  <!--#4DIF ([Mileage]Expense_Claimed_by_Employee)-->checked<!--4DELSE--><!--4DENDIF--> > Expenses Claimed By Employee
-								
+									<label class="checkbox" style="width:auto">							
+										<input name="expenses_claimed" class="span9" type="checkbox" value="true" id="expenses_claimed" <!--#4DIF ([Mileage]Expense_Claimed_by_Employee)-->checked<!--4DELSE--><!--4DENDIF--> >Expenses Claimed By Employee
+									</label>
 								</div>                                                        
                             </div>
+                            <div CLASS="form-group hidden-xs" style="margin-bottom:5px;"><a href="javascript:void(0)" style="float:right;" class="btn btn-primary btn-color margin-right-5 btn-sm" id="addrow">Add a row</a></div>			
+					
 							<div class=" table-responsive table-full-width">
 							<div class="table-responsive" style="border:none;" >
                         <table class="items table table-striped  table-bordered table-hover custom-tbl-st bt" id="table-breakpoint"  style="background-color: rgb(255, 255, 255); border-radius: 4px;" >
@@ -197,19 +199,17 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 									</td>
 									
 									<td>
-									<a href="javascript:void(0)" class="editlink"><i class="fa fa-pencil"></i></a>
-									<a href="javascript:void(0)" class="savelink" style="display:none"><i class="fa fa-save"></i></a>
+									<a href="javascript:void(0)" class="editlink" title="Edit"><i class="fa fa-pencil"></i></a>
+									<a href="javascript:void(0)" class="savelink" style="display:none" title="Save"><i class="fa fa-save"></i></a>
 									 </td>	
-									 <td><a href="javascript:void(0)" class="removelink" ><i class="fa fa-trash"></i></a>
-									<a href="javascript:void(0)" class="cancellink" style="display:none"><i class="fa fa-remove"></i></a>
+									 <td><a href="javascript:void(0)" class="removelink" title="Delete"><i class="fa fa-trash"></i></a>
+									<a href="javascript:void(0)" class="cancellink" style="display:none" title="Cancel"><i class="fa fa-remove"></i></a>
 									</td>	 						
 									</tr>
 		  
 		  <!--#4DENDLOOP-->
 		  <!--#4DENDIF-->
- 		  <tr id="hiderow">
-		    <td colspan="7"><a id="addrow" href="javascript:;" title="Add a row">Add a row</a></td>
-		  </tr>
+ 		 
 		  </tbody>
 		</table></div></div>
 		
