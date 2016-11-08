@@ -467,6 +467,12 @@ function load_data(){
 		completeScroll=false;
 	});
 }
+ function _showPurchaseInvoiceForm(uuid)
+{
+pUrlStr='purchase_invoice.shtml?uuid='+uuid;
+window.location.href=pUrlStr;
+}
+
    </script>
 </body>
 </html>

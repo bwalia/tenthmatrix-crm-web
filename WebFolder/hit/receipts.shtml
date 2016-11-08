@@ -31,12 +31,12 @@ end if
     <div class="content-wrapper">
         <section class="content-header">
       		<h1>
-        		Analysis Ledger
+        		Receipts
         		<small>List panel</small>
       		</h1>
       		<ol class="breadcrumb">
        			<li><a href="index.shtml"><i class="fa fa-dashboard"></i> Dashboard</a></li>
-        		<li class="active">Analysis Ledger</li>
+        		<li class="active">Receipts</li>
       		</ol>
     	</section>
 		<section class="content">

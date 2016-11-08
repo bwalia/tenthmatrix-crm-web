@@ -75,7 +75,9 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
 									<button class="btn btn-primary  btn-middle" onClick="__showTimeSlips('on'); return false;">Chargeable</button>                      
 									<button class="btn btn-primary  btn-middle" onClick="__showTimeSlips('off'); return false;">Not Chargeable</button>
 									<button class="btn btn-primary btn-right" onClick="__showTimeSlips('billed'); return false;">Billed</button>
+									<!--#4DIF (_HIT_WebSession_GetVar ("auth_user_type")#"CLIENTS")-->
                                     <a href="timeslip.shtml" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink " style=""> <i class="fa fa-plus"></i>Add New TimeSheet</a>
+                                    <!--#4DENDIF-->
                   				</div>
          					</div>
       					</div>
@@ -90,7 +92,9 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
                      				<button class="btn btn-primary btn-color padingmix  btn-icon-left btn-sm editorLink" STYLE="width:100%; margin:10px 0px;" onClick="__showTimeSlips('on'); return false;">Chargeable</button>  
                      				<button class="btn btn-primary btn-color padingmix  btn-icon-left btn-sm editorLink" STYLE="width:100%; margin:10px 0px;" onClick="__showTimeSlips('off'); return false;">Not Chargeable</button>  
                      				<button class="btn btn-primary btn-color padingmix  btn-icon-left btn-sm editorLink" STYLE="width:100%; margin:10px 0px;" onClick="__showTimeSlips('billed'); return false;">Billed</button>  
+                     				<!--#4DIF (_HIT_WebSession_GetVar ("auth_user_type")#"CLIENTS")-->
                      				<a href="timeslip.shtml" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink" STYLE="width:100%; margin:10px 0px;"> <i class="fa fa-plus"></i>Add New TimeSheet</a>    
+                  					<!--#4DENDIF-->
                   				</div>
 							</div>
 						</div>

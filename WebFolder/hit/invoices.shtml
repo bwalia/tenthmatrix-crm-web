@@ -128,7 +128,9 @@ end if
 									
 									<button class="btn btn-primary btn-left" onClick="__showReceipts(); return false;">Show All Receipts</button>                               
 									<button class="btn btn-primary btn-right" onClick="__hideReceipts(); return false;">Hide All Receipts</button>
+									<!--#4DIF (_HIT_WebSession_GetVar ("auth_user_type")#"CLIENTS")-->
                                     <a href="invoice.shtml" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink " style=""> <i class="fa fa-plus"></i>Add New Invoice</a>
+                                    <!--#4DENDIF-->
                   				</div>
          					</div>
       					</div>
@@ -143,7 +145,9 @@ end if
                      				<button class="btn btn-primary btn-color padingmix  btn-icon-left btn-sm editorLink" STYLE="width:100%; margin:10px 0px;" onClick="__filterBy('due'); return false;">Due</button>  
                      				<button class="btn btn-primary btn-color padingmix  btn-icon-left btn-sm editorLink" STYLE="width:100%; margin:10px 0px;" onClick="__filterBy('overdue'); return false;">Overdue</button>  
                      				<button class="btn btn-primary btn-color padingmix  btn-icon-left btn-sm editorLink" STYLE="width:100%; margin:10px 0px;" onClick="__filterBy('paid'); return false;">Paid</button>  
+                     				<!--#4DIF (_HIT_WebSession_GetVar ("auth_user_type")#"CLIENTS")-->
                      				<a href="invoice.shtml" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink" STYLE="width:100%; margin:10px 0px;"> <i class="fa fa-plus"></i>Add New Invoice</a>    
+                  					<!--#4DENDIF-->
                   				</div>
 							</div>
 						</div>

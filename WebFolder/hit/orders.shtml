@@ -66,7 +66,7 @@ end if
 									<button class="btn btn-primary  btn-middle" onClick="__filtertasks(3); return false;">Acknowledged</button>
 									<button class="btn btn-primary btn-middle" onClick="__filtertasks(5); return false;">Delivered</button>
 									<button class="btn btn-primary btn-right" onClick="__filtertasks(6); return false;">Paid</button>
-                                    <a href="order.shtml" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink " style=""> <i class="fa fa-plus"></i>Add New Work Order</a>
+                                   	<!--#4DIF (_HIT_WebSession_GetVar ("auth_user_type")#"CLIENTS")--> <a href="order.shtml" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink " style=""> <i class="fa fa-plus"></i>Add New Work Order</a> <!--#4DENDIF-->
                   				</div>
          					</div>
       					</div>
@@ -76,7 +76,7 @@ end if
 							<div class="col-lg-6 col-sm-12 col-xs-12">
 								<div>
 									<input class="form-control xs-margin-btm10 searchFieldClass keyword_type" id="small_screen_keyword" name="keyword" placeholder="Search here.." value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" type="text">
-                     				<a href="order.shtml" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink" STYLE="width:100%; margin:10px 0px;"> <i class="fa fa-plus"></i>Add New Work Order</a>  
+                     				<!--#4DIF (_HIT_WebSession_GetVar ("auth_user_type")#"CLIENTS")--><a href="order.shtml" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink" STYLE="width:100%; margin:10px 0px;"> <i class="fa fa-plus"></i>Add New Work Order</a>  <!--#4DENDIF--> 
                   				</div>
 							</div>
 						</div>

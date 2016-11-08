@@ -92,10 +92,10 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 	<!-- main container -->
    	<div class="content-wrapper" >
         <section class="content-header">
-      		<h1>
-        		<!--#4DIF (Records in selection([Tasks])=1)-->"<!--#4DVAR taskNameStr-->"<!--#4DELSE-->New<!--#4DENDIF--> 
-        		<small>Work Order</small>
-      		</h1>
+        	<!--#4DIF (mUserIsCurrentBool)--><h1>Work Order</h1><!--#4DELSE-->
+			<h1><!--#4DIF (Records in selection([orders])=1)-->Order Details: <!--#4DVAR [orders]order_id --><!--#4DELSE-->New Work Order<!--#4DENDIF--></h1>
+			<!--#4DENDIF-->
+      
       		<ol class="breadcrumb">
        			<li><a href="index.shtml"><i class="fa fa-dashboard"></i> Dashboard</a></li>
         		<li class="active">Work Order</li>
@@ -141,8 +141,11 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 							
 							
 							<div class="form-group">
-								<label class="col-sm-3 control-label">Client <span style="color:#6E829B">*</span></label><!--#4DIF (mUserIsCurrentBool)--><!--#4DVAR [Companies]company_Name--><!--#4DELSE-->
+								<label class="col-sm-3 control-label">Client <span style="color:#6E829B">*</span></label>
 								<div class=" col-sm-6">
+								<!--#4DIF (mUserIsCurrentBool)-->
+								<!--#4DVAR [Companies]company_Name--><!--#4DELSE-->
+								
 								<div class="ui-widget">
 									<select CLASS="form-control" id="Client_ID" name="Client_ID">
 									<!--#4DIF (Records in selection([orders])=0)-->
@@ -156,9 +159,8 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 									 <!--#4DENDIF-->
 									</select>
 								</div>
-									                             
-								</div>
 								<!--#4DENDIF-->
+								</div>
 							</div>
 							
 							
@@ -196,7 +198,7 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 							<div class="form-group">
 								<label class="col-sm-3 control-label">Template</label>
 								<!--#4DIF (mUserIsCurrentBool)-->
-									<div CLASS="form-group"><input name="order_template" class="form-control" type="text" value="<!--#4DVAR [orders]order_template-->" id="order_template"  readonly>
+									<div CLASS="col-sm-6"><input name="order_template" class="form-control" type="text" value="<!--#4DVAR [orders]order_template-->" id="order_template"  readonly></div>
 								<!--#4DELSE-->
 								<div class="ui-select col-sm-6">
 									<Select name="order_template" id="order_template" CLASS="form-control">
@@ -226,8 +228,11 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 							</div>
 							<!--#4DELSE--><!--#4DENDIF-->
 							<div class="form-group">
-								<label class="col-sm-3 control-label">Date <span style="color:#6E829B">*</span></label><!--#4DIF (mUserIsCurrentBool)--><!--#4DVAR [orders]order_date--><!--#4DELSE-->
-								<div CLASS="col-sm-7"><input name="ordered_date" class="input-large datepicker form-control" data-date-format="dd/mm/yyyy" type="text" <!--#4DIF ([orders]order_date=!00/00/00!)-->value=""<!--4DELSE-->value="<!--#4DVAR [orders]order_date-->"<!--4DENDIF--> id="ordered_date" readonly ><!--#4DENDIF--></div>
+								<label class="col-sm-3 control-label">Date <span style="color:#6E829B">*</span></label>
+								<div CLASS="col-sm-7">
+								<!--#4DIF (mUserIsCurrentBool)--><!--#4DVAR [orders]order_date--><!--#4DELSE-->
+								<input name="ordered_date" class="input-large datepicker form-control" data-date-format="dd/mm/yyyy" type="text" <!--#4DIF ([orders]order_date=!00/00/00!)-->value=""<!--4DELSE-->value="<!--#4DVAR [orders]order_date-->"<!--4DENDIF--> id="ordered_date" readonly ><!--#4DENDIF-->
+								</div>
 							</div>
                             <div class="form-group">
 
@@ -263,7 +268,7 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 									var statesdemo = {
 										state0: {
 											title: 'Enter new Order ID manually?',
-											html:'&lt;div id="message"&gt;&lt;/div&gt;&lt;input type="text" name="order_numbr" id="order_numbr" value=""&gt;&lt;br /&gt;',
+											html:'&lt;div id="message" style="color:#CC0000;"&gt;&lt;/div&gt;&lt;input type="text" class="form-control" name="order_numbr" id="order_numbr" value=""&gt;&lt;br /&gt;',
 											buttons: { Cancel : 0, Ok: 1 },
 											focus: "#order_numbr",
 											submit:function(e,v,m,f){ 
@@ -314,7 +319,7 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 									var statesdemo = {
 										state0: {
 											title: 'Enter tax rate',
-											html:'&lt;div id="tax_message"&gt;&lt;/div&gt;&lt;input type="text" class="num" name="dlg_tax_rate" id="dlg_tax_rate" value=""&gt;&lt;br /&gt;',
+											html:'&lt;div id="tax_message"&gt;&lt;/div&gt;&lt;input type="text" class="form-control num" name="dlg_tax_rate" id="dlg_tax_rate" value=""&gt;&lt;br /&gt;',
 											buttons: { Cancel : 0, Ok: 1 },
 											focus: "#dlg_tax_rate",
 											submit:function(e,v,m,f){ 
@@ -507,7 +512,7 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 								<div class="form-group">
 								<label class="col-sm-3 control-label">Currency Code</label>
 									<!--#4DIF (mUserIsCurrentBool)-->
-									<<input name="currency_code"  type="text" value="<!--#4DVAR [orders]currency_code-->" id="currency_code"  readonly>
+									<input name="currency_code"  type="text" value="<!--#4DVAR [orders]currency_code-->" id="currency_code"  readonly class="form-control">
 									<!--#4DELSE-->
 									<div class="ui-select col-sm-6">
 										<Select name="currency_code" id="currency_code" CLASS="form-control">

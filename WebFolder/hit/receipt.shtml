@@ -99,7 +99,7 @@ _HIT_WebSession_SetVar ("last-payment-uuid";_HIT_WebApp_GetField ("uuid"))
    	<div class="content-wrapper" >
         <section class="content-header">
       		<h1>
-        		<!--#4DIF (Records in selection([Tasks])=1)-->"<!--#4DVAR taskNameStr-->"<!--#4DELSE-->New<!--#4DENDIF--> 
+        		<!--#4DIF (Records in selection([Receipts])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> 
         		<small>Receipt</small>
       		</h1>
       		<ol class="breadcrumb">
