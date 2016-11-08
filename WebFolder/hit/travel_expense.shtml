@@ -156,9 +156,9 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
                            	<div class="form-group">
     							<label for="" class="col-sm-3 control-label"></label>
 								<div class="col-sm-9">
-									<label class="checkbox" style="width:auto">							
-										<input name="expenses_claimed" class="span9" type="checkbox" value="true" id="expenses_claimed" <!--#4DIF ([Mileage]Expense_Claimed_by_Employee)-->checked<!--4DELSE--><!--4DENDIF--> >Expenses Claimed By Employee
-									</label>
+															
+										<input name="expenses_claimed" class="span9" type="checkbox" value="true"  id="expenses_claimed"  <!--#4DIF ([Mileage]Expense_Claimed_by_Employee)-->checked<!--4DELSE--><!--4DENDIF--> > Expenses Claimed By Employee
+								
 								</div>                                                        
                             </div>
 							<div class=" table-responsive table-full-width">

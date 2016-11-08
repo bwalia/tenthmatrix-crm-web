@@ -108,7 +108,7 @@ _HIT_WebSession_SetVar ("last-payment-uuid";_HIT_WebApp_GetField ("uuid"))
       		</ol>
     	</section>
 	<section>
-	<div class="row">
+	<div class="row" STYLE="padding:0 10px;">
 	
 					<!-- left column -->
                     <div class="col-sm-8 with-sidebar">

@@ -86,7 +86,7 @@ end if
       					<div class="form-group no-margin">
      						<div class="pull-right margin-bottom-10 ">
 								<div class="form-inline" style="">                 	          
-                 					<button style="margin-left:15px;" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink" onclick="__deleteScripts(); return false;">Delete</button>
+                 					<button style="margin-left:15px; margin-top:10px;" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink" onclick="__deleteScripts(); return false;">Delete</button>
 								</div>
          					</div>
          					<div class="pull-left margin-bottom-10 ">
