@@ -580,8 +580,8 @@ _HIT_WebSession_SetVar ("last-clicked-uuid";_HIT_WebApp_GetField ("uuid"))
               	</div>
 			</div>
             <!-- /.modal-content -->
-          </div>
-	</div>
+</div>
+</div>
 </div>
 
 	<!-- scripts -->

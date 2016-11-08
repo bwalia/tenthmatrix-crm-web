@@ -109,28 +109,26 @@ end if
 		
 		
 		<section>
-		
-		
-		<div class="row">
-					<!-- left column -->
-                    <div class="col-md-8 with-sidebar">
-						<form name="DocumentForm" id="DocumentForm" action="savedocument.cgi" class="form-horizontal" method="post" enctype="multipart/form-data">
-							<input name="company_uuid" class="span6" type="hidden" value="<!--#4DVAR [Companies]uuid-->" id="company_uuid">
-							<div class="form-group">
-                                    <label class="col-sm-3 control-label">Client Name <span style="color:#6E829B">*</span></label>
-                                    <div class="ui-widget">
-                                        <select id="Client_ID" name="Client_ID" >
-										<!--#4DIF (Records in selection([Documents])=0)-->
-										<option value=""></option>
-                                        <!--#4DSCRIPT/Web_LoadCustomers/-->
-                                         <!--4DLOOP  [Companies]-->
-											<option value="<!--4DVAR [Companies]uuid-->" <!--#4DIF ([Documents]uuid_customer=[Companies]uuid)-->selected<!--4DELSE--><!--4DENDIF-->><!--4DVAR [Companies]company_Name--></option>			
-										 <!--4DENDLOOP-->  
-										 <!--#4DELSE-->
-										 <option value="<!--4DVAR [Companies]uuid-->" selected><!--4DVAR [Companies]company_Name--></option>									 
-										 <!--#4DENDIF-->
-                                        </select>
-                                    </div>
+		<div class="row" STYLE="padding:0px 10px;">
+		<!-- left column -->
+        <div class="col-md-8 with-sidebar">
+		<form name="DocumentForm" id="DocumentForm" action="savedocument.cgi" class="form-horizontal" method="post" enctype="multipart/form-data">
+		<input name="company_uuid" class="span6" type="hidden" value="<!--#4DVAR [Companies]uuid-->" id="company_uuid">
+		<div class="form-group">
+        <label class="col-sm-3 control-label">Client Name <span style="color:#6E829B">*</span></label>
+                  <div class="ui-widget">
+                  <select id="Client_ID" name="Client_ID" >
+	  			 <!--#4DIF (Records in selection([Documents])=0)-->
+							<option value=""></option>
+                             <!--#4DSCRIPT/Web_LoadCustomers/-->
+                             <!--4DLOOP  [Companies]-->
+								<option value="<!--4DVAR [Companies]uuid-->" <!--#4DIF ([Documents]uuid_customer=[Companies]uuid)-->selected<!--4DELSE--><!--4DENDIF-->><!--4DVAR [Companies]company_Name--></option>			
+								 <!--4DENDLOOP-->  
+								 <!--#4DELSE-->
+								 <option value="<!--4DVAR [Companies]uuid-->" selected><!--4DVAR [Companies]company_Name--></option>									 
+								 <!--#4DENDIF-->
+                                 </select>
+                                 </div>
 							</div>
 							<div class="form-group">
 								<label class="col-sm-3 control-label">Filename:</label>

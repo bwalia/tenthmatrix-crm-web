@@ -110,15 +110,15 @@ end if
    
 </ul>
 
-<div class="tab-content" STYLE=" overflow: hidden;    border: 1px solid #ddd;     border-top: none;">
+<div class="tab-content" STYLE=" overflow: hidden;    border: 1px solid #ddd;    border-top: none;">
 
-  <div id="home" class="tab-pane fade in active"  >
+  <div id="home" class="tab-pane fade in active" >
   
 
 				
-                <div class="row">
+                <div class="row"  STYLE="padding:0px 10px;">
 					<!-- left column -->
-                    <div class="col-md-8 with-sidebar" STYLE="padding-top:10px;">
+                    <div  class="col-md-8 with-sidebar" STYLE="padding-top:10px;" >
 						<form name="GroupForm" id="GroupForm" action="savegroup.cgi" class="form-horizontal" method="post">							
 							<input name="uuid" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="uuid">        
 								<div class="form-group" >
