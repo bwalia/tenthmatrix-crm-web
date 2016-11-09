@@ -199,25 +199,25 @@ border: 1px solid #edf2f7;
        		<div class="panel-body no-padding-top bg-white"> 
 				<div class=" col-sm-12 col-lg-12">
 					<form name="ProductForm" action="saveproduct.cgi" id="ProductForm" method="post" class="form-horizontal" >
-			  		<div class="row" >
+			  		<div class="row">
 				 		<div class="panel-body no-padding-top bg-white" >
-							<!--#4DIF (_HIT_WebApp_GetField ("msg")="success")-->
-								<div role="alert" class="alert alert-success">Product saved successfully</div>
+						<!--#4DIF (_HIT_WebApp_GetField ("msg")="success")-->
+						<div role="alert" class="alert alert-success">Product saved successfully</div>
 							<!--#4DENDIF-->
 							<!--#4DIF (_HIT_WebApp_GetField ("msg")="error")-->
-								<div role="alert" class="alert alert-danger">Sorry, some error occurred while saving product. Please try after some time!</div>
+							<div role="alert" class="alert alert-danger">Sorry, some error occurred while saving product. Please try after some time!</div>
 							<!--#4DENDIF-->
 							<ul class="nav nav-tabs">
-  								<li  class="active"><a href="#tab1" data-toggle="tab">Product Detail</a></li>
-  								<!--#4DIF (Records in selection([Products])=1)-->
- 									<li><a href="#tab2" data-toggle="tab">Product Images</a></li>
-  									<li><a href="#tab3" data-toggle="tab">Available Options</a></li>
-  								<!--#4DENDIF-->
+  							<li  class="active"><a href="#tab1" data-toggle="tab">Product Detail</a></li>
+  							<!--#4DIF (Records in selection([Products])=1)-->
+ 							<li><a href="#tab2" data-toggle="tab">Product Images</a></li>
+  							<li><a href="#tab3" data-toggle="tab">Available Options</a></li>
+  							<!--#4DENDIF-->
 							</ul>
 							<div class="tab-content" STYLE="overflow: hidden;border: 1px solid #ddd;border-top: none;">
-  								<div id="tab1" class="tab-pane fade in active"><div class="col-md-8 column" style="padding-top:20px;">
-  									<input name="Product_uuid" class="span9" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="Product_uuid">               
-                               		<div class="form-group">
+  							<div id="tab1" class="tab-pane fade in active"><div class="col-md-8 column" style="padding-top:20px;">
+  							<input name="Product_uuid" class="span9" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="Product_uuid">               
+                        	<div class="form-group">
                                 		<label for="" class="col-sm-3 control-label">Categories <span style="color:#6E829B">*</span></label>
                                 		<input class="form-control" type="hidden" id="selected_categories" value="" name="selected_categories" STYLE="width::100%;">
 										<div class="col-sm-9">

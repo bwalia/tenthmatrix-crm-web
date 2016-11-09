@@ -46,7 +46,7 @@ end if
         <section class="content-header">
       		<h1>
         		Timeslips
-        		<small>List panel</small>
+        		
       		</h1>
       		<ol class="breadcrumb">
        			<li><a href="index.shtml"><i class="fa fa-dashboard"></i> Dashboard</a></li>

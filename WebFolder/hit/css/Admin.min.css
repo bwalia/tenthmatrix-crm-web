@@ -179,13 +179,19 @@ body.hold-transition .content-wrapper, body.hold-transition .right-side, body.ho
 }
 .content {
 	min-height: 250px;
-	padding: 15px;
+	padding: 0px 15px 19px 15px;
 	margin-right: auto;
 	margin-left: auto;
-	padding-left: 15px;
-	padding-right: 15px;
-	margin-top:20px;
+	
 }
+
+
+.table-full-width{
+	padding-top:10px;
+}
+
+
+
 h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
 	font-family: 'Source Sans Pro', sans-serif
 }
@@ -324,9 +330,13 @@ color:#ccc
 }
 .content-header {
 	position: relative;
-	padding: 72px 15px 0 15px;
+	padding: 1% 15px 0 15px;
 	
 }
+
+
+
+
 .content-header>h1 {
 	margin: 0;
 	font-size: 24px
@@ -398,9 +408,15 @@ color:#ccc
 }
 
 @media (max-width:767px) {
-.main-header {
-	position: fixed;
+	
+	
+	.content-header {
+	position: relative;
+	padding: 10% 15px 0 15px;
+	
 }
+	
+
 .main-header .logo, .main-header .navbar {
 	width: 100%;
 	float: none

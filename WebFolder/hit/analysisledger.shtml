@@ -90,8 +90,8 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
    	<div class="content-wrapper" >
         <section class="content-header">
       		<h1>
-        		<!--#4DIF (Records in selection([Tasks])=1)-->"<!--#4DVAR taskNameStr-->"<!--#4DELSE-->New<!--#4DENDIF--> 
-        		<small>Edit Analysis Ledger</small>
+        		<!--#4DIF (Records in selection([analysis_ledger])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Analysis Ledger
+        		
       		</h1>
       		<ol class="breadcrumb">
        			<li><a href="index.shtml"><i class="fa fa-dashboard"></i> Dashboard</a></li>

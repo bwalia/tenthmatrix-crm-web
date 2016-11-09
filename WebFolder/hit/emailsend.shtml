@@ -81,8 +81,7 @@ end if
    	<div class="content-wrapper">
         <section class="content-header">
       		<h1>
-        		<!--#4DIF (Records in selection([Tasks])=1)-->"<!--#4DVAR taskNameStr-->"<!--#4DELSE-->New<!--#4DENDIF--> 
-        		<small>Mail</small>
+        		<!--#4DIF (Records in selection([_emailc_queue])=1)-->Resend Mail<!--#4DELSE-->New mail<!--#4DENDIF-->
       		</h1>
       		<ol class="breadcrumb">
        			<li><a href="index.shtml"><i class="fa fa-dashboard"></i> Dashboard</a></li>

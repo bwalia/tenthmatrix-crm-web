@@ -30,23 +30,23 @@ _HIT_WebSession_SetVar ("last-payment-uuid";_HIT_WebApp_GetField ("uuid"))
                 </div>
                 <div class="row-fluid form-wrapper">
 					<!-- left column -->
-                    <div class="span9 with-sidebar">
-						<form name="ftpuserForm" action="saveftpuser.cgi" class="form-comment" method="post" onSubmit="return ValidateForm();">
+                    <div class="col-sm-9 with-sidebar">
+						<form name="ftpuserForm" action="saveftpuser.cgi" class="form-horizontal" method="post" onSubmit="return ValidateForm();">
 							<input name="uuid" class="span9" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="uuid">
-							<div class="span12 field-box">
-								<label>FTP User Name<span style="color:#6E829B">*</span></label>
-								<input name="ftp_user_name" class="span5" type="text" value="<!--#4DVAR [ftp_users]ftp_user_name-->" id="ftp_user_name" readonly>
+							<div class="form-group">
+								<label class="col-sm-3 control-label">FTP User Name<span style="color:#6E829B">*</span></label>
+							<div CLASS="col-sm-6">	<input name="ftp_user_name" class="form-control" type="text" value="<!--#4DVAR [ftp_users]ftp_user_name-->" id="ftp_user_name" readonly> </div>
 							</div>                                                                 
 							<!-- 
 <div class="span12 field-box">
-								<label>FTP User Directory</label>
+								<label class="col-sm-3 control-label">FTP User Directory</label>
 								<input class="span5" name="ftp_home_dir_path"  type="text" value="<!~~4DVAR [ftp_users]ftp_home_dir_path~~>" id="ftp_home_dir_path" readonly>
 							</div>
  -->							
-							<div class="span12 field-box">
-								<label>FTP User Directory<span style="color:#6E829B">*</span></label>
-								<textarea name="ftp_home_dir_path" class="span7" rows="4" id="ftp_home_dir_path" readonly><!--#4DVAR [ftp_users]ftp_home_dir_path--></textarea>
-							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label">FTP User Directory<span style="color:#6E829B">*</span></label>
+								<div CLASS="col-sm-6"><textarea name="ftp_home_dir_path" class="form-control" rows="4" id="ftp_home_dir_path" readonly><!--#4DVAR [ftp_users]ftp_home_dir_path--></textarea>
+							</div></div>
 							<div class="span11 field-box" style="text-align: center;">
 								<!-- <input type="submit" id="submit" class="btn-glow primary" value="Submit"> -->
 								<!-- <span>OR</span> -->
