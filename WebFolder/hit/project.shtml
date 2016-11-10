@@ -294,7 +294,7 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
               								<thead>
                 								<tr>
                   									<th>File Name</th>
-                  									<th>Delete</th>
+                  									<th class="hidden-xs">Delete</th>
                   									<th class="hidden-xs">Download</th>
                 								</tr>
               								</thead>
@@ -303,8 +303,8 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 			  								<!--#4DLOOP [Documents]--><!-- row -->
                 							<tr>
                   								<!-- <td width="30">1</td> -->
-                  								<td><a title="<!--#4DHTMLVAR [Documents]filename-->" target="_blank" href="#" onClick="download_file('<!--#4DHTMLVAR [Documents]uuid-->')"><!--#4DHTMLVAR [Documents]filename--></a></td>
-                  								<td><a href="javascript:void(0)" onClick="del_file('<!--#4DHTMLVAR [Documents]uuid-->', $(this))"><i class="fa fa-remove"></i></a ></td>
+                  								<td><!--#4DHTMLVAR [Documents]filename--></td>
+                  								<td class="hidden-xs"><a href="javascript:void(0)" onClick="del_file('<!--#4DHTMLVAR [Documents]uuid-->', $(this))"><i class="fa fa-remove"></i></a ></td>
                   								<td class="hidden-xs"><a href="javascript:void(0)" onClick="download_file('<!--#4DHTMLVAR [Documents]uuid-->')"><i class="fa fa-download"></i></a></td>                
                 							</tr>
                 							<!--#4DENDLOOP-->
@@ -365,7 +365,9 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 									 <div class="col-sm-6  ">
 									<textarea name="add_new_note" class="form-control" rows="3" id="add_new_note" CLASS="form-control"> </textarea>
 									</div>
+									<div class="col-sm-4">
 									<button type="button" id="add" class="btn btn-primary" onClick="addCustomerNote()">Add Note</button>
+									</div>
 								</div>
 							
                                 </div>

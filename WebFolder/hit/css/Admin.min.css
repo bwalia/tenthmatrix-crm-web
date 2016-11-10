@@ -4797,14 +4797,14 @@ table > tbody > tr > td {
 
 }
 
-
-
-
-
-
-
-
-
-
-
-
+.scrollToTop{
+	width:38px; 
+	padding:10px; 
+	position:fixed;
+	bottom:25px;
+	right:15px;
+	display:none;background: rgba(0, 0, 0, 0) url("../img/top.png") no-repeat scroll 0 0;
+}
+.scrollToTop:hover{
+	text-decoration:none;
+}

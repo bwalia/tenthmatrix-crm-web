@@ -1,3 +1,5 @@
+<a href="#" class="scrollToTop" style="display:none;">&nbsp;</a>
+
 <div style="text-align:center" id="dialog" ></div>
 
 <div class="modal fade" id="globalPrompt" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
