@@ -19,27 +19,42 @@ else
 _HIT_HTTPD_RedirectToURL ("sign-in.shtml")
 end if 
 -->
+
 <!DOCTYPE html>
 <html>
 <head>
 	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
-	<link href="css/img-tabs.css" type="text/css" rel="stylesheet">
-	<!--<link href="css/lib/bootstrap-wysihtml5.css" type="text/css" rel="stylesheet">-->
+	 <link href="css/bootstrap.datepicker.css" type="text/css" rel="stylesheet">
 	<link rel="stylesheet" href="css/autocomplete.css" />
-	<link rel="stylesheet" media="all" type="text/css" href="css/jquery-impromptu.css" />
 <style>
-.form-comment em.error {
+.custom-combobox a.ui-button, 
+  .custom-combobox a.ui-widget, 
+  .custom-combobox a.ui-state-default, 
+  .custom-combobox a.ui-button-icon-only, 
+  .custom-combobox a.custom-combobox-toggle, 
+  .custom-combobox a.ui-corner-right {
+	top:0px;
+  }
+ #ProjectForm em.error {
 	margin-left: 10px;
 	width: auto;
 	display: inline;
 }
-.form-comment em.error {
-	color: red;
-	font-style: italic;
+#ProjectForm em.error {
+    color: red;
+    font-style: italic;
 }
-.form-comment input.error, textarea.error, select.error{
-	border: 1px solid red;
+#ProjectForm input.error, textarea.error, select.error{
+    border: 1px solid red;
 }
+
+  #ProjectForm .custom-combobox{
+  
+      width: 351px;
+    margin-left: 25px;
+    top: 2px;
+  }
+  
 .fileUpload {
 	position: relative;
 	overflow: hidden;
@@ -71,41 +86,46 @@ box-shadow: 0px 0px 12px 0px rgba(0,0,0,0.18);
 	
 	
 }
-
 </style>
 </head>
-<body>
-	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+ <body class="hold-transition skin-blue sidebar-mini">
+ <div class="wrapper">
+
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
 
     <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
 
 	<!-- main container -->
-<div class="content">
-	<div class="container-fluid">
-		<div id="pad-wrapper" class="form-page">
-	   		<div class="row-fluid header">
-				<h3><!--#4DIF (Records in selection([web_content])=1)-->Edit <!--#4DVAR [web_content]title--><!--#4DELSE-->New document<!--#4DENDIF--></h3>             
-            </div>
-            
-            	<div id="tabs">
-					<ul>
-						<li ><a style="color:#000000" href="#tabs-1">Document Editor</a></li>
-						<li ><a style="color:#000000" href="#tabs-2">Search Optimisation</a></li>
-						<!--#4DIF (Records in selection([web_content])=1)-->
-						<li ><a style="color:#000000" href="#tabs-3">Objects</a></li>
-						<!--#4DENDIF-->
-					</ul>
-					<form name="WebContentForm" action="savewebcontent.cgi" class="form-comment" method="post" id="WebContentForm">
-					<div id="tabs-1" class="var_tabs">  
-						<div class="row-fluid form-wrapper" style="margin-bottom:5px;">
-						<!-- left column -->
-                   		<div class="span8 with-sidebar">
-						
-							<div class="field-box">
-								<label>Project <span style="color:#6E829B">*</span></label>
-								<div class="ui-widget projectClass">
+   	<div class="content-wrapper">
+        <section class="content-header">
+      		<h1>
+        		<!--#4DIF (Records in selection([web_content])=1)-->Edit <!--#4DVAR [web_content]title--><!--#4DELSE-->New<!--#4DENDIF-->
+        		<small>Document</small>
+      		</h1>
+      		<ol class="breadcrumb">
+       			<li><a href="index.shtml"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+        		<li class="active">Document</li>
+      		</ol>
+    	</section>
+		<section class="content">
+        	<div class="row">
+        		<form name="WebContentForm" action="savewebcontent.cgi" id="WebContentForm" method="post" class="form-horizontal" >
+				 	<div class="panel-body no-padding-top bg-white"> 
+						<ul class="nav nav-tabs">
+  							<li class="active"><a data-toggle="tab" href="#home">Document Editor</a></li>
+  							<li><a data-toggle="tab" href="#second">Search Optimisation</a></li>
+  							<!--#4DIF (Records in selection([web_content])=1)-->
+  								<li><a data-toggle="tab" href="#third">Objects</a></li>
+  							<!--#4DENDIF-->
+						</ul>
+						<div class="tab-content" STYLE="    overflow: hidden;     border: 1px solid #ddd;     border-top: none;">
+							<div id="home" class="tab-pane fade in active" style="margin-top:20px;">
+								<div class="col-sm-12 col-lg-6">
+									<div class="form-group">
+								<label for="" class="col-sm-2 control-label">Project <span style="color:#6E829B">*</span></label>
+								<div class="col-sm-8 projectClass">
 									<input readonly type="hidden" value="<!--#4DVAR [web_content]uuid_project-->">
-									<select name="project_uuid" id="project_uuid" class="span6">
+									<select name="project_uuid" id="project_uuid" class="form-control">
 									<!--#4DIF (Records in selection([web_content])=0)-->
 										<option value=""></option>
 										<!--#4DSCRIPT/Web_LoadProjects/-->
@@ -118,174 +138,165 @@ box-shadow: 0px 0px 12px 0px rgba(0,0,0,0.18);
 									</select>                                     
 								</div>
 							</div>
-							<div class="field-box">
-								<label>Heading <span style="color:#6E829B">*</span></label>
-								<input type="hidden" value="<!--#4DVAR [web_content]title-->" id="actualName">
-								<input name="title" class="span6 errorNameClass" type="text" value="<!--#4DVAR [web_content]title-->" id="title" onKeyUp="generate_code('title','code')" onBlur="generate_code('title','code')">
-								<em class="error" id="errorEM" generated="true" style="display: none;">This name already exists!</em>
+							<div class="form-group">
+								<label for="" class="col-sm-2 control-label">Heading <span style="color:#6E829B">*</span></label>
+								<div class="col-sm-8">
+									<input type="hidden" value="<!--#4DVAR [web_content]title-->" id="actualName">
+									<input name="title" class="form-control errorNameClass" type="text" value="<!--#4DVAR [web_content]title-->" id="title" onKeyUp="generate_code('title','code')" onBlur="generate_code('title','code')">
+								</div>
+								<div class="col-sm-2"><em class="error" id="errorEM" generated="true" style="display: none;">This name already exists!</em></div>
 							</div>
 							<input name="uuid" class="span4" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="uuid">
-							<div class="field-box">
-								<label>Sub Heading</label>
-								<input name="subtitle" class="span6" type="text" value="<!--#4DVAR [web_content]subtitle-->" id="subtitle">
+							<div class="form-group">
+								<label for="" class="col-sm-2 control-label">Sub Heading</label>
+								<div class="col-sm-8"><input name="subtitle" class="form-control" type="text" value="<!--#4DVAR [web_content]subtitle-->" id="subtitle"></div>
 							</div>
-							<div class="field-box">
-								<label>Body <span style="color:#6E829B">*</span></label>
-								<div class="wysi-column" id="div_wysiwyg">
+							<div class="form-group">
+								<label for="" class="col-sm-2 control-label">Body <span style="color:#6E829B">*</span></label>
+								<div class="wysi-column col-sm-10" id="div_wysiwyg">
                                     <textarea id="body" class="span10 wysihtml5" rows="25" columns="40" name="body"><!--#4DHTMLVAR [web_content]body--></textarea>
                                 </div>
 							</div> 			
-														
-							               					
+									       					
 							</div>
-							<div class="span4 with-sidebar">
+							<div class="col-sm-12 col-lg-6">
 
-								<div class="span12 field-box">
-									<label>Posted At <span style="color:#6E829B">*</span></label>
-									<input name="posted_timestamp" class="input-large datepicker span8" data-date-format="dd/mm/yyyy" type="text"  <!--#4DIF (timestamp_unix_toDate([web_content]posted_timestamp)=!01/01/1970!)-->value=""<!--4DELSE-->value="<!--#4DHTMLVAR timestamp_unix_toDate([web_content]posted_timestamp)-->"<!--4DENDIF-->  id="posted_timestamp" readonly >
+								<div class="span12 form-group">
+									<label for="" class="col-sm-3 control-label">Posted At <span style="color:#6E829B">*</span></label>
+									<div class="col-sm-6"><input name="posted_timestamp" class="input-large datepicker form-control" data-date-format="dd/mm/yyyy" type="text"  <!--#4DIF (timestamp_unix_toDate([web_content]posted_timestamp)=!01/01/1970!)-->value=""<!--4DELSE-->value="<!--#4DHTMLVAR timestamp_unix_toDate([web_content]posted_timestamp)-->"<!--4DENDIF-->  id="posted_timestamp" readonly ></div>
 								</div>
-								<div class="span12 field-box">
-									<label>Posted By</label>
-									<input name="uuid_owner" class="span8" type="text" value="<!--#4DVAR [web_content]uuid_owner-->" id="uuid_owner" >
+								<div class="span12 form-group">
+									<label for="" class="col-sm-3 control-label">Posted By</label>
+									<div class="col-sm-6"><input name="uuid_owner" class="form-control" type="text" value="<!--#4DVAR [web_content]uuid_owner-->" id="uuid_owner" ></div>
 								</div>
-								<div class="field-box">
-									<label>Type</label>
-									<div class="ui-select span7">
-										<select id="type" name="type">
+								<div class="form-group">
+									<label for="" class="col-sm-3 control-label">Type</label>
+									<div class="col-sm-6">		
+										<select id="type" name="type" class="form-control">
 											<option value="blog" <!--#4DIF ([web_content]type="blog")-->selected<!--4DELSE--><!--4DENDIF-->>Blog</option>
 											<option value="news" <!--#4DIF ([web_content]type="news")-->selected<!--4DELSE--><!--4DENDIF-->>News</option>
 											<option value="page" <!--#4DIF ([web_content]type="page")-->selected<!--4DELSE--><!--4DENDIF-->>Page</option>
 										</select>
 						 	    	</div>
 								</div>								
-								<div class="span12 field-box">
-									<label>Order By</label>
-									<input name="sort_order" class="span8 num" type="text" value="<!--#4DVAR [web_content]sort_order-->" id="sort_order" >
+								<div class="span12 form-group">
+									<label for="" class="col-sm-3 control-label">Order By</label>
+									<div class="col-sm-6"><input name="sort_order" class="form-control num" type="text" value="<!--#4DVAR [web_content]sort_order-->" id="sort_order" ></div>
 								</div>
-								<div class="field-box">		
-									<label></label>
-									<label class="checkbox" style="width:auto">							
-										<input name="status" class="span9" type="checkbox" value="true" id="status" <!--#4DIF ([web_content]status)-->checked<!--4DELSE--><!--4DENDIF-->>Active
-									</label>  
+								<div class="form-group">		
+									<label for="" class="col-sm-3 control-label"></label>
+									<div class="col-sm-6"><label class="checkbox" style="width:auto">							
+										<input name="status" type="checkbox" value="true" id="status" <!--#4DIF ([web_content]status)-->checked<!--4DELSE--><!--4DENDIF-->>Active
+									</label></div>
 								</div>
-								<div class="span12 field-box">
-               						<label>Upload Image</label>
-             					</div>
-            					<div class="span12 field-box">
+								<div class=" form-group">
+               						<label for="" class="col-sm-3 control-label">Upload Image</label>
+             						<div class="col-sm-6">
         							<img class="set_upload_image" onerror="this.src='img/no_image.gif'" name="set_upload_image" id="set_upload_image" alt="" src="img/no_image.gif" width="250" height="250"> 
 									<div class="fileUpload btn btn-default btn-file btn-xs">
 										<span>Select image</span>
 										<input id="uploadImageBtn" name="uploadImageBtn" type="file" class="upload" accept="image/*"/>
 									</div>
+									</div>
 								</div>
 							</div>
-						</div>
-					</div>
-					<div id="tabs-2" class="var_tabs">
-						<div class="row-fluid form-wrapper" style="margin-bottom:5px;">
-						<!-- left column -->
-                   		<div class="span9 with-sidebar">
-						<div class="field-box">
-							<label>Code <span style="color:#6E829B">*</span></label>
-							<input name="code" readonly class="span8" type="text" value="<!--#4DVAR [web_content]code-->" id="code">
-						</div>
-						<div class="field-box">
-							<label>Window Title </label>
-							<input name="windowtitle" class="span8" type="text" value="<!--#4DVAR [web_content]windowtitle-->" id="windowtitle">
-						</div>
-						<div class="field-box">
-							<label>Meta tag keywords </label>
-							<textarea id="meta_tag_keywords" class="span8" rows="5" columns="40" name="meta_tag_keywords"><!--#4DHTMLVAR [web_content]meta_tag_keywords--></textarea>
-                        </div>
-                        <div class="field-box">
-							<label>Meta tag description </label>
-							<textarea id="meta_tag_description" class="span8" rows="5" columns="30" name="meta_tag_keywords"><!--#4DHTMLVAR [web_content]meta_tag_description--></textarea>
-                        </div> 
-                         
-						</div>  
-						</div>    
-					</div>
-					</form>
-					<!--#4DIF (Records in selection([web_content])=1)-->
-					
-					<div id="tabs-3" class="var_tabs">
-						<div class="row-fluid form-wrapper getObjectsClass" style="margin-bottom:5px;">
-							<!-- left column -->
-							<!--#4DSCRIPT/Web_LoadWebContentObjects-->
-							<!--4DLOOP [objects]-->
-								<div class="span12 boxbcg" STYLE="margin-left:0px;" >
-									<div class="span9 with-sidebar">
-                   						<div class="field-box ObjectMsg_<!--4DVAR [objects]uuid-->" style="margin-bottom: 1px!important;">
-											<label>Object Heading <span style="color:#6E829B">*</span></label>
-											<input class="span8" type="text" value="<!--4DVAR [objects]name-->" id="object_heading_<!--4DVAR [objects]uuid-->" onKeyUp="generate_object_code('<!--4DVAR [objects]uuid-->')" onBlur="generate_object_code('<!--4DVAR [objects]uuid-->')">
+							</div>
+							<div id="second" class="tab-pane fade" >
+   								<div class="col-sm-12 col-lg-6" STYLE="margin:20px;" >
+									<div class="form-group">
+										<label for="" class="col-sm-3 control-label">Code <span style="color:#6E829B">*</span></label>
+										<div class="col-sm-9"><input name="code" readonly class="form-control" type="text" value="<!--#4DVAR [web_content]code-->" id="code"></div>
+									</div>
+									<div class="form-group">
+										<label for="" class="col-sm-3 control-label">Window Title </label>
+										<div class="col-sm-9"><input name="windowtitle" class="form-control" type="text" value="<!--#4DVAR [web_content]windowtitle-->" id="windowtitle"></div>
+									</div>
+									<div class="form-group">
+										<label for="" class="col-sm-3 control-label">Meta tag keywords </label>
+										<div class="col-sm-9"><textarea id="meta_tag_keywords" class="form-control" rows="5" columns="40" name="meta_tag_keywords"><!--#4DHTMLVAR [web_content]meta_tag_keywords--></textarea></div>
+                        			</div>
+                        			<div class="form-group">
+										<label for="" class="col-sm-3 control-label">Meta tag description </label>
+										<div class="col-sm-9"><textarea id="meta_tag_description" class="form-control" rows="5" columns="30" name="meta_tag_keywords"><!--#4DHTMLVAR [web_content]meta_tag_description--></textarea></div>
+                        			</div> 
+                      			</div>  
+                			</div>
+							<!--#4DIF (Records in selection([web_content])=1)-->
+							<div id="third" class="tab-pane fade" >
+								<!--#4DSCRIPT/Web_LoadWebContentObjects-->
+								<!--4DLOOP [objects]-->
+								<div class="col-sm-12 col-lg-11 boxbcg " STYLE="margin:20px;" >
+									<div class="col-sm-12 col-lg-8 with-sidebar">
+                   						<div class="form-group ObjectMsg_<!--4DVAR [objects]uuid-->">
+											<label for="" class="col-sm-2 control-label">Object Heading <span style="color:#6E829B">*</span></label>
+											<div class=" col-sm-10"><input class="form-control" type="text" value="<!--4DVAR [objects]name-->" id="object_heading_<!--4DVAR [objects]uuid-->" onKeyUp="generate_object_code('<!--4DVAR [objects]uuid-->')" onBlur="generate_object_code('<!--4DVAR [objects]uuid-->')"></div>
 										</div>
 								
-										<div class="field-box" style="margin-bottom: 1px!important;"><label>Code <span style="color:#6E829B">*</span></label><input <!--#4DIF ([objects]auto_format)--><!--4DELSE-->readonly<!--4DENDIF--> class="span8" type="text" value="<!--4DVAR [objects]code-->" id="object_code_<!--4DVAR [objects]uuid-->"></div>
+										<div class="form-group"><label for="" class="col-sm-2 control-label">Code <span style="color:#6E829B">*</span></label><div class=" col-sm-10"><input <!--#4DIF ([objects]auto_format)--><!--4DELSE-->readonly<!--4DENDIF--> class="form-control" type="text" value="<!--4DVAR [objects]code-->" id="object_code_<!--4DVAR [objects]uuid-->"></div></div>
 								
-										<div class="field-box" style="margin-bottom: 1px!important;"><label></label><label class="checkbox" style="width:auto;"><input onclick="en_dis_code(this.checked,'object_code_<!--4DVAR [objects]uuid-->','<!--4DVAR [objects]uuid-->')" class="span9" type="checkbox" value="true" id="auto_format_<!--4DVAR [objects]uuid-->" <!--#4DIF ([objects]auto_format)-->checked<!--4DENDIF--> > <strong>I want to manually enter code </strong></label></div>
+										<div class="form-group"><label for="" class="col-sm-2 control-label"></label><div class=" col-sm-10"><label ><input onclick="en_dis_code(this.checked,'object_code_<!--4DVAR [objects]uuid-->','<!--4DVAR [objects]uuid-->')" class="span9" type="checkbox" value="true" id="auto_format_<!--4DVAR [objects]uuid-->" <!--#4DIF ([objects]auto_format)-->checked<!--4DENDIF--> > <strong>I want to manually enter code </strong></label></div></div>
 								
-										<div class="field-box" style="margin-bottom: 1px!important;"><label>Object Content</label><textarea id="object_content_<!--4DVAR [objects]uuid-->" class="span8" rows="5" columns="40"><!--4DVAR [objects]object_content--></textarea></div>
+										<div class="form-group"><label for="" class="col-sm-2 control-label">Object Content</label><div class=" col-sm-10"><textarea id="object_content_<!--4DVAR [objects]uuid-->" class="form-control" rows="5" columns="40"><!--4DVAR [objects]object_content--></textarea></div></div>
                        			
-                       					<div class="span11 field-box" style="text-align: center;margin-bottom: 1px;"><input type="button" onClick="saveObject('<!--4DVAR [objects]uuid-->');" class="btn-glow primary" value="Save Object"></div>  
+                       					<div class="form-group" style="text-align: center;margin-bottom: 1px;"><input type="button" onClick="saveObject('<!--4DVAR [objects]uuid-->');" class="btn btn-primary btn-color margin-right-5 btn-sm" value="Save Object"></div>  
                        				</div>
                        		
-                       				<div class="span3 with-sidebar">
-                       					<div class="field-box" style="margin-bottom: 1px!important;"><label>Sort Order</label><input class="span3" type="text" value="<!--4DVAR [objects]order_num-->" id="object_sort_order_<!--4DVAR [objects]uuid-->"></div>
-										<div class="field-box" style="margin-bottom: 1px!important;"><label></label><label class="checkbox" style="width:auto;"><input class="span9" type="checkbox" value="true" id="status_<!--4DVAR [objects]uuid-->" <!--#4DIF ([objects]status)-->checked<!--4DENDIF--> > <strong>Active</strong></label></div>
-										<div class="field-box" style="margin-bottom: 1px!important;"><label></label><a class="btn-glow grey" href="javascript:void(0)" onClick="delete_object('<!--4DVAR [objects]uuid-->')">Delete</a></div>
+                       				<div class="col-sm-12 col-lg-4 with-sidebar">
+                       					<div class="form-group"><label for="" class="col-sm-2 control-label">Sort Order</label><div class=" col-sm-10"><input class="span3" type="text" value="<!--4DVAR [objects]order_num-->" id="object_sort_order_<!--4DVAR [objects]uuid-->"></div></div>
+										<div class="form-group"><label for="" class="col-sm-2 control-label"></label><div class=" col-sm-10"><label ><input class="span9" type="checkbox" value="true" id="status_<!--4DVAR [objects]uuid-->" <!--#4DIF ([objects]status)-->checked<!--4DENDIF--> > <strong>Active</strong></label></div></div>
+										<div class="form-group"><label for="" class="col-sm-2 control-label"></label><div class=" col-sm-10"><a class="btn btn-danger btn-sm " href="javascript:void(0)" onClick="delete_object('<!--4DVAR [objects]uuid-->')">Delete</a></div></div>
 									</div>	
-							</div>
-							<!--4DENDLOOP-->
-							<div class="span12 boxbcg"  STYLE="margin-left:0px;">
-							<form name="ObjectsForm" action="" class="form-comment" method="post" id="ObjectsForm">
-                   			<div class="span9 with-sidebar displayObjectMsg">
-                   				<div class="field-box" style="margin-bottom: 1px!important;">
-									<label>Object Heading <span style="color:#6E829B">*</span></label>
-									<input name="object_heading" class="span8" type="text" value="" id="object_heading" onKeyUp="generate_code('object_heading','object_code')" onBlur="generate_code('object_heading','object_code','auto_format')">
+								</div>
+								<!--4DENDLOOP-->
+								<div class="col-sm-12 col-lg-11 boxbcg"  STYLE="margin:20px;">
+								<div class="col-sm-12 col-lg-8 with-sidebar displayObjectMsg">
+                   				<div class="form-group">
+									<label for="" class="col-sm-2 control-label">Object Heading <span style="color:#6E829B">*</span></label>
+									<div class=" col-sm-10"><input name="object_heading" class="form-control" type="text" value="" id="object_heading" onKeyUp="generate_code('object_heading','object_code')" onBlur="generate_code('object_heading','object_code','auto_format')"></div>
 								</div>
 								
-								<div class="field-box" style="margin-bottom: 1px!important;"><label>Code <span style="color:#6E829B">*</span></label><input name="object_code" readonly class="span8" type="text" value="" id="object_code"></div>
+								<div class="form-group"><label for="" class="col-sm-2 control-label">Code <span style="color:#6E829B">*</span></label><div class=" col-sm-4"><input name="object_code" readonly class="form-control" type="text" value="" id="object_code"></div></div>
 								
-								<div class="field-box" style="margin-bottom: 1px!important;"><label></label><label class="checkbox" style="width:auto;"><input onclick="en_dis_code(this.checked,'object_code')" name="auto_format" class="span9" type="checkbox" value="true" id="auto_format"> <strong>I want to manually enter code </strong></label></div>
+								<div class="form-group"><label for="" class="col-sm-2 control-label"></label><div class=" col-sm-4"><label ><input onclick="en_dis_code(this.checked,'object_code')" name="auto_format" class="span9" type="checkbox" value="true" id="auto_format"> <strong>I want to manually enter code </strong></label></div></div>
 								
-								<div class="field-box" style="margin-bottom: 1px!important;"><label>Object Content</label><textarea id="object_content" class="span8" rows="5" columns="40" name="object_content"></textarea></div>
+								<div class="form-group"><label for="" class="col-sm-2 control-label">Object Content</label><div class=" col-sm-4"><textarea id="object_content" class="form-control" rows="5" columns="40" name="object_content"></textarea></div></div>
                        			
-                       			<div class="span11 field-box" style="text-align: center;margin-bottom: 1px;"><input type="submit" name="Submit" class="btn-glow primary" value="Save Object"></div>  
-                       		</div>
+                       			<div class="form-group" style="text-align: center;margin-bottom: 1px;"><input type="button" onClick="saveObject('');" name="Submit" class="btn btn-primary btn-color margin-right-5 btn-sm" value="Save Object"></div>  
+                       			</div>
                        		
-                       		<div class="span3 with-sidebar">
-                       			<div class="field-box" style="margin-bottom: 1px!important;"><label>Sort Order</label><input name="object_sort_order" class="span3" type="text" value="" id="object_sort_order"></div>
+                       			<div class="col-sm-12 col-lg-4 with-sidebar">
+                       				<div class="form-group"><label for="" class="col-sm-2 control-label">Sort Order</label><div class=" col-sm-4"><input name="object_sort_order" class="span3" type="text" value="" id="object_sort_order"></div></div>
+									<div class="form-group"><label for="" class="col-sm-2 control-label"></label><div class=" col-sm-4"><label >	<input name="status" class="span9" type="checkbox" value="true" id="status"> <strong>Active</strong></label></div></div>
+								</div>
+								</div>
+							</div>
+  							<!--#4DENDIF-->
+  							
+  						</div>
+  						<div class="form-group">
+							<label for="" class="col-sm-3 control-label"></label>
+                            <div class="ui-select col-sm-6  ">
+                                 <input type="submit" name="Submit" class="btn btn-primary btn-color margin-right-5 btn-sm" value="Submit">
+                                   <a href="web_pages.shtml" class="btn btn-danger btn-sm ">Cancel</a>
+                            </div>
+                        </div>
 								
-								<div class="field-box" style="margin-bottom: 1px!important;"><label></label><label class="checkbox" style="width:auto;">	<input name="status" class="span9" type="checkbox" value="true" id="status"> <strong>Active</strong></label></div>
-							</div>
-							</form>
-							</div>
-						</div>    
 					</div>
-					
-					<!--4DENDIF-->	
-					<div class="span11 field-box" style="text-align: center;">
-								<input type="submit" name="Submit" class="btn-glow primary" value="Save">  
-								
-								<a href="web_pages.shtml" CLASS="cancelbtn">Cancel</a>
-							</div>
-					
-				</div><!-- end tabs -->
-			
-		</div>
-	</div>
+				</form>
+			</div>
+        </section>
+    </div>
+    <!-- end main container -->
+	<!-- scripts -->
+  	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/top-footer.shtml-->
 </div>
-<!-- end main container -->
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml-->
+		<script src="js/bootstrap.datepicker.js"></script>
+	<script src="js/jquery.validate.js"></script>
+	<script src='tinymce/tinymce.min.js'></script>
+	
 
-<!-- scripts -->
-<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
-     
-<script src='tinymce/tinymce.min.js'></script>
-<script src="js/jquery.uniform.min.js"></script>
-<script src="js/jquery.validate.js"></script>
-<script src="js/bootstrap.datepicker.js"></script>
-<script type="text/javascript" src="js/jquery-impromptu.js"></script>
-<!-- call this page plugins -->
+	<!-- call this page plugins -->
 	
 <script language="javascript">
 function en_dis_code(status,id,e){
@@ -306,23 +317,24 @@ function generate_object_code(e){
 	generate_code(s,d,a);
 }
 function saveObject(e){
-	$(".msg_"+e).remove();
+	if(e!=""){
+		$(".msg_"+e).remove();
 	
-	var uuid= e;
-	var object_heading= $("#object_heading_"+e).val();
-	var object_code= $("#object_code_"+e).val();
-	var object_content= $("#object_content_"+e).val();
-	var object_sort_order= $("#object_sort_order_"+e).val();
+		var uuid= e;
+		var object_heading= $("#object_heading_"+e).val();
+		var object_code= $("#object_code_"+e).val();
+		var object_content= $("#object_content_"+e).val();
+		var object_sort_order= $("#object_sort_order_"+e).val();
 	
-	var auto_format=false;
-	if($('#auto_format_'+e).is(':checked')){
-		auto_format= true;
-	}
-	var status=false;
-	if($('#status_'+e).is(':checked')){
-		status= true;
-	}
-	if(object_heading!="" && object_code!="" && object_content!=""){		
+		var auto_format=false;
+		if($('#auto_format_'+e).is(':checked')){
+			auto_format= true;
+		}
+		var status=false;
+		if($('#status_'+e).is(':checked')){
+			status= true;
+		}
+		if(object_heading!="" && object_code!="" && object_content!=""){		
     			$.ajax({
 					url: 'saveobject.cgi',
 					type: 'POST',
@@ -339,8 +351,40 @@ function saveObject(e){
 						
 					}
 				});
+		}else{
+			$(".ObjectMsg_"+e).before('<div class="span9 alert alert-info msg_'+e+'" role="alert">Please enter all the required fields!</div>');
+		}
 	}else{
-		$(".ObjectMsg_"+e).before('<div class="span9 alert alert-info msg_'+e+'" role="alert">Please enter all the required fields!</div>');
+		$(".alert").remove();
+		if($("#object_heading").val()!="" && $("#object_code").val()!="" && $("#object_content").val()!=""){	
+				var auto_format=false;
+				if($('#auto_format').is(':checked')){
+					auto_format= true;
+				}
+				var status=false;
+				if($('#status').is(':checked')){
+					status= true;
+				}
+				
+    			$.ajax({
+					url: 'saveobject.cgi',
+					type: 'POST',
+					data: {"web_content_uuid" : $("#uuid").val(), "name" : $("#object_heading").val(), "code" : $("#object_code").val(), "object_content" : $("#object_content").val(), "auto_format" : auto_format, "order_num" : $("#object_sort_order").val(), "status" : status },
+					dataType: 'json',
+					cache: false,
+					success: function(response){
+						if(response.success){
+							$.prompt(response.success);
+							location.reload();
+						}else if(response.error){
+							$(".displayObjectMsg").before('<div class="alert alert-danger" role="alert">'+response.error+'</div>');
+						}
+						
+					}
+				});
+		}else{
+			$(".displayObjectMsg").before('<div class="alert alert-danger" role="alert">Please enter all the required fields!</div>');
+		}
 	}
 }
 function delete_object(uid){
@@ -379,16 +423,16 @@ function fetchobjects() {
 			$.each(result, function(i,item){
 				table_html+='<div class="span12 boxbcg" >';
 				table_html+='<div class="span9 with-sidebar ObjectMsg_'+item+'">';
-				table_html+='<div class="field-box" style="margin-bottom: 1px!important;"><label>Object Heading <span style="color:#6E829B">*</span></label><input name="object_heading_'+item+'" class="span8" type="text" value="" id="object_heading_'+item+'" onKeyUp="generate_code(\'object_heading_'+item+'\',\'object_code_'+item+'\')" onBlur="generate_code(\'object_heading_'+item+'\',\'object_code_'+item+'\')"></div>';
-				table_html+='<div class="field-box" style="margin-bottom: 1px!important;"><label>Code <span style="color:#6E829B">*</span></label><input name="object_code_'+item+'" readonly class="span8" type="text" value="" id="object_code_'+item+'"></div>';
-				table_html+='<div class="field-box" style="margin-bottom: 1px!important;"><label></label><label class="checkbox" style="width:auto;"><input name="auto_format_'+item+'" class="span9" type="checkbox" value="true" id="auto_format_'+item+'"> <strong>I want to manually enter code </strong></label></div>';
-				table_html+='<div class="field-box" style="margin-bottom: 1px!important;"><label>Object Content</label><textarea id="object_content_'+item+'" class="span8" rows="5" columns="40" name="object_content_'+item+'"></textarea></div>';
-				table_html+='<div class="span11 field-box" style="text-align: center;"><input type="button" onClick="saveObject(\''+item+'\');" name="Submit" class="btn-glow primary" value="Save Object"></div>';
+				table_html+='<div class="form-group"><label for="" class="col-sm-2 control-label">Object Heading <span style="color:#6E829B">*</span></label><input name="object_heading_'+item+'" class="form-control" type="text" value="" id="object_heading_'+item+'" onKeyUp="generate_code(\'object_heading_'+item+'\',\'object_code_'+item+'\')" onBlur="generate_code(\'object_heading_'+item+'\',\'object_code_'+item+'\')"></div>';
+				table_html+='<div class="form-group"><label for="" class="col-sm-2 control-label">Code <span style="color:#6E829B">*</span></label><input name="object_code_'+item+'" readonly class="form-control" type="text" value="" id="object_code_'+item+'"></div>';
+				table_html+='<div class="form-group"><label for="" class="col-sm-2 control-label"></label><label ><input name="auto_format_'+item+'" class="span9" type="checkbox" value="true" id="auto_format_'+item+'"> <strong>I want to manually enter code </strong></label></div>';
+				table_html+='<div class="form-group"><label for="" class="col-sm-2 control-label">Object Content</label><textarea id="object_content_'+item+'" class="form-control" rows="5" columns="40" name="object_content_'+item+'"></textarea></div>';
+				table_html+='<div class="span11 form-group" style="text-align: center;"><input type="button" onClick="saveObject(\''+item+'\');" name="Submit" class="btn-glow primary" value="Save Object"></div>';
 			    table_html+='</div>';
                	table_html+='<div class="span3 with-sidebar">';
-             	table_html+='<div class="field-box" style="margin-bottom: 1px!important;"><label>Sort Order</label><input name="object_sort_order_'+item+'" class="span3" type="text" value="" id="object_sort_order_'+item+'"></div>';
-				table_html+='<div class="field-box" style="margin-bottom: 1px!important;"><label></label><label class="checkbox" style="width:auto;">	<input name="status_'+item+'" class="span9" type="checkbox" value="true" id="status_'+item+'"> <strong>Active</strong></label></div>';
-				table_html+='<div class="field-box" style="margin-bottom: 1px!important;"><label></label><a href="javascript:void(0)" onClick="delete_object(\''+item.uuid+'\')">Delete</a></div>';
+             	table_html+='<div class="form-group"><label for="" class="col-sm-2 control-label">Sort Order</label><input name="object_sort_order_'+item+'" class="span3" type="text" value="" id="object_sort_order_'+item+'"></div>';
+				table_html+='<div class="form-group"><label for="" class="col-sm-2 control-label"></label><label >	<input name="status_'+item+'" class="span9" type="checkbox" value="true" id="status_'+item+'"> <strong>Active</strong></label></div>';
+				table_html+='<div class="form-group"><label for="" class="col-sm-2 control-label"></label><a href="javascript:void(0)" onClick="delete_object(\''+item.uuid+'\')">Delete</a></div>';
 				table_html+='</div>';
 				table_html+='</div>';
 			});
@@ -451,10 +495,7 @@ function fetchobjects() {
 		<!--#4DIF (_HIT_WebApp_GetField ("msg")="error")-->
 			$.prompt("Sorry, some error occurred while saving content. Please try after some time!");
 		<!--#4DENDIF-->
-		
-		// add uniform plugin styles to html elements
-    	$("input:checkbox, input:radio").uniform();
-	
+			
 		var tiny_options=new Array();
 		tiny_options['selector']= "textarea#body";
 		tiny_options['plugins']= "advlist autolink link image lists charmap print preview hr anchor pagebreak searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking save table contextmenu directionality emoticons template paste textcolor";
