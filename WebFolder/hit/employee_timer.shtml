@@ -12,53 +12,51 @@ end if
 //_HIT_HTMLTXT:=_HIT_SessionStr
 _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
 -->
-
 <!DOCTYPE html>
 <html>
 <head>
 <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
-<link rel="stylesheet" media="all" type="text/css" href="css/jquery-impromptu.css" />
-<style>
-#message{
-	color:#FF0000;
-}
-.table-wrapper .table ul.actions{
-	float:left;
-}
-</style>
+<link rel="stylesheet" href="css/chosen.css">
+
 </head>
-<body>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
 
-<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
 
-<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
 
 	<!-- main container -->
-    <div class="content">
-        
-        <div class="container-fluid">
-            <div id="pad-wrapper">
+	<div class="content-wrapper">
+    	<!-- Content Header (Page header) -->
+    	<section class="content-header">
+      		<h1>
+        	Employees
+    		</h1>
+    		 <ol class="breadcrumb">
+        <li><a href="index.shtml"><i class="fa fa-dashboard"></i> Home</a></li>
+       <li> Employees</li>
+      </ol>
+    </section>
 
-                <!-- projects table -->
-                <div class="table-wrapper orders-table section">
-                    <div class="row-fluid head">
-                        <div class="span12">
-                            <h4>Employees</h4>
-                        </div>
-                    </div>
-
-                    <div class="row-fluid filter-block">
-                    <form id="frm_set" name="frm_set" method="post" action="employees.shtml">
+    <!-- Main content -->
+    <section class="content">
+   		<div class="row">
+       		<div class="col-sm-12">
+                    <form id="frm_set" name="frm_set" CLASS="form-horizontal" method="post" action="employees.shtml">
 
                         <div class="pull-right">
                             Date <!--4DVAR current date-->
                         </div>
                         </form>
                     </div>
-
-                    <div class="row-fluid">
 					
-                        <table class="table table-hover">
+					
+					<div class="col-sm-12">
+					
+                     	<div class="table-responsive table-full-width">
+		 								<div class="table-responsive" style="border:none;" >
+                      				  		<table class="items table table-striped  table-bordered table-hover custom-tbl-st bt" id="table-breakpoint"  style="background-color: rgb(255, 255, 255); border-radius: 4px;" >		
                             <thead>
                                 <tr>
                                 	
@@ -79,49 +77,57 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
                                         ACTION
                                     </th>                        
                                 </tr>
-                            </thead>
-                            <tfoot>
-                            <tr> 
-                            	
-                               
+                        </thead>
+                        <tfoot>
+                        <tr> 
                                 <th align="left">EMPLOYEE NAME</th>
-                                
                                 <th align="left">STATUS</th>
 								<th align="left">TIMER</th>
 								<th align="left">ACTION</th>
-                            </tr>
-                        	</tfoot>
-                            <tbody id="employee_table_body">
-							
-                            </tbody>
+                        </tr>
+                        </tfoot>
+                        <tbody id="employee_table_body">
+					    </tbody>
                         </table>
+						</div>
+						</div>
 						<div id="img_loading_div" style="text-align:center">
-							<img src="loading.gif"  style="padding:20px;" width="34" >
+						<img src="loading.gif"  style="padding:20px;" width="34" >
 						</div>
                     </div>
-                </div>
-                <!-- end projects table -->
-
-            </div>
-        </div>
     </div>
-    <!-- end main container -->
+    </section>
+    </div>
 	
-			
-
-	<!-- scripts -->
+<!-- end main container -->
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/top-footer.shtml-->
+</div>
+<!-- scripts -->
+	<script src="js/wysihtml5-0.3.0.js"></script>
    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
-	<script type="text/javascript" src="js/jquery-impromptu.js"></script>
-	<script src="js/bootstrap.datepicker.js"></script>
+	<script src="js/jquery.validate.js"></script>
+	<script src="js/chosen.jquery.js" type="text/javascript"></script>
+	<script src='tinymce/tinymce.min.js'></script>
+	<!-- call this page plugins -->
+<script src="js/bootstrap.datepicker.js"></script>
 	 <script>
 var interval=1000;
 var arr_emp_timers=new Array();
 
 $(document).ready(function() {
+	
+	 $('#table-breakpoint').basictable({
+    				breakpoint: 751
+    			});
+	
+	
 	jsonRow = 'load_employees_schedule.cgi';
 	load_data(jsonRow);	
 	//setInterval(function(){restart_timer("05:23:22","D58E4CED-0559-4A4C-AB3B-F7C15736CB04");}, interval);
 });
+
+
+
 
 function load_data(jsonRow){
 	$.getJSON(jsonRow,function(result){
@@ -342,6 +348,9 @@ function increment_time(ref){
 	ref.parents('tr').find('.timer').html(time_str);
 	
 }
+
+
+
 
  
     </script>

@@ -195,18 +195,24 @@ body.hold-transition .content-wrapper, body.hold-transition .right-side, body.ho
 h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
 	font-family: 'Source Sans Pro', sans-serif
 }
+
+
+
 a {
 	color: #3c8dbc
 }
+
 a:hover, a:active, a:focus {
 	outline: none;
 	text-decoration: none;
 	color: #72afd2
 }
+
 .page-header {
 	margin: 10px 0 20px 0;
 	font-size: 22px
 }
+
 .page-header>small {
 	color: #666;
 	display: block;

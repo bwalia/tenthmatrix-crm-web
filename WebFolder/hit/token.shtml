@@ -21,85 +21,140 @@ end if
 <!DOCTYPE html>
 <html>
 <head>
-<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+	 <link href="css/bootstrap.datepicker.css" type="text/css" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="css/jquery.ptTimeSelect.css" />
+	<link rel="stylesheet" href="css/autocomplete.css" />
+	<link rel="stylesheet" href="css/chosen.css">
 <style>
-#TaskForm em.error {
+.custom-combobox a.ui-button, 
+  .custom-combobox a.ui-widget, 
+  .custom-combobox a.ui-state-default, 
+  .custom-combobox a.ui-button-icon-only, 
+  .custom-combobox a.custom-combobox-toggle, 
+  .custom-combobox a.ui-corner-right {
+	top:0px;
+  }
+ #ProjectForm em.error {
 	margin-left: 10px;
 	width: auto;
 	display: inline;
 }
-#TaskForm em.error {
-	color: red;
-	font-style: italic;
+#ProjectForm em.error {
+    color: red;
+    font-style: italic;
 }
-#TaskForm input.error, textarea.error, select.error{
-	border: 1px solid red;
+#ProjectForm input.error, textarea.error, select.error{
+    border: 1px solid red;
 }
-</style>
 
+  
+  .chosen-container{
+	  width: 424px !important;
+	  
+
+  }
+  
+  .chosen-container-multi .chosen-choices{
+	  border-radius:4px!important;
+	  border: 1px solid #d3d3d3!important;
+	  width:240px;
+ 
+  }
+  
+  
+  #ProjectForm .custom-combobox{
+  
+      width: 351px;
+    margin-left: 25px;
+    top: 2px;
+  }
+  
+  
+
+  
+		
+
+</style>
 </head>
-<body>
+ <body class="hold-transition skin-blue sidebar-mini">
+ <div class="wrapper">
 
     <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
 
     <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
 
 	<!-- main container -->
-    <div class="content">
-    
-        <div class="container-fluid">
-            <div id="pad-wrapper" class="form-page">
-				 <div class="row-fluid header">
-					<h3><!--#4DIF (Records in selection([Tokens])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> token</h3>
-                </div>
-                <div class="row-fluid form-wrapper">
-					<!-- left column -->
-                    <div class="span9 with-sidebar">
-                           <form name="TaskForm" action="savetoken.cgi" id="TaskForm" method="post" class="form-comment" >
+   	<div class="content-wrapper">
+        <section class="content-header">
+      		<h1>
+        	<!--#4DIF (Records in selection([Tokens])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> token
+      		</h1>
+      		<ol class="breadcrumb">
+       			<li><a href="index.shtml"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+        		<li class="active">New Token </li>
+      		</ol>
+    	</section>
+		<section class="content">
+        	<div class="row">
+				 
+				<div class="col-md-6 with-sidebar">
+                           <form name="TaskForm" action="savetoken.cgi" id="TaskForm" method="post" class="form-horizontal" >
 								<input name="uuid" class="span9" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="uuid">               
                                	
-                                <div class="span12 field-box">
-                                    <label>Token Code <span style="color:#6E829B">*</span></label>
-                                    <input type="hidden" name="actualCode" id="actualCode" value="<!--#4DVAR [Tokens]code-->">
-                                	<input class="span6 errorNameClass" type="text" name="code" id="code" value="<!--#4DVAR [Tokens]code-->">
+                                <div class="form-group">
+                                    <label for="" class="col-sm-2 control-label">Token Code <span style="color:#6E829B">*</span></label>
+                                  <div CLASS="col-sm-6">  <input type="hidden" name="actualCode" id="actualCode" value="<!--#4DVAR [Tokens]code-->">
+                                	<input class="form-control errorNameClass" type="text" name="code" id="code" value="<!--#4DVAR [Tokens]code-->">
                                 	<em class="error" id="errorEM" generated="true" style="display: none;">This code already exists!</em>
-                                </div>
-                                <div class="span12 field-box">
-                                    <label>Token Text <span style="color:#6E829B">*</span></label>
-									<textarea rows="15" class="span8" id="contentTxt" name="contentTxt"><!--#4DVAR [Tokens]contentTxt--></textarea>
-                                </div>
+                                </div></div>
+                                <div class="form-group">
+                                    <label for="" class="col-sm-2 control-label">Token Text <span style="color:#6E829B">*</span></label>
+									 <div CLASS="col-sm-6"><textarea rows="15" class="form-control" id="contentTxt" name="contentTxt"><!--#4DVAR [Tokens]contentTxt--></textarea>
+                                </div></div>
                                
-                                <div class="span12 field-box">
-									<label></label>
-									<label class="checkbox" style="width:auto;">							
-										<input name="status" class="span9" type="checkbox" value="1" id="status" <!--#4DIF ([Tokens]status=1)-->checked<!--4DELSE--><!--4DENDIF--> > <strong>Active</strong>
-									</label>
-								</div>
-								 <div class="span12 field-box">
-                                    <label>Comment</label>
-									<textarea class="span8" id="comments" name="comments"><!--#4DVAR [Tokens]comments--></textarea>
+                                <div class="form-group" STYLE="padding-left:15px;">
+									<label for="" class="col-sm-2 control-label"></label>
+													
+										<input name="status" class="span9" type="checkbox" value="1" id="status" <!--#4DIF ([Tokens]status=1)-->checked<!--4DELSE--><!--4DENDIF--> > <strong> Active</strong>
+									</div>
+								 <div class="form-group">
+                                    <label for="" class="col-sm-2 control-label">Comment</label>
+								<div CLASS="col-sm-6">	<textarea class="form-control" id="comments" name="comments"><!--#4DVAR [Tokens]comments--></textarea></div>
                                 </div>
-                                <div class="span11 field-box" style="margin-left:138px;">
-								<input type="submit" class="btn-glow primary" value="Submit" id="savebtn">
+                                <div class="form-group" >
+								  <label for="" class="col-sm-2 control-label">Comment</label>
+								<div CLASS="col-sm-6"><input type="submit" class="btn btn-primary" value="Submit" id="savebtn">
 								
-								<a href="tokens.shtml" CLASS="cancelbtn">Cancel</a>
+								<a href="tokens.shtml" class="btn btn-danger" >Cancel</a></div>
 							</div>
                         </form>
                     </div>
+				
+				
+				
+					
+				</form>
 				</div>
             </div>
-        </div>
-    </div>
+        </section>
+  
+	
+	
+	
     <!-- end main container -->
-
 	<!-- scripts -->
-	<script src="js/wysihtml5-0.3.0.js"></script>
-   	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml-->
-	<script src="js/jquery.uniform.min.js"></script>
+  	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/top-footer.shtml-->
+</div>
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml-->
+		<script src="js/bootstrap.datepicker.js"></script>
 	<script src="js/jquery.validate.js"></script>
+	<script src="js/chosen.jquery.js" type="text/javascript"></script>
+	
+
 	<!-- call this page plugins -->
 
-    <script type="text/javascript">
+        <script type="text/javascript">
     
 	function checkExistence(form,e){
 		var jsonRow = 'checkalready.cgi?field_value='+e+'&table_name=Tokens&field_name=code';

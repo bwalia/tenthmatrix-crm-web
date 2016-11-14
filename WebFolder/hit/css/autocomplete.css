@@ -56,7 +56,9 @@
   
   /*user setting page setting*/
    #UserSetting .custom-combobox {
-	  width:52%; 
+	 width: 100%;
+    margin-left: 25px;
+    top: 0px;
    
   }
  #UserSetting  .custom-combobox-input{
