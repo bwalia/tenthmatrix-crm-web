@@ -86,6 +86,29 @@ box-shadow: 0px 0px 12px 0px rgba(0,0,0,0.18);
 	
 	
 }
+
+.custom-combobox{
+	top:0px;
+	right:0px;
+}
+
+
+.custom-combobox-input {
+    margin: 0;
+    padding: 0.3em;
+    width: 306%!important;
+}
+
+  @media(max-width:767px){
+	  .custom-combobox-input {
+    margin: 0;
+    padding: 0.3em;
+    width:100%!important;
+  }
+
+
+
+
 </style>
 </head>
  <body class="hold-transition skin-blue sidebar-mini">

@@ -51,16 +51,13 @@ end if
   
   .chosen-container{
 	  width: 424px !important;
-	  
-
-  }
+}
   
-  .chosen-container-multi .chosen-choices{
-	  height: 32px !important;
-	  border-radius:4px!important;
-	  border: 1px solid #d3d3d3!important;
- 
-  }
+.chosen-container-multi .chosen-choices{
+	
+	border-radius:4px!important;
+	border: 1px solid #d3d3d3!important;
+   }
   
 
 
