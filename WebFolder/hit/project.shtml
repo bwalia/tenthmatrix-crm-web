@@ -129,11 +129,11 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 	<!--#4DENDIF-->
 </ul>
 
-<div class="tab-content" STYLE="    overflow: hidden;   border: 1px solid #ddd;     border-top: none;">
+<div class="tab-content" >
 
-  <div id="home" class="tab-pane fade in active">
+  <div id="home" class="tab-pane fade in active" >
   
-<div class=" col-sm-12 col-lg-8" STYLE="margin-top:20px;">
+<div class=" col-sm-12 col-lg-8" STYLE="margin-top:20px;" >
 
 								<!-- left column -->
 								<form name="ProjectForm" action="saveproject.cgi" id="ProjectForm" method="post" class="form-comment" >

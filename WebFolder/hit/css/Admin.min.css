@@ -49,6 +49,12 @@ body {
 }
 
 
+.tab-content>.tab-pane {
+   border: 1px solid #ddd!important;
+    border-top: none!important;
+	overflow: hidden;
+}
+
 
 
 .wrapper:before, .wrapper:after {
@@ -186,10 +192,11 @@ body.hold-transition .content-wrapper, body.hold-transition .right-side, body.ho
 }
 
 
-.table-full-width{
-	padding-top:10px;
+.table-full-width {
+    padding-top: 10px;
+    margin: 10px;
+    width: 99%;
 }
-
 
 
 h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
@@ -267,6 +274,11 @@ color:#ccc
 }
 
 @media (max-width:767px) {
+	
+.table-full-width{
+	border:none;
+}
+	
 .main-header .navbar-right {
 	float: none
 }
@@ -343,6 +355,8 @@ color:#ccc
 
 
 
+
+
 .content-header>h1 {
 	margin: 0;
 	font-size: 24px
@@ -385,7 +399,8 @@ color:#ccc
 	right: 0;
 	float: none;
 	background: #d2d6de;
-	padding-left: 10px
+	padding-left: 10px;
+	margin-bottom:10px;
 }
 .content-header>.breadcrumb li:before {
 	color: #97a0b3
@@ -418,7 +433,7 @@ color:#ccc
 	
 	.content-header {
 	position: relative;
-	padding: 10% 15px 0 15px;
+	padding:2% 15px 0 15px;
 	
 }
 	
