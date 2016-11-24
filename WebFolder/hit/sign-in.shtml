@@ -39,7 +39,8 @@ _HTMLTITLETXT:="Detail Admin - Sign in"
                                 </div>
                                 <!-- Change this to a button or input when using this as a form -->
                                <!-- <a href="index.html" class="btn btn-lg btn-success btn-block">Login</a>-->
-                                <a href="javascript:$('#form-auth').submit()" class="btn btn-light-orange" style="WIDTH: 100%; font-size:17px; line-height: 27px;" >Login</a>
+                               <input type="submit" class="btn btn-light-orange" style="WIDTH: 100%; font-size:17px; line-height: 27px;" value="Login">
+                                <!--<a href="javascript:$('#form-auth').submit()" class="btn btn-light-orange" style="WIDTH: 100%; font-size:17px; line-height: 27px;" >Login</a>-->
                                 <p class="text-right"><small><a href="forgot_password.shtml"><em>forgot password?</em></a></small></p>
                                 <div style="margin: 0px; padding-top: 10px; font-size: 10px; text-align: center;">Version: <!--HIT_EXECUTE _HIT_HTMLTXT:=Sys_VersionGet--></div>
 			</div>
