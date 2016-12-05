@@ -192,7 +192,7 @@ overflow-y: scroll;
 																				</div>
 
 																				
-																				<!--#4DIF (Records in selection([Products])=1)-->
+																				
 																				<h3>Specification</h3>
 																				<div class="row specMsg">
 																						<div class="col-sm-8">
@@ -202,8 +202,12 @@ overflow-y: scroll;
 																														<tr style="background:#fafafa;" class="item">
 																																<th class="vertical-middle" >Specification Name</th>
 																																<th class="vertical-middle" >Specification Value</th>
-																																<th class="vertical-middle">Action</th>
+																																<th class="vertical-middle">Remove</th>
 																														</tr>
+																														<!--#4DIF (Records in selection([Products])=0)-->
+																														<tr class="item-row specificationClass"><td><input type="hidden" class="item_uuid" value=""><input type="text" class="form-control  parameter_name" value="Width" ></td><td><input type="text" class="form-control parameter_value num" value=""></td><td><a href="javascript:void(0)" class="removelink" ><i class="fa fa-trash"></i></a></td></tr>
+																														<tr class="item-row specificationClass"><td><input type="hidden" class="item_uuid" value=""><input type="text" class="form-control  parameter_name" value="Height" ></td><td><input type="text" class="form-control parameter_value num" value=""></td><td><a href="javascript:void(0)" class="removelink" ><i class="fa fa-trash"></i></a></td></tr>
+																														<!--#4DENDIF-->
 																														<tr id="hiderow">
 																																<td colspan="7"><a id="addrow" href="javascript:void(0)" title="Add new parameter">Add new parameter</a></td>
 																														</tr>
@@ -212,7 +216,6 @@ overflow-y: scroll;
 																								</div>
 																						</div>
 																				</div>
-																				<!--#4DENDIF--> 
 																				
 																		</div>
 																		<div class=" col-sm-12 col-lg-3">
