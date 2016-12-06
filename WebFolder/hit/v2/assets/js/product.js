@@ -89,15 +89,20 @@ function remove() {
 }
 	
 function bind() {
-	//$(".savelink").unbind();
-  	//$(".editlink").unbind();
-  	//$(".cancellink").unbind();
-  	$(".removelink").unbind();
+	if(preSettingBool){
+		$(".removelink").unbind();
+		$(".removelink").click(remove);
+	}else{
+		$(".savelink").unbind();
+  		$(".editlink").unbind();
+  		$(".cancellink").unbind();
+  		$(".removelink").unbind();
 	
-	//$(".savelink").click(save);
-  	//$(".editlink").click(edit);
-  	//$(".cancellink").click(cancel);
-  	$(".removelink").click(remove);
+		$(".savelink").click(save);
+  		$(".editlink").click(edit);
+  		$(".cancellink").click(cancel);
+  		$(".removelink").click(remove);
+  	}
   	$('.num').keypress(function(e){
 				var k = e.which;
     			if ((k<48 || k>57) && (k!=46) && (k!=8) && (k!=0)) {
@@ -115,8 +120,11 @@ function fetchspecifications() {
 		}else{
 			$.each(result, function(i,item){
 				if(item.uuid){
-				htmlStr+='<tr class="item-row specificationClass"><td><input type="hidden" class="item_uuid" value="'+item.uuid+'"><input type="text" class="form-control  parameter_name" value="'+item.name+'" ></td><td><input type="text" class="form-control parameter_value num" value="'+item.value+'"></td><td><a href="javascript:void(0)" class="removelink" ><i class="fa fa-trash"></i></a></td></tr>';
-				//old htmlStr+='<tr class="item-row specificationClass"><td><input type="hidden" class="item_uuid" value="'+item.uuid+'"><span class="s_parameter_name">'+item.name+'</span><input type="text" class="form-control  parameter_name" value="'+item.name+'" style="display:none"></td><td><span class="s_parameter_value" >'+item.value+'</span><input style="display:none" type="text" class="form-control parameter_value" value="'+item.value+'"></td><td><a href="javascript:void(0)" class="editlink">Edit</a>&nbsp;<a href="javascript:void(0)" class="savelink" style="display:none">Done</a>&nbsp;<a href="javascript:void(0)" class="removelink" >Remove</a>&nbsp;<a href="javascript:void(0)" class="cancellink" style="display:none">Cancel</a></td></tr>';
+					if(preSettingBool){
+						htmlStr+='<tr class="item-row specificationClass"><td><input type="hidden" class="item_uuid" value="'+item.uuid+'"><input type="text" class="form-control  parameter_name" value="'+item.name+'" ></td><td><input type="text" class="form-control parameter_value num" value="'+item.value+'"></td><td><a href="javascript:void(0)" class="removelink" ><i class="fa fa-trash"></i></a></td></tr>';
+					}else{
+						htmlStr+='<tr class="item-row specificationClass"><td><input type="hidden" class="item_uuid" value="'+item.uuid+'"><span class="s_parameter_name">'+item.name+'</span><input type="text" class="form-control  parameter_name" value="'+item.name+'" style="display:none"></td><td><span class="s_parameter_value" >'+item.value+'</span><input style="display:none" type="text" class="form-control parameter_value" value="'+item.value+'"></td><td><a href="javascript:void(0)" class="editlink">Edit</a>&nbsp;<a href="javascript:void(0)" class="savelink" style="display:none">Done</a>&nbsp;<a href="javascript:void(0)" class="removelink" >Remove</a>&nbsp;<a href="javascript:void(0)" class="cancellink" style="display:none">Cancel</a></td></tr>';
+					}
 				}
 			});
 		}
@@ -127,7 +135,11 @@ function fetchspecifications() {
 
 $(function() {
 	$("#addrow").click(function(){
-		$(".item").after('<tr class="item-row specificationClass"><td><input type="hidden" class="item_uuid" value=""><input type="text" class="form-control parameter_name" value=""></td><td><input type="text" class="form-control parameter_value num" value=""></td><td><a href="javascript:void(0)" class="removelink" ><i class="fa fa-trash"></i></a></td></tr>');
+		if(preSettingBool){
+			$(".item").after('<tr class="item-row specificationClass"><td><input type="hidden" class="item_uuid" value=""><input type="text" class="form-control parameter_name" value=""></td><td><input type="text" class="form-control parameter_value num" value=""></td><td><a href="javascript:void(0)" class="removelink" ><i class="fa fa-trash"></i></a></td></tr>');
+		}else{
+			$(".item").after('<tr class="item-row specificationClass"><td><input type="hidden" class="item_uuid" value=""><span class="s_parameter_name" style="display:none" ></span><input type="text" class="form-control parameter_name" value=""></td><td><span class="s_parameter_value" style="display:none" ></span><input type="text" class="form-control parameter_value" value=""></td><td><a href="javascript:void(0)" class="editlink" style="display:none">Edit</a>&nbsp;<a href="javascript:void(0)" class="savelink" >Done</a>&nbsp;<a href="javascript:void(0)" class="removelink" style="display:none" >Remove</a>&nbsp;<a href="javascript:void(0)" class="cancellink" >Cancel</a></td></tr>');
+		}
 		var curr_row = $('.item').next();
 		curr_row.find('.parameter_name').focus();
 		if ($(".delete").length > 0) $(".delete").show();

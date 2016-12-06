@@ -3,6 +3,8 @@
 C_TEXT(_HIT_HTMLTXT)
 C_LONGINT(_HIT_COUNTER;vProductIDNum)
 C_TEXT(_HTMLTITLETXT)
+C_BOOLEAN(preDefinedBool)
+preDefinedBool:=TRUE
 vProductIDNum:=ProductGetNextID
 QUERY([Products];[Products]uuid=_HIT_WebApp_GetField ("uuid"))
 
@@ -202,12 +204,18 @@ overflow-y: scroll;
 																														<tr style="background:#fafafa;" class="item">
 																																<th class="vertical-middle" >Specification Name</th>
 																																<th class="vertical-middle" >Specification Value</th>
+																																<!--#4DIF (preDefinedBool)-->
 																																<th class="vertical-middle">Remove</th>
+																																<!--#4DELSE-->
+																																<th class="vertical-middle">Action</th>
+																																<!--#4DENDIF-->
 																														</tr>
 																														<!--#4DIF (Records in selection([Products])=0)-->
+																														<!--#4DIF (preDefinedBool)-->
 																														<tr class="item-row specificationClass"><td><input type="hidden" class="item_uuid" value=""><input type="text" class="form-control  parameter_name" value="Width" ></td><td><input type="text" class="form-control parameter_value num" value=""></td><td><a href="javascript:void(0)" class="removelink" ><i class="fa fa-trash"></i></a></td></tr>
 																														<tr class="item-row specificationClass"><td><input type="hidden" class="item_uuid" value=""><input type="text" class="form-control  parameter_name" value="Height" ></td><td><input type="text" class="form-control parameter_value num" value=""></td><td><a href="javascript:void(0)" class="removelink" ><i class="fa fa-trash"></i></a></td></tr>
-																														<!--#4DENDIF-->
+                                                                                                                        <tr class="item-row specificationClass"><td><input type="hidden" class="item_uuid" value=""><input type="text" class="form-control  parameter_name" value="Depth" ></td><td><input type="text" class="form-control parameter_value num" value=""></td><td><a href="javascript:void(0)" class="removelink" ><i class="fa fa-trash"></i></a></td></tr>
+																														<!--#4DENDIF--><!--#4DENDIF-->
 																														<tr id="hiderow">
 																																<td colspan="7"><a id="addrow" href="javascript:void(0)" title="Add new parameter">Add new parameter</a></td>
 																														</tr>
@@ -286,6 +294,10 @@ overflow-y: scroll;
 <script src="assets/js/maniac.js" type="text/javascript"></script> 
 <script src="assets/js/chosen.jquery.js" type="text/javascript"></script> 
 <script type="text/javascript">
+var preSettingBool=false;
+<!--#4DIF (preDefinedBool)-->
+preSettingBool=true;
+<!--4DENDIF--> 
 	maniac.loadbstexteditor();
 	$('#ProductForm').bootstrapValidator({
 			message: 'This value is not valid',
