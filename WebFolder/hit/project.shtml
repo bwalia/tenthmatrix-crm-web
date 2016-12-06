@@ -29,6 +29,7 @@ END IF
 else
 _HIT_HTTPD_RedirectToURL ("sign-in.shtml")
 end if 
+
 C_BOOLEAN(mUserIsCurrentBool)
 mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 

@@ -75,7 +75,7 @@ function edit() {
 	function cancel() {
 		var row = $(this).parents('.item-row');
 		var id=row.find('.item_uuid').val();
-		console.log(id);
+		
 		if(id!='' && id!="undefined" && id!=null){
 			row.find('.s_parameter_name').show();
 			row.find('.s_parameter_value').show();
