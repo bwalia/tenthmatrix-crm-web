@@ -244,7 +244,7 @@ border: 1px solid #edf2f7;
                                 		<label for="" class="col-sm-3 control-label">Description <span style="color:#6E829B">*</span></label>
 										<div class="col-sm-9"><textarea rows="15" id="Description" class="form-control" name="Description"><!--#4DVAR [Products]Description--></textarea></div>
                                 	</div>
-                                
+                                <!--#4DIF (Records in selection([Products])=1)-->
                                 	<div class="span12"><h3 STYLE="padding:29px 0 23px 0px; border-bottom:none;" >Specifications</h3></div>			
 									<div class="table-responsive table-full-width">
 		 								<div class="table-responsive" style="border:none;" >
@@ -260,11 +260,12 @@ border: 1px solid #edf2f7;
 							  						<tr class="item-row"><td><span class="s_parameter_name" style="display:none" ></span><input type="text" class="parameter_name form-control" value="Height"></td><td><span class="s_parameter_value" style="display:none" ></span><input type="text" class="parameter_value form-control" value=""></td><td><a href="javascript:void(0)" class="editlink" style="display:none" title="Edit"><i class="fa fa-pencil"></i></a>&nbsp;<a href="javascript:void(0)" class="savelink" title="Save"><i class="fa fa-save"></i></a>&nbsp;<a href="javascript:void(0)" class="removelink" style="display:none" title="Delete"><i class="fa fa-trash"></i></a>&nbsp;<a href="javascript:void(0)" class="cancellink" title="Cancel"><i class="fa fa-remove"></i></a></td></tr>
 							  						<tr class="item-row"><td><span class="s_parameter_name" style="display:none" ></span><input type="text" class="parameter_name form-control" value="Depth"></td><td><span class="s_parameter_value" style="display:none" ></span><input type="text" class="parameter_value form-control" value=""></td><td><a href="javascript:void(0)" class="editlink" style="display:none" title="Edit"><i class="fa fa-pencil"></i></a>&nbsp;<a href="javascript:void(0)" class="savelink" title="Save"><i class="fa fa-save"></i></a>&nbsp;<a href="javascript:void(0)" class="removelink" style="display:none" title="Delete"><i class="fa fa-trash"></i></a>&nbsp;<a href="javascript:void(0)" class="cancellink" title="Cancel"><i class="fa fa-remove"></i></a></td></tr>
 		  											<!--#4DENDIF--><!--#4DENDIF-->
-		  											<tr id="hiderow" class="hidden-xs"><td colspan="7"><a id="addrow" href="javascript:void(0)" title="Add new specification">Add new specification</a></td></tr> 
+		  											<tr id="hiderow" class="hidden-xs"><td colspan="7"><a id="addrow" href="javascript:void(0)" onClick="AddNewSpec(); return false;" title="Add new specification">Add new specification</a></td></tr> 
 		  										
 											</table>
 										</div>
 									</div>
+									<!--#4DENDIF-->
             				</div>
             				<div class=" col-sm-12 col-lg-4">
 								<div class="form-group">
@@ -375,7 +376,10 @@ $(document).ready(function() {
 	$('#table-breakpoint').basictable({
     	breakpoint: 751
    	});
-   	
+   	<!--#4DIF (Records in selection([Products])=0)-->
+		var new_uuid='<!--#4DVAR Generate UUID-->';	
+		$('#Product_uuid').val(new_uuid);
+	<!--#4DELSE--><!--#4DENDIF-->
 	<!--#4DIF (Records in selection([Products])=1)-->
 	fetchavailableoptions();
 	fetchuploadedimages();

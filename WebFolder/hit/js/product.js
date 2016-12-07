@@ -174,11 +174,7 @@ function fetchspecifications() {
 			}
 		});
 	}
-	
-$(function() {
-	
-	//fetchavailableoptions();
-	$("#addrow").click(function(){
+	function AddNewSpec(){
 		$(".item").after('<tr class="item-row"><td><span class="s_parameter_name" style="display:none" ></span><input type="text" class="parameter_name form-control" value=""></td><td><span class="s_parameter_value" style="display:none" ></span><input type="text" class="parameter_value form-control" value=""></td><td><a href="javascript:void(0)" class="editlink" style="display:none" title="Edit"><i class="fa fa-pencil"></i></a>&nbsp;<a href="javascript:void(0)" class="savelink" title="Save"><i class="fa fa-save"></i></a>&nbsp;<a href="javascript:void(0)" class="removelink" style="display:none" title="Delete"><i class="fa fa-trash"></i></a>&nbsp;<a href="javascript:void(0)" class="cancellink" title="Cancel"><i class="fa fa-remove"></i></a></td></tr>');
 		var curr_row = $('.item').next();
 		curr_row.find('.parameter_name').focus();
@@ -189,8 +185,9 @@ $(function() {
     				breakpoint: 751
    		});
     	bind();
-  	});
-  	
+	}
+$(function() {
+	 	
   	bind();
             // add uniform plugin styles to html elements
            // $("input:checkbox").uniform();
