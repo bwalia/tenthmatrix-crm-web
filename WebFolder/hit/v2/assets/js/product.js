@@ -112,25 +112,51 @@ function bind() {
 			}); 
 }
 
-function fetchspecifications() {
+function fetchspecifications(newBool) {
+	var htmlStr="";
+	var preDefinedSpecificationsArr= ["Width", "Height", "Depth"];
+	
+	if(newBool==true && preSettingBool==true){
+		for (var i = 0; i < preDefinedSpecificationsArr.length; i++) {
+			htmlStr+='<tr class="item-row specificationClass"><td><input type="hidden" class="item_uuid" value=""><input type="text" class="form-control  parameter_name" value="'+preDefinedSpecificationsArr[i]+'" ></td><td><input type="text" class="form-control parameter_value num" value=""></td><td><a href="javascript:void(0)" class="removelink" ><i class="fa fa-trash"></i></a></td></tr>';
+		}
+		$('.item').after(htmlStr);
+		bind();
+	}else{
 	$.getJSON("loadproductspec.cgi?product_uuid="+$('#Product_uuid').val(),function(result){
-		var htmlStr="";
 		if(result.error){
-		
+			if(preSettingBool){
+				for (var i = 0; i < preDefinedSpecificationsArr.length; i++) {
+					htmlStr+='<tr class="item-row specificationClass"><td><input type="hidden" class="item_uuid" value=""><input type="text" class="form-control  parameter_name" value="'+preDefinedSpecificationsArr[i]+'" ></td><td><input type="text" class="form-control parameter_value num" value=""></td><td><a href="javascript:void(0)" class="removelink" ><i class="fa fa-trash"></i></a></td></tr>';
+				}
+			}
 		}else{
+			var createParameterArr=new Array();
+			
 			$.each(result, function(i,item){
 				if(item.uuid){
 					if(preSettingBool){
-						htmlStr+='<tr class="item-row specificationClass"><td><input type="hidden" class="item_uuid" value="'+item.uuid+'"><input type="text" class="form-control  parameter_name" value="'+item.name+'" ></td><td><input type="text" class="form-control parameter_value num" value="'+item.value+'"></td><td><a href="javascript:void(0)" class="removelink" ><i class="fa fa-trash"></i></a></td></tr>';
+						createParameterArr.push(item.name.toLowerCase());
+						htmlStr+='<tr class="item-row specificationClass"><td><input type="hidden" class="item_uuid" value="'+item.uuid+'"><input type="text" class="form-control parameter_name" value="'+item.name+'" ></td><td><input type="text" class="form-control parameter_value num" value="'+item.value+'"></td><td><a href="javascript:void(0)" class="removelink" ><i class="fa fa-trash"></i></a></td></tr>';
 					}else{
 						htmlStr+='<tr class="item-row specificationClass"><td><input type="hidden" class="item_uuid" value="'+item.uuid+'"><span class="s_parameter_name">'+item.name+'</span><input type="text" class="form-control  parameter_name" value="'+item.name+'" style="display:none"></td><td><span class="s_parameter_value" >'+item.value+'</span><input style="display:none" type="text" class="form-control parameter_value" value="'+item.value+'"></td><td><a href="javascript:void(0)" class="editlink">Edit</a>&nbsp;<a href="javascript:void(0)" class="savelink" style="display:none">Done</a>&nbsp;<a href="javascript:void(0)" class="removelink" >Remove</a>&nbsp;<a href="javascript:void(0)" class="cancellink" style="display:none">Cancel</a></td></tr>';
 					}
 				}
 			});
+			
+			if(preSettingBool){
+				for (var i = 0; i < preDefinedSpecificationsArr.length; i++) {
+    				var findNameStr=preDefinedSpecificationsArr[i].toLowerCase();
+    				if(jQuery.inArray(findNameStr, createParameterArr) === -1){
+						htmlStr+='<tr class="item-row specificationClass"><td><input type="hidden" class="item_uuid" value=""><input type="text" class="form-control  parameter_name" value="'+preDefinedSpecificationsArr[i]+'" ></td><td><input type="text" class="form-control parameter_value num" value=""></td><td><a href="javascript:void(0)" class="removelink" ><i class="fa fa-trash"></i></a></td></tr>';
+					}
+    			}
+			}
 		}
 		$('.item').after(htmlStr);
 		bind();
 	});
+	}
 }
 
 $(function() {
