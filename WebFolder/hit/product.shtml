@@ -255,11 +255,6 @@ border: 1px solid #edf2f7;
 								 						<th>Action</th>
 							  						</tr>
 							  					
-							  						<!--#4DIF (Records in selection([Products])=0)--><!--#4DIF (preDefinedBool)-->
-							  						<tr class="item-row"><td><span class="s_parameter_name" style="display:none" ></span><input type="text" class="parameter_name form-control" value="Width"></td><td><span class="s_parameter_value" style="display:none" ></span><input type="text" class="parameter_value form-control" value=""></td><td><a href="javascript:void(0)" class="editlink" style="display:none" title="Edit"><i class="fa fa-pencil"></i></a>&nbsp;<a href="javascript:void(0)" class="savelink" title="Save"><i class="fa fa-save"></i></a>&nbsp;<a href="javascript:void(0)" class="removelink" style="display:none" title="Delete"><i class="fa fa-trash"></i></a>&nbsp;<a href="javascript:void(0)" class="cancellink" title="Cancel"><i class="fa fa-remove"></i></a></td></tr>
-							  						<tr class="item-row"><td><span class="s_parameter_name" style="display:none" ></span><input type="text" class="parameter_name form-control" value="Height"></td><td><span class="s_parameter_value" style="display:none" ></span><input type="text" class="parameter_value form-control" value=""></td><td><a href="javascript:void(0)" class="editlink" style="display:none" title="Edit"><i class="fa fa-pencil"></i></a>&nbsp;<a href="javascript:void(0)" class="savelink" title="Save"><i class="fa fa-save"></i></a>&nbsp;<a href="javascript:void(0)" class="removelink" style="display:none" title="Delete"><i class="fa fa-trash"></i></a>&nbsp;<a href="javascript:void(0)" class="cancellink" title="Cancel"><i class="fa fa-remove"></i></a></td></tr>
-							  						<tr class="item-row"><td><span class="s_parameter_name" style="display:none" ></span><input type="text" class="parameter_name form-control" value="Depth"></td><td><span class="s_parameter_value" style="display:none" ></span><input type="text" class="parameter_value form-control" value=""></td><td><a href="javascript:void(0)" class="editlink" style="display:none" title="Edit"><i class="fa fa-pencil"></i></a>&nbsp;<a href="javascript:void(0)" class="savelink" title="Save"><i class="fa fa-save"></i></a>&nbsp;<a href="javascript:void(0)" class="removelink" style="display:none" title="Delete"><i class="fa fa-trash"></i></a>&nbsp;<a href="javascript:void(0)" class="cancellink" title="Cancel"><i class="fa fa-remove"></i></a></td></tr>
-		  											<!--#4DENDIF--><!--#4DENDIF-->
 		  											<tr id="hiderow" class="hidden-xs"><td colspan="7"><a id="addrow" href="javascript:void(0)" onClick="AddNewSpec(); return false;" title="Add new specification">Add new specification</a></td></tr> 
 		  										
 											</table>
@@ -371,8 +366,12 @@ border: 1px solid #edf2f7;
 	<!-- call this page plugins -->
 	<script src="js/product.js"></script>
 	<script>
-
+var preSettingBool=false;
+<!--#4DIF (preDefinedBool)-->
+preSettingBool=true;
+<!--4DENDIF--> 
 $(document).ready(function() {
+	
 	$('#table-breakpoint').basictable({
     	breakpoint: 751
    	});
@@ -380,10 +379,13 @@ $(document).ready(function() {
 		var new_uuid='<!--#4DVAR Generate UUID-->';	
 		$('#Product_uuid').val(new_uuid);
 	<!--#4DELSE--><!--#4DENDIF-->
+	
 	<!--#4DIF (Records in selection([Products])=1)-->
-	fetchavailableoptions();
-	fetchuploadedimages();
-	fetchspecifications();
+		fetchavailableoptions();
+		fetchuploadedimages();
+		fetchspecifications(false);
+	<!--#4DELSE-->
+		fetchspecifications(true);
 	<!--#4DENDIF-->
   
 		$("#ProductForm").validate({

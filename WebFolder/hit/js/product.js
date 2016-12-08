@@ -98,11 +98,11 @@ function remove() {
 	var s_name =row.find('.s_parameter_name').html();
 	var s_value =row.find('.s_parameter_value').html();
 
-$.prompt("Are you sure to delete this specification?", {
+/**$.prompt("Are you sure to delete this specification?", {
 	title: "",
 	buttons: { "Yes": true, "No": false },
 	submit: function(e,v,m,f){
-		if(v){
+		if(v){**/
 			var product_uuid=$('#Product_uuid').val();
 			var dataString = 'item_uuid='+item_uuid+'&s_name='+s_name+'&s_value='+s_value+'&product_uuid='+product_uuid+'&redirect=false';
 			$.ajax({
@@ -112,14 +112,14 @@ $.prompt("Are you sure to delete this specification?", {
 				cache: false,
 				success: function(html){
 					row.remove();
-					$.prompt.close();
+					//$.prompt.close();
 				}
 			});
-		}else{
+		/**}else{
 			$.prompt.close();
 		}
 	}
-});
+});**/
 		
 }
 	
@@ -133,29 +133,60 @@ function bind() {
   	$(".editlink").click(edit);
   	$(".cancellink").click(cancel);
   	$(".removelink").click(remove);
+  		
+  		$('.num').keypress(function(e){
+			var k = e.which;
+    		if ((k<48 || k>57) && (k!=46) && (k!=8) && (k!=0)) {
+				e.preventDefault();
+				return false;
+    		}
+		}); 
 }
 
-function fetchspecifications() {
-	$.getJSON("loadproductspec.cgi?product_uuid="+$('#Product_uuid').val(),function(result){
-		var htmlStr="";
-		if(result.error){
-			//console.log(result.error);
-		}else{
-			$.each(result, function(i,item){
-				if(item.uuid){
-					htmlStr+='<tr class="item-row"><td><input type="hidden" class="item_uuid" value="'+item.uuid+'"><span class="s_parameter_name">'+item.name+'</span><input type="text" class="parameter_name form-control" value="'+item.name+'" style="display:none"></td><td><span class="s_parameter_value" >'+item.value+'</span><input style="display:none" type="text" class="parameter_value form-control" value="'+item.value+'"></td><td><a href="javascript:void(0)" class="editlink" title="Edit"><i class="fa fa-pencil"></i></a>&nbsp;<a href="javascript:void(0)" class="savelink" style="display:none" title="Save"><i class="fa fa-save"></i></a>&nbsp;<a href="javascript:void(0)" class="removelink" title="Delete" ><i class="fa fa-trash"></i></a>&nbsp;<a href="javascript:void(0)" class="cancellink" style="display:none" title="Cancel"><i class="fa fa-remove"></i></a></td></tr>';
-				}
-			});
+function fetchspecifications(newBool) {
+	var htmlStr="";
+	var preDefinedSpecificationsArr= ["Width", "Height", "Depth"];
+	
+	if(newBool==true && preSettingBool==true){
+		for (var i = 0; i < preDefinedSpecificationsArr.length; i++) {
+			htmlStr+='<tr class="item-row specificationClass"><td><span class="s_parameter_name" style="display:none" >'+preDefinedSpecificationsArr[i]+'</span><input type="text" class="parameter_name form-control" value="'+preDefinedSpecificationsArr[i]+'"></td><td><span class="s_parameter_value" style="display:none" ></span><input type="text" class="parameter_value form-control" value=""></td><td><a href="javascript:void(0)" class="editlink" style="display:none" title="Edit"><i class="fa fa-pencil"></i></a>&nbsp;<a href="javascript:void(0)" class="savelink" title="Save"><i class="fa fa-save"></i></a>&nbsp;<a href="javascript:void(0)" class="removelink" style="display:none" title="Delete"><i class="fa fa-trash"></i></a>&nbsp;<a href="javascript:void(0)" class="cancellink" title="Cancel"><i class="fa fa-remove"></i></a></td></tr>';
 		}
 		$('.item').after(htmlStr);
+		bind();
 		
-		$('#table-breakpoint').basictable('destroy');
-		$('#table-breakpoint').basictable({
-    		breakpoint: 751
-   		});
+	}else{
+	$.getJSON("loadproductspec.cgi?product_uuid="+$('#Product_uuid').val(),function(result){
+		if(result.error){
+			if(preSettingBool){
+				for (var i = 0; i < preDefinedSpecificationsArr.length; i++) {
+					htmlStr+='<tr class="item-row specificationClass"><td><span class="s_parameter_name" style="display:none" >'+preDefinedSpecificationsArr[i]+'</span><input type="text" class="parameter_name form-control" value="'+preDefinedSpecificationsArr[i]+'"></td><td><span class="s_parameter_value" style="display:none" ></span><input type="text" class="parameter_value form-control" value=""></td><td><a href="javascript:void(0)" class="editlink" style="display:none" title="Edit"><i class="fa fa-pencil"></i></a>&nbsp;<a href="javascript:void(0)" class="savelink" title="Save"><i class="fa fa-save"></i></a>&nbsp;<a href="javascript:void(0)" class="removelink" style="display:none" title="Delete"><i class="fa fa-trash"></i></a>&nbsp;<a href="javascript:void(0)" class="cancellink" title="Cancel"><i class="fa fa-remove"></i></a></td></tr>';
+				}
+			}
+		}else{
+			var createParameterArr=new Array();
+			
+			$.each(result, function(i,item){
+				if(item.uuid){
+					if(preSettingBool){
+						createParameterArr.push(item.name.toLowerCase());
+					}
+					htmlStr+='<tr class="item-row specificationClass"><td><input type="hidden" class="item_uuid" value="'+item.uuid+'"><span class="s_parameter_name">'+item.name+'</span><input type="text" class="form-control  parameter_name" value="'+item.name+'" style="display:none"></td><td><span class="s_parameter_value" >'+item.value+'</span><input style="display:none" type="text" class="form-control parameter_value" value="'+item.value+'"></td><td><a href="javascript:void(0)" class="editlink"><i class="fa fa-pencil"></i></a>&nbsp;<a href="javascript:void(0)" class="savelink" style="display:none"><i class="fa fa-save"></i></a>&nbsp;<a href="javascript:void(0)" class="removelink" ><i class="fa fa-trash"></i></a>&nbsp;<a href="javascript:void(0)" class="cancellink" style="display:none"><i class="fa fa-remove"></i></a></td></tr>';
+				}
+			});
+			
+			if(preSettingBool){
+				for (var i = 0; i < preDefinedSpecificationsArr.length; i++) {
+    				var findNameStr=preDefinedSpecificationsArr[i].toLowerCase();
+    				if(jQuery.inArray(findNameStr, createParameterArr) === -1){
+						htmlStr+='<tr class="item-row specificationClass"><td><span class="s_parameter_name" style="display:none" >'+preDefinedSpecificationsArr[i]+'</span><input type="text" class="parameter_name form-control" value="'+preDefinedSpecificationsArr[i]+'"></td><td><span class="s_parameter_value" style="display:none" ></span><input type="text" class="parameter_value form-control" value=""></td><td><a href="javascript:void(0)" class="editlink" style="display:none" title="Edit"><i class="fa fa-pencil"></i></a>&nbsp;<a href="javascript:void(0)" class="savelink" title="Save"><i class="fa fa-save"></i></a>&nbsp;<a href="javascript:void(0)" class="removelink" style="display:none" title="Delete"><i class="fa fa-trash"></i></a>&nbsp;<a href="javascript:void(0)" class="cancellink" title="Cancel"><i class="fa fa-remove"></i></a></td></tr>';
+					}
+    			}
+			}
+		}
+		$('.item').after(htmlStr);
 		bind();
 	});
-	
+	}
 }
 
 	function checkExistence(form, e, nameStr){
@@ -175,7 +206,9 @@ function fetchspecifications() {
 		});
 	}
 	function AddNewSpec(){
-		$(".item").after('<tr class="item-row"><td><span class="s_parameter_name" style="display:none" ></span><input type="text" class="parameter_name form-control" value=""></td><td><span class="s_parameter_value" style="display:none" ></span><input type="text" class="parameter_value form-control" value=""></td><td><a href="javascript:void(0)" class="editlink" style="display:none" title="Edit"><i class="fa fa-pencil"></i></a>&nbsp;<a href="javascript:void(0)" class="savelink" title="Save"><i class="fa fa-save"></i></a>&nbsp;<a href="javascript:void(0)" class="removelink" style="display:none" title="Delete"><i class="fa fa-trash"></i></a>&nbsp;<a href="javascript:void(0)" class="cancellink" title="Cancel"><i class="fa fa-remove"></i></a></td></tr>');
+		
+		$(".item").after('<tr class="item-row specificationClass"><td><span class="s_parameter_name" style="display:none" ></span><input type="text" class="parameter_name form-control" value=""></td><td><span class="s_parameter_value" style="display:none" ></span><input type="text" class="parameter_value form-control" value=""></td><td><a href="javascript:void(0)" class="editlink" style="display:none" title="Edit"><i class="fa fa-pencil"></i></a>&nbsp;<a href="javascript:void(0)" class="savelink" title="Save"><i class="fa fa-save"></i></a>&nbsp;<a href="javascript:void(0)" class="removelink" style="display:none" title="Delete"><i class="fa fa-trash"></i></a>&nbsp;<a href="javascript:void(0)" class="cancellink" title="Cancel"><i class="fa fa-remove"></i></a></td></tr>');
+
 		var curr_row = $('.item').next();
 		curr_row.find('.parameter_name').focus();
 		if ($(".delete").length > 0) $(".delete").show();
