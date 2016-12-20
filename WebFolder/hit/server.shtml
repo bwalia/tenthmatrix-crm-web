@@ -116,11 +116,11 @@ table td, table th { border: none!important; }
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        <!--#4DIF (Records in selection([vt_cashbook_activity])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> VT CashBook Activity
+       <!--#4DIF (Records in selection([servers])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Server
     </h1>
       <ol class="breadcrumb">
         <li><a href="index.shtml"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active"><!--#4DIF (Records in selection([vt_cashbook_activity])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> VT CashBook Activity</li>
+        <li class="active">Server</li>
       </ol>
     </section>
 

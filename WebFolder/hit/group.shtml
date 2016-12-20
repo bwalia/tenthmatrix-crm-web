@@ -83,7 +83,7 @@ end if
    	<div class="content-wrapper" >
         <section class="content-header">
       		<h1>
-        	<!--#4DIF (Records in selection([Groups])=1)-->Edit Group<!--#4DVAR [Groups]group_name --><!--#4DELSE-->New<!--#4DENDIF-->
+        	<!--#4DIF (Records in selection([Groups])=1)-->Edit group : <!--#4DVAR [Groups]group_name --><!--#4DELSE-->New group<!--#4DENDIF-->
       		</h1>
       		<ol class="breadcrumb">
        			<li><a href="index.shtml"><i class="fa fa-dashboard"></i> Dashboard</a></li>

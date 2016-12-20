@@ -149,8 +149,9 @@ end if
 							<!--#4DIF (Records in selection([Sites])=1)-->
 								</div>
 								<div id="tabs-2" class="tab-pane fade col-md-12" STYLE="padding-top:20px;"  >
+								<a href="ftpserver.shtml?site=<!--#4DVAR [Sites]uuid-->" title="Add a row" class="btn btn-danger btn-sm " style="float:right;">Add new FTP Details</a>
 									<div class="content table-responsive table-full-width">
-		 								<div class="table-responsive" style="border:none;" >
+										<div class="table-responsive" style="border:none;" >
                       				  		<table class="items table table-striped  table-bordered table-hover custom-tbl-st bt" id="table-breakpoint"  style="background-color: rgb(255, 255, 255); border-radius: 4px;" >		
 												<thead><tr>
 		    										<th>Server</th>
@@ -160,15 +161,15 @@ end if
 		      										<th>Remove</th>
 												</tr></thead>
 												<tbody class="ftpdataClass">
-		 										<tr id="hiderow">
-		   											<td colspan="5"><a href="ftpserver.shtml?site=<!--#4DVAR [Sites]uuid-->" title="Add a row">Add new FTP Details</a></td>
-		 										</tr>
 		 										</tbody>
 		  									</table>
 		  								</div>
 		  							</div>
 		  						</div>
 								<div id="tabs-3" class="tab-pane fade col-md-12" STYLE="padding-top:20px;"  >
+									<!--#4DIF (mUserIsCurrentBool)--><!--#4DELSE-->
+										<a href="javascript:void(0)" title="Add a database details" id="add_db_details" class="btn btn-danger btn-sm " style="float:right;">Add a database details</a>
+									<!--#4DENDIF--> 
             						<div class="content table-responsive table-full-width">
 		 								<div class="table-responsive" style="border:none;" >
                       				  		<table class="items table table-striped  table-bordered table-hover custom-tbl-st bt" id="table-da"  style="background-color: rgb(255, 255, 255); border-radius: 4px;" >		
@@ -193,7 +194,7 @@ end if
 							  							<td>
 							  								<span class="s_db_selected"><!--#4DHTMLVAR [database_details]type--></span>
 							  								<div class="ui-select i_db_selected" style="display:none">
-							  									<select class="db_selected" name="db_selected" class="form-control">
+							  									<select class="db_selected form-control" name="db_selected">
 							  										<option value="mysql" <!--#4DIF ([database_details]type="mysql")-->selected<!--#4DENDIF--> >Mysql</option>
 							  										<option value="mongodb"  <!--#4DIF ([database_details]type="mongodb")-->selected<!--#4DENDIF-->>Mongo DB</option>
 							  									</select>
@@ -202,7 +203,7 @@ end if
 							  							<td>
 							  								<span class="s_server_type"><!--#4DHTMLVAR [database_details]server_type--></span>
 							  								<div class="ui-select i_server_type" style="display:none">
-							  									<select class="server_type" name="server_type" class="form-control">
+							  									<select class="server_type form-control" name="server_type">
 							  										<option value="Dev" <!--#4DIF ([database_details]server_type="Dev")-->selected<!--#4DENDIF--> >Dev</option>
 							  										<option value="Staging"  <!--#4DIF ([database_details]server_type="Staging")-->selected<!--#4DENDIF-->>Staging</option>
 							  										<option value="Live" <!--#4DIF ([database_details]server_type="Live")-->selected<!--#4DENDIF--> >Live</option>
@@ -240,11 +241,7 @@ end if
 												</tr>
 		  										<!--#4DENDLOOP-->
 						  						<!--#4DENDIF-->
-						  						<!--#4DIF (mUserIsCurrentBool)--><!--#4DELSE-->
-		 										<tr id="hiderow">
-		   											<td colspan="8"><a href="javascript:void(0)" title="Add a database details" id="add_db_details">Add a database details</a></td>
-		 										</tr>
-		 									<!--#4DENDIF--> 	
+						  						
 		 									</tbody>
 		  								</table>  
 									</div>
@@ -323,7 +320,7 @@ end if
         	$('#table-breakpoint').basictable({
     				breakpoint: 751
    			 	});
-   			 	$('#table-db').basictable({
+   			 	$('#table-da').basictable({
     				breakpoint: 751
    			 	});
         	<!--#4DIF (Records in selection([Sites])=0)-->

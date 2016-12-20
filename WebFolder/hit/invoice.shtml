@@ -447,7 +447,7 @@ end if
 									var statesdemo = {
 										state0: {
 											title: 'Enter new Invoice ID manually?',
-											html:'&lt;div id="message"&gt;&lt;/div&gt;&lt;input type="text" name="invoice_numbr" id="invoice_numbr" value=""&gt;&lt;br /&gt;',
+											html:'&lt;div id="message"&gt;&lt;/div&gt;&lt;input type="text" class="form-control" name="invoice_numbr" id="invoice_numbr" value=""&gt;&lt;br /&gt;',
 											buttons: { Cancel : 0, Ok: 1 },
 											focus: "#invoice_numbr",
 											submit:function(e,v,m,f){ 
