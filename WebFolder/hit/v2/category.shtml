@@ -193,7 +193,7 @@ overflow-y: scroll;
 																				<div class="form-group">
 																					<label for="" class="col-sm-2 control-label">Sort Order</label>
 																					<div class="col-sm-6">
-																						<input readonly type="text" class="form-control" id="sort_order" value="<!--#4DVAR [categories]sort_order-->" name="sort_order">
+																						<input type="text" class="form-control" id="sort_order" value="<!--#4DVAR [categories]sort_order-->" name="sort_order">
 																					</div>
 																				</div>
 
