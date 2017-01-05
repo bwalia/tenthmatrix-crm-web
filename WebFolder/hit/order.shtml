@@ -366,6 +366,7 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 		
 		  <tr class="item">
 		    <th>Item</th>
+			<th>Image</th>
 			<th>Description</th>
 			<th>Rate</th>
 			<th>Qty</th>
@@ -385,6 +386,9 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 			<td class="item-id"><div class="delete-wpr"><span class="item_id"><!--#4DHTMLVAR [order_items]item_id--></span>
 			<input class="item_uuid" type="hidden" value="<!--#4DHTMLVAR [order_items]uuid-->" />
 			</div></td>
+			
+		<td class="item-id"><IMG SRC="images/no-image.jpg" class="img-responsive" ALT=""/></td>
+			
 			<td >
 			<span class="s_description" ><!--#4DHTMLVAR [order_items]item_description--></span><input class="description" type="hidden" value="<!--#4DHTMLVAR [order_items]item_description-->" />
 			<div class="ui-widget div_i_description" style="display:none"><select name="product" id="get_products" class="i_description form-control" ><option selected="selected" value="<!--#4DHTMLVAR [order_items]uuid_product-->"><!--#4DHTMLVAR [order_items]item_description--></option></select></div>
