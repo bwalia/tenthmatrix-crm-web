@@ -2410,8 +2410,89 @@ $(document).ready(function() {
 	
 	$('#keyword').focus();
 	load_data();		 
-	
+	// toggle all checkboxes from a table when header checkbox is clicked
+  	$(".table th input:checkbox").click(function () {
+  		$checks = $(this).closest(".table").find("tbody input:checkbox");
+  		if ($(this).is(":checked")) {
+			checkAllFlag=true;
+  			$checks.prop("checked", true);
+  		} else {
+			checkAllFlag=false;
+  			$checks.prop("checked", false);
+  		}  		
+  	});
+
 	$(window).scroll(function(){
+		if ($(window).scrollTop() == $(document).height() - $(window).height()){
+		if(complete==false && completeScroll==false) {
+			$('#img_loading_div').show();
+			$('#display_more_btn').hide();	
+			$('#table-breakpoint').basictable('destroy');
+			//alert("scrolling...");
+			start=end+1;
+			end=start+25;	
+			load_data();
+		}
+		}
+	});	
+		
+	//setup before functions
+	var typingTimer;                //timer identifier
+	var doneTypingInterval = 1000;  //time in ms, 5 second for example
+	
+	//on keyup, start the countdown
+	$('#keyword_type').keyup(function(){
+		clearTimeout(typingTimer);
+		if ($('#keyword_type').val) {
+			typingTimer = setTimeout(function(){
+				var keyVal=$('#keyword_type').val();
+				$('#keyword').val(keyVal);
+				$('#table-breakpoint').basictable('destroy');
+				$('#display_more_btn').hide();	
+				$('#content_table').html('');
+				$('#img_loading_div').show();
+				start=0;
+				end=start+25;
+				tab='';
+				load_data();
+			}, doneTypingInterval);
+		}
+	});	
+	
+	$('#small_screen_keyword').keyup(function(){
+		clearTimeout(typingTimer);
+		if ($('#small_screen_keyword').val) {
+			typingTimer = setTimeout(function(){
+				var keyVal=$('#small_screen_keyword').val();
+				$('#keyword').val(keyVal);
+				$('#table-breakpoint').basictable('destroy');
+				$('#display_more_btn').hide();	
+				$('#content_table').html('');
+				$('#img_loading_div').show();
+				start=0;
+				end=start+25;
+				tab='';
+				load_data();
+			}, doneTypingInterval);
+		}
+	});	
+	
+	$('#searchBtn').click(function(){
+		if ($('#keyword_type').val()!="") {
+			var keyVal=$('#keyword_type').val();
+			$('#keyword').val(keyVal);
+			$('#table-breakpoint').basictable('destroy');
+			$('#content_table').html('');
+			$('#img_loading_div').show();
+			$('#display_more_btn').hide();	
+			start=0;
+			end=start+25;
+			load_data();
+		}else{
+			$('#keyword_type').focus();
+		}
+	});
+	/**$(window).scroll(function(){
 		if ($(window).scrollTop() == $(document).height() - $(window).height()){
 			if(complete==false && completeScroll==false) {
 				$('#img_loading_div').show();
@@ -2440,7 +2521,7 @@ $(document).ready(function() {
 			}, doneTypingInterval);
 		}
 	});		
-	
+	**/
 	//on keyup, start the countdown
 	var doneTypingInterval = 1000;  //time in ms, 5 second for example
 	$('#searchInvoiceField').keyup(function(){

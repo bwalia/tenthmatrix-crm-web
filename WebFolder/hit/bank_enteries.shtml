@@ -604,6 +604,15 @@ var showallReceiptsFlag=true;
 var isAdminUser='<!--#4DVAR IsUserAdmin -->';
 var entryFormFlag=false;
 
+
+function load_more(){
+	$('#img_loading_div').show();
+	$('#display_more_btn').hide();	
+	$('#table-breakpoint').basictable('destroy');
+	start=end+1;
+	end=start+25;	
+	load_data();
+}
 function download_file(e){
 	window.open('doc_preview.shtml?document_uuid='+e+'&token=<!--#4DVAR _HIT_TokenGetAny-->');
 }
