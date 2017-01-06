@@ -1655,6 +1655,9 @@ function viewReceipt(num){
 		}
 		$.getJSON(jsonRowStr,function(result){	
 			if(result.Alert){
+			
+			$(".reconcileTable").html("");
+				$("#reconcileWin").before("<span style='color:#CC0000;'>"+result.Alert+"</span>");
 				//
 			}else{
 				tableStr+= '<tbody>';
