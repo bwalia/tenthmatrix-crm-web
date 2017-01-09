@@ -315,6 +315,7 @@ function delete_set(set_uuid, set_name, del_type) {
 }
 
 function processPrompt(title,msg,start_prmt,stop_prmt){
+	if(false){
 	if(start_prmt){
 		$( "#dialog" ).attr('title', title);
 		$( "#dialog" ).html(msg);
@@ -326,6 +327,7 @@ function processPrompt(title,msg,start_prmt,stop_prmt){
 	else if(stop_prmt){
 		$( "#dialog" ).dialog( "destroy" );
 		$( "#dialog" ).html('');
+	}
 	}
 }
 
@@ -1655,10 +1657,8 @@ function viewReceipt(num){
 		}
 		$.getJSON(jsonRowStr,function(result){	
 			if(result.Alert){
-			
-			$(".reconcileTable").html("");
+				$(".reconcileTable").html("");
 				$("#reconcileWin").before("<span style='color:#CC0000;'>"+result.Alert+"</span>");
-				//
 			}else{
 				tableStr+= '<tbody>';
 				$.each(result, function(i,row){
