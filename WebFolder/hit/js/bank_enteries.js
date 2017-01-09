@@ -648,17 +648,17 @@ function load_data(refRow){
 						if(newRow.doc_name){
 							if(newRow.doc_name!=""){
 								if(newRow.doc_uuid!=""){
-									receiptTableHtmlStr+='<td>'+newRow.doc_name+' <a onclick="download_file(\''+newRow.doc_uuid+'\')" href="javascript:void(0)" title="Download '+newRow.doc_name+'"><i class="icon-download-alt"></i></a> <a onclick="open_upload_window(\''+row.uuid+'\',\''+newRow.uuid+'\',\''+passTableNameStr+'\', \'reupload\')" href="javascript:void(0)" title="Upload"><i class="icon-upload-alt"></i></a></td>';
+									receiptTableHtmlStr+='<td>'+newRow.doc_name+' <a onclick="download_file(\''+newRow.doc_uuid+'\')" href="javascript:void(0)" title="Download '+newRow.doc_name+'"><i class="fa fa-download"></i></a> <a onclick="open_upload_window(\''+row.uuid+'\',\''+newRow.uuid+'\',\''+passTableNameStr+'\', \'reupload\')" href="javascript:void(0)" title="Upload"><i class="fa fa-upload"></i></a></td>';
 								}else{
-									receiptTableHtmlStr+='<td>'+newRow.doc_name+' <a onclick="open_upload_window(\''+row.uuid+'\',\''+newRow.uuid+'\',\''+passTableNameStr+'\', \'reupload\')" href="javascript:void(0)" title="Upload"><i class="icon-upload-alt"></i></a></td>';
+									receiptTableHtmlStr+='<td>'+newRow.doc_name+' <a onclick="open_upload_window(\''+row.uuid+'\',\''+newRow.uuid+'\',\''+passTableNameStr+'\', \'reupload\')" href="javascript:void(0)" title="Upload"><i class="fa fa-upload"></i></a></td>';
 								}
 							}else{
 							//receiptTableHtmlStr+='<td>No Attached</td>';
-								receiptTableHtmlStr+='<td>No Attached (<a onclick="open_upload_window(\''+row.uuid+'\',\''+newRow.uuid+'\',\''+passTableNameStr+'\')" href="javascript:void(0)" title="Upload"><i class="icon-upload-alt"></i></a>)</td>';
+								receiptTableHtmlStr+='<td>No Attached (<a onclick="open_upload_window(\''+row.uuid+'\',\''+newRow.uuid+'\',\''+passTableNameStr+'\')" href="javascript:void(0)" title="Upload"><i class="fa fa-upload"></i></a>)</td>';
 							}
 						}else{
 							//receiptTableHtmlStr+='<td>No Attached</td>';
-							receiptTableHtmlStr+='<td>No Attached (<a onclick="open_upload_window(\''+row.uuid+'\',\''+newRow.uuid+'\',\''+passTableNameStr+'\')" href="javascript:void(0)" title="Upload"><i class="icon-upload-alt"></i></a>)</td>';
+							receiptTableHtmlStr+='<td>No Attached (<a onclick="open_upload_window(\''+row.uuid+'\',\''+newRow.uuid+'\',\''+passTableNameStr+'\')" href="javascript:void(0)" title="Upload"><i class="fa fa-upload"></i></a>)</td>';
 						}
 				
 						receiptTableHtmlStr+='</tr>';
@@ -1548,6 +1548,7 @@ function viewReceipt(num){
 		$('body').removeClass("modal-open");
 		$(":file").filestyle('clear');
 		$("#invNoVal").val('');
+		$('#missingLinkMsg').remove();
 		$("#searchInvoiceField").val('');
 		$("#invamountVal").val('');
 		$("#formTypeField").val('');
@@ -1599,7 +1600,8 @@ function viewReceipt(num){
 		var uuidArr=new Array();
 		$.getJSON(purcInvJsonStr,function(result){
 			if(result.Alert){
-				
+				$(".reconcileTable").html("");
+				$("#reconcileWin").before("<span style='color:#CC0000;' id='missingLinkMsg'>"+result.Alert+"</span>");
 			}else{
 			 	$.each(result.uuid, function(i,item){
 					JSONdata[i]=new Array();
@@ -1658,7 +1660,7 @@ function viewReceipt(num){
 		$.getJSON(jsonRowStr,function(result){	
 			if(result.Alert){
 				$(".reconcileTable").html("");
-				$("#reconcileWin").before("<span style='color:#CC0000;'>"+result.Alert+"</span>");
+				$("#reconcileWin").before("<span style='color:#CC0000;' id='missingLinkMsg'>"+result.Alert+"</span>");
 			}else{
 				tableStr+= '<tbody>';
 				$.each(result, function(i,row){
