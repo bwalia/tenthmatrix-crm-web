@@ -234,12 +234,14 @@
  
  
 #OrderForm .custom-combobox{
-	width: 38%!important;
+	width: 94%!important;
+top: 0px!important;
+left: -1px!important;
 	
 }
 
 #OrderForm .custom-combobox-input {
-    width: 95%!important;
+    width: 94%!important;
 }
 
 
