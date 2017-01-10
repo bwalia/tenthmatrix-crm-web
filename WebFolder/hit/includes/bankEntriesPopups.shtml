@@ -18,7 +18,7 @@
 						<input  type="hidden" value="" id="clientName">
 						<input  type="hidden" value="" id="clientUUID">
 						<div id="reconcileWin">
-						<input  type="text" value="" id="searchInvoiceField" style="width:97%; ">
+						<input  type="text" value="" id="searchInvoiceField" CLASS="form-control">
                         <div class="fixed-table-container">
                         	<div class="header-background"> </div>
 							<div class="fixed-table-container-inner">
@@ -30,12 +30,12 @@
      					<div style="clear:both;border-top:1px solids #ccc; padding-top:5px;">
                        	 <div style="margin-bottom:10px;">
       						<label style="display:inline-block; margin-right:5px; vertical-align:top; padding-top:5px;"><strong><span id="invnoLabel">Sales Invoice Number:</span></strong></label>
-      						<input style="width:90px;" type="text" value="" id="invNoVal" readonly>
-      						<label style="display:inline-block;margin-right:5px; margin-left:15px;vertical-align:top; padding-top:5px;"><strong><span id="invamountLabel">Invoice Amount:</span></strong></label>
-      						<input style="width:90px;" class="num"  type="text" value="" id="invamountVal" >
+      						<input  CLASS="form-control" type="text" value="" id="invNoVal" readonly>
+      						<label style="display:inline-block;margin-right:5px; margin-left:0px;vertical-align:top; padding-top:5px;"><strong><span id="invamountLabel">Invoice Amount:</span></strong></label>
+      						<input  CLASS="form-control num"   type="text" value="" id="invamountVal" >
       					 </div>
                          <div style="line-height:0; margin-bottom:10px;">	
-      						<label style="display:inline-block;margin-right:5px;vertical-align:top; padding-top:5px; width:111px;" class="attachLabel"><strong><span id="attachdocumentLabel">Attach</span></strong></label>
+      						<label style="display:inline-block;margin-right:5px; margin-left:0px; vertical-align:top; margin-bottom:10px; padding-top:10px; width:111px; " class="attachLabel"><strong><span id="attachdocumentLabel">Attach</span></strong></label>
       						<input name="document_attach" class="filestyle" type="file" id="document_attach">
       					 </div>	
       						<button type="button" class="btn btn-info sm-btn" style="margin-left:0px; margin-top:0px;" onClick="$('#r_window_smsg').html(''); $('#r_window_emsg').html(''); reconcile_bankentry()">Reconcile</button>
@@ -225,7 +225,7 @@ padding-top: 5px; float: right; position: relative; bottom: 32px; right: 50px;">
 						<input  type="hidden" value="" id="u_table_uuid">
 						<input  type="hidden" value="" id="u_bankuuid">
 						<input  type="hidden" value="" id="u_tableName">
-						<label style="display:inline-block;margin-right:5px;vertical-align:top; padding-top:5px;" class="attachLabel"><strong>Attach Document</strong></label>
+						<label style="display:inline-block;margin-right:5px;vertical-align:top; padding-top:5px; width:170px; padding-bottom:10px;" class="attachLabel"><strong>Attach Document</strong></label>
       					<input name="u_document_attach" class="filestyle" type="file" id="u_document_attach">
       				</div>
 				</div>
