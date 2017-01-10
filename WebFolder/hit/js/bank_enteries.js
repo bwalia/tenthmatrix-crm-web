@@ -494,8 +494,9 @@ function load_data(refRow){
 	
 	if(xhrAbortLoad) xhrAbortLoad.abort();
 	xhrAbortLoad=$.getJSON(jsonRow,function(result){
+		$('#table-breakpoint').show();
 		if(result.displaying){
-		$('.display_records').html(result.displaying);
+			$('.display_records').html(result.displaying);
 		}
 		if(result.Alert){
 			complete=true;
@@ -505,7 +506,7 @@ function load_data(refRow){
     				breakpoint: 751
    			});
 		}else{
-		var table_html='';
+			var table_html='';
 			$.each(result.aadata, function(i,row){
 				var statusStr=row.status;
 				var maintableClass="";
