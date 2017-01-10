@@ -18,6 +18,17 @@ end if
 <link href="css/bootstrap-select.css" rel="stylesheet" />
 <link href="css/bootstrap.datepicker.css" type="text/css" rel="stylesheet">
 <style>
+
+.custom-combobox {
+    position: relative;
+    display: inline-block;
+    font-family: "Open Sans", Arial;
+    font-size: 12px;
+    top: 0px;
+    right: -14px;
+}
+
+
 .payment-detail{
 	border-bottom: solid 2px #e9e8e8 ;border-radius:5px;margin-bottom:10px; background:#dadada; padding:5px; margin-top:10px;
 }

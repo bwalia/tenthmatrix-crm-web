@@ -110,7 +110,7 @@
       					</div>
       					<a href="javascript:void(0)" style="text-decoration:none;margin-bottom:10px;" onClick="openmissingLinkForm(); $('#c_window_smsg').html(''); $('#c_window_emsg').html('');"><strong>+ Create new Link</strong></a>	
       					
-      					<div style="padding-top: 10px;padding-left:10px; border: 1px solid #ddd; border-radius: 4px; padding-bottom: 10px; display:none;" id="missingLinkForm">
+      					<div style="padding-top: 10px;padding-left:10px; border: 1px solid #ddd; border-radius: 4px; overflow:hidden;padding-bottom: 10px; display:none;" id="missingLinkForm">
      						<p><span class="label-default" id="c_window_emsg" style="color:#FF0000"></span></p>
      						<label style="display:inline-block; margin-right:5px; vertical-align:top; padding-top:5px;"><strong><span id="c_CustomerLabel"></span></strong></label>
      						<div class="ui-widget" style="display:inline-block;"><select id="c_linkcustomer" class=""></select></div>
@@ -132,20 +132,40 @@
       							<div style="clear:both;border-top:1px solids #ccc; padding-top:5px;">
       								<input type="hidden" id="c_receipt_uuid" value="">
      								<input type="hidden" id="c_invoice_uuid" value="">
+									
+									<div CLASS="row">
+									<div CLASS="col-md-6">
+									
      								<label style="display:inline-block; margin-right:5px; vertical-align:top; padding-top:5px;"><strong><span id="c_reciptNoLabel"></span></strong></label>
-      								<input style="width:90px;" type="text" value="" id="c_recipt_no" readonly>
-      								
+      								<input  CLASS="form-control" type="text" value="" id="c_recipt_no" readonly>
+      								</div>
+									<div CLASS="col-md-6" STYLE="padding-right: 25px;">
       								<label style="display:inline-block;margin-right:5px; vertical-align:top; padding-top:5px;"><strong><span id="c_invnoLabel"></span></strong></label>
-      								<input style="width:90px;" type="text" value="" id="c_inv_no" readonly>
-      								<br/>
-      								<label style="display:inline-block;margin-right:5px;vertical-align:top; padding-top:5px;" class="attachLabel"><strong><span id="c_attachdocumentLabel">Attach</span></strong></label>
-      								<input name="c_document_attach" class="filestyle" type="file" id="c_document_attach">
-      								<br/>
+      								<input type="text" CLASS="form-control" value="" id="c_inv_no" readonly>
+      								</div>
+									
+									<style>
+									.bootstrap-filestyle{
+										display: inline-table;
+									}
+									
+									.group-span-filestyle {
+										 position: relative;
+										 right: 4px;
+									}
+									
+									</style>
+									<div CLASS="col-md-12" style="padding-right: 20px;padding-left: 19px;margin-top: 10px;">
+      								<label style="display:inline-block;margin-right:5px;vertical-align:top; padding-top:5px;" class="attachLabel" STYLE="display: inline-block; margin-right: 5px; padding-left: 10px; vertical-align: top;
+padding-top: 5px; float: right; position: relative; bottom: 32px; right: 50px;"></label>
+									<strong><span id="c_attachdocumentLabel">Attach</span></strong> <input name="c_document_attach" class="filestyle" STYLE="margin-left:1px;" type="file" id="c_document_attach">
+      								</div>
+									</div>
       							</div>
        						     						
 
       						</div>
-      						 <div style="margin-left: 100px;"><button type="button" class="btn btn-info sm-btn" style="margin-left:100px;margin-top:10px;" onclick="saveCreateMissingLinks()">Save new link</button></div>
+      						 <div CLASS="text-right col-md-9"  STYLE="padding-right: 36px;"><button type="button" class="btn btn-info sm-btn" style="margin-top:10px;" onclick="saveCreateMissingLinks()">Save new link</button></div>
       						
       						
       					</div>
@@ -156,12 +176,13 @@
                                 <label style="display:inline-block; margin-right:5px;width:180px;vertical-align:top; padding-top:5px;"><strong>Supplier Name:</strong></label>
       							<div class="ui-widget" style="display:inline-block;"><select id="c_n_supplierDropdown" class="companiesDropDown"></select></div>
       						</div>
-                            <div style="margin-bottom:10px;">	
-      							<label style="display:inline-block;margin-right:5px;width:180px;vertical-align:top; padding-top:5px;"><strong>Amount:</strong></label>
-      							<input style="width:90px;" class="num" type="text" value="" id="c_n_purchase_amount" >
-      							<label style="display:inline-block;margin-right:5px;padding-left:10px;vertical-align:top; padding-top:5px;">
-      							<input type="checkbox" id="c_is_vat" value="true style="vertical-align:top;margin-right:15px;">VAT
-      							</label>
+                            <div CLASS="row">	
+							<div CLASS="col-md-4"> 
+      							<label style="display:inline-block;margin-right:5px;width:180px;vertical-align:top; padding-top:5px;"><strong>Amount:</strong></label></div>
+      							<div CLASS="col-md-8" STYLE="margin-bottom: -15px;"> <input class="form-control"  type="text" value="" id="c_n_purchase_amount" STYLE="width: 63%; margin-left: 7px;">
+      							<label style="display:inline-block;margin-right:5px;padding-left:10px;vertical-align:top; padding-top:5px; float: right; position: relative; bottom: 33px; left: -50px;">
+      							<input type="checkbox" id="c_is_vat" value="true" style="vertical-align:top; margin-right:15px;" >VAT
+      							</label></div>
       						</div>
                               <div style="margin-bottom:10px;">
       						<label style="display:inline-block;margin-right:5px;width:180px;vertical-align:top; padding-top:5px;"><strong>Attach Bill:</strong></label>
