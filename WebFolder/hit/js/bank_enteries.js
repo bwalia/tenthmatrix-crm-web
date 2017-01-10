@@ -315,6 +315,7 @@ function delete_set(set_uuid, set_name, del_type) {
 }
 
 function processPrompt(title,msg,start_prmt,stop_prmt){
+	if(false){
 	if(start_prmt){
 		$( "#dialog" ).attr('title', title);
 		$( "#dialog" ).html(msg);
@@ -326,6 +327,7 @@ function processPrompt(title,msg,start_prmt,stop_prmt){
 	else if(stop_prmt){
 		$( "#dialog" ).dialog( "destroy" );
 		$( "#dialog" ).html('');
+	}
 	}
 }
 
@@ -492,8 +494,9 @@ function load_data(refRow){
 	
 	if(xhrAbortLoad) xhrAbortLoad.abort();
 	xhrAbortLoad=$.getJSON(jsonRow,function(result){
+		$('#table-breakpoint').show();
 		if(result.displaying){
-		$('.display_records').html(result.displaying);
+			$('.display_records').html(result.displaying);
 		}
 		if(result.Alert){
 			complete=true;
@@ -503,7 +506,7 @@ function load_data(refRow){
     				breakpoint: 751
    			});
 		}else{
-		var table_html='';
+			var table_html='';
 			$.each(result.aadata, function(i,row){
 				var statusStr=row.status;
 				var maintableClass="";
@@ -646,17 +649,17 @@ function load_data(refRow){
 						if(newRow.doc_name){
 							if(newRow.doc_name!=""){
 								if(newRow.doc_uuid!=""){
-									receiptTableHtmlStr+='<td>'+newRow.doc_name+' <a onclick="download_file(\''+newRow.doc_uuid+'\')" href="javascript:void(0)" title="Download '+newRow.doc_name+'"><i class="icon-download-alt"></i></a> <a onclick="open_upload_window(\''+row.uuid+'\',\''+newRow.uuid+'\',\''+passTableNameStr+'\', \'reupload\')" href="javascript:void(0)" title="Upload"><i class="icon-upload-alt"></i></a></td>';
+									receiptTableHtmlStr+='<td>'+newRow.doc_name+' <a onclick="download_file(\''+newRow.doc_uuid+'\')" href="javascript:void(0)" title="Download '+newRow.doc_name+'"><i class="fa fa-download"></i></a> <a onclick="open_upload_window(\''+row.uuid+'\',\''+newRow.uuid+'\',\''+passTableNameStr+'\', \'reupload\')" href="javascript:void(0)" title="Upload"><i class="fa fa-upload"></i></a></td>';
 								}else{
-									receiptTableHtmlStr+='<td>'+newRow.doc_name+' <a onclick="open_upload_window(\''+row.uuid+'\',\''+newRow.uuid+'\',\''+passTableNameStr+'\', \'reupload\')" href="javascript:void(0)" title="Upload"><i class="icon-upload-alt"></i></a></td>';
+									receiptTableHtmlStr+='<td>'+newRow.doc_name+' <a onclick="open_upload_window(\''+row.uuid+'\',\''+newRow.uuid+'\',\''+passTableNameStr+'\', \'reupload\')" href="javascript:void(0)" title="Upload"><i class="fa fa-upload"></i></a></td>';
 								}
 							}else{
 							//receiptTableHtmlStr+='<td>No Attached</td>';
-								receiptTableHtmlStr+='<td>No Attached (<a onclick="open_upload_window(\''+row.uuid+'\',\''+newRow.uuid+'\',\''+passTableNameStr+'\')" href="javascript:void(0)" title="Upload"><i class="icon-upload-alt"></i></a>)</td>';
+								receiptTableHtmlStr+='<td>No Attached (<a onclick="open_upload_window(\''+row.uuid+'\',\''+newRow.uuid+'\',\''+passTableNameStr+'\')" href="javascript:void(0)" title="Upload"><i class="fa fa-upload"></i></a>)</td>';
 							}
 						}else{
 							//receiptTableHtmlStr+='<td>No Attached</td>';
-							receiptTableHtmlStr+='<td>No Attached (<a onclick="open_upload_window(\''+row.uuid+'\',\''+newRow.uuid+'\',\''+passTableNameStr+'\')" href="javascript:void(0)" title="Upload"><i class="icon-upload-alt"></i></a>)</td>';
+							receiptTableHtmlStr+='<td>No Attached (<a onclick="open_upload_window(\''+row.uuid+'\',\''+newRow.uuid+'\',\''+passTableNameStr+'\')" href="javascript:void(0)" title="Upload"><i class="fa fa-upload"></i></a>)</td>';
 						}
 				
 						receiptTableHtmlStr+='</tr>';
@@ -1546,6 +1549,7 @@ function viewReceipt(num){
 		$('body').removeClass("modal-open");
 		$(":file").filestyle('clear');
 		$("#invNoVal").val('');
+		$('#missingLinkMsg').remove();
 		$("#searchInvoiceField").val('');
 		$("#invamountVal").val('');
 		$("#formTypeField").val('');
@@ -1597,7 +1601,8 @@ function viewReceipt(num){
 		var uuidArr=new Array();
 		$.getJSON(purcInvJsonStr,function(result){
 			if(result.Alert){
-				
+				$(".reconcileTable").html("");
+				$("#reconcileWin").before("<span style='color:#CC0000;' id='missingLinkMsg'>"+result.Alert+"</span>");
 			}else{
 			 	$.each(result.uuid, function(i,item){
 					JSONdata[i]=new Array();
@@ -1655,7 +1660,8 @@ function viewReceipt(num){
 		}
 		$.getJSON(jsonRowStr,function(result){	
 			if(result.Alert){
-				//
+				$(".reconcileTable").html("");
+				$("#reconcileWin").before("<span style='color:#CC0000;' id='missingLinkMsg'>"+result.Alert+"</span>");
 			}else{
 				tableStr+= '<tbody>';
 				$.each(result, function(i,row){
@@ -2410,8 +2416,89 @@ $(document).ready(function() {
 	
 	$('#keyword').focus();
 	load_data();		 
-	
+	// toggle all checkboxes from a table when header checkbox is clicked
+  	$(".table th input:checkbox").click(function () {
+  		$checks = $(this).closest(".table").find("tbody input:checkbox");
+  		if ($(this).is(":checked")) {
+			checkAllFlag=true;
+  			$checks.prop("checked", true);
+  		} else {
+			checkAllFlag=false;
+  			$checks.prop("checked", false);
+  		}  		
+  	});
+
 	$(window).scroll(function(){
+		if ($(window).scrollTop() == $(document).height() - $(window).height()){
+		if(complete==false && completeScroll==false) {
+			$('#img_loading_div').show();
+			$('#display_more_btn').hide();	
+			$('#table-breakpoint').basictable('destroy');
+			//alert("scrolling...");
+			start=end+1;
+			end=start+25;	
+			load_data();
+		}
+		}
+	});	
+		
+	//setup before functions
+	var typingTimer;                //timer identifier
+	var doneTypingInterval = 1000;  //time in ms, 5 second for example
+	
+	//on keyup, start the countdown
+	$('#keyword_type').keyup(function(){
+		clearTimeout(typingTimer);
+		if ($('#keyword_type').val) {
+			typingTimer = setTimeout(function(){
+				var keyVal=$('#keyword_type').val();
+				$('#keyword').val(keyVal);
+				$('#table-breakpoint').basictable('destroy');
+				$('#display_more_btn').hide();	
+				$('#content_table').html('');
+				$('#img_loading_div').show();
+				start=0;
+				end=start+25;
+				tab='';
+				load_data();
+			}, doneTypingInterval);
+		}
+	});	
+	
+	$('#small_screen_keyword').keyup(function(){
+		clearTimeout(typingTimer);
+		if ($('#small_screen_keyword').val) {
+			typingTimer = setTimeout(function(){
+				var keyVal=$('#small_screen_keyword').val();
+				$('#keyword').val(keyVal);
+				$('#table-breakpoint').basictable('destroy');
+				$('#display_more_btn').hide();	
+				$('#content_table').html('');
+				$('#img_loading_div').show();
+				start=0;
+				end=start+25;
+				tab='';
+				load_data();
+			}, doneTypingInterval);
+		}
+	});	
+	
+	$('#searchBtn').click(function(){
+		if ($('#keyword_type').val()!="") {
+			var keyVal=$('#keyword_type').val();
+			$('#keyword').val(keyVal);
+			$('#table-breakpoint').basictable('destroy');
+			$('#content_table').html('');
+			$('#img_loading_div').show();
+			$('#display_more_btn').hide();	
+			start=0;
+			end=start+25;
+			load_data();
+		}else{
+			$('#keyword_type').focus();
+		}
+	});
+	/**$(window).scroll(function(){
 		if ($(window).scrollTop() == $(document).height() - $(window).height()){
 			if(complete==false && completeScroll==false) {
 				$('#img_loading_div').show();
@@ -2440,7 +2527,7 @@ $(document).ready(function() {
 			}, doneTypingInterval);
 		}
 	});		
-	
+	**/
 	//on keyup, start the countdown
 	var doneTypingInterval = 1000;  //time in ms, 5 second for example
 	$('#searchInvoiceField').keyup(function(){

@@ -396,9 +396,10 @@ width: 203px; }
 				</div>
 			</div>
         	<div CLASS="row">
+        		<input type="hidden" id="remove_selected" value="">
             	<div class="content table-responsive table-full-width">
 		 			<div class="table-responsive" style="border:none;" >
-                         <table class="table table-striped  table-bordered table-hover custom-tbl-st bt" id="table-breakpoint"  style="background-color: rgb(255, 255, 255); border-radius: 4px;" >
+                         <table class="table table-striped  table-bordered table-hover custom-tbl-st bt" id="table-breakpoint"  style="background-color: rgb(255, 255, 255); border-radius: 4px;display:none;" >
                             <thead>
                                 <tr>
                                 	<th CLASS="hidden-xs"><input name="select" class="" type="checkbox" id="chk_all" ></th>
@@ -604,6 +605,15 @@ var showallReceiptsFlag=true;
 var isAdminUser='<!--#4DVAR IsUserAdmin -->';
 var entryFormFlag=false;
 
+
+function load_more(){
+	$('#img_loading_div').show();
+	$('#display_more_btn').hide();	
+	$('#table-breakpoint').basictable('destroy');
+	start=end+1;
+	end=start+25;	
+	load_data();
+}
 function download_file(e){
 	window.open('doc_preview.shtml?document_uuid='+e+'&token=<!--#4DVAR _HIT_TokenGetAny-->');
 }
