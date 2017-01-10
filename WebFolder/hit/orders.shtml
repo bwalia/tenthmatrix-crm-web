@@ -87,7 +87,7 @@ end if
    			<div class="row">
 	  			<div class="content table-responsive table-full-width">
 		 			<div class="table-responsive" style="border:none;" >
-                        <table class="table table-striped  table-bordered table-hover custom-tbl-st bt" id="table-breakpoint"  style="background-color: rgb(255, 255, 255); border-radius: 4px;" >
+                        <table class="table table-striped  table-bordered table-hover custom-tbl-st bt" id="table-breakpoint"  style="background-color: rgb(255, 255, 255); border-radius: 4px; display:none;" >
                             <thead>
                                 <tr>
                                            	<th>Order Num</th>
@@ -118,13 +118,13 @@ end if
                                         
                                      </tbody>
                         </table>
-                        <div style="text-align:center">
-							<a style="width: 60%; margin-bottom: 10px; display: none;" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink " id="display_more_btn" title="Load more" onclick="load_more()" href="javascript:void(0);">
+                       <div style="text-align:center">
+							<a style="width: 100%; font-size:17px; display: none;" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink " id="display_more_btn" title="Load more" onclick="load_more()" href="javascript:void(0);">
 								Load more
 							</a>
         				</div>
 						<div id="img_loading_div" style="text-align:center">
-							<img src="images/loading.gif?as"  style="padding:20px;" width="34" >
+							<img src="images/loading.gif" >
 						</div>
                     </div>
 				</div>
@@ -269,7 +269,7 @@ function load_data(){
 		jsonRow +='&keyword='+keyword;
 	}
 	$.getJSON(jsonRow,function(result){
-	
+		$('#table-breakpoint').show();
 			if(result.Alert){
 				$(".jqibox").remove();
 				$.prompt('No more records found!');

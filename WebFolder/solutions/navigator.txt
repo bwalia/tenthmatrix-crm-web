@@ -1,0 +1,832 @@
+[
+    {
+        "module_name": "Timeslips",
+        "icon_path_1": "fa fa-calendar",
+        "table_name": "Timeslips",
+        "uuid": "78F98FE10B9143C889F957B1DA94BB14",
+        "icon_path": "fa fa-calendar",
+        "active": "True",
+        "Sub_Module": [
+            {
+                "sub_icon_path": "",
+                "sub_module_name": "Timeslips",
+                "sub_module_file": "timeslips.shtml"
+            },
+            {
+                "sub_icon_path": "",
+                "sub_module_name": "Calendar View",
+                "sub_module_file": "calendar.shtml?mode"
+            },
+            {
+                "sub_icon_path": "",
+                "sub_module_name": "Enter New Timeslip",
+                "sub_module_file": "timeslip.shtml"
+            },
+            {
+                "sub_icon_path": "",
+                "sub_module_name": "Today",
+                "sub_module_file": "timeslips.shtml?today"
+            },
+            {
+                "sub_icon_path": "",
+                "sub_module_name": "This week",
+                "sub_module_file": "timeslips.shtml?week"
+            },
+            {
+                "sub_icon_path": "",
+                "sub_module_name": "This month",
+                "sub_module_file": "timeslips.shtml?month"
+            }
+        ]
+    },
+    {
+        "module_name": "Bank Statement Entries",
+        "icon_path_1": "img/bank-enteries.png",
+        "table_name": "bank_statement_entries",
+        "uuid": "611339F9ABAB403CB1436FF748A98B2A",
+        "icon_path": "images/documents7.svg",
+        "active": "True",
+        "Sub_Module": [
+            {
+                "sub_icon_path": "",
+                "sub_module_name": "List Bank Entries",
+                "sub_module_file": "bank_enteries.shtml"
+            },
+            {
+                "sub_icon_path": "",
+                "sub_module_name": "Enter New Bank Entry",
+                "sub_module_file": "bank_entry.shtml"
+            }
+        ],
+        "Sets": [
+            {
+                "set_name": "StatementWithoutBills",
+                "set_uuid": "E302C488-CEF6-4513-A667-6AEFDAFC084D"
+            }
+        ]
+    },
+    {
+        "module_name": "Invoices",
+        "icon_path_1": "fa fa-file-text",
+        "table_name": "Invoices",
+        "uuid": "C3E1975421B340B1AC3C36245C086E56",
+        "icon_path": "fa fa-book",
+        "active": "True",
+        "Sub_Module": [
+            {
+                "sub_icon_path": "",
+                "sub_module_name": "Invoices",
+                "sub_module_file": "invoices.shtml"
+            },
+            {
+                "sub_icon_path": "",
+                "sub_module_name": "Enter New Invoice",
+                "sub_module_file": "invoice.shtml"
+            },
+            {
+                "sub_icon_path": "",
+                "sub_module_name": "Outstanding Invoices",
+                "sub_module_file": "outstanding_invoices.shtml"
+            }
+        ],
+        "Sets": [
+            {
+                "set_name": "ELSVIERMAY2013",
+                "set_uuid": "89E5D665-C69C-467D-B395-5316AE19B67B"
+            },
+            {
+                "set_name": "Payement570000542",
+                "set_uuid": "F03E38D0-EB88-41A6-8B3B-9E13D4DA2E49"
+            },
+            {
+                "set_name": "HCLPending2012-July2013",
+                "set_uuid": "00C4585D-5353-43F9-9CFD-CD8C52BF7491"
+            },
+            {
+                "set_name": "NovMonthly2013",
+                "set_uuid": "856095B7-6F01-41FF-8F24-31579A0B5B2F"
+            },
+            {
+                "set_name": "iModerni_Review_Dec2014",
+                "set_uuid": "1C8FE95E-81F1-4000-B76C-BDE2F664F928"
+            },
+            {
+                "set_name": "Lexis Nexis",
+                "set_uuid": "F19C5FB9-F335-44DA-9594-7FB9F2757D0D"
+            }
+        ]
+    },
+    {
+        "module_name": "Work Orders",
+        "icon_path_1": "img/order.png",
+        "table_name": "orders",
+        "uuid": "EB0CEC7A06E54618B35A3D7ECE2021C6",
+        "icon_path": "fa fa-file-text-o",
+        "active": "True",
+        "Sub_Module": [
+            {
+                "sub_icon_path": "",
+                "sub_module_name": "Orders",
+                "sub_module_file": "orders.shtml"
+            },
+            {
+                "sub_icon_path": "",
+                "sub_module_name": "Enter New Work Order",
+                "sub_module_file": "order.shtml"
+            }
+        ]
+    },
+    {
+        "module_name": "Tasks",
+        "icon_path_1": "fa fa-tasks",
+        "table_name": "Tasks",
+        "uuid": "5183756E73F24FCDA998C6EF34EC867E",
+        "icon_path": "fa fa-tasks",
+        "active": "True",
+        "Sub_Module": [
+            {
+                "sub_icon_path": "",
+                "sub_module_name": "Tasks",
+                "sub_module_file": "tasks.shtml"
+            },
+            {
+                "sub_icon_path": "",
+                "sub_module_name": "Enter New Task",
+                "sub_module_file": "task.shtml"
+            }
+        ]
+    },
+    {
+        "module_name": "Customers",
+        "icon_path_1": "fa fa-users",
+        "table_name": "Companies",
+        "uuid": "6FEA91C8BA6547D49F9BEBE089AF7788",
+        "icon_path": "fa fa-users",
+        "active": "True",
+        "Sub_Module": [
+            {
+                "sub_icon_path": "",
+                "sub_module_name": "Customers",
+                "sub_module_file": "customers.shtml"
+            },
+            {
+                "sub_icon_path": "",
+                "sub_module_name": "Enter New Customer",
+                "sub_module_file": "customer.shtml"
+            },
+            {
+                "sub_icon_path": "",
+                "sub_module_name": "Suppliers",
+                "sub_module_file": "suppliers.shtml"
+            }
+        ],
+        "Sets": [
+            {
+                "set_name": "Jobshout_Customers",
+                "set_uuid": "CADD8A72-D610-4985-8AD7-9BB14E844902"
+            },
+            {
+                "set_name": "userset_1",
+                "set_uuid": "63900446-153E-4B78-A114-839B0A48E8D6"
+            }
+        ]
+    },
+    {
+        "module_name": "Projects",
+        "icon_path_1": "fa fa-list-alt",
+        "table_name": "Projects",
+        "uuid": "8BB1E525DEE643818DCC439BC6A91E63",
+        "icon_path": "fa fa-list-alt",
+        "active": "True",
+        "Sub_Module": [
+            {
+                "sub_icon_path": "",
+                "sub_module_name": "Projects",
+                "sub_module_file": "projects.shtml"
+            },
+            {
+                "sub_icon_path": "",
+                "sub_module_name": "Enter New Projects",
+                "sub_module_file": "project.shtml"
+            }
+        ]
+    },
+    {
+        "module_name": "Holidays",
+        "icon_path_1": "fa fa-tree",
+        "table_name": "",
+        "uuid": "614CC6AF0A58481FB75A48222639080D",
+        "icon_path": "images/holidays.svg",
+        "active": "True",
+        "Sub_Module": [
+            {
+                "sub_icon_path": "",
+                "sub_module_name": "Holidays",
+                "sub_module_file": "holidays.shtml"
+            },
+            {
+                "sub_icon_path": "",
+                "sub_module_name": "Request New Holiday",
+                "sub_module_file": "holiday.shtml"
+            },
+            {
+                "sub_icon_path": "",
+                "sub_module_name": "Add New Company Holiday",
+                "sub_module_file": "company_holiday.shtml"
+            }
+        ]
+    },
+    {
+        "module_name": "Sites",
+        "icon_path_1": "img/domain.png",
+        "table_name": "Sites",
+        "uuid": "E0F17294BE1D47EE9F1716AF187116EC",
+        "icon_path": "",
+        "active": "True",
+        "Sub_Module": [
+            {
+                "sub_icon_path": "",
+                "sub_module_name": "Sites",
+                "sub_module_file": "sites.shtml"
+            },
+            {
+                "sub_icon_path": "",
+                "sub_module_name": "Enter New Site",
+                "sub_module_file": "site.shtml"
+            },
+            {
+                "sub_icon_path": "",
+                "sub_module_name": "FTP Details",
+                "sub_module_file": "ftpservers.shtml"
+            },
+            {
+                "sub_icon_path": "",
+                "sub_module_name": "Enter New FTP Detail",
+                "sub_module_file": "ftpserver.shtml"
+            }
+        ]
+    },
+    {
+        "module_name": "Modules",
+        "icon_path_1": "fa fa-cubes",
+        "table_name": "",
+        "uuid": "863921CBB61C4918949AF66DBD8100B9",
+        "icon_path": "",
+        "active": "True",
+        "Sub_Module": [
+            {
+                "sub_icon_path": "",
+                "sub_module_name": "Modules",
+                "sub_module_file": "modules.shtml"
+            },
+            {
+                "sub_icon_path": "",
+                "sub_module_name": "Enter New Module",
+                "sub_module_file": "module.shtml"
+            }
+        ]
+    },
+    {
+        "module_name": "Servers",
+        "icon_path_1": "img/it-inventory.png",
+        "table_name": "servers",
+        "uuid": "1C803E96355A4B02B62BFA53910A867F",
+        "icon_path": "",
+        "active": "True",
+        "Sub_Module": [
+            {
+                "sub_icon_path": "",
+                "sub_module_name": "Servers",
+                "sub_module_file": "servers.shtml"
+            },
+            {
+                "sub_icon_path": "",
+                "sub_module_name": "Enter New Server",
+                "sub_module_file": "server.shtml"
+            }
+        ]
+    },
+    {
+        "module_name": "Purchase Invoices",
+        "icon_path_1": "img/purchase-invoices.png",
+        "table_name": "purchase_invoices",
+        "uuid": "E0C7B88D7E4247C09636F008C5F36FBE",
+        "icon_path": "fa fa-table",
+        "active": "True",
+        "Sub_Module": [
+            {
+                "sub_icon_path": "",
+                "sub_module_name": "List Purchase Invoices",
+                "sub_module_file": "purchase_invoices.shtml"
+            },
+            {
+                "sub_icon_path": "",
+                "sub_module_name": "Enter New Purchase Invoice",
+                "sub_module_file": "purchase_invoice.shtml"
+            }
+        ]
+    },
+    {
+        "module_name": "Groups",
+        "icon_path_1": "fa fa-users",
+        "table_name": "Groups",
+        "uuid": "70C2C740AA0046D287681C8E7B3C6DE5",
+        "icon_path": "",
+        "active": "True",
+        "Sub_Module": [
+            {
+                "sub_icon_path": "",
+                "sub_module_name": "Groups",
+                "sub_module_file": "groups.shtml"
+            },
+            {
+                "sub_icon_path": "",
+                "sub_module_name": "Enter New Group",
+                "sub_module_file": "group.shtml"
+            }
+        ]
+    },
+    {
+        "module_name": "Script Runner",
+        "icon_path_1": "img/script.png",
+        "table_name": "",
+        "uuid": "AA6E30318FE541F6AC6313D91BF42321",
+        "icon_path": "images/script-runner.svg",
+        "active": "True",
+        "Sub_Module": [
+            {
+                "sub_icon_path": "",
+                "sub_module_name": "List FR Scripts",
+                "sub_module_file": "scripts.shtml"
+            },
+            {
+                "sub_icon_path": "",
+                "sub_module_name": "Enter FR Script",
+                "sub_module_file": "script.shtml"
+            }
+        ]
+    },
+    {
+        "module_name": "Contacts",
+        "icon_path_1": "img/contact2.png",
+        "table_name": "",
+        "uuid": "0384747B30FE4940A8D83339E862212B",
+        "icon_path": "fa fa-envelope",
+        "active": "True",
+        "Sub_Module": [
+            {
+                "sub_icon_path": "",
+                "sub_module_name": "Contacts",
+                "sub_module_file": "contacts.shtml"
+            },
+            {
+                "sub_icon_path": "",
+                "sub_module_name": "Enter New Contact",
+                "sub_module_file": "contact.shtml"
+            }
+        ]
+    },
+    {
+        "module_name": "Products",
+        "icon_path_1": "fa fa-file-text-o",
+        "table_name": "Products",
+        "uuid": "D1B02C6356ED48CD8E72F9E25881309D",
+        "icon_path": "fa fa-file-text-o",
+        "active": "True",
+        "Sub_Module": [
+            {
+                "sub_icon_path": "",
+                "sub_module_name": "Products",
+                "sub_module_file": "products.shtml"
+            },
+            {
+                "sub_icon_path": "",
+                "sub_module_name": "Enter New Product",
+                "sub_module_file": "product.shtml"
+            }
+        ]
+    },
+    {
+        "module_name": "Payments",
+        "icon_path_1": "fa fa-credit-card-alt",
+        "table_name": "payments",
+        "uuid": "01DB06D7F3E14821B0C6AC01A7EBBB1D",
+        "icon_path": "fa fa-credit-card-alt",
+        "active": "True",
+        "Sub_Module": [
+            {
+                "sub_icon_path": "",
+                "sub_module_name": "List Payments",
+                "sub_module_file": "payments.shtml"
+            },
+            {
+                "sub_icon_path": "",
+                "sub_module_name": "Enter New Payment",
+                "sub_module_file": "payment.shtml"
+            }
+        ]
+    },
+    {
+        "module_name": "Employees",
+        "icon_path_1": "icon-group",
+        "table_name": "",
+        "uuid": "DD1AB7A661CE4DA9922A3386222E8147",
+        "icon_path": "images/worker.svg",
+        "active": "True",
+        "Sub_Module": [
+            {
+                "sub_icon_path": "",
+                "sub_module_name": "Employees",
+                "sub_module_file": "employees.shtml"
+            },
+            {
+                "sub_icon_path": "",
+                "sub_module_name": "Enter New Employee",
+                "sub_module_file": "employee.shtml"
+            },
+            {
+                "sub_icon_path": "",
+                "sub_module_name": "Employees Holidays",
+                "sub_module_file": "employeeholidays.shtml"
+            }
+        ]
+    },
+    {
+        "module_name": "Domains",
+        "icon_path_1": "img/it-inventory.png",
+        "table_name": "domains",
+        "uuid": "6733FE9EFCC14AABACC860561DB7B42D",
+        "icon_path": "images/domain.svg",
+        "active": "True",
+        "Sub_Module": [
+            {
+                "sub_icon_path": "",
+                "sub_module_name": "Domains",
+                "sub_module_file": "domains.shtml"
+            },
+            {
+                "sub_icon_path": "",
+                "sub_module_name": "Enter New Domain",
+                "sub_module_file": "domain.shtml"
+            }
+        ],
+        "Sets": [
+            {
+                "set_name": "userset_1",
+                "set_uuid": "01481F10-0CE2-48C1-9A42-96A8AB39F62B"
+            }
+        ]
+    },
+    {
+        "module_name": "VAT Calculator",
+        "icon_path_1": "",
+        "table_name": "",
+        "uuid": "19D1058CF70E40BD86FC9A77A0314036",
+        "icon_path": "fa fa-list-alt",
+        "active": "True",
+        "Sub_Module": []
+    },
+    {
+        "module_name": "Transactions",
+        "icon_path_1": "",
+        "table_name": "",
+        "uuid": "37C49B96916848B0A120C9E0BD308DE6",
+        "icon_path": "images/transactions.svg",
+        "active": "True",
+        "Sub_Module": []
+    },
+    {
+        "module_name": "Templates",
+        "icon_path_1": "",
+        "table_name": "",
+        "uuid": "3AA41481E48F4B88B7B37C7BFE3A60D2",
+        "icon_path": "fa fa-list-alt",
+        "active": "True",
+        "Sub_Module": []
+    },
+    {
+        "module_name": "Submit VAT Return",
+        "icon_path_1": "",
+        "table_name": "",
+        "uuid": "9953328F75D04851BC04356A689668E3",
+        "icon_path": "fa fa-calculator",
+        "active": "True",
+        "Sub_Module": []
+    },
+    {
+        "module_name": "Receipts",
+        "icon_path_1": "img/receipt.png",
+        "table_name": "Receipts",
+        "uuid": "9144E82DC39F4662B0D9302F6CC22EB0",
+        "icon_path": "fa fa-file-text",
+        "active": "True",
+        "Sub_Module": [
+            {
+                "sub_icon_path": "",
+                "sub_module_name": "List Receipts",
+                "sub_module_file": "receipts.shtml"
+            },
+            {
+                "sub_icon_path": "",
+                "sub_module_name": "Enter New Receipt",
+                "sub_module_file": "receipt.shtml"
+            }
+        ]
+    },
+    {
+        "module_name": "Purchase Orders",
+        "icon_path_1": "img/purchase-order.png",
+        "table_name": "Purchase_Orders",
+        "uuid": "6B08FEA7BE7146E9B2C42688092A50BA",
+        "icon_path": "fa fa-tasks",
+        "active": "True",
+        "Sub_Module": [
+            {
+                "sub_icon_path": "",
+                "sub_module_name": "List Purchase Orders",
+                "sub_module_file": "purchase_orders.shtml"
+            },
+            {
+                "sub_icon_path": "",
+                "sub_module_name": "Enter Purchase Order",
+                "sub_module_file": "purchase_order.shtml"
+            }
+        ]
+    },
+    {
+        "module_name": "Print Account Statements",
+        "icon_path_1": "",
+        "table_name": "",
+        "uuid": "339BCD87DC0B4111815A394D5AFA1EB8",
+        "icon_path": "fa fa-print",
+        "active": "True",
+        "Sub_Module": []
+    },
+    {
+        "module_name": "Outstanding Invoice",
+        "icon_path_1": "",
+        "table_name": "",
+        "uuid": "BA034639ED574F318E7342FFC3255E78",
+        "icon_path": "images/Invoice.svg",
+        "active": "True",
+        "Sub_Module": []
+    },
+    {
+        "module_name": "Mailing Templates",
+        "icon_path_1": "",
+        "table_name": "",
+        "uuid": "547CED849D394FDEB3467F5FB04CCBEB",
+        "icon_path": "fa fa-list-alt",
+        "active": "True",
+        "Sub_Module": []
+    },
+    {
+        "module_name": "Mailing",
+        "icon_path_1": "",
+        "table_name": "",
+        "uuid": "BC71ACEDDD3D446285A8229F1DA235E7",
+        "icon_path": "fa fa-envelope-o",
+        "active": "True",
+        "Sub_Module": []
+    },
+    {
+        "module_name": "Login to Online Banking",
+        "icon_path_1": "",
+        "table_name": "",
+        "uuid": "DA89E176017F49B8B0F9E27A588E06FA",
+        "icon_path": "images/login.svg",
+        "active": "True",
+        "Sub_Module": []
+    },
+    {
+        "module_name": "Leads",
+        "icon_path_1": "fa fa-users",
+        "table_name": "",
+        "uuid": "CD2D90F634BA45C19BF2D54B1EE79542",
+        "icon_path": "images/lead.svg",
+        "active": "True",
+        "Sub_Module": [
+            {
+                "sub_icon_path": "",
+                "sub_module_name": "Leads",
+                "sub_module_file": "leads.shtml"
+            },
+            {
+                "sub_icon_path": "",
+                "sub_module_name": "Enter New Lead",
+                "sub_module_file": "lead.shtml"
+            },
+            {
+                "sub_icon_path": "",
+                "sub_module_name": "Lead Contacts",
+                "sub_module_file": "lead_contacts.shtml"
+            },
+            {
+                "sub_icon_path": "",
+                "sub_module_name": "Enter New Lead Contact",
+                "sub_module_file": "lead_contact.shtml"
+            }
+        ]
+    },
+    {
+        "module_name": "Job Applications",
+        "icon_path_1": "",
+        "table_name": "",
+        "uuid": "1D0C0EC38529467889CEA8CE7AE5998B",
+        "icon_path": "images/job-application.svg",
+        "active": "True",
+        "Sub_Module": []
+    },
+    {
+        "module_name": "FTP Accounts",
+        "icon_path_1": "",
+        "table_name": "",
+        "uuid": "D5A55969DDD74D56B00344ABD0EE99BB",
+        "icon_path": "fa fa-book",
+        "active": "True",
+        "Sub_Module": []
+    },
+    {
+        "module_name": "Emails Queue",
+        "icon_path_1": "fa fa-envelope-o",
+        "table_name": "",
+        "uuid": "4C5585A830274494A5FC94122CAC99F1",
+        "icon_path": "fa fa-envelope-o",
+        "active": "True",
+        "Sub_Module": [
+            {
+                "sub_icon_path": "",
+                "sub_module_name": "Email queue",
+                "sub_module_file": "emailqueue.shtml"
+            },
+            {
+                "sub_icon_path": "",
+                "sub_module_name": "New Mail",
+                "sub_module_file": "emailsend.shtml"
+            }
+        ]
+    },
+    {
+        "module_name": "Emails Direct",
+        "icon_path_1": "",
+        "table_name": "",
+        "uuid": "6174AC915A9C4BB2AF76D1471EBF15CD",
+        "icon_path": "fa fa-envelope",
+        "active": "True",
+        "Sub_Module": []
+    },
+    {
+        "module_name": "Documents",
+        "icon_path_1": "fa fa-file-o",
+        "table_name": "Documents",
+        "uuid": "695D432274304EB68AD6B62C52C1DB96",
+        "icon_path": "fa fa-file-o",
+        "active": "True",
+        "Sub_Module": [
+            {
+                "sub_icon_path": "",
+                "sub_module_name": "Documents",
+                "sub_module_file": "documents.shtml"
+            },
+            {
+                "sub_icon_path": "",
+                "sub_module_name": "Enter New Document",
+                "sub_module_file": "document.shtml"
+            }
+        ]
+    },
+    {
+        "module_name": "Cash Management",
+        "icon_path_1": "",
+        "table_name": "",
+        "uuid": "381951CF11154AC595288BEB71F46C4B",
+        "icon_path": "images/cash-management.svg",
+        "active": "True",
+        "Sub_Module": []
+    },
+    {
+        "module_name": "Business Brands",
+        "icon_path_1": "",
+        "table_name": "",
+        "uuid": "B91FDEB5949E44B78E1FA7F97CDA3416",
+        "icon_path": "fa fa-cubes",
+        "active": "True",
+        "Sub_Module": []
+    },
+    {
+        "module_name": "Bank Entry Types",
+        "icon_path_1": "",
+        "table_name": "",
+        "uuid": "F3E6DE1600CA4E10BC91366FF5B84C6A",
+        "icon_path": "images/documents7.svg",
+        "active": "True",
+        "Sub_Module": []
+    },
+    {
+        "module_name": "Add Other Expenses",
+        "icon_path_1": "",
+        "table_name": "",
+        "uuid": "90E2914CD1E249FB8BFC98E0291C259B",
+        "icon_path": "images/add-other.svg",
+        "active": "True",
+        "Sub_Module": []
+    },
+    {
+        "module_name": "Add Mileage Expenses",
+        "icon_path_1": "fa fa-tasks",
+        "table_name": "",
+        "uuid": "076BF1E1D041448894D2E27D2321F4E6",
+        "icon_path": "fa fa-tasks",
+        "active": "True",
+        "Sub_Module": [
+            {
+                "sub_icon_path": "",
+                "sub_module_name": "Travel Expense Sheet",
+                "sub_module_file": "travel_expenses.shtml"
+            },
+            {
+                "sub_icon_path": "",
+                "sub_module_name": "Enter New Travel Expense Sheet",
+                "sub_module_file": "travel_expense.shtml"
+            }
+        ]
+    },
+    {
+        "module_name": "Account Statements",
+        "icon_path_1": "",
+        "table_name": "",
+        "uuid": "D4D47ACA25BC445C829E599BDDC0553F",
+        "icon_path": "images/documents7.svg",
+        "active": "True",
+        "Sub_Module": []
+    },
+    {
+        "module_name": "VT CashBook Activities",
+        "icon_path_1": "img/vtcash-book.png",
+        "table_name": "vt_cashbook_activity",
+        "uuid": "B60E0438AAF14DD9A0161201B60CA796",
+        "icon_path": "",
+        "active": "True",
+        "Sub_Module": [
+            {
+                "sub_icon_path": "",
+                "sub_module_name": "List Activities",
+                "sub_module_file": "vtcashbooks.shtml"
+            },
+            {
+                "sub_icon_path": "",
+                "sub_module_name": "Enter New Activity",
+                "sub_module_file": "vtcashbook.shtml"
+            }
+        ]
+    },
+    {
+        "module_name": "Analysis Ledger",
+        "icon_path_1": "img/ledger.png",
+        "table_name": "analysis_ledger",
+        "uuid": "BD4C42E4376C4C8295FD39F0C356AB7E",
+        "icon_path": "",
+        "active": "True",
+        "Sub_Module": [
+            {
+                "sub_icon_path": "",
+                "sub_module_name": "List Analysis Ledger",
+                "sub_module_file": " analysisledgers.shtml"
+            },
+            {
+                "sub_icon_path": "",
+                "sub_module_name": "Enter Analysis Ledger",
+                "sub_module_file": "analysisledger.shtml"
+            }
+        ]
+    },
+    {
+        "module_name": "Analysis Account",
+        "icon_path_1": "img/analysis-acount.png",
+        "table_name": "analysis_account",
+        "uuid": "EA8F32D845F64ACFA34E5D0EC42C7D2C",
+        "icon_path": "",
+        "active": "True",
+        "Sub_Module": [
+            {
+                "sub_icon_path": "",
+                "sub_module_name": "List Analysis Account",
+                "sub_module_file": "analysisaccounts.shtml"
+            },
+            {
+                "sub_icon_path": "",
+                "sub_module_name": "Enter Analysis Account",
+                "sub_module_file": "analysisaccount.shtml"
+            }
+        ]
+    },
+    {
+        "module_name": "test",
+        "icon_path_1": "test1",
+        "table_name": "_emailc_attachments",
+        "uuid": "A8A8FB1033F04469B549591F8C9000B3",
+        "icon_path": "test1",
+        "active": "True",
+        "Sub_Module": []
+    }
+]

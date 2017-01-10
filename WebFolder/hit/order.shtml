@@ -102,7 +102,7 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
       		</ol>
     	</section>
 		<section class="content">
-			<form name="CompanyForm" id="CompanyForm" action="savecustomer.cgi" class="form-horizontal" method="post">		
+			<form name="OrderForm" id="OrderForm" action="saveorder.cgi" class="form-horizontal" method="post">		
         	<div class="row" >
 				 <div class="panel-body no-padding-top bg-white" > 
 				 
@@ -366,7 +366,7 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 		
 		  <tr class="item">
 		    <th>Item</th>
-			<th>Image</th>
+			<!--<th>Image</th>-->
 			<th>Description</th>
 			<th>Rate</th>
 			<th>Qty</th>
@@ -387,7 +387,7 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 			<input class="item_uuid" type="hidden" value="<!--#4DHTMLVAR [order_items]uuid-->" />
 			</div></td>
 			
-		<td class="item-id"><IMG SRC="images/no-image.jpg" class="img-responsive" ALT=""/></td>
+				<!--<td class="item-id"><IMG SRC="images/no-image.jpg" class="img-responsive" ALT=""/></td>-->
 			
 			<td >
 			<span class="s_description" ><!--#4DHTMLVAR [order_items]item_description--></span><input class="description" type="hidden" value="<!--#4DHTMLVAR [order_items]item_description-->" />
@@ -553,10 +553,10 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 											<label class="col-sm-9"  STYLE="padding-left:0px; padding-top:7px;" id="user_details"><!--#4DHTMLVAR [Notes]note_user_name--> (<!--4DHTMLVAR timestamp_unix_toGMT ([Notes]Timestamp_modified)-->) (Note: <!--#4DHTMLVAR [Notes]note_ID-->)</label>
 										</div>
 										<div STYLE=" padding-left:15px;">
-											<button type="button" id="edit" class="btn btn-danger btn-sm " onClick="editCustomerNote($(this))">Edit Note</button>&nbsp;
-											<button type="button" id="delete" class="btn btn-primary btn-sm " onClick="deleteCustomerNote($(this))">Delete</button>&nbsp;
-											<button type="button" id="save" class="btn btn-danger btn-sm " onClick="saveCustomerNote($(this))" style="display:none">Save Note</button>&nbsp;
-											<button type="button" id="cancel" class="btn btn-primary btn-sm " onClick="cancelCustomerNote($(this))" style="display:none">Cancel</button>&nbsp;
+											<button type="button" id="edit" class="btn btn-danger btn-sm notesSection" onClick="editCustomerNote($(this))">Edit Note</button>&nbsp;
+											<button type="button" id="delete" class="btn btn-primary btn-sm notesSection" onClick="deleteCustomerNote($(this))">Delete</button>&nbsp;
+											<button type="button" id="save" class="btn btn-danger btn-sm notesSection" onClick="saveCustomerNote($(this))" style="display:none">Save Note</button>&nbsp;
+											<button type="button" id="cancel" class="btn btn-primary btn-sm notesSection" onClick="cancelCustomerNote($(this))" style="display:none">Cancel</button>&nbsp;
 										</div>
 									</div>
 								</div>
@@ -572,8 +572,8 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 								</div>
 									<div class="col-md-12 field-box" style="margin-bottom:5px;">
 										<label>Add Note</label>
-										<textarea name="add_new_note" class="form-control" rows="2" id="add_new_note"></textarea>
-										<button type="button" id="add" class="btn btn-primary btn-sm" onClick="addCustomerNote()" STYLE="margin-top:10px;">Add Note</button>
+										<textarea name="add_new_note" class="form-control notesSection" rows="2" id="add_new_note"></textarea>
+										<button type="button" id="add" class="btn btn-primary btn-sm notesSection" onClick="addCustomerNote()" STYLE="margin-top:10px;">Add Note</button>
 									</div>
 						        
 							
@@ -761,6 +761,8 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 		<!--#4DIF ([orders]status=6)-->
 		$('#OrderForm :input').attr('disabled', true);
 		$('#status').attr('disabled', false);
+		$('.notesSection').attr('disabled', false);
+		
 		$('#hiderow').hide();
 		$('.td_edit').hide();
 		$('.td_remove').hide();
