@@ -131,7 +131,7 @@ end if
 							<!--#4DENDIF-->
 						<!--#4DENDIF-->
 					</ul>
-					<div class="tab-content" STYLE=" overflow: hidden;    border: 1px solid #ddd; border-top: none;">
+					<div class="tab-content" STYLE=" overflow: hidden;     border-top: none;">
 					<div id="home" class="tab-pane fade in active"  >
   
     
@@ -638,13 +638,13 @@ end if
 						
 						
 						
-	<div id="third" class="tab-pane fade col-md-7" STYLE="padding-top:20px;"  >
+	<div id="third" class="tab-pane fade col-md-12" STYLE="padding-top:20px;"  >
  
 						<div class="row-fluid form-wrapper" style="margin-bottom:5px;">
 							<div class="form-group">
 								<!--#4DSCRIPT/Web_LoadInvoicesNotes/-->	
 								<!--#4DLOOP [Notes]--><!-- row -->
-								<div class="notes">
+								<div class="notes" STYLE="padding-left:2px;">
 								<div CLASS="col-sm-6">
 									<label id="user_details" ><!--#4DHTMLVAR [Notes]note_user_name--> (<!--4DHTMLVAR timestamp_unix_toGMT ([Notes]Timestamp_modified)-->) (Note: <!--#4DHTMLVAR [Notes]note_ID-->)</label>
 									<input class="note_uuid" type="hidden" value="<!--#4DHTMLVAR [Notes]uuid-->" />
