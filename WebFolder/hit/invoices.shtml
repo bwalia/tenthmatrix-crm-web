@@ -158,7 +158,7 @@ end if
         	<div CLASS="row">
             	<div class="content table-responsive table-full-width">
 		 			<div class="table-responsive" style="border:none;" >
-                         <table class="table table-striped  table-bordered table-hover custom-tbl-st bt" id="table-breakpoint"  style="background-color: rgb(255, 255, 255); border-radius: 4px;" >
+                         <table class="table table-striped  table-bordered table-hover custom-tbl-st bt" id="table-breakpoint"  style="background-color: rgb(255, 255, 255); border-radius: 4px;display:none;" >
                             <thead>
                                 <tr>
                                 	<th CLASS="hidden-xs"><input name="select" class="" type="checkbox" id="chk_all" ></th>
@@ -217,7 +217,7 @@ end if
 									var statesdemo = {
 										state0: {
 											title: 'Please enter name of new set',
-											html:'&lt;div id="message"&gt;&lt;/div&gt;&lt;input type="text" name="new_set" id="new_set" value="userset_1"&gt;&lt;br /&gt;',
+											html:'&lt;div id="message"&gt;&lt;/div&gt;&lt;input type="text" name="new_set" id="new_set" class="form-control" value="userset_1"&gt;&lt;br /&gt;',
 											buttons: { Cancel : 0, Ok: 1 },
 											focus: "#new_set",																		
 											submit:function(e,v,m,f){ 
@@ -444,7 +444,6 @@ var selected='';
 var start=0, end=50;
 var old_srch='', tab='', set='';
 var tablname='Invoices';
-var selected_set='<!--#4DVAR _HIT_WebApp_GetField ("set") -->';
 var complete=false; 
 var add_from_manager=false;
 var ccode_params='';
@@ -502,13 +501,13 @@ function __deleteMultipleEntries(){
 			}
 		}
 	});
-	console.log(selected)
+	
 	if(selected!=""){
 		deleteuuid=selected;
 		code = $('#del_prompt').text();
 		(new Function(code))();
 	}else{
-		__alertMessage("Please select one or more invoices for deletion!");
+		__alertModalBox("Please select one or more invoices for deletion!");
 	}
 }
 
@@ -795,6 +794,7 @@ function load_data(jsonRow){
 				jsonRow +='&tab='+tab;
 			}	
 	$.getJSON(jsonRow,function(result){
+		$('#table-breakpoint').show();
 		if(result.Alert){
 			__alertModalBox('No more records found!');
 			

@@ -569,7 +569,7 @@ function load_data(refRow){
 				
 				var commentStr=row.comment;
 				if(commentStr!=""){
-					table_html+='<td><span class="'+row.uuid+'"><span id="note_'+row.uuid+'">'+row.comment+'</span> <a href="javascript:void(0)" onclick="editNote(\''+row.uuid+'\')" title="Edit"><i class="table-edit"></i></a></span></td>';
+					table_html+='<td><span class="'+row.uuid+'"><span id="note_'+row.uuid+'">'+row.comment+'</span> <a href="javascript:void(0)" onclick="editNote(\''+row.uuid+'\')" title="Edit"><i class="fa fa-edit"></i></a></span></td>';
 				}else{
 					table_html+='<td><span class="'+row.uuid+'"><a href="javascript:void(0)" onclick="addNote(\''+row.uuid+'\')" title="Add">Add</a></span></td>';
 				}
@@ -1444,7 +1444,7 @@ function viewReceipt(num){
 								success: function(html){
 									if(html.Success){
 										$('.'+uuid).html('');
-										var addNoteStr='<span id="note_'+uuid+'">'+html.note+'</span> <a href="javascript:void(0)" onclick="editNote(\''+uuid+'\')" title="Edit"><i class="table-edit"></i></a></span>';
+										var addNoteStr='<span id="note_'+uuid+'">'+html.note+'</span> <a href="javascript:void(0)" onclick="editNote(\''+uuid+'\')" title="Edit"><i class="fa fa-edit"></i></a></span>';
 										$('.'+uuid).html(addNoteStr);
 										$('#bankNote').val();
 										$.prompt.close();

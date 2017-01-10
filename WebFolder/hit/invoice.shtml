@@ -683,7 +683,7 @@ end if
 						<a title="Pay Invoice <!--#4DHTMLVAR String([Invoices]inv_id;"000000")--> by Credit or Debit Card" target="_blank" href="<!--#4DVAR Invoice_GetPayByCardLink-->">
 						<input type="button" class="btn btn-primary btn-color margin-right-5 btn-sm" value="Pay Invoice"></a>
 						<!--#4DENDIF-->
-							<!--#4DIF (mUserIsCurrentBool)--><!--#4DELSE--><input type="submit"  class="btn btn-primary btn-color margin-right-5 btn-sm" value="Save Order">
+							<!--#4DIF (mUserIsCurrentBool)--><!--#4DELSE--><input type="submit"  class="btn btn-primary btn-color margin-right-5 btn-sm" value="Save Invoice">
 							<!--#4DENDIF-->
 							<a href="invoices.shtml" class="btn btn-danger btn-sm ">Cancel</a>
 							<!--<input type="reset" value="Cancel" class="reset">-->
@@ -949,7 +949,6 @@ function disableForm(e){
 }
 	
 	$(function() {
-		//alert('<!--#4DVAR [Invoices]invoice_posted-->');
 	<!--#4DIF ([Invoices]invoice_posted)-->
 		disableForm(true);
 		
