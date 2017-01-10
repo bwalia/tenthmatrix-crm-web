@@ -958,11 +958,11 @@ function del_file(del_uuid, ref){
 		cache: false,
 		success: function(html)
 		{
-			if(html.Success){
-			var title=html.Success;
+			if(html.success){
+			var title=html.success;
 			}
 			else{
-			var title=html.Error;
+			var title=html.error;
 			}
 			var statesdemo = {
 				state0: {
@@ -970,7 +970,7 @@ function del_file(del_uuid, ref){
 					buttons: { OK : 0 },
 					submit:function(e,v,m,f){ 
 						if(v==0) {
-							if(html.Success){
+							if(html.success){
 								ref.parents('tr').remove();
 							}
 						}
