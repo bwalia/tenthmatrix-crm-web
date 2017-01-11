@@ -63,9 +63,9 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
 										<button class="btn btn-left-align btn-link no-shadow bg-transparent no-padding-top padding-right-10 right-auto left" type="button" id="searchBtn"><i class="glyphicon glyphicon-search" STYLE="top:-11px;"></i></button>
 									</div>
 									
-									<button class="btn btn-primary btn-left" onClick="__showProjects(''); return false;">All</button>                               
-									<button class="btn btn-primary  btn-middle" onClick="__showProjects('active'); return false;">Active</button>       
-									<button class="btn btn-primary btn-right" onClick="__showProjects('completed'); return false;">Completed</button>
+									<button class="filterBtn btn btn-primary btn-left" onClick="__showProjects('', 'allItemsDiv'); return false;" id="allItemsDiv" disabled>All</button>                               
+									<button class="filterBtn btn btn-primary  btn-middle" onClick="__showProjects('active', 'activeItemsDiv'); return false;" id="activeItemsDiv">Active</button>       
+									<button class="filterBtn btn btn-primary btn-right" onClick="__showProjects('completed', 'completedItemsDiv'); return false;" id="completedItemsDiv">Completed</button>
                                     <a href="project.shtml" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink " style=""> <i class="fa fa-plus"></i>Add New Project</a>
                   				</div>
          					</div>
@@ -77,9 +77,9 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
 							<div class="col-lg-6 col-sm-12 col-xs-12">
 								<div>
 									<input class="form-control xs-margin-btm10 searchFieldClass" id="small_screen_keyword" name="keyword" placeholder="Search here.." value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" type="text">
-                     				<button class="btn btn-primary btn-color padingmix  btn-icon-left btn-sm editorLink" STYLE="width:100%; margin:10px 0px;" onClick="__showProjects(''); return false;">All</button>
-                     				<button class="btn btn-primary btn-color padingmix  btn-icon-left btn-sm editorLink" STYLE="width:100%; margin:10px 0px;" onClick="__showProjects('active'); return false;">Active</button>  
-                     				<button class="btn btn-primary btn-color padingmix  btn-icon-left btn-sm editorLink" STYLE="width:100%; margin:10px 0px;" onClick="__showProjects('completed'); return false;">Completed</button>  
+                     				<button class="btn btn-primary btn-color padingmix  btn-icon-left btn-sm editorLink" STYLE="width:100%; margin:10px 0px;" onClick="__showProjects('', 'allItemsDiv'); return false;">All</button>
+                     				<button class="btn btn-primary btn-color padingmix  btn-icon-left btn-sm editorLink" STYLE="width:100%; margin:10px 0px;" onClick="__showProjects('active', 'activeItemsDiv'); return false;">Active</button>  
+                     				<button class="btn btn-primary btn-color padingmix  btn-icon-left btn-sm editorLink" STYLE="width:100%; margin:10px 0px;" onClick="__showProjects('completed', 'completedItemsDiv'); return false;">Completed</button>  
                      				<a href="project.shtml" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink" STYLE="width:100%; margin:10px 0px;"> <i class="fa fa-plus"></i>Add New Project</a>    
                   				</div>
 							</div>
@@ -91,7 +91,7 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
             <div CLASS="row">
             	<div class="content table-responsive table-full-width">
 		 			<div class="table-responsive" style="border:none;" >
-                         <table class="table table-striped  table-bordered table-hover custom-tbl-st bt" id="table-breakpoint"  style="background-color: rgb(255, 255, 255); border-radius: 4px;" >
+                         <table class="table table-striped  table-bordered table-hover custom-tbl-st bt" id="table-breakpoint"  style="background-color: rgb(255, 255, 255); border-radius: 4px; display:none;" >
                             <thead>
                                 <tr>
                                 	<th CLASS="hidden-sm">
@@ -234,8 +234,10 @@ function load_more(){
 	end=start+25;	
 	load_data();
 }
-function __showProjects(val)
+function __showProjects(val, divName)
 {
+	$(".filterBtn").prop("disabled", false);
+	$("#"+divName).prop("disabled", true);
 	start=0;
 	end=25;
 	tab=val;
@@ -350,6 +352,7 @@ function load_data(jsonRow){
 					jsonRow +='&tab='+tab;
 				}	
 	$.getJSON(jsonRow,function(result){
+		$('#table-breakpoint').show();
 			if(result.Alert){
 				__alertModalBox('No more records found!');
 				complete=true;

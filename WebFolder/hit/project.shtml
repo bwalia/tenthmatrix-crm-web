@@ -7,7 +7,6 @@ C_TEXT(_HTMLTITLETXT)
 if(_HIT_AuthenticateSession="Session-Authenticated-OK")
 ALL RECORDS([Tax_Codes])
 QUERY([Projects];[Projects]uuid=_HIT_WebApp_GetField ("uuid"))
-//_HIT_HTMLTXT:="<h1>AUTH</h1>"
 
 IF (Records in selection([Projects])=0)
 _HTMLTITLETXT:="New Project"
@@ -107,7 +106,7 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
    	<div class="content-wrapper">
         <section class="content-header">
       		<h1>
-        		<!--#4DIF (Records in selection([Tasks])=1)-->"<!--#4DVAR taskNameStr-->"<!--#4DELSE-->New<!--#4DENDIF--> 
+        		<!--#4DIF (Records in selection([Projects])=1)-->"<!--#4DVAR [Projects]proj_name-->"<!--#4DELSE-->New<!--#4DENDIF--> 
         		<small>Project</small>
       		</h1>
       		<ol class="breadcrumb">
@@ -133,12 +132,10 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 <div class="tab-content" >
 
   <div id="home" class="tab-pane fade in active" >
-  
-<div class=" col-sm-12 col-lg-8" STYLE="margin-top:20px;" >
+	<div class=" col-sm-12 col-lg-8" STYLE="margin-top:20px;" >
 
 								<!-- left column -->
-								<form name="ProjectForm" action="saveproject.cgi" id="ProjectForm" method="post" class="form-comment" >
-                    			<div class="span12 with-sidebar">
+								<div class="span12 with-sidebar">
 						  		<!--#4DIF (mUserIsCurrentBool)-->
 								<input name="company_Name" class="span9" type="hidden" value="<!--4DVAR [Companies]company_Name--> [<!--4DVAR [Companies]account_Number-->]" id="company_Name">                
 						   		<!--#4DELSE--> 
@@ -221,7 +218,7 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 								<div class="form-group">
 								<label class="col-sm-2 control-label">Deadline Date</label>
 								<div class=" col-sm-4">
-								 <input type="text" CLASS="form-control" data-date-format="dd/mm/yyyy" name="deadline_date" id="deadline_date" readonly <!--#4DIF ([Projects]project_end_date=!00/00/00!)-->value=""<!--4DELSE-->value="<!--#4DVAR [Projects]project_end_date-->"<!--4DENDIF-->>
+								 <input type="text" CLASS="form-control datepicker" data-date-format="dd/mm/yyyy" name="deadline_date" id="deadline_date" readonly <!--#4DIF ([Projects]project_end_date=!00/00/00!)-->value=""<!--4DELSE-->value="<!--#4DVAR [Projects]project_end_date-->"<!--4DENDIF-->>
 								
 								                    
 								</div>
@@ -266,7 +263,7 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 								<label for="" class="col-sm-2 control-label"></label>
                                 <div class="ui-select col-sm-6  ">
                                     
-										<input type="submit" name="Submit" class="btn btn-primary btn-color margin-right-5 btn-sm" value="Submit" onclick="return ValidateForm();">
+										<input type="submit" name="Submit" class="btn btn-primary btn-color margin-right-5 btn-sm save_exit" value="Submit">
                                    		<a href="projects.shtml" class="btn btn-danger btn-sm ">Cancel</a>
                                      
                                 </div>
@@ -274,7 +271,6 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 								
                                 
                                 </div>
-                                </form>
                             </div>
   </div>
   
@@ -350,7 +346,7 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 								</div>
 								<div class="form-group">
 									<div CLASS="col-sm-8">
-										<textarea name="note" class="col-sm-5 note form-control" rows="3" id="note" readonly> <!--#4DHTMLVAR [Notes]Note--></textarea>
+										<textarea name="note" class="col-sm-5 note form-control" rows="2" id="note" readonly> <!--#4DHTMLVAR [Notes]Note--></textarea>
 									</div>
 								</div>
 								</div>
@@ -388,7 +384,7 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 									<div CLASS="row">
 									 
 									<div class="col-sm-4" style="float:left;     margin-top: 17px;     margin-left: 15px; " id="displayCountStr"></div>
-									<div class="col-sm-3 text-right pull-right" STYLE="margin-right:20px;"><input class="form-control"  type="text" value=""></div></div>
+									<div class="col-sm-3 text-right pull-right" STYLE="margin-right:20px;"><input class="form-control keywordSearchClass"  type="text" value=""></div></div>
 									
 									<div class="content table-responsive table-full-width">
 		 			<div class="table-responsive" style="border:none;" >
@@ -409,7 +405,7 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 		  							</table>
 									</div>
 									</div>
-		  							<div class="text-center" style="padding-top:20px;">
+		  							<div class="text-center">
             							<button onclick="load_related_tasks()" id="btn_more_tasks" class="btn btn-info" type="button" style="width: 25%; margin-bottom: 10px;">+ show more records</button> 
 									</div>
 								</div>
@@ -530,10 +526,13 @@ function load_related_tasks(){
 				$('#table-breakpoint').basictable({
     				breakpoint: 751
     			});
-				if(countNum!=0 && countNum!=end){
+    			
+    			if(countNum!=0 && countNum!=end){
 					start+= countNum;
+					end=start+10;
 				}else{
 					start+= end;
+					end=start+10;
 				}
 				$('#btn_more_tasks').attr('disabled',false);
 		}
@@ -669,7 +668,9 @@ function del_file(del_uuid, ref){
 	}
 	
     	$(function () {
-			
+			$('.keywordSearchClass').bind('keypress keydown keyup', function(e){
+       			if(e.keyCode == 13) { e.preventDefault(); }
+    		});
 			
 				
 					$('#table-breakpoint1').basictable({
