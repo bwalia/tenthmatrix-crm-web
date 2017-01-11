@@ -790,7 +790,7 @@ function load_data(){
 					  JSONdata[i][10]='<span class="label label-success">'+item+'</span>';
 					  break;
 					case 'assigned':
-					  JSONdata[i][10]='<span class="label label-important">'+item+'</span>';
+					  JSONdata[i][10]='<span class="label label-important">assigned to</span>';
 					  break;
 					case 'new':
 					  JSONdata[i][10]='<span class="label label-warning">'+item+'</span>';

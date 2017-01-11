@@ -320,9 +320,9 @@ width: 203px; }
 								<div class="form-inline" style="">   
 									<div class="btn-inline display-inline-block">
                  						<label>From</label>
-										<input name="start_date" class="input-large datepicker form-control" type="text" data-date-format="dd/mm/yyyy"  value="" id="start_date" readonly >
+										<input name="start_date" class="input-large datepicker form-control" type="text" data-date-format="dd/mm/yyyy"  value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebSession_GetVar("bankEntriesStartDate") -->" id="start_date" readonly >
 										<label>Till </label>
-									<input name="end_date" class="input-large datepicker form-control" type="text" data-date-format="dd/mm/yyyy"  value="" id="end_date" readonly >
+									<input name="end_date" class="input-large datepicker form-control" type="text" data-date-format="dd/mm/yyyy"  value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebSession_GetVar("bankEntriesEndDate") -->" id="end_date" readonly >
 									</div>
 									<a href="javascript:void(0)" onClick="reset_dates()" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink" title="Reset Dates"><i class="fa fa-refresh"></i></a>
                   				</div>
@@ -408,6 +408,7 @@ width: 203px; }
 			</div>
         	<div CLASS="row">
         		<input type="hidden" id="remove_selected" value="">
+        		
             	<div class="content table-responsive table-full-width">
 		 			<div class="table-responsive" style="border:none;" >
                          <table class="table table-striped  table-bordered table-hover custom-tbl-st bt" id="table-breakpoint"  style="background-color: rgb(255, 255, 255); border-radius: 4px;display:none;" >
@@ -602,7 +603,7 @@ width: 203px; }
    
 <script>
 var start=0, end=50;
-var old_srch='', tab='', set='',start_date='',end_date='',date_selected='no';
+var old_srch='', tab='', set='',start_date='<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebSession_GetVar("bankEntriesStartDate") -->',end_date='<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebSession_GetVar("bankEntriesEndDate") -->',date_selected='no';
 var tablname='bank_statement_entries';
 var complete=false;
 var completeScroll=false;

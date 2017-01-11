@@ -110,7 +110,9 @@ end if
    	<div class="content-wrapper" >
         <section class="content-header">
       		<!--#4DIF (mUserIsCurrentBool)--><h1>Invoice</h1><!--#4DELSE-->
-      		<h1><!--#4DIF (Records in selection([Invoices])=1)--><span style="font-style: italic;">Invoice Number: <!--#4DVAR [Invoices]Full_Invoice_Number --></span><!--#4DELSE-->New Invoice<!--#4DENDIF--></h1>
+      		<h1><!--#4DIF (Records in selection([Invoices])=1)--><span style="font-style: italic;">Invoice Number: <!--#4DVAR [Invoices]Full_Invoice_Number --></span><!--#4DELSE-->New Invoice<!--#4DENDIF-->
+      			<small id="headingNote" style="display:none;"></small>
+      		</h1>
 			<!--#4DENDIF-->
       		<ol class="breadcrumb">
        			<li><a href="index.shtml"><i class="fa fa-dashboard"></i> Dashboard</a></li>
@@ -169,7 +171,7 @@ end if
 								<!--#4DELSE-->
 								<div CLASS="col-sm-6">
 									<div class="ui-widget">
-										<select id="Client_ID" name="Client_ID" class="form-control">
+										<select id="Client_ID" name="Client_ID" class="form-control" placeholder="Search or select client">
 											<!--#4DIF (Records in selection([Invoices])=0)-->
 												<option value=""></option>
 												<!--#4DSCRIPT/Web_LoadCustomers/-->
@@ -182,6 +184,9 @@ end if
 										</select>
 									</div>
 								</div> 
+								<div CLASS="col-sm-3" id="addnewclientbtn" style="display:none;">
+									<a href="customer.shtml" target="_blank" class="btn btn-primary btn-color margin-right-5 btn-sm" style="float:left;">Add new client</a>
+								</div>
 								<!--#4DENDIF-->
 							</div>
 							
@@ -412,7 +417,7 @@ end if
 								<label class="col-sm-3 control-label">Analysis Ledger</label>
 								<input  type="hidden" value="<!--#4DVAR [Invoices]uuid_analysis_ledger-->">
 									<div class="ui-widget col-sm-6" id="ledger_div" >
-										<select id="uuid_analysis_ledger" name="uuid_analysis_ledger" class="form-control">
+										<select id="uuid_analysis_ledger" name="uuid_analysis_ledger" class="form-control" placeholder="Select ledger...">
 											<!--#4DIF (Records in selection([Invoices])=0)-->
 												<option value=""></option>
 												<!--#4DSCRIPT/Web_LoadAnalysisLegder/-->
@@ -429,7 +434,7 @@ end if
 								<label class="col-sm-3 control-label">Analysis Account</label>
 								<input type="hidden" value="<!--#4DVAR [Invoices]uuid_analysis_account-->">
 									<div class="ui-widget col-sm-6" id="account_div" >
-										<select id="uuid_analysis_account" name="uuid_analysis_account" class="form-control">
+										<select id="uuid_analysis_account" name="uuid_analysis_account" class="form-control" placeholder="Select analysis account...">
 											<!--#4DIF (Records in selection([Invoices])=0)-->
 												<option value=""></option>
 												<!--#4DSCRIPT/Web_LoadAnalysisAccount/-->
@@ -695,10 +700,6 @@ end if
            </div>
 			</form>
         </section>
-   
-	
-	
-	
     <!-- end main container -->
 	<!-- scripts -->
   	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/top-footer.shtml-->
@@ -951,7 +952,8 @@ function disableForm(e){
 	$(function() {
 	<!--#4DIF ([Invoices]invoice_posted)-->
 		disableForm(true);
-		
+		$("#headingNote").html(" (This record is non-editable, you can only edit notes)");
+		$("#headingNote").show();
 	<!--#4DELSE-->
 		<!--#4DIF ([Invoices]invoice_status="Paid")-->
 			disableForm(false);
@@ -1011,6 +1013,7 @@ function disableForm(e){
         this.element.hide();
         this._createAutocomplete();
         this._createShowAllButton();
+        this.input.attr("placeholder", this.element.attr('placeholder'));
       },
  
       _createAutocomplete: function() {
@@ -1121,15 +1124,19 @@ function disableForm(e){
 		//alert(jsonRowURLStr);
 		if(xhr) xhr.abort();
 		xhr=$.getJSON(jsonRow,function(result){
-			
+			$("#addnewclientbtn").hide();
 			if(result){
 				var html='<option value=""></option>';
 				if(result.error){
-				//console.log("1")
+					if(ele_select.attr('id')=='Client_ID'){
+						$("#addnewclientbtn").show();
+					}
 				}else{
 					$.each(result, function(i,item)	{
 						if(item.error){
-							//console.log("2")
+							if(ele_select.attr('id')=='Client_ID'){
+								$("#addnewclientbtn").show();
+							}
 						}else{
 							//console.log("3")
 							if(ele_select.attr('id')=='Client_ID'){

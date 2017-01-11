@@ -115,6 +115,7 @@ end if
          					<div class="pull-right margin-bottom-10 ">
 								<div class="form-inline" style="">                 	          
                  					<div class="btn-inline display-inline-block">
+                 						<label>Select filter: </label>
                  						<select class="form-control" id="filter_by" onChange="__filterBy(this.value)" >
 											<option value="">All</option>
 											<option value="due">Due</option>
@@ -126,8 +127,8 @@ end if
 										<button class="btn btn-left-align btn-link no-shadow bg-transparent no-padding-top padding-right-10 right-auto left" type="button" id="searchBtn"><i class="glyphicon glyphicon-search"></i></button>
 									</div>
 									
-									<button class="btn btn-primary btn-left" onClick="__showReceipts(); return false;">Show All Receipts</button>                               
-									<button class="btn btn-primary btn-right" onClick="__hideReceipts(); return false;">Hide All Receipts</button>
+									<a class="btn btn-primary btn-left" href="javascript:void(0)" onClick="__showReceipts(); return false;" title="Show all related receipts"><i class="fa fa-eye"></i></a>                               
+									<a href="javascript:void(0)" class="btn btn-primary btn-right" onClick="__hideReceipts(); return false;" title="Hide all related receipts"><i class="fa fa-eye-slash"></i></a>
 									<!--#4DIF (_HIT_WebSession_GetVar ("auth_user_type")#"CLIENTS")-->
                                     <a href="invoice.shtml" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink " style=""> <i class="fa fa-plus"></i>Add New Invoice</a>
                                     <!--#4DENDIF-->

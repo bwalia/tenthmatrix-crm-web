@@ -161,9 +161,9 @@ function __showForm_AddSet(val,name){
 											success: function(html)	{
 												if(html.success){
 													if(html.setUUID){
-														$('#opt_new_set').before('&lt;option value="'+html.setUUID+'"&gt;'+new_set+'&lt;/option&gt;');
+														$('#opt_new_set').before('<option value="'+html.setUUID+'">'+new_set+'</option>');
 														$('#add_sets').val(html.setUUID);
-														$('#sets_list').prepend('&lt;option value="'+html.setUUID+'" &gt;'+ new_set+'&lt;/option&gt;');
+														$('#sets_list').prepend('<option value="'+html.setUUID+'" >'+ new_set+'</option>');
 														$(".jqibox").remove();
 														selected_set=new_set;
 														setUUID=html.setUUID;
