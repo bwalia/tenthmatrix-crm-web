@@ -133,7 +133,7 @@ end if
 							<!--#4DENDIF-->
 						<!--#4DENDIF-->
 					</ul>
-					<div class="tab-content" STYLE=" overflow: hidden;     border-top: none;">
+					<div class="tab-content" STYLE=" overflow: hidden; border-top: none;">
 					<div id="home" class="tab-pane fade in active"  >
   
     
@@ -639,11 +639,7 @@ end if
 						<!--#4DIF (_HIT_WebSession_GetVar ("auth_user_type")#"CLIENTS")-->
 					<!--#4DIF (Records in selection([Invoices])=1)-->
 						
-						
-						
-						
-						
-	<div id="third" class="tab-pane fade col-md-12" STYLE="padding-top:20px;"  >
+					<div id="third" class="tab-pane fade col-md-12" STYLE="padding-top:20px;"  >
  
 						<div class="row-fluid form-wrapper" style="margin-bottom:5px;">
 							<div class="form-group">

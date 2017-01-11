@@ -17,7 +17,6 @@ end if
 <html>
 <head>
 <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
-<link rel="stylesheet" href="css/autocomplete.css" />
 <style>
 
 	.jqibox {
