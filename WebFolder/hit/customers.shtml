@@ -101,9 +101,9 @@ mUserIsCurrentBool:=userHasAccessToDelete
 										
 									</div>
 									
-									<button class="btn btn-primary btn-left" onClick="__filterResults(''); return false;">All</button>                               
-									<button class="btn btn-primary  btn-middle" onClick="__filterResults('suppliers'); return false;">Suppliers</button>                      
-									<button class="btn btn-primary  btn-right" onClick="__filterResults('active'); return false;">Active</button>
+									<button class="btn btn-primary btn-left FilterBtn" onClick="__filterResults(''); return false;" disabled>All</button>                               
+									<button class="btn btn-primary  btn-middle suppliersFilterBtn" onClick="__filterResults('suppliers'); return false;">Suppliers</button>                      
+									<button class="btn btn-primary  btn-right activeFilterBtn" onClick="__filterResults('active'); return false;">Active</button>
 									<select class="form-control" id="vat_claimed" name="vat_claimed" onChange="__filterByVatClaimed(this.value)">
 											<option value="">--Select VAT Claimed--</option>
 											<option value="Yes">Yes</option>
@@ -121,9 +121,9 @@ mUserIsCurrentBool:=userHasAccessToDelete
 							<div class="col-lg-6 col-sm-12 col-xs-12">
 								<div>
 									<input class="form-control xs-margin-btm10 searchFieldClass" id="small_screen_keyword" name="keyword" placeholder="Search here.." value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" type="text">
-                     				<button class="btn btn-primary btn-color padingmix  btn-icon-left btn-sm editorLink" STYLE="width:100%; margin:10px 0px;" onClick="__filterResults(''); return false;">All</button>
-                     				<button class="btn btn-primary btn-color padingmix  btn-icon-left btn-sm editorLink" STYLE="width:100%; margin:10px 0px;" onClick="__filterResults('suppliers');">Suppliers</button>  
-                     				<button class="btn btn-primary btn-color padingmix  btn-icon-left btn-sm editorLink" STYLE="width:100%; margin:10px 0px;" onClick="__filterResults('active'); return false;">Active</button>  
+                     				<button class="btn btn-primary btn-color padingmix  btn-icon-left btn-sm editorLink FilterBtn" STYLE="width:100%; margin:10px 0px;" onClick="__filterResults(''); return false;" disabled>All</button>
+                     				<button class="btn btn-primary btn-color padingmix  btn-icon-left btn-sm editorLink suppliersFilterBtn" STYLE="width:100%; margin:10px 0px;" onClick="__filterResults('suppliers');">Suppliers</button>  
+                     				<button class="btn btn-primary btn-color padingmix  btn-icon-left btn-sm editorLink activeFilterBtn" STYLE="width:100%; margin:10px 0px;" onClick="__filterResults('active'); return false;">Active</button>  
                      				<a href="customer.shtml" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink" STYLE="width:100%; margin:10px 0px;"> <i class="fa fa-plus"></i>Add New Customer</a>    
                   				</div>
 							</div>
@@ -135,7 +135,7 @@ mUserIsCurrentBool:=userHasAccessToDelete
         	<div CLASS="row">
             	<div class="content table-responsive table-full-width">
 		 			<div class="table-responsive" style="border:none;" >
-                         <table class="table table-striped  table-bordered table-hover custom-tbl-st bt" id="table-breakpoint"  style="background-color: rgb(255, 255, 255); border-radius: 4px;" >
+                         <table class="table table-striped  table-bordered table-hover custom-tbl-st bt" id="table-breakpoint"  style="background-color: rgb(255, 255, 255); border-radius: 4px; display:none;" >
                             <thead>
                                 <tr>
                                 	<th class="hidden-xs"><input name="select" class="" type="checkbox" id="chk_all" ></th>
@@ -441,7 +441,8 @@ function __filterResults(val){
 	start=0;
 	end=25;
 	tab=val;
-	
+	$(".btn").prop("disabled", false);
+	$("."+val+"FilterBtn").prop("disabled", true);
 	$('#table_content').html('');
 	$('#table-breakpoint').basictable('destroy');
 	$('#img_loading_div').show();	
@@ -743,6 +744,7 @@ function load_data(jsonRow){
 					jsonRow +='&vat_claimed='+vat_claimed;
 				}
 		$.getJSON(jsonRow,function(result){
+			$('#table-breakpoint').show();
 			if(result.Alert){
 				__alertModalBox('No more records found!');
 				complete=true;

@@ -347,6 +347,10 @@ function reset_dates(){
 	
 	refreshCommonElements();	
 }
+
+function reset_filters(){
+	window.location.href="bank_enteries.shtml";
+}
 function uploadDocument(){
 	$("#u_window_emsg").html("");
 	$("#u_window_smsg").html("");

@@ -86,7 +86,7 @@ End If
    	<div class="content-wrapper" >
         <section class="content-header">
       		<h1>
-        		<!--#4DIF (Records in selection([Tasks])=1)-->"<!--#4DVAR taskNameStr-->"<!--#4DELSE-->New<!--#4DENDIF--> 
+        		<!--#4DIF (Records in selection([Module])=1)-->"<!--#4DVAR [Module]name-->"<!--#4DELSE-->New<!--#4DENDIF--> 
         		<small>Module</small>
       		</h1>
       		<ol class="breadcrumb">

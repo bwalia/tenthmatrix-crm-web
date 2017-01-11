@@ -71,7 +71,7 @@ end if
 										<button class="btn btn-left-align btn-link no-shadow bg-transparent no-padding-top padding-right-10 right-auto left" type="button" id="searchBtn"><i class="glyphicon glyphicon-search"></i></button>
 									</div>
 									
-									<button class="btn btn-primary btn-left  showall" onClick="__filtertasks(''); return false;">All</button>                                
+									<button class="btn btn-primary btn-left  showall" onClick="__filtertasks(''); return false;" disabled>All</button>                                
 									<button class="btn btn-primary  btn-middle  showactive" onClick="__filtertasks('Active'); return false;">Active</button>
 									<button class="btn btn-primary btn-right  showdone" onClick="__filtertasks('Done'); return false;">Done</button>
                                     <a href="task.shtml" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink " style=""> <i class="fa fa-plus"></i>Add New Task</a>
@@ -384,26 +384,17 @@ function __showTaskForm(uuid){
 
 function __filtertasks(e){
 	if(e=="Done"){
-		$('.showdone').removeAttr('disabled');
-		$('.showdone').css('color','#a8b5c7');
+		$('.showdone').prop('disabled', true);
 		$('.showactive').removeAttr('disabled');
-		$('.showactive').removeAttr('style');
 		$('.showall').removeAttr('disabled');
-		$('.showall').removeAttr('style');
 	}else if(e=="Active"){
-		$('.showactive').removeAttr('disabled');
-		$('.showactive').css('color','#a8b5c7');
+		$('.showactive').prop('disabled', true);
 		$('.showall').removeAttr('disabled');
-		$('.showall').removeAttr('style');
 		$('.showdone').removeAttr('disabled');
-		$('.showdone').removeAttr('style');
 	}else{
-		$('.showall').removeAttr('disabled');
-		$('.showall').css('color','#a8b5c7');
+		$('.showall').prop('disabled', true);
 		$('.showactive').removeAttr('disabled');
-		$('.showactive').removeAttr('style');
 		$('.showdone').removeAttr('disabled');
-		$('.showdone').removeAttr('style');
 	}
 	start=0;
 	end=25;

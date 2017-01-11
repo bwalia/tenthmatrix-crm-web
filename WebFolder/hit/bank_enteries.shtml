@@ -337,7 +337,7 @@ width: 203px; }
 									</div>
 								
                                     <a href="bank_entry.shtml" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink " style=""> <i class="fa fa-plus"></i>Add New Bank Entry</a>
-									<a href="#" class="btn btn-primary btn-color padingmix  btn-icon-left btn-sm editorLink " style=""> <i class="fa fa-refresh"></i>Reset</a>
+									<button onClick="reset_filters()" class="btn btn-primary btn-color padingmix  btn-icon-left btn-sm editorLink " style=""> <i class="fa fa-refresh"></i>Reset</button>
                   				</div>
          					</div>
       					</div>
