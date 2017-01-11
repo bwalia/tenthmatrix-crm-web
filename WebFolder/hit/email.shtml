@@ -101,7 +101,7 @@ end if
     <!-- Main content -->
     <section class="content">
    		<div class="row">
-       		<div class="col-sm-8 with-sidebar">
+       		<div class="col-sm-8 with-sidebar" STYLE="padding-top:10px;">
 						<form name="SenMailForm" id="SenMailForm" action="" class="form-horizontal" method="post" enctype="multipart/form-data">
 						<input name="inv_uuid" class="span9" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("inv_uuid")-->" id="inv_uuid">
 							<!-- <input name="company_uuid" class="span9" type="hidden" value="<!~~#4DVAR [Companies]uuid~~>" id="company_uuid"> -->
@@ -165,8 +165,8 @@ end if
 							<div class="form-group" style="text-align: center;">
 							<label for="" class="col-sm-3 control-label"> </label>
 								<input type="submit" name="Submit" class="btn btn-primary" value="Send Mail" >
-								<span>OR</span>		
-								 <a href="emails.shtml">Cancel</a>
+								
+								 <a href="emails.shtml" CLASS="btn btn-danger">Cancel</a>
 							</div>               					
 							</form>
 						</div>

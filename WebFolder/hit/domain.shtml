@@ -73,6 +73,10 @@ end if
     position: relative;
     bottom: 0px;
 }
+
+.tab-content > .tab-pane{
+	border:none!important;
+}
   
 </style>
 </head>

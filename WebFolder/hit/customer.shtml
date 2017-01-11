@@ -118,7 +118,7 @@ End If
 								<!--#4DENDIF-->
 </ul>
 
-<div class="tab-content" STYLE="    overflow: hidden;    border: 1px solid #ddd;     border-top: none;">
+<div class="tab-content" STYLE="    overflow: hidden;   border-top: none;">
 
   <div id="home" class="tab-pane fade in active"  >
 
@@ -367,7 +367,7 @@ End If
 							
 						</div>
   
-  <div id="third" class="tab-pane fade col-md-7" STYLE="padding-top:20px;" >
+  <div id="third" class="tab-pane fade col-md-12" STYLE="padding-top:20px;" >
 
 							<div class="form-group">
 								<label class="col-sm-3 control-label">Invoice contact name</span></label>

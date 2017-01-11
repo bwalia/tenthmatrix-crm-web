@@ -53,7 +53,7 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
 					<div class="clearfix hidden-xs">
       					<div class="form-group no-margin">
       						<div class="pull-left margin-bottom-10 ">
-      							<a href="javascript:void(0)" onClick="$('#selected_vls').val('');pushLiveFormGithub();" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink " style=""> Deploy from Github to Live</a>
+      							<a href="javascript:void(0)" onClick="$('#selected_vls').val('');pushLiveFormGithub();" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink " style="margin-top:9px;"> Deploy from Github to Live</a>
       						</div>
      						<div class="pull-right margin-bottom-10 ">
 								<div class="form-inline" style="">                 	          
