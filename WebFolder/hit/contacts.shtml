@@ -22,7 +22,11 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
 <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
 <link rel="stylesheet" href="css/basictable.css">
 <link rel="stylesheet" href="css/autocomplete.css" />
-
+<style>
+.jqibox {
+	z-index:9999!important;
+}
+</style>
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
 <div class="wrapper">
@@ -77,9 +81,9 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
 										
 									</div>
 									
-									<button class="btn btn-primary btn-left" onClick="__filterResults(''); return false;">All</button>                               
-									<button class="btn btn-primary  btn-middle" onClick="__filterResults('Allowed'); return false;">Subscribers</button>                      
-									<button class="btn btn-primary  btn-right" onClick="__filterResults('Not_Allowed'); return false;">Non Subscribers</button>
+									<button class="btn btn-primary btn-left filterBtn" onClick="__filterResults(''); return false;" disabled>All</button>                               
+									<button class="btn btn-primary  btn-middle AllowedfilterBtn" onClick="__filterResults('Allowed'); return false;">Subscribers</button>                      
+									<button class="btn btn-primary  btn-right Not_AllowedfilterBtn" onClick="__filterResults('Not_Allowed'); return false;">Non Subscribers</button>
 									
                                     <a href="contact.shtml" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink " style=""> <i class="fa fa-plus"></i>Add New Contact</a>
                   				</div>
@@ -92,9 +96,9 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
 							<div class="col-lg-6 col-sm-12 col-xs-12">
 								<div>
 									<input class="form-control xs-margin-btm10 searchFieldClass" id="small_screen_keyword" name="keyword" placeholder="Search here.." value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" type="text">
-                     				<button class="btn btn-primary btn-color padingmix  btn-icon-left btn-sm editorLink" STYLE="width:100%; margin:10px 0px;" onClick="__filterResults(''); return false;">All</button>
-                     				<button class="btn btn-primary btn-color padingmix  btn-icon-left btn-sm editorLink" STYLE="width:100%; margin:10px 0px;" onClick="__filterResults('Allowed');">Subscribers</button>  
-                     				<button class="btn btn-primary btn-color padingmix  btn-icon-left btn-sm editorLink" STYLE="width:100%; margin:10px 0px;" onClick="__filterResults('Not_Allowed'); return false;">Non Subscribers</button>  
+                     				<button class="btn btn-primary btn-color padingmix  btn-icon-left btn-sm editorLink filterBtn" STYLE="width:100%; margin:10px 0px;" onClick="__filterResults(''); return false;" disabled>All</button>
+                     				<button class="btn btn-primary btn-color padingmix  btn-icon-left btn-sm editorLink AllowedfilterBtn" STYLE="width:100%; margin:10px 0px;" onClick="__filterResults('Allowed');">Subscribers</button>  
+                     				<button class="btn btn-primary btn-color padingmix  btn-icon-left btn-sm editorLink Not_AllowedfilterBtn" STYLE="width:100%; margin:10px 0px;" onClick="__filterResults('Not_Allowed'); return false;">Non Subscribers</button>  
                      				<a href="contact.shtml" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink" STYLE="width:100%; margin:10px 0px;"> <i class="fa fa-plus"></i>Add New Contact</a>    
                   				</div>
 							</div>
@@ -106,7 +110,7 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
         	<div CLASS="row">
             	<div class="content table-responsive table-full-width">
 		 			<div class="table-responsive" style="border:none;" >
-                         <table class="table table-striped  table-bordered table-hover custom-tbl-st bt" id="table-breakpoint"  style="background-color: rgb(255, 255, 255); border-radius: 4px;" >
+                         <table class="table table-striped  table-bordered table-hover custom-tbl-st bt" id="table-breakpoint"  style="background-color: rgb(255, 255, 255); border-radius: 4px;display:none;" >
                             <thead>
                                 <tr>
                                 	<th><input name="select" class="" type="checkbox" id="chk_all" ></th>
@@ -135,12 +139,12 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
                             </tbody>
                         </table>
                         <div style="text-align:center">
-							<a style="width: 60%; margin-bottom: 10px; display: none;" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink " id="display_more_btn" title="Load more" onclick="load_more()" href="javascript:void(0);">
+							<a style="width: 100%; font-size:17px; display: none;" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink " id="display_more_btn" title="Load more" onclick="load_more()" href="javascript:void(0);">
 								Load more
 							</a>
         				</div>
 						<div id="img_loading_div" style="text-align:center">
-							<img src="images/loading.gif?as"  style="padding:20px;" width="34" >
+							<img src="images/loading.gif" >
 						</div>
                  	</div>
                 	<!-- end timeslips table -->
@@ -246,24 +250,7 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
 
 									$.prompt(statesdemo);
 								</pre>
-								<pre class="code" style="display:none;" id="no_rec_prompt">
-									var statesdemo = {
-										state0: {
-											title: 'No more records found',
-											html:'',
-											buttons: { OK: 1 },																		
-											submit:function(e,v,m,f){ 
-												if(v==1) {
-													$.prompt.close();
-												}
-												
-											}
-										},
-										
-									};
-									if(!($(".jqibox").length))
-									$.prompt(statesdemo);
-								</pre>
+								
 								<pre class="code" style="display:none;" id="del_prompt">
 								var statesdemo = {
 									state0: {
@@ -311,26 +298,7 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
 
 								$.prompt(statesdemo);
 								</pre>
-								<pre class="code" style="display:none;" id="no_selection_prompt">
-									var statesdemo = {
-										state0: {
-											title: 'Please select clients to add to set',
-											html:'',
-											buttons: { OK: 1 },																		
-											submit:function(e,v,m,f){ 
-												//console.log(f);
-												if(v==1) {
-													$.prompt.close();
-												}
-												
-											}
-										},
-										
-									};
-									if(!($(".jqibox").length))
-									$.prompt(statesdemo);
-								</pre>
-								<!--<a class="run">Run It!</a>-->
+								
 							</div>
     <!-- end main container -->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -409,8 +377,7 @@ function __showContactForm_AddSet(val, name){
 		
 		});
 		if(selected!='' || add_from_manager==true){
-			if(val=='new_set'){
-				//var new_set=prompt("Please enter name of new set:","userset_1");				
+			if(val=='new_set'){		
 				code = $('#new_set_prompt').text();
 				(new Function(code))();	
 			}
@@ -429,8 +396,7 @@ function __showContactForm_AddSet(val, name){
 			}
 		}
 		else{
-			code = $('#no_selection_prompt').text();
-			(new Function(code))();
+			__alertModalBox('Please select contacts to add to set');
 			$('#add_sets').val('');
 		}
 	}
@@ -456,6 +422,9 @@ function __filterResults(val){
 	end=25;
 	tab=val;
 	
+	$(".btn").prop("disabled", false);
+	$("."+val+"filterBtn").prop("disabled", true);
+		
 	$('#table_content').html('');
 	$('#table-breakpoint').basictable('destroy');
 	$('#img_loading_div').show();	
@@ -660,9 +629,10 @@ function load_data(jsonRow){
 	}	
 	
 	$.getJSON(jsonRow,function(result){
+		$('#table-breakpoint').show();
 			if(result.Alert){
-				code = $('#no_rec_prompt').text();
-				(new Function(code))();
+				__alertModalBox('No more records found!');
+				
 				complete=true;
 				$('#display_more_btn').hide();
 				$('#table-breakpoint').basictable({

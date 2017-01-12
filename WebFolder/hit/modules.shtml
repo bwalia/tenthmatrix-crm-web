@@ -106,12 +106,12 @@ end if
                                      </tbody>
                         </table>
                         <div style="text-align:center">
-							<a style="width: 60%; margin-bottom: 10px; display: none;" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink " id="display_more_btn" title="Load more" onclick="load_more()" href="javascript:void(0);">
+							<a style="width: 100%; font-size:17px; display: none;" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink " id="display_more_btn" title="Load more" onclick="load_more()" href="javascript:void(0);">
 								Load more
 							</a>
         				</div>
 						<div id="img_loading_div" style="text-align:center">
-							<img src="images/loading.gif?as"  style="padding:20px;" width="34" >
+							<img src="images/loading.gif" >
 						</div>
                     </div>
 				</div>
@@ -154,7 +154,8 @@ function __deleteSelected(deleteuuid){
 							data: dataString,
 							cache: false,
 							success: function(html){
-								if(html.Result){		
+								if(html.Result){	
+									__alertModalBox(html.Result);
 									$('#content_table').html('');
 									$('#img_loading_div').show();
 									$('#display_more_btn').hide();	
@@ -265,8 +266,7 @@ function load_data(){
 	$.getJSON(jsonRow,function(result){
 		$('#table-breakpoint').show();
 			if(result.Alert){
-				$(".jqibox").remove();
-				$.prompt('No more records found!');
+				__alertModalBox('No more records found!');
 				complete=true;
 				$('#display_more_btn').hide();
 				$('#table-breakpoint').basictable({

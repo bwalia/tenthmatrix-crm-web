@@ -35,11 +35,7 @@ end if
 <html>
 <head>
 	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
-	 <link href="css/bootstrap.datepicker.css" type="text/css" rel="stylesheet">
-	<link rel="stylesheet" type="text/css" href="css/jquery.ptTimeSelect.css" />
 	<link rel="stylesheet" href="css/autocomplete.css" />
-	<link rel="stylesheet" href="css/colorbox.css" />
-	<link rel="stylesheet" href="css/basictable.css">
 <style>
 .custom-combobox a.ui-button, 
   .custom-combobox a.ui-widget, 
@@ -112,9 +108,17 @@ end if
 		<section>
 		
 		
-		<div class="row" STYLE="margin-top:20px;">
-		<div CLASS="col-md-6">
-		<form name="ContactForm" id="ContactForm" action="savecontact.cgi" class="form-horizontal" method="post">							
+		<div class="row" STYLE="margin:20px;">
+		<form name="ContactForm" id="ContactForm" action="savecontact.cgi" class="form-horizontal" method="post">	
+			<div class="chart">
+				<div class="col-xs-6">
+          				<div class="box box-primary">
+		   					 <h4>Basic Details</h4>
+            				<!-- /.box-header -->
+            					<div class="box-body">
+			
+									<div class="row">
+           		 						 <div class=" col-sm-12 col-lg-11">						
 							<div class="form-group">
 								<label class="col-sm-3 control-label">Client Name <span style="color:#6E829B">*</span></label>
 								<div class="ui-widget col-sm-6">
@@ -149,27 +153,6 @@ end if
 								<label class="col-sm-3 control-label">Salutation</label>
 								<div CLASS="col-sm-6"><input name="Salutation" class="form-control" type="text" value="<!--#4DVAR [Contacts]Salutation-->" id="Salutation">		</div>				
 							</div>
-							<div CLASS="form-group">
-								<label class="col-sm-3 control-label">Email </label>
-								<div CLASS="col-sm-6"><input name="Email" class="form-control" type="text" value="<!--#4DVAR [Contacts]Email-->" id="Email"></div>
-							</div>
-							<div CLASS="form-group">
-								<label class="col-sm-3 control-label">Password </label>
-								<div CLASS="col-sm-6"><input name="zWebPassword" class="form-control" type="password" value="<!--#4DVAR [Contacts]zWebPassword-->" id="zWebPassword"></div>
-							</div>
-							<div CLASS="form-group">
-								<label class="col-sm-3 control-label">Direct Phone</label>
-								<div CLASS="col-sm-6"><input class="form-control phone" type="text" value="<!--#4DVAR [Contacts]Direct Phone-->" name="Direct_Phone" id="Direct_Phone"></div>
-							</div>
-							<div CLASS="form-group">
-								<label class="col-sm-3 control-label">Mobile </label>
-								<div CLASS="col-sm-6"> <input name="Mobile" class="form-control phone" type="text" value="<!--#4DVAR [Contacts]Mobile-->" id="Mobile"></div>
-							</div>			
-							
-							<div CLASS="form-group">
-								<label class="col-sm-3 control-label">Direct fax</label>
-							<div CLASS="col-sm-6">	<input name="Direct_fax" class="form-control" type="text" value="<!--#4DVAR [Contacts]Direct fax-->" id="Direct_fax"></div>
-							</div>
 							<div class="span12 field-box" style="display:none;">
                            		<label class="col-sm-3 control-label">Assign Group :</label>
                            		<div CLASS="col-sm-6"><input type="hidden" name="user_group" id="user_group" value="">
@@ -202,21 +185,52 @@ end if
                             </div>
 							
 							
-							<div class="form-group"  >
-							<label class="col-sm-3 control-label"></label>
-							<div CLASS="col-sm-6">
-							<input type="submit" class="btn btn-primary btn-sm" value="Submit">
+							</div>
+							</div></div></div>
+						
+						</div>
+				<div class="col-xs-6">
+          				<div class="box box-primary">
+		   					 <h4>Contact Details</h4>
+            				<!-- /.box-header -->
+            					<div class="box-body">
+			
+									<div class="row">
+           		 						 <div class=" col-sm-12 col-lg-11">						
 							
-								
-								<a href="contacts.shtml" CLASS="btn btn-danger btn-sm">Cancel</a>
-								</div>
+							<div CLASS="form-group">
+								<label class="col-sm-3 control-label">Email </label>
+								<div CLASS="col-sm-6"><input name="Email" class="form-control" type="text" value="<!--#4DVAR [Contacts]Email-->" id="Email"></div>
+							</div>
+							<div CLASS="form-group">
+								<label class="col-sm-3 control-label">Password </label>
+								<div CLASS="col-sm-6"><input name="zWebPassword" class="form-control" type="password" value="<!--#4DVAR [Contacts]zWebPassword-->" id="zWebPassword"></div>
+							</div>
+							<div CLASS="form-group">
+								<label class="col-sm-3 control-label">Direct Phone</label>
+								<div CLASS="col-sm-6"><input class="form-control phone" type="text" value="<!--#4DVAR [Contacts]Direct Phone-->" name="Direct_Phone" id="Direct_Phone"></div>
+							</div>
+							<div CLASS="form-group">
+								<label class="col-sm-3 control-label">Mobile </label>
+								<div CLASS="col-sm-6"> <input name="Mobile" class="form-control phone" type="text" value="<!--#4DVAR [Contacts]Mobile-->" id="Mobile"></div>
+							</div>			
+							
+							<div CLASS="form-group">
+								<label class="col-sm-3 control-label">Direct fax</label>
+								<div CLASS="col-sm-6">	<input name="Direct_fax" class="form-control" type="text" value="<!--#4DVAR [Contacts]Direct fax-->" id="Direct_fax"></div>
 							</div>
 							
-							
-							
-						</form>
+							</div>
+							</div></div></div>
+						
 						</div>
-                    
+					<div class="col-xs-12" style="text-align:center;">
+						<input type="submit" class="btn btn-primary btn-sm" value="Submit">
+						<a href="contacts.shtml" CLASS="btn btn-danger btn-sm">Cancel</a>
+					</div>
+					</div>
+				</form>
+						
 				</div>
 		
 		</section>
@@ -233,12 +247,7 @@ end if
   	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/top-footer.shtml-->
 </div>
 <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml-->
-	<script src="js/basictable.js"></script>
-	<script src="js/bootstrap.datepicker.js"></script>
 	<script src="js/jquery.validate.js"></script>
-	<script src="js/chosen.jquery.js" type="text/javascript"></script>
-	<script src='js/jquery.MetaData.js' type="text/javascript" language="javascript"></script>
-	<script src="js/jquery.colorbox.js"></script>
 	<!-- call this page plugins -->
 <script language="javascript">
 function ValidateForm () {
@@ -288,8 +297,6 @@ if (document.ContactForm.Date_Added.value=="")
           $(this).blur();
         });
 		
-		// add uniform plugin styles to html elements
-            $("input:checkbox, input:radio").uniform();
 		
 		$('.phone').keypress(function(e){
 			var k = e.which;
@@ -319,16 +326,7 @@ if (document.ContactForm.Date_Added.value=="")
 			},
 			});	
 	});
-var config = {
-      '.chosen-select'           : {},
-      '.chosen-select-deselect'  : {allow_single_deselect:true},
-      '.chosen-select-no-single' : {disable_search_threshold:10},
-      '.chosen-select-no-results': {no_results_text:'Oops, nothing found!'},
-      '.chosen-select-width'     : {width:"95%"}
-    }
-    for (var selector in config) {
-      $(selector).chosen(config[selector]);
-    }
+
 	 var xhr;
   (function( $ ) {
     $.widget( "custom.combobox", {
