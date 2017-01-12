@@ -112,9 +112,11 @@ end if
  <!--#4DENDIF-->
 </ul>
 
-<div class="tab-content" STYLE=" overflow: hidden;    border: 1px solid #ddd;     border-top: none;">
+<div class="tab-content" STYLE=" overflow: hidden;         border-top: none;">
 
-  <div id="home" class="tab-pane fade in active col-sm-7"  STYLE="margin-top:15px;" >
+  <div id="home" class="tab-pane fade in active col-sm-12"  STYLE="padding-top:15px;" >
+  <div CLASS="row" >
+  <div CLASS="col-md-7">
   
 
 		
@@ -300,7 +302,7 @@ end if
 									<a href="leads.shtml" CLASS="btn btn-danger">Cancel</a>
 								</div>
 							
-					
+					</div></div>
   
   
   
@@ -367,7 +369,7 @@ end if
 					
 						
 						
-	<div id="third" class="tab-pane fade col-md-7" STYLE="padding-top:20px;"  >
+	<div id="third" class="tab-pane fade col-md-12" STYLE="padding-top:20px;"  >
  		<div class=" table-responsive table-full-width">
 							
 		 			<div class="table-responsive" style="border:none;" >

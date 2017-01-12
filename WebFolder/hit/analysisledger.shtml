@@ -102,7 +102,7 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 		
 		<div class="col-sm-8 with-sidebar">
                            <form name="AnaledgerForm" action="saveanalegder.cgi" id="AnaledgerForm" method="post" class="form-horizontal" >
-						     <div CLASS="row">
+						     <div CLASS="row" STYLE="padding-top:10px;">
 							 <div CLASS="col-sm-12">
 								<div class="form-group">
                                   <label class="col-sm-3 control-label">Ledger Name <span style="color:#6E829B">*</span></label>
@@ -193,6 +193,9 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 		
 		
         </section>
+		</div>
+		</div>
+		
     </div>
 	
 	
@@ -262,7 +265,7 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 		var statesdemo = {
 			state0: {
 				title: 'Add a new analysis account',
-				html:'<div id="message" style="color:#CC0000"></div><label>Account Name:</label><input type="text" name="account_name" id="account_name" value=""><br /><label>Money in or out:</label><div class="ui-select span5"><select id="money_in_or_out" name="money_in_or_out"><option value="">--Select--</option><option value="money in">Money in</option><option value="money out">Money out</option></select></div><br/><br/>',
+				html:'<div id="message" style="color:#CC0000"></div><label>Account Name:</label><input type="text" name="account_name" id="account_name" class="form-control" value=""><br /><label>Money in or out:</label><div class="ui-select span5"><select id="money_in_or_out" name="money_in_or_out" class="form-control"><option value="">--Select--</option><option value="money in">Money in</option><option value="money out">Money out</option></select></div><br/><br/>',
 				buttons: { Cancel : 0, Ok: 1 },
 				focus: "#account_name",
 				submit:function(e,v,m,f){ 

@@ -152,7 +152,7 @@ end if
 							</div>
 							<div class="form-group">
 								<label class="col-sm-2 control-label">File Content </label>
-								<div CLASS="col-sm-6"><input id="file_content" name="file_content" style="width : 78px;"  type="file" class="multi" maxlength="15" />
+								<div CLASS="col-sm-6"><input id="file_content" name="file_content" style="width : 207px;"  type="file" class="multi" maxlength="15" />
 								<input id="num_files" name="num_files" type="hidden"  /></div>
 							</div>						
 							 <div class="form-group">		

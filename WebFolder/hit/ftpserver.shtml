@@ -24,6 +24,13 @@ end if
 	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
 	<link rel="stylesheet" href="css/autocomplete.css" />
 	<style>
+	
+	#FTPForm .custom-combobox {
+    width: 97%!important;
+    top: 0px;
+    left: -2px;
+}
+	
 		#FTPForm em.error {
 			margin-left: 10px;
 			width: auto;

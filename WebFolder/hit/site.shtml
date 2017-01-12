@@ -78,7 +78,7 @@ end if
     <section class="content">
    		<div class="row">
        		<div class="panel-body no-padding-top bg-white"> 
-				<div class=" col-sm-12 col-lg-8">
+				<div class=" col-sm-12 col-lg-12">
 					<div class="row" >
 				 		<div class="panel-body no-padding-top bg-white" >
 				 			<!--#4DIF (Records in selection([Sites])=1)-->
@@ -87,8 +87,13 @@ end if
 									<li><a data-toggle="tab" href="#tabs-2">FTP Details</a></li>
 									<li><a data-toggle="tab" href="#tabs-3">Database Connection Details</a></li>
 								</ul>
-								<div class="tab-content" STYLE="overflow: hidden;border: 1px solid #ddd;border-top: none;">
-									<div id="tabs-1" class="tab-pane fade in active" STYLE="padding:20px;"  >
+								<div class="tab-content" STYLE="overflow: hidden;border-top: none;">
+									<div id="tabs-1" class="tab-pane fade in active col-md-12" STYLE="padding:20px;"  >
+									
+									<div CLASS="row">
+									
+									<div CLASS="col-md-7">
+									
 							<!--#4DENDIF-->
 									<form name="SiteForm" id="UserSetting" action="savesite.cgi" class="form-horizontal" method="post" >
 										<input name="site_uuid"  id="site_uuid" class="span9" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->">
@@ -147,6 +152,7 @@ end if
 								</form>
 							
 							<!--#4DIF (Records in selection([Sites])=1)-->
+							</div></div>
 								</div>
 								<div id="tabs-2" class="tab-pane fade col-md-12" STYLE="padding-top:20px;"  >
 								<a href="ftpserver.shtml?site=<!--#4DVAR [Sites]uuid-->" title="Add a row" class="btn btn-danger btn-sm " style="float:right;">Add new FTP Details</a>
