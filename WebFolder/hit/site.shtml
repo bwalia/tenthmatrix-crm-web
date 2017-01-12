@@ -133,13 +133,13 @@ end if
 									<div class="form-group">
     									<label for="" class="col-sm-3 control-label">Allow</label> 
 										<div class="col-sm-3">
-											<label style="width:auto;" class="checkbox">							
-												<div class="checker"><span><input type="checkbox" <!--#4DIF (IsFtpallowed)-->checked<!--#4DENDIF--> id="ftp" value="ftp" class="span9" name="is_ftpallowed"></span></div> <strong>FTP</strong>
+											<label>							
+												<input type="checkbox" <!--#4DIF (IsFtpallowed)-->checked<!--#4DENDIF--> id="ftp" value="ftp" class="span9" name="is_ftpallowed"> <strong>FTP</strong>
 											</label>
 										</div>
 										<div class="col-sm-6">
-											<label style="width:auto;" class="checkbox span2">							 
-												<div class="checker"><span><input type="checkbox" <!--#4DIF (IsImportallowed)-->checked<!--#4DENDIF--> id="import" value="import" class="span9" name="is_importallowed"></span></div> <strong>Data Import Manager</strong>
+											<label>							 
+												<input type="checkbox" <!--#4DIF (IsImportallowed)-->checked<!--#4DENDIF--> id="import" value="import" class="span9" name="is_importallowed"> <strong>Data Import Manager</strong>
 											</label>
 										</div>
 									</div>
@@ -156,9 +156,10 @@ end if
 								</div>
 								<div id="tabs-2" class="tab-pane fade col-md-12" STYLE="padding-top:20px;"  >
 								<a href="ftpserver.shtml?site=<!--#4DVAR [Sites]uuid-->" title="Add a row" class="btn btn-danger btn-sm " style="float:right;">Add new FTP Details</a>
+								
 									<div class="content table-responsive table-full-width">
 										<div class="table-responsive" style="border:none;" >
-                      				  		<table class="items table table-striped  table-bordered table-hover custom-tbl-st bt" id="table-breakpoint"  style="background-color: rgb(255, 255, 255); border-radius: 4px;" >		
+                      				  		<table class="table table-striped  table-bordered table-hover custom-tbl-st bt" id="table-breakpoint"  style="background-color: rgb(255, 255, 255); border-radius: 4px;" >		
 												<thead><tr>
 		    										<th>Server</th>
 		      										<th>User name</th>
@@ -174,7 +175,7 @@ end if
 		  						</div>
 								<div id="tabs-3" class="tab-pane fade col-md-12" STYLE="padding-top:20px;"  >
 									<!--#4DIF (mUserIsCurrentBool)--><!--#4DELSE-->
-										<a href="javascript:void(0)" title="Add a database details" id="add_db_details" class="btn btn-danger btn-sm " style="float:right;">Add a database details</a>
+										<a href="javascript:void(0)" title="Add a database details" id="add_db_details" class="btn btn-danger btn-sm hidden-xs" style="float:right;">Add a database details</a>
 									<!--#4DENDIF--> 
             						<div class="content table-responsive table-full-width">
 		 								<div class="table-responsive" style="border:none;" >
@@ -187,8 +188,8 @@ end if
 		      										<th>Password</th>
 		      										<th>Database Name</th>
 		      										<!--#4DIF (mUserIsCurrentBool)--><!--#4DELSE-->
-		      										<th>Save</th>
-		      										<th>Cancel</th>
+		      										<th>Edit/Save</th>
+		      										<th>Remove/Cancel</th>
 		      										<!--#4DENDIF--> 
 												</tr>
 												</thead>
@@ -268,7 +269,7 @@ end if
 									var statesdemo = {
 										state0: {
 											title: 'Enter new Site ID manually?',
-											html:'&lt;div id="message"&gt;&lt;/div&gt;&lt;input type="text" name="siteIDNum" id="siteIDNum" class="form-control" value=""&gt;&lt;br /&gt;',
+											html:'&lt;div id="message"&gt;&lt;/div&gt;&lt;input type="text" name="siteIDNum" id="siteIDNum" class="form-control num" value=""&gt;&lt;br /&gt;',
 											buttons: { Cancel : 0, Ok: 1 },
 											focus: "#siteIDNum",
 											submit:function(e,v,m,f){ 
@@ -308,7 +309,19 @@ end if
 										
 									};
 
-									$.prompt(statesdemo);
+						var myPrompt = $.prompt(statesdemo);
+						myPrompt.on('impromptu:loaded', function(e){
+							
+							$('#siteIDNum').keypress(function(e){
+        						var k = e.which;
+								/* numeric inputs can come from the keypad or the numeric row at the top */
+			 					if ((k<48 || k>57) && (k!=8) && (k!=0)) {
+									e.preventDefault();
+									return false;
+								}
+							}); 
+						});
+									
 								</pre>
 								<!--<a class="run">Run It!</a>-->
 							</div>
@@ -323,9 +336,7 @@ end if
     <script type="text/javascript">
 	
         $(function () {
-        	$('#table-breakpoint').basictable({
-    				breakpoint: 751
-   			 	});
+        	
    			 	$('#table-da').basictable({
     				breakpoint: 751
    			 	});
@@ -376,14 +387,15 @@ function loadftpdata(){
 	JSONdata=new Array();
 		$.getJSON(jsonRow,function(result){
 			if(result.Alert){
-				code = $('#no_rec_prompt').text();
-				(new Function(code))();
 				complete=true;
+				$('#table-breakpoint').basictable({
+    				breakpoint: 751
+   			 	});
 			}else{
 				$.each(result.uuid, function(i,item){
 					JSONdata[i]=new Array();
-					JSONdata[i][3]='<a href="ftpserver.shtml?uuid='+item+'" target="_blank">Edit</a>';	
-					JSONdata[i][4]='<a href="javascript:void(0)" onClick="deleteFtp(\''+item+'\')">Remove</a>';					
+					JSONdata[i][3]='<a href="ftpserver.shtml?uuid='+item+'" target="_blank"><i class="fa fa-pencil"></a>';	
+					JSONdata[i][4]='<a href="javascript:void(0)" onClick="deleteFtp(\''+item+'\')"><i class="fa fa-trash"></a>';					
 				}); 
 				$.each(result.ftp_server, function(i,item){
 					JSONdata[i][0]=item;
@@ -406,6 +418,9 @@ function loadftpdata(){
 				});
 				
 				$('.ftpdataClass').after(table_html);
+				$('#table-breakpoint').basictable({
+    				breakpoint: 751
+   			 	});
 			}
 			
 		});
