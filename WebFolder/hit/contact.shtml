@@ -37,6 +37,14 @@ end if
 	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
 	<link rel="stylesheet" href="css/autocomplete.css" />
 <style>
+
+#ContactForm .custom-combobox {
+    width: 95%!important;
+    top: 0px;
+    left: 0px;
+}
+
+
 .custom-combobox a.ui-button, 
   .custom-combobox a.ui-widget, 
   .custom-combobox a.ui-state-default, 
@@ -108,12 +116,12 @@ end if
 		<section>
 		
 		
-		<div class="row" STYLE="margin:20px;">
+		<div class="row" STYLE="padding:20px;">
 		<form name="ContactForm" id="ContactForm" action="savecontact.cgi" class="form-horizontal" method="post">	
 			<div class="chart">
 				<div class="col-xs-6">
           				<div class="box box-primary">
-		   					 <h4>Basic Details</h4>
+		   					 <h4 style="padding-left: 10px;margin-top: 10px;font-size: 24px;margin-bottom: 8px;padding-bottom: 14px;">Basic Details</h4>
             				<!-- /.box-header -->
             					<div class="box-body">
 			
@@ -191,7 +199,7 @@ end if
 						</div>
 				<div class="col-xs-6">
           				<div class="box box-primary">
-		   					 <h4>Contact Details</h4>
+		   					 <h4 style="padding-left: 10px;margin-top: 10px;font-size: 24px;margin-bottom: 8px;padding-bottom: 14px;">Contact Details</h4>
             				<!-- /.box-header -->
             					<div class="box-body">
 			
