@@ -145,7 +145,7 @@ end if
 					
 							</div>
 						
-                        	<div class="span11 field-box" style="text-align: center;">
+                        	<div class="span11 field-box" style="text-align: center;margin-bottom:20px;">
 								<a href="javascript:void(0)" class="btn btn-danger btn-sm" onClick="assign_modules()">Assign Modules</a>
 							</div>
 						</div>
@@ -282,11 +282,11 @@ function load_group_modules(){
 							if(row.displayed=="yes"){
 								moduleStatusStr.push(item.Module_uuid);
 							}
-							subTableHtmlStr+='<label class="span2"><input ';
+							subTableHtmlStr+='<span style="margin-left:40px"><input ';
 							if(row.displayed=="yes"){
 								subTableHtmlStr+=' checked ';
 							}
-							subTableHtmlStr+='class="submenu submenu_'+row.sub_module_uuid+' module_'+item.Module_uuid+'" type="checkbox" value="'+row.sub_module_uuid+'" name="submenu_'+item.Module_uuid+'" onClick="set_permissions(\''+item.Module_uuid+'\',\''+row.sub_module_uuid+'\')"> '+row.sub_module_name+'</label>';
+							subTableHtmlStr+='class="submenu submenu_'+row.sub_module_uuid+' module_'+item.Module_uuid+'" type="checkbox" value="'+row.sub_module_uuid+'" name="submenu_'+item.Module_uuid+'" onClick="set_permissions(\''+item.Module_uuid+'\',\''+row.sub_module_uuid+'\')"> '+row.sub_module_name+'</span>';
 								
 						});
 						subTableHtmlStr+='</div>';

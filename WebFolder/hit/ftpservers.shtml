@@ -52,7 +52,7 @@ end if
       					<div class="form-group no-margin">
      						<div class="pull-left margin-bottom-10 ">
 								<div class="form-inline" style="">                 	          
-                 					<a href="javascript:void(0)" onClick="delSelectedFTPDetail()" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink ">Delete Selected FTP Details</a>
+                 					<a href="javascript:void(0)" onClick="delSelectedFTPDetail()" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink display-inline-block">Delete Selected FTP Details</a>
                                  </div>
          					</div>
          					<div class="pull-right margin-bottom-10 ">
@@ -153,12 +153,11 @@ end if
 											buttons: { Cancel : 0, OK: 1 },																		
 											submit:function(e,v,m,f){ 
 												if(v==1) {
-													var dataString = 'delete_uuids='+deleteuuid;
-														
+													var dataString = 'delete_uuids='+deleteuuid+'&table_name=ftp_account';
 													$.ajax({
 														type: "GET",
 														dataType: "json",
-														url: "deleteftp.cgi",
+														url: "deleteftpordb.cgi",
 														data: dataString,
 														cache: false,
 														success: function(html){

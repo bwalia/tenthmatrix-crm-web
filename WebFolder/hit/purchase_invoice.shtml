@@ -181,7 +181,7 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 							</div>
 							<div class="form-group">
     							<label for="" class="col-sm-3 control-label">&nbsp;</label>
-								<div class="col-sm-9"><label class="checkbox" style="vertical-align:inherit;">
+								<div class="col-sm-9"><label>
 									<input name="is_cost_of_sales"  type="checkbox" value="true" id="is_cost_of_sales" <!--#4DIF ([purchase_invoices]is_cost_of_sales)-->checked<!--4DELSE--><!--4DENDIF--> >&nbsp;Cost of Sales
 								</label></div>
 							</div>
@@ -399,7 +399,6 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 													$.prompt.close();
 													$('#tax_rate').val("20");
 													$('#tax_code').val("UK");
-													//$('#invoice_tax_rate').val('');
 												}
 											}
 										},
@@ -419,7 +418,7 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 									var statesdemo = {
 										state0: {
 											title: 'Enter new Purchase Invoice Number manually?',
-											html:'&lt;div id="message"&gt;&lt;/div&gt;&lt;input type="text" class="form-control" name="invoice_numbr" id="invoice_numbr" value=""&gt;&lt;br /&gt;',
+											html:'&lt;div id="message"&gt;&lt;/div&gt;&lt;input type="text" class="form-control num" name="invoice_numbr" id="invoice_numbr" value=""&gt;&lt;br /&gt;',
 											buttons: { Cancel : 0, Ok: 1 },
 											focus: "#invoice_numbr",
 											submit:function(e,v,m,f){ 
@@ -437,6 +436,7 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 																$('#invoice_numbr').focus();
 															}else{
 																$('#purchase_inv_no').val(f.invoice_numbr);
+																$('#purchase_id').val(f.invoice_numbr);
 																$.prompt.close()
 															}
 															
@@ -459,6 +459,10 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 									};
 
 									$.prompt(statesdemo);
+									$(".num").unbind();
+									$('.num').keypress(function(e){
+										checknumber(e);	
+									});
 								</pre>
 								<!--<a class="run">Run It!</a>-->
 							</div>
@@ -681,7 +685,8 @@ function get_account_info(){
 		if(!$( "#Project_UUID" ).val() || $( "#Project_UUID" ).val()==''){
 			get_projects();
 		}
-		if(!$( "#bank_paid_from_id" ).val() || $( "#bank_paid_from_id" ).val()==''){
+		if(!$( "#bank_paid_from_id" ).val() || $( "#bank_paid_from_id" ).val()=='' || $( "#bank_paid_from_id" ).val()==0){
+			
 			get_accounts();
 		}
 		
