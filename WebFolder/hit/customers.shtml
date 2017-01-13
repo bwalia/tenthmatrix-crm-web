@@ -20,7 +20,9 @@ mUserIsCurrentBool:=userHasAccessToDelete
 <head>
 <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
 <style>
-
+#message {
+	color: #CC0000;
+}
 .btn-inline >.btn-left-align {
     position: absolute;
     right: 0;
@@ -42,11 +44,6 @@ mUserIsCurrentBool:=userHasAccessToDelete
     border: none;
     padding: 5px 30px 0px 7px;
 }
-
-
-
-
-
 </style>
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
@@ -133,6 +130,7 @@ mUserIsCurrentBool:=userHasAccessToDelete
 			</div>
 			
         	<div CLASS="row">
+        		<input type="hidden" value="" id="selected_uuids">
             	<div class="content table-responsive table-full-width">
 		 			<div class="table-responsive" style="border:none;" >
                          <table class="table table-striped  table-bordered table-hover custom-tbl-st bt" id="table-breakpoint"  style="background-color: rgb(255, 255, 255); border-radius: 4px; display:none;" >
@@ -195,49 +193,8 @@ mUserIsCurrentBool:=userHasAccessToDelete
 													e.preventDefault();
 													var new_set=$('#new_set').val().trim();
 													if(new_set!=''){
-														var exist=false;
-														$('#add_sets option').each(function() {
-															if(new_set.toLowerCase()==$(this).text().toLowerCase()){
-																exist=true;
-															}
-														});
-														if(exist==false){
-															if(add_from_manager==true){
-																jsonRow = 'addDelCustSets.cgi?tablname='+tablname+'&set='+new_set;
-															}
-															else{
-																jsonRow = 'loadcustomers.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab+'&selected='+selected+'&set=add_to_'+new_set+'&setUUID='+setUUID;
-															}
-															$.getJSON(jsonRow,function(result){
-																if(result.setUUID){
-																	$('#opt_new_set').before('&lt;option value="'+result.setUUID+'"&gt;'+new_set+'&lt;/option&gt;');
-																	$('#add_sets').val(result.setUUID);
-																	$('#sets_list').prepend('&lt;option value="'+result.setUUID+'" &gt;'+ new_set+'&lt;/option&gt;');
-																	$(".jqibox").remove();
-																	show_load_prompt();
-																}
-																else if(result.Succ){
-																	$('#opt_new_set').before('&lt;option value="'+result.UUID+'"&gt;'+new_set+'&lt;/option&gt;');
-																	
-																	//$('#load_sets').append('&lt;option value="'+result.UUID+'" &gt;'+ new_set+'&lt;/option&gt;');
-																	$('#sets_list').prepend('&lt;option value="'+result.UUID+'" &gt;'+ new_set+'&lt;/option&gt;');
-																	set_add_to=new_set;
-																	
-																	$(".jqibox").remove();
-																	
-																	$("#set_mgr_msg").html('* Set added successfully');
-																	
-																	add_from_manager=false;
-																}else if(result.Err){
-																	$('#message').html('* '+result.Err);
-																}
-															});				
-														}
-														else{
-															$('#message').html('* '+new_set+' already exists. Please enter another name of set');
-														}
-													}
-													else{
+														saveNewSet(new_set, 'message');
+													}else{
 														$('#message').html('* Please enter name of new set');
 														$('#new_set').focus();
 													}
@@ -301,6 +258,7 @@ mUserIsCurrentBool:=userHasAccessToDelete
 														e.preventDefault();
 														document.getElementById("message").innerHTML = "* Please select an option." ;
 													}else{
+														var deleteuuid=$("#selected_uuids").val();
 														var dataString = 'deleteuuid='+deleteuuid+'&setUUID='+setUUID;
 														if(f.opt_set_del=='from_set'){
 															dataString+='&del_type=from_set';
@@ -317,6 +275,7 @@ mUserIsCurrentBool:=userHasAccessToDelete
 															success: function(html)
 															{
 																if(html.Succ){		
+																	$("#selected_uuids").val("");
 																	$.prompt.close();				
 																	start=0;
 																	end=50;
@@ -348,7 +307,7 @@ mUserIsCurrentBool:=userHasAccessToDelete
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); $('#setManagerMsg').html('');">&times;</button>
 				<h3 class="modal-title">Set Manager</h3>
 			</div>
 			<div class="modal-body">
@@ -364,26 +323,32 @@ mUserIsCurrentBool:=userHasAccessToDelete
 						<!--4DENDLOOP-->
 						</select>
 					</div>
-					
+					<h3>Add new set</h3>
+						<div class="row"><div class="col-md-12" id="setManagerMsg" style="color:#CC0000;"></div></div>
+						<div class="row">
+							<div class="col-md-8">
+								<input class="form-control" type="text" name="add_new_set_name" id="add_new_set_name" value="userset_1">
+							</div>
+							<div class="col-md-4">
+								<button type="button" class="btn btn-info sm-btn" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); $('#setManagerMsg').html('');add_new_set()">Add new Set</button>
+							</div>
+						</div>
 				</form>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-primary sm-btn" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); add_new_set()">Add new Set</button>
-				
-				
-				<button type="button" class="btn btn-primary sm-btn" style="margin-left:0px;" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); load_from_set($('#sets_list').val(), $('#sets_list option:selected').text())">Load</button>
+				<button type="button" class="btn btn-primary sm-btn" style="margin-left:0px;" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); $('#setManagerMsg').html(''); load_from_set($('#sets_list').val(), $('#sets_list option:selected').text())">Load</button>
 				<div class="btn-group">
 				<button type="button" class="btn btn-primary sm-btn" >Delete</button>
 				<button type="button" class="btn btn-primary sm-btn  dropdown-toggle" data-toggle="dropdown" >
         <span class="caret"></span>
           </button>
       <ul class="dropdown-menu" role="menu" style="text-align:left">
-        <li><a href="javascript:void(0)" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); del_set($('#sets_list').val(),$('#sets_list option:selected').text(),1)">Delete Selected Set</a></li>
-         <li><a href="javascript:void(0)" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); del_set($('#sets_list').val(),$('#sets_list option:selected').text(),2)">Delete Contacts in selected set</a></li>
-		 <li><a href="javascript:void(0)" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); del_set($('#sets_list').val(),$('#sets_list option:selected').text(),3)">Delete Customers in selected set</a></li>
+        <li><a href="javascript:void(0)" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html('');$('#setManagerMsg').html(''); del_set($('#sets_list').val(),$('#sets_list option:selected').text(),1)">Delete Selected Set</a></li>
+         <li><a href="javascript:void(0)" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html('');$('#setManagerMsg').html(''); del_set($('#sets_list').val(),$('#sets_list option:selected').text(),2)">Delete Contacts in selected set</a></li>
+		 <li><a href="javascript:void(0)" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html('');$('#setManagerMsg').html(''); del_set($('#sets_list').val(),$('#sets_list option:selected').text(),3)">Delete Customers in selected set</a></li>
 		 </ul>
 		 </div>
-				<button type="button" class="btn btn-default sm-btn" data-dismiss="modal">OK</button>
+				<button type="button" class="btn btn-default sm-btn" data-dismiss="modal" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); $('#setManagerMsg').html('');">OK</button>
 			</div>
 		</div>
 	</div>
@@ -392,11 +357,9 @@ mUserIsCurrentBool:=userHasAccessToDelete
 </div>
 <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml-->
 <script>
-var selected='';
 var start=0, end=25;
 var old_srch='', tab='', set='', vat_claimed='';
 var tablname='Companies';
-var deleteuuid='';
 var complete=false;
 var add_from_manager=false;
 var completeScroll=false;
@@ -466,7 +429,7 @@ function __filterByVatClaimed(value){
 }
 
 function __deleteMultipleCustomers(){
-	selected='';
+	var selected='';
 	$('.check').each(function(){
 		if($(this).is(":checked")){
 			if(selected==''){
@@ -478,7 +441,7 @@ function __deleteMultipleCustomers(){
 		}
 	});
 	if(selected!=""){
-		deleteuuid=selected;
+		$("#selected_uuids").val(selected);
 		code = $('#del_prompt').text();
 		(new Function(code))();
 	}else{
@@ -487,14 +450,14 @@ function __deleteMultipleCustomers(){
 }
 
 function __deleteSelected(deluuid) {
-	deleteuuid=deluuid;
+	$("#selected_uuids").val(deluuid);
 	code = $('#del_prompt').text();
 	(new Function(code))();
 }
 
 function __showCustomerForm_AddSet(val,name){
 	if(name!=''){
-		selected='';
+		var selected='';
 		$('.check').each(function(){
 			if($(this).is(":checked")){
 				if(selected==''){
@@ -507,8 +470,9 @@ function __showCustomerForm_AddSet(val,name){
 		
 		});
 		if(selected!='' || add_from_manager==true){
+			$("#selected_uuids").val(selected);
+			
 			if(val=='new_set'){
-				//var new_set=prompt("Please enter name of new set:","userset_1");				
 				code = $('#new_set_prompt').text();
 				(new Function(code))();	
 			}
@@ -517,9 +481,11 @@ function __showCustomerForm_AddSet(val,name){
 				start=0;
 				end=25;
 				tab='';
-				jsonRow = 'loadcustomers.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab+'&selected='+selected+'&set=add_to_'+name+'&setUUID='+setUUID;
+				var selectedVals=$("#selected_uuids").val();
+				jsonRow = 'loadcustomers.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab+'&selected='+selectedVals+'&set=add_to_'+name+'&setUUID='+setUUID;
 				$.getJSON(jsonRow,function(result){
 					if(result.Alert){
+						$("#selected_uuids").val("");
 						code = $('#load_prompt').text();
 						(new Function(code))();
 					}
@@ -539,9 +505,65 @@ function show_load_prompt(){
 	(new Function(code))();
 }
 
+function saveNewSet(new_set, errorMessageDiv){
+	if(new_set!=''){
+		var exist=false;
+		$('#add_sets option').each(function() {
+			if(new_set.toLowerCase()==$(this).text().toLowerCase()){
+				exist=true;
+			}
+		});
+		if(exist==false){
+			if(add_from_manager==true){
+				jsonRow = 'addDelCustSets.cgi?tablname='+tablname+'&set='+new_set;
+			} else{
+				var selectedVals= $("#selected_uuids").val();
+				jsonRow = 'loadcustomers.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab+'&selected='+selectedVals+'&set=add_to_'+new_set+'&setUUID='+setUUID;
+			}
+			
+			$.getJSON(jsonRow,function(result){
+				if(result.setUUID){
+					$('#add_new_set_name').val("");
+					$('#opt_new_set').before('<option value="'+result.setUUID+'">'+new_set+'</option>');
+					$('#add_sets').val(result.setUUID);
+					$('#sets_list').prepend('<option value="'+result.setUUID+'" >'+ new_set+'</option>');
+					selected_set=new_set;
+					setUUID=result.setUUID;
+					$("#selected_uuids").val("");
+					$(".jqibox").remove();
+					show_load_prompt();
+				}else if(result.Succ){
+					$(".jqibox").remove();
+					$('#add_new_set_name').val("");
+					$('#opt_new_set').before('<option value="'+result.UUID+'">'+new_set+'</option>');
+					$('#sets_list').prepend('<option value="'+result.UUID+'" >'+ new_set+'</option>');
+					set_add_to=new_set;
+					$("#selected_uuids").val("");
+					$("#set_mgr_msg").html('* Set added successfully');
+					add_from_manager=false;
+				}else if(result.Err){
+					$('#'+errorMessageDiv).html('* '+result.Err);
+				}
+			});				
+		} else {
+			$('#'+errorMessageDiv).html('* '+new_set+' already exists. Please enter another name of set');
+		}
+	} else {
+		$('#'+errorMessageDiv).html('* Please enter name of new set');
+		$('#add_new_set_name').focus();
+		$('#new_set').focus();
+	}
+}
+
 function add_new_set(){
 	add_from_manager=true;
-	__showCustomerForm_AddSet('new_set','new_set');
+	var new_set=$('#add_new_set_name').val().trim();
+	if(new_set!=''){
+		saveNewSet(new_set, "setManagerMsg");
+	} else {
+		$('#setManagerMsg').html('* Please enter name of new set');
+		$('#add_new_set_name').focus();
+	}
 }
 
 function load_from_set(val, name){

@@ -18,7 +18,14 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
 <head>
 <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
 <link rel="stylesheet" href="css/basictable.css">
-
+<style>
+#message {
+	color: #CC0000;
+}
+.jqibox {
+	z-index:9999!important;
+}
+</style>
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
 <div class="wrapper">
@@ -48,7 +55,7 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
 								<div class="form-inline" style="">                 	          
                  					<div class="btn-inline display-inline-block">
 										<label>Add to Set</label>
-										<select class="form-control" name="add_sets" id="add_sets" onChange="__showDomainForm_AddSet(this.value, $('#add_sets option:selected').text())">
+										<select class="form-control" name="add_sets" id="add_sets" onChange="__showLeadForm_AddSet(this.value, $('#add_sets option:selected').text())">
 											<option value="">--Select Set--</option>
 											<!--#4DSCRIPT/Web_LoadLeadsSets/-->
 											<!--4DLOOP  [saved_sets]-->									
@@ -89,9 +96,10 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
 			</div>
 			<input id="keyword" name="keyword" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" type="hidden">
    			<div class="row">
+   				<input type="hidden" value="" id="selected_uuids">
 	  			<div class="content table-responsive table-full-width">
 		 			<div class="table-responsive" style="border:none;" >
-                        <table class="table table-striped  table-bordered table-hover custom-tbl-st bt" id="table-breakpoint"  style="background-color: rgb(255, 255, 255); border-radius: 4px;" >
+                        <table class="table table-striped  table-bordered table-hover custom-tbl-st bt" id="table-breakpoint"  style="background-color: rgb(255, 255, 255); border-radius: 4px; display:none;" >
                             <thead>
                                 <tr>
                                            	<th><input name="select" class="" type="checkbox" id="chk_all" ></th>
@@ -122,13 +130,13 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
                                         
                                      </tbody>
                         </table>
-                        <div style="text-align:center">
-							<a style="width: 60%; margin-bottom: 10px; display: none;" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink " id="display_more_btn" title="Load more" onclick="load_more()" href="javascript:void(0);">
+                       <div style="text-align:center">
+							<a style="width: 100%; font-size:17px; display: none;" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink " id="display_more_btn" title="Load more" onclick="load_more()" href="javascript:void(0);">
 								Load more
 							</a>
         				</div>
 						<div id="img_loading_div" style="text-align:center">
-							<img src="images/loading.gif?as"  style="padding:20px;" width="34" >
+							<img src="images/loading.gif" >
 						</div>
                     </div>
 				</div>
@@ -143,7 +151,7 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
 									var statesdemo = {
 										state0: {
 											title: 'Please enter name of new set',
-											html:'&lt;div id="message"&gt;&lt;/div&gt;&lt;input type="text" name="new_set" id="new_set" value="userset_1"&gt;&lt;br /&gt;',
+											html:'&lt;div id="message"&gt;&lt;/div&gt;&lt;input type="text" name="new_set" class="form-control" id="new_set" value="userset_1"&gt;&lt;br /&gt;',
 											buttons: { Cancel : 0, Ok: 1 },
 											focus: "#new_set",																		
 											submit:function(e,v,m,f){ 
@@ -152,47 +160,7 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
 													e.preventDefault();
 													var new_set=$('#new_set').val().trim();
 													if(new_set!=''){
-														var exist=false;
-														$('#add_sets option').each(function() {
-															if(new_set.toLowerCase()==$(this).text().toLowerCase()){
-																exist=true;
-															}
-														});
-														if(exist==false){
-															if(add_from_manager==true){
-																jsonRow = 'addDelLeadsSets.cgi?tablname='+tablname+'&set='+new_set;
-															}
-															else{
-																jsonRow = 'loadleads.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab+'&selected='+selected+'&set=add_to_'+new_set;
-															}
-															$.getJSON(jsonRow,function(result){
-																if(result.setUUID){
-																	$('#opt_new_set').before('&lt;option value="'+result.setUUID+'"&gt;'+new_set+'&lt;/option&gt;');
-																	$('#add_sets').val(result.setUUID);
-																	$('#sets_list').prepend('&lt;option value="'+result.setUUID+'" &gt;'+ new_set+'&lt;/option&gt;');
-																	$(".jqibox").remove();
-																	show_load_prompt();
-																}
-																else if(result.Succ){
-																	$('#opt_new_set').before('&lt;option value="'+result.UUID+'"&gt;'+new_set+'&lt;/option&gt;');
-																	
-																	//$('#load_sets').append('&lt;option value="'+result.UUID+'" &gt;'+ new_set+'&lt;/option&gt;');
-																	$('#sets_list').prepend('&lt;option value="'+result.UUID+'" &gt;'+ new_set+'&lt;/option&gt;');
-																	set_add_to=new_set;
-																	
-																	$(".jqibox").remove();
-																	
-																	$("#set_mgr_msg").html('* Set added successfully');
-																	
-																	add_from_manager=false;
-																}else if(result.Err){
-																	$('#message').html('* '+result.Err);
-																}
-															});				
-														}
-														else{
-															$('#message').html('* '+new_set+' already exists. Please enter another name of set');
-														}
+														 saveNewSet(new_set, 'message');
 													}
 													else{
 														$('#message').html('* Please enter name of new set');
@@ -236,52 +204,12 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
 									$.prompt(statesdemo);
 								</pre>
 	
-	<pre class="code" style="display:none;" id="no_rec_prompt">
-									var statesdemo = {
-										state0: {
-											title: 'No more records found',
-											html:'',
-											buttons: { OK: 1 },																		
-											submit:function(e,v,m,f){ 
-												//console.log(f);
-												if(v==1) {
-													$.prompt.close();
-												}
-												
-											}
-										},
-										
-									};
-									//$(".jqibox").remove();
-									if(!($(".jqibox").length))
-									$.prompt(statesdemo);
-								</pre>
-								<pre class="code" style="display:none;" id="no_selection_prompt">
-									var statesdemo = {
-										state0: {
-											title: 'Please select some leads to add to set',
-											html:'',
-											buttons: { OK: 1 },																		
-											submit:function(e,v,m,f){ 
-												//console.log(f);
-												if(v==1) {
-													$.prompt.close();
-												}
-												
-											}
-										},
-										
-									};
-									if(!($(".jqibox").length))
-									$.prompt(statesdemo);
-								</pre>
-								
 							</div>
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); $('#setManagerMsg').html('');">&times;</button>
 				<h3 class="modal-title">Set Manager</h3>
 			</div>
 			<div class="modal-body">
@@ -297,12 +225,19 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
 						<!--4DENDLOOP-->
 						</select>
 					</div>
-					
+					<h3>Add new set</h3>
+						<div class="row"><div class="col-md-12" id="setManagerMsg" style="color:#CC0000;"></div></div>
+						<div class="row">
+							<div class="col-md-8">
+								<input class="form-control" type="text" name="add_new_set_name" id="add_new_set_name" value="userset_1">
+							</div>
+							<div class="col-md-4">
+								<button type="button" class="btn btn-info sm-btn" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); $('#setManagerMsg').html('');add_new_set()">Add new Set</button>
+							</div>
+						</div>
 				</form>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-primary sm-btn" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); add_new_set()">Add new Set</button>
-				
 				
 				<button type="button" class="btn btn-primary sm-btn" style="margin-left:0px;" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); load_from_set($('#sets_list').val(), $('#sets_list option:selected').text())">Load</button>
 				<div class="btn-group">
@@ -311,13 +246,13 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
         <span class="caret"></span>
           </button>
       <ul class="dropdown-menu" role="menu" style="text-align:left">
-        <li><a href="javascript:void(0)" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); del_set($('#sets_list').val(),$('#sets_list option:selected').text(),1)">Delete Selected Set</a></li>
-		<li><a href="javascript:void(0)" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); del_set($('#sets_list').val(),$('#sets_list option:selected').text(),2)">Delete Contacts in selected set</a></li>
-		<li><a href="javascript:void(0)" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); del_set($('#sets_list').val(),$('#sets_list option:selected').text(),3)">Delete Activities in selected set</a></li>
-		 <li><a href="javascript:void(0)" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); del_set($('#sets_list').val(),$('#sets_list option:selected').text(),4)">Delete Leads in selected set</a></li>
+        <li><a href="javascript:void(0)" onClick=" $('#setManagerMsg').html('');$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); del_set($('#sets_list').val(),$('#sets_list option:selected').text(),1)">Delete Selected Set</a></li>
+		<li><a href="javascript:void(0)" onClick=" $('#setManagerMsg').html('');$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); del_set($('#sets_list').val(),$('#sets_list option:selected').text(),2)">Delete Contacts in selected set</a></li>
+		<li><a href="javascript:void(0)" onClick=" $('#setManagerMsg').html('');$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); del_set($('#sets_list').val(),$('#sets_list option:selected').text(),3)">Delete Activities in selected set</a></li>
+		 <li><a href="javascript:void(0)" onClick=" $('#setManagerMsg').html('');$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); del_set($('#sets_list').val(),$('#sets_list option:selected').text(),4)">Delete Leads in selected set</a></li>
 		 </ul>
 		 </div>
-				<button type="button" class="btn btn-default sm-btn" data-dismiss="modal">OK</button>
+				<button type="button" class="btn btn-default sm-btn" data-dismiss="modal" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); $('#setManagerMsg').html('');">OK</button>
 			</div>
 		</div>
 	</div>
@@ -340,7 +275,7 @@ var checkAllFlag=false;
 function __showLeadForm_AddSet(val, name)
 {
 	if(name!=''){
-		selected='';
+		var selected='';
 		$('.check').each(function(){
 			if($(this).is(":checked")){
 				if(selected==''){
@@ -353,6 +288,7 @@ function __showLeadForm_AddSet(val, name)
 		
 		});
 		if(selected!='' || add_from_manager==true){
+			$("#selected_uuids").val(selected);
 			if(val=='new_set'){
 				//var new_set=prompt("Please enter name of new set:","userset_1");				
 				code = $('#new_set_prompt').text();
@@ -364,9 +300,11 @@ function __showLeadForm_AddSet(val, name)
 				start=0;
 				end=25;
 				tab='';
-				jsonRow = 'loadleads.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab+'&selected='+selected+'&set=add_to_'+name+'&setUUID='+setUUID;
+				var selected_uuids_str= $("#selected_uuids").val();
+				jsonRow = 'loadleads.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab+'&selected='+selected_uuids_str+'&set=add_to_'+name+'&setUUID='+setUUID;
 				$.getJSON(jsonRow,function(result){
 					if(result.Alert){
+						$("#selected_uuids").val("");
 						code = $('#load_prompt').text();
 						(new Function(code))();
 					}
@@ -374,8 +312,7 @@ function __showLeadForm_AddSet(val, name)
 			}
 		}
 		else{
-			code = $('#no_selection_prompt').text();
-			(new Function(code))();
+			__alertModalBox('Please select some leads to add to set');
 			$('#add_sets').val('');
 		}
 	}
@@ -408,9 +345,65 @@ pUrlStr='lead.shtml?uuid='+uuid;
 window.location.href=pUrlStr;
 }
 
+
+function saveNewSet(new_set, errorMessageDiv){
+	if(new_set!=''){
+		var exist=false;
+		$('#add_sets option').each(function() {
+			if(new_set.toLowerCase()==$(this).text().toLowerCase()){
+				exist=true;
+			}
+		});
+		if(exist==false){
+			if(add_from_manager==true){
+				jsonRow = 'addDelLeadsSets.cgi?tablname='+tablname+'&set='+new_set;
+			} else{
+				var selected_uuids_str=$("#selected_uuids").val();
+				jsonRow = 'loadleads.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab+'&selected='+selected_uuids_str+'&set=add_to_'+new_set;
+			}
+			
+			$.getJSON(jsonRow,function(result){
+				if(result.setUUID){
+					$('#add_new_set_name').val("");
+					$('#opt_new_set').before('<option value="'+result.setUUID+'">'+new_set+'</option>');
+					$('#add_sets').val(result.setUUID);
+					$('#sets_list').prepend('<option value="'+result.setUUID+'" >'+ new_set+'</option>');
+					selected_set=new_set;
+					setUUID=result.setUUID;
+					$("#selected_uuids").val("");
+					$(".jqibox").remove();
+					show_load_prompt();
+				}else if(result.Succ){
+					$(".jqibox").remove();
+					$('#add_new_set_name').val("");
+					$('#opt_new_set').before('<option value="'+result.UUID+'">'+new_set+'</option>');
+					$('#sets_list').prepend('<option value="'+result.UUID+'" >'+ new_set+'</option>');
+					set_add_to=new_set;
+					$("#selected_uuids").val("");
+					$("#set_mgr_msg").html('* Set added successfully');
+					add_from_manager=false;
+				}else if(result.Err){
+					$('#'+errorMessageDiv).html('* '+result.Err);
+				}
+			});				
+		} else {
+			$('#'+errorMessageDiv).html('* '+new_set+' already exists. Please enter another name of set');
+		}
+	} else {
+		$('#'+errorMessageDiv).html('* Please enter name of new set');
+		$('#add_new_set_name').focus();
+		$('#new_set').focus();
+	}
+}
 function add_new_set(){
 	add_from_manager=true;
-	__showLeadForm_AddSet('new_set','new_set');
+	var new_set=$('#add_new_set_name').val().trim();
+	if(new_set!=''){
+		saveNewSet(new_set, "setManagerMsg");
+	} else {
+		$('#setManagerMsg').html('* Please enter name of new set');
+		$('#add_new_set_name').focus();
+	}
 }
 
 function load_from_set(val, name){
@@ -613,10 +606,9 @@ function load_data(jsonRow){
 					jsonRow +='&tab='+tab;
 				}		
 	$.getJSON(jsonRow,function(result){
+		$('#table-breakpoint').show();
 			if(result.Alert){
-			
-				code = $('#no_rec_prompt').text();
-				(new Function(code))();
+				__alertModalBox('No more records found!');
 				complete=true;
 				$('#display_more_btn').hide();
 				$('#table-breakpoint').basictable({

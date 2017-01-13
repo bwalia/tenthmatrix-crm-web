@@ -487,113 +487,50 @@ width: 203px; }
 			};
 			$.prompt(statesdemo);
 		</pre>
-		<pre class="code" style="display:none;" id="new_set_prompt">
-									var statesdemo = {
-										state0: {
-											title: 'Please enter name of new set',
-											html:'&lt;div id="message"&gt;&lt;/div&gt;&lt;input class="form-control" type="text" name="new_set" id="new_set" value="userset_1"&gt;&lt;br /&gt;',
-											buttons: { Cancel : 0, Ok: 1 },
-											focus: "#new_set",																		
-											submit:function(e,v,m,f){ 
-												//console.log(f);
-												if(v==1) {
-													e.preventDefault();
-													var new_set=$('#new_set').val().trim();
-													if(new_set!=''){
-														var exist=false;
-														$('#add_sets option').each(function() {
-															if(new_set.toLowerCase()==$(this).text().toLowerCase()){
-																exist=true;
-															}
-														});
-														if(exist==false){
-															if(add_from_manager==true){
-																jsonRow = 'addDelBankEnteriesSets.cgi?tablname='+tablname+'&set='+new_set;
-															}
-															else{
-																jsonRow = 'load_bankenteriesnew.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&selected='+selected+'&set=add_to_'+new_set;
-															}
-															$.getJSON(jsonRow,function(result){
-																if(result.setUUID){
-																	$('#opt_new_set').before('&lt;option value="'+result.setUUID+'"&gt;'+new_set+'&lt;/option&gt;');
-																	$('#add_sets').val(result.setUUID);
-																	$('#sets_list').prepend('&lt;option value="'+result.setUUID+'" &gt;'+ new_set+'&lt;/option&gt;');
-																	$(".jqibox").remove();
-																	selected_set=new_set;
-																	setUUID=html.setUUID;
-																	show_load_prompt();
-																}
-																else if(result.Succ){
-																	$('#opt_new_set').before('&lt;option value="'+result.UUID+'"&gt;'+new_set+'&lt;/option&gt;');
-																	
-																	//$('#load_sets').append('&lt;option value="'+result.UUID+'" &gt;'+ new_set+'&lt;/option&gt;');
-																	$('#sets_list').prepend('&lt;option value="'+result.UUID+'" &gt;'+ new_set+'&lt;/option&gt;');
-																	set_add_to=new_set;
-																	
-																	$(".jqibox").remove();
-																	
-																	$("#set_mgr_msg").html('* Set added successfully');
-																	
-																	add_from_manager=false;
-																}else if(result.Err){
-																	$('#message').html('* '+result.Err);
-																}
-															});				
-														}
-														else{
-															$('#message').html('* '+new_set+' already exists. Please enter another name of set');
-														}
-													}
-													else{
-														$('#message').html('* Please enter name of new set');
-														$('#new_set').focus();
-													}
-												}
-												if(v==0) {
-													$.prompt.close();
-													$('#add_sets').val('');
-													add_from_manager=false;
-												}
-											}
-										},
-										
-									};
-
-									$.prompt(statesdemo);
-								</pre>
+	
 	</div>
 	<div class="modal fade" id="setManagerModal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" aria-labelledby="myModalLabel" aria-hidden="true">
 				<div class="modal-dialog" role="document">
    					 <div class="modal-content">
 							<div class="modal-header">
-								<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+								<button type="button" class="close" data-dismiss="modal" aria-hidden="true" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); $('#setManagerMsg').html('');">&times;</button>
 								<h3 class="modal-title">Set Manager</h3>
 							</div>
 							<div class="modal-body">
 								<p><span class="label-default" id="set_mgr_msg" style="color:#006600"></span><span class="label-default" id="set_mgr_err" style="color:#FF0000"></span></p>
 							<div>
-						<select name="sets_list" id="sets_list" class="form-control" size="10" style="width:100%" >
-						 	<!--#4DSCRIPT/Web_loadBankEnteriesSets/-->
-							<!--4DLOOP  [saved_sets]-->									
-								<option value="<!--#4DHTMLVAR [saved_sets]uuid-->" ><!--#4DHTMLVAR [saved_sets]name--></option>
-							<!--4DENDLOOP-->
-						</select>
-					</div>
-                      </div>
+							<select name="sets_list" id="sets_list" class="form-control" size="10" style="width:100%" >
+						 		<!--#4DSCRIPT/Web_loadBankEnteriesSets/-->
+								<!--4DLOOP  [saved_sets]-->									
+									<option value="<!--#4DHTMLVAR [saved_sets]uuid-->" ><!--#4DHTMLVAR [saved_sets]name--></option>
+								<!--4DENDLOOP-->
+							</select>
+							</div>
+						<h3>Add new set</h3>
+						<div class="row"><div class="col-md-12" id="setManagerMsg" style="color:#CC0000;"></div></div>
+						<div class="row">
+							<div class="col-md-8">
+								<input class="form-control" type="text" name="add_new_set_name" id="add_new_set_name" value="userset_1">
+							</div>
+							<div class="col-md-4">
+								<button type="button" class="btn btn-info sm-btn" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); $('#setManagerMsg').html('');add_new_set()">Add new Set</button>
+							</div>
+						</div>
+                    </div>
 				<div class="modal-footer" >
-					<button type="button" class="btn btn-info sm-btn" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); add_new_set()">Add new Set</button>
-					<button type="button" class="btn btn-info sm-btn" style="margin-left:0px;" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); load_from_set($('#sets_list').val(), $('#sets_list option:selected').text())">Load</button>
+					
+					<button type="button" class="btn btn-info sm-btn" style="margin-left:0px;" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); $('#setManagerMsg').html(''); load_from_set($('#sets_list').val(), $('#sets_list option:selected').text())">Load</button>
 					<div class="btn-group">
 						<button type="button" class="btn btn-info sm-btn" >Delete</button>
 						<button type="button" class="btn btn-info  sm-btn  dropdown-toggle" data-toggle="dropdown" >
         					<span class="caret"></span>
          			 	</button>
       					<ul class="dropdown-menu" role="menu" style="text-align:left">
-       						<li><a href="javascript:void(0)" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); del_set($('#sets_list').val(),$('#sets_list option:selected').text(),1)">Delete Selected Set</a></li>
-							<li><a href="javascript:void(0)" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); del_set($('#sets_list').val(),$('#sets_list option:selected').text(),2)">Delete Bank statements in selected set</a></li>
+       						<li><a href="javascript:void(0)" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); $('#setManagerMsg').html(''); del_set($('#sets_list').val(),$('#sets_list option:selected').text(),1)">Delete Selected Set</a></li>
+							<li><a href="javascript:void(0)" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); $('#setManagerMsg').html(''); del_set($('#sets_list').val(),$('#sets_list option:selected').text(),2)">Delete Bank statements in selected set</a></li>
 						</ul>
 		 			</div>
-					<button type="button" class="btn btn-default sm-btn" data-dismiss="modal">OK</button>
+					<button type="button" class="btn btn-default sm-btn" data-dismiss="modal" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); $('#setManagerMsg').html('');">OK</button>
 				</div>
 			</div>
             </div>

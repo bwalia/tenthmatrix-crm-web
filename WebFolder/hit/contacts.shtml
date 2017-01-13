@@ -23,6 +23,9 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
 <link rel="stylesheet" href="css/basictable.css">
 <link rel="stylesheet" href="css/autocomplete.css" />
 <style>
+#message {
+	color: #CC0000;
+}
 .jqibox {
 	z-index:9999!important;
 }
@@ -108,6 +111,7 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
 			</div>
 			
         	<div CLASS="row">
+        		<input type="hidden" value="" id="selected_uuids">
             	<div class="content table-responsive table-full-width">
 		 			<div class="table-responsive" style="border:none;" >
                          <table class="table table-striped  table-bordered table-hover custom-tbl-st bt" id="table-breakpoint"  style="background-color: rgb(255, 255, 255); border-radius: 4px;display:none;" >
@@ -167,47 +171,7 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
 													e.preventDefault();
 													var new_set=$('#new_set').val().trim();
 													if(new_set!=''){
-														var exist=false;
-														$('#add_sets option').each(function() {
-															if(new_set.toLowerCase()==$(this).text().toLowerCase()){
-																exist=true;
-															}
-														});
-														if(exist==false){
-															if(add_from_manager==true){
-																jsonRow = 'addDelContactsSets.cgi?tablname='+tablname+'&set='+new_set;
-															}
-															else{
-																jsonRow = 'loadcontacts.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab+'&selected='+selected+'&set=add_to_'+new_set;
-															}
-															$.getJSON(jsonRow,function(result){
-																if(result.setUUID){
-																	$('#opt_new_set').before('&lt;option value="'+result.setUUID+'"&gt;'+new_set+'&lt;/option&gt;');
-																	$('#add_sets').val(result.setUUID);
-																	$('#sets_list').prepend('&lt;option value="'+result.setUUID+'" &gt;'+ new_set+'&lt;/option&gt;');
-																	$(".jqibox").remove();
-																	show_load_prompt();
-																}
-																else if(result.Succ){
-																	$('#opt_new_set').before('&lt;option value="'+result.UUID+'"&gt;'+new_set+'&lt;/option&gt;');
-																	
-																	//$('#load_sets').append('&lt;option value="'+result.UUID+'" &gt;'+ new_set+'&lt;/option&gt;');
-																	$('#sets_list').prepend('&lt;option value="'+result.UUID+'" &gt;'+ new_set+'&lt;/option&gt;');
-																	set_add_to=new_set;
-																	
-																	$(".jqibox").remove();
-																	
-																	$("#set_mgr_msg").html('* Set added successfully');
-																	
-																	add_from_manager=false;
-																}else if(result.Err){
-																	$('#message').html('* '+result.Err);
-																}
-															});				
-														}
-														else{
-															$('#message').html('* '+new_set+' already exists. Please enter another name of set');
-														}
+														saveNewSet(new_set, "message");
 													}
 													else{
 														$('#message').html('* Please enter name of new set');
@@ -260,6 +224,7 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
 										submit:function(e,v,m,f){ 
 											console.log(f);
 											if(v==1) {
+												var del_id=$("#selected_uuids").val();
 												var dataString = 'deleteuuid='+del_id;
 
 													$.ajax({
@@ -270,8 +235,8 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
 													cache: false,
 													success: function(html)
 													{
-														if(html.Result){		
-															//alert(html.Result);
+														if(html.Result){	
+															$("#selected_uuids").val("");	
 															$.prompt.close();	
 															if(checkAllFlag==true){
 																$("#Select").trigger('click');
@@ -305,7 +270,7 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); $('#setManagerMsg').html('');">&times;</button>
 				<h3 class="modal-title">Set Manager</h3>
 			</div>
 			<div class="modal-body">
@@ -321,13 +286,19 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
 						<!--4DENDLOOP-->
 						</select>
 					</div>
-					
+					<h3>Add new set</h3>
+					<div class="row"><div class="col-md-12" id="setManagerMsg" style="color:#CC0000;"></div></div>
+					<div class="row">
+						<div class="col-md-8">
+							<input class="form-control" type="text" name="add_new_set_name" id="add_new_set_name" value="userset_1">
+						</div>
+						<div class="col-md-4">
+							<button type="button" class="btn btn-info sm-btn" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); $('#setManagerMsg').html('');add_new_set()">Add new Set</button>
+						</div>
+					</div>
 				</form>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-primary sm-btn" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); add_new_set()">Add new Set</button>
-				
-				
 				<button type="button" class="btn btn-primary sm-btn" style="margin-left:0px;" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); load_from_set($('#sets_list').val(), $('#sets_list option:selected').text())">Load</button>
 				<div class="btn-group">
 				<button type="button" class="btn btn-primary sm-btn" >Delete</button>
@@ -335,11 +306,11 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
         <span class="caret"></span>
           </button>
       <ul class="dropdown-menu" role="menu" style="text-align:left">
-        <li><a href="javascript:void(0)" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); del_set($('#sets_list').val(),$('#sets_list option:selected').text(),1)">Delete Selected Set</a></li>
-		 <li><a href="javascript:void(0)" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); del_set($('#sets_list').val(),$('#sets_list option:selected').text(),2)">Delete Contacts in selected set</a></li>
+        <li><a href="javascript:void(0)" onClick=" $('#setManagerMsg').html(''); $('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); del_set($('#sets_list').val(),$('#sets_list option:selected').text(),1)">Delete Selected Set</a></li>
+		 <li><a href="javascript:void(0)" onClick=" $('#setManagerMsg').html(''); $('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); del_set($('#sets_list').val(),$('#sets_list option:selected').text(),2)">Delete Contacts in selected set</a></li>
 		 </ul>
 		 </div>
-				<button type="button" class="btn btn-default sm-btn" data-dismiss="modal">OK</button>
+				<button type="button" class="btn btn-default sm-btn" data-dismiss="modal" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); $('#setManagerMsg').html('');">OK</button>
 			</div>
 		</div>
 	</div>
@@ -350,7 +321,6 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
 <script src="js/basictable.js"></script>
 <script>
 var JSONdata;
-var selected='';
 var start=0, end=50;
 var old_srch='',keyword='', jsonRow='', tab='', set='';
 var tablname='Contacts';
@@ -359,12 +329,11 @@ var add_from_manager=false;
 var completeScroll=false;
 var selected_set='<!--#4DVAR _HIT_WebApp_GetField ("set") -->';
 var setUUID='<!--#4DVAR _HIT_WebApp_GetField ("set_uuid") -->';
-var del_id;
 var checkAllFlag=false;
 
 function __showContactForm_AddSet(val, name){
 	if(name!=''){
-		selected='';
+		var selected='';
 		$('.check').each(function(){
 			if($(this).is(":checked")){
 				if(selected==''){
@@ -377,6 +346,7 @@ function __showContactForm_AddSet(val, name){
 		
 		});
 		if(selected!='' || add_from_manager==true){
+			$("#selected_uuids").val(selected);
 			if(val=='new_set'){		
 				code = $('#new_set_prompt').text();
 				(new Function(code))();	
@@ -389,6 +359,7 @@ function __showContactForm_AddSet(val, name){
 				jsonRow = 'loadcontacts.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab+'&selected='+selected+'&set=add_to_'+name+'&setUUID='+setUUID;
 				$.getJSON(jsonRow,function(result){
 					if(result.Alert){
+						$("#selected_uuids").val("");
 						code = $('#load_prompt').text();
 						(new Function(code))();
 					}
@@ -437,9 +408,65 @@ function show_load_prompt(){
 	(new Function(code))();
 }
 
+
+function saveNewSet(new_set, errorMessageDiv){
+	if(new_set!=''){
+		var exist=false;
+		$('#add_sets option').each(function() {
+			if(new_set.toLowerCase()==$(this).text().toLowerCase()){
+				exist=true;
+			}
+		});
+		if(exist==false){
+			if(add_from_manager==true){
+				jsonRow = 'addDelContactsSets.cgi?tablname='+tablname+'&set='+new_set;
+			} else{
+				var selectedUUIDS=$("#selected_uuids").val();
+				jsonRow = 'loadcontacts.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab+'&selected='+selectedUUIDS+'&set=add_to_'+new_set;
+			}
+			
+			$.getJSON(jsonRow,function(result){
+				if(result.setUUID){
+					$('#add_new_set_name').val("");
+					$('#opt_new_set').before('<option value="'+result.setUUID+'">'+new_set+'</option>');
+					$('#add_sets').val(result.setUUID);
+					$('#sets_list').prepend('<option value="'+result.setUUID+'" >'+ new_set+'</option>');
+					selected_set=new_set;
+					setUUID=result.setUUID;
+					$("#selected_uuids").val("");
+					$(".jqibox").remove();
+					show_load_prompt();
+				}else if(result.Succ){
+					$(".jqibox").remove();
+					$('#add_new_set_name').val("");
+					$('#opt_new_set').before('<option value="'+result.UUID+'">'+new_set+'</option>');
+					$('#sets_list').prepend('<option value="'+result.UUID+'" >'+ new_set+'</option>');
+					set_add_to=new_set;
+					$("#selected_uuids").val("");
+					$("#set_mgr_msg").html('* Set added successfully');
+					add_from_manager=false;
+				}else if(result.Err){
+					$('#'+errorMessageDiv).html('* '+result.Err);
+				}
+			});				
+		} else {
+			$('#'+errorMessageDiv).html('* '+new_set+' already exists. Please enter another name of set');
+		}
+	} else {
+		$('#'+errorMessageDiv).html('* Please enter name of new set');
+		$('#add_new_set_name').focus();
+		$('#new_set').focus();
+	}
+}
 function add_new_set(){
 	add_from_manager=true;
-	__showContactForm_AddSet('new_set','new_set');
+	var new_set=$('#add_new_set_name').val().trim();
+	if(new_set!=''){
+		saveNewSet(new_set, "setManagerMsg");
+	} else {
+		$('#setManagerMsg').html('* Please enter name of new set');
+		$('#add_new_set_name').focus();
+	}
 }
 
 function load_from_set(val, name){
@@ -718,7 +745,7 @@ window.location.href=pUrlStr;
 
 function __deleteSelected(deleteuuid)
 {
-del_id=deleteuuid;
+$("#selected_uuids").val(deleteuuid);
 code = $('#del_prompt').text();
 (new Function(code))();
 

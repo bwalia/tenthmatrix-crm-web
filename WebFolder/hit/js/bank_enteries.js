@@ -241,9 +241,51 @@ function show_load_prompt(){
 
 function add_new_set(){
 	add_from_manager=true;
-	//__showForm_AddSet('new_set','new_set');
-	code = $('#new_set_prompt').text();
-	(new Function(code))();
+	var new_set=$('#add_new_set_name').val().trim();
+	if(new_set!=''){
+		var exist=false;
+		$('#add_sets option').each(function() {
+			if(new_set.toLowerCase()==$(this).text().toLowerCase()){
+				exist=true;
+			}
+		});
+		if(exist==false){
+			if(add_from_manager==true)	{
+				jsonRow = 'addDelBankEnteriesSets.cgi?tablname='+tablname+'&set='+new_set;
+			}	else	{
+				jsonRow = 'load_bankenteriesnew.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&selected='+selected+'&set=add_to_'+new_set;
+			}
+															$.getJSON(jsonRow,function(result){
+																if(result.setUUID){
+																	$('#add_new_set_name').val("");
+																	$('#opt_new_set').before('<option value="'+result.setUUID+'">'+new_set+'</option>');
+																	$('#add_sets').val(result.setUUID);
+																	$('#sets_list').prepend('<option value="'+result.setUUID+'" >'+ new_set+'</option>');
+																	selected_set=new_set;
+																	setUUID=html.setUUID;
+																	show_load_prompt();
+																}
+																else if(result.Succ){
+																	$('#add_new_set_name').val("");
+																	$('#opt_new_set').before('<option value="'+result.UUID+'">'+new_set+'</option>');
+																	
+																	$('#sets_list').prepend('<option value="'+result.UUID+'" >'+ new_set+'</option>');
+																	set_add_to=new_set;
+																	
+																	$("#set_mgr_msg").html('* Set added successfully');
+																	
+																	add_from_manager=false;
+																}else if(result.Err){
+																	$('#setManagerMsg').html('* '+result.Err);
+																}
+															});				
+		} else {
+			$('#setManagerMsg').html('* '+new_set+' already exists. Please enter another name of set');
+		}
+	} else {
+		$('#setManagerMsg').html('* Please enter name of new set');
+		$('#add_new_set_name').focus();
+	}
 }
 
 function load_from_set(val, name){

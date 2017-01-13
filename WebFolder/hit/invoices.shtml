@@ -18,7 +18,9 @@ end if
 <head>
 <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
 <style>
-
+#message {
+	color: #CC0000;
+}
 	.jqibox {
 		z-index:9999!important;
 	}
@@ -156,6 +158,7 @@ end if
 			</div>
 			
         	<div CLASS="row">
+        		<input id="selectedInvoices" value="" type="hidden">
             	<div class="content table-responsive table-full-width">
 		 			<div class="table-responsive" style="border:none;" >
                          <table class="table table-striped  table-bordered table-hover custom-tbl-st bt" id="table-breakpoint"  style="background-color: rgb(255, 255, 255); border-radius: 4px;display:none;" >
@@ -217,57 +220,15 @@ end if
 									var statesdemo = {
 										state0: {
 											title: 'Please enter name of new set',
-											html:'&lt;div id="message"&gt;&lt;/div&gt;&lt;input type="text" name="new_set" id="new_set" class="form-control" value="userset_1"&gt;&lt;br /&gt;',
+											html:'&lt;div id="message" &gt;&lt;/div&gt;&lt;input type="text" name="new_set" id="new_set" class="form-control" value="userset_1"&gt;&lt;br /&gt;',
 											buttons: { Cancel : 0, Ok: 1 },
 											focus: "#new_set",																		
 											submit:function(e,v,m,f){ 
-												//console.log(f);
 												if(v==1) {
 													e.preventDefault();
 													var new_set=$('#new_set').val().trim();
 													if(new_set!=''){
-														var exist=false;
-														$('#add_sets option').each(function() {
-															if(new_set.toLowerCase()==$(this).text().toLowerCase()){
-																exist=true;
-															}
-														});
-														if(exist==false){
-															if(add_from_manager==true){
-																jsonRow = 'addDelInvoicesSets.cgi?tablname='+tablname+'&set='+new_set;
-															}
-															else{
-																jsonRow = 'loadinvoices.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab+'&selected='+selected+'&set=add_to_'+new_set;
-																jsonRow +=ccode_params;
-															}
-															$.getJSON(jsonRow,function(result){
-																if(result.setUUID){
-																	$('#opt_new_set').before('&lt;option value="'+result.setUUID+'"&gt;'+new_set+'&lt;/option&gt;');
-																	$('#add_sets').val(result.setUUID);
-																	$('#sets_list').prepend('&lt;option value="'+result.setUUID+'" &gt;'+ new_set+'&lt;/option&gt;');
-																	$(".jqibox").remove();
-																	show_load_prompt();
-																}
-																else if(result.Succ){
-																	$('#opt_new_set').before('&lt;option value="'+result.UUID+'"&gt;'+new_set+'&lt;/option&gt;');
-																	
-																	//$('#load_sets').append('&lt;option value="'+result.UUID+'" &gt;'+ new_set+'&lt;/option&gt;');
-																	$('#sets_list').prepend('&lt;option value="'+result.UUID+'" &gt;'+ new_set+'&lt;/option&gt;');
-																	set_add_to=new_set;
-																	
-																	$(".jqibox").remove();
-																	
-																	$("#set_mgr_msg").html('* Set added successfully');
-																	
-																	add_from_manager=false;
-																}else if(result.Err){
-																	$('#message').html('* '+result.Err);
-																}
-															});				
-														}
-														else{
-															$('#message').html('* '+new_set+' already exists. Please enter another name of set');
-														}
+														saveNewSet(new_set, "message");
 													}
 													else{
 														$('#message').html('* Please enter name of new set');
@@ -342,6 +303,7 @@ end if
 													return false;
 												}
 												if(v==1) {
+													var deleteuuid=$("#selectedInvoices").val();
 													var dataString = 'delete_uuid='+deleteuuid+'&action=sin&delete_receipt=yes';
 													$.ajax({
 														type: "GET",
@@ -356,13 +318,14 @@ end if
 																end=50;
 																
 																$('#content_table').html('');
-																	
+																$("#selectedInvoices").val('');
 																refreshFunction();
 															}
 														}
 													});
 												}
 												if(v==0) {
+													var deleteuuid=$("#selectedInvoices").val();
 													var dataString = 'delete_uuid='+deleteuuid+'&action=sin';
 													$.ajax({
 														type: "GET",
@@ -375,7 +338,7 @@ end if
 																$.prompt.close();				
 																start=0;
 																end=50;
-																
+																$("#selectedInvoices").val('');
 																$('#content_table').html('');
 																refreshFunction();
 															}
@@ -394,7 +357,7 @@ end if
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); $('#setManagerMsg').html('');">&times;</button>
 				<h3 class="modal-title">Set Manager</h3>
 			</div>
 			<div class="modal-body">
@@ -410,25 +373,32 @@ end if
 						<!--4DENDLOOP-->
 						</select>
 					</div>
-					
+					<h3>Add new set</h3>
+						<div class="row"><div class="col-md-12" id="setManagerMsg" style="color:#CC0000;"></div></div>
+						<div class="row">
+							<div class="col-md-8">
+								<input class="form-control" type="text" name="add_new_set_name" id="add_new_set_name" value="userset_1">
+							</div>
+							<div class="col-md-4">
+								<button type="button" class="btn btn-info sm-btn" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); $('#setManagerMsg').html('');add_new_set()">Add new Set</button>
+							</div>
+						</div>
 				</form>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-primary sm-btn" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); add_new_set()">Add new Set</button>
-				
-				<button type="button" class="btn btn-primary sm-btn" style="margin-left:0px;" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); load_from_set($('#sets_list').val(), $('#sets_list option:selected').text())">Load</button>
+				<button type="button" class="btn btn-primary sm-btn" style="margin-left:0px;" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); $('#setManagerMsg').html(''); load_from_set($('#sets_list').val(), $('#sets_list option:selected').text())">Load</button>
 				<div class="btn-group">
 				<button type="button" class="btn btn-primary sm-btn" >Delete</button>
 				<button type="button" class="btn btn-primary sm-btn  dropdown-toggle" data-toggle="dropdown" >
         <span class="caret"></span>
           </button>
       <ul class="dropdown-menu" role="menu" style="text-align:left">
-        <li><a href="javascript:void(0)" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); del_set($('#sets_list').val(),$('#sets_list option:selected').text(),1)">Delete Selected Set</a></li>
+        <li><a href="javascript:void(0)" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); $('#setManagerMsg').html(''); del_set($('#sets_list').val(),$('#sets_list option:selected').text(),1)">Delete Selected Set</a></li>
          <!--<li><a href="javascript:void(0)" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); del_set($('#sets_list').val(),$('#sets_list option:selected').text(),2)">Delete Items in selected set</a></li>-->
-		 <li><a href="javascript:void(0)" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); del_set($('#sets_list').val(),$('#sets_list option:selected').text(),3)">Delete Invoices in selected set</a></li>
+		 <li><a href="javascript:void(0)" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); $('#setManagerMsg').html(''); del_set($('#sets_list').val(),$('#sets_list option:selected').text(),3)">Delete Invoices in selected set</a></li>
 		 </ul>
 		 </div>
-				<button type="button" class="btn btn-default sm-btn" data-dismiss="modal">OK</button>
+				<button type="button" class="btn btn-default sm-btn" data-dismiss="modal" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); $('#setManagerMsg').html('');">OK</button>
 			</div>
 		</div>
 	</div>
@@ -440,7 +410,6 @@ end if
     <script src="js/money.js"></script>
     
 <script type="text/javascript">
-var selected='';
 var start=0, end=50;
 var old_srch='', tab='', set='';
 var tablname='Invoices';
@@ -491,7 +460,7 @@ function __filterBy(val){
 }
 
 function __deleteMultipleEntries(){
-	selected='';
+	var selected='';
 	$('.check').each(function(){
 		if($(this).is(":checked")){
 			if(selected==''){
@@ -501,9 +470,8 @@ function __deleteMultipleEntries(){
 			}
 		}
 	});
-	
+	$("#selectedInvoices").val(selected);
 	if(selected!=""){
-		deleteuuid=selected;
 		code = $('#del_prompt').text();
 		(new Function(code))();
 	}else{
@@ -532,7 +500,7 @@ function __hideReceipts(){
 
 function __showinvoicesForm_AddSet(val,name){
 	if(name!=''){
-		selected='';
+		var selected='';
 		$('.check').each(function(){
 			if($(this).is(":checked")){
 				if(selected==''){
@@ -544,6 +512,7 @@ function __showinvoicesForm_AddSet(val,name){
 			}
 		
 		});
+		$("#selectedInvoices").val(selected);
 		if(selected!='' || add_from_manager==true){
 			if(val=='new_set'){
 				//var new_set=prompt("Please enter name of new set:","userset_1");				
@@ -552,15 +521,17 @@ function __showinvoicesForm_AddSet(val,name){
 			}
 			else
 			{
+				var selectedInvoices= $("#selectedInvoices").val();
 				start=0;
 				end=50;
 				tab='';
-				jsonRow = 'loadinvoices.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab+'&selected='+selected+'&set=add_to_'+name+'&setUUID='+setUUID;
+				jsonRow = 'loadinvoices.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab+'&selected='+selectedInvoices+'&set=add_to_'+name+'&setUUID='+setUUID;
 				jsonRow +=ccode_params;
 				$.getJSON(jsonRow,function(result){
 					if(result.Alert){
 						code = $('#load_prompt').text();
 						(new Function(code))();
+						$("#selectedInvoices").val("");
 					}
 				});
 			}
@@ -572,6 +543,56 @@ function __showinvoicesForm_AddSet(val,name){
 	}
 }
 
+function saveNewSet(new_set, errorMessageDiv){
+	if(new_set!=''){
+		var exist=false;
+		$('#add_sets option').each(function() {
+			if(new_set.toLowerCase()==$(this).text().toLowerCase()){
+				exist=true;
+			}
+		});
+		if(exist==false){
+			if(add_from_manager==true){
+				jsonRow = 'addDelInvoicesSets.cgi?tablname='+tablname+'&set='+new_set;
+			}	else{
+				var selectedInvoices= $("#selectedInvoices").val();
+				jsonRow = 'loadinvoices.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab+'&selected='+selectedInvoices+'&set=add_to_'+new_set;
+				jsonRow +=ccode_params;
+			}
+			$.getJSON(jsonRow,function(result){
+				if(result.setUUID){
+					$('#add_new_set_name').val("");
+					$('#opt_new_set').before('<option value="'+result.setUUID+'">'+new_set+'</option>');
+					$('#add_sets').val(result.setUUID);
+					$('#sets_list').prepend('<option value="'+result.setUUID+'" >'+ new_set+'</option>');
+					selected_set=new_set;
+					setUUID=result.setUUID;
+					$("#selectedInvoices").val("");
+					$(".jqibox").remove();
+					show_load_prompt();
+				}else if(result.Succ){
+					$(".jqibox").remove();
+					$('#add_new_set_name').val("");
+					$('#opt_new_set').before('<option value="'+result.UUID+'">'+new_set+'</option>');
+					$('#sets_list').prepend('<option value="'+result.UUID+'" >'+ new_set+'</option>');
+					set_add_to=new_set;
+					$("#selectedInvoices").val("");
+					$("#set_mgr_msg").html('* Set added successfully');
+					add_from_manager=false;
+				}else if(result.Err){
+					$('#'+errorMessageDiv).html('* '+result.Err);
+				}
+			});				
+		} else {
+			$('#'+errorMessageDiv).html('* '+new_set+' already exists. Please enter another name of set');
+		}
+	} else {
+		$('#'+errorMessageDiv).html('* Please enter name of new set');
+		$('#add_new_set_name').focus();
+		$('#new_set').focus();
+	}
+}
+
 function show_load_prompt(){
 	code = $('#load_prompt').text();
 	(new Function(code))();
@@ -579,7 +600,13 @@ function show_load_prompt(){
 
 function add_new_set(){
 	add_from_manager=true;
-	__showinvoicesForm_AddSet('new_set','new_set');
+	var new_set=$('#add_new_set_name').val().trim();
+	if(new_set!=''){
+		saveNewSet(new_set, "setManagerMsg");
+	} else {
+		$('#setManagerMsg').html('* Please enter name of new set');
+		$('#add_new_set_name').focus();
+	}
 }
 
 function load_from_set(val, name){
