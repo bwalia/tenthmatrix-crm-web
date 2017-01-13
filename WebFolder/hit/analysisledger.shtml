@@ -150,7 +150,7 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 																	<td><!--4DVAR [analysis_account]account_name--></td>
 																	<td><!--4DVAR [analysis_account]money_in_or_out--></td>
 																	<td><!--4DVAR [analysis_account]currency_code--></td>
-																	<td><input type="checkbox" CLASS="form-control" onchange="change_scope_of_tax(this,'<!--4DVAR [analysis_account]uuid-->')" name="is_in_scope_of_tax" <!--#4DIF ([analysis_account]is_in_scope_of_tax)-->checked<!--4DELSE--><!--4DENDIF-->/></td>
+																	<td><input type="checkbox" onchange="change_scope_of_tax(this,'<!--4DVAR [analysis_account]uuid-->')" name="is_in_scope_of_tax" <!--#4DIF ([analysis_account]is_in_scope_of_tax)-->checked<!--4DELSE--><!--4DENDIF-->/></td>
 																	</tr>
 																	<!--#4DENDLOOP-->
 																<!--#4DENDIF-->
@@ -193,8 +193,6 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 		
 		
         </section>
-		</div>
-		</div>
 		
     </div>
 	

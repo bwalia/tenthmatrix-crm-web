@@ -24,9 +24,6 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 <html>
 <head>
 	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
-	 <link href="css/bootstrap.datepicker.css" type="text/css" rel="stylesheet">
-	 <link rel="stylesheet" href="css/basictable.css">
-	<link rel="stylesheet" type="text/css" href="css/jquery.ptTimeSelect.css" />
 	<link rel="stylesheet" href="css/autocomplete.css" />
 	<style>
 	#ptTimeSelectCntr{
@@ -165,22 +162,11 @@ border: 1px solid #d3d3d3;
 </div>
 	<!-- scripts for this page -->
    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
-   	<script src="js/bootstrap.datepicker.js"></script>
-	<script src="js/basictable.js"></script>
-    <script type="text/javascript" src="js/jquery.ptTimeSelect.js"></script>
-   	
+   	<script src="js/jquery.validate.js"></script>
    	<!-- call this page plugins -->
 	  <script type="text/javascript">
         $(function () {
 
-            // add uniform plugin styles to html elements
-            $("input:checkbox").uniform();
-
-            // datepicker plugin
-            $('.datepicker').datepicker().on('changeDate', function (ev) {
-                $(this).datepicker('hide');
-            });
-			
 			$('.num').keypress(function(e){
 				var k = e.which;
 				/* numeric inputs can come from the keypad or the numeric row at the top */
