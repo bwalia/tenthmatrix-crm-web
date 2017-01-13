@@ -29,6 +29,11 @@ mUserIsCurrentBool:=userHasAccessToDelete
     top: -5px!important;
     margin: 8px 2px 0 0;
 }
+
+
+.jqibox{
+	
+}
 </style>
 </head>
 <body class="hold-transition skin-blue sidebar-mini">

@@ -23,6 +23,7 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
 <head>
 <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
 <link rel="stylesheet" href="css/basictable.css">
+ <link href="css/bootstrap.datepicker.css" type="text/css" rel="stylesheet">
 <link rel="stylesheet" href="css/autocomplete.css" />
 <style>
 #message{
@@ -270,11 +271,11 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
 						var statesdemo = {
 							state0: {
 								title: 'Download',
-								html:'&lt;div id="message"&gt;&lt;/div&gt;&lt;label&gt;Timeslip : &lt;input type="radio" class="radio_time" name="timesheet" id="week" value="week" &gt; Last Week &lt;/label&gt;'+
+								html:'&lt;div id="message"&gt;&lt;/div&gt;&lt;label&gt;Timeslip : &nbsp; &lt;input type="radio" class="radio_time" name="timesheet" id="week" value="week" &gt; &nbsp; Last Week &lt;/label&gt;'+
 									'&lt;label style="padding-left:72px;"&gt;&lt;input type="radio" class="radio_time" name="timesheet" id="month" value="month"&gt; Last Month &lt;/label&gt;'+
 									'&lt;label style="padding-left:72px;"&gt;&lt;input type="radio" class="radio_time" name="timesheet" id="other" value="other"&gt; Select Duration &lt;/label&gt;&lt;br /&gt;'+
-									'&lt;div id="dates" style="display:none;"&gt;&lt;label &gt;Start Date : &lt;input type="text" data-date-format="dd/mm/yyyy" name="dur_start" id="dur_start" &gt;  &lt;/label&gt;&lt;br /&gt;'+
-									'&lt;label &gt;End Date : &lt;input type="text" data-date-format="dd/mm/yyyy" name="dur_end" id="dur_end" &gt;  &lt;/label&gt;&lt;/div&gt;&lt;br /&gt;'+
+									'&lt;div id="dates" style="display:none;"&gt;&lt;label &gt;Start Date : &lt;input type="text" class="input-large datepicker time form-control" data-date-format="dd/mm/yyyy" name="dur_start" id="dur_start" &gt;  &lt;/label&gt;&lt;br /&gt;'+
+									'&lt;label &gt;End Date : &lt;input type="text" class="input-large datepicker time form-control" data-date-format="dd/mm/yyyy" name="dur_end" id="dur_end" &gt;  &lt;/label&gt;&lt;/div&gt;&lt;br /&gt;'+
 									'&lt;label&gt;Format &nbsp; : &lt;input type="radio" name="preview" id="preview" value="pdf"&gt; Pdf  &lt;/label&gt; '+
 									'&lt;label style="padding-left:76px;"&gt;&lt;input type="radio" name="preview" id="preview" value="excel"&gt; Excel &lt;/label&gt;&lt;br /&gt;',
 								buttons: { Cancel : 0, Ok: 1 },
@@ -346,6 +347,7 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
 </div>
 <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml-->
 <script src="js/basictable.js"></script>
+<script src="js/bootstrap.datepicker.js"></script>
 <script>
 var JSONdata, pageSize=25;
 var start=0, end=pageSize;
@@ -548,7 +550,7 @@ function load_data(jsonRow){
 					if(loggedInUser==item || pIsBookKeeper==true || pIsHitUser==true){
 						JSONdata[i][9]='<a href="javascript:void(0)" onClick="__showEmployeeForm(\''+item+'\')"><i class="fa fa-pencil"></i></a>&nbsp;<a class="hidden-xs" href="javascript:void(0)" onClick="__showDownloadPrompt(\''+item+'\',\'<!--#4DVAR _HIT_TokenGetAny-->\')"><i class="fa fa-download"></i></a>&nbsp;<a href="javascript:void(0)" onClick="__deleteSelected(\''+item+'\')"><i class="fa fa-trash"></i></a>';
 					}else{
-						JSONdata[i][9]='<a class="hidden-xs" href="javascript:void(0)" onClick="__showDownloadPrompt(\''+item+'\',\'<!--#4DVAR _HIT_TokenGetAny-->\')"><i class="fa fa-cog"></i></a>';
+						JSONdata[i][9]='<a class="hidden-xs" href="javascript:void(0)" onClick="__showDownloadPrompt(\''+item+'\',\'<!--#4DVAR _HIT_TokenGetAny-->\')"><i class="fa fa-download"></i></a>';
 					}
 				});
 				$.each(result.EmpID, function(i,item)
