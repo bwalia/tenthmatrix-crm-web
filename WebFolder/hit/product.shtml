@@ -49,6 +49,12 @@ background: #029bd3 !important;
     margin-bottom: 0px!important;
 }
 
+.tab-content > .tab-pane{
+	border:none!important;
+}
+
+
+
 
 .tab-content {
 overflow: hidden !important;
@@ -109,14 +115,19 @@ padding-bottom: 20px;
 }
 
 .chosen-container-multi .chosen-choices{
-	width:470px!important;
-	border:1px solid #ff!important;
-	border-radius:4px;
-	background:#fff!important;
-	margin-bottom: 10px;
+	width: 87% !important;
+border: 1px solid #ddd !important;
+border-radius: 4px;
+background: #fff !important;
+margin-bottom: 10px;
+line-height: 32px;
+padding-top: 6px;
 }
 .chosen-container .chosen-drop{
- width: 470px !important;
+	width: 87% !important;
+border: 1px solid #ddd !important;
+line-height: 32px;
+padding-top: 6px;
 }
 .mrgntp{
 	margin-top:10px;
@@ -216,8 +227,8 @@ border: 1px solid #edf2f7;
   							<li><a href="#tab3" data-toggle="tab">Available Options</a></li>
   							<!--#4DENDIF-->
 							</ul>
-							<div class="tab-content" STYLE="overflow: hidden;border: 1px solid #ddd;border-top: none;">
-  							<div id="tab1" class="tab-pane fade in active"><div class="col-md-8 column" style="padding-top:20px;">
+							<div class="tab-content" STYLE="overflow: hidden;border-top: none;">
+  							<div id="tab1" class="tab-pane fade in active"><div class="col-md-6 column" style="padding-top:20px;">
   							<input name="Product_uuid" class="span9" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="Product_uuid">               
                         	<div class="form-group">
                                 		<label for="" class="col-sm-3 control-label">Categories <span style="color:#6E829B">*</span></label>
@@ -262,7 +273,7 @@ border: 1px solid #edf2f7;
 									</div>
 									<!--#4DENDIF-->
             				</div>
-            				<div class=" col-sm-12 col-lg-4">
+            				<div class=" col-sm-12 col-lg-6">
 								<div class="form-group">
                                 	<label for="" class="col-sm-3 control-label">Product SKU <span style="color:#6E829B">*</span></label>
 									<div class="col-sm-9"><input class="form-control errorSkuClass" type="text" id="sku" value="<!--#4DVAR [Products]sku-->" name="sku">

@@ -50,7 +50,7 @@ end if
 
   
   .chosen-container{
-	  width: 424px !important;
+	width: 100% !important;
 }
   
 .chosen-container-multi .chosen-choices{
@@ -59,6 +59,22 @@ end if
 	border: 1px solid #d3d3d3!important;
    }
   
+  
+  .chosen-container-multi .chosen-choices{
+	width: 100% !important;
+border: 1px solid #ddd !important;
+border-radius: 4px;
+background: #fff !important;
+margin-bottom: 10px;
+line-height: 32px;
+padding-top: 6px;
+}
+.chosen-container .chosen-drop{
+	width: 100% !important;
+border: 1px solid #ddd !important;
+line-height: 32px;
+padding-top: 6px;
+}
 
 
 #InvoiceForm .custom-combobox {
@@ -98,7 +114,7 @@ end if
 						<!--#4DIF (Records in selection([Groups])=1)--><li><a data-toggle="tab" href="#second"> Assign Modules</a></li><!--#4DENDIF--> 
  					</ul>
 
-					<div class="tab-content" STYLE=" overflow: hidden;    border: 1px solid #ddd;    border-top: none;">
+					<div class="tab-content" STYLE=" overflow: hidden;       border-top: none;">
 						<div id="home" class="tab-pane fade in active" >
 						<form name="GroupForm" id="GroupForm" action="savegroup.cgi" class="form-horizontal" method="post">	
 							<div class=" col-sm-12 col-lg-8" STYLE="margin-top:20px;" >

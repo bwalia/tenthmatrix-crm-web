@@ -30,6 +30,7 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 <head>
 	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
 	<link rel="stylesheet" href="css/basictable.css">
+	<link href="css/bootstrap.datepicker.css" type="text/css" rel="stylesheet">
 	<style>
 	
 	#TravelExpenseForm em.error {
@@ -300,6 +301,7 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml-->
 
   	<script src="js/bootstrap.datepicker.js"></script>
+	
     <script src="js/basictable.js"></script>
 	<script type="text/javascript" src="js/jquery.timepicker.js"></script>
 	<script type="text/javascript" src="js/jquery-impromptu.js"></script>
