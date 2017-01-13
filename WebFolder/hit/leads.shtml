@@ -232,7 +232,7 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
 								<input class="form-control" type="text" name="add_new_set_name" id="add_new_set_name" value="userset_1">
 							</div>
 							<div class="col-md-4">
-								<button type="button" class="btn btn-info sm-btn" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); $('#setManagerMsg').html('');add_new_set()">Add new Set</button>
+								<button type="button" class="btn btn-info sm-btn" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); $('#setManagerMsg').html('');add_new_set()">Add</button>
 							</div>
 						</div>
 				</form>
