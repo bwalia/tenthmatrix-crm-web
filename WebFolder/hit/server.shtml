@@ -128,7 +128,9 @@ table td, table th { border: none!important; }
     <section class="content">
    		<div class="row">
        		<div class="panel-body no-padding-top bg-white"> 
-				<div class=" col-sm-12 col-lg-8">
+				<div class=" col-sm-12 col-lg-12">
+				<div CLASS="row">
+				<div CLASS="col-md-12">
 					<form name="ServersForm" id="ServersForm" action="saveserver.cgi" class="form-horizontal" method="post" >
 						<div class="row" >
 				 			<div class="panel-body no-padding-top bg-white" >
@@ -136,7 +138,7 @@ table td, table th { border: none!important; }
 									<li class="active"><a data-toggle="tab" href="#tabs-1">Server Details</a></li>
 									<li><a data-toggle="tab" href="#tabs-2">Active Domains on Server</a></li>
 								</ul>
-								<div class="tab-content" STYLE="overflow: hidden;border: 1px solid #ddd;border-top: none;">
+								<div class="tab-content" STYLE="overflow: hidden;border-top: none;">
 									<div id="tabs-1" class="tab-pane fade in active"><div class="col-md-8 column" style="padding-top:20px;">
 									
 										<div class="form-group">
@@ -265,6 +267,8 @@ table td, table th { border: none!important; }
 							</div>
 						</div>
 					</form>
+					</div>
+					</div>
 				</div>
 			</div>
 		</div>

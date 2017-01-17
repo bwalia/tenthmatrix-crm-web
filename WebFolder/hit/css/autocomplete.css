@@ -208,21 +208,26 @@
  }
  
  
-  
-  #PurchaseInvoiceForm .custom-combobox{
-	width: 38%!important;
-	
+ 
+ #PurchaseInvoiceForm .custom-combobox {
+    width: 95% !important;
+    top: 0px;
+    left: 1px;
 }
+ 
+ 
+  
+
 
 #PurchaseInvoiceForm .custom-combobox-input {
-    width: 95%!important;
+    width:100%!important;
 }
 
 
 
  @media(max-width:767px){
 	 #PurchaseInvoiceForm .custom-combobox{
-	width: 95%!important;
+	width: 96%!important;
 	
 }
  }

@@ -75,7 +75,7 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 					
 				<form name="TravelExpenseForm" id="TravelExpenseForm" action="savemileage.cgi" class="form-horizontal" method="post" >    
 					<!-- left column -->
-                    <div class=" col-sm-12 col-lg-8">
+                    <div class=" col-sm-12 col-lg-6">
 						    <span id="err_msg" style="color:#FF0000"></span>       
 							<div class="form-group">
     							<label for="" class="col-sm-3 control-label">Invoice Number <span style="color:#6E829B">*</span></label>
@@ -247,7 +247,7 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 							
                     </div>
 					
-					<div class=" col-sm-12 col-lg-4">
+					<div class=" col-sm-12 col-lg-6">
 						<div class="form-group">
     							<label for="" class="col-sm-3 control-label">Currency Code</label>
 							<!--#4DIF (mUserIsCurrentBool)-->
@@ -269,17 +269,17 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 						<div class="form-group">
     							<label for="" class="col-sm-3 control-label"></label>	
 								<div class="col-sm-9">
-									<label class="checkbox">
-										<input name="veh_hired" class="span9" type="checkbox" value="true" id="veh_hired" <!--#4DIF ([Mileage]Vechicle_Hired)-->checked<!--4DELSE--><!--4DENDIF--> >Vehicle Hired
-									</label> 
+									
+										<input name="veh_hired"  type="checkbox" value="true" id="veh_hired" <!--#4DIF ([Mileage]Vechicle_Hired)-->checked<!--4DELSE--><!--4DENDIF--> > Vehicle Hired
+									
 								</div>
 							</div>  
 							<div class="form-group">
     							<label for="" class="col-sm-3 control-label"></label>	
 								<div class="col-sm-9">
-									<label class="checkbox">							
-										<input name="stay_charged" class="span9" type="checkbox" value="true" id="stay_charged" <!--#4DIF ([Mileage]Accomodation_Charged)-->checked<!--4DELSE--><!--4DENDIF--> >Stay Charged
-									</label>                                                         
+													
+										<input name="stay_charged" type="checkbox" value="true" id="stay_charged" <!--#4DIF ([Mileage]Accomodation_Charged)-->checked<!--4DELSE--><!--4DENDIF--> > Stay Charged
+									                                                       
                             	</div>
 							</div>
 					</div>
