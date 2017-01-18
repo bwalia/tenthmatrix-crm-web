@@ -135,7 +135,7 @@ function __showForm_AddSet(val,name){
 			if(val=='new_set'){
 				var statesdemo = {
 					state0: {
-						title: 'Please enter name of new set',
+						title: 'Please enter name of new saved search',
 						html:'<div id="message"></div><input type="text" name="new_set" id="new_set" value="userset_1" class="form-control"><br />',
 						buttons: { Cancel : 0, Ok: 1 },
 						focus: "#new_set",																		
@@ -176,10 +176,10 @@ function __showForm_AddSet(val,name){
 											}
 										});
 									}else{
-										$('#message').html('* '+new_set+' already exists. Please enter another name of set');
+										$('#message').html('* '+new_set+' already exists. Please enter another name');
 									}
 								}else{
-									$('#message').html('* Please enter name of new set');
+									$('#message').html('* Please enter name of new saved search');
 									$('#new_set').focus();
 								}
 							}
@@ -227,7 +227,7 @@ function __showForm_AddSet(val,name){
 				});
 			}
 		}else{
-			__alertModalBox('Please select some entries to add to set!');
+			__alertModalBox('Please select some entries to add to saved searches!');
 			$('#add_sets').val('');
 		}
 	}
@@ -272,7 +272,7 @@ function add_new_set(){
 																	$('#sets_list').prepend('<option value="'+result.UUID+'" >'+ new_set+'</option>');
 																	set_add_to=new_set;
 																	
-																	$("#set_mgr_msg").html('* Set added successfully');
+																	$("#set_mgr_msg").html('* Saved search added successfully');
 																	
 																	add_from_manager=false;
 																}else if(result.Err){
@@ -280,10 +280,10 @@ function add_new_set(){
 																}
 															});				
 		} else {
-			$('#setManagerMsg').html('* '+new_set+' already exists. Please enter another name of set');
+			$('#setManagerMsg').html('* '+new_set+' already exists. Please enter another name');
 		}
 	} else {
-		$('#setManagerMsg').html('* Please enter name of new set');
+		$('#setManagerMsg').html('* Please enter name of new saved search');
 		$('#add_new_set_name').focus();
 	}
 }
@@ -293,25 +293,25 @@ function load_from_set(val, name){
 		location.href='bank_enteries.shtml?set='+name+'&set_uuid='+val;
 	}
 	else{
-		$("#set_mgr_err").html('* Please select a Set');
+		$("#set_mgr_err").html('* Please select a saved search');
 		$('#sets_list').focus();
 	}
 }
 function del_set(set_uuid, set_name, del_type){
 	if(set_uuid!='' && set_uuid!=null){
 		if(del_type==1){
-			var state_title='About to delete selected set. Are you sure you want to go ahead?';
-			var prompt_title='Deleting selected set';
+			var state_title='About to delete selected saved search. Are you sure you want to go ahead?';
+			var prompt_title='Deleting selected saved search';
 			show_del_prompt(state_title, prompt_title, set_uuid, set_name, del_type);						
 		}
 		else{
-			var state_title='About to delete bank entries permanently of the selected set. Are you sure you want to go ahead?';
-			var prompt_title='Deleting Bank statements in selected set';
+			var state_title='About to delete bank entries permanently of the selected search. Are you sure you want to go ahead?';
+			var prompt_title='Deleting Bank statements in selected search';
 			show_del_prompt(state_title, prompt_title, set_uuid, set_name, del_type);
 		}		
 	}
 	else{
-		$("#set_mgr_err").html('* Please select a Set');
+		$("#set_mgr_err").html('* Please select a saved search');
 		$('#sets_list').focus();
 	}
 }
@@ -797,10 +797,10 @@ function remove_from_set(){
 				}
 			});
 		}else{
-			__alertModalBox('Please select some entries to remove from set!');
+			__alertModalBox('Please select some entries to remove from saved search!');
 		}
 	}else{
-		__alertModalBox('Please select a set!');
+		__alertModalBox('Please select a saved search!');
 	}
 	
 }
@@ -2437,7 +2437,16 @@ function viewReceipt(num){
       }
     });
   })( jQuery );
-  
+ 
+function showHideSetManager(){
+	var a = $("input[type='checkbox'].check");
+	if(a.filter(":checked").length>=1){
+		$(".savedSearchesClass").show();
+	}else{
+		$(".savedSearchesClass").hide();
+	}
+}
+ 
 $(document).ready(function() {
 	$('select.selectpicker').on('change', function(e){
   		bank_account='', entry_type='', bill='';
@@ -2461,7 +2470,13 @@ $(document).ready(function() {
 	});
 	
 	$('#keyword').focus();
-	load_data();		 
+	load_data();	
+		 
+	//
+	$( '.table' ).on( 'click', 'input[type="checkbox"]', function() {
+		showHideSetManager();
+  	});
+  	
 	// toggle all checkboxes from a table when header checkbox is clicked
   	$(".table th input:checkbox").click(function () {
   		$checks = $(this).closest(".table").find("tbody input:checkbox");
