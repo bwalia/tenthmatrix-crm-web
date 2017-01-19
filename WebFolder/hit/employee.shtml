@@ -395,7 +395,7 @@ function set_no_of_employement_holidays(){
     // Calculate the difference in milliseconds
     var difference_ms = Math.abs(date1_ms - date2_ms)
 	
-    // Convert back to days and return
+	// Convert back to days and return
     var days = Math.round(difference_ms/ONE_DAY)
 	
 	var s_year=start_date.getFullYear();

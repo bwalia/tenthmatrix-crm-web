@@ -32,6 +32,8 @@ end if
 	<link rel="stylesheet" href="css/autocomplete.css" />
 	<link rel="stylesheet" href="css/colorbox.css" />
 	<link rel="stylesheet" href="css/basictable.css">
+	
+	<link href='css/jquery.rating.css' type="text/css" rel="stylesheet"/>
 <style>
 .custom-combobox a.ui-button, 
   .custom-combobox a.ui-widget, 
@@ -311,6 +313,7 @@ end if
   
 <!--#4DIF (Records in selection([Leads])=1)-->
  <div id="second" class="tab-pane fade col-md-12" STYLE="padding-top:20px;"  >
+ 	<a id="addcontact" class="btn btn-primary hidden-xs" >Add a row</a>
 				<div class=" table-responsive table-full-width">
 							
 		 			<div class="table-responsive" style="border:none;" >
@@ -358,9 +361,7 @@ end if
 									</td>								
 									</tr>
 		  						<!--#4DENDLOOP-->
-		  						<tr id="hiderow"  class="hidden-xs">
-		   							 <td colspan="7"><a id="addcontact" href="javascript:;" title="Add a row">Add a row</a></td>
-		  						</tr>
+		  						
 								</table>
 							</div>
 						</div>
@@ -370,6 +371,7 @@ end if
 						
 						
 	<div id="third" class="tab-pane fade col-md-12" STYLE="padding-top:20px;"  >
+		<a id="addactivity" class="btn btn-primary hidden-xs" >Add a row</a>
  		<div class=" table-responsive table-full-width">
 							
 		 			<div class="table-responsive" style="border:none;" >
@@ -416,9 +418,7 @@ end if
 									</td>								
 									</tr>
 		  						<!--#4DENDLOOP-->
-		  						<tr id="hiderow" class="hidden-xs">
-		   							 <td colspan="7"><a id="addactivity" href="javascript:;" title="Add a row">Add a row</a></td>
-		  						</tr>
+		  						
 								</table>
          </div></div>
 							

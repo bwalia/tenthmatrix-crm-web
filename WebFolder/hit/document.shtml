@@ -140,13 +140,14 @@ end if
 							<input name="doc_uuid" class="form-control" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="doc_uuid">
 							<div class="form-group">
 								<label class="col-sm-3 control-label">File Content:</label>
-								<div CLASS="col-sm-6"><input name="file_content" type="file" id="file_content">
+								<div CLASS="col-sm-6"><input name="file_content" type="file" id="file_content"></div>
+								
 								<!--#4DIF (Records in selection([Documents])=1)-->
-								 <span ><a title="Download Document <!--#4DHTMLVAR String([Documents]filename)-->" href="javascript:void(0)" onClick="download_file('<!--#4DVAR [Documents]uuid-->')">
-                                        <i class="icon-download-alt"></i>&nbsp;</a>
-                                    </span>Download
+								 <div CLASS="col-sm-3"><a title="Download Document <!--#4DHTMLVAR String([Documents]filename)-->" href="javascript:void(0)" onClick="download_file('<!--#4DVAR [Documents]uuid-->')">
+                                        <i class="fa fa-download"></i>&nbsp;</a>Download
+                                    </div>
                                 <!--#4DENDIF-->
-							</div>	</div>
+							</div>
 												
 							<div class="form-group">
 								<label class="col-sm-3 control-label">Relationship Type:</label>

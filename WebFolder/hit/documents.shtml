@@ -77,40 +77,40 @@ end if
    			<div class="row">
 	  			<div class="content table-responsive table-full-width">
 		 			<div class="table-responsive" style="border:none;" >
-                        <table class="table table-striped  table-bordered table-hover custom-tbl-st bt" id="table-breakpoint"  style="background-color: rgb(255, 255, 255); border-radius: 4px;" >
+                        <table class="table table-striped table-bordered table-hover custom-tbl-st bt" id="table-breakpoint" style="background-color: rgb(255, 255, 255); border-radius: 4px; display:none;" >
                             <thead>
                                 <tr>
-                                            <th>CLIENT</th>
-                                <th>FILE NAME</th>
-                                <th>DOCUMENT TYPE</th>
-                                <th>SIZE</th>
-                                <th>DATE MODIFIED</th>
-                                <th>DATE CREATED</th>
-								<th>ACTION</th>
-                                        </tr>
-                                    </thead>
-                                     <tfoot>
-                                        <tr>
-                                        	  <th>CLIENT</th>
-                                <th>FILE NAME</th>
-                                <th>DOCUMENT TYPE</th>
-                                <th>SIZE</th>
-                                <th>DATE MODIFIED</th>
-                                <th>DATE CREATED</th>
-								<th>ACTION</th>
-                                        </tr>
-                                    </tfoot>
-                                    <tbody id="content_table">
+                                	<th>CLIENT</th>
+                                	<th>FILE NAME</th>
+                                	<th>DOCUMENT TYPE</th>
+                                	<th>SIZE</th>
+                                	<th>DATE MODIFIED</th>
+                                	<th>DATE CREATED</th>
+									<th>ACTION</th>
+                                </tr>
+                            </thead>
+                            <tfoot>
+                            	<tr>
+                                	<th>CLIENT</th>
+                                	<th>FILE NAME</th>
+                                	<th>DOCUMENT TYPE</th>
+                                	<th>SIZE</th>
+                                	<th>DATE MODIFIED</th>
+                                	<th>DATE CREATED</th>
+									<th>ACTION</th>
+                                </tr>
+                            </tfoot>
+                            <tbody id="content_table">
                                         
-                                     </tbody>
+                            </tbody>
                         </table>
                         <div style="text-align:center">
-							<a style="width: 60%; margin-bottom: 10px; display: none;" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink " id="display_more_btn" title="Load more" onclick="load_more()" href="javascript:void(0);">
+							<a style="width: 100%; font-size:17px; display: none;" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink " id="display_more_btn" title="Load more" onclick="load_more()" href="javascript:void(0);">
 								Load more
 							</a>
         				</div>
 						<div id="img_loading_div" style="text-align:center">
-							<img src="images/loading.gif?as"  style="padding:20px;" width="34" >
+							<img src="images/loading.gif" >
 						</div>
                     </div>
 				</div>
@@ -164,24 +164,21 @@ function __deleteDocument(e){
 				cache: false,
 				success: function(html)	{
 					if(html.success){
-						$.prompt(html.success);
+						__alertModalBox(html.success);
+						$('#content_table').html('');
+						$('#table-breakpoint').basictable('destroy');
+						$('#img_loading_div').show();
+						$('#display_more_btn').hide();	
 						start=0;
-						end=25;
-						jsonRow = 'loaddocuments.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab;
-						keyword= $("#keyword_type").val();
-						if(keyword!=''){
-							jsonRow +='&keyword='+keyword;
-						}
-						$('#documents_table_body').html('');
-						$('#img_loading_div').show();		
-						load_data(jsonRow);
+						end=start+25;
+						load_data();
 					}else if(html.error){
-						$.prompt(html.error);
+						__alertModalBox(html.error);
 					}
 				}
 			});
 		}else{
-			$.prompt('This entry can\'t be deleted!');
+			__alertModalBox('This entry can\'t be deleted!');
 		}
 	}
 }
@@ -282,9 +279,9 @@ function load_data(){
 	completeScroll=true;
 	var JSONdata=new Array();
 	$.getJSON(jsonRow,function(result){
+		$('#table-breakpoint').show();
 			if(result.Alert){
-				$(".jqibox").remove();
-				$.prompt('No more records found!');
+				__alertModalBox('No more records found!');
 				complete=true;
 				$('#display_more_btn').hide();
 				$('#table-breakpoint').basictable({

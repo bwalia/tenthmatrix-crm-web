@@ -65,6 +65,23 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
 				<div CLASS="col-md-12">
 					<div class="clearfix hidden-xs">
       					<div class="form-group no-margin">
+      						<div class="pull-left margin-bottom-10 ">
+      							<div class="form-inline" style="">
+      								
+                    				<!--#4DIF (_HIT_WebApp_GetField ("keyword")#"load_@")-->Select employees and assign to manager : 
+									<div class="btn-inline display-inline-block">
+										<input type="hidden" name="selected" id="selected" value="">
+										<select class="form-control" name="sets" onChange="__showemployeeForm_Selectmanager(this.value)" id="add_sets">
+											<option value="">--Select Manager--</option>
+											<!--#4DSCRIPT/Web_LoadManager/-->
+											<!--4DLOOP  [Employees]-->									
+												<option value="<!--#4DHTMLVAR [Employees]uuid-->" ><!--#4DHTMLVAR [Employees]emp_first_name-->  <!--#4DHTMLVAR [Employees]emp_last_name--></option>
+											<!--4DENDLOOP-->
+										</select>
+									</div>
+									<!--#4DELSE--><!--#4DENDIF-->
+								</div>
+							</div>
      						<div class="pull-right margin-bottom-10 ">
 								<div class="form-inline" style="">                 	          
                  					<div class="btn-inline display-inline-block">
@@ -73,9 +90,9 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
 										
 										<button class="btn btn-left-align btn-link no-shadow bg-transparent no-padding-top padding-right-10 right-auto left" type="button" id="searchBtn"><i class="glyphicon glyphicon-search"></i></button>
 									</div>
-									<button class="btn btn-primary btn-left" onClick="__filterResults(''); return false;">All</button>                               
-									<button class="btn btn-primary  btn-middle" onClick="__filterResults('active'); return false;">Active</button>                      
-									<button class="btn btn-primary  btn-middle" onClick="__filterResults('inactive'); return false;">In Active</button>
+									<button class="btn btn-primary btn-left FilterBtn" onClick="__filterResults(''); return false;">All</button>                               
+									<button class="btn btn-primary  btn-middle activeFilterBtn" onClick="__filterResults('active'); return false;">Active</button>                      
+									<button class="btn btn-primary  btn-right inactiveFilterBtn" onClick="__filterResults('inactive'); return false;">In Active</button>
                                     <!--#4DIF ((IsUserBookKeeper) | (IsUserAdmin))-->
                                     <a href="employee.shtml" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink " style=""> <i class="fa fa-plus"></i>Add New Employee</a>
                                     <!--#4DENDIF-->
@@ -84,14 +101,15 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
       					</div>
      				</div>
      				<input id="keyword" name="keyword" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" type="hidden">
+     				<input id="selected_uuids" name="selected_uuids" value="" type="hidden">
 					<div class="visible-xs ">
 						<div class="row">
 							<div class="col-lg-6 col-sm-12 col-xs-12">
 								<div>
 									<input class="form-control xs-margin-btm10 searchFieldClass" id="small_screen_keyword" name="keyword" placeholder="Search here.." value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" type="text">
-                     				<button class="btn btn-primary btn-color padingmix  btn-icon-left btn-sm editorLink" STYLE="width:100%; margin:10px 0px;" onClick="__filterResults(''); return false;">All</button>
-                     				<button class="btn btn-primary btn-color padingmix  btn-icon-left btn-sm editorLink" STYLE="width:100%; margin:10px 0px;" onClick="__filterResults('active'); return false;">Active</button>  
-                     				<button class="btn btn-primary btn-color padingmix  btn-icon-left btn-sm editorLink" STYLE="width:100%; margin:10px 0px;" onClick="__filterResults('inactive'); return false;">In Active</button>  
+                     				<button class="btn btn-primary btn-color padingmix  btn-icon-left btn-sm editorLink FilterBtn" STYLE="width:100%; margin:10px 0px;" onClick="__filterResults(''); return false;">All</button>
+                     				<button class="btn btn-primary btn-color padingmix  btn-icon-left btn-sm editorLink activeFilterBtn" STYLE="width:100%; margin:10px 0px;" onClick="__filterResults('active'); return false;">Active</button>  
+                     				<button class="btn btn-primary btn-color padingmix  btn-icon-left btn-sm editorLink inactiveFilterBtn" STYLE="width:100%; margin:10px 0px;" onClick="__filterResults('inactive'); return false;">In Active</button>  
                      				<!--#4DIF ((IsUserBookKeeper) | (IsUserAdmin))-->
                      					<a href="employee.shtml" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink" STYLE="width:100%; margin:10px 0px;"> <i class="fa fa-plus"></i>Add New Employee</a>    
                   				 	<!--#4DENDIF-->
@@ -105,7 +123,7 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
         	<div CLASS="row">
             	<div class="content table-responsive table-full-width">
 		 			<div class="table-responsive" style="border:none;" >
-                         <table class="table table-striped  table-bordered table-hover custom-tbl-st bt" id="table-breakpoint"  style="background-color: rgb(255, 255, 255); border-radius: 4px;" >
+                         <table class="table table-striped  table-bordered table-hover custom-tbl-st bt" id="table-breakpoint"  style="background-color: rgb(255, 255, 255); border-radius: 4px; display:none" >
                             <thead>
                                 <tr>
                                 	<th class="hidden-xs"><input name="select" class="" type="checkbox" id="chk_all" ></th>
@@ -138,17 +156,18 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
                             </tbody>
                         </table>
                         <div style="text-align:center">
-							<a style="width: 60%; margin-bottom: 10px; display: none;" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink " id="display_more_btn" title="Load more" onclick="load_more()" href="javascript:void(0);">
+							<a style="width: 100%; font-size:17px; display: none;" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink " id="display_more_btn" title="Load more" onclick="load_more()" href="javascript:void(0);">
 								Load more
 							</a>
         				</div>
 						<div id="img_loading_div" style="text-align:center">
-							<img src="images/loading.gif?as"  style="padding:20px;" width="34" >
+							<img src="images/loading.gif" >
 						</div>
+						<input id="employee_uuid" type="hidden" value="">
+						<input id="token" type="hidden" value="">
                  	</div>
                 	<!-- end timeslips table -->
 				</div>
-        	</div>
         	</div>
         </section>
     </div>
@@ -178,25 +197,6 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
 									$.prompt(statesdemo);
 								</pre>
 								
-			<pre class="code" style="display:none;" id="valid_prompt">
-									var statesdemo = {
-										state0: {
-											title: 'Please Select atleast one Employee',
-											html:'',
-											buttons: { OK: 1 },																		
-											submit:function(e,v,m,f){ 
-												//console.log(f);
-												if(v==1) {
-													$.prompt.close();
-												}
-												
-											}
-										},
-										
-									};
-									if(!($(".jqibox").length))
-									$.prompt(statesdemo);
-								</pre>
 		<pre class="code" style="display:none;" id="del_prompt">
 		var html='';
 		if(managerUUID!=''){
@@ -250,6 +250,9 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
 																	$('#table-breakpoint').basictable('destroy');
 																	$('#img_loading_div').show();					
 																	load_data();
+																}else if(html.Err){
+																	$.prompt.close();
+																	__alertModalBox(html.Err);
 																}
 															}
 														});
@@ -390,31 +393,21 @@ cache: false,
 success: function(html)
 {
  if(html.MessageAlert){		
-	//alert(html.MessageAlert);
 	message= html.MessageAlert;
 	 code = $('#load_prompt').text();
 	(new Function(code))();
   }
-	
-	/*if(html.nManagerName){
-	var ManagerName = html.nManagerName;
-	var ManagerUUID = html.nManagerUUID;
-	pUrlStr='employees.shtml?manager='+ManagerName+'&manageruuid='+ManagerUUID;
-	window.location.href=pUrlStr;
-  }*/
 }
 });}
 else{
-//alert("Please Select atleast one Employee");
-code = $('#valid_prompt').text();
-	(new Function(code))();
+__alertModalBox('Please Select atleast one Employee');
 }
 }
 }
 
 function __deleteSelected(del_uuid){
 	selected= del_uuid;
-	 code = $('#del_prompt').text();
+	code = $('#del_prompt').text();
 	(new Function(code))();
 }
 
@@ -422,6 +415,8 @@ function __filterResults(val){
 	start=0;
 	end=pageSize;
 	tab=val;
+	$(".btn").prop("disabled", false);
+	$("."+val+"FilterBtn").prop("disabled", true);
 	$('#load_content').html('');
 	$('#display_more_btn').hide();	
 	$('#table-breakpoint').basictable('destroy');
@@ -430,7 +425,7 @@ function __filterResults(val){
 }
 
 $(document).ready(function() {
-
+	$(".FilterBtn").prop("disabled", true);
 	$('#keyword_type').focus();
 	load_data();	
 	
@@ -532,9 +527,9 @@ function load_data(jsonRow){
 				jsonRow +='&tab='+tab;
 			}		
 	$.getJSON(jsonRow,function(result){
+		$('#table-breakpoint').show();
 			if(result.Alert){
-				$(".jqibox").remove();
-				$.prompt('No more records found');
+				__alertModalBox('No more records found!');
 				complete=true;
 				$('#display_more_btn').hide();
 				$('#table-breakpoint').basictable({
@@ -559,8 +554,7 @@ function load_data(jsonRow){
 				});	
 				$.each(result.EmpName, function(i,item)
 				{	
-					var empname = item.substr(0,item.indexOf(' ')); 
-					JSONdata[i][2]='<a target="_blank"  href="employees.shtml?keyword='+empname+'">'+item+'</a>';
+					JSONdata[i][2]=item;
 						
 				}); 
 				$.each(result.Position, function(i,item)

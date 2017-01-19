@@ -26,11 +26,7 @@ end if
 <html>
 <head>
 	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
-	 <link href="css/bootstrap.datepicker.css" type="text/css" rel="stylesheet">
-	<link rel="stylesheet" type="text/css" href="css/jquery.ptTimeSelect.css" />
 	<link rel="stylesheet" href="css/autocomplete.css" />
-	<link rel="stylesheet" href="css/basictable.css">
-	<link rel="stylesheet" href="css/chosen.css">
 <style>
 .custom-combobox a.ui-button, 
   .custom-combobox a.ui-widget, 
@@ -164,7 +160,7 @@ end if
 							<div class="form-group">
 								<label class="col-sm-2 control-label">Send Message </label>
 								<div class="wysi-column col-sm-6" id="div_wysiwyg">
-<textarea id="html_Message_Body" class="form-control wysihtml5" rows="10"  name="Message_Body"><!--#4DHTMLVAR [_emailc_queue]_email_body_html--></textarea>
+<textarea id="html_Message_Body" class="form-control" rows="10"  name="Message_Body"><!--#4DHTMLVAR [_emailc_queue]_email_body_html--></textarea>
                                 </div>
 								
 								</div>
@@ -198,12 +194,9 @@ end if
   	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/top-footer.shtml-->
 </div>
 <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml-->
-	<script src="js/basictable.js"></script>
-	<script src="js/bootstrap.datepicker.js"></script>
 	<script src="js/jquery.validate.js"></script>
-	<script src="js/chosen.jquery.js" type="text/javascript"></script>
+	<script src='tinymce/tinymce.min.js'></script>
 	
-
 	<!-- call this page plugins -->
 	
 <script language="javascript">
@@ -253,18 +246,17 @@ function Save_Mail()
 </script>
 <script type="text/javascript">
 	$(function () {
-		 
-		$('.datepicker').datepicker().on('changeDate', function(){
-          $(this).blur();
-        });
-		
-		// add uniform plugin styles to html elements
-            $("input:checkbox, input:radio").uniform();
-		
-		 $(".wysihtml5").wysihtml5({
-                "font-styles": false
-            });
-			
+tinymce.init({
+  selector: '#html_Message_Body',  // change this value according to your HTML
+  height: 500,
+  menubar: false,
+  plugins: [
+    'advlist autolink lists link image charmap print preview anchor',
+    'searchreplace visualblocks code fullscreen',
+    'insertdatetime media table contextmenu paste code'
+  ],
+  toolbar: 'undo redo | insert | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image'
+});	
 		$('#Message_Body').hide();
 			
 		$('#send_html_mail').change(function(){
@@ -479,9 +471,7 @@ function Save_Mail()
   $(function() {
     $( "#ToEmailAddress" ).combobox();
     $( "#CCToEmailAddress" ).combobox();
-    $( "#BCCToEmailAddress" ).combobox();
-   $( "#Client_ID" ).combobox();
-	
+    $( "#BCCToEmailAddress" ).combobox();	
   });
 
   </script>

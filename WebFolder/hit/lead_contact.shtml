@@ -187,11 +187,11 @@ end if
 							</div>
  							<div class="form-group">
     							<label for="" class="col-sm-3 control-label"></label>
-								<div class="col-sm-4"><label class="checkbox" style="width:auto">							
-									<input name="dont_Email"  type="checkbox" value="true" id="dont_Email" <!--#4DIF ([Lead_Contacts]dontEmail)-->checked<!--4DELSE--><!--4DENDIF--> >Do not Email
+								<div class="col-sm-4"><label>							
+									<input name="dont_Email"  type="checkbox" value="true" id="dont_Email" <!--#4DIF ([Lead_Contacts]dontEmail)-->checked<!--4DELSE--><!--4DENDIF--> > Do not Email
 								</label></div>
-								<div class="col-sm-5"><label class="checkbox" style="width:auto">							
-									<input name="Transferred_to_CC" type="checkbox" value="true" id="Transferred_to_CC" <!--#4DIF ([Lead_Contacts]Transferred to CC)-->checked<!--4DELSE--><!--4DENDIF--> >Transferred to CC
+								<div class="col-sm-5"><label>							
+									<input name="Transferred_to_CC" type="checkbox" value="true" id="Transferred_to_CC" <!--#4DIF ([Lead_Contacts]Transferred to CC)-->checked<!--4DELSE--><!--4DENDIF--> > Transferred to CC
 								</label>   </div>                                                          
 
                             </div>

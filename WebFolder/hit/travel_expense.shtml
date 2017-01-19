@@ -225,14 +225,14 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 							<div class="form-group">
     							<label for="" class="col-sm-3 control-label">Job Description</label>
     							<div class="col-sm-9">	
-									<textarea class="form-control" name="job_desc" id="job_desc" rows="5"><!--#4DVAR [Mileage]Job_Description--></textarea>
+									<textarea class="form-control" name="job_desc" id="job_desc" rows="3"><!--#4DVAR [Mileage]Job_Description--></textarea>
 								</div>
 							</div>
 							
 							<div class="form-group">
     							<label for="" class="col-sm-3 control-label">Internal Notes</label>
     							<div class="col-sm-9">
-									<textarea class="form-control" name="notes" id="notes" rows="5"><!--#4DVAR [Mileage]Sfaff_Notes--></textarea>
+									<textarea class="form-control" name="notes" id="notes" rows="3"><!--#4DVAR [Mileage]Sfaff_Notes--></textarea>
 								</div>
 							</div>
 							<div class="form-group">

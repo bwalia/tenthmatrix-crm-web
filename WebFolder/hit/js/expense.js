@@ -94,7 +94,7 @@ function update_tax()
 function update_total()
 {
 	var total=0;
-	$('#items tr.item-row').each(function(){
+	$('.items tr.item-row').each(function(){
 		//alert($(this).find('.s_amount').html());
 		total+=Number($(this).find('.s_amount').html());					   
 	});

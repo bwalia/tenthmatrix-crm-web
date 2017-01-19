@@ -105,7 +105,7 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 		<section class="content">
 		<div class="container-fluid">
             <div id="pad-wrapper" class="form-page">
-				
+				<div class="panel-body no-padding-top bg-white">
 		
 				<form name="OrderForm" id="OrderForm" action="savepurchaseorder.cgi" class="form-horizontal" method="post" >
 					<div class="row" style="margin-bottom:5px;">
@@ -300,6 +300,7 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 					</div>
 					<!-- tabs div-->
 				</form>
+				</div>
             </div>
         </div>
         </section>

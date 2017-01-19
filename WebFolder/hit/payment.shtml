@@ -102,7 +102,7 @@ _HIT_WebSession_SetVar ("last-payment-uuid";_HIT_WebApp_GetField ("uuid"))
 		
 		<section>
 		
-		
+		<div class="row">
 		<div class="row-fluid form-wrapper">
 					<!-- left column -->
                     <div class="col-sm-8">
@@ -122,7 +122,7 @@ _HIT_WebSession_SetVar ("last-payment-uuid";_HIT_WebApp_GetField ("uuid"))
 							</div>							
 							<div class="form-group">
 								<label class="col-sm-3 control-label">Date <span style="color:#6E829B">*</span></label>
-							<div CLASS="col-sm-6">	<input name="date_received" class="input-large datepicker form-control" type="text" data-date-format="dd/mm/yyyy" <!--#4DIF ([Payments]date_paid=!00/00/00!)-->value=""<!--4DELSE-->value="<!--#4DVAR [Payments]date_paid-->"<!--4DENDIF--> id="date_received" readonly>
+							<div CLASS="col-sm-6"><input name="date_received" class="input-large datepicker form-control" type="text" data-date-format="dd/mm/yyyy" <!--#4DIF ([Payments]date_paid=!00/00/00!)-->value=""<!--4DELSE-->value="<!--#4DVAR [Payments]date_paid-->"<!--4DENDIF--> id="date_received" readonly>
 							</div></div>
                   
 							<div class="form-group">
@@ -177,7 +177,7 @@ _HIT_WebSession_SetVar ("last-payment-uuid";_HIT_WebApp_GetField ("uuid"))
 						</form>
                     </div>
 				</div>
-		
+			</div>
 		</section>
 		</div>
 		
