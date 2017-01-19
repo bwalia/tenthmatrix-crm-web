@@ -84,6 +84,7 @@ end if
 				</div>
 			</div>
 			<input id="keyword" name="keyword" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" type="hidden">
+			<input id="selected_uuids" name="selected_uuids" value="" type="hidden">
    			<div class="row">
 	  			<div class="content table-responsive table-full-width">
 		 			<div class="table-responsive" style="border:none;" >
@@ -133,7 +134,7 @@ end if
 											buttons: { No : 0, Yes: 1 },																		
 											submit:function(e,v,m,f){ 
 												if(v==1) {
-													var dataString = 'delete_uuids='+deleteuuid;
+													var dataString = 'delete_uuids='+$("#selected_uuids").val();
 													$.ajax({
 														type: "GET",
 														dataType: "json",
@@ -143,6 +144,7 @@ end if
 														success: function(html)	{
 															if(html.success){		
 																$.prompt.close();
+																$("#selected_uuids").val('');
 																__alertModalBox(html.success);				
 																$('#content_table').html('');
 																$('#table-breakpoint').basictable('destroy');
@@ -202,7 +204,7 @@ function __deleteMultipleEntries(){
 		}
 	});
 	if(selected!=""){
-		deleteuuid=selected;
+		$("#selected_uuids").val(selected);
 		code = $('#del_prompt').text();
 		(new Function(code))();
 	}else{
@@ -210,7 +212,7 @@ function __deleteMultipleEntries(){
 	}
 }  
 function __deleteSelectedEntry(uuid){
-	deleteuuid=uuid;
+	$("#selected_uuids").val(uuid);
 	code = $('#del_prompt').text();
 	(new Function(code))();
 }
