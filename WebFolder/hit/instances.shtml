@@ -88,8 +88,6 @@ end if
 	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/top-footer.shtml-->
 </div>
 <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml-->
-  <script src="js/bootstrap.datepicker.js"></script>
-   
 <script>
 $(document).ready(function() {
 	load_data();	
@@ -106,22 +104,55 @@ function viewDetails(id ){
 	$("#displayDetails_"+id).toggle();
 }
 
+function createSubTables(value){
+	tableHtmlStr='<tr><td colspan="14" style="background:#f5fafc; position:relative;" class="tdmrgnbtm" data-th="" align="left"><span class="bt-content"><div class="payment-detail1">';
+	tableHtmlStr+='<table class="table table-hover" style="background:#fff; border-radius:5px; margin-bottom: 0px;" cellspacing="0" cellpadding="0" border="0"><tbody>';
+	var countNum=0;
+	if($.type(value)=="object"){
+		$.each(value, function(key1, value1){
+			countNum++;
+			tableHtmlStr+='<tr><td data-th=""><span class="bt-content"><strong>'+countNum+'. '+key1+'</strong></span></td><td>'+value1+'</td></tr>';
+		});
+	}else if($.type(value)=="array"){	
+		$.each(value, function(k, subArray){
+			countNum++;
+			$.each(subArray, function(key2, value2){
+				if($.type(value2)=="object" || $.type(value2)=="array"){
+					tableHtmlStr+='<tr><td data-th=""><span class="bt-content"><strong>'+countNum+'. '+key2+'</strong></span></td><td><i class="fa fa-arrow-down"></i></td></tr>';
+					tableHtmlStr+=createSubTables(value2);
+				}else{
+					tableHtmlStr+='<tr><td data-th=""><span class="bt-content"><strong>'+key2+'</strong></span></td><td>'+value2+'</td></tr>';
+				}
+			});
+		});
+	}
+	tableHtmlStr+='</tbody></table>';
+	tableHtmlStr+='</div></span></td></tr>';
+	return tableHtmlStr;
+}
+
 function load_data(){
 	var jsonRow = 'ec2_describe-instances-running_output.txt';
 	$.getJSON(jsonRow,function(result){
 		var tableHtmlStr="";
 		$.each(result.Reservations, function(i,row){
-			$.each(row.Instances, function(i,perRow){
+			$.each(row.Instances, function(j,perRow){
 				tableHtmlStr+='<tr><td>'+perRow.InstanceId+'</td><td class="hidden-xs"><a href="javascript:void(0)" onclick="viewDetails(\''+perRow.InstanceId+'\')" title="Check details"><i class="fa fa-eye" id="changeIcon_'+perRow.InstanceId+'"></i></a></td></tr>';
 				tableHtmlStr+='<tr id="displayDetails_'+perRow.InstanceId+'" class="hidden-xs" style="display:none;"><td colspan="14" style="background:#f5fafc; position:relative;" class="tdmrgnbtm" data-th="" align="left"><span class="bt-content"><div class="payment-detail">';
 				tableHtmlStr+='<table class="table table-hover" style="background:#fff; border-radius:5px; margin-bottom: 0px;" cellspacing="0" cellpadding="0" border="0"><tbody>';
 				
 				$.each(perRow, function(key, value){
 					var valueStr=value;
-				if($.type(value)=="object" || $.type(value)=="array"){
-					var valueStr=JSON.stringify(value);
-				}
-				tableHtmlStr+='<tr><td data-th=""><span class="bt-content"><strong>'+key+'</strong></span></td><td>'+valueStr+'</td></tr>';
+					
+					tableHtmlStr+='<tr><td data-th=""><span class="bt-content"><strong>'+key+'</strong></span></td>';
+					
+					if($.type(value)=="object" || $.type(value)=="array"){
+						//var valueStr=JSON.stringify(value);
+						tableHtmlStr+='<td>:</td></tr>';
+						tableHtmlStr+=createSubTables(value);
+					}	else	{
+						tableHtmlStr+='<td>'+valueStr+'</td></tr>';
+					}
 				});
 				tableHtmlStr+='</tbody></table>';
 				tableHtmlStr+='</div></span></td></tr>';
