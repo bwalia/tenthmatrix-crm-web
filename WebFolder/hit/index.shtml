@@ -51,7 +51,7 @@ _HIT_HTMLTXT:=String(Records in selection([Projects]))
 
 --></h3>
 
-              <p>Projects</p>
+              <p>Projects Scheduled</p>
             </div>
             <div class="icon">
               <i class="fa fa-tasks"></i>
@@ -88,7 +88,7 @@ RELATE MANY SELECTION([Timeslips]task_id)
 _HIT_HTMLTXT:=String(Round(Sum([Timeslips]slip_hours);2))
                             --></h3>
 
-              <p>total hour spent</p>
+              <p>Total Hours Worked</p>
             </div>
             <div class="icon">
               <i class="fa fa-clock-o"></i>
@@ -106,7 +106,7 @@ _HIT_HTMLTXT:=String(Round(Sum([Timeslips]slip_hours);2))
 _HIT_HTMLTXT:=String(Sum([Projects]budget))
                             --></h3>
 
-              <p>budget spent</p>
+              <p>Total Budget</p>
             </div>
             <div class="icon">
               <i class="fa fa-dollar"></i>
@@ -160,7 +160,7 @@ _HIT_HTMLTXT:=String(Sum([Projects]budget))
           <!-- LINE CHART -->
           <div class="box box-info">
             <div class="box-header with-border">
-              <h3 class="box-title">Expenses</h3>
+              <h3 class="box-title">Expense Report</h3>
 
               <div class="box-tools pull-right">
                 <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
@@ -178,7 +178,7 @@ _HIT_HTMLTXT:=String(Sum([Projects]budget))
          
           <div class="box box-success">
             <div class="box-header with-border">
-              <h3 class="box-title">Invoice Status</h3>
+              <h3 class="box-title">Invoices Status (Pie chart)</h3>
 
               <div class="box-tools pull-right">
                 <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
@@ -205,7 +205,7 @@ _HIT_HTMLTXT:=String(Sum([Projects]budget))
             <div class="box-header with-border">
               <i class="fa fa-bar-chart-o"></i>
 
-              <h3 class="box-title">Tasks Chart</h3>
+              <h3 class="box-title">Tasks Status</h3>
 
               <div class="box-tools pull-right">
                 <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
@@ -227,7 +227,7 @@ _HIT_HTMLTXT:=String(Sum([Projects]budget))
             <div class="box-header with-border">
               <i class="fa fa-bar-chart-o"></i>
 
-              <h3 class="box-title">Invoice Status Chart</h3>
+              <h3 class="box-title">Invoices Status (Bar chart)</h3>
 
               <div class="box-tools pull-right">
                 <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
