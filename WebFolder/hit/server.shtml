@@ -105,7 +105,8 @@ table td, table th { border: none!important; }
 	border: 1px solid red;
 }
 </style>
-	
+	<link rel="stylesheet" href="css/jquery.tag-editor.css">
+</head>
 <body class="hold-transition skin-blue sidebar-mini">
 <div class="wrapper">
 
@@ -233,6 +234,10 @@ table td, table th { border: none!important; }
 												<option value="false" <!--#4DIF ([servers]isactive=false)-->selected<!--4DELSE--><!--4DENDIF--> >InActive</option>
 											</select></div>
 										</div>
+										<div class="form-group">
+    										<label for="" class="col-sm-3 control-label">Tags</label>
+    										<textarea type="text" class="span10" name="tags" id="tags" rows="1"></textarea>
+										</div>
 									</div></div>
 									<div id="tabs-2" class="tab-pane fade col-md-12" STYLE="padding-top:20px;"  >
 										<!--#4DIF (Records in selection([servers])=1)-->
@@ -289,6 +294,8 @@ table td, table th { border: none!important; }
     <!-- datatables bootstrap integration -->
     <script src="lib/datatables/jquery.dataTables.bootstrap.min.js" type="text/javascript"></script>
 	<script src="js/jquery.validate.js"></script>
+	<script src="js/jquery.caret.min.js"></script>
+	<script src="js/jquery.tag-editor.min.js"></script>
 <script language="javascript">
 
     $(function () {
@@ -316,6 +323,19 @@ table td, table th { border: none!important; }
 			},
 		});	
 		
+		$('#tags').keypress(function(event){
+			if(event.keyCode == 13) {
+      			event.preventDefault();
+      			return false;
+   			}
+  		});
+  			
+  		$('#tags').tagEditor({
+  			delimiter: ',',
+    		placeholder: 'Enter tags ...'
+    	});
+  		
+  		
 		//*dt
 		gebo_galery_table.init();
     });
