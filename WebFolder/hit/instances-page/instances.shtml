@@ -45,33 +45,7 @@
                                 	<th>Instance ID</th><th class="hidden-xs">Show Details</th>
                                 </tr>
                             </thead>
-							
-							 <tbody>
-							 
-							 <tr>
-							 <td>i-055b76e2eb82b99f9</td>
-							  <td><i class="fa fa-eye" id="#"></i></td>
-							 </tr>
-							 
-							 
-							 <tr>
-							 <td>i-055b76e2eb82b99f9</td>
-							  <td><i class="fa fa-eye" id="#"></i></td>
-							 </tr>
-							 
-							 
-							 <tr>
-							 <td>i-055b76e2eb82b99f9</td>
-							  <td><i class="fa fa-eye" id="#"></i></td>
-							 </tr>
-							 
-							 
-							 <tr>
-							 <td>i-055b76e2eb82b99f9</td>
-							  <td><i class="fa fa-eye" id="#"></i></td>
-							 </tr>
-							 
-							 </tbody>
+							<tbody id="content_table"></tbody>
 							
                             <tfoot>
                             	<tr> 
@@ -80,25 +54,91 @@
                         	</tfoot>
                             
                         </table>
-                       
-						
-                 	</div>
+                    </div>
                 	<!-- end timeslips table -->
 				</div>
-				
-				
-				<tr id="displayDetails_i-055b76e2eb82b99f9" class="hidden-xs" style="display: table-row;"><td colspan="14" style="background:#f5fafc; position:relative;" class="tdmrgnbtm" data-th="Instance ID" align="left"><span class="bt-content"><div class="payment-detail"><table class="table table-hover" style="background:#fff; border-radius:5px; margin-bottom: 0px;" cellspacing="0" cellpadding="0" border="0"><tbody><tr><td data-th="Instance ID"><span class="bt-content"><strong>Monitoring</strong></span></td><td data-th="Show Details"><span class="bt-content">:</span></td></tr><tr><td colspan="14" style="background:#f5fafc; position:relative;" class="tdmrgnbtm" data-th="Instance ID" align="left"><span class="bt-content"><div class="payment-detail1"><table class="table table-hover" style="background:#fff; border-radius:5px; margin-bottom: 0px;" cellspacing="0" cellpadding="0" border="0"><tbody><tr><td data-th="Instance ID"><span class="bt-content"><strong>1. State</strong></span></td><td data-th="Show Details"><span class="bt-content">disabled</span></td></tr></tbody></table></div></span></td></tr><tr><td data-th="Instance ID"><span class="bt-content"><strong>PublicDnsName</strong></span></td><td data-th="Show Details"><span class="bt-content">ec2-52-214-194-118.eu-west-1.compute.amazonaws.com</span></td></tr><tr><td data-th="Instance ID"><span class="bt-content"><strong>Platform</strong></span></td><td data-th="Show Details"><span class="bt-content">windows</span></td></tr><tr><td data-th="Instance ID"><span class="bt-content"><strong>State</strong></span></td><td data-th="Show Details"><span class="bt-content">:</span></td></tr><tr><td colspan="14" style="background:#f5fafc; position:relative;" class="tdmrgnbtm" data-th="Instance ID" align="left"><span class="bt-content"><div class="payment-detail1"><table class="table table-hover" style="background:#fff; border-radius:5px; margin-bottom: 0px;" cellspacing="0" cellpadding="0" border="0"><tbody><tr><td data-th="Instance ID"><span class="bt-content"><strong>1. Code</strong></span></td><td data-th="Show Details"><span class="bt-content">16</span></td></tr><tr><td data-th="Instance ID"><span class="bt-content"><strong>2. Name</strong></span></td><td data-th="Show Details"><span class="bt-content">running</span></td></tr></tbody></table></div></span></td></tr><tr><td data-th="Instance ID"><span class="bt-content"><strong>EbsOptimized</strong></span></td><td data-th="Show Details"><span class="bt-content">false</span></td></tr><tr><td data-th="Instance ID"><span class="bt-content"><strong>LaunchTime</strong></span></td><td data-th="Show Details"><span class="bt-content">2017-01-12T14:38:45.000Z</span></td></tr><tr><td data-th="Instance ID"><span class="bt-content"><strong>PublicIpAddress</strong></span></td><td data-th="Show Details"><span class="bt-content">52.214.194.118</span></td></tr><tr><td data-th="Instance ID"><span class="bt-content"><strong>PrivateIpAddress</strong></span></td><td data-th="Show Details"><span class="bt-content">172.30.0.151</span></td></tr><tr><td data-th="Instance ID"><span class="bt-content"><strong>ProductCodes</strong></span></td><td data-th="Show Details"><span class="bt-content">:</span></td></tr><tr><td colspan="14" style="background:#f5fafc; position:relative;" class="tdmrgnbtm" data-th="Instance ID" align="left"><span class="bt-content"><div class="payment-detail1"><table class="table table-hover" style="background:#fff; border-radius:5px; margin-bottom: 0px;" cellspacing="0" cellpadding="0" border="0"><tbody></tbody></table></div></span></td></tr><tr><td data-th="Instance ID"><span class="bt-content"><strong>VpcId</strong></span></td><td data-th="Show Details"><span class="bt-content">vpc-dbd757be</span></td></tr><tr><td data-th="Instance ID"><span class="bt-content"><strong>StateTransitionReason</strong></span></td><td class="bt-hide"></td></tr><tr><td data-th="Instance ID"><span class="bt-content"><strong>InstanceId</strong></span></td><td data-th="Show Details"><span class="bt-content">i-055b76e2eb82b99f9</span></td></tr><tr><td data-th="Instance ID"><span class="bt-content"><strong>EnaSupport</strong></span></td><td data-th="Show Details"><span class="bt-content">true</span></td></tr><tr><td data-th="Instance ID"><span class="bt-content"><strong>ImageId</strong></span></td><td data-th="Show Details"><span class="bt-content">ami-ab381ed8</span></td></tr><tr><td data-th="Instance ID"><span class="bt-content"><strong>PrivateDnsName</strong></span></td><td data-th="Show Details"><span class="bt-content">ip-172-30-0-151.eu-west-1.compute.internal</span></td></tr><tr><td data-th="Instance ID"><span class="bt-content"><strong>KeyName</strong></span></td><td data-th="Show Details"><span class="bt-content">SynWindows3</span></td></tr><tr><td data-th="Instance ID"><span class="bt-content"><strong>SecurityGroups</strong></span></td><td data-th="Show Details"><span class="bt-content">:</span></td></tr><tr><td colspan="14" style="background:#f5fafc; position:relative;" class="tdmrgnbtm" data-th="Instance ID" align="left"><span class="bt-content"><div class="payment-detail1"><table class="table table-hover" style="background:#fff; border-radius:5px; margin-bottom: 0px;" cellspacing="0" cellpadding="0" border="0"><tbody><tr><td data-th="Instance ID"><span class="bt-content"><strong>GroupName</strong></span></td><td data-th="Show Details"><span class="bt-content">launch-wizard-2</span></td></tr><tr><td data-th="Instance ID"><span class="bt-content"><strong>GroupId</strong></span></td><td data-th="Show Details"><span class="bt-content">sg-98bebffd</span></td></tr></tbody></table></div></span></td></tr><tr><td data-th="Instance ID"><span class="bt-content"><strong>ClientToken</strong></span></td><td data-th="Show Details"><span class="bt-content">seVLH1484231924540</span></td></tr><tr><td data-th="Instance ID"><span class="bt-content"><strong>SubnetId</strong></span></td><td data-th="Show Details"><span class="bt-content">subnet-3b15685e</span></td></tr><tr><td data-th="Instance ID"><span class="bt-content"><strong>InstanceType</strong></span></td><td data-th="Show Details"><span class="bt-content">t2.medium</span></td></tr><tr><td data-th="Instance ID"><span class="bt-content"><strong>NetworkInterfaces</strong></span></td><td data-th="Show Details"><span class="bt-content">:</span></td></tr><tr><td colspan="14" style="background:#f5fafc; position:relative;" class="tdmrgnbtm" data-th="Instance ID" align="left"><span class="bt-content"><div class="payment-detail1"><table class="table table-hover" style="background:#fff; border-radius:5px; margin-bottom: 0px;" cellspacing="0" cellpadding="0" border="0"><tbody><tr><td data-th="Instance ID"><span class="bt-content"><strong>Status</strong></span></td><td data-th="Show Details"><span class="bt-content">in-use</span></td></tr><tr><td data-th="Instance ID"><span class="bt-content"><strong>MacAddress</strong></span></td><td data-th="Show Details"><span class="bt-content">02:e8:5a:09:99:85</span></td></tr><tr><td data-th="Instance ID"><span class="bt-content"><strong>SourceDestCheck</strong></span></td><td data-th="Show Details"><span class="bt-content">true</span></td></tr><tr><td data-th="Instance ID"><span class="bt-content"><strong>VpcId</strong></span></td><td data-th="Show Details"><span class="bt-content">vpc-dbd757be</span></td></tr><tr><td data-th="Instance ID"><span class="bt-content"><strong>Description</strong></span></td><td data-th="Show Details"><span class="bt-content">Primary network interface</span></td></tr><tr><td data-th="Instance ID"><span class="bt-content"><strong>1. Association</strong></span></td><td data-th="Show Details"><span class="bt-content"><i class="fa fa-arrow-down"></i></span></td></tr><tr><td colspan="14" style="background:#f5fafc; position:relative;" class="tdmrgnbtm" data-th="Instance ID" align="left"><span class="bt-content"><div class="payment-detail1"><table class="table table-hover" style="background:#fff; border-radius:5px; margin-bottom: 0px;" cellspacing="0" cellpadding="0" border="0"><tbody><tr><td data-th="Instance ID"><span class="bt-content"><strong>1. PublicIp</strong></span></td><td data-th="Show Details"><span class="bt-content">52.214.194.118</span></td></tr><tr><td data-th="Instance ID"><span class="bt-content"><strong>2. PublicDnsName</strong></span></td><td data-th="Show Details"><span class="bt-content">ec2-52-214-194-118.eu-west-1.compute.amazonaws.com</span></td></tr><tr><td data-th="Instance ID"><span class="bt-content"><strong>3. IpOwnerId</strong></span></td><td data-th="Show Details"><span class="bt-content">878760020695</span></td></tr></tbody></table></div></span></td></tr><tr><td data-th="Instance ID"><span class="bt-content"><strong>NetworkInterfaceId</strong></span></td><td data-th="Show Details"><span class="bt-content">eni-5a942526</span></td></tr><tr><td data-th="Instance ID"><span class="bt-content"><strong>1. PrivateIpAddresses</strong></span></td><td data-th="Show Details"><span class="bt-content"><i class="fa fa-arrow-down"></i></span></td></tr><tr><td colspan="14" style="background:#f5fafc; position:relative;" class="tdmrgnbtm" data-th="Instance ID" align="left"><span class="bt-content"><div class="payment-detail1"><table class="table table-hover" style="background:#fff; border-radius:5px; margin-bottom: 0px;" cellspacing="0" cellpadding="0" border="0"><tbody><tr><td data-th="Instance ID"><span class="bt-content"><strong>PrivateDnsName</strong></span></td><td data-th="Show Details"><span class="bt-content">ip-172-30-0-151.eu-west-1.compute.internal</span></td></tr><tr><td data-th="Instance ID"><span class="bt-content"><strong>1. Association</strong></span></td><td data-th="Show Details"><span class="bt-content"><i class="fa fa-arrow-down"></i></span></td></tr><tr><td colspan="14" style="background:#f5fafc; position:relative;" class="tdmrgnbtm" data-th="Instance ID" align="left"><span class="bt-content"><div class="payment-detail1"><table class="table table-hover" style="background:#fff; border-radius:5px; margin-bottom: 0px;" cellspacing="0" cellpadding="0" border="0"><tbody><tr><td data-th="Instance ID"><span class="bt-content"><strong>1. PublicIp</strong></span></td><td data-th="Show Details"><span class="bt-content">52.214.194.118</span></td></tr><tr><td data-th="Instance ID"><span class="bt-content"><strong>2. PublicDnsName</strong></span></td><td data-th="Show Details"><span class="bt-content">ec2-52-214-194-118.eu-west-1.compute.amazonaws.com</span></td></tr><tr><td data-th="Instance ID"><span class="bt-content"><strong>3. IpOwnerId</strong></span></td><td data-th="Show Details"><span class="bt-content">878760020695</span></td></tr></tbody></table></div></span></td></tr><tr><td data-th="Instance ID"><span class="bt-content"><strong>Primary</strong></span></td><td data-th="Show Details"><span class="bt-content">true</span></td></tr><tr><td data-th="Instance ID"><span class="bt-content"><strong>PrivateIpAddress</strong></span></td><td data-th="Show Details"><span class="bt-content">172.30.0.151</span></td></tr></tbody></table></div></span></td></tr><tr><td data-th="Instance ID"><span class="bt-content"><strong>PrivateDnsName</strong></span></td><td data-th="Show Details"><span class="bt-content">ip-172-30-0-151.eu-west-1.compute.internal</span></td></tr><tr><td data-th="Instance ID"><span class="bt-content"><strong>1. Attachment</strong></span></td><td data-th="Show Details"><span class="bt-content"><i class="fa fa-arrow-down"></i></span></td></tr><tr><td colspan="14" style="background:#f5fafc; position:relative;" class="tdmrgnbtm" data-th="Instance ID" align="left"><span class="bt-content"><div class="payment-detail1"><table class="table table-hover" style="background:#fff; border-radius:5px; margin-bottom: 0px;" cellspacing="0" cellpadding="0" border="0"><tbody><tr><td data-th="Instance ID"><span class="bt-content"><strong>1. Status</strong></span></td><td data-th="Show Details"><span class="bt-content">attached</span></td></tr><tr><td data-th="Instance ID"><span class="bt-content"><strong>2. DeviceIndex</strong></span></td><td data-th="Show Details"><span class="bt-content">0</span></td></tr><tr><td data-th="Instance ID"><span class="bt-content"><strong>3. DeleteOnTermination</strong></span></td><td data-th="Show Details"><span class="bt-content">true</span></td></tr><tr><td data-th="Instance ID"><span class="bt-content"><strong>4. AttachmentId</strong></span></td><td data-th="Show Details"><span class="bt-content">eni-attach-88bc48e8</span></td></tr><tr><td data-th="Instance ID"><span class="bt-content"><strong>5. AttachTime</strong></span></td><td data-th="Show Details"><span class="bt-content">2017-01-12T14:38:45.000Z</span></td></tr></tbody></table></div></span></td></tr><tr><td data-th="Instance ID"><span class="bt-content"><strong>1. Groups</strong></span></td><td data-th="Show Details"><span class="bt-content"><i class="fa fa-arrow-down"></i></span></td></tr><tr><td colspan="14" style="background:#f5fafc; position:relative;" class="tdmrgnbtm" data-th="Instance ID" align="left"><span class="bt-content"><div class="payment-detail1"><table class="table table-hover" style="background:#fff; border-radius:5px; margin-bottom: 0px;" cellspacing="0" cellpadding="0" border="0"><tbody><tr><td data-th="Instance ID"><span class="bt-content"><strong>GroupName</strong></span></td><td data-th="Show Details"><span class="bt-content">launch-wizard-2</span></td></tr><tr><td data-th="Instance ID"><span class="bt-content"><strong>GroupId</strong></span></td><td data-th="Show Details"><span class="bt-content">sg-98bebffd</span></td></tr></tbody></table></div></span></td></tr><tr><td data-th="Instance ID"><span class="bt-content"><strong>1. Ipv6Addresses</strong></span></td><td data-th="Show Details"><span class="bt-content"><i class="fa fa-arrow-down"></i></span></td></tr><tr><td colspan="14" style="background:#f5fafc; position:relative;" class="tdmrgnbtm" data-th="Instance ID" align="left"><span class="bt-content"><div class="payment-detail1"><table class="table table-hover" style="background:#fff; border-radius:5px; margin-bottom: 0px;" cellspacing="0" cellpadding="0" border="0"><tbody></tbody></table></div></span></td></tr><tr><td data-th="Instance ID"><span class="bt-content"><strong>SubnetId</strong></span></td><td data-th="Show Details"><span class="bt-content">subnet-3b15685e</span></td></tr><tr><td data-th="Instance ID"><span class="bt-content"><strong>OwnerId</strong></span></td><td data-th="Show Details"><span class="bt-content">878760020695</span></td></tr><tr><td data-th="Instance ID"><span class="bt-content"><strong>PrivateIpAddress</strong></span></td><td data-th="Show Details"><span class="bt-content">172.30.0.151</span></td></tr></tbody></table></div></span></td></tr><tr><td data-th="Instance ID"><span class="bt-content"><strong>SourceDestCheck</strong></span></td><td data-th="Show Details"><span class="bt-content">true</span></td></tr><tr><td data-th="Instance ID"><span class="bt-content"><strong>Placement</strong></span></td><td data-th="Show Details"><span class="bt-content">:</span></td></tr><tr><td colspan="14" style="background:#f5fafc; position:relative;" class="tdmrgnbtm" data-th="Instance ID" align="left"><span class="bt-content"><div class="payment-detail1"><table class="table table-hover" style="background:#fff; border-radius:5px; margin-bottom: 0px;" cellspacing="0" cellpadding="0" border="0"><tbody><tr><td data-th="Instance ID"><span class="bt-content"><strong>1. Tenancy</strong></span></td><td data-th="Show Details"><span class="bt-content">default</span></td></tr><tr><td data-th="Instance ID"><span class="bt-content"><strong>2. GroupName</strong></span></td><td class="bt-hide"></td></tr><tr><td data-th="Instance ID"><span class="bt-content"><strong>3. AvailabilityZone</strong></span></td><td data-th="Show Details"><span class="bt-content">eu-west-1a</span></td></tr></tbody></table></div></span></td></tr><tr><td data-th="Instance ID"><span class="bt-content"><strong>Hypervisor</strong></span></td><td data-th="Show Details"><span class="bt-content">xen</span></td></tr><tr><td data-th="Instance ID"><span class="bt-content"><strong>BlockDeviceMappings</strong></span></td><td data-th="Show Details"><span class="bt-content">:</span></td></tr><tr><td colspan="14" style="background:#f5fafc; position:relative;" class="tdmrgnbtm" data-th="Instance ID" align="left"><span class="bt-content"><div class="payment-detail1"><table class="table table-hover" style="background:#fff; border-radius:5px; margin-bottom: 0px;" cellspacing="0" cellpadding="0" border="0"><tbody><tr><td data-th="Instance ID"><span class="bt-content"><strong>DeviceName</strong></span></td><td data-th="Show Details"><span class="bt-content">/dev/sda1</span></td></tr><tr><td data-th="Instance ID"><span class="bt-content"><strong>1. Ebs</strong></span></td><td data-th="Show Details"><span class="bt-content"><i class="fa fa-arrow-down"></i></span></td></tr><tr><td colspan="14" style="background:#f5fafc; position:relative;" class="tdmrgnbtm" data-th="Instance ID" align="left"><span class="bt-content"><div class="payment-detail1"><table class="table table-hover" style="background:#fff; border-radius:5px; margin-bottom: 0px;" cellspacing="0" cellpadding="0" border="0"><tbody><tr><td data-th="Instance ID"><span class="bt-content"><strong>1. Status</strong></span></td><td data-th="Show Details"><span class="bt-content">attached</span></td></tr><tr><td data-th="Instance ID"><span class="bt-content"><strong>2. DeleteOnTermination</strong></span></td><td data-th="Show Details"><span class="bt-content">true</span></td></tr><tr><td data-th="Instance ID"><span class="bt-content"><strong>3. VolumeId</strong></span></td><td data-th="Show Details"><span class="bt-content">vol-0d68073f42eb56434</span></td></tr><tr><td data-th="Instance ID"><span class="bt-content"><strong>4. AttachTime</strong></span></td><td data-th="Show Details"><span class="bt-content">2017-01-12T14:38:45.000Z</span></td></tr></tbody></table></div></span></td></tr></tbody></table></div></span></td></tr><tr><td data-th="Instance ID"><span class="bt-content"><strong>Architecture</strong></span></td><td data-th="Show Details"><span class="bt-content">x86_64</span></td></tr><tr><td data-th="Instance ID"><span class="bt-content"><strong>RootDeviceType</strong></span></td><td data-th="Show Details"><span class="bt-content">ebs</span></td></tr><tr><td data-th="Instance ID"><span class="bt-content"><strong>RootDeviceName</strong></span></td><td data-th="Show Details"><span class="bt-content">/dev/sda1</span></td></tr><tr><td data-th="Instance ID"><span class="bt-content"><strong>VirtualizationType</strong></span></td><td data-th="Show Details"><span class="bt-content">hvm</span></td></tr><tr><td data-th="Instance ID"><span class="bt-content"><strong>Tags</strong></span></td><td data-th="Show Details"><span class="bt-content">:</span></td></tr><tr><td colspan="14" style="background:#f5fafc; position:relative;" class="tdmrgnbtm" data-th="Instance ID" align="left"><span class="bt-content"><div class="payment-detail1"><table class="table table-hover" style="background:#fff; border-radius:5px; margin-bottom: 0px;" cellspacing="0" cellpadding="0" border="0"><tbody><tr><td data-th="Instance ID"><span class="bt-content"><strong>Value</strong></span></td><td data-th="Show Details"><span class="bt-content">Bastion 1</span></td></tr><tr><td data-th="Instance ID"><span class="bt-content"><strong>Key</strong></span></td><td data-th="Show Details"><span class="bt-content">Name</span></td></tr></tbody></table></div></span></td></tr><tr><td data-th="Instance ID"><span class="bt-content"><strong>AmiLaunchIndex</strong></span></td><td data-th="Show Details"><span class="bt-content">0</span></td></tr></tbody></table></div></span></td></tr>
-				
-				
 				
         	</div>
         	</section>
 
 
 </div>
+<script src="js/jquery-2.2.3.min.js"></script>
+<script>
+$(document).ready(function() {
+	load_data();	
+});
 
+function viewDetails(id ){
+	if($("#changeIcon_"+id).hasClass("fa-eye")){
+		$("#changeIcon_"+id).removeClass("fa-eye");
+		$("#changeIcon_"+id).addClass("fa-eye-slash");
+	}	else	{
+		$("#changeIcon_"+id).addClass("fa-eye");
+		$("#changeIcon_"+id).removeClass("fa-eye-slash");
+	}
+	$("#displayDetails_"+id).toggle();
+}
 
+function createSubTables(value){
+	tableHtmlStr='<tr><td colspan="14" style="background:#f5fafc; position:relative;" class="tdmrgnbtm" data-th="" align="left"><span class="bt-content"><div class="payment-detail1">';
+	tableHtmlStr+='<table class="table table-hover" style="background:#fff; border-radius:5px; margin-bottom: 0px;" cellspacing="0" cellpadding="0" border="0"><tbody>';
+	var countNum=0;
+	if($.type(value)=="object"){
+		$.each(value, function(key1, value1){
+			countNum++;
+			tableHtmlStr+='<tr><td data-th=""><span class="bt-content"><strong>'+countNum+'. '+key1+'</strong></span></td><td>'+value1+'</td></tr>';
+		});
+	}else if($.type(value)=="array"){	
+		$.each(value, function(k, subArray){
+			countNum++;
+			$.each(subArray, function(key2, value2){
+				if($.type(value2)=="object" || $.type(value2)=="array"){
+					tableHtmlStr+='<tr><td data-th=""><span class="bt-content"><strong>'+countNum+'. '+key2+'</strong></span></td><td><i class="fa fa-arrow-down"></i></td></tr>';
+					tableHtmlStr+=createSubTables(value2);
+				}else{
+					tableHtmlStr+='<tr><td data-th=""><span class="bt-content"><strong>'+key2+'</strong></span></td><td>'+value2+'</td></tr>';
+				}
+			});
+		});
+	}
+	tableHtmlStr+='</tbody></table>';
+	tableHtmlStr+='</div></span></td></tr>';
+	return tableHtmlStr;
+}
 
+function load_data(){
+	var jsonRow = 'ec2_describe-instances-running_output.txt';
+	$.getJSON(jsonRow,function(result){
+		var tableHtmlStr="";
+		$.each(result.Reservations, function(i,row){
+			$.each(row.Instances, function(j,perRow){
+				tableHtmlStr+='<tr><td>'+perRow.InstanceId+'</td><td class="hidden-xs"><a href="javascript:void(0)" onclick="viewDetails(\''+perRow.InstanceId+'\')" title="Check details"><i class="fa fa-eye" id="changeIcon_'+perRow.InstanceId+'"></i></a></td></tr>';
+				tableHtmlStr+='<tr id="displayDetails_'+perRow.InstanceId+'" class="hidden-xs" style="display:none;"><td colspan="14" style="background:#f5fafc; position:relative;" class="tdmrgnbtm" data-th="" align="left"><span class="bt-content"><div class="payment-detail">';
+				tableHtmlStr+='<table class="table table-hover" style="background:#fff; border-radius:5px; margin-bottom: 0px;" cellspacing="0" cellpadding="0" border="0"><tbody>';
+				
+				$.each(perRow, function(key, value){
+					var valueStr=value;
+					
+					tableHtmlStr+='<tr><td data-th=""><span class="bt-content"><strong>'+key+'</strong></span></td>';
+					
+					if($.type(value)=="object" || $.type(value)=="array"){
+						//var valueStr=JSON.stringify(value);
+						tableHtmlStr+='<td>:</td></tr>';
+						tableHtmlStr+=createSubTables(value);
+					}	else	{
+						tableHtmlStr+='<td>'+valueStr+'</td></tr>';
+					}
+				});
+				tableHtmlStr+='</tbody></table>';
+				tableHtmlStr+='</div></span></td></tr>';
+			});
+		});
+		$('#content_table').html(tableHtmlStr);
+		$('#img_loading_div').hide();
+	});
+}
 
+  </script>
 </body>
 </html>
