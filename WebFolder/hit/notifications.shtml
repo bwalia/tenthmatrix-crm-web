@@ -1,72 +1,68 @@
- <!--HIT_EXECUTE
- 
-C_TEXT(_HIT_HTMLTXT;_HTMLTITLETXT)
+<!--HIT_EXECUTE
+_HIT_HTTPD_SetHTTPHeader ("Content-type";"text/html; charset=utf-8")
+
+C_TEXT(_HIT_HTMLTXT)
 C_LONGINT(_HIT_COUNTER)
+C_TEXT(_HTMLTITLETXT)
 
-If(_HIT_AuthenticateSession="Session-Authenticated-OK")
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+
 _HTMLTITLETXT:="Notifications"
-Else
+
+else
 _HIT_HTTPD_RedirectToURL ("sign-in.shtml?url="+HTTPD_DocumentURI)
-End if 
+end if 
 
-//_HIT_HTMLTXT:=_HIT_SessionStr
 -->
-
 <!DOCTYPE html>
 <html>
 <head>
 <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
-<link rel="stylesheet" href="css/base/jquery-ui.css" />
-<link rel="stylesheet" href="css/autocomplete.css" />
 <style>
-#notification-th{
-padding-top:20px;padding-bottom:5px;
-}
-#notifications{
-text-decoration: none;color:#005580;
-}
-#notifications #first{
-font-size: 16px; padding-right: 10px;
-}
-#notifications .time{
-color: #6E829B;float: right;font-size: 11px;font-style: italic;font-weight: 600; padding-left:45px; min-width: 60px;
-}
-.timings{
-color: #CFCFCF;font-size: 13px;margin-right: 1px;
+.time{
+color: #6E829B;font-size: 11px;font-style: italic;font-weight: 600;
 }
 </style>
 </head>
-<body>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
 
 <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
 
 <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
 
 	<!-- main container -->
-    <div class="content">
-        
-        <div class="container-fluid">
-            <div id="pad-wrapper">
-
-                <!-- Task table -->
-                <div class="table-wrapper orders-table section">
-                    <div class="row-fluid head">
-                        <div class="span12">
-                            <h4>Notifications</h4>
-                        </div>
-                    </div>
-                    <input name="notification" id="notification" type="hidden" value="notification">
-                    <div class="row-fluid">
-                        <table class="table table-hover" style="width:100%;">
+    <div class="content-wrapper">
+        <section class="content-header">
+      		<h1>
+        		Notifications
+        		<small>List panel</small>
+      		</h1>
+      		<ol class="breadcrumb">
+       			<li><a href="index.shtml"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+        		<li class="active">Notifications</li>
+      		</ol>
+    	</section>
+		<section class="content">
+			<div class="row">
+	  			<div class="content table-responsive table-full-width">
+		 			<div class="table-responsive" style="border:none;" >
+                        <table class="table table-striped  table-bordered table-hover custom-tbl-st bt" id="table-breakpoint"  style="background-color: rgb(255, 255, 255); border-radius: 4px;" >
                             <thead>
-                                <tr><th id="notification-th">Notification</th> 
-                                <th id="notification-th">Time </th>
-                                </tr>
-                            </thead>
-                              
-						 <tbody>
-						<!--#4DSCRIPT/Web_LoadNotifications/-->
-						<!--#4DLOOP [user_notification]--><!--#4DSCRIPT/Web_LoadNotificationsRelated/--><!-- row -->
+                                <tr>
+                                            <th id="notification-th">Notification</th> 
+                               				<th id="notification-th">Time </th>
+                                        </tr>
+                                    </thead>
+                                     <tfoot>
+                                        <tr>
+                                        	<th id="notification-th">Notification</th> 
+                                			<th id="notification-th">Time </th>
+                                        </tr>
+                                    </tfoot>
+                                    <tbody>
+                            <!--#4DSCRIPT/Web_LoadNotifications/-->
+							<!--#4DLOOP [user_notification]--><!--#4DSCRIPT/Web_LoadNotificationsRelated/--><!-- row -->
                                 <tr class="first" style="cursor:pointer; 
 								<!--#4DIF (Web_isUserStaff | Web_isUserClient)-->
 								<!--#4DIF ([user_notification]status=0)-->background-color:#EFF4F7<!--#4DENDIF--><!--#4DENDIF-->"
@@ -88,17 +84,14 @@ color: #CFCFCF;font-size: 13px;margin-right: 1px;
 						 		<!--#4DENDIF-->
                          		<!--#4DENDIF-->
 								>
-                                    <td style="width:60%;" >
-									
-						 			<a href="javascript:void(0)" class="item"  >
-
-									<i class="icon-signin" id="first" STYLE="padding-right:7px;"></i> 
-									<!--#4DHTMLVAR [user_notification]activity_name--> 
-									</a>
+                                    <td>
+										<a href="javascript:void(0)" class="item"  >
+											<i class="fa fa-sign-in"></i> 	<!--#4DHTMLVAR [user_notification]activity_name--> 
+											</a>
 									</td>
 									<td>
 									<span class="time" style="">
-									<i class="icon-time" id="timings" STYLE="padding-right:7px;"></i>
+									<i class="fa fa-clock-o" id="timings" STYLE="padding-right:7px;"></i>
 									<!--#4DIF (Round((timestamp_unix_Get -[Activity_Log]Timestamp_created)/60;2)<=60)-->
                                     <!--#4DHTMLVAR Round((timestamp_unix_Get -[Activity_Log]Timestamp_created)/60;2)--> min ago.
                                     <!--#4DELSE-->
@@ -111,22 +104,26 @@ color: #CFCFCF;font-size: 13px;margin-right: 1px;
 										</span>
                                     </td>
                                 </tr>
-                            <!--#4DENDLOOP-->
-                             </tbody>
-                                   
+                            <!--#4DENDLOOP-->    
+                                    </tbody>
                         </table>
                     </div>
-                </div>
-                <!-- end Tasks table -->
-
-            </div>
-        </div>
-    </div>
+				</div>
+			</div>
+      		<!-- /.row (main row) -->
+		</section>
+	</div>
     <!-- end main container -->
-
-	<!-- scripts -->
-    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
-	<script src="js/ui/jquery-ui.js"></script>
 	
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/top-footer.shtml-->
+</div>
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml-->
+<script>
+$(document).ready(function() {
+	$('#table-breakpoint').basictable({
+    	breakpoint: 751
+   	});	 
+});
+</script>
 </body>
 </html>
