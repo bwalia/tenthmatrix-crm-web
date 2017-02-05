@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+    	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    	<meta name="description" content="">
+    	<meta name="author" content="cosmic">
+    	
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>Tenthmatrix Billing Secure Site - Pay Invoice Online</title>
+
+<!--#4DSCRIPT/_HIT_LoadInclude/includes/static_files.shtml-->
+
+</head>
+
+<body>
+<!--#4DSCRIPT/_HIT_LoadInclude/includes/topmenu.shtml-->
+
+<div class="container">
+	<div class="row client">
+		<div id="content">
+			<div class="container">
+				<div class="row " style="margin-top:20px;">
+					<div class="col-lg-8 col-md-9 col-sm-12 col-xs-12 content ">
+            			<h1 style="margin-top: 10px; font-family: 'montserratlight'; color: #40a3d4; font-size: 22px; border-bottom: 1px dashed #ddd; padding-bottom: 7px;" ><span>Pay an invoice with your credit or debit card securely</span></h1>
+				
+						<!-- Classic Heading -->
+				
+               			<p><em> Note: We do not store your personal data or credit card information.</em></p>
+						<div id="response_msg"></div>
+						<!-- Start Contact Form -->
+						<form action="confirm_payment.cgi" class="form-horizontal" method="POST" name="invoice" onSubmit="return ValidateForm();">
+	
+      						<div class="form-group">
+        						<label  class="col-sm-2 control-label">Invoice No</label>
+        						<div class="col-sm-10">
+        							<input type="hidden" name="pay" value="<!--HIT_EXECUTE
+   									 _HIT_HTMLTXT:=_HIT_WebApp_GetField("pay")
+    								Invoice_LoadBySecureKey(_HIT_HTMLTXT)
+    								-->">
+          							<input class="form-control" placeholder="Invoice No" type="Invoice No" value="<!--#4DVar [Invoices]Full_Invoice_Number-->" name="invoice_no" id="invoice_no">
+        						</div>
+      						</div>
+      						<div class="form-group">
+        						<label  class="col-sm-2 control-label">Invoice PIN</label>
+        						<div class="col-sm-10">
+          							<input class="form-control" placeholder="Invoice PIN" value="<!--#4DVar [Invoices]Payment_Pin_Or_Passcode-->" name="invoice_pin" id="invoice_pin">
+        							<p style="margin-bottom:0px; padding-bottom:0px; font-size:13px;"><em>* Payment PIN can be found on the Invoice itself.</em></p>
+             					</div>
+      						</div>
+      
+      						<div class="form-group">
+       							<label  class="col-sm-2 control-label">Name</label>
+        						<div class="col-sm-10">
+          							<input class="form-control" id="name" placeholder="Name" type="name">
+         						</div>
+      						</div>
+      
+     						<div class="form-group">
+        						<label  class="col-sm-2 control-label">Email</label>
+        						<div class="col-sm-10">
+          							<input class="form-control" id="email" placeholder="Email" type="Email" name="email" value="">
+         						</div>
+      						</div>
+      
+      						<div class="form-group">
+       							<label  class="col-sm-2 control-label">Amount</label>
+        						<div class="col-sm-10">
+          							<input class="form-control" placeholder="Amount (£)" <!--#4DVar Web_RoundAmount([Invoices]inv_total_due_with_tax)-->" name="amount" id="amount">
+         							<p style="font-size:13px;"> <em>* Payments to be made in GPB(£) unless stated otherwise on the Invoice.</em></p>
+        						</div>
+      						</div>
+      
+      
+      						<div class="form-group">
+       							<label  class="col-sm-2 control-label">Notes</label>
+        						<div class="col-sm-10">
+       								<textarea class="form-control" rows="8" name="message" id="message"></textarea>
+      							</div>
+      						</div>
+      						        
+							<input type="hidden" name="testMode" value="0"><!--100 for test mode-->
+							<input type="hidden" name="accid1" value="TENTHMATRIXIM1">
+							<input type="hidden" name="instId" value="303468">
+							<input type="hidden" name="cartId" id="cartId" value="<!--#4DVar [Invoices]Full_Invoice_Number-->">
+							<input type="hidden" name="currency" value="GBP">
+							      						
+      						<div class="text-right" style="margin-top:10px; float:right;">
+								<button type="submit" name="submit" class="btn btn-danger" id="submit_next">Continue to Enter Credit Card Details</button> 
+  							</div>
+   						</form>    
+							
+							
+   						<div class="col-md-12 text-right" style="margin-top:15px; float:right;">
+   							<table cellspacing="0" border="0" align="center" style="border:none" >
+							<tr><td style="border:none">
+								<script language="JavaScript" src="https://secure.worldpay.com/wcc/logo?instId=303468"></script>
+								</td>
+
+								<td  valign="top">
+									<a target="_blank" href="https://www.americanexpress.com"> <img src="images/amex.jpg" alt=""/></a>
+								</td>
+							</tr>
+							</table>
+							
+							<!--ssl security seal code-->
+<!--#4DSCRIPT/_HIT_LoadInclude/includes/ssl_cert_seal.shtml-->
+<!--ssl security seal code-->
+		
+							
+ 						</div>
+					<!-- End Contact Form -->
+				
+				</div>
+        			<div class=" col-lg-4 col-md-3 col-sm-12 col-xs-12 ">
+						<!--#4DSCRIPT/_HIT_LoadInclude/includes/company_info_sidebar.shtml-->
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!---------------clientsays---section-------end------->
+
+<!--#4DSCRIPT/_HIT_LoadInclude/includes/footer.shtml-->
+
+<script language="javascript">
+
+$(document).ready(function() {
+
+$("#response_msg").hide();
+if($('#amount').val()=='0'){//when encrypted link auto loads we have amount otherwise system displays zero; kill pointless zero
+	$('#amount').val('');
+}
+
+
+$.__customAlert = function(pMsgTxt){
+	var errorMsgStr= '<div class="alert alert-danger" role="alert"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span><span class="sr-only">Error:</span> '+pMsgTxt+'</div>';
+	$("#response_msg").html(errorMsgStr);
+	$("#response_msg").show();
+}
+
+$.__onChangeInvoiceNo = function(){
+
+	if($('#invoice_no').val()==''){
+		$('#invoice_pin').val('');//If not Invoice No then delete PIN and Amount
+		$('#amount').val('');
+		$('#invoice_no').focus();
+		$.__customAlert('Please enter Invoice no to proceed.');
+		return false;
+	}
+
+	if($('#invoice_pin').val()!=''){
+		$.__fetchInvoiceFullDetails();
+	}
+
+}
+
+$.__onChangeInvoicePin = function(){
+
+	if($('#invoice_no').val()==''){
+	$.__customAlert('Please enter Invoice no to proceed.');
+	return false;}
+
+	if($('#invoice_pin').val()==''){
+	$.__customAlert('Please enter Invoice pin or passcode to proceed.');
+	return false;}
+
+	$.__fetchInvoiceFullDetails();
+
+}
+
+
+$.__fetchInvoiceFullDetails = function(){
+
+	jsonRowURLStr = '/json/invoices.json?Full_Invoice_Number='+$('#invoice_no').val()+'&token_uuid=<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_TokenGetAny-->&key_uuid=cef54768cbd28230d04c91eb2bc80ef5&template=invoice_row_by_id&Payment_Pin_Or_Passcode='+$('#invoice_pin').val()+'&theme=alldata&debug=true'
+
+	$.getJSON(jsonRowURLStr,function(result){
+		bInvalidCombination=false;
+		if(result){
+			if(result.aaData[0]){
+				if(result.aaData[0].inv_total_due_with_tax){
+					if(result.aaData[0].inv_total_due_with_tax){
+						if( $('#invoice_pin').val() == result.aaData[0].Payment_Pin_Or_Passcode ) //passcode entered by the user must be same as set in the database
+						{
+							$('#amount').val(result.aaData[0].inv_total_due_with_tax);
+
+							//alert($('#invoice_no').val());
+
+							if($('#invoice_no').val() != ''){
+								$('#cartId').val($('#invoice_no').val());
+							}else{
+								$('#cartId').val(result.aaData[0].project_code);
+							}
+
+
+							$('#message').val('Project code: ' + result.aaData[0].project_code + ', Total Due: '+result.aaData[0].inv_total_due_with_tax);
+
+							bInvalidCombination=true;
+						}else {
+
+						}
+					}
+				}
+			}
+		}
+
+
+		if(bInvalidCombination){
+			$.__customAlert('Enter your details below and click Enter Card Details button to continue.');
+		}
+		else{
+			$.__customAlert('Invoice No and Invoice Pin combination can not be found.');
+			$('#amount').val('');
+			$('#invoice_no').val('');
+			$('#invoice_pin').val('');
+			$('#message').val('');
+			$('#invoice_no').focus();
+		}
+
+	});
+}
+
+	if($('#invoice_no').val()!='' && $('#invoice_pin').val()!=''){
+		$.__fetchInvoiceFullDetails();
+	}
+	$('#invoice_no').focus();
+
+	$('#invoice_no').change(function() {
+		$.__onChangeInvoiceNo();
+	});
+
+	$('#invoice_pin').change(function() {
+		$.__onChangeInvoicePin();
+	});
+
+});
+
+function validateEmail()
+{
+ 
+   var emailID = document.invoice.email.value;
+   var filter=/^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i
+   if (!filter.test(emailID))
+   {
+		$.__customAlert('Please enter a valid email');
+       document.invoice.email.focus() ;
+       return false;
+   }
+   return( true );
+}
+
+function ValidateForm () {
+var msg = '';
+
+
+if (document.invoice.invoice_no.value=="")
+{ $.__customAlert('Please enter your Invoice No.');
+	document.invoice.invoice_no.focus() ;
+	return false;
+}
+
+
+if (document.invoice.invoice_pin.value=="")
+{ $.__customAlert('Please enter your Invoice Security Pin.');
+	document.invoice.invoice_pin.focus() ;
+	return false;
+}
+
+if (document.invoice.name.value=="")
+{ $.__customAlert('Please enter your name');
+	document.invoice.name.focus() ;
+	return false; 
+}
+if (document.invoice.email.value=="")
+{ $.__customAlert('Please enter your email');
+	document.invoice.email.focus() ;
+	return false; 
+}else{
+     // Put extra check for data format
+     var ret = validateEmail();
+     if( ret == false )
+     {
+          return false;
+     }
+   }
+if (document.invoice.amount.value=="")
+{ $.__customAlert('Please enter some amount');
+	document.invoice.amount.focus() ;
+	return false; 
+}
+if (isNaN(document.invoice.amount.value) || Number(document.invoice.amount.value)<=0)
+{ $.__customAlert('Please enter a valid Invoice amount');
+	document.invoice.amount.focus() ;
+	return false; 
+}
+
+}
+</script>
+</body>
+</html>

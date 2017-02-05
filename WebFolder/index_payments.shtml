@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Tenthmatrix Billing Secure Site - Pay Invoice Online</title>
+
+<!--#4DSCRIPT/_HIT_LoadInclude/includes/static_files.shtml-->
+
+</head>
+
+<body>
+<!--#4DSCRIPT/_HIT_LoadInclude/includes/topmenu.shtml-->
+
+<div class="container">
+	<div class="row client">
+		<div id="content">
+			<div class="container">
+				<div class="row " style="margin-top:20px;">
+					<div class="col-lg-8 col-md-9 col-sm-12 col-xs-12 content ">
+            			<h1 style="margin-top: 10px; font-family: 'montserratlight'; color: #40a3d4; font-size: 22px; border-bottom: 1px dashed #ddd; padding-bottom: 7px;" ><span>Make a payment with your credit or debit card securely</span></h1>
+				
+						<!-- Classic Heading -->
+				
+               			<p><em> Note: We do not store your personal data or credit card information.</em></p>
+						<div id="response_msg"></div>
+						<!-- Start Contact Form -->
+						<form action="confirm_payment_multiple.cgi" class="form-horizontal" method="POST" name="invoice" onSubmit="return ValidateForm();">
+							<input type="hidden" name="pay" value="multiple_invoices">
+      						<div class="form-group">
+        						<label  class="col-sm-2 control-label">Your Name</label>
+        						<div class="col-sm-10">
+          							<input class="form-control" id="name" placeholder="Your Name" type="Your Name" name="name" value="">
+        						</div>
+      						</div>
+      						<div class="form-group">
+        						<label  class="col-sm-2 control-label">Email</label>
+        						<div class="col-sm-10">
+          							<input class="form-control" id="email" placeholder="Email" type="Email" value="" name="email">
+        						</div>
+      						</div>
+      
+      						<div class="form-group">
+        						<label  class="col-sm-2 control-label">Amount (£)</label>
+       							<div class="col-sm-10">
+          							<input class="form-control" placeholder="Amount (£)" type="Your Name" value="<!--#4DVar Web_RoundAmount([Invoices]inv_total_due_with_tax)-->" name="amount" id="amount">
+         							<p style="font-size:13px;"> <em>* Payments to be made in GPB(£) unless stated otherwise on the Invoice.</em></p>
+        						</div>
+      						</div>
+      
+      
+     						<div class="form-group">
+        						<label  class="col-sm-2 control-label">Notes</label>
+        						<div class="col-sm-10">
+       								<textarea class="form-control" rows="8" name="message" id="message"></textarea>
+      							</div>
+     					 	</div>
+      						<input type="hidden" name="testMode" value="0"><!--100 for test mode-->
+							<input type="hidden" name="accid1" value="TENTHMATRIXIM1">
+							<input type="hidden" name="instId" value="303468">
+							<input type="hidden" name="cartId" id="cartId" value="">
+							<input type="hidden" name="currency" value="GBP">
+      						<div class="text-right" style="margin-top:10px; float:right;">
+
+      							<button type="submit" name="submit" class="btn btn-danger" id="submit_next">Continue to Enter Credit Card Details</button> 
+  							</div>
+   						</form>    
+							
+							
+   						<div class="col-md-12 text-right" style="margin-top:15px; float:right;">
+   							<table cellspacing="0" border="0" align="center" style="border:none" >
+							<tr><td style="border:none">
+								<script language="JavaScript" src="https://secure.worldpay.com/wcc/logo?instId=303468"></script>
+								</td>
+
+								<td  valign="top">
+									<a target="_blank" href="https://www.americanexpress.com"> <img src="images/amex.jpg" alt=""/></a>
+								</td>
+							</tr>
+							</table>
+							
+														<!--ssl security seal code-->
+<!--#4DSCRIPT/_HIT_LoadInclude/includes/ssl_cert_seal.shtml-->
+<!--ssl security seal code-->
+
+ 						</div>
+					<!-- End Contact Form -->
+				
+				</div>
+        			<div class=" col-lg-4 col-md-3 col-sm-12 col-xs-12 ">
+						<!--#4DSCRIPT/_HIT_LoadInclude/includes/company_info_sidebar.shtml-->
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!---------------clientsays---section-------end------->
+
+<!--#4DSCRIPT/_HIT_LoadInclude/includes/footer.shtml-->
+
+<script language="javascript">
+
+$(document).ready(function() {
+
+$("#response_msg").hide();
+if($('#amount').val()=='0'){//when encrypted link auto loads we have amount otherwise system displays zero; kill pointless zero
+	$('#amount').val('');
+}
+
+
+	$.__customAlert = function(pMsgTxt){
+		var errorMsgStr= '<div class="alert alert-danger" role="alert"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span><span class="sr-only">Error:</span> '+pMsgTxt+'</div>';
+		$("#response_msg").html(errorMsgStr);
+		//$("#response_msg").css("color","red");
+		$("#response_msg").show();
+	}
+
+	$('#name').focus();
+
+
+});
+
+function validateEmail(){
+ 
+   var emailID = document.invoice.email.value;
+   var filter=/^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i
+   if (!filter.test(emailID))
+   {
+		$.__customAlert('Please enter a valid email');
+       document.invoice.email.focus() ;
+       return false;
+   }
+   return( true );
+}
+
+function ValidateForm () {
+	var msg = '';
+	if (document.invoice.name.value==""){
+		$.__customAlert('Please enter your name');
+		document.invoice.name.focus() ;
+		return false; 
+	}
+
+	if (document.invoice.email.value==""){ 
+		$.__customAlert('Please enter your email');
+		document.invoice.email.focus() ;
+		return false; 
+	}else{
+    	 // Put extra check for data format
+    	 var ret = validateEmail();
+     	if( ret == false ){
+          return false;
+     	}
+   }
+
+	if (document.invoice.amount.value==""){
+		$.__customAlert('Please enter Payment amount');
+		document.invoice.amount.focus() ;
+		return false; 
+	}
+	if (isNaN(document.invoice.amount.value) || Number(document.invoice.amount.value)<=0){ 
+		$.__customAlert('Please enter a valid Payment amount');
+		document.invoice.amount.focus() ;
+		return false; 
+	}
+
+	if (Number(document.invoice.amount.value)>5000){
+		$.__customAlert('A max of £5000.00 can be paid in a single transaction! Please enter amount less than £5000.00');
+		document.invoice.amount.focus() ;
+		return false; 
+	}
+}
+</script>
+</body>
+</html>
