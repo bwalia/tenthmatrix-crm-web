@@ -5,6 +5,14 @@ C_LONGINT(_HIT_COUNTER)
 C_TEXT(_HTMLTITLETXT)
 
 If(_HIT_AuthenticateSession="Session-Authenticated-OK")
+C_TEXT(_PAGETITLETXT)
+_PAGETITLETXT:=_HIT_WebApp_GetField ("page")
+If (_PAGETITLETXT="supplier")
+	_PAGETITLETXT :="Supplier"
+Else
+	_PAGETITLETXT :="Customer"
+End If
+
 ALL RECORDS([Tax_Codes])
 
 QUERY([Companies];[Companies]uuid=_HIT_WebApp_GetField ("uuid"))
@@ -15,9 +23,9 @@ QUERY([analysis_ledger];[analysis_ledger]uuid=[Companies]uuid_analysis_ledger)
 QUERY([analysis_account];[analysis_account]uuid=[Companies]uuid_analysis_account)
 
 If (Records in selection([Companies])=0)
-_HTMLTITLETXT:="New Customer"
+_HTMLTITLETXT:="New "+_PAGETITLETXT
 Else
-_HTMLTITLETXT:= "Customer: "+[Companies]company_Name
+_HTMLTITLETXT:= _PAGETITLETXT+": "+[Companies]company_Name
 END If
 
 Else
@@ -93,7 +101,7 @@ End If
    	<div class="content-wrapper">
         <section class="content-header">
       		<h1>
-        		<!--#4DIF (Records in selection([Companies])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Customer
+        		<!--#4DIF (Records in selection([Companies])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> <!--HIT_EXECUTE _HIT_HTMLTXT:=_PAGETITLETXT-->
       		</h1>
       		<ol class="breadcrumb">
        			<li><a href="index.shtml"><i class="fa fa-dashboard"></i> Dashboard</a></li>
@@ -106,7 +114,7 @@ End If
 				 <div class="panel-body no-padding-top bg-white" > 
 				 
 				<ul class="nav nav-tabs">
-  <li class="active"><a data-toggle="tab" href="#home">Customer Info </a></li>
+  <li class="active"><a data-toggle="tab" href="#home"><!--HIT_EXECUTE _HIT_HTMLTXT:=_PAGETITLETXT--> Info </a></li>
   		
   <li><a data-toggle="tab" href="#second"> Licence Number</a></li>
    <li><a data-toggle="tab" href="#third"> More Information and Contacts</a></li>
@@ -129,7 +137,8 @@ End If
 										<div class=" col-sm-6"><input class="form-control" name="Company_Name" type="text" value="<!--#4DVAR [Companies]company_Name-->" id="Company_Name"></div>
 									</div>
 									<input name="Company_uuid" class="form-control" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="Company_uuid">
-							
+									<input class="form-control" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_PAGETITLETXT -->" id="page_type">
+									
 									<div class="form-group" >
 										
 											<label class="col-sm-3 control-label">Account Number <span style="color:#6E829B">*</span></label>
@@ -590,7 +599,10 @@ function __showEmailForm(uuid){
 	
         $(function () {
 			$("a.info").colorbox({maxWidth:'80%', maxHeight:'90%'});
-		
+			if($("#page_type").val()=="Supplier"){
+				$("#is_supplier").attr("checked", true);
+			}
+			
 			<!--#4DIF (Records in selection([Companies])=0)-->
 		
 				var new_acc_no='<!--#4DVAR  SequenceNumber (->[Companies]account_Number)-->';
@@ -610,7 +622,7 @@ function __showEmailForm(uuid){
 			$( "#tabs" ).tabs();
 				
 			$('.phone').keypress(function(e){
-					checkphone(e);
+				checkphone(e);
 			});
 			
 			$("#CompanyForm").validate({
@@ -636,8 +648,8 @@ function __showEmailForm(uuid){
 			});
         });
         
-        var xhr;
-  (function( $ ) {
+	var xhr;
+  	(function( $ ) {
     $.widget( "custom.combobox", {
       _create: function() {
         this.wrapper = $( "<span>" )
@@ -824,24 +836,14 @@ function __showEmailForm(uuid){
     });
   })( jQuery );
  
-  $(function() {
-	  
-	  
-	  
-    $( "#analysis_ledger" ).combobox();
-    $("#uuid_analysis_account").combobox();
-	
-	
-	
-  });
+	$(function() {
+		$( "#analysis_ledger" ).combobox();
+    	$("#uuid_analysis_account").combobox();
+    });
   
-  
-  $('#table-breakpoint').basictable({
-    				breakpoint: 751
-    			});
-  
-  
-
+  	$('#table-breakpoint').basictable({
+    	breakpoint: 751
+    });
     </script>
 	 <script type='text/javascript' src='js/contactcustomer.js'></script>
 	 <script type='text/javascript' src='js/customerNotes.js'></script>

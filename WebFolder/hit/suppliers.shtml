@@ -103,7 +103,7 @@ mUserIsCurrentBool:=userHasAccessToDelete
 											<option value="No">No</option>
 											<option value="Depend upon bill">Depend upon bill</option>	
 									</select>
-                                    <a href="customer.shtml" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink " style=""> <i class="fa fa-plus"></i>Add New Supplier</a>
+                                    <a href="customer.shtml?page=supplier" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink " style=""> <i class="fa fa-plus"></i>Add New Supplier</a>
                   				</div>
          					</div>
       					</div>
@@ -114,7 +114,7 @@ mUserIsCurrentBool:=userHasAccessToDelete
 							<div class="col-lg-6 col-sm-12 col-xs-12">
 								<div>
 									<input class="form-control xs-margin-btm10 searchFieldClass" id="small_screen_keyword" name="keyword" placeholder="Search here.." value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" type="text">
-                     				<a href="customer.shtml" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink" STYLE="width:100%; margin:10px 0px;"> <i class="fa fa-plus"></i>Add New Supplier</a>    
+                     				<a href="customer.shtml?page=supplier" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink" STYLE="width:100%; margin:10px 0px;"> <i class="fa fa-plus"></i>Add New Supplier</a>    
                   				</div>
 							</div>
 						</div>
