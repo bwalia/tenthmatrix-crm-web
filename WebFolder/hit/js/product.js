@@ -369,7 +369,7 @@ function fetchuploadedimages() {
 			var optionStatusStr= new Array();
 			
 			$.each(result, function(i,row){
-				table_html+='<div class="col-sm-2 mrgntp">';
+				table_html+='<div class="col-md-3 mrgntp">';
 				table_html+='<img alt="" ';
 				if(row.default=="yes"){
 					table_html+='class="imgbrdrslectd"';
@@ -380,17 +380,19 @@ function fetchuploadedimages() {
 				//"data:image/".$mimetype.";base64,".$imagebase64;
 				
 				table_html+=' src="data:image/'+row.extension+';base64,'+row.base64code+'">';
-				if(row.default=="no"){
-					table_html+='<div class="row"><div class="span3">';
-				}
+				//if(row.default=="no"){
+					table_html+='<div class="row"><div class="col-md-12">';
+				//}
 				table_html+='<input type="checkbox" class="check" value="true">';
 				if(row.default=="no"){
 					table_html+='<a title="Set as default image" href="javascript:void(0)" onClick="modify_image(\''+row.image_uuid+'\')" class="btn btn-default btn-xs" STYLE="margin:0 7px;"><i class="fa fa-paste"> &nbsp; Set as Default Image</i></a>';
 					table_html+='<a title="Remove" href="javascript:void(0)" onClick="remove_image(\''+row.image_uuid+'\')" class="btn  btn-danger btn-file btn-xs" style="float:right"><i class="fa fa-trash"></i></a>';
+				}else {
+					table_html+='&nbsp;<b>Default Image</b>';
 				}
-				if(row.default=="no"){
+				//if(row.default=="no"){
 					table_html+='</div></div>';
-				}
+				//}
 				table_html+='</div>';
 			             
 			});
@@ -413,8 +415,8 @@ function fetchavailableoptions() {
 			$.each(result, function(i,item){
 				if(item.options){
 					if(item.options!=""){
-						table_html+='<div CLASS="span3 boxbcg">';
-						table_html+='<h3><input type="checkbox" value="true" id="option_'+item.uuid+'" onClick="mainOptionChecked(\''+item.uuid+'\')"> '+item.name+'<span style="float:right;"><a style="float:right" class="btn  btn-danger btn-file btn-xs" target="_blank" href="product_option.shtml?uuid='+item.uuid+'" title="Add more options"><i class="icon-pencil"></i></a></span></h3>';
+						table_html+='<div CLASS="col-md-2 boxbcg" >';
+						table_html+='<h3><input type="checkbox" value="true" id="option_'+item.uuid+'" onClick="mainOptionChecked(\''+item.uuid+'\')"> '+item.name+'<span style="float:right;"><a style="float:right" class="btn  btn-danger btn-file btn-xs" target="_blank" href="product_option.shtml?uuid='+item.uuid+'" title="Add more options"><i class="fa fa-edit"></i></a></span></h3>';
 						table_html+='<div CLASS="overflowdata"><table class="table table-hover tablebox">';
 						var subTableHtmlStr='';
 						$.each(item.options, function(i,row){

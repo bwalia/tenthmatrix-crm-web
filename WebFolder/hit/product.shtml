@@ -30,7 +30,61 @@ end if
 <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
 <link rel="stylesheet" href="css/chosen.css">
 <style>
+.boxbcg{
+	border:1px solid #E1E1E1!important;
+	padding:10px!important;
+	border-radius:7px!important;
+	margin-bottom:10px!important;
+	margin-right:5px;
+}
 
+.boxbcg h3{
+	padding: 0px 0px 0px 6px;
+font-size: 21px;
+color: #108cd3;
+}
+
+.pdng3{
+	padding:3px 0px;
+}
+
+.labelnew{
+	padding-left: 0px; float: left; width: 124px; padding-top: 5px;
+}
+
+.labtext{
+	position: relative; padding-right: 7px; bottom: 4px; float: left;
+}
+
+.tablebox{
+
+width: 95%; margin-bottom: 20px; margin: 0% 3% 0% 3%;
+}
+
+.overflowdata{
+	overflow-x: none; overflow-y: scroll; height: 190px;
+margin-top: 5%;
+margin-bottom: 5%;
+	
+}
+
+
+
+.savebtn{
+	  text-align: center;
+    width: 90%;
+    color: rgb(255, 255, 255);
+    padding-right: 0px;
+    margin-left: 8px;
+}
+
+.savebtn a{
+	color:#fff;
+}
+
+.savebtn a:hover{
+	text-decoration:none;
+}
 .nav-tabs > li{
 	margin-right:4px;
 	border-radius:4px 4px 0px 0px;
