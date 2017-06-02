@@ -105,7 +105,7 @@ End If
       		</h1>
       		<ol class="breadcrumb">
        			<li><a href="index.shtml"><i class="fa fa-dashboard"></i> Dashboard</a></li>
-        		<li class="active">Customer Detail</li>
+        		<li class="active"><!--HIT_EXECUTE _HIT_HTMLTXT:=_PAGETITLETXT--> Detail</li>
       		</ol>
     	</section>
 		<section class="content">

@@ -13,7 +13,6 @@ end if
 
 _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
 -->
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -37,8 +36,7 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
 	<!-- main container -->
     <div class="content-wrapper">
         <section class="content-header">
-      		<h1>
-        		<!--#4DIF (Records in selection([Timeslips])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> TimeSlip
+      		<h1>Timeslips
       		</h1>
       		<ol class="breadcrumb">
        			<li><a href="index.shtml"><i class="fa fa-dashboard"></i> Dashboard</a></li>
