@@ -15,6 +15,12 @@
 <!--#4DENDIF-->	
 <script src="js/checkbox.js"></script>
 <script>
+function switchBusiness(id){
+	var jsonRow = 'swtich_business?id='+id;
+	$.getJSON(jsonRow,function(result){
+		window.location.href="index.shtml";
+	});
+}
 function chng_activity_status(act_uuid, location){
  <!--#4DIF (Web_isUserStaff | Web_isUserClient)-->
 		var dataString = 'act_uuid='+act_uuid+'&redirect=false';

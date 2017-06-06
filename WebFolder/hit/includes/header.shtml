@@ -56,8 +56,11 @@ color:#fff!important;
 border-radius:0px 4px 4px 0px;
 color:#fff!important;
 }
-	
-	</style>
+.active2 {
+    background-color: #0456ae;
+    color: #fff!important;
+}
+</style>
 
 	<link rel="stylesheet" media="all" type="text/css" href="css/jquery-impromptu.css" />
 	

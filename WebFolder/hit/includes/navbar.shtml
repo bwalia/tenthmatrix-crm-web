@@ -2,6 +2,7 @@
 curr_date:=Current date
 last_week:=curr_date-6
 -->
+
 <header class="main-header">
     <!-- Logo -->
     <a href="index.shtml" class="logo">
@@ -97,7 +98,22 @@ last_week:=curr_date-6
               <li class="footer"><a href="notifications.shtml">View all</a></li>
             </ul>
           </li>
-          
+          <li class="dropdown tasks-menu" id="loggedInUserBusiness">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              <i class="fa fa-flag-o"></i>
+              <span class="label label-danger totalLoggedInBusinessSystems">2</span>
+            </a>
+            <ul class="dropdown-menu">
+				<li class="header">Switch Business to</li>
+              	<li>
+                	<!-- inner menu: contains the actual data -->
+                	<ul id="swtich_business" class="menu">
+                	<li class="active2"><a href="javascript:void(0)" onclick="switchBusiness('1'); return false;">Business 1</a></li>
+                	<li class=""><a href="javascript:void(0)" onclick="switchBusiness('2'); return false;">Business 2</a></li>
+                	</ul>
+              	</li>
+            </ul>
+          </li>
           <!-- User Account: style can be found in dropdown.less -->
           <!--#4DIF (_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")-->
           <li class="dropdown user user-menu">
