@@ -56,9 +56,12 @@ color:#fff!important;
 border-radius:0px 4px 4px 0px;
 color:#fff!important;
 }
-.active2 {
+.active2 a{
     background-color: #0456ae;
     color: #fff!important;
+}
+.active2 a:hover{
+    color: #000!important;
 }
 </style>
 
