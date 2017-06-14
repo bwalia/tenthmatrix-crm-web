@@ -19,6 +19,33 @@ end if
 <link href="css/bootstrap.datepicker.css" type="text/css" rel="stylesheet">
 <style>
 
+
+
+#demo-2 input[type=search] {
+	width: 40px;
+	padding-left: 10px;
+	color: transparent;
+	cursor: pointer;
+}
+#demo-2 input[type=search]:hover {
+	background-color: #fff;
+}
+#demo-2 input[type=search]:focus {
+	width: 300px;
+	padding-left: 10px;
+	color: #000;
+	background-color: #fff;
+	cursor: auto;
+}
+#demo-2 input:-moz-placeholder {
+	color: transparent;
+}
+#demo-2 input::-webkit-input-placeholder {
+	color: transparent;
+}
+
+
+
 .custom-combobox {
     position: relative;
     display: inline-block;
@@ -300,7 +327,7 @@ width: 203px; }
 	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
 
 	<!-- main container -->
-    <div class="content-wrapper">
+    <div class="content-wrapper" >
         <section class="content-header">
       		<h1>
         		Bank Statement Entries
@@ -313,33 +340,122 @@ width: 203px; }
     	</section>
 		<section class="content">
         	<div CLASS="row">
-				<div CLASS="col-md-12">
+				<div CLASS="col-md-12" STYLE="padding-top:15px;">
 					<div class="clearfix hidden-xs">
+					
       					<div class="form-group no-margin">
+						
+						
      						<div class="pull-left margin-bottom-10 ">
-								<div class="form-inline" style="">   
+							
+							
+							  <button data-toggle="collapse" CLASS="btn btn-primary" STYLE="" data-target="#filter"><i CLASS="fa fa-filter"></i>  Filter </button>
+							  
+							  <a href="javascript:void(0)"  data-toggle="modal" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); $('#setManagerModal').modal('show');" class="btn btn-danger btn-color padingmix btn-icon-left btn-sm editorLink">Saved Searches</a> 
+
+ 
+
+	
+
+<div id="filter" class="collapse" style="background-color: #efefef; border-radius: 4px;padding: 10px 45px 14px 27px; margin-top: 3px;">
+
+<div CLASS="row">
+
+<div CLASS="col-md-6" style="padding-left: 0px; padding-right:0px;" >
+<div class="form-inline" style="">   
 									<div class="btn-inline display-inline-block">
                  						<label>From</label>
 										<input name="start_date" class="input-large datepicker form-control" type="text" data-date-format="dd/mm/yyyy"  value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebSession_GetVar("bankEntriesStartDate") -->" id="start_date" readonly >
 										<label>Till </label>
 									<input name="end_date" class="input-large datepicker form-control" type="text" data-date-format="dd/mm/yyyy"  value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebSession_GetVar("bankEntriesEndDate") -->" id="end_date" readonly >
 									</div>
-									<a href="javascript:void(0)" onClick="reset_dates()" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink" title="Reset Dates"><i class="fa fa-refresh"></i></a>
+									<a href="javascript:void(0)" onClick="reset_dates()" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink" title="Reset Dates"><i class="fa fa-refresh" STYLE="margin-right:0px;"></i></a>
                   				</div>
+
+</div>
+
+
+<div CLASS="col-md-6" style="padding-left: 0px;">
+
+<div class="btn-inline display-inline-block">
+                 					<label style="position: relative;top: 6px;right: 9px;">Select Filter</label>
+										<select name="filterOptions" class="selectpicker form-control" multiple data-width="auto" STYLE="padding:10px 0px;"  >
+               						<optgroup label="Select Bank" data-max-options="1"> 
+                						<!--#4DSCRIPT/Web_LoadAllBankAccount/-->
+										<!--4DLOOP  [bank_accounts]-->									
+										<option value="bank_<!--#4DHTMLVAR [bank_accounts]uuid-->"><!--#4DHTMLVAR [bank_accounts]account_name--></option>
+										<!--4DENDLOOP-->
+               						</optgroup > 
+               						
+                					<optgroup label="Display entries with" data-max-options="1" > 
+               							<option value="display_paid_in">Money In</option>
+										<option value="display_paid_out">Money Out</option>
+									</optgroup > 
+									<optgroup label="Show Entries with" data-max-options="1"> 
+               							<option value="show_with">Attached documents</option>
+										<option value="show_without">Without documents</option>
+									</optgroup> 
+              						</select>
+									
+									<label style="display:inline-block; float:right;position: relative;top: -19px;left: 30px;"><input type="checkbox" style="vertical-align:top"  id="hide_entry_details" value="true" onChange="__showHideEntryDetails()"> Hide Entry Details</label>
+										
+									</div>
+
+
+
+
+									 
+              						
+
+</div>
+
+</div>
+
+
+
+
+
+	
+									
+									
+								<div class="form-inline" style=" margin-top:10px;">       
+								
+								          	          
+                 					<button class="btn btn-primary btn-left showAllBankStatements" onClick="__filterResults(''); return false;" disabled>All</button>                            
+									<button class="btn btn-primary  btn-middle showPending" onClick="__filterResults('pending'); return false;">Pending</button>
+									<button class="btn btn-primary btn-right showReconciled" onClick="__filterResults('reconciled'); return false;">Reconciled</button>
+									
+								
+									
+									
+								
+								
+                  				</div>	
+									
+
+</div> 
+							
+							
+								
          					</div>
-         					<div class="pull-right margin-bottom-10 ">
+         					<div class="pull-right margin-bottom-10">
+							<form ID="demo-2">
 								<div class="form-inline" style="">                 	          
                  					<div class="btn-inline display-inline-block">
+									
+									
                  						
-										<input class="form-control searchFieldClass" id="keyword_type" style="min-width:225px; height:36px;" placeholder="Search here.." name="keyword" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" type="text">
+										<input class="form-control searchFieldClass" id="keyword_type" type="search" style=" height:36px;" placeholder="" name="keyword" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" type="text">
 										
 										<button class="btn btn-left-align btn-link no-shadow bg-transparent no-padding-top padding-right-10 right-auto left" type="button" id="searchBtn"><i class="glyphicon glyphicon-search"></i></button>
 									</div>
 								
-                                    <a href="bank_entry.shtml" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink " style=""> <i class="fa fa-plus"></i>Add New Bank Entry</a>
-									<button onClick="reset_filters()" class="btn btn-primary btn-color padingmix  btn-icon-left btn-sm editorLink " style=""> <i class="fa fa-refresh"></i>Reset</button>
+                                    <a href="bank_entry.shtml" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink " style=""> <i class="fa fa-plus"></i>Bank Entry</a>
+									<button onClick="reset_filters()" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink " style=""> <i class="fa fa-refresh"></i>Reset </button>
                   				</div>
-         					</div>
+         					
+							</form>
+							</div>
       					</div>
      				</div>
      				<input id="keyword" name="keyword" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" type="hidden">
@@ -361,7 +477,7 @@ width: 203px; }
       					<div class="form-group no-margin">
      						<div class="pull-left margin-bottom-10 ">
 								<div class="form-inline" style="margin-top:8px;">  
-									<a href="javascript:void(0)" data-toggle="modal" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); $('#setManagerModal').modal('show');" class="btn btn-danger btn-color padingmix btn-icon-left btn-sm editorLink">Saved Searches</a> 
+									
 								 
 									<div class="btn-inline savedSearchesClass" style="display:none; float: right; padding-left:5px;">
                  						<label>Add selected items to saved searches</label>
@@ -379,31 +495,7 @@ width: 203px; }
                   				</div>
          					</div>
          					<div class="pull-right margin-bottom-10 ">
-								<div class="form-inline" style="">                 	          
-                 					<button class="btn btn-primary btn-left showAllBankStatements" onClick="__filterResults(''); return false;" disabled>All</button>                            
-									<button class="btn btn-primary  btn-middle showPending" onClick="__filterResults('pending'); return false;">Pending</button>
-									<button class="btn btn-primary btn-right showReconciled" onClick="__filterResults('reconciled'); return false;">Reconciled</button>
-									<label>Select Filter</label>
-									<select name="filterOptions" class="selectpicker" multiple data-width="auto" class="form-control">
-               						<optgroup label="Select Bank" data-max-options="1">
-                						<!--#4DSCRIPT/Web_LoadAllBankAccount/-->
-										<!--4DLOOP  [bank_accounts]-->									
-										<option value="bank_<!--#4DHTMLVAR [bank_accounts]uuid-->"><!--#4DHTMLVAR [bank_accounts]account_name--></option>
-										<!--4DENDLOOP-->
-               						</optgroup>
-               						
-                					<optgroup label="Display entries with" data-max-options="1">
-               							<option value="display_paid_in">Money In</option>
-										<option value="display_paid_out">Money Out</option>
-									</optgroup>
-									<optgroup label="Show Entries with" data-max-options="1">
-               							<option value="show_with">Attached documents</option>
-										<option value="show_without">Without documents</option>
-									</optgroup>
-              						</select>
-              						<label style="display:inline-block; float:right;"><input type="checkbox" style="vertical-align:top"  id="hide_entry_details" value="true" onChange="__showHideEntryDetails()"> Hide Entry Details</label>
 								
-                  				</div>
          					</div>
       					</div>
      				</div>
