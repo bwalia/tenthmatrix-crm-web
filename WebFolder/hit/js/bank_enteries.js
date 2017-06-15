@@ -2464,6 +2464,10 @@ $(document).ready(function() {
  				var valStr = selectedValues.replace("show_", ""); 
 				bill=valStr;
  			}
+ 			else if(selectedValues.indexOf("filter_")>=0){
+ 				var valStr = selectedValues.replace("filter_", ""); 
+				status=valStr;
+ 			}
 		});
 		
 		refreshTable();
@@ -2545,7 +2549,7 @@ $(document).ready(function() {
 	});	
 	
 	$('#searchBtn').click(function(){
-		if ($('#keyword_type').val()!="") {
+		/**if ($('#keyword_type').val()!="") {
 			var keyVal=$('#keyword_type').val();
 			$('#keyword').val(keyVal);
 			$('#table-breakpoint').basictable('destroy');
@@ -2557,7 +2561,8 @@ $(document).ready(function() {
 			load_data();
 		}else{
 			$('#keyword_type').focus();
-		}
+		}**/
+		$('#keyword_type').focus();
 	});
 	/**$(window).scroll(function(){
 		if ($(window).scrollTop() == $(document).height() - $(window).height()){
