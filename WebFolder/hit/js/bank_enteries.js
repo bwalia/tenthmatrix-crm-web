@@ -549,7 +549,7 @@ function load_data(refRow){
 			__alertModalBox('No more records found!');
 			$('#display_more_btn').hide();
 			$('#table-breakpoint').basictable({
-    				breakpoint: 751
+    			breakpoint: 751
    			});
 		}else{
 			var table_html='';
@@ -2472,10 +2472,12 @@ $(document).ready(function() {
 		
 		refreshTable();
 	});
+	if(entryFormFlag){
 	
-	$('#keyword').focus();
-	load_data();	
-		 
+	}else{
+		$('#keyword').focus();
+		load_data();	
+	}
 	//
 	$( '.table' ).on( 'click', 'input[type="checkbox"]', function() {
 		showHideSetManager();

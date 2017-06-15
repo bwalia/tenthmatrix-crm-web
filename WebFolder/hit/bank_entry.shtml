@@ -155,6 +155,19 @@ end if
 	<script src="js/jquery.colorbox.js"></script>
 	<!-- call this page plugins -->
 <script type="text/javascript">
+var start=0, end=50;
+var old_srch='', tab='', set='',start_date='',end_date='',date_selected='no';
+var tablname='bank_statement_entries';
+var complete=false;
+var completeScroll=false;
+var checkAllFlag=false;
+var add_from_manager=false;
+var bank_account='', entry_type='', bill='', selected_set='';
+var setUUID='';
+var status='',xhrAbortCustomerLoad;
+var showallReceiptsFlag=true;
+var isAdminUser='<!--#4DVAR IsUserAdmin -->';
+
 var xhrAbortCustomerLoad;
 var bank_uuid='<!--#4DVAR [bank_statement_entries]uuid-->';
 var entryFormFlag=true;
@@ -186,7 +199,7 @@ function saveEntryStatus(evn, selected){
 
 function loadRecPayRows(e){
 	jsonRow = 'load_bankenteriesnew.cgi?uuid_entry='+e;	
-	xhrAbortLoad=$.getJSON(jsonRow,function(result){
+	$.getJSON(jsonRow,function(result){
 		if(result.Alert){
 			$.prompt('No more records found');
 		}else{
