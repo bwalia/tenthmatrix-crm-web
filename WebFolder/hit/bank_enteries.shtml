@@ -432,7 +432,7 @@ width: 203px; }
 								
          					</div>
          					<div class="pull-right margin-bottom-10">
-							<form ID="demo-2">
+							<form ID="demo-2" STYLE="top: -8px; position:relative;">
 								<div class="form-inline" style="">                 	          
                  					<div class="btn-inline display-inline-block">
 										<input class="form-control searchFieldClass" id="keyword_type" type="search" style=" height:36px;" placeholder="" name="keyword" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" type="text">
