@@ -67,7 +67,7 @@ end if
 												<option value="<!--#4DVAR [Projects]proj_id-->" ><!--4DVAR [Projects]proj_name--></option>
 											<!--4DENDLOOP-->
 										</select>
-										<input class="form-control searchFieldClass keyword_type" id="keyword_type" style="height:36px;" placeholder="Search here.." name="keyword" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" type="search">
+										<input class="form-control searchFieldClass keyword_type" id="keyword_type" style="height:36px;" name="keyword" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" type="search">
 										<button class="btn btn-left-align btn-link no-shadow bg-transparent no-padding-top padding-right-10 right-auto left" type="button" id="searchBtn"><i class="glyphicon glyphicon-search"></i></button>
 									</div>
 									<select name="filterOptions" class="selectpicker form-control" data-width="auto" onChange="__filtertasks(this.value)">
@@ -414,8 +414,8 @@ function __filtertasks(e){
 function __deleteSelected(del_uuid){
 	var statesdemo = {
 		state0: {
-			title: 'Are you sure to delete?',
-			buttons: { Cancel : 0, "Task Only": 1 , "Task with related Timeslips": 2},																	
+			title: 'Are you sure to delete task?',
+			buttons: { Cancel : 0, "Task Only": 1 , "With related Timeslips": 2},																	
 			submit:function(e,v,m,f){ 
 				if(v==1) {
 					var url= "deletetaskandtimeslip.cgi";
@@ -595,7 +595,7 @@ function __showDownloadPrompt(task_uuid, token){
 }
 
 $(document).ready(function() {
-	$('#keyword_type').focus();
+	//$('#keyword_type').focus();
 	load_data();		 
 	
 	$(window).scroll(function(){
@@ -611,19 +611,7 @@ $(document).ready(function() {
 		}
 	});	
 	$('#searchBtn').click(function(){
-		if ($('#keyword_type').val()!="") {
-			var keyVal=$('#keyword_type').val();
-			$('#keyword').val(keyVal);
-			$('#tasks_table_body').html('');
-			$('#table-breakpoint').basictable('destroy');
-			$('#img_loading_div').show();
-			$('#display_more_btn').hide();	
-			start=0;
-			end=start+25;
-			load_data();
-		}else{
-			$('#keyword_type').focus();
-		}
+		$('#keyword_type').focus();
 	});
 	$('#n_tax_code').change(function(){
 		var tax_code=$(this).val();

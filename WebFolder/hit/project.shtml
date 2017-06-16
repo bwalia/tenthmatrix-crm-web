@@ -66,31 +66,20 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 #ProjectForm input.error, textarea.error, select.error{
     border: 1px solid red;
 }
-
-  
-  .chosen-container{
+.chosen-container{
 	  width: 424px !important;
-	  
-
-  }
-  
-  .chosen-container-multi .chosen-choices{
+}
+.chosen-container-multi .chosen-choices{
 	  border-radius:4px!important;
 	  border: 1px solid #d3d3d3!important;
 	  width:240px;
- 
-  }
-  
-  
-  #ProjectForm .custom-combobox{
-  
-      width: 351px;
+}
+#ProjectForm .custom-combobox{
+   width: 351px;
     margin-left: 25px;
     top: 2px;
-  }
-  
-  
-  .chosen-container .chosen-results {
+}
+.chosen-container .chosen-results {
     color: #444;
     position: relative;
     overflow-x: hidden;
@@ -98,44 +87,25 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
     margin: 0 4px 4px 0;
     padding: 0 0 0 4px;
     max-height: 160px;
-  }
-  
-  
-  .bootstrap-filestyle{
-display: inline-table;
 }
-									
+.bootstrap-filestyle{
+	display: inline-table;
+}									
 .group-span-filestyle {
 	position: relative;
 	right: 4px;
 }
-
-
 .group-span-filestyle{
 	margin-left:0px;
 	outline:none;
 }
-
-
-
-  
-  
-  .chosen-container-multi .chosen-choices {
+.chosen-container-multi .chosen-choices {
     border-radius: 4px !important;
     border: 1px solid #d3d3d3 !important;
     width: 79%;
     line-height: 24px;
     padding: 6px 6px;
 }
-
-
-
-
-  
-
-  
-		
-
 </style>
 </head>
  <body class="hold-transition skin-blue sidebar-mini">
@@ -188,7 +158,7 @@ display: inline-table;
 								
 								<div class="form-group" >
     							<label for="" class="col-sm-2 control-label">Client Name<sup class="required">*</sup></label>	
-								<div class="col-sm-4">					
+								<div class="col-sm-10">					
                              		<select id="Client_ID" name="Client_ID"  CLASS="form-control"  >
 										<!--#4DIF (Records in selection([Projects])=0)-->
 											<!--#4DIF (pUserClient="")-->
@@ -221,7 +191,7 @@ display: inline-table;
 								
 								<div class="form-group">
 								<label class="col-sm-2 control-label">Project Name <sup class="required">*</sup></label>
-								<div class=" col-sm-4">
+								<div class=" col-sm-8">
 									<input CLASS="form-control" type="text" name="Project_Name" id="Project_Name" value="<!--#4DVAR [Projects]proj_name-->">                                 
 								</div>
 							</div>
@@ -323,12 +293,12 @@ display: inline-table;
 
 
   <div id="second" class="tab-pane fade" >
-   <div class="col-sm-12 col-lg-8" STYLE="margin-top:20px;" >
+   <div class="col-sm-12 col-lg-12" STYLE="margin-top:20px;" >
 								<!-- left column -->
 								
 								<div class="form-group">
 								<label for="" class="col-sm-2 control-label">Attached Documents</label>
-                                <div class="col-sm-6  ">
+                                <div class="col-sm-10  ">
                                     
 									<div class=" table-responsive table-full-width">
 		 			<div class="table-responsive" style="border:none;" >
@@ -361,7 +331,7 @@ display: inline-table;
 							
 							<div class="form-group hidden-xs">
 								<label for="" class="col-sm-2 control-label">Upload New Document</label>
-                                <div class="col-sm-7  ">
+                                <div class="col-sm-10">
 								
 								<div CLASS="row">
 								<div CLASS="col-md-8">

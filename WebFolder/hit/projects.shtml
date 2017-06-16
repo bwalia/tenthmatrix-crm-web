@@ -250,8 +250,7 @@ function __showProjects(val, divName)
 	load_data();
 }
 $(document).ready(function() {
-
-	$('#keyword_type').focus();
+	//$('#keyword_type').focus();
 			
 	load_data();	
 	

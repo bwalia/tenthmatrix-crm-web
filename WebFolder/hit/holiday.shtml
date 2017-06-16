@@ -107,7 +107,7 @@ mReadOnly:=(Records in selection([employee_holidays])=1)
 								</div>
 								<!--<div class="col-sm-1"></div>-->
 								<div class="col-sm-4">
-								<input class="time form-control" type="text" value="<!--#4DVAR timestamp_unix_toTime([employee_holidays]timestamp_start)-->" name="setStartTime" id="setStartTime" style="width:27%;"> 
+								<input class="time form-control" type="text" value="<!--#4DVAR timestamp_unix_toTime([employee_holidays]timestamp_start)-->" name="setStartTime" id="setStartTime" style="width:40%;"> 
 								<input type="hidden" readonly value="07:00 PM" id="startDay_endTime" style="width:60px;">   
                             </div>
 							</div>
@@ -122,12 +122,10 @@ mReadOnly:=(Records in selection([employee_holidays])=1)
 								<!--<div class="col-sm-1"></div>-->
 								<div class="col-sm-4">
 									<input type="hidden" readonly value="09:00 AM" id="endDay_startTime" style="width:60px;">
-									<input class="time form-control" type="text" value="<!--#4DVAR timestamp_unix_toTime([employee_holidays]timestamp_end)-->" name="setEndTime" id="setEndTime" style="width:27%;" >
+									<input class="time form-control" type="text" value="<!--#4DVAR timestamp_unix_toTime([employee_holidays]timestamp_end)-->" name="setEndTime" id="setEndTime" style="width:40%;" >
 									<span id="err_msg" style="color:#FF0000"></span> 
                             	</div>
 							</div>
-					   
-					   
 					   
 					   
 					   <div class="form-group">
@@ -152,7 +150,7 @@ mReadOnly:=(Records in selection([employee_holidays])=1)
 							
 							<div class="form-group">
     							<label for="" class="col-sm-2 control-label">Reason For Leave :</label>
-    							<div class="col-sm-4">	
+    							<div class="col-sm-6">	
 								<!--#4DIF (mReadOnly)--><textarea class="form-control" rows="4" name="Subject" id="Subject" class="form-control"><!--#4DVAR [employee_holidays]subject--></textarea><!--#4DELSE-->
 								<textarea  class="form-control" rows="4" name="Subject" id="Subject"><!--#4DVAR [employee_holidays]subject--></textarea><!--#4DENDIF-->
                             </div>
@@ -160,7 +158,7 @@ mReadOnly:=(Records in selection([employee_holidays])=1)
 							
 							<div class="form-group">
     							<label for="" class="col-sm-2 control-label">Manager Notes :</label>
-    							<div class="col-sm-4">	
+    							<div class="col-sm-6">	
 								<!--#4DIF (mReadOnly)--><textarea class="form-control" rows="4" name="Comments" id="Comments"><!--#4DVAR [employee_holidays]comments--></textarea><!--#4DELSE-->
 								<textarea   class="form-control" rows="4" name="Comments" id="Comments"><!--#4DVAR [employee_holidays]comments--></textarea><!--#4DENDIF-->
                             </div>

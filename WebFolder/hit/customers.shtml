@@ -116,7 +116,6 @@ mUserIsCurrentBool:=userHasAccessToDelete
 										<button class="btn btn-left-align btn-link no-shadow bg-transparent no-padding-top padding-right-10 right-auto left" type="button" id="searchBtn"><i class="glyphicon glyphicon-search"></i></button>
 										
 									</div>
-									<label style="position: relative;">Filter by</label>
 										<select name="filterOptions" class="selectpicker form-control" multiple data-width="auto" STYLE="padding:10px 0px;"  >
 											<optgroup label="Select options" data-max-options="1" > 
                									<option value="filter_">All</option>
@@ -712,7 +711,7 @@ $('select.selectpicker').on('change', function(e){
 		load_data();
 	});
 		
-	$('#keyword_type').focus();
+	//$('#keyword_type').focus();
 	load_data();	
 			 
 	// toggle all checkboxes from a table when header checkbox is clicked
@@ -783,19 +782,7 @@ $('select.selectpicker').on('change', function(e){
 	});	
 	
 	$('#searchBtn').click(function(){
-		if ($('#keyword_type').val()!="") {
-			var keyVal=$('#keyword_type').val();
-			$('#keyword').val(keyVal);
-			$('#table-breakpoint').basictable('destroy');
-			$('#table_content').html('');
-			$('#img_loading_div').show();
-			$('#display_more_btn').hide();	
-			start=0;
-			end=start+25;
-			load_data();
-		}else{
-			$('#keyword_type').focus();
-		}
+		$('#keyword_type').focus();
 	});
 });
 	

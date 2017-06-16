@@ -254,7 +254,7 @@ function load_more(){
 }
 $(document).ready(function() {
 	$('#task').val('<!--#4DVAR _HIT_WebApp_GetField ("task") -->');
-	$('#keyword_type').focus();
+	//$('#keyword_type').focus();
 	load_data();			 
 	
 	$(window).scroll(function(){
@@ -315,19 +315,7 @@ $(document).ready(function() {
 	});	
 	$( "#task" ).combobox();	
 	$('#searchBtn').click(function(){
-		if ($('#keyword_type').val()!="") {
-			var keyVal=$('#keyword_type').val();
-			$('#keyword').val(keyVal);
-			$('#table-breakpoint').basictable('destroy');
-			$('#timeslip_table_body').html('');
-			$('#img_loading_div').show();
-			$('#display_more_btn').hide();	
-			start=0;
-			end=start+25;
-			load_data();
-		}else{
-			$('#keyword_type').focus();
-		}
+		$('#keyword_type').focus();
 	});
 });
 	
