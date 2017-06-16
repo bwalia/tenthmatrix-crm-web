@@ -68,7 +68,7 @@ end if
 	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
 
 	<!-- main container -->
-    <div class="content-wrapper">
+    <div class="content-wrapper" >
         <section class="content-header">
       		<h1>
         		<!--#4DIF (_HIT_WebApp_GetField ("page") ="outstanding")-->Outstanding&nbsp;<!--#4DENDIF-->
@@ -394,10 +394,10 @@ end if
 					<p ><span class="label-default" id="set_mgr_msg" style="color:#006600"></span><span class="label-default" id="set_mgr_err" style="color:#FF0000"></span></p>
 					
 					<div >
-						<select name="sets_list" id="sets_list" class="form-control" size="10" style="width:100%" >
+						<select name="sets_list" id="sets_list" class="form-control" size="10" style="width:100%; height: 180px!important;" >
 						 <!--#4DSCRIPT/Web_LoadInvoicesSets/-->
 						<!--4DLOOP  [saved_sets]-->						
-						<option value="<!--#4DHTMLVAR [saved_sets]uuid-->"><!--#4DHTMLVAR [saved_sets]name--></option>
+						<option STYLE="padding-bottom: 5px; padding-top:5px;" value="<!--#4DHTMLVAR [saved_sets]uuid-->" ><!--#4DHTMLVAR [saved_sets]name--></option>
 						<!--4DENDLOOP-->
 						</select>
 					</div>

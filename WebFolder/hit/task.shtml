@@ -160,7 +160,7 @@ _HIT_WebSession_SetVar ("last-clicked-uuid";_HIT_WebApp_GetField ("uuid"))
 									</div>                  
  									<div class="form-group">
 										<label class="col-sm-2 control-label">Project Name <sup class="required">*</sup></label>
-										<div class="ui-widget projectClass col-sm-7" style=" margin-left: 27px; width: 80%; margin-top: -12px; padding-bottom: 10px;">
+										<div class="ui-widget projectClass col-sm-7" style=" margin-left: 27px; margin-top: -12px; padding-bottom: 10px;">
 										<Select name="Project_ID" id="Project_ID" class="form-control">
 										<!--#4DIF (Records in selection([Tasks])=0)-->
 											<!--#4DIF (pUserProject="")-->
