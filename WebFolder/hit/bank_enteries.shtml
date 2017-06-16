@@ -369,7 +369,7 @@ top: 0px!important;
 
 							<div CLASS="col-md-6" style="padding-left: 0px;">
 								<div class="btn-inline display-inline-block">
-                 					<label style="position: relative;top: 3px;right: 9px;">Select Filter</label>
+                 					<label style="position: relative;top: 5px;right: 9px;">Select Filter</label>
 										<select name="filterOptions" class="selectpicker form-control" multiple data-width="auto" STYLE="padding:10px 0px;"  >
 										<optgroup label="Show entries" data-max-options="1" > 
                								<option value="filter_">All</option>
@@ -393,7 +393,7 @@ top: 0px!important;
 									</optgroup> 
               						</select>
 									
-									<label style="display:inline-block; float:right;position: relative;top: -26px;left: 30px;"><input type="checkbox" style="vertical-align:top"  id="hide_entry_details" value="true" onChange="__showHideEntryDetails()"> Hide Entry Details</label>
+									<label style="display:inline-block; float:right;position: relative;top: -21px;left: 30px;"><input type="checkbox" style="vertical-align:top"  id="hide_entry_details" value="true" onChange="__showHideEntryDetails()"> Hide Entry Details</label>
 								</div>
 							</div>
 

@@ -53,18 +53,19 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
       						<div class="pull-left margin-bottom-10 ">
       							<a href="javascript:void(0)" onClick="$('#selected_vls').val('');pushLiveFormGithub();" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink " style="margin-top:9px;"> Deploy from Github to Live</a>
       						</div>
-     						<div class="pull-right margin-bottom-10 ">
+     						<div class="pull-right margin-bottom-10 " id="demo-2">
 								<div class="form-inline" style="">                 	          
                  					<div class="btn-inline display-inline-block">
-                 						<input class="form-control searchFieldClass" id="keyword_type" style="min-width:225px;  height:36px;" placeholder="Search here.." name="keyword" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" type="text">
+                 						<input class="form-control searchFieldClass" id="keyword_type" style="height:36px;" name="keyword" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" type="search">
 										
 										<button class="btn btn-left-align btn-link no-shadow bg-transparent no-padding-top padding-right-10 right-auto left" type="button" id="searchBtn"><i class="glyphicon glyphicon-search" STYLE="top:-11px;"></i></button>
 									</div>
-									
-									<button class="filterBtn btn btn-primary btn-left" onClick="__showProjects('', 'allItemsDiv'); return false;" id="allItemsDiv" disabled>All</button>                               
-									<button class="filterBtn btn btn-primary  btn-middle" onClick="__showProjects('active', 'activeItemsDiv'); return false;" id="activeItemsDiv">Active</button>       
-									<button class="filterBtn btn btn-primary btn-right" onClick="__showProjects('completed', 'completedItemsDiv'); return false;" id="completedItemsDiv">Completed</button>
-                                    <a href="project.shtml" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink " style=""> <i class="fa fa-plus"></i>Add New Project</a>
+									<select name="filterOptions" class="selectpicker form-control" data-width="auto" onChange="__showProjects(this.value)">
+										<option value="">All</option>
+										<option value="active">Active</option>
+										<option value="completed">Completed</option>
+									</select>
+                                    <a href="project.shtml" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink" style=""><i class="fa fa-plus"></i> New Project</a>
                   				</div>
          					</div>
       					</div>
@@ -75,9 +76,11 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
 							<div class="col-lg-6 col-sm-12 col-xs-12">
 								<div>
 									<input class="form-control xs-margin-btm10 searchFieldClass" id="small_screen_keyword" name="keyword" placeholder="Search here.." value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" type="text">
-                     				<button class="btn btn-primary btn-color padingmix  btn-icon-left btn-sm editorLink" STYLE="width:100%; margin:10px 0px;" onClick="__showProjects('', 'allItemsDiv'); return false;">All</button>
-                     				<button class="btn btn-primary btn-color padingmix  btn-icon-left btn-sm editorLink" STYLE="width:100%; margin:10px 0px;" onClick="__showProjects('active', 'activeItemsDiv'); return false;">Active</button>  
-                     				<button class="btn btn-primary btn-color padingmix  btn-icon-left btn-sm editorLink" STYLE="width:100%; margin:10px 0px;" onClick="__showProjects('completed', 'completedItemsDiv'); return false;">Completed</button>  
+                     				<select name="filterOptions" class="form-control" STYLE="margin-top:10px;" onChange="__showProjects(this.value)">
+										<option value="">All</option>
+										<option value="Active">Active</option>
+										<option value="completed">Completed</option>
+									</select>
                      				<a href="project.shtml" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink" STYLE="width:100%; margin:10px 0px;"> <i class="fa fa-plus"></i>Add New Project</a>    
                   				</div>
 							</div>
@@ -212,7 +215,7 @@ function pushLiveFormGithub(){
 		$("#selected_vls").val(selected);
 		var get_selectedStr=$("#selected_vls").val();
 		if(get_selectedStr!=''){
-			console.log(get_selectedStr);
+			__alertModalBox('Work in progress!');
 		}else{
 			__alertModalBox('Please select some projects!');
 			$('#selected_vls').val('');
@@ -235,8 +238,8 @@ function load_more(){
 }
 function __showProjects(val, divName)
 {
-	$(".filterBtn").prop("disabled", false);
-	$("#"+divName).prop("disabled", true);
+	//$(".filterBtn").prop("disabled", false);
+	//$("#"+divName).prop("disabled", true);
 	start=0;
 	end=25;
 	tab=val;
@@ -309,19 +312,7 @@ $(document).ready(function() {
 		}
 	});
 	$('#searchBtn').click(function(){
-		if ($('#keyword_type').val()!="") {
-			var keyVal=$('#keyword_type').val();
-			$('#keyword').val(keyVal);
-			$('#table-breakpoint').basictable('destroy');
-			$('#projects_table_body').html('');
-			$('#img_loading_div').show();
-			$('#display_more_btn').hide();	
-			start=0;
-			end=start+25;
-			load_data();
-		}else{
-			$('#keyword_type').focus();
-		}
+		$('#keyword_type').focus();
 	});
 	// toggle all checkboxes from a table when header checkbox is clicked
   	$(".table th input:checkbox").click(function () {
