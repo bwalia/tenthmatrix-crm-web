@@ -20,6 +20,7 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
 <html>
 <head>
 <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+<link href="css/bootstrap-select.css" rel="stylesheet" />
 <link rel="stylesheet" href="css/basictable.css">
 <link rel="stylesheet" href="css/autocomplete.css" />
 <style>
@@ -55,10 +56,12 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
 					<div class="clearfix hidden-xs">
       					<div class="form-group no-margin">
       						<!--#4DIF (_HIT_WebSession_GetVar ("auth_user_type")#"CLIENTS")-->
-      						<div class="pull-left margin-bottom-10 ">
+      						<div class="pull-left margin-bottom-10 " STYLE="margin-top:15px;">
 								<div class="form-inline" style="">                 	          
-                 					<div class="btn-inline display-inline-block">
-                 						
+                 					
+									 <button data-toggle="collapse" CLASS="btn btn-primary" STYLE="" data-target="#sets"><i CLASS="fa fa-bars"></i>  Sets </button>
+								
+								<div id="sets" class="collapse" style="background-color: #efefef; border-radius: 4px;padding: 10px 45px 14px 27px; margin-top: 11px; " >
 											<label>Add to Set :</label>
 											<select class="form-control" name="add_sets" id="add_sets" onChange="__showContactForm_AddSet(this.value, $('#add_sets option:selected').text())">
 												<option value="">--Select Set--</option>
@@ -69,26 +72,36 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
 												<option id="opt_new_set" value="new_set">Create New Set</option>
 											</select>
 										
-									</div>
+								
 									<a href="#myModal" data-toggle="modal" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html('');" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink "><i class="fa fa-folder-open"></i>Set Manager</a>
-                   				</div>
+										</div>
+										</div>
+								
          					</div>
          					<!--#4DENDIF-->
      						<div class="pull-right margin-bottom-10 ">
-								<div class="form-inline" style="">                 	          
+								<div class="form-inline" style="" ID="demo-2">                 	          
                  					<div class="btn-inline display-inline-block">
                  						
-										<input class="form-control searchFieldClass" id="keyword_type" style="min-width:225px; height:36px;" placeholder="Search here.." name="keyword" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" type="text">
+										<input class="form-control searchFieldClass" id="keyword_type" style="height:36px;" placeholder="" name="keyword" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" type="search">
 										
 										<button class="btn btn-left-align btn-link no-shadow bg-transparent no-padding-top padding-right-10 right-auto left" type="button" id="searchBtn"><i class="glyphicon glyphicon-search"></i></button>
 										
 									</div>
 									
-									<button class="btn btn-primary btn-left filterBtn" onClick="__filterResults(''); return false;" disabled>All</button>                               
-									<button class="btn btn-primary  btn-middle AllowedfilterBtn" onClick="__filterResults('Allowed'); return false;">Subscribers</button>                      
-									<button class="btn btn-primary  btn-right Not_AllowedfilterBtn" onClick="__filterResults('Not_Allowed'); return false;">Non Subscribers</button>
 									
-                                    <a href="contact.shtml" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink " style=""> <i class="fa fa-plus"></i>Add New Contact</a>
+									<select class="selectpicker form-control" data-width="auto" id="filter_by" onChange="__filterResults(this.value)" >
+											<option value="">All</option>
+											<option value="Allowed">Subscribers</option>
+											<option value="Not_Allowed" >Non Subscribers</option>
+											
+										</select>
+									
+									
+									
+									
+									
+                                    <a href="contact.shtml" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink " style=""> <i class="fa fa-plus"></i>Contact</a>
                   				</div>
          					</div>
       					</div>
@@ -319,6 +332,7 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
 </div>
 <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml-->
 <script src="js/basictable.js"></script>
+<script src="js/bootstrap-select.js" type="text/javascript"></script>
 <script>
 var JSONdata;
 var start=0, end=50;
@@ -551,7 +565,7 @@ function processPrompt(title,msg,start_prmt,stop_prmt){
 
  
 $(document).ready(function() {
-	$('#keyword_type').focus();
+	
 	load_data();	
 			 
 	// toggle all checkboxes from a table when header checkbox is clicked
