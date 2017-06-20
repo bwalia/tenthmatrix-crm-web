@@ -18,6 +18,7 @@ end if
 <html>
 <head>
 <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+
 <link rel="stylesheet" href="css/basictable.css">
 
 <link href="css/bootstrap.datepicker.css" type="text/css" rel="stylesheet">
@@ -47,7 +48,17 @@ end if
 					<div class="clearfix hidden-xs">
       					<div class="form-group no-margin">
      						<div class="pull-left margin-bottom-10 ">
-								<div class="form-inline" style="">                 	          
+							
+							
+							
+								<div class="form-inline" style="">   
+								
+							
+							
+							
+							
+								 <button data-toggle="collapse" CLASS="btn btn-primary" STYLE="" data-target="#sets"><i CLASS="fa fa-filter"></i>  Filter </button>
+								              	          
                  					<div class="btn-inline display-inline-block">
                  						<label>From</label>
                  						<input name="start_date" class=" datepicker" type="text" data-date-format="dd/mm/yyyy"  value="" id="start_date" readonly >
@@ -55,41 +66,10 @@ end if
                  						<input name="end_date" class="datepicker " type="text" data-date-format="dd/mm/yyyy"  value="" id="end_date" readonly >
 									</div>
 								</div>
-         					</div>
-         					<div class="pull-right margin-bottom-10 ">
-								<div class="form-inline" style="">                 	          
-                 					<div class="btn-inline display-inline-block">
-                 						<input class="form-control searchFieldClass keyword_type" id="keyword_type" style="min-width:225px; height:36px;" placeholder="Search here.." name="keyword" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" type="text">
-										<button class="btn btn-left-align btn-link no-shadow bg-transparent no-padding-top padding-right-10 right-auto left" type="button" id="searchBtn"><i class="glyphicon glyphicon-search"></i></button>
-									</div>
-									
-									<a href="vtcashbook.shtml" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink"> <i class="fa fa-plus"></i>Add VT CashBook Activity</a>
-                  				</div>
-         					</div>
-      					</div>
-     				</div>
-					<div class="visible-xs ">
-						<div class="row">
-							<div class="col-lg-6 col-sm-12 col-xs-12">
-								<div>
-									<input class="form-control xs-margin-btm10 searchFieldClass keyword_type" id="small_screen_keyword" name="keyword" placeholder="Search here.." value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" type="text">
-                     				<a href="vtcashbook.shtml" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink" STYLE="width:100%; margin:10px 0px;"> <i class="fa fa-plus"></i>Add New VT CashBook Activity</a>  
-                  				</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div CLASS="row">
-				<div CLASS="col-md-12">
-					<div class="clearfix hidden-xs">
-      					<div class="form-group no-margin">
-     						<div class="pull-right margin-bottom-10 ">
-								<div class="form-inline" style="">                 	          
-                 					<button style="margin-left:15px; margin-top:10px;" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink" onclick="__deleteScripts(); return false;">Delete</button>
-								</div>
-         					</div>
-         					<div class="pull-left margin-bottom-10 ">
+								
+							
+								
+								<div id="sets" class="collapse" style="background-color: #efefef; border-radius: 4px;padding: 10px 45px 14px 27px; margin-top: 11px; " >
 								<div class="form-inline" style="">                 	          
                  					<div class="btn-inline display-inline-block">
                  						<input type="checkbox" class="saleInvoiceCheck selectedCheckClass" name="saleInvoiceCheck" value="SIN" style="margin-left:10px; margin-right:5px;margin-top:-2px;"> Sales Invoice
@@ -108,11 +88,40 @@ end if
 									<a href="javascript:void(0)" onclick="vatReturn()" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink vatReturnBtn" style="margin-bottom:10px;margin-left:5px;display:none;">VAT Return</a>
 									<a href="javascript:void(0)" onclick="exportSpreadSheet()" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink exportSpreadSheetBtn" style="margin-bottom:10px;margin-left:5px;display:none;">Export Spreadsheet</a>
 								</div>
+								</div>
+								
+								
+         					</div>
+         					<div class="pull-right margin-bottom-10 " ID="demo-2">
+								<div class="form-inline" style="">                 	          
+                 					<div class="btn-inline display-inline-block">
+                 						<input class="form-control searchFieldClass keyword_type" id="keyword_type" style="height:36px;"  name="keyword" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" type="search">
+										<button class="btn btn-left-align btn-link no-shadow bg-transparent no-padding-top padding-right-10 right-auto left" type="button" id="searchBtn"><i class="glyphicon glyphicon-search"></i></button>
+									</div>
+									
+									<a href="vtcashbook.shtml" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink"> <i class="fa fa-plus"></i>VT CashBook Activity</a>
+									
+									<div class="form-inline" style=" float:right;">                 	          
+                 					<button style="margin-left:5px; margin-top:8px; padding-right:5px;" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink" onclick="__deleteScripts(); return false;"><i class="fa fa-trash"></i>
+									</button>
+								</div>
+                  				</div>
          					</div>
       					</div>
      				</div>
+					<div class="visible-xs ">
+						<div class="row">
+							<div class="col-lg-6 col-sm-12 col-xs-12">
+								<div>
+									<input class="form-control xs-margin-btm10 searchFieldClass keyword_type" id="small_screen_keyword" name="keyword" placeholder="Search here.." value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" type="text">
+                     				<a href="vtcashbook.shtml" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink" STYLE="width:100%; margin:10px 0px;"> <i class="fa fa-plus"></i>Add New VT CashBook Activity</a>  
+                  				</div>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
+			
 			<input id="keyword" name="keyword" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" type="hidden">
    			<div class="row">
 	  			<div class="content table-responsive table-full-width">
