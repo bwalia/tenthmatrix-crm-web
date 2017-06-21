@@ -280,7 +280,7 @@ function __deleteSelectedEntry(uuid){
 	(new Function(code))();
 }
 $(document).ready(function() {
-	$('#keyword_type').focus();
+	
 	load_data();		 
 	
 	$(window).scroll(function(){
