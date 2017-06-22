@@ -1,0 +1,114 @@
+<!--HIT_EXECUTE
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+C_TEXT(_HTMLTITLETXT)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+QUERY([Templates];[Templates]uuid=_HIT_WebApp_GetField ("uuid"))
+
+IF (Records in selection([bank_statement_entries])=0)
+_HTMLTITLETXT:="New Template entry"
+ELSE
+_HTMLTITLETXT:= "Edit Template entry"
+END IF
+
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+-->
+<!DOCTYPE html>
+<html>
+<head>
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+	<div class="wrapper">
+	    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+
+    	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
+
+		<!-- main container -->
+   		<div class="content-wrapper" >
+        	<section class="content-header">
+      			<h1>
+        			<!--#4DIF (Records in selection([bank_statement_entries])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Template entry
+      			</h1>
+      			<ol class="breadcrumb">
+       				<li><a href="index.shtml"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+        			<li class="active">Template Entry</li>
+      			</ol>
+    		</section>
+			<section>
+			<div class="row" STYLE="margin-top:20px;">
+			<div class="panel-body no-padding-top bg-white">
+				<div CLASS="col-md-8">
+					<form name="TemplateForm" id="TemplateForm" action="savetemplate.cgi" class="form-horizontal" method="post" >
+							<input name="uuid" class="span9" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="uuid">
+							<div class="form-group">
+								<label class="col-sm-2 control-label">Code <span style="color:#6E829B">*</span></label>
+								<div CLASS="col-sm-6"><input name="code" class="form-control" type="text" value="<!--#4DVAR [Templates]code-->" id="code"></div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label">Subject <span style="color:#6E829B">*</span></label>
+								<div CLASS="col-sm-10"><input name="subject" class="form-control" rows="2" id="subject" value="<!--#4DVAR [Templates]subject-->" type="text"></div>
+							</div>  
+							<div class="form-group">
+								<label class="col-sm-2 control-label">Template Content <span style="color:#6E829B">*</span></label>
+								<div CLASS="col-sm-10"><textarea name="contentTxt" class="form-control" rows="20" id="contentTxt"><!--#4DVAR [Templates]contentTxt--></textarea></div>
+							</div>							
+							<div class="form-group">
+								<label class="col-sm-2 control-label">Comment</label>
+								<div CLASS="col-sm-10">
+									<textarea name="comments" class="form-control" rows="2" id="comments"><!--#4DVAR [Templates]comments--></textarea>
+								</div>
+							</div>
+								<div class="form-group"  >
+								<label class="col-sm-3 control-label"></label>
+								<div CLASS="col-sm-6">
+									<input type="submit" id="submit" class="btn btn-primary btn-sm" value="Submit">
+									<a href="templates.shtml" CLASS="btn btn-danger btn-sm">Cancel</a>
+								</div>
+							</div>
+						</form>
+					</div>
+					</div>
+               </div>
+		</section>
+	</div>
+		
+ <!-- end main container -->
+	<!-- scripts -->
+  	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/top-footer.shtml-->
+</div>
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml-->
+<script src="js/jquery.validate.js"></script>
+<script type="text/javascript">
+		$(function () {
+			
+			$("#TemplateForm").validate({
+				ignore: "",
+				onkeyup: false,
+				errorClass: 'error',
+				validClass: 'valid',
+				errorElement: "em",
+				errorPlacement: function(error, element) {
+					$(element).closest('div').append(error);
+				},
+				onfocusout: false,
+				invalidHandler: function(form, validator) {
+					var errors = validator.numberOfInvalids();
+					if (errors) {                    
+						validator.errorList[0].element.focus();
+					}
+				},
+				rules: {
+					code: { required: true  },
+					subject: { required: true  },
+					contentTxt: { required: true  },
+				},
+			});
+            
+        });
+</script>
+</body>
+</html>
