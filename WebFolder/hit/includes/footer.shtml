@@ -1,4 +1,3 @@
-
 <script src="js/jquery-2.2.3.min.js"></script>
 
 
@@ -16,9 +15,32 @@
 <script src="js/checkbox.js"></script>
 <script>
 function switchBusiness(id){
-	var jsonRow = 'swtich_business?id='+id;
+	var jsonRow = 'swtich_business.cgi?uuid='+id;
 	$.getJSON(jsonRow,function(result){
 		window.location.href="index.shtml";
+	});
+}
+function loadBusiness(){
+	var selectedBusinessVal='<!--HIT_EXECUTE
+C_TEXT(_HIT_HTMLTXT)
+If (_HIT_WebSession_GetVar ("business_uuid")#"")
+_HIT_HTMLTXT:=_HIT_WebSession_GetVar ("business_uuid")
+End If
+-->';
+	$.getJSON('loadbusiness.cgi',function(result){
+		if(result.iTotalRecords && result.iTotalRecords>0 && result.aaData){
+			$(".totalLoggedInBusinessSystems").html(result.iTotalRecords);
+			var contentHtmlStr="";
+			$.each(result.aaData, function(i,row){
+				contentHtmlStr+='<li ';
+				if(selectedBusinessVal==row.uuid){
+					contentHtmlStr+=' class="active2" ';
+				}
+				contentHtmlStr+='><a href="javascript:void(0)" onclick="switchBusiness(\''+row.uuid+'\'); return false;">'+row.name+'</a></li>';
+			});
+			$("#loggedInUserBusiness").show();
+			$("#swtich_business").html(contentHtmlStr);
+		}
 	});
 }
 function chng_activity_status(act_uuid, location){
@@ -42,4 +64,8 @@ function chng_activity_status(act_uuid, location){
 	window.location.href=location;
 <!--#4DENDIF-->	
 }
+
+$(document).ready(function() {
+	loadBusiness();
+});
 </script>

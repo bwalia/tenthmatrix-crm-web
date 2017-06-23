@@ -1,0 +1,190 @@
+<!--HIT_EXECUTE
+C_TEXT(_HIT_HTMLTXT)
+C_LONGINT(_HIT_COUNTER)
+C_TEXT(_HTMLTITLETXT)
+
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+QUERY([bank_statement_entries];[bank_statement_entries]uuid=_HIT_WebApp_GetField ("uuid"))
+
+IF (Records in selection([bank_statement_entries])=0)
+_HTMLTITLETXT:="New Business"
+ELSE
+_HTMLTITLETXT:= "Edit Business"
+END IF
+
+else
+_HIT_HTTPD_RedirectToURL ("sign-in.shtml")
+end if 
+-->
+<!DOCTYPE html>
+<html>
+<head>
+	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+	 <link href="css/bootstrap.datepicker.css" type="text/css" rel="stylesheet">
+<style>
+.box-primary h4 {
+    border-bottom: 1px solid #ddd;
+    border-radius: 3px;
+    font-size: 20px;
+    margin: 7px 5px 0 0;
+    padding: 9px;
+}
+</style>
+</head>
+ <body class="hold-transition skin-blue sidebar-mini">
+ <div class="wrapper">
+
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+
+    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
+
+	<!-- main container -->
+   	<div class="content-wrapper" >
+        <section class="content-header">
+      		<h1>
+        		<!--#4DIF (Records in selection([bank_statement_entries])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Business
+      		</h1>
+      		<ol class="breadcrumb">
+       			<li><a href="index.shtml"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+        		<li class="active">Business</li>
+      		</ol>
+    	</section>
+		<section class="content">
+			<div class="row">
+			<div class="panel-body no-padding-top bg-white">
+					<form name="ContentEntryForm" id="ContentEntryForm" action="savebusiness.cgi" class="form-horizontal" method="post" >
+							<input name="uuid" class="span9" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="uuid">
+							<div class="row">
+            						<div class="col-sm-6 col-xs-12"><div class="box box-primary">
+            						<h4>Basic Details</h4>
+            						<div class="box-body"><div class="row"><div class=" col-sm-12 col-lg-11">
+            						<div class="form-group">
+                  						<label class="control-label col-md-3" for="first-name">Name<span class="required">*</span></label>
+                  						<div class="col-md-6 col-lg-7">
+                    						<input type="text" required="required" id="name" name="name" class="form-control col-md-5 col-xs-12" value="">
+                  						</div>
+                					</div>
+                					 <div class="form-group" style="margin-top:10px;">
+										<label class="col-sm-3 control-label">Established Date </label>
+										<div class="col-md-6 col-lg-7">
+											<input class="form-control col-md-5 col-xs-12" type="text" id="established_on" name="established_on" value="" readonly>
+                    					</div>
+                            		</div>
+                					
+                					<div class="form-group">
+                  						<label class="control-label col-md-3" for="">Description</label>
+                  						<div class="col-md-6 col-lg-7">
+                   							<textarea class="form-control col-md-5 col-xs-12" row="10" id="description" name="description"></textarea>
+                  						</div>
+                					</div>
+                					<div class="form-group">
+    									<label for="" class="col-sm-3 control-label">Status</label>
+    									<div class="col-sm-7" style="margin-top:6px;">
+    										<div STYLE="margin-right:10px;display:inline-block;">
+      		  									<label> <input type="radio" id="status" name="status" value="1" checked > <strong style="font-weight:600">Active</strong></label>
+    			  							</div>
+				  							<div STYLE="display:inline-block;">
+      		  									<label> <input type="radio" id="status" name="status" value="0"> <strong style="font-weight:600">Inactive</strong></label>
+    			  							</div>
+										</div>
+									</div>
+									
+                            		</div></div>
+                            		</div></div></div>
+							        <div class="col-sm-6 col-xs-12"><div class="box box-primary">
+							        <h4>Contact Details</h4>
+            						<div class="box-body"><div class="row"><div class=" col-sm-12 col-lg-11">
+							       		<div class="form-group">
+                  						<label class="control-label col-md-3" for="">Address<span class="required">*</span></label>
+                  						<div class="col-md-6 col-lg-9">
+                   							<textarea required="required" class="form-control col-md-5 col-xs-12" row="4" id="address" name="address" ></textarea>
+                  						</div>
+                					</div>
+                					<div class="form-group">
+                  						<label class="control-label col-md-3" for="">Telephone</label>
+                  						<div class="col-md-6 col-lg-7">
+                  							<input type="text" class="form-control col-md-5 col-xs-12" id="telephone" name="telephone" value="">
+                  						</div>
+                					</div>
+                					<div class="form-group">
+                  						<label class="control-label col-md-3" for="">E-mail<span class="required">*</span></label>
+                  						<div class="col-md-6 col-lg-7">
+                   							<input type="text" required="required" class="form-control col-md-5 col-xs-12" id="email" name="email" value="">
+                  						</div>
+                					</div>
+                					<h3>Main contact</h3>
+                					<div class="form-group">
+                  						<label class="control-label col-md-3" for="">Contact name <span class="required">*</span></label>
+                  						<div class="col-md-6 col-lg-7">
+                   							<input type="text" required="required" class="form-control col-md-5 col-xs-12" id="contact_name" name="contact_name" value="">
+                  						</div>
+                					</div>
+                					<div class="form-group">
+                  						<label class="control-label col-md-3" for="">Contact e-mail<span class="required">*</span></label>
+                  						<div class="col-md-6 col-lg-7">
+                   							<input type="text" required="required" class="form-control col-md-5 col-xs-12" id="contact_email" name="contact_email" value="">
+                  						</div>
+                					</div>
+									</div></div>
+                					</div></div></div>
+                					</div>
+								<div class="form-group"  >
+								<label class="col-sm-3 control-label"></label>
+								<div CLASS="col-sm-6">
+									<input type="submit" id="submit" class="btn btn-primary btn-sm" value="Submit">
+									
+									<a href="businesses.shtml" CLASS="btn btn-danger btn-sm">Cancel</a>
+									</div>
+								</div>
+						</form>
+					</div>
+               </div>
+		</section>
+	</div>
+
+ <!-- end main container -->
+	<!-- scripts -->
+  	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/top-footer.shtml-->
+</div>
+<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml-->
+	<script src="js/bootstrap.datepicker.js"></script>
+	<script src="js/jquery.validate.js"></script>
+<script type="text/javascript">
+		$(function () {
+			
+			$("#ContentEntryForm").validate({
+				ignore: "",
+				onkeyup: false,
+				errorClass: 'error',
+				validClass: 'valid',
+				errorElement: "em",
+				errorPlacement: function(error, element) {
+					$(element).closest('div').append(error);
+				},
+				onfocusout: false,
+				invalidHandler: function(form, validator) {
+					var errors = validator.numberOfInvalids();
+					if (errors) {                    
+						validator.errorList[0].element.focus();
+					}
+				},
+				rules: {
+					name: { required: true },
+					established_on: { required: true  },
+					address: { required: true  },
+					email: { required: true  },
+					contact_name: { required: true  },
+					contact_email: { required: true  }
+				}
+			});
+            
+
+            // datepicker plugin
+            $('#established_on').datepicker().on('changeDate', function (ev) {
+                $(this).datepicker('hide');
+            });
+        });
+
+</script>
+</body>
+</html>

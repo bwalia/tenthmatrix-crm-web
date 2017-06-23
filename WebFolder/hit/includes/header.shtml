@@ -28,24 +28,22 @@
 <meta name="msapplication-TileColor" content="#ffffff">
 <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
 <meta name="theme-color" content="#ffffff">
-
-	
-	<style>
-	 .btn-left{
+<style>
+.btn-left{
 	border-radius:4px 0px 0px 4px;
 	margin-right: -4px;
 	color:#fff!important;
-	}
+}
 									
 .btn-middle{
-border-radius:0px;
-margin-right: -5px;
-color:#fff!important;
+	border-radius:0px;
+	margin-right: -5px;
+	color:#fff!important;
 }
 									
 .btn-right{
-border-radius:0px 4px 4px 0px;
-color:#fff!important;
+	border-radius:0px 4px 4px 0px;
+	color:#fff!important;
 }
 .active2 a{
     background-color: #0456ae;
