@@ -15,7 +15,7 @@
 <script src="js/checkbox.js"></script>
 <script>
 function switchBusiness(id){
-	var jsonRow = 'swtich_business.cgi?uuid='+id;
+	var jsonRow = 'switch_business.cgi?uuid='+id;
 	$.getJSON(jsonRow,function(result){
 		window.location.href="index.shtml";
 	});
