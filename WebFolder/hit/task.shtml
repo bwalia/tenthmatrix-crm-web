@@ -1427,6 +1427,13 @@ function del_relation(del_uuid, ref){
   });
   </script>
   
+  
+  <script type="text/javascript">
+  (function($) {
+      fakewaffle.responsiveTabs(['xs', 'sm']);
+  })(jQuery);
+</script>
+  
 	<script type='text/javascript' src='js/customerNotes.js'></script>
 	
 </body>
