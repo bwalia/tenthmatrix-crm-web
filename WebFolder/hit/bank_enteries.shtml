@@ -349,13 +349,13 @@ top: 0px!important;
 
 	
 
-<div id="filter" class="collapse" style="background-color: #efefef; border-radius: 4px;padding: 10px 45px 0px 27px; margin-top: 11px; " >
+<div id="filter" class="collapse col-md-12" style="background-color: rgb(239, 239, 239); border-radius: 4px; padding: 10px 45px 15px 27px; margin-top: 11px; margin-bottom: 5px;  position: relative; " >
 
 <div CLASS="row">
 
-<div CLASS="col-md-6" style="padding-left: 0px; padding-right:0px;" >
+<div CLASS="col-lg-6 col-sm-12" style="padding-left: 0px; padding-right:0px;" >
 <div class="form-inline" style="">   
-									<div class="btn-inline display-inline-block">
+									<div class="btn-inline display-inline-block" >
                  						<label>From</label>
 										<input name="start_date" class="input-large datepicker form-control" type="text" data-date-format="dd/mm/yyyy"  value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebSession_GetVar("bankEntriesStartDate") -->" id="start_date" readonly >
 										<label>Till </label>
@@ -367,7 +367,7 @@ top: 0px!important;
 </div>
 
 
-							<div CLASS="col-md-6" style="padding-left: 0px;">
+							<div CLASS="col-lg-6 col-sm-12" style="padding-left: 0px;" >
 								<div class="btn-inline display-inline-block">
                  					<label style="position: relative;top: 5px;right: 9px;">Select Filter</label>
 										<select name="filterOptions" class="selectpicker form-control" multiple data-width="auto" STYLE="padding:10px 0px;" title="Filter results..." data-selected-text-format="count > 2">
@@ -393,7 +393,7 @@ top: 0px!important;
 									</optgroup> 
               						</select>
 									
-									<label style="display:inline-block; float:right;position: relative;top: -21px;left: 30px;"><input type="checkbox" style="vertical-align:top"  id="hide_entry_details" value="true" onChange="__showHideEntryDetails()"> Hide Entry Details</label>
+									<label><input type="checkbox" style="vertical-align:top"  id="hide_entry_details" value="true" onChange="__showHideEntryDetails()"> Hide Entry Details</label>
 								</div>
 							</div>
 
