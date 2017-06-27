@@ -12,7 +12,7 @@ else
 QUERY([Invoices];[Invoices]uuid=_HIT_WebApp_GetField ("uuid"))
 end If
 
-IF (Records in selection([Invoices])=0)
+IF (Records in selection([Invoices])=1)
 QUERY([Companies];[Companies]account_Number=num([Invoices]client_id))
 QUERY([Projects];[Projects]proj_name=[Invoices]project_code)
 

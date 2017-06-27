@@ -187,6 +187,11 @@ function save() {
 							else{
 								update_total();
 							}
+							$('#table-breakpoint').basictable('destroy');	
+							
+  							$('#table-breakpoint').basictable({
+								breakpoint: 751
+   							});
 						}	
 					}
 				});

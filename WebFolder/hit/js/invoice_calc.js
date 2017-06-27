@@ -347,7 +347,6 @@ function update_price() {
 }
 
 function save() {
-
 	var row = $(this).parents('.item-row');
 	var ID=row.find('.item_id').html();
 	var invoice_id=$('#invoice_id').val();
@@ -396,6 +395,11 @@ function save() {
 						row.find('.removelink').show();
 						
 						update_total();
+						$('#table-breakpoint').basictable('destroy');	
+	
+  						$('#table-breakpoint').basictable({
+							breakpoint: 751
+   						});
 					}
 				});
 			}else{
@@ -481,20 +485,20 @@ update_total();
 
 function bind() {
 	$(".rate").unbind();
-  $(".hours").unbind();
-  
-  $(".savelink").unbind();
-  $(".editlink").unbind();
-  $(".cancellink").unbind();
-  $(".removelink").unbind();
+  	$(".hours").unbind();
+  	
+  	$(".savelink").unbind();
+  	$(".editlink").unbind();
+  	$(".cancellink").unbind();
+  	$(".removelink").unbind();
 	
-  $(".rate").blur(update_price);
-  $(".hours").blur(update_price);
+  	$(".rate").blur(update_price);
+  	$(".hours").blur(update_price);
   
-  $(".savelink").click(save);
-  $(".editlink").click(edit);
-  $(".cancellink").click(cancel);
-  $(".removelink").click(remove);
+  	$(".savelink").click(save);
+  	$(".editlink").click(edit);
+  	$(".cancellink").click(cancel);
+  	$(".removelink").click(remove);
 }
 
 $(function() {
@@ -520,14 +524,14 @@ $(function() {
   
   $("#paid").blur(update_balance);
    
-  $("#addrow").click(function(){
-    $(".item").after('<tr class="item-row"><td class="item-id"><span class="item_id"></span><input class="item_uuid" type="hidden" /></td><td ><span class="s_description" style="display:none" ></span><textarea class="description form-control"></textarea></td><td><span class="s_rate" style="display:none" ></span><input type="text" class="rate num form-control" value="0" style="width:50px" ></td><td><span class="s_hours" style="display:none" ></span><input type="text" class="hours num form-control" value="0" style="width:50px" ></td><td><span class="price">0</span></td><td ><a href="javascript:void(0)" class="editlink" style="display:none " title="Edit"><i CLASS="fa fa-pencil"></i></a><a href="javascript:void(0)" class="savelink" title="Save"><i CLASS="fa fa-save"></i></a></td><td><a href="javascript:void(0)" class="removelink" style="display:none" title="Remove"><i CLASS="fa fa-trash"></i></a><a href="javascript:void(0)" class="cancellink" title="Cancel"><i CLASS="fa fa-remove"></i></a></td></tr>');
-	var curr_row = $('.item').next();
-	curr_row.find('.description').focus();
-	
-    if ($(".delete").length > 0) $(".delete").show();
-    bind();
-  });
+	$("#addrow").click(function(){
+    	$(".item").after('<tr class="item-row"><td class="item-id"><span class="item_id"></span><input class="item_uuid" type="hidden" /></td><td ><span class="s_description" style="display:none" ></span><textarea class="description form-control"></textarea></td><td><span class="s_rate" style="display:none" ></span><input type="text" class="rate num form-control" value="0" style="width:50px" ></td><td><span class="s_hours" style="display:none" ></span><input type="text" class="hours num form-control" value="0" style="width:50px" ></td><td><span class="price">0</span></td><td ><a href="javascript:void(0)" class="editlink" style="display:none " title="Edit"><i CLASS="fa fa-pencil"></i></a><a href="javascript:void(0)" class="savelink" title="Save"><i CLASS="fa fa-save"></i></a></td><td><a href="javascript:void(0)" class="removelink" style="display:none" title="Remove"><i CLASS="fa fa-trash"></i></a><a href="javascript:void(0)" class="cancellink" title="Cancel"><i CLASS="fa fa-remove"></i></a></td></tr>');
+		var curr_row = $('.item').next();
+		curr_row.find('.description').focus();
+		if ($(".delete").length > 0) $(".delete").show();
+    	bind();
+    	return false;
+  	});
   
   bind();
   

@@ -108,7 +108,7 @@ _HIT_WebSession_SetVar ("last-payment-uuid";_HIT_WebApp_GetField ("uuid"))
     	</section>
 	<section>
 	<div class="row">
-	
+		 <div class="panel-body no-padding-top bg-white" > 
 					<!-- left column -->
                     <div class="col-sm-8 with-sidebar">
 					<form name="PaymentForm" id="PaymentForm" action="savereceipt.cgi" class="form-horizontal" method="post">
@@ -190,7 +190,7 @@ _HIT_WebSession_SetVar ("last-payment-uuid";_HIT_WebApp_GetField ("uuid"))
                     </div>
 				</div>
 		
-		
+			</div>
 		</section>
 		</div>
 		

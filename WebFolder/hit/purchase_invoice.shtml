@@ -5,9 +5,11 @@ C_LONGINT(_HIT_COUNTER)
 
 if(_HIT_AuthenticateSession="Session-Authenticated-OK")
 ALL RECORDS([Tax_Codes])
-IF (Records in selection([purchase_invoices])=1)
 
 QUERY([purchase_invoices];[purchase_invoices]uuid=_HIT_WebApp_GetField ("uuid"))
+
+IF (Records in selection([purchase_invoices])=1)
+
 QUERY([purchase_invoice_items];[purchase_invoice_items]payment_uuid=[purchase_invoices]uuid)
 QUERY([Companies];[Companies]uuid=[purchase_invoices]uuid_company)
 QUERY([Projects];[Projects]uuid=[purchase_invoices]project_uuid)
@@ -106,21 +108,21 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 				
    					<form name="PurchaseInvoiceForm" id="PurchaseInvoiceForm" action="savepurchaseinvoice.cgi" class="form-horizontal" method="post" >
 						<!-- left column -->
-						<div class=" col-sm-12 col-lg-6">
+						<div class=" col-sm-12 col-lg-8">
 							<div class="form-group">
-    							<label for="" class="col-sm-3 control-label">Purchase Invoice No <span style="color:#6E829B">*</span></label>
-								<div class="col-sm-9"><input readonly type="text" class="form-control" id="purchase_inv_no" value="<!--#4DVAR [purchase_invoices]purchase_inv_no -->" name="purchase_inv_no"></div>
+    							<label for="" class="col-sm-2 control-label">Purchase Invoice No <span style="color:#6E829B">*</span></label>
+								<div class="col-sm-3"><input readonly type="text" class="form-control" id="purchase_inv_no" value="<!--#4DVAR [purchase_invoices]purchase_inv_no -->" name="purchase_inv_no"></div>
 							</div>
 							<div class="form-group">
-    							<label for="" class="col-sm-3 control-label">Payment Date <span style="color:#6E829B">*</span></label>
-								<div class="col-sm-9"><input name="payment_date" class="input-large form-control datepicker" type="text" data-date-format="dd/mm/yyyy" <!--#4DIF ([purchase_invoices]payment_date=!00/00/00!)-->value=""<!--4DELSE-->value="<!--#4DVAR [purchase_invoices]payment_date -->"<!--4DENDIF--> id="payment_date" readonly></div>
+    							<label for="" class="col-sm-2 control-label">Payment Date <span style="color:#6E829B">*</span></label>
+								<div class="col-sm-3"><input name="payment_date" class="input-large form-control datepicker" type="text" data-date-format="dd/mm/yyyy" <!--#4DIF ([purchase_invoices]payment_date=!00/00/00!)-->value=""<!--4DELSE-->value="<!--#4DVAR [purchase_invoices]payment_date -->"<!--4DENDIF--> id="payment_date" readonly></div>
 							</div>
 							<input name="purchase_uuid" class="span9" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="purchase_uuid">
 							<input name="purchase_id" class="span9" type="hidden" value="<!--#4DVAR [purchase_invoices]id-->" id="purchase_id">
 							
 							<div class="form-group">
-    							<label for="" class="col-sm-3 control-label">Beneficiary Name <span style="color:#6E829B">*</span></label>
-								<div class="col-sm-9">
+    							<label for="" class="col-sm-2 control-label">Beneficiary Name <span style="color:#6E829B">*</span></label>
+								<div class="col-sm-6">
 									<select id="Client_ID" name="Client_ID" class="form-control">
 										<!--#4DIF (Records in selection([purchase_invoices])=0)-->
 										<option value=""></option>
@@ -131,17 +133,17 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 								</div>	
 							</div>
 							<div class="form-group">
-    							<label for="" class="col-sm-3 control-label">Beneficiary Address</label>
-								<div class="col-sm-9"><textarea <!--#4DIF (mUserIsCurrentBool)-->readonly<!--#4DELSE--><!--#4DENDIF--> name="beneficiary_address" class="form-control" rows="3" id="beneficiary_address"><!--#4DVAR [purchase_invoices]beneficiary_address --></textarea></div>
+    							<label for="" class="col-sm-2 control-label">Beneficiary Address</label>
+								<div class="col-sm-6"><textarea <!--#4DIF (mUserIsCurrentBool)-->readonly<!--#4DELSE--><!--#4DENDIF--> name="beneficiary_address" class="form-control" rows="3" id="beneficiary_address"><!--#4DVAR [purchase_invoices]beneficiary_address --></textarea></div>
 							</div>
 							<div class="form-group">
-    							<label for="" class="col-sm-3 control-label">Payment Method <span style="color:#6E829B">*</span></label>
-								<div class="col-sm-9"><input <!--#4DIF (mUserIsCurrentBool)-->readonly<!--#4DELSE--><!--#4DENDIF--> name="payment_method" class="form-control" type="text" value="<!--#4DVAR [purchase_invoices]payment_method -->" id="payment_method"></div>
+    							<label for="" class="col-sm-2 control-label">Payment Method <span style="color:#6E829B">*</span></label>
+								<div class="col-sm-6"><input <!--#4DIF (mUserIsCurrentBool)-->readonly<!--#4DELSE--><!--#4DENDIF--> name="payment_method" class="form-control" type="text" value="<!--#4DVAR [purchase_invoices]payment_method -->" id="payment_method"></div>
 							</div>
 							
 							<div class="form-group">
-    							<label for="" class="col-sm-3 control-label">Project </label>
-								<div class="ui-widget col-sm-9" id="div_proj">
+    							<label for="" class="col-sm-2 control-label">Project </label>
+								<div class="ui-widget col-sm-6" id="div_proj">
 									<Select name="Project_UUID" id="Project_UUID" class="form-control">
 									<!--#4DIF (Records in selection([purchase_invoices])=0)-->
 										<option value="<!--#4DVAR [Projects]uuid-->" selected><!--4DVAR [Projects]proj_name--></option>		
@@ -152,8 +154,8 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 								</div>
 							</div>	
 							<div class="form-group">
-    							<label for="" class="col-sm-3 control-label">Employee <span style="color:#6E829B">*</span></label>
-								<div class="col-sm-9">
+    							<label for="" class="col-sm-2 control-label">Employee <span style="color:#6E829B">*</span></label>
+								<div class="col-sm-6">
 									<select name="employee_uuid" id="employee_uuid" class="form-control">
 										<!--HIT_EXECUTE
 										_HIT_HTMLTXT:=""
@@ -175,11 +177,11 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 							</div>
 
 							<div class="form-group">
-    							<label for="" class="col-sm-3 control-label">Payment Notes</label>
+    							<label for="" class="col-sm-2 control-label">Payment Notes</label>
 								<div class="col-sm-9"><textarea name="payment_notes" class="form-control" rows="4" id="payment_notes"><!--#4DVAR [purchase_invoices]payment_notes --></textarea></div>
 							</div>
 							<div class="form-group">
-    							<label for="" class="col-sm-3 control-label">&nbsp;</label>
+    							<label for="" class="col-sm-2 control-label">&nbsp;</label>
 								<div class="col-sm-9"><label>
 									<input name="is_cost_of_sales"  type="checkbox" value="true" id="is_cost_of_sales" <!--#4DIF ([purchase_invoices]is_cost_of_sales)-->checked<!--4DELSE--><!--4DENDIF--> >&nbsp;Cost of Sales
 								</label></div>
@@ -246,8 +248,8 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 		</div>
 		
 							<div class="form-group">
-    							<label for="" class="col-sm-3 control-label">Tax Code</label>
-								<div class="col-sm-9">
+    							<label for="" class="col-sm-2 control-label">Tax Code</label>
+								<div class="col-sm-6">
 									<select id="tax_code" name="tax_code" class="form-control">
 									<!--#4DSCRIPT/Web_LoadTax_Codes/-->
 									<!--4DLOOP [Tax_Codes]-->
@@ -257,25 +259,25 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 								</div>
 							</div>
 							<div class="form-group">
-    							<label for="" class="col-sm-3 control-label">Tax Rate</label>
-								<div class="col-sm-9"><input name="tax_rate" class="form-control" type="text" id="tax_rate" value="<!--#4DVAR [purchase_invoices]tax_rate -->"></div>
+    							<label for="" class="col-sm-2 control-label">Tax Rate</label>
+								<div class="col-sm-6"><input name="tax_rate" class="form-control" type="text" id="tax_rate" value="<!--#4DVAR [purchase_invoices]tax_rate -->"></div>
 							</div>
 							<div class="form-group">
-    							<label for="" class="col-sm-3 control-label">Payment Subtotal</label>
-								<div class="col-sm-9"><input class="form-control" type="text" value="<!--#4DVAR [purchase_invoices]payment_subtotal -->" name="payment_subtotal" id="payment_subtotal"></div>
+    							<label for="" class="col-sm-2 control-label">Payment Subtotal</label>
+								<div class="col-sm-6"><input class="form-control" type="text" value="<!--#4DVAR [purchase_invoices]payment_subtotal -->" name="payment_subtotal" id="payment_subtotal"></div>
 							</div>
 							<div class="form-group">
-    							<label for="" class="col-sm-3 control-label">Payment Tax</label>
-								<div class="col-sm-9"><input class="form-control" type="text" value="<!--#4DVAR [purchase_invoices]payment_tax -->" name="payment_tax" id="payment_tax"></div>
+    							<label for="" class="col-sm-2 control-label">Payment Tax</label>
+								<div class="col-sm-6"><input class="form-control" type="text" value="<!--#4DVAR [purchase_invoices]payment_tax -->" name="payment_tax" id="payment_tax"></div>
 							</div>
 							<div class="form-group">
-    							<label for="" class="col-sm-3 control-label">Payment Total </label>
-								<div class="col-sm-9"><input name="payment_total" class="form-control" type="text" value="<!--#4DVAR [purchase_invoices]payment_total -->" id="payment_total" ></div>
+    							<label for="" class="col-sm-2 control-label">Payment Total </label>
+								<div class="col-sm-6"><input name="payment_total" class="form-control" type="text" value="<!--#4DVAR [purchase_invoices]payment_total -->" id="payment_total" ></div>
 							</div>
 						</div>
 					
 						<!-- right column -->
-						<div class=" col-sm-12 col-lg-6">
+						<div class=" col-sm-12 col-lg-4">
 							<div class="form-group">
 								<label for="" class="col-sm-3 control-label">Bank paid from </label>
 								<div class="col-sm-9 ui-widget" id="div_proj">

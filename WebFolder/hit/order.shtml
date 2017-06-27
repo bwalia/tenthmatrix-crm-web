@@ -30,7 +30,7 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 <html>
 <head>
 	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
-	 <link href="css/bootstrap.datepicker.css" type="text/css" rel="stylesheet">
+	<link href="css/bootstrap.datepicker.css" type="text/css" rel="stylesheet">
 	<link rel="stylesheet" type="text/css" href="css/jquery.ptTimeSelect.css" />
 	<link rel="stylesheet" href="css/autocomplete.css" />
 	<link rel="stylesheet" href="css/colorbox.css" />
@@ -43,8 +43,8 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
   .custom-combobox a.custom-combobox-toggle, 
   .custom-combobox a.ui-corner-right {
 	top:0px;
-  }
- #ProjectForm em.error {
+}
+#ProjectForm em.error {
 	margin-left: 10px;
 	width: auto;
 	display: inline;
@@ -56,96 +56,71 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 #ProjectForm input.error, textarea.error, select.error{
     border: 1px solid red;
 }
-
-  
-  .chosen-container{
-	  width: 424px !important;
-	  
-
-  }
-  
-  .chosen-container-multi .chosen-choices{
+.chosen-container{
+  width: 424px !important;
+}
+.chosen-container-multi .chosen-choices{
 	  height: 32px !important;
 	  border-radius:4px!important;
-	  border: 1px solid #d3d3d3!important;
- 
-  }
-  
-  #CompanyForm .custom-combobox {
+	  border: 1px solid #d3d3d3!important; 
+}
+#CompanyForm .custom-combobox {
     width: 98%!important;
     margin-left: 26px;
     top: 1px;
 }
-
-
-  
-  
-
 </style>
 </head>
- <body class="hold-transition skin-blue sidebar-mini">
- <div class="wrapper">
+<body class="hold-transition skin-blue sidebar-mini">
+	<div class="wrapper">
+	    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
+	    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
 
-    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
-
-    <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
-
-	<!-- main container -->
-   	<div class="content-wrapper" >
-        <section class="content-header">
-        	<!--#4DIF (mUserIsCurrentBool)--><h1>Work Order</h1><!--#4DELSE-->
-			<h1><!--#4DIF (Records in selection([orders])=1)-->Order Details: <!--#4DVAR [orders]order_id --><!--#4DELSE-->New Work Order<!--#4DENDIF--></h1>
-			<!--#4DENDIF-->
+		<!-- main container -->
+   		<div class="content-wrapper" >
+        	<section class="content-header">
+        		<!--#4DIF (mUserIsCurrentBool)--><h1>Work Order</h1><!--#4DELSE-->
+				<h1><!--#4DIF (Records in selection([orders])=1)-->Order Details: <!--#4DVAR [orders]order_id --><!--#4DELSE-->New Work Order<!--#4DENDIF--></h1>
+				<!--#4DENDIF-->
       
-      		<ol class="breadcrumb">
-       			<li><a href="index.shtml"><i class="fa fa-dashboard"></i> Dashboard</a></li>
-        		<li class="active">Work Order</li>
-      		</ol>
-    	</section>
-		<section class="content">
-			<form name="OrderForm" id="OrderForm" action="saveorder.cgi" class="form-horizontal" method="post">		
-        	<div class="row" >
-				 <div class="panel-body no-padding-top bg-white" > 
-				 
-				<ul class="nav nav-tabs">
-  <li class="active"><a data-toggle="tab" href="#home"> Order Details</a></li>
-  
- 
-
-  		
-  <li><a data-toggle="tab" href="#second"> Other Details</a></li>
-  <!--#4DIF (_HIT_WebSession_GetVar ("auth_user_type")#"CLIENTS")-->
-							<!--#4DIF (Records in selection([orders])=1)-->
-							<li ><a data-toggle="tab" href="#third"> Notes</a></li>
-							<!--#4DENDIF--><!--#4DENDIF-->
-   
-</ul>
-
-<div class="tab-content" STYLE=" overflow: hidden;         border-top: none;">
-
-  <div id="home" class="tab-pane fade in active"  >
-					 
-					<div class="row" style="margin-bottom:5px; margin-top:10px; padding-left:15px; padding-right:15px;">
-						<!-- left column -->
-						<div class="col-sm-6 col-xs-12">
-							<div class="form-group">
-								<label class="col-sm-3 control-label">Order Number <span style="color:#6E829B">*</span></label>
-								<div CLASS="col-sm-6"><input readonly type="text" CLASS="form-control" id="order_id" value="<!--#4DVAR [orders]order_id -->" name="order_id">
-							</div> </div>
-							<!--#4DIF (Records in selection([orders])=1)-->
-							<input name="order_uuid" CLASS="form-control" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="order_uuid"> 
-							<!--#4DELSE-->
-							<input name="order_uuid" CLASS="form-control" type="hidden" value="<!--#4DVAR Generate UUID-->" id="order_uuid"> 
-							<!--#4DENDIF-->
-							
-							
-							
-							
-							<div class="form-group" ID="OrderForm">
-								<label class="col-sm-3 control-label">Client <span style="color:#6E829B">*</span></label>
-								<div class=" col-sm-6">
-								<!--#4DIF (mUserIsCurrentBool)-->
-								<!--#4DVAR [Companies]company_Name--><!--#4DELSE-->
+      			<ol class="breadcrumb">
+       				<li><a href="index.shtml"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+        			<li class="active">Work Order</li>
+      			</ol>
+    		</section>
+			<section class="content">
+				<form name="OrderForm" id="OrderForm" action="saveorder.cgi" class="form-horizontal" method="post">		
+        			<div class="row" >
+				 		<div class="panel-body no-padding-top bg-white" > 
+							<ul class="nav nav-tabs">
+  								<li class="active"><a data-toggle="tab" href="#home"> Order Details</a></li>
+								<li><a data-toggle="tab" href="#second"> Other Details</a></li>
+								<!--#4DIF (_HIT_WebSession_GetVar ("auth_user_type")#"CLIENTS")-->
+									<!--#4DIF (Records in selection([orders])=1)-->
+									<li ><a data-toggle="tab" href="#third"> Notes</a></li>
+									<!--#4DENDIF-->
+								<!--#4DENDIF-->
+							</ul>
+							<div class="tab-content" STYLE=" overflow: hidden;border-top: none;">
+								<div id="home" class="tab-pane fade in active"  >
+									<div class="row" style="margin-bottom:5px; margin-top:10px; padding-left:15px; padding-right:15px;">
+										<!-- left column -->
+										<div class="col-sm-8 col-xs-12">
+											<div class="form-group">
+												<label class="col-sm-2 control-label">Order Number <span style="color:#6E829B">*</span></label>
+												<div CLASS="col-sm-4"><input readonly type="text" CLASS="form-control" id="order_id" value="<!--#4DVAR [orders]order_id -->" name="order_id">
+											</div>
+										</div>
+										<!--#4DIF (Records in selection([orders])=1)-->
+											<input name="order_uuid" CLASS="form-control" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="order_uuid"> 
+										<!--#4DELSE-->
+											<input name="order_uuid" CLASS="form-control" type="hidden" value="<!--#4DVAR Generate UUID-->" id="order_uuid"> 
+										<!--#4DENDIF-->
+										<div class="form-group" ID="OrderForm">
+											<label class="col-sm-2 control-label">Client <span style="color:#6E829B">*</span></label>
+											<div class=" col-sm-6">
+												<!--#4DIF (mUserIsCurrentBool)-->
+												<!--#4DVAR [Companies]company_Name--><!--#4DELSE-->
 								
 								<div class="ui-widget">
 									<select CLASS="form-control" id="Client_ID" name="Client_ID">
@@ -164,27 +139,23 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 								</div>
 							</div>
 							
-							
-							
 							<div class="form-group">
-								<label class="col-sm-3 control-label">Bill To</label>
+								<label class="col-sm-2 control-label">Bill To</label>
 								<div class=" col-sm-6"><textarea <!--#4DIF (mUserIsCurrentBool)-->readonly<!--#4DELSE--><!--#4DENDIF--> name="order_bill_to" class="form-control" rows="3" id="order_bill_to"><!--#4DVAR [orders]bill_to --></textarea></div>
 							</div>
 							
 							<div class="form-group">
-								<label class="col-sm-3 control-label">Order By</label>
+								<label class="col-sm-2 control-label">Order By</label>
 								<div class=" col-sm-6"><input <!--#4DIF (mUserIsCurrentBool)-->readonly<!--#4DELSE--><!--#4DENDIF--> name="ordered_by" class="form-control" type="text" value="<!--#4DVAR [orders]ordered_by -->" id="ordered_by"></div>
 							</div>
 							
-							
-							
 							<div class="form-group">
-								<label class="col-sm-3 control-label">Comments</label>
-								<div CLASS="col-sm-6"><textarea <!--#4DIF (mUserIsCurrentBool)-->readonly<!--#4DELSE--><!--#4DENDIF--> name="comments" class="form-control" rows="4" id="comments"><!--#4DVAR [orders]comments --></textarea>
+								<label class="col-sm-2 control-label">Comments</label>
+								<div CLASS="col-sm-8"><textarea <!--#4DIF (mUserIsCurrentBool)-->readonly<!--#4DELSE--><!--#4DENDIF--> name="comments" class="form-control" rows="4" id="comments"><!--#4DVAR [orders]comments --></textarea>
 							</div></div>
 							
 							<div class="form-group">
-								<label class="col-sm-3 control-label">Project Code</label>
+								<label class="col-sm-2 control-label">Project Code</label>
 								<!--#4DIF (mUserIsCurrentBool)-->
 									<div CLASS="col-sm-6"><input name="project_code" class="form-control" type="text" value="<!--#4DVAR [orders]project_code-->" id="project_code"  readonly></div>
 								<!--#4DELSE-->
@@ -197,7 +168,7 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 							</div>
 							
 							<div class="form-group">
-								<label class="col-sm-3 control-label">Template</label>
+								<label class="col-sm-2 control-label">Template</label>
 								<!--#4DIF (mUserIsCurrentBool)-->
 									<div CLASS="col-sm-6"><input name="order_template" class="form-control" type="text" value="<!--#4DVAR [orders]order_template-->" id="order_template"  readonly></div>
 								<!--#4DELSE-->
@@ -211,7 +182,7 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 							
 							
                             </div>
-                            <div class="col-sm-6 column  col-xs-12">
+                            <div class="col-sm-4 column  col-xs-12">
 							<!--#4DIF (Records in selection([orders])=1)-->
 							
 							<div class="form-group">
@@ -236,7 +207,6 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 								</div>
 							</div>
                             <div class="form-group">
-
 								<label class="col-sm-3 control-label">Balance Outstanding</label>
 								<div CLASS="col-sm-7"><input name="balance_due" class="form-control due" type="text" value="<!--#4DVAR [orders]balance_due -->" id="balance_due" readonly>
 							</div></div>
@@ -312,7 +282,6 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 
 									$.prompt(statesdemo);
 								</pre>
-								<!--<a class="run">Run It!</a>-->
 							</div>
 							
 							<div class="example-container">
@@ -353,7 +322,6 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 										checknumber(e);	
 									}); 
 								</pre>
-								<!--<a class="run">Run It!</a>-->
 							</div>
 							
 						</div>
@@ -430,8 +398,7 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 		</div>
 		</div>
 		</div>
-		
-        <div class="row-fluid form-wrapper" style="margin-bottom:5px;">
+						<div class="row-fluid form-wrapper" style="margin-bottom:5px;">
 						<!-- left column -->
 						<div class="col-sm-6">
 							<div class="form-group">
@@ -481,27 +448,13 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 								<label class="col-sm-3 control-label">Total Due With Tax</label>
 								<div CLASS="col-sm-6"><input name="total_due_with_tax" class="form-control" type="text" value="<!--#4DVAR [orders]total_due_with_tax -->" id="total_due_with_tax" readonly>
 							</div></div>
-							
-							
-							
-							                            
 						</div>
-					
-						<!-- right column -->
-						
-						
+						<!-- right column -->						
 						</div>
 					</div>
-							
-					
 
-
-  
-
-
-
-  <div id="second" class="tab-pane fade col-md-12" STYLE="padding-top:20px;"  >
-  <div class="row-fluid form-wrapper" style="margin-bottom:5px;">
+			<div id="second" class="tab-pane fade col-md-12" STYLE="padding-top:20px;"  >
+  				<div class="row-fluid form-wrapper" style="margin-bottom:5px;">
 							<!-- left column -->
 							<div class="col-sm-6">
 								<div class="form-group">
@@ -543,7 +496,6 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 						
 						
 	<div id="third" class="tab-pane fade col-md-12" STYLE="padding-top:20px;"  >
-		<div class="row-fluid form-wrapper" style="padding:20px;">
 							
 									<!--#4DSCRIPT/Web_LoadOrdersNotes/-->	
 									<!--#4DLOOP [Notes]--><!-- row -->
@@ -565,7 +517,6 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 									<div CLASS="col-sm-8">
 										<textarea name="note" class="col-sm-5 note form-control" rows="3" id="note" readonly> <!--#4DHTMLVAR [Notes]Note--></textarea>
 									</div>
-								</div>
 								</div>
 
 									<!--#4DENDLOOP-->
