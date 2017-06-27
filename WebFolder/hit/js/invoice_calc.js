@@ -1,3 +1,204 @@
+
+	function applyTaxEntered(){
+		$("tax_message").remove();
+		if($('#dlg_tax_rate').val()!=null && $('#dlg_tax_rate').val()!=""){
+			$('#invoice_tax_rate').val($('#dlg_tax_rate').val());
+			$('#addTaxRate').modal('hide');
+			$('#dlg_tax_rate').val('');
+		}	else {
+			$('#taxmessageId').before('<span id="tax_message" style="color:#CC0000;">* Please enter Tax Rate.</span>');
+			$('#dlg_tax_rate').focus();
+		}
+	}
+	
+	function generate_manual_id(){
+		$("#msgSpan").remove();
+		if($('#invoice_numbr').val()!=null && $('#invoice_numbr').val()!=""){
+			var jsonRowURLStr = 'checkinvoicenum.cgi?inv_no='+$('#invoice_numbr').val();
+			$.getJSON(jsonRowURLStr,function(result){
+				if(result.exist=='false'){
+					$('#inv_number').val($('#invoice_numbr').val());
+					$('#invoice_id').val($('#invoice_numbr').val());
+					$('#enterNewInvoice').modal('hide');
+				}	else{
+					$("#messageId").before('<span id="msgSpan" style="color:#CC0000;">* Invoice number '+$('#invoice_numbr').val()+' already exists!</span>');
+					$('#invoice_numbr').val('');
+					$('#invoice_numbr').focus();
+				}
+			});
+		}else {
+			$("#messageId").before('<span id="msgSpan" style="color:#CC0000;">* Please enter Invoice number!</span>');
+			$('#invoice_numbr').focus();
+		}
+	}
+	
+	function checknumber(e)	{
+		var k = e.which;
+		/* numeric inputs can come from the keypad or the numeric row at the top */
+		 if ((k<48 || k>57) && (k!=46) && (k!=8) && (k!=0)) {
+			e.preventDefault();
+			//alert("Allowed characters are 0-9, +, -, (, )");
+			return false;
+		}
+	}
+	
+	function get_customer_analysisaccounts(l_uuid,a_uuid){
+		l_uuid = typeof l_uuid !== 'undefined' ? l_uuid : $('#uuid_analysis_ledger').val();
+		a_uuid = typeof a_uuid !== 'undefined' ? a_uuid : '';
+		$('#account_div').find('.ui-autocomplete-input').val('');
+		var jsonRow = 'getanalysisaccountsonsearch.cgi?srch=&money=in';
+		if(l_uuid!=""){
+			jsonRow+='&ledger_uuid='+l_uuid;
+		}
+		
+		$.getJSON(jsonRow,function(result){	
+			if(result){
+				var html='<option value=""></option>';
+				if(result.error){
+			
+				}else{
+					$.each(result, function(i,item){
+						html += '<option value="'+item.uuid+'"';
+						if(item.uuid==a_uuid){
+							html += ' selected ';
+						}
+						html += '>'+item.name+'</option>';
+					});
+				}
+				$('#uuid_analysis_account').html(html);
+				if(a_uuid!=""){
+					$("#uuid_analysis_account").val(a_uuid);
+					$('#uuid_analysis_account').combobox("destroy");
+					$('#uuid_analysis_account').combobox();
+				}
+			}
+		});
+	}
+	
+	function get_customer_ledger(l_uuid){
+		l_uuid = typeof l_uuid !== 'undefined' ? l_uuid : '';
+		$('#ledger_div').find('.ui-autocomplete-input').val('');
+		var jsonRow = 'getledgersonsearch.cgi?srch=';
+		
+		$.getJSON(jsonRow,function(result){	
+			if(result){
+				var html='<option value=""></option>';
+				if(result.error){
+			
+				}else{
+					$.each(result, function(i,item){
+						html += '<option value="'+item.uuid+'"';
+						if(item.uuid==l_uuid){
+							html += ' selected ';
+						}
+						html += '>'+item.name+'</option>';
+					});
+				}
+				$('#uuid_analysis_ledger').html(html);
+				if(l_uuid!=""){
+					$('#uuid_analysis_ledger').val(l_uuid);
+					$('#uuid_analysis_ledger').combobox("destroy");
+					$('#uuid_analysis_ledger').combobox();
+				}
+			}
+		});
+	}
+	function get_client_info()	{
+		/**var Client_ID=	$("#Client_ID").val();
+		var dataString = 'Client_ID='+Client_ID;
+		$.ajax({
+			type: "GET",
+			url: "Returnvalues.cgi",
+			data: dataString,
+			cache: false,
+			success: function(html){
+				$("#invoice_bill_to").val(html);
+				get_customer_ledger_accounts();
+			}
+		});**/
+		var jsonRow = 'returncustomerValues.cgi?client='+$('#Client_ID').val();
+		$.getJSON(jsonRow,function(html){	
+			if(html){
+				$("#invoice_bill_to").val(html.bill_to);
+				get_customer_analysisaccounts(html.uuid_analysis_ledger,html.uuid_analysis_account);
+				get_customer_ledger(html.uuid_analysis_ledger);
+			}
+		});
+	}
+	function EditMainNote(){
+		$("._neditNote").hide();
+		$("#inv_note").attr('disabled', false);
+		$(".msaveCancelButtons").show();
+		var noteStr= $("#invoice_note").val();
+		if(noteStr!=""){
+			noteStr+="\n";
+		}
+		noteStr+=currentdatetime+" : ";
+		$("#inv_note").val(noteStr);
+	}
+	
+	function CancelMainNote(){
+		var noteStr= $("#invoice_note").val();
+		$("#inv_note").val(noteStr);
+		$("._neditNote").show();
+		$("#inv_note").attr('disabled', true);
+		$(".msaveCancelButtons").hide();
+	}
+	
+	function saveMainNote(){
+		var noteStr= $("#inv_note").val();
+		//console.log(noteStr)
+		if(noteStr!=""){
+			if(noteStr!=currentdatetime){
+				$.ajax({
+					type: "GET",
+					dataType: "json",
+					url: "saveinvoicenote.cgi",
+					data: {"uuid" : tableUUIDStr, "note": noteStr},
+					cache: false,
+					success: function(html)	{
+						if(html.success){
+							$("#invoice_note").val(noteStr);
+							$("._neditNote").show();
+							$("#inv_note").attr('disabled', true);
+							$(".msaveCancelButtons").hide();
+						}else if(html.error){
+							$.prompt(html.error);
+						}
+					}
+				});
+			}else{
+				$.prompt("Please enter some value for note!");
+			}
+		}else{
+			$.prompt("Please enter some value for note!");
+		}		
+	}
+function disableForm(e){
+	$('#InvoiceForm :input').attr('disabled', true);
+	$('#status').attr('disabled', false);
+	$('#hiderow').hide();
+	$('.td_edit').hide();
+	$('.td_remove').hide();
+	
+	$('#status').change(function(){
+		if($(this).val()!='Paid'){
+			$('#InvoiceForm :input').attr('disabled', false);
+			$('#hiderow').show();
+			$('.td_edit').show();
+			$('.td_remove').show();
+		}	
+	});
+	
+	if(e){
+		$("._neditNote").show();
+		$("._neditNote").attr('disabled', false);
+		$("._nsaveNote").attr('disabled', false);
+		$("._nCancelNote").attr('disabled', false);
+	}
+}
+	
+
 function print_today() {
   // ***********************************************
   // AUTHOR: WWW.CGISCRIPT.NET, LLC
@@ -311,20 +512,6 @@ $(function() {
 	}else{
 		total_for_edit();
 	}
-	
-	<!--#4DIF (Records in selection([Invoices])=1)-->		   
-	total_for_edit();
-	<!--#4DELSE-->
-	var taxCodeSelected = $('#inv_tax_code').val();
-	
-	if(taxCodeSelected==""){
-	 $('#invoice_tax_rate').val("20");
-	 $('#inv_tax_code').val("UK");
-	}else if(taxCodeSelected=="US"){
-	$('#invoice_tax_rate').val("");
-	update_total();
-	}
-	<!--#4DENDIF-->
   $('input').click(function(){
     $(this).select();
   });
@@ -350,8 +537,9 @@ $(function() {
 	if(tax_code=='Rest of the world' || tax_code=='EU'){
 		//var tax_rate=prompt("Enter tax rate");
 		//$('#invoice_tax_rate').val(tax_rate);
-		code = $('#tax_rate_code').text();
-		(new Function(code))();
+		//code = $('#tax_rate_code').text();
+		//(new Function(code))();
+		$('#addTaxRate').modal('show');
 	}else if(tax_code=='US'){
 		$('#invoice_tax_rate').val("");
 	}

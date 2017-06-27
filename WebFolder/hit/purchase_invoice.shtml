@@ -5,6 +5,8 @@ C_LONGINT(_HIT_COUNTER)
 
 if(_HIT_AuthenticateSession="Session-Authenticated-OK")
 ALL RECORDS([Tax_Codes])
+IF (Records in selection([purchase_invoices])=1)
+
 QUERY([purchase_invoices];[purchase_invoices]uuid=_HIT_WebApp_GetField ("uuid"))
 QUERY([purchase_invoice_items];[purchase_invoice_items]payment_uuid=[purchase_invoices]uuid)
 QUERY([Companies];[Companies]uuid=[purchase_invoices]uuid_company)
@@ -12,10 +14,10 @@ QUERY([Projects];[Projects]uuid=[purchase_invoices]project_uuid)
 QUERY([bank_accounts];[bank_accounts]id=[purchase_invoices]bank_paid_from_id)
 QUERY([analysis_ledger];[analysis_ledger]uuid=[purchase_invoices]uuid_analysis_ledger)
 QUERY([analysis_account];[analysis_account]uuid=[purchase_invoices]uuid_analysis_account)
-IF (Records in selection([purchase_invoices])=0)
-_HTMLTITLETXT:="New Purchase Invoice"
+
+_HTMLTITLETXT:="Edit Purchase Invoice"
 ELSE
-_HTMLTITLETXT:= "Edit Purchase Invoice"
+_HTMLTITLETXT:= "New Purchase Invoice"
 END IF
 
 else
@@ -356,113 +358,60 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 										</select>
 									</div>
 							</div>
-							<div class="example-container">
-								<pre class="code" style="display:none;" id="err_msg">
-									var statesdemo = {
-										state0: {
-											title: message,
-											buttons: {  OK: 1 },
-											submit:function(e,v,m,f){ 
-												if(v==1) {
-													$.prompt.close();
-												}
-											}
-										},
-										
-									};
-									$.prompt(statesdemo);
-								</pre>
-								<pre class="code" style="display:none;" id="tax_rate_code">
-									var statesdemo = {
-										state0: {
-											title: 'Enter tax rate',
-											html:'&lt;div id="tax_message"&gt;&lt;/div&gt;&lt;input type="text" class="num form-control" name="dlg_tax_rate" id="dlg_tax_rate" value=""&gt;&lt;br /&gt;',
-											buttons: { Cancel : 0, Ok: 1 },
-											focus: "#dlg_tax_rate",
-											submit:function(e,v,m,f){ 
-												//console.log(f);
-												if(v==1) {
-													if(f.dlg_tax_rate!=null && f.dlg_tax_rate!=""){
-														$('#tax_rate').val(f.dlg_tax_rate);
-														calculate_tax();
-													}
-													else {
-														e.preventDefault();
-														$('#tax_message').html('* Please enter Tax Rate.');
-														$('#dlg_tax_rate').focus();
-													}
-												}
-												if(v==0) {
-													$.prompt.close();
-													$('#tax_rate').val("20");
-													$('#tax_code').val("UK");
-												}
-											}
-										},
-										
-									};
 
-									$.prompt(statesdemo);
-									$(".num").unbind();
-									$('.num').keypress(function(e){
-										checknumber(e);	
-									}); 
-								</pre>
-								<!--<a class="run">Run It!</a>-->
-							</div>
-							<div class="example-container">
-								<pre class="code" style="display:none;" id="inv_num_code">
-									var statesdemo = {
-										state0: {
-											title: 'Enter new Purchase Invoice Number manually?',
-											html:'&lt;div id="message"&gt;&lt;/div&gt;&lt;input type="text" class="form-control num" name="invoice_numbr" id="invoice_numbr" value=""&gt;&lt;br /&gt;',
-											buttons: { Cancel : 0, Ok: 1 },
-											focus: "#invoice_numbr",
-											submit:function(e,v,m,f){ 
-												if(v==1) {
-													if(f.invoice_numbr!=null && f.invoice_numbr!=""){
-														e.preventDefault();
-														var jsonRowURLStr = 'checkpin.cgi?purchase_id='+f.invoice_numbr;
-		
-														$.getJSON(jsonRowURLStr,function(result){
-															
-															if(result.success){
-																e.preventDefault();
-																document.getElementById("message").innerHTML = result.success;
-																$('#invoice_numbr').val('');
-																$('#invoice_numbr').focus();
-															}else{
-																$('#purchase_inv_no').val(f.invoice_numbr);
-																$('#purchase_id').val(f.invoice_numbr);
-																$.prompt.close()
-															}
-															
-														});
-													}else {
-														e.preventDefault();
-														document.getElementById("message").innerHTML = "* Please enter Invoice number." ;
-														$('#invoice_numbr').focus();
-													}
-												}
-												if(v==0) {
-													$.prompt.close();
-													var new_inv='<!--#4DVAR SequenceNumber (->[purchase_invoices]id)-->';
-													$('#purchase_inv_no').val(new_inv);
-													
-												}
-											}
-										},
-										
-									};
+<div class="modal fade" id="addTaxRate" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" onClick="$('#tax_rate').val('20');$('#tax_code').val('UK');$('tax_message').remove();">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <h3 class="modal-title" id="myModalLabel">Enter tax rate</h3>
+            </div>
+            <!-- Modal Body -->
+            <div class="modal-body">
+            	<div class="form-group" id="taxmessageId" style="padding:10px">
+            		<input class="form-control num" id="dlg_tax_rate">
+                </div>
+            </div>
+            
+            <!-- Modal Footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" onClick="$('#tax_rate').val('20');$('#tax_code').val('UK');$('tax_message').remove();">Close</button>
+                <button type="button" class="btn btn-primary" onClick="applyTaxEntered();">Ok</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="enterNewInvoice" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" onClick="generate_automatic_id()">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <h3 class="modal-title" id="myModalLabel">Enter new Purchase Invoice Number manually?</h3>
+            </div>
+            <!-- Modal Body -->
+            <div class="modal-body">
+            	<div class="form-group" id="messageId" style="padding:10px">
+            		<input class="form-control" id="invoice_numbr">
+                </div>
+            </div>
+            
+            <!-- Modal Footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" onClick="generate_automatic_id()">Close</button>
+                <button type="button" class="btn btn-primary" onClick="generate_manual_id()">Ok</button>
+            </div>
+        </div>
+    </div>
+</div>
 
-									$.prompt(statesdemo);
-									$(".num").unbind();
-									$('.num').keypress(function(e){
-										checknumber(e);	
-									});
-								</pre>
-								<!--<a class="run">Run It!</a>-->
-							</div>
 						</div>
 						<div class=" col-sm-12 col-lg-12">
 						<div style="text-align:center; margin-top: 11px;">
@@ -486,183 +435,14 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 	<script src="js/basictable.js"></script>
 	<script src="js/jquery.validate.js"></script>
 	<script language="javascript">
-
-	function checknumber(e)
-	{
-		var k = e.which;
-		/* numeric inputs can come from the keypad or the numeric row at the top */
-		 if ((k<48 || k>57) && (k!=46) && (k!=8) && (k!=0)) {
-			e.preventDefault();
-			//alert("Allowed characters are 0-9, +, -, (, )");
-			return false;
-		}
-	}
-	
-	function get_customer_analysisaccounts(l_uuid,a_uuid){
-		l_uuid = typeof l_uuid !== 'undefined' ? l_uuid : $('#uuid_analysis_ledger').val();
-		a_uuid = typeof a_uuid !== 'undefined' ? a_uuid : '';
-		$('#account_div').find('.ui-autocomplete-input').val('');
-		var jsonRow = 'getanalysisaccountsonsearch.cgi?srch=&money=out';
-		if(l_uuid!=""){
-			jsonRow+='&ledger_uuid='+l_uuid;
-		}
-		
-		$.getJSON(jsonRow,function(result){	
-			if(result){
-				var html='<option value=""></option>';
-				if(result.error){
-				}else{
-				$.each(result, function(i,item){
-					html += '<option value="'+item.uuid+'"';
-					if(item.uuid==a_uuid){
-						html += ' selected ';
-					}
-					html += '>'+item.name+'</option>';
-				});
-				}
-				$('#uuid_analysis_account').html(html);
-				if(a_uuid!=""){
-					$("#uuid_analysis_account").val(a_uuid);
-					$('#uuid_analysis_account').combobox("destroy");
-					$('#uuid_analysis_account').combobox();
-				}
-			}
-		});
-	}
-	
-	function get_customer_ledger(l_uuid){
-		l_uuid = typeof l_uuid !== 'undefined' ? l_uuid : '';
-		$('#ledger_div').find('.ui-autocomplete-input').val('');
-		var jsonRow = 'getledgersonsearch.cgi?srch=';
-		
-		$.getJSON(jsonRow,function(result){	
-			if(result){
-				var html='<option value=""></option>';
-				var nameStr="";
-				$.each(result, function(i,item){
-					html += '<option value="'+item.uuid+'"';
-					if(item.uuid==l_uuid){
-						html += ' selected ';
-						nameStr=item.name;
-					}
-					html += '>'+item.name+'</option>';
-				});
-				$('#uuid_analysis_ledger').html(html);
-				if(l_uuid!=""){
-					$('#uuid_analysis_ledger').val(l_uuid);
-					$('#uuid_analysis_ledger').combobox("destroy");
-					$('#uuid_analysis_ledger').combobox();
-				}
-			}
-		});
-	}
-	
-	function get_client_info()	{
-		var jsonRow = 'returncustomerValues.cgi?client='+$('#Client_ID').val();
-		$.getJSON(jsonRow,function(html){	
-			if(html){
-				$("#beneficiary_address").val(html.bill_to);
-				get_customer_analysisaccounts(html.uuid_analysis_ledger,html.uuid_analysis_account);
-				get_customer_ledger(html.uuid_analysis_ledger);
-			}
-		});
-	}
-	
-function get_account_info(){
-	var account_id=	$("#bank_paid_from_id").val();
-	var dataString = 'Account_ID='+account_id;
-		//alert(dataString);
-			
-	$.ajax({
-		type: "GET",
-		url: "returnaccountdetail.cgi",
-		data: dataString,
-		cache: false,
-		success: function(html)
-		{
-			$("#sort_code").val(html.Sort_Code);
-			$("#swift_code").val(html.Swift_Code);
-			$("#routing").val(html.Routing);
-			$("#iban").val(html.Iban);
-			$("#bic_code").val(html.Bic_Code);
-			$("#currency_code").val(html.Currency_Code);
-		}
-	});
-
-}
-	
-	function get_projects(){
-		if($('#Client_ID').val() && $('#Client_ID').val()!=''){
-			$('#div_proj').find('.ui-autocomplete-input').val('');
-			var jsonRow = 'getprojectsonsearch.cgi?srch=&client_uuid='+$('#Client_ID').val();
-		}
-		else{
-			var jsonRow = 'getprojectsonsearch.cgi?srch=';
-		}
-		$.getJSON(jsonRow,function(result){	
-			if(result){
-				var html='<option value=""></option>';
-
-				$.each(result, function(i,item)
-				{
-					html += '<option value="'+item.ProjectUUID+'">'+item.value+'</option>';
-				});
-				
-				$('#Project_UUID').html(html);
-			}
-		});
-	}
-	
-	function get_clients(){
-		var jsonRow = 'getcompaniesonsearch.cgi?srch=&companies=supplier';
-		$.getJSON(jsonRow,function(result){	
-			if(result){
-				var html='<option value=""></option>';
-
-				$.each(result, function(i,item)
-				{
-					html += '<option value="'+item.CustoemrUUID+'">'+item.value+'</option>';
-				});
-				
-				$('#Client_ID').html(html);
-			}
-		});
-	}
-	
-	function get_accounts(){
-		var jsonRow = 'getaccountonsearch.cgi?srch=';
-		$.getJSON(jsonRow,function(result){	
-			if(result){
-				var html='<option value=""></option>';
-
-				$.each(result, function(i,item)
-				{
-					html += '<option value="'+item.AccountID+'">'+item.AccountName+'</option>';
-				});
-				
-				$('#bank_paid_from_id').html(html);
-			}
-		});
-	}
-
-	function checknumber(e)
-	{
-		var k = e.which;
-    					/* numeric inputs can come from the keypad or the numeric row at the top */
-   						 if ((k<48 || k>57) && (k!=46) && (k!=8) && (k!=0)) {
-        					e.preventDefault();
-							//alert("Allowed characters are 0-9, +, -, (, )");
-        					return false;
-    					}
-	
+	function generate_automatic_id(){
+		$("#msgSpan").remove();
+		var new_inv='<!--#4DVAR SequenceNumber (->[purchase_invoices]id)-->';
+		$('#purchase_inv_no').val(new_inv);
 	}
 	$(function() {
-		$('#table-breakpoint').basictable({
-    		breakpoint: 751
-   		});
 		<!--#4DIF (Records in selection([purchase_invoices])=0)-->
-		code = $('#inv_num_code').text();
-		(new Function(code))();
+		$('#enterNewInvoice').modal('show');
 				
 		var new_uuid='<!--#4DVAR Generate UUID-->';	
 		$('#purchase_uuid').val(new_uuid);
@@ -674,291 +454,10 @@ function get_account_info(){
 		$('#tax_rate').val("20");
 		$('#tax_code').val("UK");
 
-		<!--#4DELSE--><!--#4DENDIF-->
-		
-		if(!$( "#Client_ID" ).val() || $( "#Client_ID" ).val()==''){
-			get_clients();
-		}
-		if(!$( "#Project_UUID" ).val() || $( "#Project_UUID" ).val()==''){
-			get_projects();
-		}
-		if(!$( "#bank_paid_from_id" ).val() || $( "#bank_paid_from_id" ).val()=='' || $( "#bank_paid_from_id" ).val()==0){
-			
-			get_accounts();
-		}
-		
-		$('#payment_date').datepicker().on('changeDate', function (ev) {
-			$(this).datepicker('hide');
-		});
-				
-		$('.num').keypress(function(e){
-			checknumber(e);	
-		}); 
-		
-// validate form on keyup and submit
-		$("#PurchaseInvoiceForm").validate({
-			ignore: "",
-			onkeyup: false,
-			errorClass: 'error',
-			validClass: 'valid',
-			errorElement: "em",
-			errorPlacement: function(error, element) {
-				$(element).closest('div').append(error);
-			},
-			onfocusout: false,
-			invalidHandler: function(form, validator) {
-				var errors = validator.numberOfInvalids();
-				if (errors) {                    
-					validator.errorList[0].element.focus();
-				}
-			},
-			rules: {
-				payment_date: { required: true  },
-				Client_ID: { required: true  },
-				payment_method: { required: true  },
-				employee_uuid: { required: true  },
-			},
-		});					
+		<!--#4DELSE--><!--#4DENDIF-->			
 	});
 </script>
- 
- <script>
-	 var xhr;
-  (function( $ ) {
-    $.widget( "custom.combobox", {
-      _create: function() {
-        this.wrapper = $( "<span>" )
-          .addClass( "custom-combobox" )
-          .insertAfter( this.element );
- 
-        this.element.hide();
-        this._createAutocomplete();
-        this._createShowAllButton();
-      },
- 
-      _createAutocomplete: function() {
-		  var ele_select= this.element;
-        var selected = this.element.children( ":selected" ),
-          value = selected.val() ? selected.text() : "";
- 
-        this.input = $( "<input>" )
-          .appendTo( this.wrapper )
-          .val( value )
-          .attr( "title", "" )
-          .addClass( "custom-combobox-input ui-widget ui-widget-content ui-state-default ui-corner-left" )
-          .autocomplete({
-            delay: 0,
-            minLength: 0,
-            source: $.proxy( this, "_source" )
-          })
-          .tooltip({
-            tooltipClass: "ui-state-highlight"
-          });
- 
-        this._on( this.input, {
-          autocompleteselect: function( event, ui ) {
-		  	//alert("show all");
-            ui.item.option.selected = true;
-			
-            this._trigger( "select", event, {
-              item: ui.item.option
-            });
-			
-			if(ele_select.attr('id')=='Client_ID'){
-				get_client_info();
-				get_projects();
-			}
-			else if(ele_select.attr('id')=='bank_paid_from_id'){
-				get_account_info();
-			}
-			else if(ele_select.attr('id')=='uuid_analysis_ledger'){
-				get_customer_analysisaccounts();
-			}
-          },
- 
-          autocompletechange: "_removeIfInvalid"
-        });
-      },
- 
-      _createShowAllButton: function() {
-        var input = this.input,
-          wasOpen = false;
- 
-        $( "<a>" )
-          .attr( "tabIndex", -1 )
-          .attr( "title", "Show All Items" )
-          .tooltip()
-          .appendTo( this.wrapper )
-          .button({
-            icons: {
-              primary: "ui-icon-triangle-1-s"
-            },
-            text: false
-          })
-          .removeClass( "ui-corner-all" )
-          .addClass( "custom-combobox-toggle ui-corner-right" )
-          .mousedown(function() {
-            wasOpen = input.autocomplete( "widget" ).is( ":visible" );
-          })
-          .click(function() {
-            input.focus();
- 
-            // Close if already visible
-            if ( wasOpen ) {
-              return;
-            }
- 
-            // Pass last search string as value to search for, displaying last results
-            input.autocomplete( "search", 'SHOWALL' );
-          });
-      },
- 
-      _source: function( request, response ) {
-        //var matcher = new RegExp( $.ui.autocomplete.escapeRegex(request.term), "i" );
-		var ele_select= this.element;
-		if(request.term=='SHOWALL'){
-			response(ele_select.children( "option" ).map(function() {
-          var text = $( this ).text();
-		 var value= $( this ).val();
-          //if ( this.value && ( !request.term || matcher.test(text) ) )
-            return {
-              label: text,
-              value: text,
-              option: this
-            };
-        }) );
-		
-		}
-		else
-		{
-		if(ele_select.attr('id')=='Client_ID'){
-		var jsonRow = 'getcompaniesonsearch.cgi?srch='+request.term+'&companies=supplier';
-		}
-		else if(ele_select.attr('id')=='Project_UUID'){
-			var jsonRow = 'getprojectsonsearch.cgi?srch='+request.term+'&client_uuid='+$('#Client_ID').val();
-		}
-		else if(ele_select.attr('id')=='bank_paid_from_id'){
-			var jsonRow = 'getaccountonsearch.cgi?srch='+request.term;
-		}
-		else if(ele_select.attr('id')=='uuid_analysis_ledger'){
-			var jsonRow = 'getledgersonsearch.cgi?srch='+request.term;
-		}
-		else if(ele_select.attr('id')=='uuid_analysis_account'){
-			var jsonRow = 'getanalysisaccountsonsearch.cgi?srch='+request.term+'&ledger_uuid='+$('#uuid_analysis_ledger').val()+'&money=out';
-		}
-		
-
-		//alert(jsonRowURLStr);
-		if(xhr) xhr.abort();
-		xhr=$.getJSON(jsonRow,function(result){
-			
-			if(result){
-				var html='<option value=""></option>';
-				if(result.error){
-				
-				}else{
-				$.each(result, function(i,item)
-				{
-					if(ele_select.attr('id')=='Client_ID'){
-						html += '<option value="'+item.CustoemrUUID+'">'+item.value+'</option>';
-					}
-					else if(ele_select.attr('id')=='Project_UUID'){
-						html += '<option value="'+item.ProjectUUID+'">'+item.value+'</option>';
-					}
-					else if(ele_select.attr('id')=='bank_paid_from_id'){
-						html += '<option value="'+item.AccountID+'">'+item.AccountName+'</option>';
-					}else if(ele_select.attr('id')=='uuid_analysis_ledger'){
-						html += '<option value="'+item.uuid+'">'+item.name+'</option>';
-					}else if(ele_select.attr('id')=='uuid_analysis_account'){
-						html += '<option value="'+item.uuid+'">'+item.name+'</option>';
-					}
-				});
-				}
-				ele_select.html(html);
-				
-				
-				response(ele_select.children( "option" ).map(function() {
-          var text = $( this ).text();
-		 var value= $( this ).val();
-          //if ( this.value && ( !request.term || matcher.test(text) ) )
-            return {
-              label: text,
-              value: text,
-              option: this
-            };
-        }) );
-				
-				
-			}
-		});
-       
-	  } 
-		
-      },
- 
-      _removeIfInvalid: function( event, ui ) {
- 
-        // Selected an item, nothing to do
-        if ( ui.item ) {
-
-          return;
-        }
- 
-        // Search for a match (case-insensitive)
-        var value = this.input.val(),
-          valueLowerCase = value.toLowerCase(),
-          valid = false;
-		  var ele_select= this.element;
-        this.element.children( "option" ).each(function() {
-          if ( $( this ).text().toLowerCase() === valueLowerCase ) {
-            this.selected = valid = true;	
-		if(ele_select.attr('id')=='Client_ID'){
-			get_client_info();
-			get_projects();
-			}
-		else if(ele_select.attr('id')=='bank_paid_from_id'){
-				get_account_info();
-			}else if(ele_select.attr('id')=='uuid_analysis_ledger'){
-				get_customer_analysisaccounts();
-			}
-            return false;
-          }
-        });
- 
-        // Found a match, nothing to do
-        if ( valid ) {
-          return;
-        }
- 
-        // Remove invalid value
-        this.input
-          .val( "" )
-          .attr( "title", value + " didn't match any item" )
-          .tooltip( "open" );
-        this.element.val( "" );
-        this._delay(function() {
-          this.input.tooltip( "close" ).attr( "title", "" );
-        }, 2500 );
-        this.input.data( "ui-autocomplete" ).term = "";
-      },
- 
-      _destroy: function() {
-        this.wrapper.remove();
-        this.element.show();
-      }
-    });
-  })( jQuery );
- 
-  $(function() {
-    $( "#Client_ID" ).combobox();
-	$( "#Project_UUID" ).combobox();
-	$('#bank_paid_from_id').combobox();
-	$("#uuid_analysis_ledger" ).combobox();
-    $("#uuid_analysis_account").combobox();
-	
-  });
-  </script>
-  <script src="js/purchase_inv.js"></script>
+<script src="js/purchase_inv.js"></script>
 </body>
 </html>
 </html>

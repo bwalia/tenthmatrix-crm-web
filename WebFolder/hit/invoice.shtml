@@ -12,20 +12,16 @@ else
 QUERY([Invoices];[Invoices]uuid=_HIT_WebApp_GetField ("uuid"))
 end If
 
-
+IF (Records in selection([Invoices])=0)
 QUERY([Companies];[Companies]account_Number=num([Invoices]client_id))
 QUERY([Projects];[Projects]proj_name=[Invoices]project_code)
 
 QUERY([analysis_ledger];[analysis_ledger]uuid=[Invoices]uuid_analysis_ledger)
 QUERY([analysis_account];[analysis_account]uuid=[Invoices]uuid_analysis_account)
 
-//Web_LoadInvoiceRelated
-//$nrecords:=Records in selection([Invoices])
-
-IF (Records in selection([Invoices])=0)
-_HTMLTITLETXT:="New Invoice"
-ELSE
 _HTMLTITLETXT:= "Invoice Number: "+[Invoices]Full_Invoice_Number
+ELSE
+_HTMLTITLETXT:="New Invoice"
 END IF
 
 C_BOOLEAN(mUserIsCurrentBool)
@@ -37,9 +33,6 @@ mUserIsStaff:=(_HIT_WebSession_GetVar ("auth_user_type")="STAFF")
 else
 _HIT_HTTPD_RedirectToURL ("sign-in.shtml")
 end if 
-
-
-//_HIT_HTMLTXT:=_HIT_SessionStr
 -->
 <!DOCTYPE html>
 <html>
@@ -447,98 +440,60 @@ end if
 										</select>
 									</div>
 							</div>
-							<div class="example-container">
-								<pre class="code" style="display:none;" id="inv_num_code">
-									var statesdemo = {
-										state0: {
-											title: 'Enter new Invoice ID manually?',
-											html:'&lt;div id="message"&gt;&lt;/div&gt;&lt;input type="text" class="form-control" name="invoice_numbr" id="invoice_numbr" value=""&gt;&lt;br /&gt;',
-											buttons: { Cancel : 0, Ok: 1 },
-											focus: "#invoice_numbr",
-											submit:function(e,v,m,f){ 
-												//console.log(f);
-												if(v==1) {
-													if(f.invoice_numbr!=null && f.invoice_numbr!=""){
-														e.preventDefault();
-														var jsonRowURLStr = 'checkinvoicenum.cgi?inv_no='+f.invoice_numbr;
-		
-														$.getJSON(jsonRowURLStr,function(result){
-															//alert(result.exist);
-															
-															if(result.exist=='false'){
-																$('#inv_number').val(f.invoice_numbr);
-																$('#invoice_id').val(f.invoice_numbr);
-																$.prompt.close()
-															}
-															else{
-																e.preventDefault();
-																document.getElementById("message").innerHTML = "* Invoice number "+f.invoice_numbr+" already exists." ;
-																$('#invoice_numbr').val('');
-																$('#invoice_numbr').focus();
-															}
-															
-														});
-													}else {
-														e.preventDefault();
-														document.getElementById("message").innerHTML = "* Please enter Invoice number." ;
-														$('#invoice_numbr').focus();
-													}
-												}
-												if(v==0) {
-													$.prompt.close();
-													var new_inv='<!--#4DVAR InvoiceGetNextID-->';
-													$('#inv_number').val(new_inv);
-													$('#invoice_id').val(new_inv);
-												}
-											}
-										},
-										
-									};
-
-									$.prompt(statesdemo);
-								</pre>
-								<!--<a class="run">Run It!</a>-->
-								
-								<pre class="code" style="display:none;" id="tax_rate_code">
-									var statesdemo = {
-										state0: {
-											title: 'Enter tax rate',
-											html:'&lt;div id="tax_message"&gt;&lt;/div&gt;&lt;input type="text" class="num" name="dlg_tax_rate" id="dlg_tax_rate" value=""&gt;&lt;br /&gt;',
-											buttons: { Cancel : 0, Ok: 1 },
-											focus: "#dlg_tax_rate",
-											submit:function(e,v,m,f){ 
-												//console.log(f);
-												if(v==1) {
-													if(f.dlg_tax_rate!=null && f.dlg_tax_rate!=""){
-														$('#invoice_tax_rate').val(f.dlg_tax_rate);
-		
-													}
-													else {
-														e.preventDefault();
-														$('#tax_message').html('* Please enter Tax Rate.');
-														$('#dlg_tax_rate').focus();
-													}
-												}
-												if(v==0) {
-													$.prompt.close();
-													$('#invoice_tax_rate').val("20");
-													$('#inv_tax_code').val("UK");
-													//$('#invoice_tax_rate').val('');
-												}
-											}
-										},
-										
-									};
-
-									$.prompt(statesdemo);
-									$(".num").unbind();
-									$('.num').keypress(function(e){
-										checknumber(e);	
-									}); 
-								</pre>
-								<!--<a class="run">Run It!</a>-->
-							</div>
 							
+<!-- Modal -->
+<div class="modal fade" id="enterNewInvoice" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" onClick="generate_automatic_id()">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <h3 class="modal-title" id="myModalLabel">Enter new Invoice ID manually?</h3>
+            </div>
+            <!-- Modal Body -->
+            <div class="modal-body">
+            	<div class="form-group" id="messageId" style="padding:10px">
+            		<input class="form-control" id="invoice_numbr">
+                </div>
+            </div>
+            
+            <!-- Modal Footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" onClick="generate_automatic_id()">Close</button>
+                <button type="button" class="btn btn-primary" onClick="generate_manual_id()">Ok</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="addTaxRate" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" onClick="$('#invoice_tax_rate').val('20');$('#inv_tax_code').val('UK');$('tax_message').remove();">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <h3 class="modal-title" id="myModalLabel">Enter tax rate</h3>
+            </div>
+            <!-- Modal Body -->
+            <div class="modal-body">
+            	<div class="form-group" id="taxmessageId" style="padding:10px">
+            		<input class="form-control num" id="dlg_tax_rate">
+                </div>
+            </div>
+            
+            <!-- Modal Footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" onClick="$('#invoice_tax_rate').val('20');$('#inv_tax_code').val('UK');$('tax_message').remove();">Close</button>
+                <button type="button" class="btn btn-primary" onClick="applyTaxEntered();">Ok</button>
+            </div>
+        </div>
+    </div>
+</div>
 						</div>
 						
 						</div>
@@ -704,6 +659,13 @@ end if
 	var month=currentdate.getMonth()+1;
 	var currentdatetime = currentdate.getDay()+ "/"+month+ "/" + currentdate.getFullYear() + " @ " + currentdate.getHours() + ":" + currentdate.getMinutes() + ":" + currentdate.getSeconds();
 	
+	function generate_automatic_id(){
+		$("#msgSpan").remove();
+		var new_inv='<!--#4DVAR InvoiceGetNextID-->';
+		$('#inv_number').val(new_inv);
+		$('#invoice_id').val(new_inv);
+	}
+		
 	$(function(){
 		
 		 $('#table-breakpoint').basictable({
@@ -711,11 +673,11 @@ end if
     			});
 		
 			<!--#4DIF (Records in selection([Invoices])=0)-->
-				code = $('#inv_num_code').text();
-				(new Function(code))();
+				$("#enterNewInvoice").modal('show');
+				$('#invoice_numbr').focus();
 				newEntry=true;
 			<!--#4DELSE-->
-			newEntry=false;
+				newEntry=false;
 			<!--#4DENDIF-->
 			// validate form on keyup and submit
 			$("#InvoiceForm").validate({
@@ -746,100 +708,6 @@ end if
 		});
 			
 		
-	function checknumber(e)	{
-		var k = e.which;
-		/* numeric inputs can come from the keypad or the numeric row at the top */
-		 if ((k<48 || k>57) && (k!=46) && (k!=8) && (k!=0)) {
-			e.preventDefault();
-			//alert("Allowed characters are 0-9, +, -, (, )");
-			return false;
-		}
-	}
-	
-	function get_customer_analysisaccounts(l_uuid,a_uuid){
-		l_uuid = typeof l_uuid !== 'undefined' ? l_uuid : $('#uuid_analysis_ledger').val();
-		a_uuid = typeof a_uuid !== 'undefined' ? a_uuid : '';
-		$('#account_div').find('.ui-autocomplete-input').val('');
-		var jsonRow = 'getanalysisaccountsonsearch.cgi?srch=&money=in';
-		if(l_uuid!=""){
-			jsonRow+='&ledger_uuid='+l_uuid;
-		}
-		
-		$.getJSON(jsonRow,function(result){	
-			if(result){
-				var html='<option value=""></option>';
-				if(result.error){
-			
-				}else{
-					$.each(result, function(i,item){
-						html += '<option value="'+item.uuid+'"';
-						if(item.uuid==a_uuid){
-							html += ' selected ';
-						}
-						html += '>'+item.name+'</option>';
-					});
-				}
-				$('#uuid_analysis_account').html(html);
-				if(a_uuid!=""){
-					$("#uuid_analysis_account").val(a_uuid);
-					$('#uuid_analysis_account').combobox("destroy");
-					$('#uuid_analysis_account').combobox();
-				}
-			}
-		});
-	}
-	
-	function get_customer_ledger(l_uuid){
-		l_uuid = typeof l_uuid !== 'undefined' ? l_uuid : '';
-		$('#ledger_div').find('.ui-autocomplete-input').val('');
-		var jsonRow = 'getledgersonsearch.cgi?srch=';
-		
-		$.getJSON(jsonRow,function(result){	
-			if(result){
-				var html='<option value=""></option>';
-				if(result.error){
-			
-				}else{
-					$.each(result, function(i,item){
-						html += '<option value="'+item.uuid+'"';
-						if(item.uuid==l_uuid){
-							html += ' selected ';
-						}
-						html += '>'+item.name+'</option>';
-					});
-				}
-				$('#uuid_analysis_ledger').html(html);
-				if(l_uuid!=""){
-					$('#uuid_analysis_ledger').val(l_uuid);
-					$('#uuid_analysis_ledger').combobox("destroy");
-					$('#uuid_analysis_ledger').combobox();
-				}
-			}
-		});
-	}
-	function get_client_info()	{
-		/**var Client_ID=	$("#Client_ID").val();
-		var dataString = 'Client_ID='+Client_ID;
-		$.ajax({
-			type: "GET",
-			url: "Returnvalues.cgi",
-			data: dataString,
-			cache: false,
-			success: function(html){
-				$("#invoice_bill_to").val(html);
-				get_customer_ledger_accounts();
-			}
-		});**/
-		var jsonRow = 'returncustomerValues.cgi?client='+$('#Client_ID').val();
-		$.getJSON(jsonRow,function(html){	
-			if(html){
-				$("#invoice_bill_to").val(html.bill_to);
-				get_customer_analysisaccounts(html.uuid_analysis_ledger,html.uuid_analysis_account);
-				get_customer_ledger(html.uuid_analysis_ledger);
-			}
-		});
-	}
-	
 	function get_projects(){
 		$('#div_proj').find('.ui-autocomplete-input').val('');
 		var jsonRow = 'getprojectsonsearch.cgi?srch=&client='+$('#Client_ID').val();
@@ -859,78 +727,6 @@ end if
 		});
 	}
 	
-	function EditMainNote(){
-		$("._neditNote").hide();
-		$("#inv_note").attr('disabled', false);
-		$(".msaveCancelButtons").show();
-		var noteStr= $("#invoice_note").val();
-		if(noteStr!=""){
-			noteStr+="\n";
-		}
-		noteStr+=currentdatetime+" : ";
-		$("#inv_note").val(noteStr);
-	}
-	
-	function CancelMainNote(){
-		var noteStr= $("#invoice_note").val();
-		$("#inv_note").val(noteStr);
-		$("._neditNote").show();
-		$("#inv_note").attr('disabled', true);
-		$(".msaveCancelButtons").hide();
-	}
-	
-	function saveMainNote(){
-		var noteStr= $("#inv_note").val();
-		//console.log(noteStr)
-		if(noteStr!=""){
-			if(noteStr!=currentdatetime){
-				$.ajax({
-					type: "GET",
-					dataType: "json",
-					url: "saveinvoicenote.cgi",
-					data: {"uuid" : tableUUIDStr, "note": noteStr},
-					cache: false,
-					success: function(html)	{
-						if(html.success){
-							$("#invoice_note").val(noteStr);
-							$("._neditNote").show();
-							$("#inv_note").attr('disabled', true);
-							$(".msaveCancelButtons").hide();
-						}else if(html.error){
-							$.prompt(html.error);
-						}
-					}
-				});
-			}else{
-				$.prompt("Please enter some value for note!");
-			}
-		}else{
-			$.prompt("Please enter some value for note!");
-		}		
-	}
-function disableForm(e){
-	$('#InvoiceForm :input').attr('disabled', true);
-	$('#status').attr('disabled', false);
-	$('#hiderow').hide();
-	$('.td_edit').hide();
-	$('.td_remove').hide();
-	
-	$('#status').change(function(){
-		if($(this).val()!='Paid'){
-			$('#InvoiceForm :input').attr('disabled', false);
-			$('#hiderow').show();
-			$('.td_edit').show();
-			$('.td_remove').show();
-		}	
-	});
-	
-	if(e){
-		$("._neditNote").show();
-		$("._neditNote").attr('disabled', false);
-		$("._nsaveNote").attr('disabled', false);
-		$("._nCancelNote").attr('disabled', false);
-	}
-}
 	
 	$(function() {
 	<!--#4DIF ([Invoices]invoice_posted)-->

@@ -100,24 +100,25 @@ End If
 		
 		
 		<div class="row">
+			<div class="panel-body no-padding-top bg-white" > 
 					<!-- left column -->
                     <div class="col-md-8 with-sidebar">
                     	<form name="ModuleForm" action="savemodule.cgi" id="ModuleForm" method="post" class="form-horizontal" >
 							<div class="form-group">
-                            	<label class="col-sm-3 control-label">Name <span style="color:#6E829B">*</span></label>
+                            	<label class="col-sm-2 control-label">Name <span style="color:#6E829B">*</span></label>
                                	<div CLASS="col-sm-6"> <input name="name" class="form-control" type="text" value="<!--4DVAR [Module]name-->" id="name" onKeyUp="generate_code()" onBlur="generate_code()">
 									<input name="uuid" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="uuid">
 								</div>
 							</div>	
 							<div class="form-group">
-                            	<label class="col-sm-3 control-label">Code	</label>
+                            	<label class="col-sm-2 control-label">Code	</label>
                             	<div CLASS="col-sm-6"><input name="code" class="form-control" type="text" value="<!--4DVAR [Module]code-->" id="code" readonly>
                            		<em class="error moduleNameClass" for="name" generated="true" style="display:none;">Module name already exists</em></div>
                             </div>
                            
 							<div class="form-group">
 								<!--#4DIF (Records in selection([Module])=1)-->
-                            	<label class="col-sm-3 control-label">Created On</label>
+                            	<label class="col-sm-2 control-label">Created On</label>
                                 <div CLASS="col-sm-2"><input name="created" class="form-control" type="text" <!--#4DIF (timestamp_unix_toDate([Module]created)=!01/01/1970!)-->value=""<!--4DELSE-->value="<!--#4DHTMLVAR timestamp_unix_toDate([Module]created)-->"<!--4DENDIF--> id="created" readonly></div>
 								<!--#4DELSE-->
 								<label class="col-sm-3 control-label"></label>
@@ -127,20 +128,26 @@ End If
 							</div>
 							
 							<div class="form-group">
-                            	<label class="col-sm-3 control-label">Icon's Class/Image's Path</label>
-                               <div CLASS="col-sm-6"> <input name="icon_path" class="form-control" type="text" value="<!--4DVAR [Module]icon_path-->" id="icon_path"></div>
+                            	<label class="col-sm-2 control-label">Icon's Class/Image's Path</label>
+                               	<div CLASS="col-sm-5">
+                               		<input name="icon_path" class="form-control" type="text" value="<!--4DVAR [Module]icon_path-->" id="icon_path">
+                               		<select style="display:none;" id="icon_class" name="icon_class" class="form-control col-md-5 col-xs-12" onChange="showIcon(this.value)">
+                   								
+                    				</select>
+                               	</div>
+                               	<div class="col-sm-1" id="showIconDiv" style="font-size:30px;"><i class="<!--4DVAR [Module]icon_path-->"></i></div>
 							</div>
 							<div class="form-group">
-                            	<label class="col-sm-3 control-label">Web Icon's Class/Image's Path</label>
+                            	<label class="col-sm-2 control-label">Web Icon's Class/Image's Path</label>
                                  <div CLASS="col-sm-6"> <input name="icon_path_1" class="form-control" type="text" value="<!--4DVAR [Module]icon_path_1-->" id="icon_path_1"></div>
 							</div>
 							<div class="form-group">
-                            	<label class="col-sm-3 control-label">Search Terms</label>
+                            	<label class="col-sm-2 control-label">Search Terms</label>
                              <div CLASS="col-sm-6"> 	<textarea rows="4" id="free_text_search" name="free_text_search" class="form-control"><!--4DVAR [Module]free_text_search--></textarea>
                             </div></div>
 							
                             <div class="form-group">
-                                <label class="col-sm-3 control-label">Table</label>
+                                <label class="col-sm-2 control-label">Table</label>
 								<div class="ui-select col-sm-6">
 									<select name="table_name" id="table_name" CLASS="form-control">
 									<!--HIT_EXECUTE _HIT_HTMLTXT:=Web_TableListHTMLPopup([Module]table_name)-->
@@ -148,7 +155,7 @@ End If
 								</div>
                             </div>
                             <div class="form-group">
-                            	<label class="col-sm-3 control-label">Sort Order</label>
+                            	<label class="col-sm-2 control-label">Sort Order</label>
                                <div CLASS="col-sm-6">   <input name="module_rank" class="form-control" type="text" value="<!--4DVAR [Module]module_rank-->" id="module_rank"></div>
 							</div>
 							<!--#4DIF (Records in selection([Module])=1)-->
@@ -212,7 +219,7 @@ End If
                         </form>
                     </div>
 				</div>
-		
+		 </div>
 		</section>
 		</div>
 		
@@ -238,6 +245,9 @@ End If
 		<!-- call this page plugins -->
 	
 	<script language="javascript">
+	function showIcon(val){
+		$("#showIconDiv").html('<i class="'+val+'"></i>');
+	}
 	function generate_code(){
 		
 		var val=document.getElementById("name").value;
@@ -388,6 +398,10 @@ End If
 		<!--#4DIF (Records in selection([Module])=0)-->
 			var new_uuid='<!--#4DVAR Generate UUID-->';	
 			$('#uuid').val(new_uuid);
+			var sVal='<!--4DVAR [Module]icon_path-->';
+			if(sVal!=""){
+				showIcon(sVal);
+			}
 		<!--#4DELSE-->
 		submenu_bind();
 		
