@@ -366,7 +366,7 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
         <div class="modal-content">
             <!-- Modal Header -->
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" onClick="$('#tax_rate').val('20');$('#tax_code').val('UK');$('tax_message').remove();">
+                <button type="button" class="close" data-dismiss="modal" onClick="$('#tax_rate').val('20');$('#tax_code').val('UK');$('#tax_message').remove();">
                     <span aria-hidden="true">&times;</span>
                     <span class="sr-only">Close</span>
                 </button>
@@ -381,7 +381,7 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
             
             <!-- Modal Footer -->
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal" onClick="$('#tax_rate').val('20');$('#tax_code').val('UK');$('tax_message').remove();">Close</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal" onClick="$('#tax_rate').val('20');$('#tax_code').val('UK');$('#tax_message').remove();">Close</button>
                 <button type="button" class="btn btn-primary" onClick="applyTaxEntered();">Ok</button>
             </div>
         </div>

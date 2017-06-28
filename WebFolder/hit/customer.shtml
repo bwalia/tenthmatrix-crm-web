@@ -342,27 +342,27 @@ End If
 
 
 
-  <div id="second" class="tab-pane fade col-md-7" STYLE="padding-top:20px;"  >
+  <div id="second" class="tab-pane fade col-md-12" STYLE="padding-top:20px;"  >
    
          
 							<div class="form-group" >
-								<label class="col-sm-3 control-label">Catbase Type </label>
+								<label class="col-sm-2 control-label">Catbase Type </label>
 								<div class=" col-sm-6"><input class="form-control" type="text" name="catBase_type" id="catBase_type" value="<!--#4DVAR [Companies]catBase_type-->"></div>
 							</div>
 							<div class="form-group" >
-								<label class="col-sm-3 control-label">Catbase Prog Type</label>
+								<label class="col-sm-2 control-label">Catbase Prog Type</label>
 								<div class=" col-sm-6"><input class="form-control" type="text" name="catbase_prog_type" id="catbase_prog_type" value="<!--#4DVAR [Companies]catbase_prog_type-->"></div>
 							</div>
 							<div class="form-group" >
-								<label class="col-sm-3 control-label">Catbase Version</label>
+								<label class="col-sm-2 control-label">Catbase Version</label>
 								<div class=" col-sm-6"><input class="form-control" type="text" name="catbase_version" id="catbase_version" value="<!--#4DVAR [Companies]catbase_version-->"></div>
 							</div>
 							<div class="form-group" >
-								<label class="col-sm-3 control-label">Number of users</label>
+								<label class="col-sm-2 control-label">Number of users</label>
 								<div class=" col-sm-6"><input class="form-control" type="text" name="no_of_users" id="no_of_users" value="<!--#4DVAR [Companies]no_of_users-->"></div>
 							</div>
 							<div class="form-group" >
-								<label class="col-sm-3 control-label">Licence Number </label>
+								<label class="col-sm-2 control-label">Licence Number </label>
 								<div class=" col-sm-6"><input class="form-control" type="text" name="license_number" id="license_number" value="<!--#4DVAR [Companies]licence_number-->"></br>
 								<!--#4DIF (Records in selection([Companies])=1)-->
 								<span><a href="licencemanager.shtml" class="btn btn-primary btn-color margin-right-5 btn-sm info" id="lnk_licence" name="lnk_licence">Generate New License</a></span>
@@ -370,7 +370,7 @@ End If
 								<!--#4DENDIF--></div></div>
 							
 							<div class="form-group" >
-								<label class="col-sm-3 control-label">Old licence number</label>
+								<label class="col-sm-2 control-label">Old licence number</label>
 								<div class=" col-sm-6"><input class="form-control" type="text" name="old_licence_no" id="old_licence_no" value="<!--#4DVAR [Companies]old_licence_number-->"></div>
 							</div>
 							
@@ -379,32 +379,32 @@ End If
   <div id="third" class="tab-pane fade col-md-12" STYLE="padding-top:20px;" >
 
 							<div class="form-group">
-								<label class="col-sm-3 control-label">Invoice contact name</span></label>
+								<label class="col-sm-2 control-label">Invoice contact name</span></label>
 								<div class=" col-sm-6"><input class="form-control" type="text" id="invoice_contact_name" name="invoice_contact_name" value="<!--#4DVAR [Companies]invoice_contact_name-->"></div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-3 control-label">Invoice contact email</span></label>
+								<label class="col-sm-2 control-label">Invoice contact email</span></label>
 								<div class=" col-sm-6"><input class="form-control" type="text" id="invoice_contact_email" name="invoice_contact_email" value="<!--#4DVAR [Companies]invoice_contact_email-->">
 							</div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-3 control-label">Invoice Address</span></label>
+								<label class="col-sm-2 control-label">Invoice Address</span></label>
 								<div class=" col-sm-6"><input class="form-control" type="text" id="invoice_address" name="invoice_address" value="<!--#4DVAR [Companies]invoice_address-->"></div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-3 control-label">Account Status</label>
+								<label class="col-sm-2 control-label">Account Status</label>
 								<div class=" col-sm-6"><input class="form-control" type="text" id="accountStatus" name="accountStatus" value="<!--#4DVAR [Companies]account_status-->"></div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-3 control-label">Computer type</span></label>
+								<label class="col-sm-2 control-label">Computer type</span></label>
 							<div class=" col-sm-6">	<input class="form-control" type="text" id="computer_type" name="computer_type" value="<!--#4DVAR [Companies]computer_type-->"></div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-3 control-label">Platform</span></label>
+								<label class="col-sm-2 control-label">Platform</span></label>
 								<div class=" col-sm-6"><input class="form-control" type="text" id="platform" name="platform" value="<!--#4DVAR [Companies]platform_os-->"></div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-3 control-label">Website</span></label>
+								<label class="col-sm-2 control-label">Website</span></label>
 								<div class=" col-sm-6"><input class="form-control" type="text" id="website" name="website" value="<!--#4DVAR [Companies]website_url-->"></div>
 								<!--#4DIF ((Records in selection([Companies])=1) & ([Companies]website_url#""))-->
 								<div class=" col-sm-3">
@@ -412,7 +412,7 @@ End If
 								</div><!--#4DENDIF-->
 							</div>
 							<div class="form-group">
-								<label class="col-sm-3 control-label">Logo Path</span></label>
+								<label class="col-sm-2 control-label">Logo Path</span></label>
 								<div class=" col-sm-6"><input class="form-control" type="text" id="logo_path" name="logo_path" value="<!--#4DVAR [Companies]logo_path-->"></div>
 							</div>
 							<br/>

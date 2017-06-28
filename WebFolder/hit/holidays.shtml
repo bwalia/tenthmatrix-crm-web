@@ -19,19 +19,17 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
 <head>
 <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
 <link rel="stylesheet" href="css/autocomplete.css" />
+<link href="css/bootstrap-select.css" rel="stylesheet" />
 <style>
-
 .ui-autocomplete {
     z-index: 10000;
 }
-
 .btn-inline >.btn-left-align {
     position: absolute;
     right: 0;
     top: -4px;
     margin: 8px 2px 0 0;
 }
-
 </style>
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
@@ -62,7 +60,7 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
 								<div class="form-inline" style="">                 	          
                  					<div class="btn-inline display-inline-block">
                  						<label>Type:</label>
-										<select class="form-control" name="type" id="type" onChange="__change_holiday_type(this.value)" >
+										<select class="selectpicker form-control" name="type" id="type" data-width="auto"  onChange="__change_holiday_type(this.value)" >
 											<option value="employee_holiday" selected="selected"  >Employee Holiday</option>
 											<option value="company_holiday"  >Company Holiday</option>
 										</select>
@@ -77,7 +75,7 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
                  						<input class="form-control searchFieldClass" id="keyword_type" style="height:36px;" name="keyword" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" type="search">
 										<button class="btn btn-left-align btn-link no-shadow bg-transparent no-padding-top padding-right-10 right-auto left" type="button" id="searchBtn"><i class="glyphicon glyphicon-search"></i></button>
 									</div>     
-									<select name="filterOptions" class="selectpicker form-control filterHolidaysClass" data-width="auto" onChange="__filterHolidays(this.value)">
+									<select name="filterOptions" class="form-control filterHolidaysClass" onChange="__filterHolidays(this.value)">
 										<option value="">All</option>
 										<option value="paid">Paid Leave</option>
 										<option value="unpaid">Un-Paid Leave</option>
@@ -215,6 +213,8 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
     <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/top-footer.shtml-->
 </div>
 <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml-->
+
+<script src="js/bootstrap-select.js" type="text/javascript"></script>
 <script>
 var JSONdata;
 var start=0, pageSize=50,  end=pageSize;

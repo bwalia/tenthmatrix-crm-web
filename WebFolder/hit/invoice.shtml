@@ -473,7 +473,7 @@ end if
         <div class="modal-content">
             <!-- Modal Header -->
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" onClick="$('#invoice_tax_rate').val('20');$('#inv_tax_code').val('UK');$('tax_message').remove();">
+                <button type="button" class="close" data-dismiss="modal" onClick="$('#invoice_tax_rate').val('20');$('#inv_tax_code').val('UK');$('#tax_message').remove();">
                     <span aria-hidden="true">&times;</span>
                     <span class="sr-only">Close</span>
                 </button>
@@ -488,7 +488,7 @@ end if
             
             <!-- Modal Footer -->
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal" onClick="$('#invoice_tax_rate').val('20');$('#inv_tax_code').val('UK');$('tax_message').remove();">Close</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal" onClick="$('#invoice_tax_rate').val('20');$('#inv_tax_code').val('UK');$('#tax_message').remove();">Close</button>
                 <button type="button" class="btn btn-primary" onClick="applyTaxEntered();">Ok</button>
             </div>
         </div>

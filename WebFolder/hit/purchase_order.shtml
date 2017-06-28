@@ -94,8 +94,7 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
    	<div class="content-wrapper" >
         <section class="content-header">
       		<h1>
-        		<!--#4DIF (Records in selection([Tasks])=1)-->"<!--#4DVAR taskNameStr-->"<!--#4DELSE-->New<!--#4DENDIF--> 
-        		<small>Purchase Order</small>
+      			<!--#4DIF (Records in selection([Purchase_Orders])=1)--><span style="font-style: italic;">Purchase Order Number: <!--#4DVAR [Purchase_Orders]Purchase_ID_Number --></span><!--#4DELSE-->New <small>Purchase Order</small><!--#4DENDIF-->
       		</h1>
       		<ol class="breadcrumb">
        			<li><a href="index.shtml"><i class="fa fa-dashboard"></i> Dashboard</a></li>
@@ -110,10 +109,10 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 				<form name="OrderForm" id="OrderForm" action="savepurchaseorder.cgi" class="form-horizontal" method="post" >
 					<div class="row" style="margin-bottom:5px;">
 						<!-- left column -->
-						<div class="col-sm-6 column">
+						<div class="col-sm-8 column">
 							<div class="form-group">
-								<label class="col-sm-3 control-label">Purchase Order No <span style="color:#6E829B">*</span></label>
-							<div CLASS="col-sm-6">	<input readonly type="hidden" class="form-control" name="full_order_number" id="full_order_number" value="" />
+								<label class="col-sm-2 control-label">Purchase Order No <span style="color:#6E829B">*</span></label>
+							<div CLASS="col-sm-4">	<input readonly type="hidden" class="form-control" name="full_order_number" id="full_order_number" value="" />
 								<input readonly type="text" class="form-control" name="purchase_id_number" id="purchase_id_number" value="<!--#4DVAR [Purchase_Orders]Purchase_ID_Number -->" />
 							</div></div>
 							<!--#4DIF (Records in selection([Purchase_Orders])=1)-->
@@ -123,7 +122,7 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 							<!--#4DENDIF-->
 							
 							<div class="form-group">
-								<label class="col-sm-3 control-label">Client <span style="color:#6E829B">*</span></label><!--#4DIF (mUserIsCurrentBool)--><!--#4DVAR [Companies]company_Name--><!--#4DELSE-->
+								<label class="col-sm-2 control-label">Client <span style="color:#6E829B">*</span></label><!--#4DIF (mUserIsCurrentBool)--><!--#4DVAR [Companies]company_Name--><!--#4DELSE-->
 								<div class="ui-widget col-sm-6">
 									<select id="Client_ID" name="Client_ID" CLASS="form-control">
 									<!--#4DIF (Records in selection([Purchase_Orders])=0)-->
@@ -139,18 +138,18 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 								</div><!--#4DENDIF-->
 							</div>
 							<div class="form-group">
-								<label class="col-sm-3 control-label">Start Date <span style="color:#6E829B">*</span></label><!--#4DIF (mUserIsCurrentBool)--><!--#4DVAR [Purchase_Orders]Purchase_start_date--><!--#4DELSE-->
+								<label class="col-sm-2 control-label">Start Date <span style="color:#6E829B">*</span></label><!--#4DIF (mUserIsCurrentBool)--><!--#4DVAR [Purchase_Orders]Purchase_start_date--><!--#4DELSE-->
 							<div CLASS="col-sm-6">	<input name="purchase_start_date" class="input-large datepicker form-control" data-date-format="dd/mm/yyyy" type="text" <!--#4DIF (timestamp_unix_toDate([Purchase_Orders]Purchase_Start_Date)=!01/01/1970!)-->value=""<!--4DELSE-->value="<!--#4DVAR timestamp_unix_toDate([Purchase_Orders]Purchase_Start_Date)-->"<!--4DENDIF--> id="purchase_start_date" readonly ><!--#4DENDIF--></div>
 							</div>
 							
 							<div class="form-group">
-								<label class="col-sm-3 control-label">End Date <span style="color:#6E829B">*</span></label><!--#4DIF (mUserIsCurrentBool)--><!--#4DVAR [Purchase_Orders]Purchase_End_Date--><!--#4DELSE-->
+								<label class="col-sm-2 control-label">End Date <span style="color:#6E829B">*</span></label><!--#4DIF (mUserIsCurrentBool)--><!--#4DVAR [Purchase_Orders]Purchase_End_Date--><!--#4DELSE-->
 							<div CLASS="col-sm-6">	<input name="purchase_end_date" class="input-large datepicker form-control" data-date-format="dd/mm/yyyy" type="text" <!--#4DIF (timestamp_unix_toDate([Purchase_Orders]Purchase_End_Date)=!01/01/1970!)-->value=""<!--4DELSE-->value="<!--#4DVAR timestamp_unix_toDate([Purchase_Orders]Purchase_End_Date)-->"<!--4DENDIF--> id="purchase_end_date" readonly ><!--#4DENDIF-->
 							</div></div>
 							
 							
                          <div class="form-group">
-								<label class="col-sm-3 control-label">Tax Code<span style="color:#6E829B">*</span></label>
+								<label class="col-sm-2 control-label">Tax Code<span style="color:#6E829B">*</span></label>
 								<div class="ui-widget col-sm-6" id="div_proj" >
 									<select id="tax_code" name="tax_code" class="form-control">
 										<!--#4DSCRIPT/Web_LoadTax_Codes/-->
@@ -162,43 +161,43 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 							</div>
 							 
 							<div class="form-group">
-								<label class="col-sm-3 control-label">Currency Code</label>
+								<label class="col-sm-2 control-label">Currency Code</label>
 								<div CLASS="col-sm-6">	<input name="currency_code" class="form-control" type="text" value="<!--4DVAR [Purchase_Orders]Currency_Code-->" id="currency_code" ></div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-3 control-label">Unit Price</label>
+								<label class="col-sm-2 control-label">Unit Price</label>
 								 <div CLASS="col-sm-6">	<input name="unit_price" class="form-control" onBlur="update_total();" type="text" value="<!--4DVAR [Purchase_Orders]Unit_Price-->" id="unit_price" >
 							</div></div>
 						<div class="form-group">
-								<label class="col-sm-3 control-label">Unit Quantity</label>
+								<label class="col-sm-2 control-label">Unit Quantity</label>
 								<div CLASS="col-sm-6"> 	<input name="unit_quantity" class="form-control" onBlur="update_total();" type="text" value="<!--4DVAR [Purchase_Orders]Unit_Quantity-->" id="unit_quantity" >
 							</div></div>
 
 							<div class="form-group">
-							<label class="col-sm-3 control-label">Currency Exchange Rate</label>
+							<label class="col-sm-2 control-label">Currency Exchange Rate</label>
 							<div CLASS="col-sm-6"><input name="currency_exchange_rate" class="form-control" type="text" value="<!--4DVAR [Purchase_Orders]Currency_Exchange_Rate-->" id="currency_exchange_rate" readonly>
 							</div></div>
 													
 					<div class="form-group">
-								<label class="col-sm-3 control-label">Total Without Tax</label>
+								<label class="col-sm-2 control-label">Total Without Tax</label>
 								 <div CLASS="col-sm-6">	<input name="total_without_vat" class="form-control" type="text" value="<!--#4DVAR [Purchase_Orders]Total_Without_VAT -->" id="total_without_vat" readonly>
 							</div></div>
 						<div class="form-group">
-								<label class="col-sm-3 control-label">Total Amount</label>
+								<label class="col-sm-2 control-label">Total Amount</label>
 								 <div CLASS="col-sm-6">	<input name="total_amount" class="form-control" type="text" value="<!--4DVAR [Purchase_Orders]Total_Amount-->" id="total_amount" >
 							</div></div>
 							<div class="form-group">
-								<label class="col-sm-3 control-label">Description</label>
-							 <div CLASS="col-sm-6">	<textarea <!--#4DIF (mUserIsCurrentBool)-->readonly<!--#4DELSE--><!--#4DENDIF--> name="purchase_descrition" class="form-control" rows="4" id="purchase_descrition"><!--#4DVAR [Purchase_Orders]Purchase_Descrition --></textarea></div>
+								<label class="col-sm-2 control-label">Description</label>
+							 <div CLASS="col-sm-8">	<textarea <!--#4DIF (mUserIsCurrentBool)-->readonly<!--#4DELSE--><!--#4DENDIF--> name="purchase_descrition" class="form-control" rows="4" id="purchase_descrition"><!--#4DVAR [Purchase_Orders]Purchase_Descrition --></textarea></div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-3 control-label">Comments</label>
-								<div CLASS="col-sm-6"><textarea <!--#4DIF (mUserIsCurrentBool)-->readonly<!--#4DELSE--><!--#4DENDIF--> name="comments" class="form-control" rows="4" id="comments"><!--#4DVAR [Purchase_Orders]Comments --></textarea>		</div>					
+								<label class="col-sm-2 control-label">Comments</label>
+								<div CLASS="col-sm-8"><textarea <!--#4DIF (mUserIsCurrentBool)-->readonly<!--#4DELSE--><!--#4DENDIF--> name="comments" class="form-control" rows="4" id="comments"><!--#4DVAR [Purchase_Orders]Comments --></textarea>		</div>					
 							</div>
                         </div>
-						<div class="col-sm-6 column pull-right">
+						<div class="col-sm-4 column pull-right">
 							<div class="form-group">
-								<label class="col-sm-3 control-label">Approved By <span style="color:#6E829B">*</span></label>
+								<label class="col-sm-5 control-label">Approved By <span style="color:#6E829B">*</span></label>
 								<div class="ui-widget col-sm-6" id="div_proj">
 									<div ><Select name="uuid_approved_by" id="uuid_approved_by" class="form-control">
 										<option value="">--Select Employee--</option>
@@ -221,7 +220,7 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 							</div>
                             
                             <div class="form-group">
-								<label class="col-sm-3 control-label">Project Code <span style="color:#6E829B">*</span></label>
+								<label class="col-sm-5 control-label">Project Code <span style="color:#6E829B">*</span></label>
 								<div class="ui-widget" id="div_proj">
 								<div CLASS="col-sm-6">	<select name="Project_code" id="Project_code" class="form-control">
 									 <!--HIT_EXECUTE _HIT_HTMLTXT:=PurOrder_ProjectCodeHTMLPopUP([Purchase_Orders]Project_code)-->
@@ -229,74 +228,64 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-3 control-label">Supplier Vat Number</label>
+								<label class="col-sm-5 control-label">Supplier Vat Number</label>
 								 <div CLASS="col-sm-6">	<input name="supplier_vat_number" class="form-control" type="text" value="<!--#4DVAR [Purchase_Orders]Supplier_VAT_Number -->" id="supplier_vat_number"></div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-3 control-label">Payment Due On<span style="color:#6E829B">*</span></label><!--#4DIF (mUserIsCurrentBool)--><!--#4DVAR [Purchase_Orders]Payment_Due_Date--><!--#4DELSE-->
+								<label class="col-sm-5 control-label">Payment Due On<span style="color:#6E829B">*</span></label><!--#4DIF (mUserIsCurrentBool)--><!--#4DVAR [Purchase_Orders]Payment_Due_Date--><!--#4DELSE-->
 								<div CLASS="col-sm-6"><input placeholder="Payment Due Date" name="payment_due_date" class="input-large datepicker form-control" data-date-format="dd/mm/yyyy" type="text" <!--#4DIF ([Purchase_Orders]Payment_Due_Date=!00/00/00!)-->value=""<!--4DELSE-->value="<!--#4DVAR [Purchase_Orders]Payment_Due_Date-->"<!--4DENDIF--> id="payment_due_date" readonly ><!--#4DENDIF-->
 							</div></div>
 								
 								 	
 							<div class="form-group">
-								<label class="col-sm-3 control-label">Payment Made On Date</label><!--#4DIF (mUserIsCurrentBool)--><!--#4DVAR [Purchase_Orders]Payment_Made_On_Date--><!--#4DELSE-->
+								<label class="col-sm-5 control-label">Payment Made On Date</label><!--#4DIF (mUserIsCurrentBool)--><!--#4DVAR [Purchase_Orders]Payment_Made_On_Date--><!--#4DELSE-->
 								<div CLASS="col-sm-6"><input placeholder="Payment Made On" type="text" readonly="readonly" CLASS="form-control"  name="payment_made_on_Date" id="payment_made_on_Date" <!--#4DIF ([Purchase_Orders]Payment_Made_On_Date=!00/00/00!)-->value=""<!--4DELSE-->value="<!--#4DVAR [Purchase_Orders]Payment_Made_On_Date-->"<!--4DENDIF--> data-date-format="dd/mm/yyyy" /><!--#4DENDIF-->
 							</div></div>
 							<div class="form-group">
-								<label class="col-sm-3 control-label">Billing Frequency</label>
+								<label class="col-sm-5 control-label">Billing Frequency</label>
 								 <div CLASS="col-sm-6">	<input name="billing_frequency" class="form-control" type="text" value="<!--4DVAR [Purchase_Orders]billing_frequency-->" id="billing_frequency" >
 							</div></div>
 							<div class="form-group">
-							<label class="col-sm-3 control-label"></label>
+							<label class="col-sm-5 control-label"></label>
 							<div CLASS="col-sm-6">	<input name="purchase_order_inactive" class="span1" type="checkbox" value="true" id="purchase_order_inactive" <!--#4DIF ([Purchase_Orders]Purchase_order_inactive)-->checked<!--4DELSE--><!--4DENDIF--> > Purchase Order Inactive
 							</div></div>
 							
 							<div class="form-group">
-							<label class="col-sm-3 control-label"></label>
+							<label class="col-sm-5 control-label"></label>
 							<div CLASS="col-sm-6">	<input name="vat_charged" class="span1" type="checkbox" value="true" id="vat_charged" <!--#4DIF ([Purchase_Orders]VAT_Charged)-->checked<!--4DELSE--><!--4DENDIF--> > VAT Charged
 							</div></div>
 						</div>
 					</div>
-					<div class="example-container">
-						<pre class="code" style="display:none;" id="tax_rate_code">
-							var statesdemo = {
-								state0: {
-									title: 'Enter tax rate',
-									html:'&lt;div id="tax_message"&gt;&lt;/div&gt;&lt;input type="text" class="num" name="dlg_tax_rate" id="dlg_tax_rate" value=""&gt;&lt;br /&gt;',
-									buttons: { Cancel : 0, Ok: 1 },
-									focus: "#dlg_tax_rate",
-									submit:function(e,v,m,f){ 
-										//console.log(f);
-										if(v==1) {
-											if(f.dlg_tax_rate!=null && f.dlg_tax_rate!=""){
-												$('#currency_exchange_rate').val(f.dlg_tax_rate);
-												update_total();
-											}
-											else {
-												e.preventDefault();
-												$('#tax_message').html('* Please enter Tax Rate.');
-												$('#dlg_tax_rate').focus();
-											}
-										}
-										if(v==0) {
-											$.prompt.close();
-											$('#currency_exchange_rate').val("20");
-											$('#tax_code').val("UK");
-										}
-									}
-								},
-								
-							};
+<div class="modal fade" id="addTaxRate" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" onClick="$('#currency_exchange_rate').val('20');$('#tax_code').val('UK');$('#tax_message').remove();">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <h3 class="modal-title" id="myModalLabel">Enter tax rate</h3>
+            </div>
+            <!-- Modal Body -->
+            <div class="modal-body">
+            	<div class="form-group" id="taxmessageId" style="padding:10px">
+            		<input class="form-control num" id="dlg_tax_rate">
+                </div>
+            </div>
+            
+            <!-- Modal Footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" onClick="$('#currency_exchange_rate').val('20');$('#tax_code').val('UK');$('#tax_message').remove();">Close</button>
+                <button type="button" class="btn btn-primary" onClick="applyTaxEntered();">Ok</button>
+            </div>
+        </div>
+    </div>
+</div>
 
-							$.prompt(statesdemo);
-						</pre>
-					</div>
 					<div class="form-group" STYLE="text-align:center; "> 
-					
-												<!--#4DIF (mUserIsCurrentBool)--><!--#4DELSE--><input type="submit" class="btn btn-primary btn-sm" value="Save Order"><!--#4DENDIF-->
-						
-							<a href="purchase_orders.shtml" CLASS="btn btn-danger btn-sm" >Cancel</a>
-							<!--<input type="reset" value="Cancel" class="reset">-->
+					<!--#4DIF (mUserIsCurrentBool)--><!--#4DELSE--><input type="submit" class="btn btn-primary btn-sm" value="Save Order"><!--#4DENDIF-->
+					<a href="purchase_orders.shtml" CLASS="btn btn-danger btn-sm" >Cancel</a>
 					</div>
 					<!-- tabs div-->
 				</form>
@@ -320,6 +309,18 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 	<script src='js/jquery.MetaData.js' type="text/javascript" language="javascript"></script>
 	<script src="js/jquery.colorbox.js"></script>
 		<script language="javascript">
+	function applyTaxEntered(){
+		$("tax_message").remove();
+		if($('#dlg_tax_rate').val()!=null && $('#dlg_tax_rate').val()!=""){
+			$('#currency_exchange_rate').val($('#dlg_tax_rate').val());
+			$('#addTaxRate').modal('hide');
+			$('#dlg_tax_rate').val('');
+			update_total();
+		}	else {
+			$('#taxmessageId').before('<span id="tax_message" style="color:#CC0000;">* Please enter Tax Rate.</span>');
+			$('#dlg_tax_rate').focus();
+		}
+	}
 	function checknumber(e)
 	{
 		var k = e.which;
@@ -384,7 +385,7 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 		$('#total_amount').val(total_with_tax);
 	}
 	$(function() {
-		
+		<!--#4DIF (Records in selection([Purchase_Orders])=0)-->
 			var new_order='<!--#4DVAR Sequence number([Purchase_Orders])-->';
 			$('#purchase_id_number').val(new_order);
 			$('#tax_code').val("UK");
@@ -396,8 +397,9 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 		$('#tax_code').change(function(){
 			var tax_code=$(this).val();
 			if(tax_code=='Rest of the world' || tax_code=='EU'){
-				code = $('#tax_rate_code').text();
-				(new Function(code))();
+				$('#addTaxRate').modal('show');
+			}else if(tax_code=='US'){
+				$('#currency_exchange_rate').val("");
 			}else{
 				$('#currency_exchange_rate').val("20");
 				update_total();
