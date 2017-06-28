@@ -141,7 +141,7 @@ function load_more(){
 
 $(document).ready(function() {
 	load_data();	
-	/**
+	
 	$(window).scroll(function(){
 		if ($(window).scrollTop() == $(document).height() - $(window).height()){
 			if(complete==false && completeScroll==false) {
@@ -154,7 +154,7 @@ $(document).ready(function() {
 			}
 		}
 	});
-	**/
+	/****/
 	//setup before functions
 	var typingTimer;                //timer identifier
 	var doneTypingInterval = 1000;  //time in ms, 5 second for example
@@ -202,7 +202,7 @@ $(document).ready(function() {
 	});
 });
 
-function load_data(){
+function load_data_xxx(){
 	completeScroll=true;
 	var keyword= $("#keyword").val();
 	var jsonRow = 'loadtemplates.cgi?start='+start+'&end='+end+'&tablname='+tablname;
@@ -236,14 +236,14 @@ function load_data(){
     			breakpoint: 751
    			 });
 			complete=false;
-			//$('#display_more_btn').show();	
+			$('#display_more_btn').show();	
 		}
 		$('#img_loading_div').hide();
 		completeScroll=false;
 	});
 }
 
-function load_data1(){
+function load_data(){
 	completeScroll=true;
 	JSONdata=new Array();
 	var keyword= $("#keyword").val();
@@ -261,7 +261,7 @@ function load_data1(){
     			breakpoint: 751
    			});	
 		}else{
-			$.each(result.Code, function(i,item)	{
+			$.each(result.code, function(i,item)	{
 				JSONdata[i]=new Array();
 				JSONdata[i][0]=item;					
 			}); 
