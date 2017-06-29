@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Tenthmatrix Billing Secure Site - Quote approval online</title>
+
+<!--#4DSCRIPT/_HIT_LoadInclude/includes/static_files.shtml-->
+
+<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+<!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+<style>
+body{
+	font-family: Arial, sans-serif; 	
+}
+p{
+	font-family: Arial, sans-serif!important; 	
+}
+
+td{
+	padding:8px;
+}
+
+h4,h1 {
+	font-family: Arial, sans-serif!important; 	
+	font-weight: bold;
+	margin-top: 0.7em;
+	margin-bottom: 0.5em; font-size:21px;
+}
+h3{
+	font-family: Arial, sans-serif!important;
+}
+
+.trans_type { position: absolute; 
+color: #666666;
+	overflow: visible; 
+	left: 22; 
+	top: 60; 
+	padding-bottom: 10px; 
+	font-family: Arial, sans-serif; 
+	font-size: 26px;
+	margin: 0;
+}
+
+table{
+	font-family: Arial, sans-serif; 
+}
+
+td { vertical-align: top; }
+.items td {
+    border-left: 0.1mm solid #000000;
+    border-right: 0.1mm solid #000000;
+}
+
+table thead td { background-color: #EEEEEE;
+    text-align: center;
+    border: 0.1mm solid #000000;
+}
+.items td.blanktotal {
+    background-color: #FFFFFF;
+    border: 0mm none #000000;
+    border-top: 0.1mm solid #000000;
+    border-right: 0.1mm solid #000000;
+}
+.items td.totals {
+    text-align: right;    
+    border: 0.1mm solid #333333;
+}
+.bankDetails
+{
+	background-color: #FFF;
+	border-collapse: collapse; 
+	border: 1px solid #827F85;
+	margin: 4pt 0pt 0pt 0pt;
+}
+.bankDetails td 
+{
+     border: 1px solid #827F85;
+}
+.bankDetails thead td 
+{ 
+	background-color: #00A3D3;
+	text-align: center;
+	color:#FFF;
+	font-size: 12pt;
+	text-align: center;
+	font-family: Arial, sans-serif; 
+}
+</style>
+</head>
+
+<body>
+<!--#4DEVAL SingleInvoice_LoadBySecureKey-->
+<!--#4DIF (Records in selection([Invoices])=1)-->
+
+<input type="hidden" name="invoice_uuid" id="invoice_uuid" value="<!--#4DTEXT [Invoices]uuid-->">
+<input type="hidden" name="auth_email" id="auth_email" value="<!--#4DTEXT _HIT_WebApp_GetField ("auth_email")-->">
+<div class="container">
+  <div class="row">
+    <div class=" col-lg-4 col-md-4 col-sm-4 col-xs-12 logo"><a href="https://www.tenthmatrix.co.uk/index.php"><img src="images/logo.jpg" class="img-responsive" alt="Tenthmatrix"></a></div>
+</div>
+</div>
+<div CLASS="container content" STYLE="padding-top:20px;">
+<div CLASS="row">
+<div CLASS="col-md-8">
+<h1 style="margin-top: 10px; color:#000;"><!--#4DTEXT [Invoices]invoice_status--></h1>
+<div class="col-md-6 col-xs-12 content " STYLE="margin-bottom:15px; margin-left:0px; padding-left:0px;">
+
+						<div style="margin-top: 90; margin-bottom: 0pt; width: 100%;	border:0.1mm solid #220044; background-color: #EEEEEE; background-gradient: linear #eeeeee #f0f2f0 0 1 0 0.5; padding:5px 15px; margin-left:0px;">
+							<h4><b>Bill To:</b></h4>
+							<div title="Page 1">
+									<div>
+											<div>
+													<div>
+															<p><!--#4DHTML [Invoices]inv_bill_to--></p>
+													</div>
+											</div>
+									</div>
+							</div>
+							<br>
+						</div>
+						</div>
+						
+<div CLASS="col-md-6" STYLE="margin-left:0px; padding-left:0px;">
+
+<div CLASS="table-responsive" >
+
+<table  width="100%" class="table table-bordered table-striped" >
+<tbody>
+
+<!--#4DIF (TRUE)--><!--#4DELSE-->
+<tr>
+<td><b>Status</b></td>
+<td></td>
+</tr>
+<tr>
+<td><b>uuid</b></td>
+<td><!--#4DTEXT [Invoices]uuid--></td>
+</tr>
+<!--#4DENDIF-->
+
+<td><b>Invoice#</b></td>
+<td><!--#4DTEXT [Invoices]Full_Invoice_Number--></td>
+</tr>
+
+<tr>
+<td><b>Invoice Date</b></td>
+<td><!--#4DTEXT String([Invoices]inv_date;System date short)--></td>
+</tr>
+<tr>
+<td><b>Due Date</b></td>
+<td><!--#4DTEXT String([Invoices]inv_date_due;System date short)--></td>
+</tr>
+
+<tr>
+<td><STRONG>Project</STRONG></td>
+<td><!--#4DTEXT [Invoices]project_code--></td>
+</tr>
+
+<tr>
+<td><b>Ordered by</b></td>
+<td><!--#4DTEXT [Invoices]ordered_by--></td>
+</tr>
+
+<tr>
+<td><STRONG>Your ref, PO number</STRONG></td>
+<td><!--#4DTEXT [Invoices]inv_customer_ref_po--></td>
+</tr>
+
+</tbody></table>
+</div>
+
+</div>
+
+
+<div CLASS="col-md-12" STYLE="padding-left:0px;">
+<div CLASS="table-responsive">
+<table  width="100%" class="table table-bordered table-striped">
+<thead>
+<tr>
+<td>ITEM</td>
+<td>DESCRIPTION</td>
+<td>RATE</td>
+<td>HOURS</td>
+<td>AMOUNT</td>
+</tr>
+</thead>
+<tbody>
+
+<!-- ITEMS HERE -->
+<!--#4DEVAL Web_LoadInvoiceItems-->
+<!--#4DLOOP [Invoice_Items]-->
+<tr>
+<td><!--#4DTEXT [Invoice_Items]item_id--></td>
+<td><!--#4DHTML [Invoice_Items]item_description--></td>
+<td><!--#4DTEXT [Invoice_Items]item_rate--></td>
+<td><!--#4DTEXT [Invoice_Items]item_hours--></td>
+<td><!--#4DHTML Invoice_AmtReturnAsText ([Invoice_Items]item_amount)--></td>
+</tr>
+<!--#4DENDLOOP-->
+<!-- END ITEMS HERE -->
+
+<tr>
+<td colspan="3" rowspan="5" STYLE="background:#fff; border-left:1px solid #fff; border-bottom:1px solid #fff;"></td>
+<td>Subtotal:</td>
+<td><!--#4DHTML mProcessTagVariable("mInvoiceCurrencySymbolStr")--><!--#4DTEXT mProcessTagVariable("mInvoiceTotalDueStr")--></td>
+</tr>
+<tr>
+<td>VAT:</td>
+<td><!--#4DHTML mProcessTagVariable("mInvoiceTaxRealStr")--></td>
+</tr>
+<tr>
+<td>Delivery:</td>
+<td>Electronic</td>
+</tr>
+<tr>
+<td><b>TOTAL:</b></td>
+<td><b><!--#4DHTML mProcessTagVariable("mInvoiceCurrencySymbolStr")--><!--#4DHTML mProcessTagVariable("mInvoiceTotalDueWithTaxStr")--></b></td>
+</tr>
+<tr>
+<td><b>Balance due:</b></td>
+<td><b><!--#4DHTML mProcessTagVariable("mInvoiceCurrencySymbolStr")--><!--#4DHTML mProcessTagVariable("mInvoiceTotalDueWithTaxStr")--></b></td>
+</tr>
+</tbody>
+</table>
+</div>
+
+</div>
+
+
+<div class="row client">
+		<div id="content">
+			<div class="row ">
+				<div CLASS="col-md-6"> 
+			<div CLASS="table-responsive " >
+<table  width="100%" class="table table-bordered table-striped">
+<tbody>
+<tr>
+<td>Invoice Ref</td>
+<td><b><!--#4DTEXT [Invoices]Full_Invoice_Number--></b></td>
+</tr>
+<tr>
+<td>Invoice Currency Code</td>
+<td><b><!--#4DHTML mProcessTagVariable("mInvoiceCurrencyStr")--></b></td>
+</tr>
+
+</tbody>
+</table>
+</div>
+</div>
+				
+				</div>
+		</div>
+		
+
+		<div CLASS="col-md-12 col-sm-12" STYLE="padding:10px 10px 20px 10px; overflow:hidden;"><img class="img-responsive" src="images/adobe-technology-partner.jpg" WIDTH="120" STYLE="float:left; padding-top:4px;">
+		<img class="img-responsive" src="https://www.tenthmatrix.co.uk/images/partner-silver.png" WIDTH="127" STYLE="float:left; overflow:hidden; padding-left:20px;"></div>
+<div CLASS="col-md-12 col-sm-12">
+<h3>Thank you for your business.</h3>
+
+<nl>
+<li>All prices are quoted in <!--#4DHTML mProcessTagVariable("mInvoiceCurrencyStr")-->.</li>
+<li>This Quote is based on our current understanding of the project. If the requirements change, the Quote may need to be adjusted.</li>
+<li>This Quote is valid for 30 days.</li>
+</nl>
+
+<p>Please note that this is not a tax Invoice.</p>
+<h5>VAT number: <*--Tenthmatrix_VAT_Number--*></h5>
+<h5><u>Terms of business</u></h5>
+<p style="font-size:12px!important; "><a target="_blank" href="http://www.tenthmatrix.co.uk/terms-of-business.html">http://www.tenthmatrix.co.uk/terms-of-business.html</a><br/>
+Tenthmatrix Information Systems Ltd. also trading as Tenthmatrix, is a registered company number: 06597469. VAT number: GB 972 9855 56. Registered in England and Wales. Registered office address: <*--Registered_Address_tenthmatrix_uk--*>. Correspondence office address: <*--Correspondence_Address_tenthmatrix_uk--*>.</p>
+<p style="font-size:12px!important; "><strong>Note: </strong>This Invoice was generated by Tenthmatrix CRM, Sales Order Processing and Invoicing system automatically.<br/>
+<strong>Date:</strong> <!--#4DHTMLVar Current Date-->, Time: <!--#4DHTMLVar Current Time--></p>
+
+<p STYLE="text-align:right;	">E&amp;OE</p>
+</div>
+	</div>
+
+
+
+
+
+</div>
+
+<div CLASS="col-md-4">
+
+						<!-- Classic Heading -->
+					<h4 class="heading-title" style="font-size: 25px;"><span>Invoice Auth. Online</span></h4>
+						<a id="print_link" style="color: #fff; padding: 6px 10px;  margin-bottom:10px;" class="btn btn-success" href="<!--#4DHTMLVar Invoice_OnlinePDFPreviewLink-->">Download PDF</a>
+						<br>
+						<div id="err_msg"><div class="alert alert-warning" role="alert"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span><span class="sr-only">Reminder: </span> Please enter Your ref, PO number in the comments box.</div></div>
+						<textarea id="comment" name="comment" rows="6" class="form-control"></textarea>
+						<a id="comment_link" style="color: #fff; padding: 6px 10px;  margin-bottom:10px;  margin-top:10px;" class="btn btn-warning" href="javascript:void(0)" onclick="leave_comment()">Leave your Comment</a>
+					</div>
+					
+						<div STYLE="padding-top:10px;" CLASS="col-md-4"><a style="text-decoration:none;" target="_blank" href="https://www.tenthmatrix.co.uk/terms-of-business.html">Terms of business</a></div>
+					
+					
+					<div CLASS="col-md-4">
+<!--#4DEVAL Web_LoadInvoiceActivity-->
+						<!--#4DIF (Records in selection([Activity_Log])>0)-->
+					<h4 style="font-size: 21px;padding-bottom: 8px;border-bottom: 1px solid #eee;">Comments</h4>
+					
+					</div>
+					<div CLASS="col-md-4">
+					<div><!--#4DELSE--><!--#4DENDIF-->
+<!--#4DLOOP [Activity_Log]-->
+<!--#4DEVAL Web_LoadInvoiceActivityRelated-->
+					<div STYLE="border-bottom:1px dashed #ddd;">
+					<h3 STYLE="margin-bottom:4px;"> <!--#4DTEXT [Activity_Log]Activity_Description-->:</h3>
+					<small STYLE="padding-bottom:8px; color:#B1ADAD; "><!--#4DTEXT timestamp_unix_toGMT ([Activity_Log]Timestamp_modified)--></small>
+					<p STYLE="padding-top:5px; "><!--#4DHTML [Activity_Log]Activity_Notes--></p>
+					</div>
+<!--#4DENDLOOP-->
+					</div>
+		
+</div>
+
+</div>
+</div>
+<!---------------clientsays---section-------end------->
+<script src="js/jquery.js"></script>
+
+
+<!-- Include all compiled plugins (below), or include individual files as needed --> 
+<script src="js/bootstrap.min.js"></script>
+<script src="js/bootstrap-hover-dropdown.js"></script>
+<script language="javascript">
+
+function redirect_itself(){
+window.location.reload();
+}
+
+function leave_comment(){
+var errorMsgStr= '<div class="alert alert-danger" role="alert"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>Saving...</div>';
+$("#err_msg").html(errorMsgStr);
+
+$('#comment_link').hide();
+	var commentsStr=$("#comment").val();
+	if(commentsStr==""){
+		var errorMsgStr= '<div class="alert alert-danger" role="alert"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span><span class="sr-only">Error:</span> Please comments in the box below:</div>';
+		$("#err_msg").html(errorMsgStr);
+	}else{
+		$.ajax({
+			type: "POST",
+			dataType: "json",
+			url: "invoice_status_update.cgi",
+			data: {"action" : "leave_comments", "comments" : commentsStr, "auth_email": $('#auth_email').val(), "invoice": $('#invoice_uuid').val()},
+			cache: false,
+			success: function(html){
+				if(html.success){		
+					redirect_itself();//$("#comment").val("");
+				}else if(html.error){
+					var errorMsgStr= '<div class="alert alert-danger" role="alert"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span><span class="sr-only">Error:</span> '+html.error+'</div>';
+					$("#err_msg").html(errorMsgStr);
+				}
+			}
+		});
+	}
+}
+
+</script><!--#4DELSE-->
+<div class="container">
+  <div class="row">
+    <div class=" col-lg-4 col-md-4 col-sm-4 col-xs-12 logo"><a href="https://www.tenthmatrix.co.uk/index.php"><img src="images/logo.jpg" class="img-responsive" alt="Tenthmatrix"></a></div>
+</div>
+</div>
+<div CLASS="container content" STYLE="padding-top:20px;">
+<div CLASS="row">
+<div CLASS="col-md-8">
+<h1 style="margin-top: 10px; "><span>Invalid Invoice. Please check the link and try again!</span></h1>
+</div>
+</div>
+</div>
+<!--#4DENDIF-->
+</body>
+</html>
