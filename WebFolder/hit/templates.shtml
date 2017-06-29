@@ -154,7 +154,7 @@ $(document).ready(function() {
 			}
 		}
 	});
-	/****/
+	
 	//setup before functions
 	var typingTimer;                //timer identifier
 	var doneTypingInterval = 1000;  //time in ms, 5 second for example
@@ -266,17 +266,15 @@ function load_data(){
 				JSONdata[i][0]=item;					
 			}); 
 			$.each(result.uuid, function(i,item){
-				JSONdata[i][3]='<a href="javascript:void(0)" onClick="__showContentForm(\''+item+'\')"><i class="fa fa-pencil"></i></a>';					
+				JSONdata[i][2]='<a href="javascript:void(0)" onClick="__showContentForm(\''+item+'\')"><i class="fa fa-pencil"></i></a>';					
 			}); 
 			$.each(result.subject, function(i,item){
 				JSONdata[i][1]=item;
 			});
 				
-			$.each(result.modified_timestamp, function(i,item)	{	
-				JSONdata[i][2]=item;
-			});
+			var table_html='';
 			$.each(JSONdata, function(i,row){
-				var table_html='<tr >';
+				table_html+='<tr >';
 				$.each(row, function(i,col){
 					table_html+='<td>'+col+'</td>';
 				});
