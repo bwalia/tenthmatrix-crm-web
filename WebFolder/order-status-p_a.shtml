@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Tenthmatrix Billing Secure Site - Quote approval online</title>
+
+<!--#4DSCRIPT/_HIT_LoadInclude/includes/static_files.shtml-->
+
+<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+<!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+<style>
+body{
+	font-family: Arial, sans-serif; 	
+}
+p{
+	font-family: Arial, sans-serif!important; 	
+}
+
+td{
+	padding:8px;
+}
+
+h4,h1 {
+	font-family: Arial, sans-serif!important; 	
+	font-weight: bold;
+	margin-top: 0.7em;
+	margin-bottom: 0.5em; font-size:21px;
+}
+h3{
+	font-family: Arial, sans-serif!important;
+}
+
+.trans_type { position: absolute; 
+color: #666666;
+	overflow: visible; 
+	left: 22; 
+	top: 60; 
+	padding-bottom: 10px; 
+	font-family: Arial, sans-serif; 
+	font-size: 26px;
+	margin: 0;
+}
+
+table{
+	font-family: Arial, sans-serif; 
+}
+
+td { vertical-align: top; }
+.items td {
+    border-left: 0.1mm solid #000000;
+    border-right: 0.1mm solid #000000;
+}
+
+table thead td { background-color: #EEEEEE;
+    text-align: center;
+    border: 0.1mm solid #000000;
+}
+.items td.blanktotal {
+    background-color: #FFFFFF;
+    border: 0mm none #000000;
+    border-top: 0.1mm solid #000000;
+    border-right: 0.1mm solid #000000;
+}
+.items td.totals {
+    text-align: right;    
+    border: 0.1mm solid #333333;
+}
+.bankDetails
+{
+	background-color: #FFF;
+	border-collapse: collapse; 
+	border: 1px solid #827F85;
+	margin: 4pt 0pt 0pt 0pt;
+}
+.bankDetails td 
+{
+     border: 1px solid #827F85;
+}
+.bankDetails thead td 
+{ 
+	background-color: #00A3D3;
+	text-align: center;
+	color:#FFF;
+	font-size: 12pt;
+	text-align: center;
+	font-family: Arial, sans-serif; 
+}
+
+table thead td{
+	background-color:#049fd0;
+	color:#fff;
+	border:1px solid #fff;
+	
+}
+
+
+.tdbcg{
+	background-color:#EEEEEE;
+}
+
+</style>
+</head>
+
+<body>
+<!--#4DEVAL Order_LoadBySecureKey-->
+<!--#4DIF (Records in selection([orders])=1)-->
+
+<input type="hidden" name="order" id="order" value="<!--#4DTEXT [orders]uuid-->">
+<input type="hidden" name="auth_email" id="auth_email" value="<!--#4DTEXT _HIT_WebApp_GetField ("auth_email")-->">
+<div class="container">
+  <div class="row">
+    <div class=" col-lg-4 col-md-4 col-sm-4 col-xs-12 logo"><a href="https://www.tenthmatrix.co.uk/index.php"><img src="images/logo.jpg" class="img-responsive" alt="Tenthmatrix"></a></div>
+</div>
+</div>
+<div CLASS="container content" STYLE="padding-top:20px;">
+<div CLASS="row">
+<div CLASS="col-md-8">
+<h1 style="margin-top: 10px; color:#000;"><!--#4DHTML mOrderStatus("print-uppercase")--></h1>
+<div class="col-lg-6 col-xs-12 content " STYLE="margin-bottom:15px; margin-left:0px; padding-left:0px;">
+
+						<div style="margin-bottom: 0pt; width: 100%;	 border-radius:4px; color:#000; background-color: #EEEEEE; border:1px solid #ddd;  padding:5px 15px; margin-left:0px; ">
+							<h4 ><b>Bill To:</b></h4>
+							<div title="Page 1">
+									<div>
+											<div>
+													<div>
+															<p><!--#4DHTML mProcessTagVariable("mOrderBillToTxt")--></p>
+													</div>
+											</div>
+									</div>
+							</div>
+						
+						</div>
+						</div>
+						
+<div CLASS="col-lg-6 col-xs-12" STYLE="margin-left:0px; padding-left:0px;">
+
+<div CLASS="table-responsive" >
+
+<table  width="100%" class="table table-bordered table-striped" >
+<tbody>
+
+<!--#4DIF (TRUE)--><!--#4DELSE-->
+<tr>
+<td ><b>Status</b></td>
+<td><!--#4DTEXT [orders]order_accepted_by_client--></td>
+</tr>
+<tr>
+<td><b>uuid</b></td>
+<td><!--#4DTEXT [orders]uuid--></td>
+</tr>
+<!--#4DENDIF-->
+
+<td CLASS="tdbcg"><b>Order#</b></td>
+<td><!--#4DTEXT [orders]full_order_number--></td>
+</tr>
+
+<tr>
+<td CLASS="tdbcg"><b>Account No</b></td>
+<td><!--#4DTEXT [orders]client_id--></td>
+</tr>
+<tr>
+<td CLASS="tdbcg"><b>Sales person</b></td>
+<td><!--#4DTEXT [Employees]emp_first_name+" "+[Employees]emp_last_name--></td>
+</tr>
+
+<tr>
+<td CLASS="tdbcg"><b>Order Date</b></td>
+<td><!--#4DTEXT String([orders]order_date;System date short)--></td>
+</tr>
+<tr>
+<td CLASS="tdbcg"><b>Expiry Date</b></td>
+<td><!--#4DTEXT String([orders]expiry_date;System date short)--></td>
+</tr>
+
+<tr>
+<td CLASS="tdbcg"><STRONG>Project</STRONG></td>
+<td><!--#4DTEXT [orders]project_code--></td>
+</tr>
+
+<tr>
+<td CLASS="tdbcg"><b>Ordered by</b></td>
+<td><!--#4DTEXT [orders]ordered_by--></td>
+</tr>
+
+<tr>
+<td CLASS="tdbcg"><STRONG>Your ref, PO number</STRONG></td>
+<td><!--#4DTEXT [orders]customer_ref_po--></td>
+</tr>
+
+</tbody></table>
+</div>
+
+</div>
+
+
+<div CLASS="col-md-12" STYLE="padding-left:0px;">
+<div CLASS="table-responsive">
+<table  width="100%" class="table table-bordered table-striped">
+<thead>
+<tr>
+<td>ITEM</td>
+<td>UNIT</td>
+<td>DESCRIPTION</td>
+<td>UNIT PRICE</td>
+<td>DISCOUNT</td>
+<td>AMOUNT</td>
+</tr>
+</thead>
+<tbody>
+
+<!-- ITEMS HERE -->
+<!--#4DEVAL Web_LoadOrderItems-->
+<!--#4DLOOP [order_items]-->
+<tr>
+<td><!--#4DTEXT [order_items]sort_order--></td>
+<td><!--#4DIF ([order_items]item_hours=0)--><!--#4DELSE--><!--#4DTEXT String([order_items]item_hours)--><!--#4DENDIF--></td>
+<td><!--#4DHTML mOrderItemDescription--></td>
+<td><!--#4DHTML [order_items]item_rate--></td>
+<td><!--#4DHTML String([order_items]item_discount)-->%</td>
+<td><!--#4DHTML Invoice_AmtReturnAsText ([order_items]item_amount)--></td>
+</tr>
+<!--#4DENDLOOP-->
+<!-- END ITEMS HERE -->
+
+<tr>
+<td colspan="4" rowspan="5" STYLE="background:#fff; border-left:1px solid #fff; border-bottom:1px solid #fff;"></td>
+<td>Subtotal:</td>
+<td><!--#4DHTML mProcessTagVariable("mOrderCurrencySymbolStr")--><!--#4DTEXT mProcessTagVariable("mOrderTotalDueStr")--></td>
+</tr>
+<tr>
+<td>VAT:</td>
+<td><!--#4DHTML mProcessTagVariable("mOrderTaxRealStr")--></td>
+</tr>
+<tr>
+<td>Delivery:</td>
+<td>Electronic</td>
+</tr>
+<tr>
+<td><b>TOTAL:</b></td>
+<td><b><!--#4DHTML mProcessTagVariable("mOrderCurrencySymbolStr")--><!--#4DHTML mProcessTagVariable("mOrderTotalDueWithTaxStr")--></b></td>
+</tr>
+<tr>
+<td><b>Balance due:</b></td>
+<td><b><!--#4DHTML mProcessTagVariable("mOrderCurrencySymbolStr")--><!--#4DHTML mProcessTagVariable("mOrderTotalDueWithTaxStr")--></b></td>
+</tr>
+</tbody>
+</table>
+</div>
+
+</div>
+
+
+<div class="row client">
+		<div id="content">
+			<div class="row ">
+				<div CLASS="col-md-6"> 
+			<div CLASS="table-responsive " >
+<table  width="100%" class="table table-bordered table-striped">
+<tbody>
+<tr>
+<td>Estimated Delivery Date</td>
+<td><b><!--#4DTEXT String([orders]delivery_date;System date short)--></b></td>
+</tr>
+<tr>
+<td>Order Ref</td>
+<td><b><!--#4DTEXT [orders]full_order_number--></b></td>
+</tr>
+<tr>
+<td>Order Currency Code</td>
+<td><b><!--#4DHTML mProcessTagVariable("mOrderCurrencyStr")--></b></td>
+</tr>
+
+</tbody>
+</table>
+</div>
+</div>
+				
+				</div>
+		</div>
+		
+
+		<div CLASS="col-md-12 col-sm-12" STYLE="padding:10px 10px 20px 10px; overflow:hidden;"><img class="img-responsive" src="images/adobe-technology-partner.jpg" WIDTH="120" STYLE="float:left; padding-top:4px;">
+		<img class="img-responsive" src="https://www.tenthmatrix.co.uk/images/partner-silver.png" WIDTH="127" STYLE="float:left; overflow:hidden; padding-left:20px;"></div>
+<div CLASS="col-md-12 col-sm-12">
+<h3>Thank you for your business.</h3>
+
+<nl>
+<li>All prices are quoted in <!--#4DHTML mProcessTagVariable("mOrderCurrencyStr")-->.</li>
+<li>This Quote is based on our current understanding of the project. If the requirements change, the Quote may need to be adjusted.</li>
+<li>This Quote is valid for 30 days.</li>
+</nl>
+
+<p>Please note that this is not a tax Invoice.</p>
+<h5>VAT number: <*--Tenthmatrix_VAT_Number--*></h5>
+<h5><u>Terms of business</u></h5>
+<p style="font-size:12px!important; "><a target="_blank" href="http://www.tenthmatrix.co.uk/terms-of-business.html">http://www.tenthmatrix.co.uk/terms-of-business.html</a><br/>
+Tenthmatrix Information Systems Ltd. also trading as Tenthmatrix, is a registered company number: 06597469. VAT number: GB 972 9855 56. Registered in England and Wales. Registered office address: <*--Registered_Address_tenthmatrix_uk--*>. Correspondence office address: <*--Correspondence_Address_tenthmatrix_uk--*>.</p>
+<p style="font-size:12px!important; "><strong>Note: </strong>This Order was generated by Tenthmatrix CRM, Sales Order Processing and Invoicing system automatically.<br/>
+<strong>Date:</strong> <!--#4DHTMLVar Current Date-->, Time: <!--#4DHTMLVar Current Time--></p>
+
+<p STYLE="text-align:right;	">E&amp;OE</p>
+</div>
+	</div>
+
+
+
+
+
+</div>
+
+<div CLASS="col-md-4">
+
+						<!-- Classic Heading -->
+					<h4 class="heading-title" style="font-size: 25px;"><span>Order Auth. Online</span></h4>
+						<a id="accept_link" style="color: #fff; padding: 6px 10px; width: 49%;  margin-bottom:10px;"  class="btn btn-success"  href="javascript:void(0)"  <!--#4DIF ([orders]order_accepted_by_client=1)-->onclick="alert('You have already Accepted this Quote. If you have any questions please leave your comments.')"<!--#4DELSE--> onclick="__accept()"<!--#4DENDIF-->><!--#4DIF ([orders]order_accepted_by_client=1)-->Accepted<!--#4DELSE--> Accept it<!--#4DENDIF--></a>
+						<a id="print_link" style="color: #fff; padding: 6px 10px;  width: 49%; margin-bottom:10px;" class="btn btn-warning" href="<!--#4DHTMLVar Order_OnlinePDFPreviewLink-->">Download PDF</a>
+						
+						<div STYLE="margin:0px; padding:0px;" CLASS="col-md-12"><a style="text-decoration:none; width:100%;" target="_blank" href="https://www.tenthmatrix.co.uk/terms-of-business.html" CLASS="btn btn-primary">Terms of business</a></div>
+						
+						<br>
+						<div id="err_msg" CLASS="col-md-12" STYLE="padding:15px 0px 0px 0px; margin:0px;"><div class="alert alert-warning" role="alert"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span><span class="sr-only">Reminder: </span> Please enter Your ref, PO number in the comments box.</div></div>
+						<textarea id="comment" name="comment" rows="6" class="form-control"></textarea>
+						<a id="comment_link" style="color: #fff; padding: 6px 10px;  margin-bottom:10px; float:right;  margin-top:10px;" class="btn btn-primary" href="javascript:void(0)" onclick="leave_comment()">Leave your Comment</a>
+						
+						<!--#4DIF ([orders]order_accepted_by_client=1)--><!--#4DELSE--><br><a id="decline_link" style="color: #fff; padding: 6px 10px;  margin-bottom:10px;" class="btn btn-danger" href="javascript:void(0)" onclick="__decline()">Decline it</a><!--#4DENDIF-->
+						
+					</div>
+					
+						
+					
+					
+					<div CLASS="col-md-4" >
+					<div STYLE="background-color:#fff; border:1px solid #ddd; padding:10px; margin-top:15px; border-radius:4px;">
+<!--#4DEVAL Web_LoadOrderActivity-->
+						<!--#4DIF (Records in selection([Activity_Log])>0)-->
+					<h4 style="font-size: 21px;padding-bottom: 8px;border-bottom: 1px solid #eee; color:#049fd0; margin-top:0px;">Comments</h4>
+					
+					
+					<div><!--#4DELSE--><!--#4DENDIF-->
+<!--#4DLOOP [Activity_Log]-->
+<!--#4DEVAL Web_LoadOrderActivityRelated-->
+					<div STYLE="border-bottom:1px dashed #ddd; margin-bottom: 12px;">
+					<h3 STYLE="margin-bottom:4px; display:none;"> <!--#4DTEXT [Activity_Log]Activity_Description-->:</h3>
+					<small STYLE="padding-bottom:8px; color:#B1ADAD; "><!--#4DTEXT timestamp_unix_toGMT ([Activity_Log]Timestamp_modified)--></small>
+					<p STYLE="padding-top:5px; background-color:# EBEBEB;"><!--#4DHTML [Activity_Log]Activity_Notes--></p>
+					</div>
+<!--#4DENDLOOP-->
+					
+		</div>
+</div>
+					
+					
+					</div>
+					
+
+</div>
+</div>
+<!---------------clientsays---section-------end------->
+<script src="js/jquery.js"></script>
+
+
+<!-- Include all compiled plugins (below), or include individual files as needed --> 
+<script src="js/bootstrap.min.js"></script>
+<script src="js/bootstrap-hover-dropdown.js"></script>
+<script language="javascript">
+
+function redirect_itself(){
+window.location.reload();
+}
+
+function leave_comment(){
+var errorMsgStr= '<div class="alert alert-danger" role="alert"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>Saving...</div>';
+$("#err_msg").html(errorMsgStr);
+
+$('#comment_link').hide();
+	var commentsStr=$("#comment").val();
+	if(commentsStr==""){
+		var errorMsgStr= '<div class="alert alert-danger" role="alert"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span><span class="sr-only">Error:</span> Please comments in the box below:</div>';
+		$("#err_msg").html(errorMsgStr);
+	}else{
+		$.ajax({
+			type: "POST",
+			dataType: "json",
+			url: "order_status_update.cgi",
+			data: {"action" : "leave_comments", "comments" : commentsStr, "auth_email": $('#auth_email').val(), "order": $('#order').val()},
+			cache: false,
+			success: function(html){
+				if(html.success){		
+					redirect_itself();//$("#comment").val("");
+				}else if(html.error){
+					var errorMsgStr= '<div class="alert alert-danger" role="alert"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span><span class="sr-only">Error:</span> '+html.error+'</div>';
+					$("#err_msg").html(errorMsgStr);
+				}
+			}
+		});
+	}
+}
+function __accept(){
+$('#accept_link').hide();
+var errorMsgStr= '<div class="alert alert-danger" role="alert"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>Saving...</div>';
+$("#err_msg").html(errorMsgStr);
+	var commentsStr=$("#comment").val();
+
+		$.ajax({
+			type: "POST",
+			dataType: "json",
+			url: "order_status_update.cgi",
+			data: {"action" : "accepted", "auth_email": $('#auth_email').val(), "order": $('#order').val(), "comments": commentsStr}, //pass the required
+			cache: false,
+			success: function(html){
+				if(html.success){		
+					redirect_itself();//$("#comment").val("");
+				}else if(html.error){
+					var errorMsgStr= '<div class="alert alert-danger" role="alert"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span><span class="sr-only">Error:</span> '+html.error+'</div>';
+					$("#err_msg").html(errorMsgStr);
+				}
+			}
+		});
+}
+function __decline(){
+var errorMsgStr= '<div class="alert alert-danger" role="alert"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>Saving...</div>';
+$("#err_msg").html(errorMsgStr);
+
+$('#decline_link').hide();
+	var commentsStr=$("#comment").val();
+		$.ajax({
+			type: "POST",
+			dataType: "json",
+			url: "order_status_update.cgi",
+			data: {"action" : "declined", "auth_email": $('#auth_email').val(), "order": $('#order').val(), "comments": commentsStr}, //pass the required
+			cache: false,
+			success: function(html){
+				if(html.success){		
+				redirect_itself();	//$("#comment").val("");
+				}else if(html.error){
+					var errorMsgStr= '<div class="alert alert-danger" role="alert"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span><span class="sr-only">Error:</span> '+html.error+'</div>';
+					$("#err_msg").html(errorMsgStr);
+				}
+			}
+		});
+}
+
+</script><!--#4DELSE-->
+<div class="container">
+  <div class="row">
+    <div class=" col-lg-4 col-md-4 col-sm-4 col-xs-12 logo"><a href="https://www.tenthmatrix.co.uk/index.php"><img src="images/logo.jpg" class="img-responsive" alt="Tenthmatrix"></a></div>
+</div>
+</div>
+<div CLASS="container content" STYLE="padding-top:20px;">
+<div CLASS="row">
+<div CLASS="col-md-8">
+<h1 style="margin-top: 10px; "><span>Invalid Order or Quote. Please check the link and try again!</span></h1>
+</div>
+</div>
+</div>
+<!--#4DENDIF-->
+</body>
+</html>

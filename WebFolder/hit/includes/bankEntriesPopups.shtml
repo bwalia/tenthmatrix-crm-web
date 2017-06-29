@@ -21,7 +21,7 @@
 						<input  type="text" value="" id="searchInvoiceField" CLASS="form-control">
                         <div class="fixed-table-container">
                         	<div class="header-background"> </div>
-							<div class="fixed-table-container-inner">
+							<div class="fixed-table-container-inner">	
         						<table CLASS="table-hover newtd reconcileTable" style="width:100%;">
         						
        							</table>
@@ -118,10 +118,16 @@
      							 <div class="fixed-table-container" style="margin: 5px -6px;">
                         			<div class="header-background"> </div>
 									<div class="fixed-table-container-inner">
-        								<table CLASS="table-hover newtd" style="width:100%;">
+									
+									<table CLASS="table-hover newtd" style="width:100%;position: absolute;margin-top: -30px; height: 30px;">
      										<thead id="c_newCreateMisLinkHead">
        						
        										</thead>
+       										
+      									</table>
+									
+        								<table CLASS="table-hover newtd" style="width:100%;">
+     										
        										<tbody id="c_newCreateMissingBody">
        							
        										</tbody>
