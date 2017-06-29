@@ -4,9 +4,9 @@ C_LONGINT(_HIT_COUNTER)
 C_TEXT(_HTMLTITLETXT)
 
 if(_HIT_AuthenticateSession="Session-Authenticated-OK")
-QUERY([bank_statement_entries];[bank_statement_entries]uuid=_HIT_WebApp_GetField ("uuid"))
+QUERY([businesses];[businesses]uuid=_HIT_WebApp_GetField ("uuid"))
 
-IF (Records in selection([bank_statement_entries])=0)
+IF (Records in selection([businesses])=0)
 _HTMLTITLETXT:="New Business"
 ELSE
 _HTMLTITLETXT:= "Edit Business"
@@ -20,7 +20,6 @@ end if
 <html>
 <head>
 	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
-	 <link href="css/bootstrap.datepicker.css" type="text/css" rel="stylesheet">
 <style>
 .box-primary h4 {
     border-bottom: 1px solid #ddd;
@@ -42,7 +41,7 @@ end if
    	<div class="content-wrapper" >
         <section class="content-header">
       		<h1>
-        		<!--#4DIF (Records in selection([bank_statement_entries])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Business
+        		<!--#4DIF (Records in selection([businesses])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Business
       		</h1>
       		<ol class="breadcrumb">
        			<li><a href="index.shtml"><i class="fa fa-dashboard"></i> Dashboard</a></li>
@@ -58,73 +57,58 @@ end if
             						<div class="col-sm-6 col-xs-12"><div class="box box-primary">
             						<h4>Basic Details</h4>
             						<div class="box-body"><div class="row"><div class=" col-sm-12 col-lg-11">
+            						<!--#4DIF (Records in selection([businesses])=1)-->
             						<div class="form-group">
+                  						<label class="control-label col-md-3" for="first-name"> ID </label>
+                  						<div class="col-md-8 col-lg-9">
+                    						<input type="text" class="form-control col-md-5 col-xs-12" value="<!--#4DVAR [businesses]ID-->">
+                  						</div>
+                					</div>
+                					<!--#4DENDIF-->
+                					<div class="form-group">
                   						<label class="control-label col-md-3" for="first-name">Name<span class="required">*</span></label>
-                  						<div class="col-md-6 col-lg-7">
-                    						<input type="text" required="required" id="name" name="name" class="form-control col-md-5 col-xs-12" value="">
+                  						<div class="col-md-8 col-lg-9">
+                    						<input type="text" required="required" id="name" name="name" class="form-control col-md-5 col-xs-12" value="<!--#4DVAR [businesses]name-->">
                   						</div>
-                					</div>
-                					 <div class="form-group" style="margin-top:10px;">
-										<label class="col-sm-3 control-label">Established Date </label>
-										<div class="col-md-6 col-lg-7">
-											<input class="form-control col-md-5 col-xs-12" type="text" id="established_on" name="established_on" value="" readonly>
-                    					</div>
-                            		</div>
-                					
+                					</div>                					
                 					<div class="form-group">
-                  						<label class="control-label col-md-3" for="">Description</label>
+                  						<label class="control-label col-md-3" for="">Company number<span class="required">*</span></label>
                   						<div class="col-md-6 col-lg-7">
-                   							<textarea class="form-control col-md-5 col-xs-12" row="10" id="description" name="description"></textarea>
+                   							<input type="text" required="required" id="company_no" name="company_no" class="form-control col-md-5 col-xs-12" value="<!--#4DVAR [businesses]company_no-->">
                   						</div>
                 					</div>
                 					<div class="form-group">
-    									<label for="" class="col-sm-3 control-label">Status</label>
-    									<div class="col-sm-7" style="margin-top:6px;">
-    										<div STYLE="margin-right:10px;display:inline-block;">
-      		  									<label> <input type="radio" id="status" name="status" value="1" checked > <strong style="font-weight:600">Active</strong></label>
-    			  							</div>
-				  							<div STYLE="display:inline-block;">
-      		  									<label> <input type="radio" id="status" name="status" value="0"> <strong style="font-weight:600">Inactive</strong></label>
-    			  							</div>
-										</div>
-									</div>
-									
+                  						<label class="control-label col-md-3" for="">Vat registration number</label>
+                  						<div class="col-md-6 col-lg-7">
+                   							<input type="text" id="vat_registration_no" name="vat_registration_no" class="form-control col-md-5 col-xs-12" value="<!--#4DVAR [businesses]vat_registration_no-->">
+                  						</div>
+                					</div>
+									<div class="form-group">
+                  						<label class="control-label col-md-3" for="">Trading as<span class="required">*</span></label>
+                  						<div class="col-md-6 col-lg-7">
+                   							<input type="text" required="required" id="trading_as" name="trading_as" class="form-control col-md-5 col-xs-12" value="<!--#4DVAR [businesses]trading_as-->">
+                  						</div>
+                					</div>
                             		</div></div>
                             		</div></div></div>
 							        <div class="col-sm-6 col-xs-12"><div class="box box-primary">
 							        <h4>Contact Details</h4>
             						<div class="box-body"><div class="row"><div class=" col-sm-12 col-lg-11">
 							       		<div class="form-group">
-                  						<label class="control-label col-md-3" for="">Address<span class="required">*</span></label>
+                  						<label class="control-label col-md-3" for="">Full Address</label>
                   						<div class="col-md-6 col-lg-9">
-                   							<textarea required="required" class="form-control col-md-5 col-xs-12" row="4" id="address" name="address" ></textarea>
+                   							<textarea required="required" rows="4" class="form-control col-md-5 col-xs-12" row="4" id="address_full" name="address_full" ><!--#4DVAR [businesses]address_full--></textarea>
                   						</div>
                 					</div>
                 					<div class="form-group">
-                  						<label class="control-label col-md-3" for="">Telephone</label>
-                  						<div class="col-md-6 col-lg-7">
-                  							<input type="text" class="form-control col-md-5 col-xs-12" id="telephone" name="telephone" value="">
-                  						</div>
-                					</div>
-                					<div class="form-group">
-                  						<label class="control-label col-md-3" for="">E-mail<span class="required">*</span></label>
-                  						<div class="col-md-6 col-lg-7">
-                   							<input type="text" required="required" class="form-control col-md-5 col-xs-12" id="email" name="email" value="">
-                  						</div>
-                					</div>
-                					<h3>Main contact</h3>
-                					<div class="form-group">
-                  						<label class="control-label col-md-3" for="">Contact name <span class="required">*</span></label>
-                  						<div class="col-md-6 col-lg-7">
-                   							<input type="text" required="required" class="form-control col-md-5 col-xs-12" id="contact_name" name="contact_name" value="">
-                  						</div>
-                					</div>
-                					<div class="form-group">
-                  						<label class="control-label col-md-3" for="">Contact e-mail<span class="required">*</span></label>
-                  						<div class="col-md-6 col-lg-7">
-                   							<input type="text" required="required" class="form-control col-md-5 col-xs-12" id="contact_email" name="contact_email" value="">
-                  						</div>
-                					</div>
+	 									<label for="" class="col-sm-3 control-label"></label>
+	 									<div class="col-sm-7" style="margin-top:6px;">
+	 										<div STYLE="margin-right:10px;display:inline-block;">
+	   		  									<label> <input type="checkbox" id="is_default_business" name="is_default_business" value="true" <!--#4DIF ([businesses]is_default_business=1)-->checked<!--4DELSE--><!--4DENDIF--> > <strong style="font-weight:600">Set as default business</strong></label>
+	 			  							</div>
+	 			  						</div>
+									</div>
+
 									</div></div>
                 					</div></div></div>
                 					</div>
@@ -147,7 +131,6 @@ end if
   	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/top-footer.shtml-->
 </div>
 <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml-->
-	<script src="js/bootstrap.datepicker.js"></script>
 	<script src="js/jquery.validate.js"></script>
 <script type="text/javascript">
 		$(function () {
@@ -170,19 +153,13 @@ end if
 				},
 				rules: {
 					name: { required: true },
-					established_on: { required: true  },
-					address: { required: true  },
-					email: { required: true  },
-					contact_name: { required: true  },
-					contact_email: { required: true  }
+					vat_registration_no: { required: true  },
+					address_full: { required: true  },
+					trading_as: { required: true  },
+					company_no: { required: true  }
 				}
 			});
-            
-
-            // datepicker plugin
-            $('#established_on').datepicker().on('changeDate', function (ev) {
-                $(this).datepicker('hide');
-            });
+        
         });
 
 </script>

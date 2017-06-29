@@ -4,9 +4,9 @@ C_LONGINT(_HIT_COUNTER)
 C_TEXT(_HTMLTITLETXT)
 
 if(_HIT_AuthenticateSession="Session-Authenticated-OK")
-QUERY([bank_statement_entries];[bank_statement_entries]uuid=_HIT_WebApp_GetField ("uuid"))
+QUERY([system_lists];[system_lists]uuid=_HIT_WebApp_GetField ("uuid"))
 
-IF (Records in selection([bank_statement_entries])=0)
+IF (Records in selection([system_lists])=0)
 _HTMLTITLETXT:="New list"
 ELSE
 _HTMLTITLETXT:= "Edit list"
@@ -40,7 +40,7 @@ end if
    	<div class="content-wrapper" >
         <section class="content-header">
       		<h1>
-        		<!--#4DIF (Records in selection([bank_statement_entries])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> List
+        		<!--#4DIF (Records in selection([system_lists])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> List
       		</h1>
       		<ol class="breadcrumb">
        			<li><a href="index.shtml"><i class="fa fa-dashboard"></i> Dashboard</a></li>
@@ -50,32 +50,14 @@ end if
 		<section class="content">
 			<div class="row">
 			<div class="panel-body no-padding-top bg-white">
-					<form name="ContentEntryForm" id="ContentEntryForm" action="savelist.cgi" class="form-horizontal" method="post" >
+					<form name="ContentEntryForm" id="ContentEntryForm" action="savesystemlists.cgi" class="form-horizontal" method="post" >
 							<input name="uuid" class="span9" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="uuid">
 								<div class="form-group">
     									<label for="firstname" class="col-sm-1  control-label">Name <span class="required">*</span></label>
     									<div class="col-md-6 col-lg-4">
-                  							<input type="text" required="required" id="name" name="name" onblur="generate_code('name','code')" onkeyup="generate_code('name','code')" class="form-control col-md-5 col-xs-12" value="">
+                  							<input type="text" required="required" id="key_name" name="key_name" class="form-control col-md-5 col-xs-12" value="<!--#4DVAR [system_lists]key_name-->">
                   						</div>
                   					</div>
-  									<div class="form-group">
-                  						<label class="control-label col-md-1" for="first-name">Code<span class="required">*</span></label>
-                  						<div class="col-md-6 col-lg-4">
-                    						<input type="text" readonly required="required" id="code" name="code" class="form-control col-md-5 col-xs-12" value="">
-                  						</div>
-                					</div>
-              						
-                					<div class="form-group">
-    									<label for="" class="col-sm-1 control-label">Status</label>
-    									<div class="col-sm-9" style="margin-top:6px;">
-    										<div STYLE="float:left; margin-right:10px; display:inline-block;">
-      		  									<label> <input type="radio" id="status" name="status" value="1"> <strong style="font-weight:600">Active</strong></label>
-    			  							</div>
-				  							<div STYLE="float:left; display:inline-block;"">
-      		  									<label> <input type="radio" id="status" name="status" value="0"> <strong style="font-weight:600">Inactive</strong></label>
-    			  							</div>
-										</div>
-									</div>
 									<div CLASS="ROW ">
 									<div CLASS="col-md-12 itemsContent">
 										<span style="float:right; font-weight:bold;">
@@ -87,7 +69,7 @@ end if
 									
 									<div class="itemsContent col-md-12" id="itemsTable">
     									<label for="" class="col-lg-1 col-sm-12 control-label" STYLE="padding-left:0px;">List Items</label>
-    									<input type="hidden" id="list" name="list" value="">
+    									<input type="hidden" id="key_value" name="key_value" value="<!--#4DVAR [system_lists]key_value-->">
 										<div CLASS="table-responsive">
 										   	<table class="table table-striped  table-bordered table-hover custom-tbl-st bt" id="table-breakpoint">
 												<thead>
@@ -210,7 +192,7 @@ function generateObjectJson(){
   		createArr[i]=createObject;
   		i++;
   	});
-  	$("#list").val(JSON.stringify(createArr));
+  	$("#key_value").val(JSON.stringify(createArr));
 }
 
 function remove_item(e){
@@ -286,17 +268,6 @@ function guid() {
   return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
     s4() + '-' + s4() + s4() + s4();
 }
-function generate_code(name,code){
-	var val=document.getElementById(name).value;
-	var patt=/[^A-Za-z0-9_-]/g;
-	var result=val.replace(patt,' ');
-	result=result.replace(/-/g, ' ');
-	result=result.replace(/\s+/g, ' ');
-	result = result.replace(/^\s+|\s+$/g,'');
-	result=result.replace(/\s/g, '-');
-	result=result.toLowerCase();
-	document.getElementById(code).value=result;
-}
 function resetItemForm(){
 	$("#msgSpan").remove();
 	$("#item_uuid").val("");
@@ -304,10 +275,25 @@ function resetItemForm(){
 	$("#item_sort_order").val(0);
 	$("#item_active").val(1);
 }
+function displayData() {
+	if($('#key_value').val()!=""){
+		var obj = JSON.parse($('#key_value').val());
+		var contentHtmlStr="";
+		$.each(obj, function(i,row)	{
+			contentHtmlStr+='<tr class="itemClass item_'+row.uuid+'"><td><input type="hidden" value="'+row.uuid+'" id="list_uuid"><input class="itemtr_'+row.uuid+'" id="labelField" type="hidden" value="'+row.label+'">'+row.label+'</td>';
+			contentHtmlStr+='<td><input id="sort_orderField" type="hidden" value="'+row.item_sort_order+'">'+row.item_sort_order+'</td>';
+			contentHtmlStr+='<td><input id="statusField" type="hidden" value="'+row.status+'">'+row.status+'</td>';
+			contentHtmlStr+='<td><a href="javascript:void(0)" title="Edit" onClick="edit_item(\''+row.uuid+'\')"><i class="fa fa-pencil"></i></a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:void(0)" onClick="remove_item(\''+row.uuid+'\')" title="Remove"><i class="fa fa-trash"></i></a></td></tr>';
+		});
+		$('#link_items').html(contentHtmlStr);
+		$('#table-breakpoint').basictable({
+       		breakpoint: 751
+    	});
+	}
+}
+
 		$(function () {
-			$('#table-breakpoint').basictable({
-       			breakpoint: 751
-    		});
+			displayData();
 			
 			$("#ContentEntryForm").validate({
 				ignore: "",
@@ -326,8 +312,7 @@ function resetItemForm(){
 					}
 				},
 				rules: {
-					name: { required: true },
-					code: { required: true  }
+					name: { required: true }
 				},
 				submitHandler: function(form) {
 					generateObjectJson();
