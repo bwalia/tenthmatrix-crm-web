@@ -7,6 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>Tenthmatrix Billing Secure Site - Quote approval online</title>
 
+<link REL="STYLESHEET" HREF="hit/css/basictable.css">
 <!--#4DSCRIPT/_HIT_LoadInclude/includes/static_files.shtml-->
 
 <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -148,6 +149,9 @@ table thead td{
 						
 <div CLASS="col-lg-6 col-xs-12" STYLE="margin-left:0px; padding-left:0px;">
 
+
+
+
 <div CLASS="table-responsive" >
 
 <table  width="100%" class="table table-bordered table-striped" >
@@ -208,8 +212,12 @@ table thead td{
 
 
 <div CLASS="col-md-12" STYLE="padding-left:0px;">
-<div CLASS="table-responsive">
-<table  width="100%" class="table table-bordered table-striped">
+
+<div class="content table-responsive table-full-width">
+		 <div class="table-responsive" style="border:none;" >
+                                <table class="table table-striped  table-bordered table-hover custom-tbl-st bt" id="table-breakpoint"   >
+
+
 <thead>
 <tr>
 <td>ITEM</td>
@@ -261,12 +269,18 @@ table thead td{
 </table>
 </div>
 
+
+
+
+
+</div>
+
 </div>
 
 
 <div class="row client">
 		<div id="content">
-			<div class="row ">
+			<div class="row " STYLE="margin:0px;">
 				<div CLASS="col-md-6"> 
 			<div CLASS="table-responsive " >
 <table  width="100%" class="table table-bordered table-striped">
@@ -371,6 +385,19 @@ Tenthmatrix Information Systems Ltd. also trading as Tenthmatrix, is a registere
 </div>
 <!---------------clientsays---section-------end------->
 <script src="js/jquery.js"></script>
+
+
+<script type="text/javascript">
+    $(document).ready(function() {
+      $('#table').basictable();
+	   $('#table-breakpoint').basictable({
+        breakpoint: 751
+      });
+
+      
+    });
+  </script>
+  <script src="hit/js/basictable.js"></script>
 
 
 <!-- Include all compiled plugins (below), or include individual files as needed --> 
