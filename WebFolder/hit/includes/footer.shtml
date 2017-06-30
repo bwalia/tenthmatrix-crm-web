@@ -27,17 +27,29 @@ If (_HIT_WebSession_GetVar ("business_uuid")#"")
 _HIT_HTMLTXT:=_HIT_WebSession_GetVar ("business_uuid")
 End If
 -->';
-	$.getJSON('loadbusiness.cgi',function(result){
-		if(result.iTotalRecords && result.iTotalRecords>0 && result.aaData){
-			$(".totalLoggedInBusinessSystems").html(result.iTotalRecords);
-			var contentHtmlStr="";
-			$.each(result.aaData, function(i,row){
+	$.getJSON('loadbusinesses.cgi?tablname=businesses&start=0&end=10',function(result){
+		if(result.Alert){
+			$("#loggedInUserBusiness").hide();
+			$("#swtich_business").html('');
+		}else{
+			var JSONdata = {};
+			$.each(result.name, function(i,item)	{
+				JSONdata[i]=new Array();
+				JSONdata[i]['name']=item;					
+			});
+			$.each(result.uuid, function(i,item){
+				JSONdata[i]['uuid']=item;					
+			});
+			var contentHtmlStr="", iTotalRecords=0;
+			$.each(JSONdata, function(i,row){
+				iTotalRecords++;
 				contentHtmlStr+='<li ';
 				if(selectedBusinessVal==row.uuid){
 					contentHtmlStr+=' class="active2" ';
 				}
 				contentHtmlStr+='><a href="javascript:void(0)" onclick="switchBusiness(\''+row.uuid+'\'); return false;">'+row.name+'</a></li>';
 			});
+			$(".totalLoggedInBusinessSystems").html(iTotalRecords);
 			$("#loggedInUserBusiness").show();
 			$("#swtich_business").html(contentHtmlStr);
 		}
