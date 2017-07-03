@@ -130,8 +130,8 @@ End If
 							<div class="form-group">
                             	<label class="col-sm-2 control-label">Icon's Class/Image's Path</label>
                                	<div CLASS="col-sm-5">
-                               		<input name="icon_path" class="form-control" type="text" value="<!--4DVAR [Module]icon_path-->" id="icon_path">
-                               		<select style="display:none;" id="icon_class" name="icon_class" class="form-control col-md-5 col-xs-12" onChange="showIcon(this.value)">
+                               		<!--<input name="icon_path" class="form-control" type="text" value="<!--4DVAR [Module]icon_path-->" id="icon_path">-->
+                               		<select id="icon_path" name="icon_path" class="form-control col-md-5 col-xs-12" onChange="showIcon('showIconDiv',this.value)">
                    								
                     				</select>
                                	</div>
@@ -139,7 +139,19 @@ End If
 							</div>
 							<div class="form-group">
                             	<label class="col-sm-2 control-label">Web Icon's Class/Image's Path</label>
-                                 <div CLASS="col-sm-6"> <input name="icon_path_1" class="form-control" type="text" value="<!--4DVAR [Module]icon_path_1-->" id="icon_path_1"></div>
+                                 <div CLASS="col-sm-5">
+                                 	<!--<input name="icon_path_1" class="form-control" type="text" value="<!--4DVAR [Module]icon_path_1-->" id="icon_path_1">-->
+                                 	<!--#4DSCRIPT/Web_LoadSystemListByName/icons-class-->
+                                 	<!--#4DIF (Records in selection([system_lists])=1)-->
+                                 		<input class="form-control" type="hidden" value="<!--#4DVAR [system_lists]key_value-->" id="system_list_value">
+                                 	<!--#4DELSE-->
+                                 		<input class="form-control" type="hidden" value="" id="system_list_value">
+                                 	<!--#4DENDIF-->
+                                 	<select id="icon_path_1" name="icon_path_1" class="form-control col-md-5 col-xs-12" onChange="showIcon('showIconDiv1',this.value)">
+                   								
+                    				</select>
+                                 </div>
+                                 <div class="col-sm-1" id="showIconDiv1" style="font-size:30px;"><i class="<!--4DVAR [Module]icon_path_1-->"></i></div>
 							</div>
 							<div class="form-group">
                             	<label class="col-sm-2 control-label">Search Terms</label>
@@ -199,37 +211,20 @@ End If
 		  						
 							</div>
 							<!--#4DENDIF-->
-							
-							
-							
-								<div class="form-group">
-                            	<label class="col-sm-3 control-label"></label>
+							<div class="form-group">
+								<label class="col-sm-3 control-label"></label>
                                  <div CLASS="col-sm-6"> 
-								 
-								 
-								 <input type="submit" name="Submit" class="btn btn-primary btn-sm" value="Submit">
-								 
-								 <a href="modules.shtml"  class="btn btn-danger btn-sm">Cancel</a>
-								 
+								 	<input type="submit" name="Submit" class="btn btn-primary btn-sm" value="Submit">
+								 	<a href="modules.shtml"  class="btn btn-danger btn-sm">Cancel</a>
 								</div>
 							</div>
-							
-							
-						
-                        </form>
+						</form>
                     </div>
 				</div>
 		 </div>
 		</section>
-		</div>
-		
-		
-		
-	
-   
+		</div>  
 	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/bankEntriesPopups.shtml--> 
-	
-	
 	
     <!-- end main container -->
 	<!-- scripts -->
@@ -245,8 +240,34 @@ End If
 		<!-- call this page plugins -->
 	
 	<script language="javascript">
-	function showIcon(val){
-		$("#showIconDiv").html('<i class="'+val+'"></i>');
+function displaysystemListsData() {
+	var iconPathStr="<option value=''>--Select option--</option>";
+	var iconPath1Str="<option value=''>--Select option--</option>";
+	var icon_path_val='<!--4DVAR [Module]icon_path-->', icon_path_1_val='<!--4DVAR [Module]icon_path_1-->';
+	
+	if($('#system_list_value').val()!=""){
+		var obj = JSON.parse($('#system_list_value').val());
+		$.each(obj, function(i,row)	{
+			iconPathStr+='<option value="'+row.label+'"';
+			if(icon_path_val==row.label){
+				iconPathStr+=' selected ';
+			}
+			iconPathStr+='>'+row.label+'</option>';
+			
+			iconPath1Str+='<option value="'+row.label+'"';
+			if(icon_path_1_val==row.label){
+				iconPath1Str+=' selected ';
+			}
+			iconPath1Str+='>'+row.label+'</option>';
+		});
+	}
+	
+		$('#icon_path').html(iconPathStr);
+		console.log(iconPathStr);console.log(iconPath1Str);
+		$('#icon_path_1').html(iconPath1Str);
+}
+	function showIcon(divId,val){
+		$("#"+showIconDiv).html('<i class="'+val+'"></i>');
 	}
 	function generate_code(){
 		
@@ -389,7 +410,7 @@ End If
 	}
 	
 	$(function () {
-		
+		displaysystemListsData();
 		
 			 $('#table-breakpoint').basictable({
     				breakpoint: 751
