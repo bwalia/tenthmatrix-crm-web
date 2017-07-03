@@ -3,7 +3,7 @@
 <!-- BEGIN HEAD -->
 <head>
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-<title>Tenthmatrix</title>
+<title>Jobshout</title>
 <link href="css/font-awesome.css" rel="stylesheet">
 <link href="css/bootstrap.css" rel="stylesheet">
 <link href="css/icon.css" rel="stylesheet">
@@ -20,7 +20,7 @@
 		<div CLASS="row">
 				<div CLASS=" col-lg-3 col-md-6 col-sm-12">
 						<div class="page-head bg-grey-100">
-								<h1 class="page-title">Tenthmatrix CRM Navigator<small>Version: <!--HIT_EXECUTE _HIT_HTMLTXT:=Sys_VersionGet--></small></h1>
+								<h1 class="page-title">Jobshout CRM Navigator<small>Version: <!--HIT_EXECUTE _HIT_HTMLTXT:=Sys_VersionGet--></small></h1>
 						</div>
 				</div>
 				<div CLASS=" col-lg-2 col-md-6 col-sm-9 pull-right" STYLE="margin-right:20px; margin-left:20px;" >
@@ -190,10 +190,10 @@
 		</div>
 		<!-- BEGIN FOOTER -->
 		<footer class="bg-white">
-				<div class="pull-left"> <span class="pull-left margin-right-15">&copy;&nbsp;2015&nbsp;&nbsp;<a target="_blank" href="javascript:void(0)" onclick='$4d.WEBAREA_OPEN_WEB_URL("https://www.tenthmatrix.co.uk",function(result,error){ 	});'">Tenthmatrix.co.uk</a>&nbsp;&nbsp;</span>
+				<div class="pull-left"> <span class="pull-left margin-right-15">&copy;&nbsp;2015&nbsp;&nbsp;<a target="_blank" href="javascript:void(0)" onclick='$4d.WEBAREA_OPEN_WEB_URL("https://www.Jobshout.co.uk",function(result,error){ 	});'">Jobshout.co.uk</a>&nbsp;&nbsp;</span>
 						<ul class="list-inline pull-left">
-								<li><a href="javascript:void(0)" onclick='$4d.WEBAREA_OPEN_WEB_URL("https://www.tenthmatrix.co.uk/privacy-policy.html",function(result,error){ 	});'>Privacy Policy</a></li>
-								<li><a href="javascript:void(0)" onclick='$4d.WEBAREA_OPEN_WEB_URL("https://www.tenthmatrix.co.uk/terms-of-business.html",function(result,error){ 	});'>Terms of Use</a></li>
+								<li><a href="javascript:void(0)" onclick='$4d.WEBAREA_OPEN_WEB_URL("https://www.Jobshout.co.uk/privacy-policy.html",function(result,error){ 	});'>Privacy Policy</a></li>
+								<li><a href="javascript:void(0)" onclick='$4d.WEBAREA_OPEN_WEB_URL("https://www.Jobshout.co.uk/terms-of-business.html",function(result,error){ 	});'>Terms of Use</a></li>
 						</ul>
 				</div>
 		</footer>
