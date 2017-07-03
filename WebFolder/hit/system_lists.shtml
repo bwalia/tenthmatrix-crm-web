@@ -4,7 +4,7 @@ C_TEXT(_HIT_HTMLTXT)
 C_LONGINT(_HIT_COUNTER)
 C_TEXT(_HTMLTITLETXT)
 if(_HIT_AuthenticateSession="Session-Authenticated-OK")
-_HTMLTITLETXT:="Businesses"
+_HTMLTITLETXT:="System Lists"
 
 else
 _HIT_HTTPD_RedirectToURL ("sign-in.shtml?url="+HTTPD_DocumentURI)
@@ -37,12 +37,12 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
     <div class="content-wrapper">
         <section class="content-header">
       		<h1>
-        		Businesses
+        		System Lists
         		<small>List panel</small>
       		</h1>
       		<ol class="breadcrumb">
        			<li><a href="index.shtml"><i class="fa fa-dashboard"></i> Dashboard</a></li>
-        		<li class="active">Businesses</li>
+        		<li class="active">System Lists</li>
       		</ol>
     	</section>
 		<section class="content">
@@ -56,7 +56,7 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
                  						<input class="form-control searchFieldClass" id="keyword_type" style="height:36px;" name="keyword" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" type="search">
 										<button class="btn btn-left-align btn-link no-shadow bg-transparent no-padding-top padding-right-10 right-auto left" type="button" id="searchBtn"><i class="glyphicon glyphicon-search" STYLE="top:-11px;"></i></button>
 									</div>
-                                    <a href="template.shtml" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink" style=""><i class="fa fa-plus"></i> New Template</a>
+                                    <a href="default_list.shtml" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink" style=""><i class="fa fa-plus"></i> New System List</a>
                   				</div>
          					</div>
       					</div>
@@ -67,7 +67,7 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
 							<div class="col-lg-6 col-sm-12 col-xs-12">
 								<div>
 									<input class="form-control xs-margin-btm10 searchFieldClass" id="small_screen_keyword" name="keyword" placeholder="Search here.." value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" type="text">
-                     				<a href="template.shtml" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink" STYLE="width:100%; margin:10px 0px;"> <i class="fa fa-plus"></i>Add New Template</a>    
+                     				<a href="default_list.shtml" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink" STYLE="width:100%; margin:10px 0px;"> <i class="fa fa-plus"></i> New System List</a>    
                   				</div>
 							</div>
 						</div>
@@ -109,7 +109,6 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
 			
             </section>
         </div>
-    </div>
     
 	<!-- scripts -->
   	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/top-footer.shtml-->
@@ -210,8 +209,8 @@ function load_data(){
 	}
 	$.getJSON(jsonRow,function(result){
 		$('#table-breakpoint').show();
-		if(result.Alert){
-			__alertModalBox('No more records found!');
+		if(result.nError){
+			__alertModalBox(result.nError);
 			complete=true;
 			$('#display_more_btn').hide();
 			$('#table-breakpoint').basictable({
