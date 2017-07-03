@@ -22,11 +22,9 @@ body{
 p{
 	font-family: Arial, sans-serif!important; 	
 }
-
 td{
 	padding:8px;
 }
-
 h4,h1 {
 	font-family: Arial, sans-serif!important; 	
 	font-weight: bold;
@@ -36,7 +34,6 @@ h4,h1 {
 h3{
 	font-family: Arial, sans-serif!important;
 }
-
 .trans_type { position: absolute; 
 color: #666666;
 	overflow: visible; 
@@ -47,11 +44,9 @@ color: #666666;
 	font-size: 26px;
 	margin: 0;
 }
-
 table{
 	font-family: Arial, sans-serif; 
 }
-
 td { vertical-align: top; }
 .items td {
     border-left: 0.1mm solid #000000;
@@ -72,25 +67,34 @@ table thead td { background-color: #EEEEEE;
     text-align: right;    
     border: 0.1mm solid #333333;
 }
-.bankDetails
-{
+.bankDetails{
 	background-color: #FFF;
 	border-collapse: collapse; 
 	border: 1px solid #827F85;
 	margin: 4pt 0pt 0pt 0pt;
 }
-.bankDetails td 
-{
+.bankDetails td {
      border: 1px solid #827F85;
 }
-.bankDetails thead td 
-{ 
+.bankDetails thead td { 
 	background-color: #00A3D3;
 	text-align: center;
 	color:#FFF;
 	font-size: 12pt;
 	text-align: center;
 	font-family: Arial, sans-serif; 
+}
+table thead td{
+	background-color:#049fd0;
+	color:#fff;
+	border:1px solid #fff;
+}
+.tdbcg{
+	background-color:#EEEEEE;
+}
+.table-responsive {
+    min-height: .01%;
+    overflow-x: inherit;
 }
 </style>
 </head>
@@ -112,7 +116,7 @@ table thead td { background-color: #EEEEEE;
 <h1 style="margin-top: 10px; color:#000;"><!--#4DHTML mOrderStatus("print-uppercase")--></h1>
 <div class="col-md-6 col-xs-12 content " STYLE="margin-bottom:15px; margin-left:0px; padding-left:0px;">
 
-						<div style="margin-top: 90; margin-bottom: 0pt; width: 100%;	border:0.1mm solid #220044; background-color: #EEEEEE; background-gradient: linear #eeeeee #f0f2f0 0 1 0 0.5; padding:5px 15px; margin-left:0px;">
+						<div style="margin-bottom: 0pt; width: 100%;	 border-radius:4px; color:#000; background-color: #EEEEEE; border:1px solid #ddd;  padding:5px 15px; margin-left:0px; ">
 							<h4><b>Bill To:</b></h4>
 							<div title="Page 1">
 									<div>
@@ -136,49 +140,49 @@ table thead td { background-color: #EEEEEE;
 
 <!--#4DIF (TRUE)--><!--#4DELSE-->
 <tr>
-<td><b>Status</b></td>
+<td CLASS="tdbcg"><b>Status</b></td>
 <td><!--#4DTEXT [orders]order_accepted_by_client--></td>
 </tr>
 <tr>
-<td><b>uuid</b></td>
+<td CLASS="tdbcg"><b>uuid</b></td>
 <td><!--#4DTEXT [orders]uuid--></td>
 </tr>
 <!--#4DENDIF-->
 
-<td><b>Order#</b></td>
+<td CLASS="tdbcg"><b>Order#</b></td>
 <td><!--#4DTEXT [orders]full_order_number--></td>
 </tr>
 
 <tr>
-<td><b>Account No</b></td>
+<td CLASS="tdbcg"><b>Account No</b></td>
 <td><!--#4DTEXT [orders]client_id--></td>
 </tr>
 <tr>
-<td><b>Sales person</b></td>
+<td CLASS="tdbcg"><b>Sales person</b></td>
 <td><!--#4DTEXT [Employees]emp_first_name+" "+[Employees]emp_last_name--></td>
 </tr>
 
 <tr>
-<td><b>Order Date</b></td>
+<td CLASS="tdbcg"><b>Order Date</b></td>
 <td><!--#4DTEXT String([orders]order_date;System date short)--></td>
 </tr>
 <tr>
-<td><b>Expiry Date</b></td>
+<td CLASS="tdbcg"><b>Expiry Date</b></td>
 <td><!--#4DTEXT String([orders]expiry_date;System date short)--></td>
 </tr>
 
 <tr>
-<td><STRONG>Project</STRONG></td>
+<td CLASS="tdbcg"><STRONG>Project</STRONG></td>
 <td><!--#4DTEXT [orders]project_code--></td>
 </tr>
 
 <tr>
-<td><b>Ordered by</b></td>
+<td CLASS="tdbcg"><b>Ordered by</b></td>
 <td><!--#4DTEXT [orders]ordered_by--></td>
 </tr>
 
 <tr>
-<td><STRONG>Your ref, PO number</STRONG></td>
+<td CLASS="tdbcg"><STRONG>Your ref, PO number</STRONG></td>
 <td><!--#4DTEXT [orders]customer_ref_po--></td>
 </tr>
 
@@ -307,18 +311,18 @@ Tenthmatrix Information Systems Ltd. also trading as Tenthmatrix, is a registere
 
 						<!-- Classic Heading -->
 					<h4 class="heading-title" style="font-size: 25px;"><span>Order Auth. Online</span></h4>
-						<a id="accept_link" style="color: #fff; padding: 6px 10px;  margin-bottom:10px;" class="btn btn-success" href="javascript:void(0)"<!--#4DIF ([orders]order_accepted_by_client=1)-->onclick="alert('You have already Accepted this Quote. If you have any questions please leave your comments.')"<!--#4DELSE--> onclick="__accept()"<!--#4DENDIF-->><!--#4DIF ([orders]order_accepted_by_client=1)-->Accepted<!--#4DELSE--> Accept it<!--#4DENDIF--></a>
-						<a id="print_link" style="color: #fff; padding: 6px 10px;  margin-bottom:10px; margin-left:40px" class="btn btn-success" href="<!--#4DHTMLVar Order_OnlinePDFPreviewLink-->">Download PDF</a>
+						<a id="accept_link" style="color: #fff; padding: 6px 10px;  margin-bottom:10px;width: 49%;" class="btn btn-success" href="javascript:void(0)"<!--#4DIF ([orders]order_accepted_by_client=1)-->onclick="alert('You have already Accepted this Quote. If you have any questions please leave your comments.')"<!--#4DELSE--> onclick="__accept()"<!--#4DENDIF-->><!--#4DIF ([orders]order_accepted_by_client=1)-->Accepted<!--#4DELSE--> Accept it<!--#4DENDIF--></a>
+						<a id="print_link" style="color: #fff; padding: 6px 10px;  margin-bottom:10px; width: 49%;" class="btn btn-success" href="<!--#4DHTMLVar Order_OnlinePDFPreviewLink-->">Download PDF</a>
 						<br>
 						<div id="err_msg"><div class="alert alert-warning" role="alert"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span><span class="sr-only">Reminder: </span> Please enter Your ref, PO number in the comments box.</div></div>
 						<textarea id="comment" name="comment" rows="6" class="form-control"></textarea>
-						<a id="comment_link" style="color: #fff; padding: 6px 10px;  margin-bottom:10px;  margin-top:10px;" class="btn btn-warning" href="javascript:void(0)" onclick="leave_comment()">Leave your Comment</a>
+						<a id="comment_link" style="color: #fff; padding: 6px 10px;  margin-bottom:10px;  margin-top:10px; float:right;" class="btn btn-primary" href="javascript:void(0)" onclick="leave_comment()">Leave your Comment</a>
 						
-						<!--#4DIF ([orders]order_accepted_by_client=1)--><!--#4DELSE--><br><a id="decline_link" style="color: #fff; padding: 6px 10px;  margin-bottom:10px;" class="btn btn-danger" href="javascript:void(0)" onclick="__decline()">Decline it</a><!--#4DENDIF-->
+						<!--#4DIF ([orders]order_accepted_by_client=1)--><!--#4DELSE--><br><a id="decline_link" style="color: #fff; padding: 6px 10px;  margin-bottom:10px;width:100%;" class="btn btn-danger" href="javascript:void(0)" onclick="__decline()">Decline it</a><!--#4DENDIF-->
 						
 					</div>
 					
-						<div STYLE="padding-top:10px;" CLASS="col-md-4"><a style="text-decoration:none;" target="_blank" href="https://www.tenthmatrix.co.uk/terms-of-business.html">Terms of business</a></div>
+						<div STYLE="padding-top:10px;" CLASS="col-md-4"><a class="btn btn-warning" style="text-decoration:none;width:100%;" target="_blank" href="https://www.tenthmatrix.co.uk/terms-of-business.html">Terms of business</a></div>
 					
 					
 					<div CLASS="col-md-4">

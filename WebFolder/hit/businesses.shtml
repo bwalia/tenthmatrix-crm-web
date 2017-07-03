@@ -56,7 +56,7 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
                  						<input class="form-control searchFieldClass" id="keyword_type" style="height:36px;" name="keyword" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" type="search">
 										<button class="btn btn-left-align btn-link no-shadow bg-transparent no-padding-top padding-right-10 right-auto left" type="button" id="searchBtn"><i class="glyphicon glyphicon-search" STYLE="top:-11px;"></i></button>
 									</div>
-                                    <a href="template.shtml" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink" style=""><i class="fa fa-plus"></i> New Template</a>
+                                    <a href="business.shtml" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink" style=""><i class="fa fa-plus"></i> New Business</a>
                   				</div>
          					</div>
       					</div>
@@ -67,7 +67,7 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
 							<div class="col-lg-6 col-sm-12 col-xs-12">
 								<div>
 									<input class="form-control xs-margin-btm10 searchFieldClass" id="small_screen_keyword" name="keyword" placeholder="Search here.." value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" type="text">
-                     				<a href="template.shtml" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink" STYLE="width:100%; margin:10px 0px;"> <i class="fa fa-plus"></i>Add New Template</a>    
+                     				<a href="business.shtml" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink" STYLE="width:100%; margin:10px 0px;"> <i class="fa fa-plus"></i> New Business</a>    
                   				</div>
 							</div>
 						</div>
@@ -115,7 +115,6 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
 			
             </section>
         </div>
-    </div>
     
 	<!-- scripts -->
   	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/top-footer.shtml-->
