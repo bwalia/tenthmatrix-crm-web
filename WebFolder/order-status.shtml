@@ -85,7 +85,11 @@ table thead td { background-color: #EEEEEE;
 	font-family: Arial, sans-serif; 
 }
 table thead td{
+	<!--#4DIF (true)-->
+	background-color:#b90140;
+	<!--#4DELSE-->
 	background-color:#049fd0;
+	<!--#4DENDIF-->
 	color:#fff;
 	border:1px solid #fff;
 }
@@ -107,7 +111,13 @@ table thead td{
 <input type="hidden" name="auth_email" id="auth_email" value="<!--#4DTEXT _HIT_WebApp_GetField ("auth_email")-->">
 <div class="container">
   <div class="row">
-    <div class=" col-lg-4 col-md-4 col-sm-4 col-xs-12 logo"><a href="https://www.tenthmatrix.co.uk/index.php"><img src="images/logo.jpg" class="img-responsive" alt="Tenthmatrix"></a></div>
+    <div class=" col-lg-4 col-md-4 col-sm-4 col-xs-12 logo">
+    <!--#4DIF (true)-->
+    	<a href="http://www.jobshout.co.uk/index"><img src="images/jobshoutlogo.gif" class="img-responsive" alt="Jobshout" style="padding-top:10px;"></a>
+    	<!--#4DELSE-->
+    	<a href="https://www.tenthmatrix.co.uk/index.php"><img src="images/logo.jpg" class="img-responsive" alt="Tenthmatrix"></a>
+    	<!--#4DENDIF-->
+    </div>
 </div>
 </div>
 <div CLASS="container content" STYLE="padding-top:20px;">
