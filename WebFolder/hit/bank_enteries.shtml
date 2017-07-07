@@ -5,7 +5,7 @@ C_TEXT(_HIT_HTMLTXT)
 C_LONGINT(_HIT_COUNTER)
 C_TEXT(_HTMLTITLETXT)
 if(_HIT_AuthenticateSession="Session-Authenticated-OK")
-_HTMLTITLETXT:="Bank Statement Entries"
+_HTMLTITLETXT:="Bank Transactions"
 else
 _HIT_HTTPD_RedirectToURL ("sign-in.shtml")
 end if 
@@ -310,12 +310,12 @@ top: 0px!important;
     <div class="content-wrapper" >
         <section class="content-header">
       		<h1>
-        		Bank Statement Entries
+        		Bank Transactions
         		<small><!--#4DIF (_HIT_WebApp_GetField ("set")#"")--> Saved search : <!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("set")--><!--4DELSE--><!--4DENDIF--> </small>
       		</h1>
       		<ol class="breadcrumb">
        			<li><a href="index.shtml"><i class="fa fa-dashboard"></i> Dashboard</a></li>
-        		<li class="active">Bank Statement Entries</li>
+        		<li class="active">Bank Transactions</li>
       		</ol>
     	</section>
 		<section class="content">
@@ -412,7 +412,7 @@ top: 0px!important;
 								
          					</div>
          					<div class="pull-right margin-bottom-10">
-							<form ID="demo-2" STYLE="top: -8px; position:relative;">
+							<div ID="demo-2" STYLE="top: -8px; position:relative;">
 								<div class="form-inline" style="">                 	          
                  					<div class="btn-inline display-inline-block">
 										<input class="form-control searchFieldClass" id="keyword_type" type="search" style=" height:36px;" placeholder="" name="keyword" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("keyword")-->" type="text">
@@ -423,7 +423,7 @@ top: 0px!important;
 									<button onClick="reset_filters()" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink " style=""> <i class="fa fa-refresh"></i>Reset </button>
                   				</div>
          					
-							</form>
+							</div>
 							</div>
       					</div>
      				</div>

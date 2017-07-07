@@ -162,8 +162,7 @@
 									
 									</style>
 									<div CLASS="col-md-12" style="padding-right: 20px;padding-left: 19px;margin-top: 10px;">
-      								<label style="display:inline-block;margin-right:5px;vertical-align:top; padding-top:5px;" class="attachLabel" STYLE="display: inline-block; margin-right: 5px; padding-left: 10px; vertical-align: top;
-padding-top: 5px; float: right; position: relative; bottom: 32px; right: 50px;"></label>
+      								<label class="attachLabel" STYLE="display: inline-block; margin-right: 5px; padding-left: 10px; vertical-align: top;padding-top: 5px; float: right; position: relative; bottom: 32px; right: 50px;"></label>
 									<strong><span id="c_attachdocumentLabel">Attach</span></strong> <input name="c_document_attach" class="filestyle" STYLE="margin-left:1px;" type="file" id="c_document_attach">
       								</div>
 									</div>
@@ -171,7 +170,7 @@ padding-top: 5px; float: right; position: relative; bottom: 32px; right: 50px;">
        						     						
 
       						</div>
-      						 <div CLASS="text-right col-md-9"  STYLE="padding-right: 36px;"><button type="button" class="btn btn-info sm-btn" style="margin-top:10px;" onclick="saveCreateMissingLinks()">Save new link</button></div>
+      						 <div CLASS="text-right col-md-12"><button type="button" class="btn btn-info sm-btn" style="margin-top:10px;" onclick="saveCreateMissingLinks()">Save new link</button></div>
       						
       						
       					</div>

@@ -1,10 +1,12 @@
 <!--HIT_EXECUTE
 
-C_TEXT(_HIT_HTMLTXT)
+C_TEXT(_HIT_HTMLTXT; _HTMLDATETXT)
 C_LONGINT(_HIT_COUNTER)
 C_TEXT(_HTMLTITLETXT)
 
 if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+_HTMLDATETXT:=String(Day of(Current date))+"/"+String(Month of(Current date))+"/"+String(Year of(Current date))
+
 ALL RECORDS([Tax_Codes])
 QUERY([Projects];[Projects]uuid=_HIT_WebApp_GetField ("uuid"))
 
@@ -200,7 +202,7 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
 							<div class="form-group">
 								<label class="col-sm-2 control-label">Start Date</label>
 								<div class=" col-sm-4">
-								 <input type="text" ame="task_start_date" class="input-large datepicker form-control" type="text"  data-date-format="dd/mm/yyyy" <!--#4DIF ([Projects]start_date=!00/00/00!)-->value="<!--#4DHTMLVAR Current date -->"<!--4DELSE-->value="<!--#4DVAR [Projects]start_date-->"<!--4DENDIF--> name="Start_Date" id="Start_Date" readonly >
+								 <input type="text" ame="task_start_date" class="input-large datepicker form-control" type="text"  data-date-format="dd/mm/yyyy" <!--#4DIF ([Projects]start_date=!00/00/00!)-->value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HTMLDATETXT-->"<!--4DELSE-->value="<!--#4DVAR [Projects]start_date-->"<!--4DENDIF--> name="Start_Date" id="Start_Date" readonly >
 								                         
 								</div>
 							</div>

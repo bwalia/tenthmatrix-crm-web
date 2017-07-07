@@ -2,8 +2,11 @@
 
 C_TEXT(_HIT_HTMLTXT)
 C_LONGINT(_HIT_COUNTER)
-C_TEXT(_HTMLTITLETXT)
+C_TEXT(_HTMLTITLETXT; _HTMLDATETXT)
 if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+
+_HTMLDATETXT:=String(Day of(Current date))+"/"+String(Month of(Current date))+"/"+String(Year of(Current date))
+
 ALL RECORDS([Tax_Codes])
 
 If(Num(_HIT_WebApp_GetField ("inv_id"))#0)
@@ -347,7 +350,7 @@ end if
 								<!--#4DIF (mUserIsCurrentBool)-->
 									<!--#4DVAR [Invoices]inv_date-->
 								<!--#4DELSE-->
-									<input name="invoice_date" class="input-large datepicker form-control" data-date-format="dd/mm/yyyy" type="text" <!--#4DIF ([Invoices]inv_date=!00/00/00!)-->value=""<!--4DELSE-->value="<!--#4DVAR [Invoices]inv_date-->"<!--4DENDIF--> id="invoice_date" readonly >
+									<input name="invoice_date" class="input-large datepicker form-control" data-date-format="dd/mm/yyyy" type="text" <!--#4DIF ([Invoices]inv_date=!00/00/00!)-->value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HTMLDATETXT-->"<!--4DELSE-->value="<!--#4DVAR [Invoices]inv_date-->"<!--4DENDIF--> id="invoice_date" readonly >
 								<!--#4DENDIF-->
 								</div>
 							</div>
