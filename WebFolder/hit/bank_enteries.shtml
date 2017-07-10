@@ -339,117 +339,7 @@ top: 0px!important;
       		</ol>
     	</section>
 		<section class="content">
-		
-		<div class="container">
-  <div class="row">
-      <div class="panel panel-default">
-        
-        <table class="table table-fixed">
-          <thead>
-            <tr>
-              <th class="col-xs-2 " STYLE="padding-left:5px!important;">Pin</th>
-			  <th class="col-xs-2 " STYLE="padding-left:5px!important;">Ammount</th>
-			  <th class="col-xs-2 " STYLE="padding-left:5px!important;">Date</th>
-			  <th class="col-xs-2 " STYLE="padding-left:5px!important;">Status</th>
-			  <th class="col-xs-4 " STYLE="padding-left:5px!important;">Client</th>
-			
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td class="col-xs-2"> 752</td>
-			  <td class="col-xs-2">40</td>
-			  <td class="col-xs-2">9/28/16</td>
-			  <td class="col-xs-2">Invoiced</td>
-			  <td class="col-xs-4">JV Multimedia</td>
-			 </tr>
-            <tr>
-              <td class="col-xs-2"> 752</td>
-			  <td class="col-xs-2">40</td>
-			  <td class="col-xs-2">9/28/16</td>
-			  <td class="col-xs-2">Invoiced</td>
-			  <td class="col-xs-4">JV Multimedia</td>
-			 </tr>
-           <tr>
-              <td class="col-xs-2"> 752</td>
-			  <td class="col-xs-2">40</td>
-			  <td class="col-xs-2">9/28/16</td>
-			  <td class="col-xs-2">Invoiced</td>
-			  <td class="col-xs-4">JV Multimedia</td>
-			 				
-            </tr>
-            <tr>
-              <td class="col-xs-2"> 752</td>
-			  <td class="col-xs-2">40</td>
-			  <td class="col-xs-2">9/28/16</td>
-			  <td class="col-xs-2">Invoiced</td>
-			  <td class="col-xs-4">JV Multimedia</td>
-			  </tr>
-              <tr>
-              <td class="col-xs-2"> 752</td>
-			  <td class="col-xs-2">40</td>
-			  <td class="col-xs-2">9/28/16</td>
-			  <td class="col-xs-2">Invoiced</td>
-			  <td class="col-xs-4">JV Multimedia</td>
-			  </tr>
-             <tr>
-              <td class="col-xs-2"> 752</td>
-			  <td class="col-xs-2">40</td>
-			  <td class="col-xs-2">9/28/16</td>
-			  <td class="col-xs-2">Invoiced</td>
-			  <td class="col-xs-4">JV Multimedia</td>
-			  </tr>
-             <tr>
-              <td class="col-xs-2"> 752</td>
-			  <td class="col-xs-2">40</td>
-			  <td class="col-xs-2">9/28/16</td>
-			  <td class="col-xs-2">Invoiced</td>
-			  <td class="col-xs-4">JV Multimedia</td>
-			  </tr>
-            <tr>
-              <td class="col-xs-2"> 752</td>
-			  <td class="col-xs-2">40</td>
-			  <td class="col-xs-2">9/28/16</td>
-			  <td class="col-xs-2">Invoiced</td>
-			  <td class="col-xs-4">JV Multimedia</td>
-			  </tr>
-            <tr>
-              <td class="col-xs-2"> 752</td>
-			  <td class="col-xs-2">40</td>
-			  <td class="col-xs-2">9/28/16</td>
-			  <td class="col-xs-2">Invoiced</td>
-			  <td class="col-xs-4">JV Multimedia</td>
-			  </tr>
-             <tr>
-              <td class="col-xs-2"> 752</td>
-			  <td class="col-xs-2">40</td>
-			  <td class="col-xs-2">9/28/16</td>
-			  <td class="col-xs-2">Invoiced</td>
-			  <td class="col-xs-4">JV Multimedia</td>
-			  </tr>
-              <tr>
-              <td class="col-xs-2"> 752</td>
-			  <td class="col-xs-2">40</td>
-			  <td class="col-xs-2">9/28/16</td>
-			  <td class="col-xs-2">Invoiced</td>
-			  <td class="col-xs-4">JV Multimedia</td>
-			  </tr>
-             <tr>
-              <td class="col-xs-2"> 752</td>
-			  <td class="col-xs-2">40</td>
-			  <td class="col-xs-2">9/28/16</td>
-			  <td class="col-xs-2">Invoiced</td>
-			  <td class="col-xs-4">JV Multimedia</td>
-			  </tr>
-          </tbody>
-        </table>
-      </div>
-  </div>
-</div>
-		
-		
-		
-        	<div CLASS="row">
+			<div CLASS="row">
 				<div CLASS="col-md-12" STYLE="padding-top:15px;">
 					<div class="clearfix hidden-xs">
 					
@@ -475,14 +365,6 @@ top: 0px!important;
 							
 							  <button data-toggle="collapse" CLASS="btn btn-danger" STYLE="" data-target="#filter"><i CLASS="fa fa-filter"></i>  Filter </button>
 							  
-
- 
-
-
-
-
-	
-
 <div id="filter" class="collapse col-md-12" style="background-color: rgb(239, 239, 239); border-radius: 4px; padding: 10px 45px 15px 27px; margin-top: 11px; margin-bottom: 5px;  position: relative; " >
 
 <div CLASS="row">

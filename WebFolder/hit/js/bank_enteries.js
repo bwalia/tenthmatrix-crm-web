@@ -1634,7 +1634,7 @@ function viewReceipt(num){
 	
 	function refreshPurInvoiceTable(){
 	 	var tableStr='';
-		var tableHeadingStr= '<thead><tr><th style="margin-left:-7px;"><div class="th-inner">PIN</div></th><th><div class="th-inner">Amount</div></th><th><div class="th-inner">Date</div></th><th><div class="th-inner">Status</div></th><th><div class="th-inner">Client</div></th></tr></thead>';
+		var tableHeadingStr= '<thead><tr><th class="col-xs-1 " STYLE="padding-left:5px!important;">PIN</th><th class="col-xs-1 " STYLE="padding-left:5px!important;">Amount</th><th class="col-xs-2 " STYLE="padding-left:5px!important;">Date</th><th class="col-xs-3" STYLE="padding-left:5px!important;">Status</th><th class="col-xs-5 " STYLE="padding-left:5px!important;">Client</th></tr></thead>';
 	
 		var purcInvJsonStr = 'loadpurchase_invoices.cgi?start=0&end=1000&tablname=Invoices';
 		var inv_keyStr= $("#searchInvoiceField").val();
@@ -1654,22 +1654,22 @@ function viewReceipt(num){
 					uuidArr[i]=item					
 				}); 
 				$.each(result.PurchaseId, function(i,item){
-					JSONdata[i][0]='<td id="r_invno">'+item+'</td>';
+					JSONdata[i][0]='<td id="r_invno" class="col-xs-1">'+item+'</td>';
 				}); 
 				$.each(result.BenfName, function(i,item){
-					JSONdata[i][4]='<td id="r_client">'+item+'</td>';	
+					JSONdata[i][4]='<td id="r_client" class="col-xs-5">'+item+'</td>';	
 				});
 				$.each(result.ClientID, function(i,item){					
 					JSONdata[i][5]='<td id="r_clientuuid" style="display:none;">'+item+'</td>';
 					});
 				$.each(result.PurchasedDate, function(i,item){					
-					JSONdata[i][2]='<td id="r_invdate">'+item+'</td>';
+					JSONdata[i][2]='<td id="r_invdate" class="col-xs-2">'+item+'</td>';
 				});
 				$.each(result.Balance, function(i,item){					
-					JSONdata[i][1]='<td id="r_invamount">'+item+'</td>';
+					JSONdata[i][1]='<td id="r_invamount" class="col-xs-1">'+item+'</td>';
 				});
 				$.each(result.Status, function(i,item){					
-					JSONdata[i][3]='<td id="r_invStatus">'+item+'</td>';
+					JSONdata[i][3]='<td id="r_invStatus" class="col-xs-3">'+item+'</td>';
 					statusArr[i]=item;
 				});
 							
@@ -1696,7 +1696,7 @@ function viewReceipt(num){
 	
 	function refreshInvoicesTable(){
 	 	var tableStr='';
-		var tableHeadingStr= '<thead><tr><th><div class="th-inner">Inv no</div></th><th><div class="th-inner">Amount</div></th><th><div class="th-inner">Date</div></th><th><div class="th-inner">Status</div></th><th><div class="th-inner">Invoiced to</div></th></tr></thead>';
+		var tableHeadingStr= '<thead><tr><th class="col-xs-1" STYLE="padding-left:5px!important;">InvNo.</th><th class="col-xs-2" STYLE="padding-left:5px!important;">Amount</th><th class="col-xs-2 " STYLE="padding-left:5px!important;">Date</th><th class="col-xs-3" STYLE="padding-left:5px!important;">Status</th><th class="col-xs-4 " STYLE="padding-left:5px!important;">Invoiced to</th></tr></thead>';
 		
 		var jsonRowStr = 'loadinvoices.cgi?start=0&end=50&tablname=Invoices&tab=due';
 		var inv_keyStr= $("#searchInvoiceField").val();
@@ -1725,12 +1725,16 @@ function viewReceipt(num){
 						}
 						tableStr+= '>';
 						if(row.inv_id){
-						tableStr+= '<td id="r_invno">'+row.inv_id+'</td>';
+						tableStr+= '<td id="r_invno" class="col-xs-1">'+row.inv_id+'</td>';
 						}
-         				tableStr+= '<td id="r_invamount">'+row.balance_due_base_currency+'</td>';
-         				tableStr+= '<td id="r_invdate">'+row.inv_date+'</td>';
-         				tableStr+= '<td id="r_invStatus">'+invoiceStatus+'</td>';
-         				tableStr+= '<td id="r_client">'+row.company_Name+'</td>';
+         				tableStr+= '<td id="r_invamount" class="col-xs-2">'+row.balance_due_base_currency+'</td>';
+         				tableStr+= '<td id="r_invdate" class="col-xs-2">'+row.inv_date+'</td>';
+         				tableStr+= '<td id="r_invStatus" class="col-xs-3">'+invoiceStatus+'</td>';
+         				var companyNameStr='&nbsp;';
+         				if(row.company_Name){
+         					companyNameStr=row.company_Name;
+         				}
+         				tableStr+= '<td id="r_client" class="col-xs-4">'+companyNameStr+'</td>';
          				tableStr+= '<td id="r_clientuuid" style="display:none;">'+row.company_uuid+'</td>';
 						tableStr+= '</tr>';
 						
