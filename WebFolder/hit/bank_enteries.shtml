@@ -136,21 +136,19 @@ width: 203px; }
       left: 0;
     }
     
-  .th-inner {
+   .th-inner {
 	
       position: absolute;
       top: 0;
-      line-height: 32px; / height of header /
+      line-height: 32px;
       text-align: left;
-   margin-left: -6px;
+   margin-left: 6px;
+   font-size: 13px;
 margin-right: -10px;
 margin-bottom: 4px;
-
-   
-   
-   
-     
-    }
+  }
+  
+  
     .first .th-inner {
 		border-radius:4px;
 	}
@@ -343,7 +341,7 @@ top: 0px!important;
 							  <a href="javascript:void(0)"  data-toggle="modal" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); $('#setManagerModal').modal('show');" class="btn btn-danger btn-color padingmix btn-icon-left btn-sm editorLink">Saved Searches</a> 
 								
 							
-							  <button data-toggle="collapse" CLASS="btn btn-primary" STYLE="" data-target="#filter"><i CLASS="fa fa-filter"></i>  Filter </button>
+							  <button data-toggle="collapse" CLASS="btn btn-danger" STYLE="" data-target="#filter"><i CLASS="fa fa-filter"></i>  Filter </button>
 							  
 
  
