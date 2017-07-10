@@ -2183,8 +2183,14 @@ border-right: 2px solid #a50033!important;
 border-right: 2px solid #a50033;
 border-left:none;
 border-top:none;
+color:#fff!important;
 	
 }
+.btn-danger a {
+	color:#fff!important;
+}
+
+
 .btn-danger:hover, .btn-danger:active, .btn-danger.hover {
 	background-color: #b9003f;border-bottom: 2px solid #a50033;
 border-right: 2px solid #a50033;
@@ -2200,11 +2206,13 @@ border-top:none;
 
 
 .btn-warning {
-	background-color: #f39c12;
-	border-color: #e08e0b
+	background-color: #444;
+border-color: #000;
+
 }
 .btn-warning:hover, .btn-warning:active, .btn-warning.hover {
-	background-color: #e08e0b
+	background-color: #000;
+	border:1px solid #444;
 }
 .btn-outline {
 	border: 1px solid #fff;
@@ -2528,7 +2536,9 @@ border-top:none;
 }
 .table>thead>tr>th {
 	border-bottom: 2px solid #f4f4f4;
-	background: linear-gradient(to bottom, #d9d7d8 0%, #fdfdfd 3%, #eaeaea 79%) repeat scroll 0 0 rgba(0, 0, 0, 0);
+	background-color:#444;
+	color:#fff;
+	
 	padding: 14px !important;
 }
 .table tr td .progress {
@@ -4808,10 +4818,10 @@ a {
 }
 
 .btn-color {
-	color: #FFF!important;
+	
 }
 .btn-color:hover, .btn-color:active, .btn-color.hover {
-	color: #FFF;
+	color: #444;
 	opacity: 0.9;
 }
 
@@ -4917,4 +4927,10 @@ table > tbody > tr > td {
 }
 #demo-2 input::-webkit-input-placeholder {
 	color: transparent;
+}
+
+
+
+.padinglft{
+	padding-left:5px!important;
 }

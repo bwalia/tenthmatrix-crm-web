@@ -18,6 +18,10 @@ end if
 <link href="css/bootstrap-select.css" rel="stylesheet" />
 <link href="css/bootstrap.datepicker.css" type="text/css" rel="stylesheet">
 <style>
+
+
+
+
 .custom-combobox {
     position: relative;
     display: inline-block;
@@ -293,6 +297,28 @@ margin-bottom: 4px;
 position: relative;
 top: 0px!important;
 }
+
+.table > thead > tr > th{
+	background-color:#444!important;
+}
+
+.table-fixed thead {
+  width: 100%;
+}
+.table-fixed tbody {
+  height: 230px;
+  overflow-y: auto;
+  width:100%;
+}
+.table-fixed thead, .table-fixed tbody, .table-fixed tr, .table-fixed td, .table-fixed th {
+  display: block;
+}
+.table-fixed tbody td, .table-fixed thead > tr> th {
+  float: left;
+  border-bottom-width: 0;
+}
+
+
 </style>
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
@@ -313,6 +339,116 @@ top: 0px!important;
       		</ol>
     	</section>
 		<section class="content">
+		
+		<div class="container">
+  <div class="row">
+      <div class="panel panel-default">
+        
+        <table class="table table-fixed">
+          <thead>
+            <tr>
+              <th class="col-xs-2 " STYLE="padding-left:5px!important;">Pin</th>
+			  <th class="col-xs-2 " STYLE="padding-left:5px!important;">Ammount</th>
+			  <th class="col-xs-2 " STYLE="padding-left:5px!important;">Date</th>
+			  <th class="col-xs-2 " STYLE="padding-left:5px!important;">Status</th>
+			  <th class="col-xs-4 " STYLE="padding-left:5px!important;">Client</th>
+			
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-xs-2"> 752</td>
+			  <td class="col-xs-2">40</td>
+			  <td class="col-xs-2">9/28/16</td>
+			  <td class="col-xs-2">Invoiced</td>
+			  <td class="col-xs-4">JV Multimedia</td>
+			 </tr>
+            <tr>
+              <td class="col-xs-2"> 752</td>
+			  <td class="col-xs-2">40</td>
+			  <td class="col-xs-2">9/28/16</td>
+			  <td class="col-xs-2">Invoiced</td>
+			  <td class="col-xs-4">JV Multimedia</td>
+			 </tr>
+           <tr>
+              <td class="col-xs-2"> 752</td>
+			  <td class="col-xs-2">40</td>
+			  <td class="col-xs-2">9/28/16</td>
+			  <td class="col-xs-2">Invoiced</td>
+			  <td class="col-xs-4">JV Multimedia</td>
+			 				
+            </tr>
+            <tr>
+              <td class="col-xs-2"> 752</td>
+			  <td class="col-xs-2">40</td>
+			  <td class="col-xs-2">9/28/16</td>
+			  <td class="col-xs-2">Invoiced</td>
+			  <td class="col-xs-4">JV Multimedia</td>
+			  </tr>
+              <tr>
+              <td class="col-xs-2"> 752</td>
+			  <td class="col-xs-2">40</td>
+			  <td class="col-xs-2">9/28/16</td>
+			  <td class="col-xs-2">Invoiced</td>
+			  <td class="col-xs-4">JV Multimedia</td>
+			  </tr>
+             <tr>
+              <td class="col-xs-2"> 752</td>
+			  <td class="col-xs-2">40</td>
+			  <td class="col-xs-2">9/28/16</td>
+			  <td class="col-xs-2">Invoiced</td>
+			  <td class="col-xs-4">JV Multimedia</td>
+			  </tr>
+             <tr>
+              <td class="col-xs-2"> 752</td>
+			  <td class="col-xs-2">40</td>
+			  <td class="col-xs-2">9/28/16</td>
+			  <td class="col-xs-2">Invoiced</td>
+			  <td class="col-xs-4">JV Multimedia</td>
+			  </tr>
+            <tr>
+              <td class="col-xs-2"> 752</td>
+			  <td class="col-xs-2">40</td>
+			  <td class="col-xs-2">9/28/16</td>
+			  <td class="col-xs-2">Invoiced</td>
+			  <td class="col-xs-4">JV Multimedia</td>
+			  </tr>
+            <tr>
+              <td class="col-xs-2"> 752</td>
+			  <td class="col-xs-2">40</td>
+			  <td class="col-xs-2">9/28/16</td>
+			  <td class="col-xs-2">Invoiced</td>
+			  <td class="col-xs-4">JV Multimedia</td>
+			  </tr>
+             <tr>
+              <td class="col-xs-2"> 752</td>
+			  <td class="col-xs-2">40</td>
+			  <td class="col-xs-2">9/28/16</td>
+			  <td class="col-xs-2">Invoiced</td>
+			  <td class="col-xs-4">JV Multimedia</td>
+			  </tr>
+              <tr>
+              <td class="col-xs-2"> 752</td>
+			  <td class="col-xs-2">40</td>
+			  <td class="col-xs-2">9/28/16</td>
+			  <td class="col-xs-2">Invoiced</td>
+			  <td class="col-xs-4">JV Multimedia</td>
+			  </tr>
+             <tr>
+              <td class="col-xs-2"> 752</td>
+			  <td class="col-xs-2">40</td>
+			  <td class="col-xs-2">9/28/16</td>
+			  <td class="col-xs-2">Invoiced</td>
+			  <td class="col-xs-4">JV Multimedia</td>
+			  </tr>
+          </tbody>
+        </table>
+      </div>
+  </div>
+</div>
+		
+		
+		
         	<div CLASS="row">
 				<div CLASS="col-md-12" STYLE="padding-top:15px;">
 					<div class="clearfix hidden-xs">
@@ -341,6 +477,9 @@ top: 0px!important;
 							  
 
  
+
+
+
 
 	
 
