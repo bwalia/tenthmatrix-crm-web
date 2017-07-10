@@ -591,11 +591,10 @@ function load_data(refRow){
 				table_html+='<td><span class="amount_due_'+row.uuid+'">'+row.amount_due+'</span></td>';
 					table_html+='<td><select class="form-control" name="status" id="status_'+row.uuid+'" onchange="saveStatus(this,\''+row.uuid+'\',\''+row.status+'\')">';
 					if(row.status=="reconciled"){
-					table_html +='<option value="Create missing links">Create missing links</option>';
-					//table_html +='<option value="pending">Pending</option>';
+					table_html +='<option value="Create missing links">Undo and reconcile again</option>';
 					table_html +='<option value="reconciled" selected>Reconciled</option>';
 					}else if(row.status=="need to confirm" || row.status=="Create missing links"){
-						table_html +='<option value="Create missing links" selected>Create missing links</option>';
+						table_html +='<option value="Create missing links" selected>Undo and reconcile again</option>';
 						table_html +='<option value="pending">Pending</option>';
 						if(row.paid_in>0 && row.paid_out==0){
 							table_html +='<option value="reconciled">Scan Remittance Advice & Reconcile</option>';
@@ -603,7 +602,7 @@ function load_data(refRow){
 							table_html +='<option value="reconciled">Scan Bill & Reconcile</option>';
 						}
 					}else{
-						table_html +='<option value="Create missing links">Create missing links</option>';
+						table_html +='<option value="Create missing links">Undo and reconcile again</option>';
 						table_html +='<option value="pending" selected>Pending</option>';
 						if(row.paid_in>0 && row.paid_out==0){
 							table_html +='<option value="reconciled">Scan Remittance Advice & Reconcile</option>';
@@ -1105,7 +1104,7 @@ function saveCreateMissingLinks(){
 	var invoice_uuid= $('#c_invoice_uuid').val();
 	var receipt_uuid= $('#c_receipt_uuid').val();
 	
-	if((client_uuid!="" || invoice_uuid!="" || receipt_uuid!="") && uuid!=""){
+	if((client_uuid!="" || receipt_uuid!="") && invoice_uuid!="" && uuid!=""){
 		var goAhead=false;
 		if(formtype=="Receipt"){
 			var errorMsg = '* Please upload Remittance!';
@@ -1311,7 +1310,7 @@ function getreceiptdetails(para){
 							tableStr+="<td>"+b_row.invoice_id+"</td>";
 							tableStr+="<td>"+b_row.company_name+"</td>";
 							tableStr+="<td>"+b_row.amount+"</td>";
-							tableStr+="<td><a href='javascript:void(0)' onclick='deletemissingLink(\""+b_row.link_uuid+"\",\""+formtype+"\")'>Unlink</a></td>";
+							tableStr+="<td><a href='javascript:void(0)' onclick='deletemissingLink(\""+b_row.link_uuid+"\",\""+formtype+"\")'>Undo</a></td>";
 							tableStr+="</tr>";	
 						}
 					});	

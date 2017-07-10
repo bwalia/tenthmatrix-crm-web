@@ -18,10 +18,6 @@ end if
 <link href="css/bootstrap-select.css" rel="stylesheet" />
 <link href="css/bootstrap.datepicker.css" type="text/css" rel="stylesheet">
 <style>
-
-
-
-
 .custom-combobox {
     position: relative;
     display: inline-block;
