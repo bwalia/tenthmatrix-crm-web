@@ -128,7 +128,7 @@ function fetch_navigation()	{
 			});
 			
 			$("#footer_navigation_id").html(footerNavigationStr);
-			$("#header_navigation_id").html(mainNavigationStr);
+			$("#header_navigation_id").prepend(mainNavigationStr);
 		}
 	});
 }

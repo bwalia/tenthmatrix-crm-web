@@ -1437,7 +1437,6 @@ function createmissinglinks(formtype, uuid,selectedOption,amountRec){
 	$("#c_selectedStatusField").val(selectedOption);
 	$("#c_bankamountField").val(amountRec);
 	
-	//get_suppliers("","c_linkcustomer");
 	getreceiptdetails('bank_uuid');
 	$('#c_window_smsg').html('');
 	$('#c_window_emsg').html('');
@@ -1461,7 +1460,6 @@ function viewReceipt(num){
 		$(".hideReceiptDetails_"+num).hide();	
 	}else{
 		$(".invoice_"+num).addClass('selectTable');
-		//$(".receiptDetails_"+num).html('Hide Receipt');
 		$(".showReceiptDetails_"+num).hide();
 		$(".hideReceiptDetails_"+num).show();
 	}

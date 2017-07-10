@@ -10,6 +10,12 @@
           </div>
           <div class="navbar-collapse collapse">
               <ul class="nav navbar-nav" id="header_navigation_id">
+              
+              		<li class="hidden-xs">
+                  	<form id="searchForm" method="get" action="/search" onsubmit="return $.checkSearchBox();">
+                  		<input class="form-control search" placeholder=" Search" type="text" name="s" value="" id="csearch1">
+                  	</form>
+                  </li>
               </ul>
           </div>
       </div>
