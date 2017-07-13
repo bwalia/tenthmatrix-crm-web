@@ -77,11 +77,11 @@ border: 1px solid #d3d3d3;
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        <!--#4DIF (Records in selection([Timeslips])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> TimeSlip
+        <!--#4DIF (Records in selection([Timeslips])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Timeslip
     </h1>
       <ol class="breadcrumb">
         <li><a href="index.shtml"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active"><!--#4DIF (Records in selection([Timeslips])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> TimeSlip</li>
+        <li class="active"><!--#4DIF (Records in selection([Timeslips])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Timeslip</li>
       </ol>
     </section>
 

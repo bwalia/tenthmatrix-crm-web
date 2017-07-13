@@ -180,15 +180,15 @@ last_week:=curr_date-6
           <!--#4DELSE-->
           <li class="dropdown user user-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <img src="img/user2-160x160.jpg" class="user-image" alt="User Image">
-              <span class="hidden-xs"><!--HIT_EXECUTE
+              <i class="fa fa-user"></i>
+              <span class="hidden-xs"><b><!--HIT_EXECUTE
 						C_TEXT(_HIT_HTMLTXT)
 						 If (Web_isUserStaff)
 						_HIT_HTMLTXT:=[Employees]emp_first_name+" "+[Employees]emp_last_name
 						Else 
 						_HIT_HTMLTXT:="Your account"
 						End if
-						--> </span>
+						--></b></span>
             </a>
             <ul class="dropdown-menu">
               <!-- User image -->

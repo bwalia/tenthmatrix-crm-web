@@ -33,7 +33,7 @@ function load_navigation_data(){
 		if(result.Alert){
 			//
 		}else{
-			var table_html='<li><a href="index.shtml"><i class="fa fa-dashboard"></i> <span>Dashboard</span><span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span></a></li>';
+			var table_html='<li><a href="index.shtml"><i class="fa fa-dashboard"></i> <span><b>Dashboard</b></span><span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span></a></li>';
 			var urlStr = window.location.pathname;
 			var openedFileNameStr = urlStr.substring(urlStr.lastIndexOf('/')+1);
 			
@@ -62,7 +62,7 @@ function load_navigation_data(){
 								if(openedFileNameStr=="index.shtml"){
 									subTableHtmlStr+='target="_blank" ';
 								}
-								subTableHtmlStr+='onclick="saveusermodulepreferences(\''+item.uuid+'\');"><i class="fa fa-circle-o"></i> '+row.sub_module_name+'</a></li>';
+								subTableHtmlStr+='onclick="saveusermodulepreferences(\''+item.uuid+'\');"><i class="fa fa-circle-o"></i> <b>'+row.sub_module_name+'</b></a></li>';
 							});
 									
 							if(activeMenuFlag){
@@ -76,7 +76,7 @@ function load_navigation_data(){
 							}else{
 								table_html+='<i class="'+iconStr+'"></i>';
 							}
-							table_html+='&nbsp;<span>'+item.module_name+'</span><i class="icon-chevron-down"></i><span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span></a>';
+							table_html+='&nbsp;<span><b>'+item.module_name+'</b></span><i class="icon-chevron-down"></i><span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span></a>';
 							if(activeMenuFlag){
 								table_html+='<ul class="submenu active treeview-menu">';
 							}else{
