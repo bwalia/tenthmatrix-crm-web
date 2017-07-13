@@ -59,6 +59,7 @@
 	background-color: #444;
 	color: #fff;
 	/*border-bottom: 1px solid #ddd;*/
+	border-right: 1px solid #383a3a;
 }
 .skin-blue .main-header .logo:hover {
 	background-color: #000;
