@@ -7,9 +7,9 @@ if(_HIT_AuthenticateSession="Session-Authenticated-OK")
 QUERY([bank_statement_entries];[bank_statement_entries]uuid=_HIT_WebApp_GetField ("uuid"))
 
 IF (Records in selection([bank_statement_entries])=0)
-_HTMLTITLETXT:="New Bank statement entry"
+_HTMLTITLETXT:="New Bank Transaction"
 ELSE
-_HTMLTITLETXT:= "Edit Bank statement entry"
+_HTMLTITLETXT:= "Edit Bank Transaction"
 END IF
 
 else
@@ -59,11 +59,11 @@ end if
    	<div class="content-wrapper" >
         <section class="content-header">
       		<h1>
-        		<!--#4DIF (Records in selection([bank_statement_entries])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Bank statement entry
+        		<!--#4DIF (Records in selection([bank_statement_entries])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Bank Transaction
       		</h1>
       		<ol class="breadcrumb">
        			<li><a href="index.shtml"><i class="fa fa-dashboard"></i> Dashboard</a></li>
-        		<li class="active">Bank Statement Entry</li>
+        		<li class="active">Bank Transaction</li>
       		</ol>
     	</section>
 		<section>
