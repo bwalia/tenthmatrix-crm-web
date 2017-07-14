@@ -23,7 +23,7 @@
 		</div>
 				<div CLASS="col-lg-6 col-md-6" STYLE="float:right;">
 				<div class="page-head bg-grey-100 text-right">
-				<h1 class="page-title"><span STYLE="color:#b90140;">CRM Navigator</span> <small>Version: 01.02.04 131414 <!--HIT_EXECUTE _HIT_HTMLTXT:=Sys_VersionGet--></small></h1>
+				<h1 class="page-title"><span STYLE="color:#b90140;">CRM Navigator</span> <small>Version: <!--HIT_EXECUTE _HIT_HTMLTXT:=Sys_VersionGet--></small></h1>
 				</div>
 				</div>
 				
