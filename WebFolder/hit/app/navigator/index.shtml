@@ -18,12 +18,19 @@
 <div class="wrapper">
 <div class="container-fluid" ><BR>
 		<div CLASS="row">
-				<div CLASS=" col-lg-3 col-md-6 col-sm-12">
-						<div class="page-head bg-grey-100">
-								<h1 class="page-title">Jobshout CRM Navigator<small>Version: <!--HIT_EXECUTE _HIT_HTMLTXT:=Sys_VersionGet--></small></h1>
-						</div>
+		<div CLASS="col-lg-6 col-md-6" STYLE="position: absolute; overflow:hidden;">
+		<img SRC="images/navigator-logo.png" >
+		</div>
+				<div CLASS="col-lg-6 col-md-6" STYLE="float:right;">
+				<div class="page-head bg-grey-100 text-right">
+				<h1 class="page-title"><span STYLE="color:#b90140;">CRM Navigator</span> <small>Version: 01.02.04 131414 <!--HIT_EXECUTE _HIT_HTMLTXT:=Sys_VersionGet--></small></h1>
 				</div>
-				<div CLASS=" col-lg-2 col-md-6 col-sm-9 pull-right" STYLE="margin-right:20px; margin-left:20px;" >
+				</div>
+				
+				</div>
+				
+				<div CLASS="row">
+				<div CLASS=" col-lg-3 col-md-6 col-sm-6 col-xs-12 pull-right" STYLE=" margin-left:20px;" >
 						<div class="input-group stylish-input-group">
 								<input class="form-control" placeholder="Search" type="text" id="menu">
 								<span class="input-group-addon">
