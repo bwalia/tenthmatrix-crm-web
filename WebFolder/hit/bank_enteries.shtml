@@ -573,7 +573,7 @@ display: block;
          			 	</button>
       					<ul class="dropdown-menu" role="menu" style="text-align:left">
        						<li><a href="javascript:void(0)" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); $('#setManagerMsg').html(''); del_set($('#sets_list').val(),$('#sets_list option:selected').text(),1)">Delete selected search</a></li>
-							<li><a href="javascript:void(0)" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); $('#setManagerMsg').html(''); del_set($('#sets_list').val(),$('#sets_list option:selected').text(),2)">Delete Bank statements in selected search</a></li>
+							<li><a href="javascript:void(0)" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); $('#setManagerMsg').html(''); del_set($('#sets_list').val(),$('#sets_list option:selected').text(),2)">Delete Bank Transactions in selected search</a></li>
 						</ul>
 		 			</div>
 					<button type="button" class="btn btn-default sm-btn" data-dismiss="modal" onClick="$('#set_mgr_msg').html(''); $('#set_mgr_err').html(''); $('#setManagerMsg').html('');">OK</button>
