@@ -19,10 +19,12 @@ html, body {
 body {
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
-	font-family: 'Raleway', sans-serif;
+	font-family: 'Work Sans', sans-serif;
 	font-weight: 400;
 	overflow-x: hidden;
 	overflow-y: auto
+	
+	
 }
 
 
@@ -244,13 +246,13 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
 
 
 a {
-	color: #3c8dbc
+	color: #3c8dbc;
 }
 
 a:hover, a:active, a:focus {
 	outline: none;
 	text-decoration: none;
-	color: #72afd2
+	color: #b90140
 }
 
 .page-header {
@@ -388,16 +390,25 @@ color:#ccc
 	position: relative;
 	padding: 1% 15px 0 15px;
 	
+	
 }
 
-
+.content-header > h1 {
+    margin: 0;
+    font-size: 24px;
+    border-bottom: 1px dashed #ddd;
+    padding-bottom: 6px;
+}
 
 
 
 
 .content-header>h1 {
 	margin: 0;
-	font-size: 24px
+	font-size: 24px;
+	 border-bottom: 1px dashed #ddd;
+    padding-bottom: 6px;
+	margin-bottom: 7px;
 }
 .content-header>h1>small {
 	font-size: 15px;
@@ -405,29 +416,35 @@ color:#ccc
 	padding-left: 4px;
 	font-weight: 300
 }
-.content-header>.breadcrumb {
-	float: right;
-	background: transparent;
-	margin-top: 0;
-	margin-bottom: 0;
-	font-size: 12px;
-	padding: 7px 5px;
-	position: absolute;
-	top: 15px;
-	right: 10px;
-	border-radius: 2px
+.content-header > .breadcrumb {
+    float: right;
+    background: #fff;
+    margin-top: 0;
+    margin-bottom: 0;
+    font-size: 13.5px;
+    padding: 7px 7px;
+    position: absolute;
+    top: 14px;
+    right: 13px;
+    border-radius: 2px;
+    border: 1px dashed #ddd;
+   	border-bottom: none;
 }
+
 .content-header>.breadcrumb>li>a {
 	color: #444;
 	text-decoration: none;
-	display: inline-block
+	display: inline-block;
+	font-weight:bold;
 }
 .content-header>.breadcrumb>li>a>.fa, .content-header>.breadcrumb>li>a>.glyphicon, .content-header>.breadcrumb>li>a>.ion {
-	margin-right: 5px
+	color: #b90140;
 }
 .content-header>.breadcrumb>li+li:before {
 	content: '>\00a0'
 }
+
+
 
 @media (max-width:991px) {
 .content-header>.breadcrumb {
@@ -597,7 +614,7 @@ color:#ccc
 .sidebar-menu>li {
 	position: relative;
 	margin: 0;
-	padding: 0
+	padding: 0;
 }
 .sidebar-menu>li>a {
 	padding: 12px 5px 12px 15px;
@@ -2086,7 +2103,9 @@ opacity:1
 	border-radius: 3px;
 	-webkit-box-shadow: none;
 	box-shadow: none;
-	border: 1px solid transparent
+	border: 1px solid transparent;
+	font-weight:bold;
+	font-family:Segoe, "Segoe UI", "DejaVu Sans", "Trebuchet MS", Verdana, sans-serif;
 }
 .btn.uppercase {
 	text-transform: uppercase
