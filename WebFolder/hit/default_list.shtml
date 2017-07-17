@@ -102,7 +102,7 @@ end if
 								<div CLASS="col-sm-6">
 									<input type="submit" id="submit" class="btn btn-primary btn-sm" value="Submit">
 									
-									<a href="lists.shtml" CLASS="btn btn-danger btn-sm">Cancel</a>
+									<a href="system_lists.shtml" CLASS="btn btn-danger btn-sm">Cancel</a>
 									</div>
 								</div>
 						</form>

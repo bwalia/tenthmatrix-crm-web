@@ -136,6 +136,7 @@ End If
                     				</select>
                                	</div>
                                	<div class="col-sm-1" id="showIconDiv" style="font-size:30px;"><i class="<!--4DVAR [Module]icon_path-->"></i></div>
+                               	<div class="col-sm-2"><a href="system_lists.shtml?keyword=icons-class" target="_blank" class="btn btn-danger btn-sm">+ Add new icon</a></div>
 							</div>
 							<div class="form-group">
                             	<label class="col-sm-2 control-label">Web Icon's Class/Image's Path</label>
@@ -151,7 +152,8 @@ End If
                    								
                     				</select>
                                  </div>
-                                 <div class="col-sm-1" id="showIconDiv1" style="font-size:30px;"><i class="<!--4DVAR [Module]icon_path_1-->"></i></div>
+                                <div class="col-sm-1" id="showIconDiv1" style="font-size:30px;"><i class="<!--4DVAR [Module]icon_path_1-->"></i></div>
+								<div class="col-sm-2"><a href="system_lists.shtml?keyword=icons-class" target="_blank" class="btn btn-danger btn-sm">+ Add new icon</a></div>
 							</div>
 							<div class="form-group">
                             	<label class="col-sm-2 control-label">Search Terms</label>
@@ -240,6 +242,16 @@ End If
 		<!-- call this page plugins -->
 	
 	<script language="javascript">
+function displayIcon(logoPath, loadDiv){
+	var imagesPathStr=logoPath.indexOf("images/"), imgPathStr=logoPath.indexOf("img/");
+	var pathStr=logoPath.indexOf("/"), loadHtml= '';
+	if(pathStr>=0 || imgPathStr>=0 || imagesPathStr>=0){
+		loadHtml='<img width="18" height="18" alt="" src="'+logoPath+'">';
+	}else{
+		loadHtml='<i class="'+logoPath+'"></i>';
+	}
+	$("#"+loadDiv).html(loadHtml);
+}
 function displaysystemListsData() {
 	var iconPathStr="<option value=''>--Select option--</option>";
 	var iconPath1Str="<option value=''>--Select option--</option>";
@@ -263,8 +275,9 @@ function displaysystemListsData() {
 	}
 	
 		$('#icon_path').html(iconPathStr);
-		console.log(iconPathStr);console.log(iconPath1Str);
+		displayIcon(icon_path_val, 'showIconDiv');
 		$('#icon_path_1').html(iconPath1Str);
+		displayIcon(icon_path_1_val, 'showIconDiv1');
 }
 	function showIcon(divId,val){
 		$("#"+showIconDiv).html('<i class="'+val+'"></i>');
