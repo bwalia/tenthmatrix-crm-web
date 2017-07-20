@@ -17,7 +17,7 @@
 <body >
 <div class="wrapper">
 <div class="container-fluid" ><BR>
-		<div CLASS="row">
+		<div CLASS="row" STYLE="padding:0 20px;">
 		<div CLASS="col-lg-6 col-md-6" STYLE="position: absolute; overflow:hidden;">
 		<img SRC="images/navigator-logo.png" >
 		</div>
@@ -29,7 +29,7 @@
 				
 				</div>
 				
-				<div CLASS="row">
+				<div CLASS="row" STYLE="padding:0 20px;">
 				<div CLASS=" col-lg-3 col-md-6 col-sm-6 col-xs-12 pull-right" STYLE=" margin-left:20px;" >
 						<div class="input-group stylish-input-group">
 								<input class="form-control" placeholder="Search" type="text" id="menu">
@@ -197,7 +197,7 @@
 		</div>
 		<!-- BEGIN FOOTER -->
 		<footer class="bg-white">
-				<div class="pull-left"> <span class="pull-left margin-right-15">&copy;&nbsp;2015&nbsp;&nbsp;<a target="_blank" href="javascript:void(0)" onclick='$4d.WEBAREA_OPEN_WEB_URL("https://www.Jobshout.co.uk",function(result,error){ 	});'">Jobshout.co.uk</a>&nbsp;&nbsp;</span>
+				<div class="pull-left"> <span class="pull-left margin-right-15">&copy;&nbsp;2017&nbsp;&nbsp;<a target="_blank" href="javascript:void(0)" onclick='$4d.WEBAREA_OPEN_WEB_URL("https://www.Jobshout.co.uk",function(result,error){ 	});'">Jobshout.co.uk</a>&nbsp;&nbsp;</span>
 						<ul class="list-inline pull-left">
 								<li><a href="javascript:void(0)" onclick='$4d.WEBAREA_OPEN_WEB_URL("https://www.Jobshout.co.uk/privacy-policy.html",function(result,error){ 	});'>Privacy Policy</a></li>
 								<li><a href="javascript:void(0)" onclick='$4d.WEBAREA_OPEN_WEB_URL("https://www.Jobshout.co.uk/terms-of-business.html",function(result,error){ 	});'>Terms of Use</a></li>
