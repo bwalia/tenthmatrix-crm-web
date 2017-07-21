@@ -96,7 +96,7 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
         Purchase Invoice
     </h1>
       <ol class="breadcrumb">
-        <li><a href="index.shtml"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li><a href="index.shtml"><i class="fa fa-dashboard"></i> Dashboard</a></li>
         <li class="active">Purchase Invoice</li>
       </ol>
     </section>

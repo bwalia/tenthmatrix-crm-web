@@ -106,7 +106,7 @@ end if
    	<div class="content-wrapper" >
         <section class="content-header">
       		<!--#4DIF (mUserIsCurrentBool)--><h1>Invoice</h1><!--#4DELSE-->
-      		<h1><!--#4DIF (Records in selection([Invoices])=1)--><span style="font-style: italic;">Invoice Number: <!--#4DVAR [Invoices]Full_Invoice_Number --></span><!--#4DELSE-->New Invoice<!--#4DENDIF-->
+      		<h1><!--#4DIF (Records in selection([Invoices])=1)-->Invoice Number: <!--#4DVAR [Invoices]Full_Invoice_Number --> <!--#4DELSE-->New Invoice<!--#4DENDIF-->
       			<small id="headingNote" style="display:none;"></small>
       		</h1>
 			<!--#4DENDIF-->

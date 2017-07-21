@@ -71,7 +71,7 @@ _HIT_HTMLTXT:=_HIT_HTTP_GetReferer
                     				<!--#4DIF (_HIT_WebApp_GetField ("keyword")#"load_@")-->Select employees and assign to manager : 
 									<div class="btn-inline display-inline-block">
 										<input type="hidden" name="selected" id="selected" value="">
-										<select class="form-control" name="sets" onChange="__showemployeeForm_Selectmanager(this.value)" id="add_sets">
+										<select class="form-control" name="sets" onChange="__showemployeeForm_Selectmanager(this.value)" id="add_sets" STYLE="height: 36px;">
 											<option value="">--Select Manager--</option>
 											<!--#4DSCRIPT/Web_LoadManager/-->
 											<!--4DLOOP  [Employees]-->									

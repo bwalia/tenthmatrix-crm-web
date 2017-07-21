@@ -120,7 +120,7 @@ table td, table th { border: none!important; }
        <!--#4DIF (Records in selection([servers])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Server
     </h1>
       <ol class="breadcrumb">
-        <li><a href="index.shtml"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li><a href="index.shtml"><i class="fa fa-dashboard"></i> Dashboard </a></li>
         <li class="active">Server</li>
       </ol>
     </section>

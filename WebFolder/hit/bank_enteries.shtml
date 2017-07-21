@@ -331,7 +331,8 @@ display: block;
         <section class="content-header">
       		<h1>
         		Bank Transactions
-        		<small><!--#4DIF (_HIT_WebApp_GetField ("set")#"")--> Saved search : <!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("set")--><!--4DELSE--><!--4DENDIF--> </small>
+				<small>List panel</small>
+        		<!--#4DIF (_HIT_WebApp_GetField ("set")#"")--> Saved search : <!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("set")--><!--4DELSE--><!--4DENDIF--> 
       		</h1>
       		<ol class="breadcrumb">
        			<li><a href="index.shtml"><i class="fa fa-dashboard"></i> Dashboard</a></li>

@@ -63,7 +63,7 @@ mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
       			<!--#4DIF (Records in selection([Mileage])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Travel Expense
     		</h1>
       		<ol class="breadcrumb">
-       			<li><a href="index.shtml"><i class="fa fa-dashboard"></i> Home</a></li>
+       			<li><a href="index.shtml"><i class="fa fa-dashboard"></i> Dashboard</a></li>
         		<li class="active"><!--#4DIF (Records in selection([Mileage])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Travel Expense</li>
       		</ol>
     	</section>

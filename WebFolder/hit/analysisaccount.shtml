@@ -47,6 +47,21 @@ border: 1px solid #d3d3d3;
     margin-left: 27px;
 }
 	
+	
+	#AnalAccountForm .custom-combobox {
+    width: 96% !important;
+}
+
+.custom-combobox {
+    position: relative;
+    display: inline-block;
+    font-family: "Open Sans", Arial;
+    font-size: 12px;
+    top: -2px;
+    right: 0px;
+}
+
+
 	</style>
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
@@ -64,7 +79,7 @@ border: 1px solid #d3d3d3;
        <!--#4DIF (Records in selection([analysis_account])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Analysis Account
     </h1>
       <ol class="breadcrumb">
-        <li><a href="index.shtml"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li><a href="index.shtml"><i class="fa fa-dashboard"></i> Dashboard </a></li>
         <li class="active"><!--#4DIF (Records in selection([Timeslips])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Analysis Account</li>
       </ol>
     </section>

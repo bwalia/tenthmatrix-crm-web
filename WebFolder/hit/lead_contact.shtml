@@ -47,6 +47,14 @@ end if
 #ContactForm input.error, textarea.error, select.error{
 	border: 1px solid red;
 }
+
+#ContactForm .custom-combobox {
+    width: 98% !important;
+    top: 1px;
+    left: 0px;
+}
+
+
 </style>
 </head>
 
@@ -67,7 +75,7 @@ end if
        <!--#4DIF (Records in selection([Lead_Contacts])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Contact
     </h1>
       <ol class="breadcrumb">
-        <li><a href="index.shtml"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li><a href="index.shtml"><i class="fa fa-dashboard"></i> Dashboard</a></li>
         <li class="active"><!--#4DIF (Records in selection([Lead_Contacts])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Contact</li>
       </ol>
     </section>

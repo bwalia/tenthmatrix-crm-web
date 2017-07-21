@@ -50,7 +50,7 @@ _HIT_WebSession_SetVar ("last-payment-uuid";_HIT_WebApp_GetField ("uuid"))
         		<!--#4DIF (Records in selection([Scripts])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Script
     		</h1>
       		<ol class="breadcrumb">
-        		<li><a href="index.shtml"><i class="fa fa-dashboard"></i> Home</a></li>
+        		<li><a href="index.shtml"><i class="fa fa-dashboard"></i> Dashboard</a></li>
         		<li class="active"><!--#4DIF (Records in selection([Scripts])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Script</li>
       		</ol>
     	</section>
