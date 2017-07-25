@@ -110,7 +110,7 @@ function fetch_navigation()	{
 						bookmarkItems.sort(dynamicSort("item_sort_order"));
 						for(var count=0; count< bookmarkItems.length; count++){
 							if(bookmarkItems[count].type=="url"){
-								tempNavStr+='<li><a href="'+bookmarkItems[count].content+'" title="'+bookmarkItems[count].label+'">'+bookmarkItems[count].label+'</a></li>';
+								tempNavStr+='<li><a href="'+bookmarkItems[count].content+'" title="'+bookmarkItems[count].label+'"><i class="fa fa-angle-right"></i> '+bookmarkItems[count].label+'</a></li>';
 							}else if(bookmarkItems[count].type=="html"){
 								tempNavStr+='<li>'+bookmarkItems[count].content+'</li>';
 							}
