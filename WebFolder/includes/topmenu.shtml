@@ -1,4 +1,439 @@
         <!--Begin menu -->
+
+<style>
+
+	ul{
+
+		margin-bottom:0px!important;
+
+	}
+
+	
+
+	.menu ul{
+
+		margin-bottom:0px!important;
+
+	}
+
+	
+
+	.menu { display: block; }
+
+
+
+.menu li {
+
+  display: inline-block;
+
+   font-family: 'montserratlight';
+
+  position: relative;
+
+  z-index: 100;
+
+}
+
+
+
+.menu li:first-child { margin-left: 0; }
+
+
+
+.menu li a {
+
+  text-decoration: none;
+
+ padding: 19px 15px;
+
+  display: block;
+
+ 
+
+font-size: 12px;
+
+letter-spacing: 2px;
+
+color: #fff;
+
+text-transform: uppercase;
+
+  color: #fff;
+
+  transition: all 0.2s ease-in-out 0s;
+
+}
+
+
+
+.menu li a:hover,
+
+.menu li:hover>a {
+
+  color: #fff;
+
+  background: #3b95c2;
+
+}
+
+
+
+.menu ul {
+
+  visibility: hidden;
+
+  opacity: 0;
+
+  margin: 0;
+
+  padding: 0;
+
+  width: 250px;
+
+  position: absolute;
+
+  left: 0px;
+
+  background: #fff;
+
+  z-index: 99;
+
+  transform: translate(0, 20px);
+
+  transition: all 0.2s ease-out;
+
+}
+
+
+
+.menu ul:after {
+
+  bottom: 100%;
+
+  
+
+  border: solid transparent;
+
+  content: " ";
+
+  height: 0;
+
+  width: 0;
+
+  position: absolute;
+
+  pointer-events: none;
+
+  
+
+}
+
+
+
+.menu ul li {
+
+	  font-family: 'montserratlight';
+
+  display: block;
+
+  float: none;
+
+  background: none;
+
+  margin: 0;
+
+  padding: 0;
+
+}
+
+
+
+.menu ul li a {
+
+	  font-family: 'montserratlight';
+
+  font-size: 12px;
+
+
+
+  display: block;
+
+  color: #797979;
+
+ background: #f2f8fb;
+
+padding: 10px 8px;
+
+border-left: 2px solid #40a3d4;
+
+}
+
+
+
+.menu ul li a:hover,
+
+.menu ul li:hover>a {
+
+  background: #3689b2;
+
+  color: #fff;
+
+}
+
+
+
+.menu li ul li{
+
+	padding:0px;
+
+}
+
+
+
+.menu li:hover>ul {
+
+  visibility: visible;
+
+  opacity: 1;
+
+  transform: translate(0, 0);
+
+}
+
+
+
+.menu ul ul {
+
+  left: 250px;
+
+  top: 0px;
+
+  visibility: hidden;
+
+  opacity: 0;
+
+  transform: translate(20px, 20px);
+
+  transition: all 0.2s ease-out;
+
+}
+
+
+
+.menu ul ul:after { 
+
+  top: 10%;
+
+  border: solid transparent;
+
+  content: " ";
+
+  height: 0;
+
+  width: 0;
+
+  position: absolute;
+
+  pointer-events: none;
+
+  border-color: rgba(255, 255, 255, 0);
+
+  border-right-color: #fff;
+
+  border-width: 6px;
+
+  margin-top: -6px;
+
+}
+
+
+
+.menu li>ul ul:hover {
+
+  visibility: visible;
+
+  opacity: 1;
+
+  transform: translate(0, 0);
+
+}
+
+
+
+.responsive-menu {
+
+ display: none;
+
+width: 101%;
+
+padding: 10px 9px;
+
+background: #40a3d4;
+
+color: #fff;
+
+text-transform: uppercase;
+
+border-radius: 4px;
+
+position: relative;
+
+bottom: 143px;
+
+z-index: 1000;
+
+right: 0px;
+
+left: 0px;
+
+top: 9px;
+
+border-radius: 60px;
+
+}
+
+
+
+.responsive-menu:hover {
+
+  background: #3689b2;
+
+  color: #fff;
+
+  text-decoration: none;
+
+}
+
+
+
+a.homer { background: #3689b2; }
+
+ @media (min-width: 768px) and (max-width: 979px) {
+
+
+
+.mainWrap { width: 768px; }
+
+
+
+.menu ul { top: 37px; }
+
+
+
+.menu li a { font-size: 12px; }
+
+
+
+a.homer { background: #3689b2; }
+
+}
+
+ @media (max-width: 767px) {
+
+
+
+.mainWrap {
+
+  width: auto;
+
+  padding: 50px 20px;
+
+}
+
+
+
+.menu { display: none; }
+
+
+
+.responsive-menu { display: block; }
+
+
+
+
+
+.menu li {
+
+  display: block;
+
+  margin: 0;
+
+}
+
+
+
+.menu li a {
+
+  background: #40a3d4;
+
+  color: #fff;
+
+  border-bottom:1px solid #348fbc;
+
+  
+
+}
+
+
+
+.menu li a:hover,
+
+.menu li:hover>a {
+
+  background: #3689b2;
+
+  color: #fff;
+
+}
+
+
+
+.menu ul {
+
+  visibility: hidden;
+
+  opacity: 0;
+
+  top: 0;
+
+  left: 0;
+
+  width: 100%;
+
+  transform: initial;
+
+}
+
+
+
+.menu li:hover>ul {
+
+  visibility: visible;
+
+  opacity: 1;
+
+  position: relative;
+
+  transform: initial;
+
+}
+
+
+
+.menu ul ul {
+
+  left: 0;
+
+  transform: initial;
+
+}
+
+
+
+.menu li>ul ul:hover { transform: initial; }
+
+</style>
+
 <div class="navbar headerbcg">
   <div class="container">
   <div class="row visible-xs" >
@@ -33,9 +468,9 @@
     </div>
     <div class="socialtxt navbar-right hidden-xs" style="padding-right:10px;">
      <a href="https://www.tenthmatrix.co.uk/news.php">News</a> <a href="https://www.tenthmatrix.co.uk/blog.php">Blog</a> <a href="https://www.tenthmatrix.co.uk/careers.html">Career</a>
-     <a href="https://crm.tenthmatrix.co.uk/hit/sign-in.shtml" target="_blank" class="btn btn-danger" style="color: #fff; padding: 3px 7px;  margin-bottom:5px;" > Customer sign in</a> 
-    <a href="index.shtml" class="btn btn-danger" style="color: #fff; padding: 3px 7px; margin-bottom:5px; " > Pay  Invoice</a> 
-    <a href="index_payments.shtml" class="btn btn-danger" style="color: #fff; padding: 3px 7px;  margin-bottom:5px; " > Make payment</a> 
+     <a href="https://crm.tenthmatrix.co.uk/hit/sign-in.shtml" target="_blank" class="btn-round customer-sign" style="padding: 6px 15px; margin-bottom: 5px; color:#fff;" > Customer sign in</a> 
+    <a href="index.shtml" class="btn-round customer-sign"  style="padding: 6px 15px; margin-bottom: 5px; color:#fff;" > Pay  Invoice</a> 
+    <a href="index_payments.shtml" class="btn-round customer-sign"  style="padding: 6px 15px; margin-bottom: 5px; color:#fff;"  > Make payment</a> 
     
     
     </div>
