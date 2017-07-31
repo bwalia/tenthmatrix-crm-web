@@ -1,4 +1,24 @@
+<style>
+.heading-title {
+    font-family: 'museo_sans_cyrl100';
+    font-size: 24px;
+    color: #333333;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #eee;
+    font-weight: 300;
+}
+.heading-title span {
+    padding-bottom: 8px;
+    border-bottom: 1px solid #40a3d4;
+    font-weight: 400;
+}
+</style>
 <!-- Classic Heading -->
+<div style="padding:0px;margin-top: 10px;" >
+   		<a href="index.shtml" class="btn-round customer-sign" style="color: #fff;  margin-bottom:5px; "> Pay  Invoice</a> 
+    	<a href="index_payments.shtml" class="btn-round customer-sign" style="color: #fff; margin-bottom:5px; "> Make Payment</a> 
+    </div>
 <h4 class="heading-title"><span>Company Details</span></h4>
 
 <p>
