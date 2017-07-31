@@ -11,7 +11,7 @@ body{
     }
 	
 	
-	1266
+
 	
 	.floatright{
 		float:right;
@@ -25,6 +25,9 @@ body{
 
 
 
+.navigationbcg {
+    background-color: #40a3d4;
+}
 
 
 .tab-content {
