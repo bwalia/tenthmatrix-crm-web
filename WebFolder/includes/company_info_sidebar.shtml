@@ -1,8 +1,8 @@
 <style>
 .heading-title {
     font-family: 'museo_sans_cyrl100';
-    font-size: 24px;
-    color: #333333;
+    font-size: 20px;
+    color: #40a3d4;
     margin-bottom: 16px;
     padding-bottom: 8px;
     border-bottom: 1px solid #eee;
@@ -15,9 +15,9 @@
 }
 </style>
 <!-- Classic Heading -->
-<div style="padding:0px;margin-top: 10px;" >
-   		<a href="index.shtml" class="btn-round customer-sign" style="color: #fff;  margin-bottom:5px; "> Pay  Invoice</a> 
-    	<a href="index_payments.shtml" class="btn-round customer-sign" style="color: #fff; margin-bottom:5px; "> Make Payment</a> 
+<div CLASS="row" STYLE="margin-top:15px;">
+<div CLASS="col-md-6" ><a href="index.shtml" class="btn-round customer-sign" style="color: #fff;  margin-bottom:5px; display:block; text-align:center;"> Pay  Invoice</a> </div>
+<div CLASS="col-md-6"><a href="index_payments.shtml" class="btn-round customer-sign" style="color: #fff; margin-bottom:5px;  display:block; text-align:center;"> Make Payment</a> </div>
     </div>
 <h4 class="heading-title"><span>Company Details</span></h4>
 

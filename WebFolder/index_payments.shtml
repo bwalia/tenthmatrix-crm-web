@@ -9,6 +9,32 @@
 
 <!--#4DSCRIPT/_HIT_LoadInclude/includes/static_files.shtml-->
 
+
+<style>
+		
+	.breadcrumbs {
+    background-image: url(../images/main-bg.jpg);
+    color: #fff;
+    padding: 30px 0;
+    margin-bottom: 20px!important;
+}
+
+
+@media (max-width: 768px) {
+.breadcrumbs {
+    background-image: url(../images/main-bg.jpg);
+    color: #fff;
+    padding: 30px 0;
+    margin-bottom: 20px!important;
+	position: relative;
+margin-top: 129px;
+
+}
+
+}
+	
+		</style>
+
 </head>
 
 <body>
@@ -32,7 +58,7 @@
 	<div class="row client">
 		<div id="content">
 			<div class="container">
-				<div class="row " style="margin-top:20px;">
+				<div class="row " >
 					<div class="col-lg-8 col-md-9 col-sm-12 col-xs-12 content ">
             			<h1 style="margin-top: 10px; font-family: 'montserratlight'; color: #40a3d4; font-size: 22px; border-bottom: 1px dashed #ddd; padding-bottom: 7px;" ><span>Make a payment with your credit or debit card securely</span></h1>
 				
