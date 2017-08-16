@@ -1,4 +1,4 @@
-/*
+ /*
 Template Name: Acme Business Template with Bootstrap 3
 Template Version: 1.0
 Author: cosmic
@@ -62,8 +62,8 @@ p { line-height: 22px }
 .head-section .nav li a,
 .head-section .nav li.active ul.dropdown-menu li a {
     color: #999;
-    font-size: 14px;
-    font-weight: 300;
+    font-size: 13px;
+    font-weight: 500;
     background: none;
 }
 ul.dropdown-menu { border: none }
@@ -169,7 +169,7 @@ ul.dropdown-menu { border: none }
     -o-transition: all .3s ease;
     transition: all .3s ease;
     color: #c8c8c8;
-    font-weight: 300;
+    font-weight: 500;
     margin-left: 10px;
 }
 /*homepage features*/
@@ -177,7 +177,7 @@ ul.dropdown-menu { border: none }
 .feature-head h1 {
     color: #797979;
     font-size: 30px;
-    font-weight: 300;
+    font-weight: 500;
     text-transform: uppercase;
     margin-top: 40px;
     margin-bottom: 20px;
@@ -185,7 +185,7 @@ ul.dropdown-menu { border: none }
 .feature-head p {
     color: #8a8b8b;
     font-size: 18px;
-    font-weight: 300;
+    font-weight: 500;
     text-align: center;
     padding-bottom: 5px;
     margin-bottom: 20px;
@@ -241,7 +241,7 @@ ul.dropdown-menu { border: none }
 }
 .f-text {
     font-size: 14px;
-    font-weight: 300;
+    font-weight: 500;
     padding-bottom: 10px;
     margin-bottom: 15px;
 }
@@ -265,7 +265,7 @@ ul.dropdown-menu { border: none }
 }
 .quote-info p {
     color: #9eb3c4;
-    font-weight: 300;
+    font-weight: 500;
     font-size: 16px;
     margin: 0 0 20px 0px;
 }
@@ -391,14 +391,14 @@ ul.about-flex-slides { margin-left: 0 }
     line-height: 11px;
     margin: 30px 0 8px 0;
     color: #504946;
-    font-weight: 300;
+    font-weight: 500;
 }
 .about-testimonial .about-testimonial-company {
     display: block;
     font-size: 13px;
     line-height: 14px;
     color: #ababab;
-    font-weight: 300;
+    font-weight: 500;
 }
 .about-testimonial.boxed-style .about-testimonial-content {
     background-color: #fff;
@@ -724,7 +724,7 @@ ul.about-flex-slides { margin-left: 0 }
 }
 .pricing-head h1 {
     font-size: 20px;
-    font-weight: 300;
+    font-weight: 500;
     padding-top: 15px;
 }
 .pricing-head h2 {
@@ -745,7 +745,7 @@ ul.about-flex-slides { margin-left: 0 }
     margin: 0 2em;
     padding: 1em 0;
     text-align: center;
-    font-weight: 300;
+    font-weight: 500;
 }
 .pricing-head span.note {
     display: inline;
@@ -1027,7 +1027,7 @@ section.contact-infos {
 .person-info h4,
 .person-info h4 a {
     color: #f37c6b;
-    font-weight: 300;
+    font-weight: 500;
     margin-bottom: 5px;
 }
 .mtop30 { margin-top: 30px }
@@ -1128,7 +1128,7 @@ section.contact-infos {
 }
 .date-wrap .date {
     font-size: 30px;
-    font-weight: 300;
+    font-weight: 500;
     background: #b9003f;
     color: #fff;
     border-radius: 1px 1px 0 0;
@@ -1137,7 +1137,7 @@ section.contact-infos {
 }
 .date-wrap .month {
     font-size: 16px;
-    font-weight: 300;
+    font-weight: 500;
     background: #f6f5f0;
     color: #a19fa2;
     border-radius: 0 0 1px 1px;
@@ -1168,7 +1168,7 @@ section.contact-infos {
 .blog-item h1 a {
     font-size: 25px;
     color: #b9003f;
-    font-weight: 300;
+    font-weight: 500;
 }
 .blog-item h1 {
     margin-bottom: 20px;
@@ -1242,7 +1242,7 @@ ul.tag li a {
     padding:20px 0;
     display: inline-block;
     width: 100%;
-    font-weight: 300;
+    font-weight: 500;
 }
 .footer h1 {
     font-size: 20px;
@@ -1362,7 +1362,7 @@ ul.page-footer-list li i { padding-right: 10px }
     border-bottom: solid 1px #eee;
 }
 .slide_title {
-    font-weight: 300;
+    font-weight: 500;
     color: #b9003f;
     text-transform: uppercase;
     font-size: 35px;
@@ -1392,7 +1392,7 @@ ul.page-footer-list li i { padding-right: 10px }
     padding-left: 5px;
 }
 .slide_btn {
-    font-weight: 300;
+    font-weight: 500;
     background: #b9003f;
     padding: 15px 20px;
     color: #fff;
@@ -1402,7 +1402,7 @@ ul.page-footer-list li i { padding-right: 10px }
 }
 .slide_btn:hover,
 .slide_btn:focus {
-    font-weight: 300;
+    font-weight: 500;
     background: #16a085;
     padding: 15px 20px;
     color: #fff;
@@ -1675,7 +1675,7 @@ ul#filters > .active > span {
     text-align: center;
     color: #fff;
     font-size: 25px;
-    font-weight: 300;
+    font-weight: 500;
     line-height: 40px;
     margin-top: 160px;
 }
@@ -1900,13 +1900,13 @@ ul#filters > .active > span {
     color: #fff;
     font-size: 18px;
     text-transform: uppercase;
-    font-weight: 300;
+    font-weight: 500;
 }
 .form-signin .checkbox { margin-bottom: 14px }
 .form-signin .checkbox {
     font-weight: normal;
     color: #b6b6b6;
-    font-weight: 300;
+    font-weight: 500;
 }
 .form-signin .form-control {
     position: relative;
@@ -1932,7 +1932,7 @@ ul#filters > .active > span {
     background: #b9003f;
     color: #fff;
     text-transform: uppercase;
-    font-weight: 300;
+    font-weight: 500;
     margin-bottom: 20px;
     border-radius: 3px;
     -webkit-border-radius: 3px;
@@ -1958,7 +1958,7 @@ ul#filters > .active > span {
     text-align: center;
     color: #b6b6b6;
     font-size: 16px;
-    font-weight: 300;
+    font-weight: 500;
 }
 .form-signin a { color: #41cac0 }
 .form-signin a:hover { color: #b6b6b6 }
@@ -3107,7 +3107,7 @@ line-height: 28px;
     margin-bottom: 16px;
     padding-bottom: 8px;
     border-bottom: 1px solid #eee;
-    font-weight: 300;
+    font-weight: 500;
 }
 
 
@@ -3119,8 +3119,11 @@ border-bottom: 1px solid #b90140;
 	font-weight: 400;
 }
 
-
-
+.form-horizontal .control-label {
+    font-weight: 500;
+    font-size: 14px;
+    text-align: left;
+}
 
 .pagination > .active > a, .pagination > .active > span, .pagination > .active > a:hover, .pagination > .active > span:hover, .pagination > .active > a:focus, .pagination > .active > span:focus{
 	background-color:#373737;
