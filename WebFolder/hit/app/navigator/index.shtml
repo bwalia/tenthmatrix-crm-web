@@ -3,7 +3,7 @@
 <!-- BEGIN HEAD -->
 <head>
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-<title>Jobshout</title>
+<title>Web CRM</title>
 <link href="css/font-awesome.css" rel="stylesheet">
 <link href="css/bootstrap.css" rel="stylesheet">
 <link href="css/icon.css" rel="stylesheet">
@@ -197,10 +197,10 @@
 		</div>
 		<!-- BEGIN FOOTER -->
 		<footer class="bg-white">
-				<div class="pull-left"> <span class="pull-left margin-right-15">&copy;&nbsp;2009-2017&nbsp;&nbsp;<a target="_blank" href="javascript:void(0)" onclick='$4d.WEBAREA_OPEN_WEB_URL("https://www.jobshout.com",function(result,error){ 	});'">jobshout.com</a>&nbsp;&nbsp;</span>
+				<div class="pull-left"> <span class="pull-left margin-right-15">&copy;&nbsp;2009-2017&nbsp;&nbsp;<a target="_blank" href="javascript:void(0)" onclick='$4d.WEBAREA_OPEN_WEB_URL("https://www.webcrm.io/",function(result,error){ 	});'">webcrm.io</a>&nbsp;&nbsp;</span>
 						<ul class="list-inline pull-left">
-								<li><a href="javascript:void(0)" onclick='$4d.WEBAREA_OPEN_WEB_URL("https://www.Jobshout.co.uk/privacy-policy.html",function(result,error){ 	});'>Privacy Policy</a></li>
-								<li><a href="javascript:void(0)" onclick='$4d.WEBAREA_OPEN_WEB_URL("https://www.Jobshout.co.uk/terms-of-business.html",function(result,error){ 	});'>Terms of Use</a></li>
+								<li><a href="javascript:void(0)" onclick='$4d.WEBAREA_OPEN_WEB_URL("https://www.webcrm.io/privacy-policy.html",function(result,error){ 	});'>Privacy Policy</a></li>
+								<li><a href="javascript:void(0)" onclick='$4d.WEBAREA_OPEN_WEB_URL("https://www.webcrm.io/terms-of-business.html",function(result,error){ 	});'>Terms of Use</a></li>
 						</ul>
 				</div>
 		</footer>
