@@ -1,0 +1,77 @@
+<html>
+  <head>
+	<title>HTML</title>
+   	<script type = "text/javascript">
+   	
+function loadanimation(id, img1, img2) {
+	var element = document.getElementById(id);
+	
+	if(element.classList.contains('animation')){
+		element.classList.remove("animation");
+		element.src = img2;
+	} else	{
+		element.classList.add("animation");
+		element.src = img1;
+	}
+	
+	setTimeout("loadanimation('"+id+"', '"+img1+"', '"+img2+"')",1000);
+    return true;
+}
+   	
+   	function makeAvatarDoGesture(pGestureType)
+{
+
+if(pGestureType=="smiling")
+{
+	loadanimation('avatar', 'images/smiling.svg', 'images/user.svg');
+}
+
+if(pGestureType=="thinking")
+{
+	loadanimation('avatar', 'images/thinking.svg', 'images/user.svg');
+}
+
+
+}
+
+function callOnLoad(){
+makeAvatarDoGesture("smiling");
+}
+
+
+   	
+function stopSpeaking(){
+	document.getElementById("status").value = 0;
+//alert('stopSpeaking');
+	var element = document.getElementById('avatarImg');
+	element.src = "images/speak/user0.svg";
+}
+
+function startSpeaking(){
+//alert('startSpeaking');
+	document.getElementById("status").value = 1;
+	avatarSpeaking();
+}
+
+function avatarSpeaking(){
+	var statusVal = document.getElementById('status').value;
+	console.log(statusVal)
+	if(statusVal==1){
+		var element = document.getElementById('avatarImg');
+		var imgAr = ['user1.svg', 'user2.svg', 'user4.svg', 'user5.svg'];
+		var num = Math.floor( Math.random() * imgAr.length );
+    	element.src = "images/speak/"+imgAr[num];
+    
+   		setTimeout(avatarSpeaking,500);
+   		return true;
+    }   
+}
+      </script>
+   </head>
+
+   	<body onload = "callOnLoad()">
+   		<!--button onClick="startSpeaking();">Start speaking</button>&nbsp;<button onClick="stopSpeaking();">Stop speaking</button-->
+  		<img src="images/speak/user0.svg" id="avatarImg" width="500px;">
+  		<input type="hidden" id="status" value="0">
+	</body>
+</html>

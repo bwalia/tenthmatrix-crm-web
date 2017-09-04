@@ -1,0 +1,61 @@
+<html>
+  <head>
+	<title>HTML</title>
+   	<script type = "text/javascript">
+/**function blinkId() {
+	var elements = document.getElementsByClassName('normal');
+	var element2 = document.getElementsByClassName('animation');
+	
+	for(var i=0; i<elements.length; i++) { 
+  		var j = elements[i];
+  		var k= element2[i];
+  		
+  		if(j.style.visibility=='hidden') {
+			j.style.visibility='visible';
+			k.style.visibility='hidden';
+		} else {
+			j.style.visibility='hidden';
+			k.style.visibility='visible';
+		}
+	}
+	
+	document.getElementById("myDiv").style.backgroundImage = "url('img_tree.png')";
+    setTimeout(blinkId,1000);
+	return true;
+}**/
+
+function loadanimation(id, img1, img2) {
+	var element = document.getElementById(id);
+	
+	if(element.classList.contains('animation')){
+		element.classList.remove("animation");
+		element.src = img2;
+	} else	{
+		element.classList.add("animation");
+		element.src = img1;
+	}
+	
+	setTimeout("loadanimation('"+id+"', '"+img1+"', '"+img2+"')",1000);
+    return true;
+}
+
+function callOnLoad(){
+	// call different animations
+	loadanimation('blinkeyeId', 'images/open-eyes.svg', 'images/close-eyes.svg');
+	loadanimation('smiling_user', 'images/smiling.svg', 'images/user.svg');
+	loadanimation('angry_user', 'images/angry.svg', 'images/user.svg');
+	loadanimation('thinking_user', 'images/thinking.svg', 'images/user.svg');
+	loadanimation('crying_user', 'images/crying.svg', 'images/user.svg');
+}
+
+      </script>
+   </head>
+
+   	<body onload = "callOnLoad()">
+  		<img src="images/close-eyes.svg" id="blinkeyeId">
+  		<img src="images/user.svg" id="smiling_user" width="500px;">
+  		<img src="images/user.svg" id="angry_user" width="500px;">
+  		<img src="images/user.svg" id="thinking_user" width="500px;">
+  		<img src="images/user.svg" id="crying_user" width="500px;">
+	</body>
+</html>

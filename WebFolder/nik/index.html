@@ -1,0 +1,51 @@
+<html>
+  <head>
+	<title>HTML</title>
+   	<script type = "text/javascript">
+   	
+function loadanimation(id, img1, img2) {
+	var element = document.getElementById(id);
+	
+	if(element.classList.contains('animation')){
+		element.classList.remove("animation");
+		element.src = img2;
+	} else	{
+		element.classList.add("animation");
+		element.src = img1;
+	}
+	
+	setTimeout("loadanimation('"+id+"', '"+img1+"', '"+img2+"')",1000);
+    return true;
+}
+
+function makeAvatarDoGesture(pGestureType)
+{
+
+if(pGestureType=="smiling")
+{
+	loadanimation('avatar', 'images/smiling.svg', 'images/user.svg');
+}
+
+if(pGestureType=="thinking")
+{
+	loadanimation('avatar', 'images/thinking.svg', 'images/user.svg');
+}
+
+
+}
+
+function callOnLoad(){
+makeAvatarDoGesture("smiling");
+}
+
+      </script>
+   </head>
+
+   	<body onload = "callOnLoad()">
+  		<img src="images/user.svg" id="avatar" width="500px;">
+  		
+  		<a href="#" onclick="makeAvatarDoGesture("thinking");" >Thinking</a><br>
+  		  		<a href="#" onclick="makeAvatarDoGesture("smiling");" >Smiling</a>
+
+	</body>
+</html>
