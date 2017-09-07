@@ -226,7 +226,15 @@ success: function(html)
 	
 	
         $(document).ready(function() {
-		
+		//left right key press
+    	$(document).keydown(function(e){
+        	if (e.keyCode == 37) {
+               $('.fc-prev-button').trigger('click');
+    		}
+    		if (e.keyCode == 39) {
+               $('.fc-next-button').trigger('click');
+    		}
+		}); 
 		$('#s_time').ptTimeSelect({
 		 	onClose: function(input, widget){
 				$('#s_time').trigger('change');
