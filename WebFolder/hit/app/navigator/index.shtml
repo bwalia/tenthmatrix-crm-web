@@ -18,12 +18,12 @@
 <div class="wrapper">
 <div class="container-fluid" ><BR>
 		<div CLASS="row" STYLE="padding:0 20px;">
-		<div CLASS="col-lg-6 col-md-6" STYLE="position: absolute; overflow:hidden;">
-		<img SRC="images/navigator-logo.png" >
+		<div CLASS="col-lg-6 col-md-6" STYLE="position: absolute; overflow:hidden; color: #004994; font-weight: bold;font-size: 26px;">
+		WebCRM <i CLASS="fa fa-dot-circle-o"></i>
 		</div>
 				<div CLASS="col-lg-6 col-md-6" STYLE="float:right;">
 				<div class="page-head bg-grey-100 text-right">
-				<h1 class="page-title"><span STYLE="color:#b90140;">CRM Navigator</span> <small>Version: <!--HIT_EXECUTE _HIT_HTMLTXT:=Sys_VersionGet--></small></h1>
+				<h1 class="page-title"><span STYLE="color:#004994;">CRM Navigator</span> <small>Version: <!--HIT_EXECUTE _HIT_HTMLTXT:=Sys_VersionGet--></small></h1>
 				</div>
 				</div>
 				
