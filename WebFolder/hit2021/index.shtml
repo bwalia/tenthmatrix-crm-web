@@ -1,0 +1,982 @@
+<!--HIT_EXECUTE
+
+C_TEXT(_HTMLTITLETXT)
+_HTMLTITLETXT:="Dashboard"
+if(_HIT_AuthenticateSession="Session-Authenticated-OK")
+//_HIT_HTMLTXT:="<h1>AUTH</h1>"
+else
+_HIT_HTTPD_RedirectToURL ("/hit/sign-in.shtml")
+end if 
+
+-->
+
+<!--#4DIF (_HIT_AuthenticateSession="Session-Authenticated-OK")-->
+
+<!DOCTYPE html>
+<html lang="zxx">
+<meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <title>WorkStation</title>
+
+    <link rel="icon" href="img/workstation-logo-icon.png" type="image/png">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+       <link rel="stylesheet" href="vendors/font_awesome/css/all.min.css" />
+    <!-- Icons CSS -->
+    <link rel="stylesheet" href="vendors/themefy_icon/themify-icons.css" />
+  <!-- sidebarmenu -->
+    <link rel="stylesheet" href="css/metisMenu.css">
+    <!-- style CSS -->
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/select2.min.css" />
+</head>
+<body class="crm_body_bg">   
+
+
+<!-- main content part here -->
+ 
+ <!-- sidebar  -->
+<nav class="sidebar">
+    <div class="logo d-flex justify-content-between">
+        <a class="large_logo" href="index.html"><img src="img/workstation-logo.png" alt=""></a>
+        <a class="small_logo" href="index.html"><img src="img/workstation-logo-icon.png" alt=""></a>
+        <div class="sidebar_close_icon d-lg-none">
+            <i class="ti-close"></i>
+        </div>
+    </div>
+    <ul id="sidebar_menu">
+        <li class="mm-active">
+          <a   class="has-arrow" href="#" aria-expanded="true">
+            <div class="nav_icon_small">
+                <img src="img/menu-icon/dashboard.svg" alt="">
+            </div>
+            <div class="nav_title">
+                <span>Category</span>
+            </div>
+          </a>
+          <ul class="mm-collapse mm-show">
+            <li><a href="javascript:void(0)">Category One</a></li>
+            <li><a href="javascript:void(0)">Category Two</a></li>
+            <li><a href="javascript:void(0)">Category Three</a></li>
+            <li><a href="javascript:void(0)">Category Four</a></li>
+            <li><a href="javascript:void(0)">Category Five</a></li>
+          </ul>
+        </li>
+
+    </ul>
+</nav>
+ <!--/ sidebar  -->
+
+
+<section class="main_content dashboard_part large_header_bg">
+        <!-- menu  -->
+    <div class="container-fluid no-gutters">
+        <div class="row">
+            <div class="col-lg-12 p-0 ">
+                <div class="header_iner d-flex justify-content-between align-items-center">
+                    <div class="sidebar_icon d-lg-none">
+                        <i class="ti-menu"></i>
+                    </div>
+                    <div class="line_icon open_miniSide d-none d-lg-block">
+                      <i class="ti-menu"></i>
+                    </div>
+                    <div class="serach_field-area d-flex align-items-center">
+                        <div class="search_inner">
+	    	<!--HIT_EXECUTE
+                C_TEXT(_HIT_HTMLTXT)
+                _HIT_HTMLTXT:=_HIT_WebSession_GetVar ("auth_user_type")-->
+                <form id="form-auth" method="post" action="authenticate.cgi" role="form">
+                    <input name="url_to_redirect" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("url")-->">
+        
+                                <div class="search_field">
+                                    <input type="text" placeholder="Search">
+                                </div>
+                                <button type="submit"> <img src="img/icon/icon_search.svg" alt=""> </button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="header_right d-flex justify-content-between align-items-center">
+                        <div class="header_notification_warp d-flex align-items-center">
+                            <li>
+                                <a class="bell_notification_clicker" href="#"> <img src="img/icon/bell.svg" alt="">
+                                    <span>2</span>
+                                </a>
+                                <!-- Menu_NOtification_Wrap-->
+                            <div class="Menu_NOtification_Wrap">
+                                <div class="notification_Header">
+                                    <h4>Notifications</h4>
+                                </div>
+                                <div class="Notification_body">
+                                    <!-- single_notify  -->
+                                    <div class="single_notify d-flex align-items-center">
+                                        <div class="notify_thumb">
+                                            <a href="#"><img src="img/staf/2.png" alt=""></a>
+                                        </div>
+                                        <div class="notify_content">
+                                            <a href="#"><h5>Notificaton 1 </h5></a>
+                                            <p>Lorem ipsum dolor sit amet</p>
+                                        </div>
+                                    </div>
+                                    <!-- single_notify  -->
+                                    <div class="single_notify d-flex align-items-center">
+                                        <div class="notify_thumb">
+                                            <a href="#"><img src="img/staf/4.png" alt=""></a>
+                                        </div>
+                                        <div class="notify_content">
+                                            <a href="#"><h5>Notificaton 2</h5></a>
+                                            <p>Lorem ipsum dolor sit amet</p>
+                                        </div>
+                                    </div>
+                                    <!-- single_notify  -->
+                                    <div class="single_notify d-flex align-items-center">
+                                        <div class="notify_thumb">
+                                            <a href="#"><img src="img/staf/3.png" alt=""></a>
+                                        </div>
+                                        <div class="notify_content">
+                                            <a href="#"><h5>Notificaton 3</h5></a>
+                                            <p>Lorem ipsum dolor sit amet</p>
+                                        </div>
+                                    </div>
+                                    <!-- single_notify  -->
+                                    <div class="single_notify d-flex align-items-center">
+                                        <div class="notify_thumb">
+                                            <a href="#"><img src="img/staf/2.png" alt=""></a>
+                                        </div>
+                                        <div class="notify_content">
+                                            <a href="#"><h5>Notificaton 4 </h5></a>
+                                            <p>Lorem ipsum dolor sit amet</p>
+                                        </div>
+                                    </div>
+                                    <!-- single_notify  -->
+                                    <div class="single_notify d-flex align-items-center">
+                                        <div class="notify_thumb">
+                                            <a href="#"><img src="img/staf/4.png" alt=""></a>
+                                        </div>
+                                        <div class="notify_content">
+                                            <a href="#"><h5>Notificaton 5</h5></a>
+                                            <p>Lorem ipsum dolor sit amet</p>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                                <div class="nofity_footer">
+                                    <div class="submit_button text-center pt_20">
+                                        <a href="#" class="btn_1">See More</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--/ Menu_NOtification_Wrap  -->
+                            </li>
+                           
+                        </div>
+                        <div class="profile_info">
+                            <img src="img/client_img.png" alt="#">
+                            <div class="profile_info_iner">
+                                <div class="profile_author_name">
+                                    <p> Web Walia  </p>
+                                    <h5>Web Developer</h5>
+                                </div>
+                                <div class="profile_info_details">
+                                     <span>balinder.walia@gmail.com</span>
+                                    <a href="#">My Profile </a>
+                                    <a href="#">Settings</a>
+                                    <a href="#">Log Out </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--/ menu  -->
+    <div class="main_content_iner overly_inner ">
+        <div class="container-fluid p-0 ">
+            <!-- page title  -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="page_title_box d-flex flex-wrap align-items-center justify-content-between">
+                        <div class="page_title_left d-flex align-items-center">
+                            <h3 class="f_s_25 f_w_700 dark_text mr_30" >Document </h3>
+                            <ol class="breadcrumb page_bradcam mb-0">
+                                <li class="breadcrumb-item"><a href="javascript:void(0);">Home</a></li>
+                                <li class="breadcrumb-item active">Document</li>
+                            </ol>
+                        </div>
+                        <div class="page_title_right">
+
+                           <p class="showingTotal">
+                            Showing 13 out of 13</p>
+                            <div class="header_more_tool setDropDownBlk">
+                                <div class="dropdown btn btn-secondary">
+                                    <small class="dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown"><i class="ti-eye iconEye"></i>  Set </small>
+                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                                      <a class="dropdown-item" href="#" data-toggle="modal" data-target="#setModelData"> <i class="ti-plus"></i> Add to new set</a>
+                                      <a class="dropdown-item" href="#"> <i class="ti-folder"></i> Set manager</a>
+                                      <a class="dropdown-item" href="document-edit.html"> <i class="ti-reload"></i>Load Set</a>
+                                      <a class="dropdown-item" href="#"> <i class="ti-files"></i> Add to Set</a>
+                                      <a class="dropdown-item" href="#"> <i class="ti-back-right"></i> Clear Add to Set</a></div>
+                                </div>
+                            </div>
+
+                            <div class="header_more_tool setDropDownBlk">
+                                <div class="dropdown btn btn-secondary">
+                                    <small class="dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown">
+                                        <i class="ti-receipt"></i>  Action
+                                    </small>
+                                    <div class="dropdown-menu dropdown-menu-right">
+                                      <a class="dropdown-item" href="#"> <i class="ti-import"></i> 
+                                      Import Documents</a>
+                                      <a class="dropdown-item" href="#"> <i class="ti-split-v"></i>Import and Export Set to S3</a>
+                                      <a class="dropdown-item" href="document-edit.html"> <i class="ti-files"></i>Export Set to S3</a>
+                                    </div>
+                            </div>
+                            <a href="document-edit.html" class="btn btn-primary"><i class="ti-plus"></i> Add Document</a>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+            <div class="row ">
+                <div class="col-lg-6">
+                    <div class="white_card card_height_100 mb_20 ">
+                        <div class="white_card_header">
+                            <div class="box_header m-0">
+                                <div class="main-title">
+                                    <h3 class="m-0">Document List</h3>
+                                </div>
+                              
+                            </div>
+                        </div>
+                        <div class="white_card_body ">
+                            <div class="QA_table ">
+                                <!-- table-responsive -->
+                                <table class="table tableDocument table-bordered table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">
+                                                <input type="checkbox" class="check_all" onclick="set_check_all(this);">
+                                            </th>
+                                            <th scope="col">Id</th>
+                                            <th scope="col">Document Name</th>
+                                            <th scope="col">Date</th>
+                                            <th scope="col" width="80">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>                                        
+                                    <tr data-href="document-edit.html">
+
+                                        <td class="checkDocument">
+                                            <input type="checkbox" class="check_all" onclick="set_check_all(this);">
+                                        </td>
+                                        <td class="f_s_12 f_w_400"><a href="document-edit.html">Doc142 Jmd</a></td>
+                                        <td class="f_s_12 f_w_400"><a href="document-edit.html">Lorem ipsum dolor sit amet Lorem ipsum dolor </a></td>
+                                        <td class="f_s_12 f_w_400 text_color_1 "><a href="document-edit.html">24 Jun 2021</a></td>
+                                        <td class="f_s_12 f_w_400 text-right">
+                                            <div class="header_more_tool">
+                                                <div class="dropdown">
+                                                    <span class="dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown">
+                                                      <i class="ti-more-alt"></i>
+                                                    </span>
+                                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                                                      <a class="dropdown-item" href="#"> <i class="ti-eye"></i> Action</a>
+                                                      <a class="dropdown-item" href="#"> <i class="ti-trash"></i> Delete</a>
+                                                      <a class="dropdown-item" href="document-edit.html"> <i class="fas fa-edit"></i> Edit</a>
+                                                      <a class="dropdown-item" href="#"> <i class="ti-printer"></i> Print</a>
+                                                      <a class="dropdown-item" href="#"> <i class="fa fa-download"></i> Download</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>                                           
+                                    </tr>
+                                    <tr data-href="document-edit.html">
+                                        
+                                        <td class="checkDocument">
+                                            <input type="checkbox" class="check_all" onclick="set_check_all(this);">
+                                        </td>
+                                        <td class="f_s_12 f_w_400"><a href="document-edit.html">Doc142 Jmd</a></td>
+                                        <td class="f_s_12 f_w_400"><a href="document-edit.html">Lorem ipsum dolor sit amet Lorem ipsum dolor </a></td>
+                                        <td class="f_s_12 f_w_400 text_color_1 "><a href="document-edit.html">24 Jun 2021</a></td>
+                                        <td class="f_s_12 f_w_400 text-right">
+                                            <div class="header_more_tool">
+                                                <div class="dropdown">
+                                                    <span class="dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown">
+                                                      <i class="ti-more-alt"></i>
+                                                    </span>
+                                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                                                      <a class="dropdown-item" href="#"> <i class="ti-eye"></i> Action</a>
+                                                      <a class="dropdown-item" href="#"> <i class="ti-trash"></i> Delete</a>
+                                                      <a class="dropdown-item" href="document-edit.html"> <i class="fas fa-edit"></i> Edit</a>
+                                                      <a class="dropdown-item" href="#"> <i class="ti-printer"></i> Print</a>
+                                                      <a class="dropdown-item" href="#"> <i class="fa fa-download"></i> Download</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>                                           
+                                    </tr>
+                                    <tr data-href="document-edit.html">
+                                        
+                                        <td class="checkDocument">
+                                            <input type="checkbox" class="check_all" onclick="set_check_all(this);">
+                                        </td>
+                                        <td class="f_s_12 f_w_400"><a href="document-edit.html">Doc142 Jmd</a></td>
+                                        <td class="f_s_12 f_w_400"><a href="document-edit.html">Lorem ipsum dolor sit amet Lorem ipsum dolor </a></td>
+                                        <td class="f_s_12 f_w_400 text_color_1 "><a href="document-edit.html">24 Jun 2021</a></td>
+                                        <td class="f_s_12 f_w_400 text-right">
+                                            <div class="header_more_tool">
+                                                <div class="dropdown">
+                                                    <span class="dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown">
+                                                      <i class="ti-more-alt"></i>
+                                                    </span>
+                                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                                                      <a class="dropdown-item" href="#"> <i class="ti-eye"></i> Action</a>
+                                                      <a class="dropdown-item" href="#"> <i class="ti-trash"></i> Delete</a>
+                                                      <a class="dropdown-item" href="document-edit.html"> <i class="fas fa-edit"></i> Edit</a>
+                                                      <a class="dropdown-item" href="#"> <i class="ti-printer"></i> Print</a>
+                                                      <a class="dropdown-item" href="#"> <i class="fa fa-download"></i> Download</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>                                           
+                                    </tr>
+                                    <tr data-href="document-edit.html">
+                                        
+                                        <td class="checkDocument">
+                                            <input type="checkbox" class="check_all" onclick="set_check_all(this);">
+                                        </td>
+                                        <td class="f_s_12 f_w_400"><a href="document-edit.html">Doc142 Jmd</a></td>
+                                        <td class="f_s_12 f_w_400"><a href="document-edit.html">Lorem ipsum dolor sit amet Lorem ipsum dolor </a></td>
+                                        <td class="f_s_12 f_w_400 text_color_1 "><a href="document-edit.html">24 Jun 2021</a></td>
+                                        <td class="f_s_12 f_w_400 text-right">
+                                            <div class="header_more_tool">
+                                                <div class="dropdown">
+                                                    <span class="dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown">
+                                                      <i class="ti-more-alt"></i>
+                                                    </span>
+                                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                                                      <a class="dropdown-item" href="#"> <i class="ti-eye"></i> Action</a>
+                                                      <a class="dropdown-item" href="#"> <i class="ti-trash"></i> Delete</a>
+                                                      <a class="dropdown-item" href="document-edit.html"> <i class="fas fa-edit"></i> Edit</a>
+                                                      <a class="dropdown-item" href="#"> <i class="ti-printer"></i> Print</a>
+                                                      <a class="dropdown-item" href="#"> <i class="fa fa-download"></i> Download</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>                                           
+                                    </tr>
+                                    <tr data-href="document-edit.html">
+                                        
+                                        <td class="checkDocument">
+                                            <input type="checkbox" class="check_all" onclick="set_check_all(this);">
+                                        </td>
+                                        <td class="f_s_12 f_w_400"><a href="document-edit.html">Doc142 Jmd</a></td>
+                                        <td class="f_s_12 f_w_400"><a href="document-edit.html">Lorem ipsum dolor sit amet Lorem ipsum dolor </a></td>
+                                        <td class="f_s_12 f_w_400 text_color_1 "><a href="document-edit.html">24 Jun 2021</a></td>
+                                        <td class="f_s_12 f_w_400 text-right">
+                                            <div class="header_more_tool">
+                                                <div class="dropdown">
+                                                    <span class="dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown">
+                                                      <i class="ti-more-alt"></i>
+                                                    </span>
+                                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                                                      <a class="dropdown-item" href="#"> <i class="ti-eye"></i> Action</a>
+                                                      <a class="dropdown-item" href="#"> <i class="ti-trash"></i> Delete</a>
+                                                      <a class="dropdown-item" href="document-edit.html"> <i class="fas fa-edit"></i> Edit</a>
+                                                      <a class="dropdown-item" href="#"> <i class="ti-printer"></i> Print</a>
+                                                      <a class="dropdown-item" href="#"> <i class="fa fa-download"></i> Download</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>                                           
+                                    </tr>
+                                    <tr data-href="document-edit.html">
+                                        
+                                        <td class="checkDocument">
+                                            <input type="checkbox" class="check_all" onclick="set_check_all(this);">
+                                        </td>
+                                        <td class="f_s_12 f_w_400"><a href="document-edit.html">Doc142 Jmd</a></td>
+                                        <td class="f_s_12 f_w_400"><a href="document-edit.html">Lorem ipsum dolor sit amet Lorem ipsum dolor </a></td>
+                                        <td class="f_s_12 f_w_400 text_color_1 "><a href="document-edit.html">24 Jun 2021</a></td>
+                                        <td class="f_s_12 f_w_400 text-right">
+                                            <div class="header_more_tool">
+                                                <div class="dropdown">
+                                                    <span class="dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown">
+                                                      <i class="ti-more-alt"></i>
+                                                    </span>
+                                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                                                      <a class="dropdown-item" href="#"> <i class="ti-eye"></i> Action</a>
+                                                      <a class="dropdown-item" href="#"> <i class="ti-trash"></i> Delete</a>
+                                                      <a class="dropdown-item" href="document-edit.html"> <i class="fas fa-edit"></i> Edit</a>
+                                                      <a class="dropdown-item" href="#"> <i class="ti-printer"></i> Print</a>
+                                                      <a class="dropdown-item" href="#"> <i class="fa fa-download"></i> Download</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>                                           
+                                    </tr>
+                                    <tr data-href="document-edit.html">
+                                        
+                                        <td class="checkDocument">
+                                            <input type="checkbox" class="check_all" onclick="set_check_all(this);">
+                                        </td>
+                                        <td class="f_s_12 f_w_400"><a href="document-edit.html">Doc142 Jmd</a></td>
+                                        <td class="f_s_12 f_w_400"><a href="document-edit.html">Lorem ipsum dolor sit amet Lorem ipsum dolor </a></td>
+                                        <td class="f_s_12 f_w_400 text_color_1 "><a href="document-edit.html">24 Jun 2021</a></td>
+                                        <td class="f_s_12 f_w_400 text-right">
+                                            <div class="header_more_tool">
+                                                <div class="dropdown">
+                                                    <span class="dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown">
+                                                      <i class="ti-more-alt"></i>
+                                                    </span>
+                                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                                                      <a class="dropdown-item" href="#"> <i class="ti-eye"></i> Action</a>
+                                                      <a class="dropdown-item" href="#"> <i class="ti-trash"></i> Delete</a>
+                                                      <a class="dropdown-item" href="document-edit.html"> <i class="fas fa-edit"></i> Edit</a>
+                                                      <a class="dropdown-item" href="#"> <i class="ti-printer"></i> Print</a>
+                                                      <a class="dropdown-item" href="#"> <i class="fa fa-download"></i> Download</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>                                           
+                                    </tr>
+                                    <tr data-href="document-edit.html">
+                                        
+                                        <td class="checkDocument">
+                                            <input type="checkbox" class="check_all" onclick="set_check_all(this);">
+                                        </td>
+                                        <td class="f_s_12 f_w_400"><a href="document-edit.html">Doc142 Jmd</a></td>
+                                        <td class="f_s_12 f_w_400"><a href="document-edit.html">Lorem ipsum dolor sit amet Lorem ipsum dolor </a></td>
+                                        <td class="f_s_12 f_w_400 text_color_1 "><a href="document-edit.html">24 Jun 2021</a></td>
+                                        <td class="f_s_12 f_w_400 text-right">
+                                            <div class="header_more_tool">
+                                                <div class="dropdown">
+                                                    <span class="dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown">
+                                                      <i class="ti-more-alt"></i>
+                                                    </span>
+                                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                                                      <a class="dropdown-item" href="#"> <i class="ti-eye"></i> Action</a>
+                                                      <a class="dropdown-item" href="#"> <i class="ti-trash"></i> Delete</a>
+                                                      <a class="dropdown-item" href="document-edit.html"> <i class="fas fa-edit"></i> Edit</a>
+                                                      <a class="dropdown-item" href="#"> <i class="ti-printer"></i> Print</a>
+                                                      <a class="dropdown-item" href="#"> <i class="fa fa-download"></i> Download</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>                                           
+                                    </tr>
+                                    <tr data-href="document-edit.html">
+                                        
+                                        <td class="checkDocument">
+                                            <input type="checkbox" class="check_all" onclick="set_check_all(this);">
+                                        </td>
+                                        <td class="f_s_12 f_w_400"><a href="document-edit.html">Doc142 Jmd</a></td>
+                                        <td class="f_s_12 f_w_400"><a href="document-edit.html">Lorem ipsum dolor sit amet Lorem ipsum dolor </a></td>
+                                        <td class="f_s_12 f_w_400 text_color_1 "><a href="document-edit.html">24 Jun 2021</a></td>
+                                        <td class="f_s_12 f_w_400 text-right">
+                                            <div class="header_more_tool">
+                                                <div class="dropdown">
+                                                    <span class="dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown">
+                                                      <i class="ti-more-alt"></i>
+                                                    </span>
+                                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                                                      <a class="dropdown-item" href="#"> <i class="ti-eye"></i> Action</a>
+                                                      <a class="dropdown-item" href="#"> <i class="ti-trash"></i> Delete</a>
+                                                      <a class="dropdown-item" href="document-edit.html"> <i class="fas fa-edit"></i> Edit</a>
+                                                      <a class="dropdown-item" href="#"> <i class="ti-printer"></i> Print</a>
+                                                      <a class="dropdown-item" href="#"> <i class="fa fa-download"></i> Download</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>                                           
+                                    </tr>
+                                    <tr data-href="document-edit.html">
+                                        
+                                        <td class="checkDocument">
+                                            <input type="checkbox" class="check_all" onclick="set_check_all(this);">
+                                        </td>
+                                        <td class="f_s_12 f_w_400"><a href="document-edit.html">Doc142 Jmd</a></td>
+                                        <td class="f_s_12 f_w_400"><a href="document-edit.html">Lorem ipsum dolor sit amet Lorem ipsum dolor </a></td>
+                                        <td class="f_s_12 f_w_400 text_color_1 "><a href="document-edit.html">24 Jun 2021</a></td>
+                                        <td class="f_s_12 f_w_400 text-right">
+                                            <div class="header_more_tool">
+                                                <div class="dropdown">
+                                                    <span class="dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown">
+                                                      <i class="ti-more-alt"></i>
+                                                    </span>
+                                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                                                      <a class="dropdown-item" href="#"> <i class="ti-eye"></i> Action</a>
+                                                      <a class="dropdown-item" href="#"> <i class="ti-trash"></i> Delete</a>
+                                                      <a class="dropdown-item" href="document-edit.html"> <i class="fas fa-edit"></i> Edit</a>
+                                                      <a class="dropdown-item" href="#"> <i class="ti-printer"></i> Print</a>
+                                                      <a class="dropdown-item" href="#"> <i class="fa fa-download"></i> Download</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>                                           
+                                    </tr>
+                                    <tr data-href="document-edit.html">
+                                        
+                                        <td class="checkDocument">
+                                            <input type="checkbox" class="check_all" onclick="set_check_all(this);">
+                                        </td>
+                                        <td class="f_s_12 f_w_400"><a href="document-edit.html">Doc142 Jmd</a></td>
+                                        <td class="f_s_12 f_w_400"><a href="document-edit.html">Lorem ipsum dolor sit amet Lorem ipsum dolor </a></td>
+                                        <td class="f_s_12 f_w_400 text_color_1 "><a href="document-edit.html">24 Jun 2021</a></td>
+                                        <td class="f_s_12 f_w_400 text-right">
+                                            <div class="header_more_tool">
+                                                <div class="dropdown">
+                                                    <span class="dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown">
+                                                      <i class="ti-more-alt"></i>
+                                                    </span>
+                                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                                                      <a class="dropdown-item" href="#"> <i class="ti-eye"></i> Action</a>
+                                                      <a class="dropdown-item" href="#"> <i class="ti-trash"></i> Delete</a>
+                                                      <a class="dropdown-item" href="document-edit.html"> <i class="fas fa-edit"></i> Edit</a>
+                                                      <a class="dropdown-item" href="#"> <i class="ti-printer"></i> Print</a>
+                                                      <a class="dropdown-item" href="#"> <i class="fa fa-download"></i> Download</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>                                           
+                                    </tr>
+                                    <tr data-href="document-edit.html">
+                                        
+                                        <td class="checkDocument">
+                                            <input type="checkbox" class="check_all" onclick="set_check_all(this);">
+                                        </td>
+                                        <td class="f_s_12 f_w_400"><a href="document-edit.html">Doc142 Jmd</a></td>
+                                        <td class="f_s_12 f_w_400"><a href="document-edit.html">Lorem ipsum dolor sit amet Lorem ipsum dolor </a></td>
+                                        <td class="f_s_12 f_w_400 text_color_1 "><a href="document-edit.html">24 Jun 2021</a></td>
+                                        <td class="f_s_12 f_w_400 text-right">
+                                            <div class="header_more_tool">
+                                                <div class="dropdown">
+                                                    <span class="dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown">
+                                                      <i class="ti-more-alt"></i>
+                                                    </span>
+                                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                                                      <a class="dropdown-item" href="#"> <i class="ti-eye"></i> Action</a>
+                                                      <a class="dropdown-item" href="#"> <i class="ti-trash"></i> Delete</a>
+                                                      <a class="dropdown-item" href="document-edit.html"> <i class="fas fa-edit"></i> Edit</a>
+                                                      <a class="dropdown-item" href="#"> <i class="ti-printer"></i> Print</a>
+                                                      <a class="dropdown-item" href="#"> <i class="fa fa-download"></i> Download</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>                                           
+                                    </tr>
+                                    <tr data-href="document-edit.html">
+                                        
+                                        <td class="checkDocument">
+                                            <input type="checkbox" class="check_all" onclick="set_check_all(this);">
+                                        </td>
+                                        <td class="f_s_12 f_w_400"><a href="document-edit.html">Doc142 Jmd</a></td>
+                                        <td class="f_s_12 f_w_400"><a href="document-edit.html">Lorem ipsum dolor sit amet Lorem ipsum dolor </a></td>
+                                        <td class="f_s_12 f_w_400 text_color_1 "><a href="document-edit.html">24 Jun 2021</a></td>
+                                        <td class="f_s_12 f_w_400 text-right">
+                                            <div class="header_more_tool">
+                                                <div class="dropdown">
+                                                    <span class="dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown">
+                                                      <i class="ti-more-alt"></i>
+                                                    </span>
+                                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                                                      <a class="dropdown-item" href="#"> <i class="ti-eye"></i> Action</a>
+                                                      <a class="dropdown-item" href="#"> <i class="ti-trash"></i> Delete</a>
+                                                      <a class="dropdown-item" href="document-edit.html"> <i class="fas fa-edit"></i> Edit</a>
+                                                      <a class="dropdown-item" href="#"> <i class="ti-printer"></i> Print</a>
+                                                      <a class="dropdown-item" href="#"> <i class="fa fa-download"></i> Download</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>                                           
+                                    </tr>
+                                    <tr data-href="document-edit.html">
+                                        
+                                        <td class="checkDocument">
+                                            <input type="checkbox" class="check_all" onclick="set_check_all(this);">
+                                        </td>
+                                        <td class="f_s_12 f_w_400"><a href="document-edit.html">Doc142 Jmd</a></td>
+                                        <td class="f_s_12 f_w_400"><a href="document-edit.html">Lorem ipsum dolor sit amet Lorem ipsum dolor </a></td>
+                                        <td class="f_s_12 f_w_400 text_color_1 "><a href="document-edit.html">24 Jun 2021</a></td>
+                                        <td class="f_s_12 f_w_400 text-right">
+                                            <div class="header_more_tool">
+                                                <div class="dropdown">
+                                                    <span class="dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown">
+                                                      <i class="ti-more-alt"></i>
+                                                    </span>
+                                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                                                      <a class="dropdown-item" href="#"> <i class="ti-eye"></i> Action</a>
+                                                      <a class="dropdown-item" href="#"> <i class="ti-trash"></i> Delete</a>
+                                                      <a class="dropdown-item" href="document-edit.html"> <i class="fas fa-edit"></i> Edit</a>
+                                                      <a class="dropdown-item" href="#"> <i class="ti-printer"></i> Print</a>
+                                                      <a class="dropdown-item" href="#"> <i class="fa fa-download"></i> Download</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>                                           
+                                    </tr>
+                                    <tr data-href="document-edit.html">
+                                        
+                                        <td class="checkDocument">
+                                            <input type="checkbox" class="check_all" onclick="set_check_all(this);">
+                                        </td>
+                                        <td class="f_s_12 f_w_400"><a href="document-edit.html">Doc142 Jmd</a></td>
+                                        <td class="f_s_12 f_w_400"><a href="document-edit.html">Lorem ipsum dolor sit amet Lorem ipsum dolor </a></td>
+                                        <td class="f_s_12 f_w_400 text_color_1 "><a href="document-edit.html">24 Jun 2021</a></td>
+                                        <td class="f_s_12 f_w_400 text-right">
+                                            <div class="header_more_tool">
+                                                <div class="dropdown">
+                                                    <span class="dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown">
+                                                      <i class="ti-more-alt"></i>
+                                                    </span>
+                                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                                                      <a class="dropdown-item" href="#"> <i class="ti-eye"></i> Action</a>
+                                                      <a class="dropdown-item" href="#"> <i class="ti-trash"></i> Delete</a>
+                                                      <a class="dropdown-item" href="document-edit.html"> <i class="fas fa-edit"></i> Edit</a>
+                                                      <a class="dropdown-item" href="#"> <i class="ti-printer"></i> Print</a>
+                                                      <a class="dropdown-item" href="#"> <i class="fa fa-download"></i> Download</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>                                           
+                                    </tr>
+                                    <tr data-href="document-edit.html">
+                                        
+                                        <td class="checkDocument">
+                                            <input type="checkbox" class="check_all" onclick="set_check_all(this);">
+                                        </td>
+                                        <td class="f_s_12 f_w_400"><a href="document-edit.html">Doc142 Jmd</a></td>
+                                        <td class="f_s_12 f_w_400"><a href="document-edit.html">Lorem ipsum dolor sit amet Lorem ipsum dolor </a></td>
+                                        <td class="f_s_12 f_w_400 text_color_1 "><a href="document-edit.html">24 Jun 2021</a></td>
+                                        <td class="f_s_12 f_w_400 text-right">
+                                            <div class="header_more_tool">
+                                                <div class="dropdown">
+                                                    <span class="dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown">
+                                                      <i class="ti-more-alt"></i>
+                                                    </span>
+                                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                                                      <a class="dropdown-item" href="#"> <i class="ti-eye"></i> Action</a>
+                                                      <a class="dropdown-item" href="#"> <i class="ti-trash"></i> Delete</a>
+                                                      <a class="dropdown-item" href="document-edit.html"> <i class="fas fa-edit"></i> Edit</a>
+                                                      <a class="dropdown-item" href="#"> <i class="ti-printer"></i> Print</a>
+                                                      <a class="dropdown-item" href="#"> <i class="fa fa-download"></i> Download</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>                                           
+                                    </tr>
+                                    <tr data-href="document-edit.html">
+                                        
+                                        <td class="checkDocument">
+                                            <input type="checkbox" class="check_all" onclick="set_check_all(this);">
+                                        </td>
+                                        <td class="f_s_12 f_w_400"><a href="document-edit.html">Doc142 Jmd</a></td>
+                                        <td class="f_s_12 f_w_400"><a href="document-edit.html">Lorem ipsum dolor sit amet Lorem ipsum dolor </a></td>
+                                        <td class="f_s_12 f_w_400 text_color_1 "><a href="document-edit.html">24 Jun 2021</a></td>
+                                        <td class="f_s_12 f_w_400 text-right">
+                                            <div class="header_more_tool">
+                                                <div class="dropdown">
+                                                    <span class="dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown">
+                                                      <i class="ti-more-alt"></i>
+                                                    </span>
+                                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                                                      <a class="dropdown-item" href="#"> <i class="ti-eye"></i> Action</a>
+                                                      <a class="dropdown-item" href="#"> <i class="ti-trash"></i> Delete</a>
+                                                      <a class="dropdown-item" href="document-edit.html"> <i class="fas fa-edit"></i> Edit</a>
+                                                      <a class="dropdown-item" href="#"> <i class="ti-printer"></i> Print</a>
+                                                      <a class="dropdown-item" href="#"> <i class="fa fa-download"></i> Download</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>                                           
+                                    </tr>
+                                    <tr data-href="document-edit.html">
+                                        
+                                        <td class="checkDocument">
+                                            <input type="checkbox" class="check_all" onclick="set_check_all(this);">
+                                        </td>
+                                        <td class="f_s_12 f_w_400"><a href="document-edit.html">Doc142 Jmd</a></td>
+                                        <td class="f_s_12 f_w_400"><a href="document-edit.html">Lorem ipsum dolor sit amet Lorem ipsum dolor </a></td>
+                                        <td class="f_s_12 f_w_400 text_color_1 "><a href="document-edit.html">24 Jun 2021</a></td>
+                                        <td class="f_s_12 f_w_400 text-right">
+                                            <div class="header_more_tool">
+                                                <div class="dropdown">
+                                                    <span class="dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown">
+                                                      <i class="ti-more-alt"></i>
+                                                    </span>
+                                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                                                      <a class="dropdown-item" href="#"> <i class="ti-eye"></i> Action</a>
+                                                      <a class="dropdown-item" href="#"> <i class="ti-trash"></i> Delete</a>
+                                                      <a class="dropdown-item" href="document-edit.html"> <i class="fas fa-edit"></i> Edit</a>
+                                                      <a class="dropdown-item" href="#"> <i class="ti-printer"></i> Print</a>
+                                                      <a class="dropdown-item" href="#"> <i class="fa fa-download"></i> Download</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>                                           
+                                    </tr>
+                                    <tr data-href="document-edit.html">
+                                        
+                                        <td class="checkDocument">
+                                            <input type="checkbox" class="check_all" onclick="set_check_all(this);">
+                                        </td>
+                                        <td class="f_s_12 f_w_400"><a href="document-edit.html">Doc142 Jmd</a></td>
+                                        <td class="f_s_12 f_w_400"><a href="document-edit.html">Lorem ipsum dolor sit amet Lorem ipsum dolor </a></td>
+                                        <td class="f_s_12 f_w_400 text_color_1 "><a href="document-edit.html">24 Jun 2021</a></td>
+                                        <td class="f_s_12 f_w_400 text-right">
+                                            <div class="header_more_tool">
+                                                <div class="dropdown">
+                                                    <span class="dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown">
+                                                      <i class="ti-more-alt"></i>
+                                                    </span>
+                                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                                                      <a class="dropdown-item" href="#"> <i class="ti-eye"></i> Action</a>
+                                                      <a class="dropdown-item" href="#"> <i class="ti-trash"></i> Delete</a>
+                                                      <a class="dropdown-item" href="document-edit.html"> <i class="fas fa-edit"></i> Edit</a>
+                                                      <a class="dropdown-item" href="#"> <i class="ti-printer"></i> Print</a>
+                                                      <a class="dropdown-item" href="#"> <i class="fa fa-download"></i> Download</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>                                           
+                                    </tr>
+                                    <tr data-href="document-edit.html">
+                                        
+                                        <td class="checkDocument">
+                                            <input type="checkbox" class="check_all" onclick="set_check_all(this);">
+                                        </td>
+                                        <td class="f_s_12 f_w_400"><a href="document-edit.html">Doc142 Jmd</a></td>
+                                        <td class="f_s_12 f_w_400"><a href="document-edit.html">Lorem ipsum dolor sit amet Lorem ipsum dolor </a></td>
+                                        <td class="f_s_12 f_w_400 text_color_1 "><a href="document-edit.html">24 Jun 2021</a></td>
+                                        <td class="f_s_12 f_w_400 text-right">
+                                            <div class="header_more_tool">
+                                                <div class="dropdown">
+                                                    <span class="dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown">
+                                                      <i class="ti-more-alt"></i>
+                                                    </span>
+                                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                                                      <a class="dropdown-item" href="#"> <i class="ti-eye"></i> Action</a>
+                                                      <a class="dropdown-item" href="#"> <i class="ti-trash"></i> Delete</a>
+                                                      <a class="dropdown-item" href="document-edit.html"> <i class="fas fa-edit"></i> Edit</a>
+                                                      <a class="dropdown-item" href="#"> <i class="ti-printer"></i> Print</a>
+                                                      <a class="dropdown-item" href="#"> <i class="fa fa-download"></i> Download</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>                                           
+                                    </tr>
+                                    <tr data-href="document-edit.html">
+                                        
+                                        <td class="checkDocument">
+                                            <input type="checkbox" class="check_all" onclick="set_check_all(this);">
+                                        </td>
+                                        <td class="f_s_12 f_w_400"><a href="document-edit.html">Doc142 Jmd</a></td>
+                                        <td class="f_s_12 f_w_400"><a href="document-edit.html">Lorem ipsum dolor sit amet Lorem ipsum dolor </a></td>
+                                        <td class="f_s_12 f_w_400 text_color_1 "><a href="document-edit.html">24 Jun 2021</a></td>
+                                        <td class="f_s_12 f_w_400 text-right">
+                                            <div class="header_more_tool">
+                                                <div class="dropdown">
+                                                    <span class="dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown">
+                                                      <i class="ti-more-alt"></i>
+                                                    </span>
+                                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                                                      <a class="dropdown-item" href="#"> <i class="ti-eye"></i> Action</a>
+                                                      <a class="dropdown-item" href="#"> <i class="ti-trash"></i> Delete</a>
+                                                      <a class="dropdown-item" href="document-edit.html"> <i class="fas fa-edit"></i> Edit</a>
+                                                      <a class="dropdown-item" href="#"> <i class="ti-printer"></i> Print</a>
+                                                      <a class="dropdown-item" href="#"> <i class="fa fa-download"></i> Download</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>                                           
+                                    </tr>
+                                    <tr data-href="document-edit.html">
+                                        
+                                        <td class="checkDocument">
+                                            <input type="checkbox" class="check_all" onclick="set_check_all(this);">
+                                        </td>
+                                        <td class="f_s_12 f_w_400"><a href="document-edit.html">Doc142 Jmd</a></td>
+                                        <td class="f_s_12 f_w_400"><a href="document-edit.html">Lorem ipsum dolor sit amet Lorem ipsum dolor </a></td>
+                                        <td class="f_s_12 f_w_400 text_color_1 "><a href="document-edit.html">24 Jun 2021</a></td>
+                                        <td class="f_s_12 f_w_400 text-right">
+                                            <div class="header_more_tool">
+                                                <div class="dropdown">
+                                                    <span class="dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown">
+                                                      <i class="ti-more-alt"></i>
+                                                    </span>
+                                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                                                      <a class="dropdown-item" href="#"> <i class="ti-eye"></i> Action</a>
+                                                      <a class="dropdown-item" href="#"> <i class="ti-trash"></i> Delete</a>
+                                                      <a class="dropdown-item" href="document-edit.html"> <i class="fas fa-edit"></i> Edit</a>
+                                                      <a class="dropdown-item" href="#"> <i class="ti-printer"></i> Print</a>
+                                                      <a class="dropdown-item" href="#"> <i class="fa fa-download"></i> Download</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>                                           
+                                    </tr>
+                                    <tr data-href="document-edit.html">
+                                        
+                                        <td class="checkDocument">
+                                            <input type="checkbox" class="check_all" onclick="set_check_all(this);">
+                                        </td>
+                                        <td class="f_s_12 f_w_400"><a href="document-edit.html">Doc142 Jmd</a></td>
+                                        <td class="f_s_12 f_w_400"><a href="document-edit.html">Lorem ipsum dolor sit amet Lorem ipsum dolor </a></td>
+                                        <td class="f_s_12 f_w_400 text_color_1 "><a href="document-edit.html">24 Jun 2021</a></td>
+                                        <td class="f_s_12 f_w_400 text-right">
+                                            <div class="header_more_tool">
+                                                <div class="dropdown">
+                                                    <span class="dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown">
+                                                      <i class="ti-more-alt"></i>
+                                                    </span>
+                                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                                                      <a class="dropdown-item" href="#"> <i class="ti-eye"></i> Action</a>
+                                                      <a class="dropdown-item" href="#"> <i class="ti-trash"></i> Delete</a>
+                                                      <a class="dropdown-item" href="document-edit.html"> <i class="fas fa-edit"></i> Edit</a>
+                                                      <a class="dropdown-item" href="#"> <i class="ti-printer"></i> Print</a>
+                                                      <a class="dropdown-item" href="#"> <i class="fa fa-download"></i> Download</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>                                           
+                                    </tr>
+
+                                       
+                                       
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="white_card card_height_100 mb_20 ">
+                        <div class="white_card_header">
+                            <div class="box_header m-0">
+                                <div class="main-title">
+                                    <h3 class="m-0">Document View</h3>
+                                </div>
+                             
+                            </div>
+                        </div>
+                        <div class="white_card_body QA_section">
+                            <div class="samplepdfblk">
+                                <iframe src="img/sample1.pdf" ></iframe>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- footer part -->
+<div class="footer_part">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="footer_iner text-center">
+                    <p>2021 © WorkStaition - Designed by <a href="#"> <i class="ti-heart"></i> </a><a href="#"> Tenthmatrix</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</section>
+<!-- main content part end -->
+
+
+
+<!-- modals ppup  -->
+  <!-- Modal -->
+  <div class="modal fade" id="setModelData" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLongTitle">
+              <div class="modelSearch">
+                  <div class="form-group">
+                      <input type="text" class="form-control" placeholder="Search..." name="">
+                      <i class="ti-search"></i>
+                  </div>
+              </div>
+
+          </h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <div class="setModelListBlk">
+                <select class="form-control" name="states[]" multiple="multiple" style="height: 200px;">
+                    <option value="one">Xmas Wishlist [21]</option>
+                    <option value="two">Why Workstation [29]</option>
+                    <option value="Three">Needs reviewing [42]</option>
+                    <option value="four">HMRC VAT EORI DOCS [2]</option>
+                    <option value="five">Getting started [26]</option>
+                    <option value="six">For Bal Review 24 June 2021[7]</option>
+                    <option value="seven">CRM Installation [26]</option>
+                    <option value="eight">Configuration Manual [24]</option>
+                    <option value="nine">Balinder Documents [10]</option>
+                    <option value="ten">Articles [24]</option>
+                </select>        
+                <!-- <ul>
+                    <li>Xmas Wishlist [21]</li>
+                    <li>Why Workstation [29]</li>
+                    <li>Needs reviewing [42]</li>
+                    <li>HMRC VAT EORI DOCS [2]</li>
+                    <li>Getting started [26]</li>
+                    <li>For Bal Review 24 June 2021[7]</li>
+                    <li>CRM Installation [26]</li>
+                    <li>Configuration Manual [24]</li>
+                    <li>Brussels Expenses [27]</li>
+                    <li>Balinder Documents [10]</li>
+                    <li>Articles [24]</li>
+                </ul> -->
+            </div>          
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" >Add</button>
+          <button type="button" class="btn btn-primary">Delete</button>
+          <button type="button" class="btn btn-secondary" > Script</button>
+          <button type="button" class="btn btn-primary">Load</button>
+          <button type="button" class="btn btn-secondary">Ok</button>
+
+        </div>  
+      </div>
+    </div>
+  </div>
+<!-- modals ppup  -->
+
+
+<!-- footer  -->
+<script src="js/jquery-2.2.3.min.js"></script>
+<script src="js/popper.min.js"></script>
+
+<!-- bootstarp js -->
+<script src="js/bootstrap.min.js"></script>
+<!-- sidebar menu  -->
+<script src="js/metisMenu.js"></script>
+<script src="js/select2.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+    $('.js-example-basic-multiple').select2();
+});
+</script>
+<script type="text/javascript">
+    $('*[data-href]').on("click",function(){
+      window.location = $(this).data('href');
+      return false;
+    });
+    $("td > a").on("click",function(e){
+      e.stopPropagation();
+    });
+    </script>
+<script src="js/custom.js"></script>
+
+</body>
+</html>
+<!--#4DELSE--><!--#4DENDIF-->

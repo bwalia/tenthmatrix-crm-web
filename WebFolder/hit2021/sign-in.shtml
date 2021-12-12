@@ -1,0 +1,114 @@
+<!--HIT_EXECUTE
+C_TEXT(_HTMLTITLETXT)
+_HTMLTITLETXT:="Workstation CRM v1 - Sign in"
+-->
+<!DOCTYPE html>
+<html lang="zxx">
+<meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <title>WorkStation</title>
+
+    <link rel="icon" href="img/workstation-logo-icon.png" type="image/png">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+       <link rel="stylesheet" href="vendors/font_awesome/css/all.min.css" />
+    <!-- Icons CSS -->
+    <link rel="stylesheet" href="vendors/themefy_icon/themify-icons.css" />
+  <!-- sidebarmenu -->
+    <link rel="stylesheet" href="css/metisMenu.css">
+    <!-- style CSS -->
+    <link rel="stylesheet" href="css/style.css" />
+</head>
+<body class="crm_body_bg">   
+
+
+<!-- main content part here -->
+
+<section class="loginBlkMain dashboard_part large_header_bg">
+      
+    <div class="main_content_iner ">
+        <div class="container-fluid p-0">
+            <div class="row justify-content-center">
+              
+                <div class="col-lg-12">
+                    <div class="mb_30">
+                        <div class="row justify-content-center">
+                          
+                            <div class="col-lg-4">
+                              
+                                <!-- sign_in  -->
+                                <div class="modal-content cs_modal loginModel">
+                                   
+                                    <div class="modal-body">
+                                        <div class="logo  text-center">
+                                            <a class="large_logo" href="index.html"><img src="img/workstation-logo-login.png" alt=""></a>
+                                        </div>
+                                        <br/><br/>
+	    	<!--HIT_EXECUTE
+                C_TEXT(_HIT_HTMLTXT)
+                _HIT_HTMLTXT:=_HIT_WebSession_GetVar ("auth_user_type")-->
+                <form id="form-auth" method="post" action="authenticate.cgi" role="form">
+                    <input name="url_to_redirect" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("url")-->">
+        
+                                        <div class="form-group">
+                                                <input name="auth_user" id="username" type="text" class="form-control" placeholder="Enter your username">
+                                            </div>
+                                            <div class="form-group">
+                                                <input type="password" class="form-control" placeholder="Password" name="auth_password" id="password">
+                                            </div>
+                                            <a id="login-btn" href="#" class="btn_1 full_width text-center">Log in</a>
+                                            <div class="text-center">
+                                                <a href="forget_password.html" class="pass_forget_btn">Forget Password?</a>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- footer part -->
+<div class="footer_part_Login">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+               <div class="footer_iner text-center">
+                    <p>2021 © WorkStaition - Designed by <a href="#"> <i class="ti-heart"></i> </a><a href="#"> Tenthmatrix</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</section>
+
+
+<!-- footer  -->
+<script src="js/jquery-3.4.1.min.js"></script>
+<script src="js/popper.min.js"></script>
+
+<!-- bootstarp js -->
+<script src="js/bootstrap.min.js"></script>
+<!-- sidebar menu  -->
+<script src="js/metisMenu.js"></script>
+
+<script src="js/custom.js"></script>
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $( "#login-btn" ).click(function() {
+            $( "#form-auth" ).submit();
+        });
+    });
+    </script>
+    
+</body>
+</html>

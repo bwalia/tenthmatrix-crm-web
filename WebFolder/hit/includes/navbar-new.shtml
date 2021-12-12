@@ -13,7 +13,7 @@ last_week:=curr_date-6
                 <span class="icon-bar"></span>
             </button>
             
-            <a class="brand" href="index.shtml"><img src="img/logo1.png"></a>
+            <a class="brand" href="index.shtml"><img src="img/cloudcrm.png"></a>
 
             <ul class="nav pull-right">                
                 <li class="hidden-phone">

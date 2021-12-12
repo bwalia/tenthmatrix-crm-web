@@ -24,12 +24,12 @@ end if
 <!DOCTYPE html>
 <html>
 <head>
-	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
-	 <link href="css/bootstrap.datepicker.css" type="text/css" rel="stylesheet">
-	<link rel="stylesheet" type="text/css" href="css/jquery.ptTimeSelect.css" />
-	<link rel="stylesheet" href="css/autocomplete.css" />
-	<link rel="stylesheet" href="css/colorbox.css" />
-	<link rel="stylesheet" href="css/basictable.css">
+  <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/header.shtml-->
+   <link href="css/bootstrap.datepicker.css" type="text/css" rel="stylesheet">
+   <link rel="stylesheet" type="text/css" href="css/jquery.ptTimeSelect.css" />
+   <link rel="stylesheet" href="css/autocomplete.css" />
+   <link rel="stylesheet" href="css/colorbox.css" />
+   <link rel="stylesheet" href="css/basictable.css">
 <style>
 .custom-combobox a.ui-button, 
   .custom-combobox a.ui-widget, 
@@ -37,12 +37,12 @@ end if
   .custom-combobox a.ui-button-icon-only, 
   .custom-combobox a.custom-combobox-toggle, 
   .custom-combobox a.ui-corner-right {
-	top:0px;
+top:0px;
   }
  #ProjectForm em.error {
-	margin-left: 10px;
-	width: auto;
-	display: inline;
+margin-left: 10px;
+width: auto;
+display: inline;
 }
 #ProjectForm em.error {
     color: red;
@@ -54,8 +54,8 @@ end if
 
   
   .chosen-container{
-	  width: 424px !important;
-	  
+  width: 424px !important;
+  
 
   }
   
@@ -68,9 +68,9 @@ end if
   
   
   .chosen-container-multi .chosen-choices{
-	  height: 32px !important;
-	  border-radius:4px!important;
-	  border: 1px solid #d3d3d3!important;
+  height: 32px !important;
+  border-radius:4px!important;
+  border: 1px solid #d3d3d3!important;
  
   }
   
@@ -94,119 +94,162 @@ end if
 
     <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navigation.shtml-->
 
-	<!-- main container -->
-   	<div class="content-wrapper" >
+    <!-- main container -->
+    <div class="content-wrapper" >
         <section class="content-header">
-      		<h1>
-        		<!--#4DIF (Records in selection([Documents])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Document
-      		</h1>
-      		<ol class="breadcrumb">
-       			<li><a href="index.shtml"><i class="fa fa-dashboard"></i> Dashboard</a></li>
-        		<li class="active">Document</li>
-      		</ol>
-    	</section>
-		
-		
-		<section>
-		<div class="row" STYLE="padding:0px 10px;">
-		<!-- left column -->
+	  <h1>
+            <!--#4DIF (Records in selection([Documents])=1)-->Edit<!--#4DELSE-->New<!--#4DENDIF--> Document
+	    </h1>
+	  <ol class="breadcrumb">
+	    <li><a href="index.shtml"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+            <li class="active">Document</li>
+	    </ol>
+	  </section>
+	
+	
+	<section>
+	  <div class="row" STYLE="padding:0px 10px;">
+	    <!-- left column -->
         <div class="col-md-8 with-sidebar">
-		<form name="DocumentForm" id="DocumentForm" action="savedocument.cgi" class="form-horizontal" method="post" enctype="multipart/form-data">
-		<input name="company_uuid" class="span6" type="hidden" value="<!--#4DVAR [Companies]uuid-->" id="company_uuid">
-		<div class="form-group">
+	  <form name="DocumentForm" id="DocumentForm" action="savedocument.cgi" class="form-horizontal" method="post" enctype="multipart/form-data">
+      <input name="xcompany_uuid" class="span6" type="hidden" value="<!--#4DVAR [Companies]uuid-->" id="xcompany_uuid">
+      <input type="hidden" id="sToken" value="<!--#4DVAR _HIT_TokenGetAny-->" />
+  
+	    <div class="form-group">
         <label class="col-sm-3 control-label">Client Name <span style="color:#6E829B">*</span></label>
                   <div class="ui-widget">
-                  <select id="Client_ID" name="Client_ID" >
-	  			 <!--#4DIF (Records in selection([Documents])=0)-->
-							<option value=""></option>
+                  <select id="company_uuid" name="company_uuid" >
+		     <!--#4DIF (Records in selection([Documents])=0)-->
+		     <option value=""></option>
                              <!--#4DSCRIPT/Web_LoadCustomers/-->
+                             <!--#4DIF (Records in selection([Companies])>1)-->
                              <!--4DLOOP  [Companies]-->
-								<option value="<!--4DVAR [Companies]uuid-->" <!--#4DIF ([Documents]uuid_customer=[Companies]uuid)-->selected<!--4DELSE--><!--4DENDIF-->><!--4DVAR [Companies]company_Name--></option>			
-								 <!--4DENDLOOP-->  
-								 <!--#4DELSE-->
-								 <option value="<!--4DVAR [Companies]uuid-->" selected><!--4DVAR [Companies]company_Name--></option>									 
-								 <!--#4DENDIF-->
+		     <option value="<!--4DVAR [Companies]uuid-->" <!--#4DIF ((_HIT_HTMLTXT=[Companies]uuid) | ([Documents]uuid_customer=[Companies]uuid))-->selected<!--4DELSE--><!--4DENDIF-->><!--4DVAR [Companies]company_Name--></option>
+          <!--4DENDLOOP--> 
+          <!--#4DELSE-->
+          <option value="<!--4DVAR [Companies]uuid-->" selected><!--4DVAR [Companies]company_Name--></option> 
+          <!--#4DENDIF-->
+		       <!--#4DELSE-->
+		     <option value="<!--4DVAR [Companies]uuid-->" selected><!--4DVAR [Companies]company_Name--></option> 
+		      <!--#4DENDIF-->
                                  </select>
                                  </div>
-							</div>
-							<div class="form-group">
-								<label class="col-sm-3 control-label">Filename:</label>
-								
-								<div CLASS="col-sm-6"><input class="form-control" name="file_name" type="text" value="<!--#4DVAR [Documents]filename-->" id="file_name"></div>
-								<!--#4DIF (Records in selection([Documents])#0)-->
-								&nbsp;Size:&nbsp;<!--#4DVAR _HIT_FileSizeHumanReadable (BLOB size([Documents]filecontent))-->
-								<!--#4DENDIF-->
-							</div>
-							<input name="doc_uuid" class="form-control" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="doc_uuid">
-							<div class="form-group">
-								<label class="col-sm-3 control-label">File Content:</label>
-								<div CLASS="col-sm-6"><input name="file_content" type="file" id="file_content"></div>
-								
-								<!--#4DIF (Records in selection([Documents])=1)-->
-								 <div CLASS="col-sm-3"><a title="Download Document <!--#4DHTMLVAR String([Documents]filename)-->" href="javascript:void(0)" onClick="download_file('<!--#4DVAR [Documents]uuid-->')">
-                                        <i class="fa fa-download"></i>&nbsp;</a>Download
-                                    </div>
-                                <!--#4DENDIF-->
-							</div>
-												
-							<div class="form-group">
-								<label class="col-sm-3 control-label">Relationship Type:</label>
-								<div CLASS="col-sm-6"><input class="form-control" name="type" type="text" value="<!--#4DVAR [Documents]doctype-->" id="type">
-								<input class="span6" name="customer" type="hidden" value="<!--#4DVAR [Companies]company_Name-->" id="customer">		</div>						
-							</div>
-							<div class="form-group">
-								<label class="col-sm-3 control-label">Metadata:</label>
-								<div CLASS="col-sm-6"><textarea class="form-control" name="metadata" id="metadata" rows="10"><!--#4DVAR [Documents]metadata--></textarea></div>
-							</div>	
-							
-							
-							
-							<div class="form-group">
-                            	<label class="col-sm-3 control-label"></label>
-                                 <div CLASS="col-sm-6"> 
-								 
-								 <input type="submit" name="Submit" class="btn btn-primary btn-sm" value="Submit">
-							
-								 <a href="documents.shtml"  class="btn btn-danger btn-sm">Cancel</a>
-								 
-								</div>
-							</div>
-							
-										
-								</form>
-			
-							</div>
-				
+		  </div>
+	    <div class="form-group" style="display: none">
+	      <label class="col-sm-3 control-label">Name:</label>
+	      
+	      <div CLASS="col-sm-6"><input class="form-control" name="file_name" type="text" value="<!--#4DIF ([Documents]filename="")-->automatic<!--4DELSE--><!--#4DVAR [Documents]filename--><!--4DENDIF-->" id="file_name"></div>
+	      </div>
+	    <input name="doc_uuid" class="form-control" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="doc_uuid">
+	    <div class="form-group">
+	      <label class="col-sm-3 control-label">File <!--#4DIF ((Records in selection([Documents])=1) & (BLOB size([Documents]filecontent)>0))-->(Size:&nbsp;<!--#4DVAR _HIT_FileSizeHumanReadable (BLOB size([Documents]filecontent))-->):<!--4DELSE--><!--#4DENDIF--></label>
+	      
+	      <!--#4DIF ((Records in selection([Documents])=1) & (BLOB size([Documents]filecontent)>0))-->
+
+        <div class="form-group"">
+            <label class="col-sm-4 control-label"></label>
+
+            <div CLASS="col-sm-6" style="width: 800px; height: 800px">
+              
+                <iframe id="doc_preview" allowfullscreen style="height:100%;width:100%;" height="100%" width="100%" src=""></iframe>
             </div>
-		
-		</section>
-		</div>
-		
-		
-		
+            </div>
+
+            <div class="form-group">
+              <label class="col-sm-3 control-label">Type:</label>
+              <div CLASS="col-sm-6"><!--#4DHTMLVAR [Documents]doctype--></div>
+            </div>
+	    
+	    <div class="form-group"">
+	      <label class="col-sm-3 control-label">Document:</label>
+	      
+	      <div CLASS="col-sm-6"><a title="Download Document <!--#4DHTMLVAR String([Documents]filename)-->" href="javascript:void(0)" onClick="download_file('<!--#4DVAR [Documents]uuid-->')"><i class="fa fa-download"></i>&nbsp;Download&nbsp;<!--#4DHTMLVAR String([Documents]filename)--></a></div>
+	      </div>
+      <!--#4DENDIF-->
+				</div>
+					    <div class="form-group">
+	      <label class="col-sm-3 control-label">Upload</label>
+	      <div CLASS="col-sm-6"><input name="file_content" type="file" id="file_content"></div>
+	      </div>
+                    
+                    <div class="form-group">
+      <label class="col-sm-3 control-label">Document date</label>
+      <div CLASS="col-sm-6">
+                        <input name="doc_date" class="input-large datepicker form-control" data-date-format="dd/mm/yyyy" type="text" <!--#4DIF ([Documents]created_timestamp=0)-->value=""<!--4DELSE-->value="<!--#4DVAR timestamp_unix_toDate ([Documents]created_timestamp)-->"<!--4DENDIF--> id="doc_date"></div>
+                    </div>
+                    
+	    <div class="form-group" style="display: none">
+	      <label class="col-sm-3 control-label">Relationship Type:</label>
+	      <div CLASS="col-sm-6"><input class="form-control" name="type" type="text" value="<!--#4DVAR [Documents]doctype-->" id="type">
+		<input class="span6" name="customer" type="hidden" value="<!--#4DVAR [Companies]company_Name-->" id="customer"></div>
+	      </div>
+	    <div class="form-group">
+	      <label class="col-sm-3 control-label">Metadata:</label>
+	      <div CLASS="col-sm-6"><textarea class="form-control" name="metadata" id="metadata" rows="3"><!--#4DVAR [Documents]metadata--></textarea></div>
+	    </div>
+	    
+	    
+	    
+	    <div class="form-group">
+              <label class="col-sm-3 control-label"></label>
+                                 <div CLASS="col-sm-6"> 
+				    
+								 <a style="float: left;" href="documents.shtml"  class="btn btn-danger btn-sm">Cancel</a>
+															 <input style="float: right;" type="submit" name="Submit" class="btn btn-primary btn-sm" value="Submit">
+				      
+				     </div>
+				 </div>
+	    
+	    
+	    </form>
+	  
+	  </div>
 	
+            </div>
+	  
+	  </section>
+	</div>
+    
+    
+    
+    
    
-	 <!-- end main container -->
-	<!-- scripts -->
-  	<!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/top-footer.shtml-->
+     <!-- end main container -->
+     <!-- scripts -->
+     <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/top-footer.shtml-->
 </div>
 <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/footer.shtml--> 
-	<script src="js/basictable.js"></script>
-	<script src="js/bootstrap.datepicker.js"></script>
-	<script src="js/jquery.validate.js"></script>
-	<script src="js/chosen.jquery.js" type="text/javascript"></script>
-	<script src='js/jquery.MetaData.js' type="text/javascript" language="javascript"></script>
-	<script src="js/jquery.colorbox.js"></script>
-		<!-- call this page plugins -->
-	
-	<script language="javascript">
+<script src="js/basictable.js"></script>
+<script src="js/bootstrap.datepicker.js"></script>
+<script src="js/jquery.validate.js"></script>
+<script src="js/chosen.jquery.js" type="text/javascript"></script>
+<script src='js/jquery.MetaData.js' type="text/javascript" language="javascript"></script>
+<script src="js/jquery.colorbox.js"></script>
+<!-- call this page plugins -->
+
+<script language="javascript">
 function download_file(e){
-	window.open('doc_preview.shtml?document_uuid='+e+'&token=<!--#4DVAR _HIT_TokenGetAny-->');
+window.open('doc_preview.shtml?document_uuid='+e+'&token=<!--#4DVAR _HIT_TokenGetAny-->');
 }
+
+function __loadCurrentDocPreview(e)
+{
+var doc_previewSrcURL = 'doc_preview.shtml?document_uuid='+e+'&token='+__getCurrentToken()+'&content-disposition-flag=0';
+//alert(doc_previewSrcURL);
+document.getElementById("doc_preview").src = doc_previewSrcURL;
+}
+
+
+function __getCurrentToken()
+{
+	return $('#sToken').val();
+}
+
+
 function ValidateForm () {
 var msg = '';
-if (document.DocumentForm.file_name.value=="")
-{ msg = msg + 'Please Specify File Name\n'; }
+// if (document.DocumentForm.file_name.value=="")
+// { msg = msg + 'Please Specify File Name\n'; }
 
 
 if (msg=="") {
@@ -217,29 +260,29 @@ return false;
 }}
 </script>
     <script type="text/javascript">
-	
+      
         $(function () {
-			// validate form on keyup and submit
-			$("#DocumentForm").validate({
-				ignore: "",
-				onkeyup: false,
-				errorClass: 'error',
-				validClass: 'valid',
-				errorElement: "em",
-				errorPlacement: function(error, element) {
-					$(element).closest('div').append(error);
-				},
-				rules: {
-					Client_ID: { required: true },
-					file_name: { required: true },
-				},
-			});	
-			 
-			
+	// validate form on keyup and submit
+	$("#DocumentForm").validate({
+	ignore: "",
+	onkeyup: false,
+	errorClass: 'error',
+	validClass: 'valid',
+	errorElement: "em",
+	errorPlacement: function(error, element) {
+	$(element).closest('div').append(error);
+	},
+	rules: {
+	company_uuid: { required: true },
+	file_name: { required: true },
+	},
+	});
+	 
+	
         });
     </script>
    <script>
-	 var xhr;
+      var xhr;
   (function( $ ) {
     $.widget( "custom.combobox", {
       _create: function() {
@@ -272,9 +315,9 @@ return false;
  
         this._on( this.input, {
           autocompleteselect: function( event, ui ) {
-		  	//alert("show all");
+       //alert("show all");
             ui.item.option.selected = true;
-			
+       
             this._trigger( "select", event, {
               item: ui.item.option
             });
@@ -319,11 +362,11 @@ return false;
  
       _source: function( request, response ) {
         //var matcher = new RegExp( $.ui.autocomplete.escapeRegex(request.term), "i" );
-		var ele_select= this.element;
-		if(request.term=='SHOWALL'){
-			response(ele_select.children( "option" ).map(function() {
+	 var ele_select= this.element;
+	 if(request.term=='SHOWALL'){
+	 response(ele_select.children( "option" ).map(function() {
           var text = $( this ).text();
-		 var value= $( this ).val();
+	  var value= $( this ).val();
           //if ( this.value && ( !request.term || matcher.test(text) ) )
             return {
               label: text,
@@ -331,30 +374,30 @@ return false;
               option: this
             };
         }) );
-		
-		}
-		else
-		{
-		var jsonRow = 'getcompaniesonsearch.cgi?srch='+request.term;
-		
+	 
+	 }
+	 else
+	 {
+	 var jsonRow = 'getcompaniesonsearch.cgi?srch='+request.term;
+	 
 
-		//alert(jsonRowURLStr);
-		if(xhr) xhr.abort();
-		xhr=$.getJSON(jsonRow,function(result){
-			
-			if(result){
-				var html='<option value=""></option>';
+	 //alert(jsonRowURLStr);
+	 if(xhr) xhr.abort();
+	 xhr=$.getJSON(jsonRow,function(result){
+	 
+	 if(result){
+	 var html='<option value=""></option>';
 
-				$.each(result, function(i,item)
-				{
-					html += '<option value="'+item.CustoemrUUID+'">'+item.value+'</option>';
-				});
-				ele_select.html(html);
-				
-				
-				response(ele_select.children( "option" ).map(function() {
+	 $.each(result, function(i,item)
+	 {
+	 html += '<option value="'+item.CustoemrUUID+'">'+item.value+'</option>';
+	 });
+	 ele_select.html(html);
+	 
+	 
+	 response(ele_select.children( "option" ).map(function() {
           var text = $( this ).text();
-		 var value= $( this ).val();
+	  var value= $( this ).val();
           //if ( this.value && ( !request.term || matcher.test(text) ) )
             return {
               label: text,
@@ -362,13 +405,13 @@ return false;
               option: this
             };
         }) );
-				
-				
-			}
-		});
+	 
+	 
+	 }
+	 });
        
-	  } 
-		
+	   } 
+	 
       },
  
       _removeIfInvalid: function( event, ui ) {
@@ -385,8 +428,8 @@ return false;
           valid = false;
         this.element.children( "option" ).each(function() {
           if ( $( this ).text().toLowerCase() === valueLowerCase ) {
-            this.selected = valid = true;	
-			
+         this.selected = valid = true;
+	 
             return false;
           }
         });
@@ -416,9 +459,18 @@ return false;
   })( jQuery );
  
   $(function() {
-    $( "#Client_ID" ).combobox();
-   
-	
+    $( "#company_uuid" ).combobox();
+  });
+
+  $(document).ready(function() {
+
+
+      $('#doc_date').datepicker().on('changeDate', function (ev) {
+          $(this).datepicker('hide');
+      });
+      
+  __loadCurrentDocPreview('<!--#4DVAR [Documents]uuid-->');
+
   });
 
   </script>

@@ -370,7 +370,7 @@ function __showContactForm_AddSet(val, name){
 				start=0;
 				end=25;
 				tab='';
-				jsonRow = 'loadcontacts.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab+'&selected='+selected+'&set=add_to_'+name+'&setUUID='+setUUID;
+				jsonRow = 'loadcontacts.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab+'&selected='+selected+'&set=add_to_'+name+'&setUUID='+setUUID+'&'+(new Date()).getTime()+'&';
 				$.getJSON(jsonRow,function(result){
 					if(result.Alert){
 						$("#selected_uuids").val("");
@@ -436,7 +436,7 @@ function saveNewSet(new_set, errorMessageDiv){
 				jsonRow = 'addDelContactsSets.cgi?tablname='+tablname+'&set='+new_set;
 			} else{
 				var selectedUUIDS=$("#selected_uuids").val();
-				jsonRow = 'loadcontacts.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab+'&selected='+selectedUUIDS+'&set=add_to_'+new_set;
+				jsonRow = 'loadcontacts.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab+'&selected='+selectedUUIDS+'&set=add_to_'+new_set+'&'+(new Date()).getTime()+'&';
 			}
 			
 			$.getJSON(jsonRow,function(result){
@@ -661,7 +661,7 @@ function load_data(jsonRow){
 	var JSONdata=new Array();
 	
 	var keyword= $("#keyword").val();
-	var jsonRow = 'loadcontacts.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&set='+selected_set+'&setUUID='+setUUID;
+	var jsonRow = 'loadcontacts.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&set='+selected_set+'&setUUID='+setUUID+'&'+(new Date()).getTime()+'&';
 	if(keyword!=''){
 		jsonRow +='&keyword='+keyword;
 	}

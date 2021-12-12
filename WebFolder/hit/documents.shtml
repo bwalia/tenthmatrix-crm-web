@@ -1,4 +1,5 @@
 <!--HIT_EXECUTE
+
 _HIT_HTTPD_SetHTTPHeader ("Content-type";"text/html; charset=utf-8")
 
 C_TEXT(_HIT_HTMLTXT)
@@ -8,9 +9,9 @@ C_TEXT(_HTMLTITLETXT)
 if(_HIT_AuthenticateSession="Session-Authenticated-OK")
 _HTMLTITLETXT:="Documents"
 
-else
+Else
 _HIT_HTTPD_RedirectToURL ("sign-in.shtml")
-end if 
+End if 
 
 -->
 <!DOCTYPE html>
@@ -21,6 +22,10 @@ end if
 <link rel="stylesheet" href="css/basictable.css">
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
+	
+		<input type="hidden" id="sDocUUID" value="" />
+		<input type="hidden" id="sToken" value="<!--#4DVAR _HIT_TokenGetAny-->" />
+
 <div class="wrapper">
 
 <!--#4DSCRIPT/_HIT_LoadInclude/hit/includes/navbar.shtml-->
@@ -32,10 +37,10 @@ end if
         <section class="content-header">
       		<h1>
         		Documents
-        		<small>List panel</small>
+        		<small>List</small>
       		</h1>
       		<ol class="breadcrumb">
-       			<li><a href="index.shtml"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+       			<li><a href="#" onclick="this.href='index.shtml?'+Math.random()"><i class="fa fa-dashboard"></i> Dashboard</a></li>
         		<li class="active">Documents</li>
       		</ol>
     	</section>
@@ -88,30 +93,28 @@ end if
                         <table class="table table-striped table-bordered table-hover custom-tbl-st bt" id="table-breakpoint" style="background-color: rgb(255, 255, 255); border-radius: 4px; display:none;" >
                             <thead>
                                 <tr>
-                                	<th>CLIENT</th>
-                                	<th>FILE NAME</th>
-                                	<th>DOCUMENT TYPE</th>
-                                	<th>SIZE</th>
-                                	<th>DATE MODIFIED</th>
-                                	<th>DATE CREATED</th>
-									<th>ACTION</th>
+                                	<th width="60px">FILE</th>
+                                	<th width="60px">CLIENT</th>
+                                    <th width="20px">CREATED</th>
+                                    <th width="20px">MODIFIED</th>
+									<th width="30px">ACTION</th>
+									<th width="50%">PREVIEW</th>
                                 </tr>
                             </thead>
                             <tfoot>
                             	<tr>
-                                	<th>CLIENT</th>
-                                	<th>FILE NAME</th>
-                                	<th>DOCUMENT TYPE</th>
-                                	<th>SIZE</th>
-                                	<th>DATE MODIFIED</th>
-                                	<th>DATE CREATED</th>
-									<th>ACTION</th>
+                                	<th width="60px">FILE</th>
+                                	<th width="60px">CLIENT</th>
+                                    <th width="20px">CREATED</th>
+                                	<th width="20px">MODIFIED</th>
+									<th width="30px">ACTION</th>
+									<th width="50%"></th>
                                 </tr>
                             </tfoot>
                             <tbody id="content_table">
                                         
-                            </tbody>
-                        </table>
+							</tbody>
+						</table>
                         <div style="text-align:center">
 							<a style="width: 100%; font-size:17px; display: none;" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink " id="display_more_btn" title="Load more" onclick="load_more()" href="javascript:void(0);">
 								Load more
@@ -140,10 +143,45 @@ var tablname='analysis_ledger';
 var complete=false;
 var completeScroll=false;
 
-function __showDocumentForm(uuid)
+function __showDocumentByClick(linkNum)
 {
-pUrlStr='document.shtml?uuid='+uuid;
-window.location.href=pUrlStr;
+$('#show_doc_link_'+linkNum).click();
+}
+
+function __getCurrentDocUUID()
+{
+	return $('#sDocUUID').val();
+}
+
+function __getCurrentToken()
+{
+	return $('#sToken').val();
+}
+
+function __loadCurrentDocPreview()
+{
+var doc_previewSrcURL = 'doc_preview.shtml?document_uuid='+__getCurrentDocUUID()+'&token='+__getCurrentToken()+'&content-disposition-flag=0';
+//alert(doc_previewSrcURL);
+document.getElementById("doc_preview").src = doc_previewSrcURL;
+}
+
+
+function __setCurrentDocUUID(pUUIDStr)
+{
+$('#sDocUUID').val(pUUIDStr);
+}
+
+function __editDocumentByUUID(pUUIDStr)
+{
+	//window.location.href=pUrlStr;
+doc_previewSrcURL='document.shtml?uuid='+pUUIDStr+'&token='+__getCurrentToken()+'&'+Math.random();
+window.open(doc_previewSrcURL);
+}
+function __showDocumentByUUID(pUUIDStr)
+{
+
+__setCurrentDocUUID(pUUIDStr);
+__loadCurrentDocPreview();
 }
 
 function __filterResults(val)
@@ -202,6 +240,11 @@ function load_more(){
 }
 
 $(document).ready(function() {
+
+	$(document).keydown(function(e){
+    if (e.keyCode > 36 && e.keyCode < 41) 
+      console.log( "arrowkey pressed" );          
+});
 	
 	load_data();		 
 	
@@ -273,12 +316,15 @@ $(document).ready(function() {
 			}, doneTypingInterval);
 		}
 	});	
+
 });
 
 function load_data(){
+	var previewDisplayedFlag=0;
 	var keyword= $("#keyword").val();
-	var jsonRow = 'loaddocuments.cgi?start='+start+'&end='+end+'&tablname='+tablname;
-			if(keyword!=''){
+	//var jsonRow = 'loaddocuments.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&'+(new Date()).getTime()+'&';
+	var jsonRow = 'loaddocuments.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&sort=modified_timestamp&direction=desc&'+(new Date()).getTime()+'&';
+		if(keyword!=''){
 				jsonRow +='&keyword='+keyword;
 			}
 			if(tab!=''){
@@ -297,34 +343,39 @@ function load_data(){
     					breakpoint: 751
    				});
 			}else{
-					$.each(result.Client, function(i,item)
+				$.each(result.Client, function(i,item)
 				{
 					JSONdata[i]=new Array();
-					JSONdata[i][0]='<a target="_blank" href="customers.shtml?keyword='+item+'">'+item+'</a>';					
+					JSONdata[i][1]='<a target="_blank" href="customers.shtml?keyword='+item+'">'+item+'</a>';					
 				}); 
 				$.each(result.FileName, function(i,item)
 				{
-					JSONdata[i][1]=item;
+					JSONdata[i][0]='<a href="javascript:void(0)" onClick="__showDocumentByClick(\''+i+'\')">'+item+'</a>';
 				});
-				$.each(result.DocType, function(i,item)
-				{	
-					JSONdata[i][2]=item;
-				});
+				// $.each(result.DocType, function(i,item)
+				// {	
+				// 	JSONdata[i][2]=item;
+				// });
 				$.each(result.DocSize, function(i,item)
 				{	
-					JSONdata[i][3]=item;
+					JSONdata[i][0] = JSONdata[i][0] + ' (' + item + ')';
 				});
-				$.each(result.Created, function(i,item)
-				{					
-					JSONdata[i][4]=item;
-				});
+                $.each(result.uuid, function(i,item)
+                {
+                    JSONdata[i][0] = JSONdata[i][0] + '&nbsp;&nbsp;<a href="javascript:void(0)" id="edit_doc_link_'+i+'" onClick="__editDocumentByUUID(\''+item+'\')"><i class="fa fa-pencil"></i></a>';
+                });
+				 $.each(result.Created, function(i,item)
+				 {   //console.log(item);
+                     JSONdata[i][2] = item;
+				 });
 				$.each(result.Modified, function(i,item)
 				{					
-					JSONdata[i][5]=item;
-				});  
+                    JSONdata[i][3] = item;
+				});
+                
 				$.each(result.uuid, function(i,item)
-				{
-					JSONdata[i][6]='<a href="javascript:void(0)" onClick="__showDocumentForm(\''+item+'\')"><i class="fa fa-pencil"></i></a>&nbsp;<a href="javascript:void(0)" onClick="__deleteDocument(\''+item+'\')"><i class="fa fa-trash"></i></a>';					
+				{ if ( i==0 ) { __setCurrentDocUUID(item); setTimeout(function(){ __loadCurrentDocPreview(); }, 1000); }
+					JSONdata[i][4]='<a href="javascript:void(0)" id="show_doc_link_'+i+'" onClick="__showDocumentByUUID(\''+item+'\')"></a><a href="javascript:void(0)" id="download_doc_link_'+i+'" onClick="__downloadDocument(\''+item+'\')"><i class="fa fa-download"></i></a>&nbsp;&nbsp;<a href="javascript:void(0)" id="edit_doc_link_'+i+'" onClick="__editDocumentByUUID(\''+item+'\')"><i class="fa fa-pencil"></i></a>&nbsp;&nbsp;<a href="javascript:void(0)" onClick="__deleteDocument(\''+item+'\')"><i class="fa fa-trash"></i></a>';
 				});
 				
 				var table_html='';
@@ -334,14 +385,23 @@ function load_data(){
 					table_html+='<tr>';
 					
 					$.each(row, function(i,col){
-						table_html+='<td>'+col+'</td>';
+						table_html+='<td wdith="10%">'+col+'</td>';
 					});
+
+					if(previewDisplayedFlag == 0) {
+						previewDisplayedFlag=1;
+						table_html+='<td rowspan="1000" wdith="100%" style="position:relative;"><iframe id="doc_preview" allowfullscreen style="overflow:hidden;overflow-x:hidden;overflow-y:hidden;height:100%;width:100%;position:absolute;top:0px;left:0px;right:0px;bottom:0px" height="100%" width="100%" src=""></iframe></td>';
+
+						//table_html+='<td rowspan="1000" width="40%" height="1000%"><iframe id="doc_preview"  allowfullscreen style="position:relative;top:0;left:0;width:100%;height:100%;" src=""></iframe></td>';
+					}
+
 					table_html+='</tr>';
 				});
 				if(old_srch!=keyword){
 					$('#content_table').html('');
 					old_srch=keyword;
 				}
+                //console.log(table_html);
 				$('#content_table').append(table_html);
 				
 				$('#table-breakpoint').basictable({

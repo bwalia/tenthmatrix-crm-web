@@ -58,8 +58,10 @@ function load_navigation_data(){
 								if(i==0 && loadSetsFileStr==""){
 									loadSetsFileStr=row.sub_module_file;
 								}
-								subTableHtmlStr+='<a href="'+row.sub_module_file+'" ';
-								if(openedFileNameStr=="index.shtml"){
+								//subTableHtmlStr+='<a href="'+row.sub_module_file+'" ';
+                                subTableHtmlStr+='<a href="'+row.sub_module_file+'?'+Math.random()+'" ';
+
+                                if(openedFileNameStr=="index.shtml"){
 									subTableHtmlStr+='target="_blank" ';
 								}
 								subTableHtmlStr+='onclick="saveusermodulepreferences(\''+item.uuid+'\');"><i class="fa fa-circle-o"></i> <b>'+row.sub_module_name+'</b></a></li>';

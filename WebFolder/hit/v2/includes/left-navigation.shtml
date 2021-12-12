@@ -112,7 +112,7 @@ margin-left: 80px;
                             </a>
                             <ul>
                                 <li><a href="documents.shtml"><i class="fa fa-file-text"></i> Documents</a></li>
-                                <li><a href="document.shtml"><i class="fa fa-plus-square"></i> Add New Document</a></li>
+                                <li><a href="#" onclick="   this.href='document.shtml'+Math.random()"><i class="fa fa-plus-square"></i> Add New Document</a></li>
                             </ul>
                         </li>
                         <li class="nav-dropdown">

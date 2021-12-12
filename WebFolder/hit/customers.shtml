@@ -57,8 +57,8 @@ mUserIsCurrentBool:=userHasAccessToDelete
     <div class="content-wrapper">
         <section class="content-header">
       		<h1>
-        		Customers
-        		<small>List panel</small>
+					Customers
+        		<small>or Suppliers List</small>
       		</h1>
       		<ol class="breadcrumb">
        			<li><a href="index.shtml"><i class="fa fa-dashboard"></i> Dashboard</a></li>
@@ -74,15 +74,9 @@ mUserIsCurrentBool:=userHasAccessToDelete
       						<div class="pull-left margin-bottom-10 " style="margin-top:10px;">
 								<div class="form-inline" style="">   
 								
-								
-								
 								<button data-toggle="collapse" CLASS="btn btn-primary" STYLE="" data-target="#sets"><i CLASS="fa fa-bars"></i>  Sets </button>
-								
-								
-									
 									
                    					<a href="javascript:void(0)" onClick="__deleteMultipleCustomers()" class="btn btn-danger btn-color padingmix  btn-icon-left btn-sm editorLink " STYLE="padding-right:6px;"> <i class="fa fa-trash"></i></a>
-									
 									
 									<div id="sets" class="collapse" style="background-color: #efefef; border-radius: 4px;padding: 10px 45px 14px 27px; margin-top: 11px; " >              	          
                  					<div class="btn-inline display-inline-block">
@@ -271,7 +265,7 @@ mUserIsCurrentBool:=userHasAccessToDelete
 									
 									var statesdemo = {
 										state0: {
-											title: 'Are you sure to delete?',
+											title: 'Are you sure you want to delete this customer or supplier?',
 											html:html,
 											buttons: { Cancel : 0, OK: 1 },																		
 											submit:function(e,v,m,f){ 
@@ -412,7 +406,14 @@ function getMonthName(m) {
 function __showEmailForm(uuid)
 {
 pUrlStr='email.shtml?company_uuid='+uuid;
-window.location.href=pUrlStr;
+//window.location.href=pUrlStr;
+window.open(pUrlStr);
+}
+
+function __addNewDocForm(uuid)
+{
+pUrlStr='document.shtml?company_uuid='+uuid;
+window.open(pUrlStr);
 }
 
 function __showCustomerForm(uuid)
@@ -506,7 +507,7 @@ function __showCustomerForm_AddSet(val,name){
 				end=25;
 				tab='';
 				var selectedVals=$("#selected_uuids").val();
-				jsonRow = 'loadcustomers.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab+'&selected='+selectedVals+'&set=add_to_'+name+'&setUUID='+setUUID;
+				jsonRow = 'loadcustomers.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab+'&selected='+selectedVals+'&set=add_to_'+name+'&setUUID='+setUUID+'&'+(new Date()).getTime()+'&';
 				$.getJSON(jsonRow,function(result){
 					if(result.Alert){
 						$("#selected_uuids").val("");
@@ -542,7 +543,7 @@ function saveNewSet(new_set, errorMessageDiv){
 				jsonRow = 'addDelCustSets.cgi?tablname='+tablname+'&set='+new_set;
 			} else{
 				var selectedVals= $("#selected_uuids").val();
-				jsonRow = 'loadcustomers.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab+'&selected='+selectedVals+'&set=add_to_'+new_set+'&setUUID='+setUUID;
+				jsonRow = 'loadcustomers.cgi?start='+start+'&end='+end+'&tablname='+tablname+'&tab='+tab+'&selected='+selectedVals+'&set=add_to_'+new_set+'&setUUID='+setUUID+'&'+(new Date()).getTime()+'&';
 			}
 			
 			$.getJSON(jsonRow,function(result){
@@ -820,10 +821,11 @@ function load_data(jsonRow){
 					}else{
 					JSONdata[i][0]='<input name="Select" class="check" type="checkbox" id="Select" value="'+item+'">';
 					}
-					JSONdata[i][8]='<a class="hidden-xs" title="Download Statement" target="_blank" href="statement_preview.shtml?uuid='+item+'&token=<!--#4DVAR _HIT_TokenGetAny-->&preview=pdf"><i class="fa fa-download"></i></a>&nbsp;';
-					JSONdata[i][8]+='<a href="javascript:void(0)" onClick="__showCustomerForm(\''+item+'\')"><i class="fa fa-pencil"></i></a>&nbsp;<a href="javascript:void(0)" onClick="__showEmailForm(\''+item+'\')"><i class="fa fa-envelope"></i></a>';
+					JSONdata[i][8]='<a href="javascript:void(0)" onClick="__addNewDocForm(\''+item+'\')" title="Add New Document" ><i class="fa fa-file"></i></a>&nbsp;&nbsp;';
+					JSONdata[i][8]+='<a class="hidden-xs" title="Download Statement" target="_blank" href="statement_preview.shtml?uuid='+item+'&token=<!--#4DVAR _HIT_TokenGetAny-->&preview=pdf"><i class="fa fa-download"></i></a>&nbsp;&nbsp;';
+					JSONdata[i][8]+='<a href="javascript:void(0)" onClick="__showCustomerForm(\''+item+'\')" title="Show more"><i class="fa fa-pencil"></i></a>&nbsp;&nbsp;<a href="javascript:void(0)" onClick="__showEmailForm(\''+item+'\')" title="Email customer"><i class="fa fa-envelope"></i></a>';
 					<!--#4DIF (mUserIsCurrentBool)-->
-					JSONdata[i][8]+='&nbsp;<a href="javascript:void(0)" onClick="__deleteSelected(\''+item+'\')"><i class="fa fa-trash"></i></a>';
+					JSONdata[i][8]+='&nbsp;&nbsp;<a href="javascript:void(0)" onClick="__deleteSelected(\''+item+'\')"><i class="fa fa-trash"></i></a>';
 					<!--#4DELSE--><!--#4DENDIF-->
 					cust_uuid[i]=item;
 					

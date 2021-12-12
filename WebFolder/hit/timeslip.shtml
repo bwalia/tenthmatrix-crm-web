@@ -8,7 +8,9 @@ C_TEXT(_HTMLTITLETXT;pUserUUIDStr;pUserTask)
 if(_HIT_AuthenticateSession="Session-Authenticated-OK")
 
 QUERY([Timeslips];[Timeslips]uuid=_HIT_WebApp_GetField ("uuid"))
-mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
+mTimeSlipDayName:=TB4D_GetDayName(timestamp_unix_toDate ([Timeslips]Timestamp_start))
+	mUserIsCurrentBool:=(_HIT_WebSession_GetVar ("auth_user_type")="CLIENTS")
+
 QUERY([Employees];[Employees]emp_id=[Timeslips]emp_id)
 
 IF (Records in selection([Timeslips])=0)
@@ -62,6 +64,7 @@ border: 1px solid #d3d3d3;
    width: 180%;
     margin-left: 27px;
 }
+select.selectList { width: 350px; }
 	
 	</style>
 </head>
@@ -95,9 +98,9 @@ border: 1px solid #d3d3d3;
     							<label for="" class="col-sm-3 control-label" style="
     padding-top: 20px;
 ">Task Name <span style="color:#6E829B">*</span></label>
-								<div class="ui-widget col-sm-6">
+								<div class="ui-widget col-sm-9">
 									<!--4D FUNCTION INIT REQUIRED-->
-									<select name="Task_ID" id="Task_ID" CLASS="form-control">
+									<select class="selectList" name="Task_ID" id="Task_ID" CLASS="form-control">
 									<!--#4DIF (Records in selection([Timeslips])=0)-->
 										<!--#4DIF (pUserTask="")-->
 										<option value=""></option>
@@ -115,8 +118,12 @@ border: 1px solid #d3d3d3;
 								</div>
 							</div> 
 							
-							
-							
+						                            <div class="form-group">
+                                                        <label for="" class="col-sm-3 control-label">Week No</label>
+                                                        <div class="col-sm-2  ">
+                            <input <!--#4DIF (mUserIsCurrentBool)-->readonly readonly="readonly" <!--#4DELSE--><!--#4DENDIF-->class="form-control num" name="Week_No" id="Week_No" type="text" value="<!--#4DVAR [Timeslips]week_no-->">
+                            </div>&nbsp;&nbsp;(Day: <!--#4DVAR mTimeSlipDayName-->)
+</div>	
 							
 							<div class="form-group"><!--4D FUNCTION INIT REQUIRED-->
     							<label for="" class="col-sm-3 control-label">Employee Name</label>
@@ -127,6 +134,7 @@ border: 1px solid #d3d3d3;
 									</select>
 								</div>
                             </div>
+                            <input name="url_to_redirect" class="span9" type="hidden" value="calendar.shtml" id="url_to_redirect">                      
                             <input name="Timeslip_uuid" class="span9" type="hidden" value="<!--HIT_EXECUTE _HIT_HTMLTXT:=_HIT_WebApp_GetField ("uuid")-->" id="Timeslip_uuid">                      
                             <div class="form-group">
     							<label for="" class="col-sm-3 control-label">Slip Start Date <span style="color:#6E829B">*</span></label>	

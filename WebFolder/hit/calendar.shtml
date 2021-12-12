@@ -361,7 +361,7 @@ success: function(html)
 				
 				//var s_date=	view.start.getTime();
 				//var e_date= view.end.getTime();
-				var dataString = 's_date='+s_date+'&e_date='+e_date+'&s_time='+s_time+'&e_time='+e_time+'&redirect=false';
+				var dataString = 's_date='+s_date+'&e_date='+e_date+'&s_time='+s_time+'&e_time='+e_time+'&redirect=false&'+Math.random();
 				
 				//alert(dataString);
 								

@@ -17,7 +17,7 @@ last_week:=curr_date-6
       <!-- logo for regular state and mobile devices -->
      <!-- <span class="logo-lg"><IMG SRC="images/jobshout-logo.png" STYLE="width:160px;" ALT=""/></span>-->
 	  
-	<span class="logo-lg"><IMG SRC="images/webcrm-logo.png"  ALT=""/></span>
+	<span class="logo-lg"><IMG SRC="images/cloudcrm.png"  ALT=""/></span>
 	  
 	  
 	  

@@ -75,6 +75,8 @@ $(document).ready(function() {
 function selectValue(val, name){
 	$(".projectNameStr").val(name);
 	$("#Client_ID").val(val);
+	$("#company_uuid").val(val);
+	alert($("#company_uuid").val());
 	$( ".projectListView" ).listview( "refresh" );
 	$( ".projectListView li" ).addClass("ui-screen-hidden");
 }
