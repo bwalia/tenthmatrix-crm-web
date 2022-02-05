@@ -247,7 +247,6 @@ success: function(html)
 		 });
 		
             var flag=0;
-			
             
             $('#calendar').fullCalendar({
                 header: {
@@ -260,22 +259,7 @@ success: function(html)
                 editable: true,
 				
 				timeFormat: 'd MMM h(:mm)t{ - d MMM h(:mm)t}',
-               /* events: [
-				
-                 
-					<!--#4DSCRIPT/Web_LoadTimeslips/-->
-                         <!--#4DLOOP [Timeslips]--><!--#4DSCRIPT/Web_LoadTimeslipRelated/--><!-- row -->
-					{
-                        id: '<!--#4DVAR [Timeslips]uuid-->',
-                        title: '<!--#4DVAR [Tasks]task_name-->',
-						start: get_datetime('<!--#4DVAR timestamp_unix_toDate ([Timeslips]Timestamp_start)-->', '<!--#4DVAR timestamp_unix_toTime ([Timeslips]Timestamp_start)-->'),						
-						end: get_datetime('<!--#4DVAR timestamp_unix_toDate ([Timeslips]Timestamp_end)-->', '<!--#4DVAR timestamp_unix_toTime ([Timeslips]Timestamp_end)-->'),						
-						url: 'timeslip.shtml?uuid=<!--#4DVAR [Timeslips]uuid-->'
-                        //allDay: false
-                    },
-					<!--#4DENDLOOP-->
-					
-                ],*/
+ 
                 eventBackgroundColor: '#278ccf',
 				
 				<!--#4DIF (_HIT_WebApp_GetField ("mode")="week")-->
@@ -410,7 +394,29 @@ success: function(html)
             });
 			
 			
-			
+						//---
+						$('#calendar').fullCalendar({
+        eventClick: function(info) {
+          var eventObj = info.event;
+  
+          if (eventObj.url) {
+            alert(
+              'Clicked ' + eventObj.title + '.\n' +
+              'Will open ' + eventObj.url + ' in a new tab'
+            );
+  
+            window.open(eventObj.url);
+  
+            info.jsEvent.preventDefault(); // prevents browser from following link in current tab.
+          } else {
+            alert('Clicked ' + eventObj.title);
+          }
+        }
+  
+      });
+
+
+			//---
 			
         });
     </script>

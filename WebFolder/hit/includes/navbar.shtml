@@ -20,7 +20,7 @@ last_week:=curr_date-6
 	  
 	<!--<span class="logo-lg"><IMG SRC="images/Web_Crm.png" STYLE="width:140px;"  ALT=""/></span>-->
 	
-	<span class="logo-lg"><i class="fa fa-dot-circle-o"></i> Tenthmatrix</span>
+	<span class="logo-lg"><i class="fa fa-dot-circle-o"></i> Workstation</span>
 	  
 	 
     </a>
